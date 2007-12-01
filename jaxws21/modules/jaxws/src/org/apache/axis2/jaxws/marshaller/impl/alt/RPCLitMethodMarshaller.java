@@ -90,16 +90,14 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //to a method then an implementation MUST throw WebServiceException.
             if (pds.length > 0) {
                 if (signatureArguments == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                            "rpc/lit"));
+                    throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("NullParamErr2",operationDesc.getJavaMethodName()));
                 }
                 if (signatureArguments != null) {
                     for (Object argument : signatureArguments) {
                         if (argument == null) {
-                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                    "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                    "rpc/lit"));
+                        	throw ExceptionFactory.makeWebServiceException(
+                            		Messages.getMessage("NullParamErr2",operationDesc.getJavaMethodName()));
                         }
                     }
                 }
@@ -212,9 +210,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             if (sigArguments != null) {
                 for (Object argument : sigArguments) {
                     if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                                "NullParamErr1", "Input", operationDesc.getJavaMethodName(),
-                                "rpc/lit"));
+                    	throw ExceptionFactory.makeWebServiceException(
+                        		Messages.getMessage("NullParamErr2",operationDesc.getJavaMethodName()));
 
                     }
                 }
@@ -301,9 +298,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
                 if (returnObject == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "rpc/lit"));
+                	throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("NullParamErr3",operationDesc.getJavaMethodName()));
 
                 }
                 Element returnElement = null;
@@ -428,9 +424,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
                 if (returnValue == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                            "NullParamErr1", "Return", operationDesc.getJavaMethodName(),
-                            "rpc/lit"));
+                	throw ExceptionFactory.makeWebServiceException(
+                    		Messages.getMessage("NullParamErr3",operationDesc.getJavaMethodName()));
                 }
             }
 

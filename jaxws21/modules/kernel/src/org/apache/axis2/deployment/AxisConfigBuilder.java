@@ -22,7 +22,9 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.builder.ApplicationXMLBuilder;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.MIMEBuilder;
@@ -47,10 +49,13 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -200,6 +205,15 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (dataLocatorElement != null) {
                 processDataLocatorConfig(dataLocatorElement);
             }
+            
+            // process roleplayer configuration
+            OMElement rolePlayerElement =
+                    config_element
+                            .getFirstChildWithName(new QName(Constants.SOAP_ROLE_CONFIGURATION_ELEMENT));
+
+            if (rolePlayerElement != null) {
+                processSOAPRoleConfig(axisConfig, rolePlayerElement);
+            }
 
             // process MessageFormatters
             OMElement messageFormattersElement =
@@ -246,6 +260,36 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
+    private void processSOAPRoleConfig(AxisConfiguration axisConfig, OMElement soaproleconfigElement) {
+    	if (soaproleconfigElement != null) {
+    		final boolean isUltimateReceiever = JavaUtils.isTrue(soaproleconfigElement.getAttributeValue(new QName(Constants.SOAP_ROLE_IS_ULTIMATE_RECEIVER_ATTRIBUTE)), true);
+    		ArrayList roles = new ArrayList();
+    		Iterator iterator = soaproleconfigElement.getChildrenWithName(new QName(Constants.SOAP_ROLE_ELEMENT));
+    		while (iterator.hasNext()) {
+    			OMElement roleElement = (OMElement) iterator.next();
+    			roles.add(roleElement.getText());
+    		}
+    		final List unmodifiableRoles = Collections.unmodifiableList(roles);
+    		try{
+    			RolePlayer rolePlayer = new RolePlayer(){
+    				public List getRoles() {
+    					return unmodifiableRoles;
+    				}
+    				public boolean isUltimateDestination() {
+    					return isUltimateReceiever;
+    				}
+    			};
+    			axisConfig.addParameter("rolePlayer", rolePlayer);
+    		} catch (AxisFault e) {
+    			if (log.isTraceEnabled()) {
+    				log.trace(
+    						"processTargetResolvers: Exception thrown initialising TargetResolver: " +
+    						e.getMessage());
+    			}
+    		}
+    	}
+    }
+    
     private void processDeployers(Iterator deployerItr) {
         HashMap directoryToExtensionMappingMap = new HashMap();
         HashMap extensionToDeployerMappingMap = new HashMap();

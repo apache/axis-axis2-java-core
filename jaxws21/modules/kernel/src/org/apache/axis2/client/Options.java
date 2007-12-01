@@ -101,6 +101,11 @@ public class Options implements Externalizable, SafeSerializable {
     // current revision level of this object
     private static final int revisionID = REVISION_2;
 
+    //I am going to set a reply to as customer reply To address ,
+    // so that Axis2 does not need to wait for the reply
+    public static String  CUSTOM_REPLYTO_ADDRESS = "CUSTOM_REPLYTO_ADDRESS";
+    public static String  CUSTOM_REPLYTO_ADDRESS_TRUE = "true";
+
 
     /**
      * Default blocking timeout value.
@@ -882,6 +887,8 @@ public class Options implements Externalizable, SafeSerializable {
                                                     senderTransport));
         }
     }
+
+
 
     /**
      * Set the SOAP version to be used.

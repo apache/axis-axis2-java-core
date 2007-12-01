@@ -29,14 +29,22 @@ import org.apache.axis2.clustering.context.commands.ContextClusteringCommandColl
 import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
 import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
-import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
+import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
@@ -77,6 +85,29 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     public void messageReceived(Serializable msg, Member sender) {
+        try {
+            AxisConfiguration configuration = configurationContext.getAxisConfiguration();
+            List classLoaders = new ArrayList();
+            classLoaders.add(configuration.getSystemClassLoader());
+            classLoaders.add(getClass().getClassLoader());
+            for (Iterator iter = configuration.getServiceGroups(); iter.hasNext();) {
+                AxisServiceGroup group = (AxisServiceGroup) iter.next();
+                classLoaders.add(group.getServiceGroupClassLoader());
+            }
+            for (Iterator iter = configuration.getModules().values().iterator(); iter.hasNext();) {
+                AxisModule module = (AxisModule) iter.next();
+                classLoaders.add(module.getModuleClassLoader());
+            }
+
+
+            byte[] message = ((ByteMessage) msg).getMessage();
+            msg = XByteBuffer.deserialize(message,
+                                          0,
+                                          message.length,
+                                          (ClassLoader[])classLoaders.toArray(new ClassLoader[classLoaders.size()])); 
+        } catch (Exception e) {
+            log.error(e);
+        }
 
         // If the system has not still been intialized, reject all incoming messages, except the
         // GetStateResponseCommand message
@@ -84,17 +115,22 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
             && !(msg instanceof GetStateResponseCommand) &&
             !(msg instanceof GetConfigurationResponseCommand)) {
+
+            log.warn("Received message before cluster initialization has been completed");
             return;
         }
-        log.debug("RECEIVED MESSAGE " + msg + " from " + TribesUtil.getHost(sender));
+        log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
         try {
-            processMessage(msg,sender);
+            processMessage(msg, sender);
         } catch (Exception e) {
             log.error(e);
         }
     }
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
+        //TODO: Reject duplicates that can be received due to retransmissions
+        //TODO: ACK implosion?
+
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
             contextManager.process(ctxCmd);
@@ -114,6 +150,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
             controlCommandProcessor.process((ControlCommand) msg,
                                             sender);
-        } 
+        }
     }
 }

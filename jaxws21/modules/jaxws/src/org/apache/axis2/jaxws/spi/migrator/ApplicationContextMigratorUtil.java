@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.MEPContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,7 +92,8 @@ public class ApplicationContextMigratorUtil {
                                                         Map<String, Object> requestContext,
                                                         MessageContext messageContext) {
         if (messageContext == null) {
-            throw ExceptionFactory.makeWebServiceException("Null MessageContext");
+        	
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("nullMsgCtxErr"));
         }
 
         ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
@@ -133,7 +135,7 @@ public class ApplicationContextMigratorUtil {
                                                           Map<String, Object> responseContext,
                                                           MessageContext messageContext) {
         if (messageContext == null) {
-            throw ExceptionFactory.makeWebServiceException("Null MessageContext");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("nullMsgCtxErr"));
         }
 
         ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();

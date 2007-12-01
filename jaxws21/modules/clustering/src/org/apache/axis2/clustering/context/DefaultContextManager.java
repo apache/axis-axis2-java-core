@@ -52,7 +52,7 @@ public class DefaultContextManager implements ContextManager {
 
     public DefaultContextManager() {
     }
-    
+
     public String updateContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand cmd =
                 ContextClusteringCommandFactory.getUpdateCommand(context,
@@ -161,15 +161,21 @@ public class DefaultContextManager implements ContextManager {
                             configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
                                                                    new Long(tts));
                         } catch (ClusteringFault clusteringFault) {
+                            AckManager.removeMessage(cmd.getUniqueId());
                             throw new RuntimeException(clusteringFault);
                         }
                     }
                 };
                 processorThread.start();
             } else {
-                long tts = sender.sendToGroup(cmd);
-                configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
-                                                       new Long(tts));
+                try {
+                    long tts = sender.sendToGroup(cmd);
+                    configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
+                                                           new Long(tts));
+                } catch (ClusteringFault clusteringFault) {
+                    AckManager.removeMessage(cmd.getUniqueId());
+                    throw clusteringFault;
+                }
             }
         }
     }

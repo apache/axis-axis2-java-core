@@ -46,6 +46,7 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.util.HashMap;
 
 /**
  * BlockImpl Abstract Base class for various Block Implementations.
@@ -73,6 +74,8 @@ public abstract class BlockImpl implements Block {
     protected BlockFactory factory;
     protected boolean consumed = false;
     protected Message parent;
+    
+    private HashMap map = null; // OMDataSourceExt properties
 
     /**
      * A Block has the following components
@@ -493,4 +496,24 @@ public abstract class BlockImpl implements Block {
                                           XMLStreamWriter writer)
             throws XMLStreamException, WebServiceException;
 	
+    public Object getProperty(String key) {
+        if (map == null) {
+            return null;
+        }
+        return map.get(key);
+    }
+
+    public Object setProperty(String key, Object value) {
+        if (map == null) {
+            map = new HashMap();
+        }
+        return map.put(key, value);
+    }
+
+    public boolean hasProperty(String key) {
+        if (map == null) {
+            return false;
+        } 
+        return map.containsKey(key);
+    }
 }

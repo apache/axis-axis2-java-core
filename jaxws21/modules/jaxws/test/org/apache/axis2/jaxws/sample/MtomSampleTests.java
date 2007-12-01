@@ -54,7 +54,7 @@ public class MtomSampleTests extends TestCase {
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
-    public void testSendImageAttachmentAPI11() throws Exception {
+    public void _testSendImageAttachmentAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -98,7 +98,7 @@ public class MtomSampleTests extends TestCase {
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
      */
-    public void testSendImageAttachmentProperty11() throws Exception {
+    public void _testSendImageAttachmentProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -139,7 +139,7 @@ public class MtomSampleTests extends TestCase {
      * Enable attachment optimization using both the SOAP11 binding
      * property for MTOM and the Binding API
      */
-    public void testSendImageAttachmentAPIProperty11() throws Exception {
+    public void _testSendImageAttachmentAPIProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         

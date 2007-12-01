@@ -20,6 +20,7 @@
 
 package org.apache.axis2.engine;
 
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
@@ -72,7 +73,7 @@ public class AxisEngine {
         }
 
         // Get all the headers targeted to us
-        Iterator headerBlocks = envelope.getHeader().getHeadersToProcess(null);
+        Iterator headerBlocks = envelope.getHeader().getHeadersToProcess((RolePlayer)msgContext.getConfigurationContext().getAxisConfiguration().getParameterValue("rolePlayer"));
 
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();

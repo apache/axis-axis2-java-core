@@ -40,6 +40,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
@@ -154,7 +155,8 @@ public class MessageUtils {
                 Protocol protocol = msgContext.isDoingREST() ? Protocol.rest : null;
                 message = msgFactory.createFrom(soapEnv, protocol);
             } catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException("Could not create new Message");
+                throw ExceptionFactory.makeWebServiceException(
+                		Messages.getMessage("msgFromMsgErr"), e);
             }
 
             Object property = msgContext.getProperty(Constants.Configuration.ENABLE_MTOM);

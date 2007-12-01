@@ -186,8 +186,8 @@
             <artifactId>woden-impl-dom</artifactId>
         </dependency>
         <dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean</artifactId>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.jaxme</groupId>
@@ -214,7 +214,20 @@
             <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
-
+	<distributionManagement>
+		<repository>
+			<id>apache-repo</id>
+			<name>Maven Central Repository</name>
+			<url>
+            scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+		</repository>
+		<snapshotRepository>
+			<id>apache-snapshots</id>
+			<name>Apache Development Repository</name>
+			<url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
     <build>
         <plugins>
             <plugin>

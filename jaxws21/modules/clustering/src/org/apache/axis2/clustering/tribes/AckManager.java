@@ -51,11 +51,21 @@ public final class AckManager {
         }
     }
 
+    public static void removeMessage(String messageUniqueId){
+        messageAckTable.remove(messageUniqueId);
+    }
+
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
 
         boolean isAcknowledged = false;
+        if(messageUniqueId == null){
+            return true;
+        }
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
+        if(ack == null){  // If the message is not found, treat it as ACKed
+            return true;
+        }
 
         // Check that all members in the memberList are same as the total member list,
         // which will indicate that all members have ACKed the message

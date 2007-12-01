@@ -28,4 +28,5 @@ public interface AnnotationConstants {
     String EXCLUDE = "exclude";
     String ACTION = "action";
     String WSDL_LOCATION = "wsdlLocation";
+    String OPERATION_NAME ="operationName";
 }

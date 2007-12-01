@@ -107,7 +107,7 @@
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <groovy.all.version>1.0-jsr-06</groovy.all.version>
         <intellij.version>5.0</intellij.version>
-        <httpcore.version>4.0-alpha5</httpcore.version>
+        <httpcore.version>4.0-alpha6</httpcore.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.0</jaxb.api.version>
         <jaxbri.version>2.0.5</jaxbri.version>
@@ -137,7 +137,7 @@
         <woden.version>1.0-incubating-SNAPSHOT</woden.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
-        <xbean.version>2.2.0</xbean.version>
+        <xmlbeans.version>2.3.0</xmlbeans.version>
         <xerces.version>2.8.1</xerces.version>
         <xml_apis.version>1.3.03</xml_apis.version>
         <xmlschema.version>SNAPSHOT</xmlschema.version>
@@ -757,9 +757,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>xmlbeans</groupId>
-                <artifactId>xbean</artifactId>
-                <version>${xbean.version}</version>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>${xmlbeans.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.jaxme</groupId>

@@ -19,10 +19,13 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +180,43 @@ public class DescriptionFactoryImplTests extends TestCase {
             assertEquals(SampleAnnotationProcessor.class.getName(), name);
         }
     }
+    
+    public void testHandlerChainSource() {
+    	JavaClassToDBCConverter converter = new JavaClassToDBCConverter(AnnotatedService.class);
+        HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+        DescriptionBuilderComposite dbc = dbcMap.get(AnnotatedService.class.getName());
+        assertNotNull(dbc);
+        InputStream is = getXMLFileStream();
+        assertNotNull(is);
+        dbc.setHandlerChainSource(is);
+        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+        assertNotNull(sdList);
+        assertTrue(sdList.size() > 0);
+        ServiceDescription sd = sdList.get(0);
+        assertNotNull(sd.getEndpointDescriptions_AsCollection());
+        Collection<EndpointDescription> edColl = sd.getEndpointDescriptions_AsCollection();
+        assertNotNull(edColl);
+        assertTrue(edColl.size() > 0);
+        EndpointDescription ed = edColl.iterator().next();
+        assertNotNull(ed);
+        assertNotNull(ed.getHandlerChain());
+    }
+    
+    private InputStream getXMLFileStream() {
+    	InputStream is = null;
+    	String configLoc = null;
+        try {
+            String sep = "/";
+            configLoc = sep + "test-resources" + sep + "test-handler.xml";
+            String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+            is = new File(baseDir + configLoc).toURL().openStream();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    	return is;
+    }
+    
     
     private void resetClientConfigFactory() throws Exception {
         Field field = DescriptionFactoryImpl.class.getDeclaredField("clientConfigFactory");

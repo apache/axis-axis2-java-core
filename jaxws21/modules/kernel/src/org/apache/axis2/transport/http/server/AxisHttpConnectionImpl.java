@@ -25,21 +25,18 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.ConnectionClosedException;
-import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpConnectionMetrics;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.RequestLine;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.ContentLengthStrategy;
 import org.apache.http.impl.DefaultHttpRequestFactory;
 import org.apache.http.impl.entity.StrictContentLengthStrategy;
@@ -47,20 +44,18 @@ import org.apache.http.impl.io.ChunkedInputStream;
 import org.apache.http.impl.io.ChunkedOutputStream;
 import org.apache.http.impl.io.ContentLengthInputStream;
 import org.apache.http.impl.io.ContentLengthOutputStream;
-import org.apache.http.impl.io.HttpDataInputStream;
+import org.apache.http.impl.io.HttpRequestParser;
+import org.apache.http.impl.io.HttpResponseWriter;
+import org.apache.http.impl.io.IdentityInputStream;
 import org.apache.http.impl.io.IdentityOutputStream;
-import org.apache.http.impl.io.SocketHttpDataReceiver;
-import org.apache.http.impl.io.SocketHttpDataTransmitter;
-import org.apache.http.io.HttpDataReceiver;
-import org.apache.http.io.HttpDataTransmitter;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicRequestLine;
-import org.apache.http.message.BasicStatusLine;
-import org.apache.http.message.BufferedHeader;
+import org.apache.http.impl.io.SocketInputBuffer;
+import org.apache.http.impl.io.SocketOutputBuffer;
+import org.apache.http.io.HttpMessageParser;
+import org.apache.http.io.HttpMessageWriter;
+import org.apache.http.io.SessionInputBuffer;
+import org.apache.http.io.SessionOutputBuffer;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.CharArrayBuffer;
-import org.apache.http.util.HeaderUtils;
 
 public class AxisHttpConnectionImpl implements AxisHttpConnection {
 
@@ -68,13 +63,11 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         LogFactory.getLog("org.apache.axis2.transport.http.server.wire");
 
     private final Socket socket;
-    private final HttpDataTransmitter datatransmitter;
-    private final HttpDataReceiver datareceiver;
-    private final CharArrayBuffer charbuffer; 
-    private final HttpRequestFactory requestfactory;
+    private final SessionOutputBuffer outbuffer;
+    private final SessionInputBuffer inbuffer;
+    private final HttpMessageParser requestParser;
+    private final HttpMessageWriter responseWriter;
     private final ContentLengthStrategy contentLenStrategy;
-    private final int maxHeaderCount;
-    private final int maxLineLen;
 
     private OutputStream out = null;
     private InputStream in = null;
@@ -98,17 +91,17 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         
         int buffersize = HttpConnectionParams.getSocketBufferSize(params);
         this.socket = socket;
-        this.datatransmitter = new SocketHttpDataTransmitter(socket, buffersize, params); 
-        this.datareceiver = new SocketHttpDataReceiver(socket, buffersize, params); 
-        this.charbuffer = new CharArrayBuffer(256);
-        this.requestfactory = new DefaultHttpRequestFactory();
+        this.outbuffer = new SocketOutputBuffer(socket, buffersize, params); 
+        this.inbuffer = new SocketInputBuffer(socket, buffersize, params); 
         this.contentLenStrategy = new StrictContentLengthStrategy();
-        this.maxHeaderCount = params.getIntParameter(HttpConnectionParams.MAX_HEADER_COUNT, -1);
-        this.maxLineLen = params.getIntParameter(HttpConnectionParams.MAX_LINE_LENGTH, -1);
+        this.requestParser = new HttpRequestParser(
+                this.inbuffer, null, new DefaultHttpRequestFactory(), params);
+        this.responseWriter = new HttpResponseWriter(
+                this.outbuffer, null, params);
     }
 
     public void close() throws IOException {
-        this.datatransmitter.flush();
+        this.outbuffer.flush();
         try {
             this.socket.shutdownOutput();
         } catch (IOException ignore) {
@@ -126,7 +119,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
 
     public boolean isStale() {
         try {
-            this.datareceiver.isDataAvailable(1);
+            this.inbuffer.isDataAvailable(1);
             return false;
         } catch (IOException ex) {
             return true;
@@ -141,23 +134,11 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
     }
 
     public HttpRequest receiveRequest() throws HttpException, IOException {
-        this.charbuffer.clear();
-        int i = this.datareceiver.readLine(this.charbuffer);
-        if (i == -1) {
-            throw new ConnectionClosedException("Client closed connection"); 
-        }
-        RequestLine requestline = BasicRequestLine.parse(this.charbuffer, 0, this.charbuffer.length());
-        HttpRequest request = this.requestfactory.newHttpRequest(requestline);
-        Header[] headers = HeaderUtils.parseHeaders(
-                this.datareceiver, 
-                this.maxHeaderCount,
-                this.maxLineLen);
-        request.setHeaders(headers);
-        
+        HttpRequest request = (HttpRequest) this.requestParser.parse();
         if (HEADERLOG.isDebugEnabled()) {
             HEADERLOG.debug(">> " + request.getRequestLine().toString());
-            for (i = 0; i < headers.length; i++) {
-                HEADERLOG.debug(">> " + headers[i].toString());
+            for (HeaderIterator it = request.headerIterator(); it.hasNext(); ) {
+                HEADERLOG.debug(">> " + it.nextHeader().toString());
             }
         }
         
@@ -166,11 +147,11 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         if (request instanceof HttpEntityEnclosingRequest) {
             long len = this.contentLenStrategy.determineLength(request);
             if (len == ContentLengthStrategy.CHUNKED) {
-                this.in = new ChunkedInputStream(this.datareceiver);
+                this.in = new ChunkedInputStream(this.inbuffer);
             } else if (len == ContentLengthStrategy.IDENTITY) {
-                this.in = new HttpDataInputStream(this.datareceiver);                            
+                this.in = new IdentityInputStream(this.inbuffer);                            
             } else {
-                this.in = new ContentLengthInputStream(datareceiver, len);
+                this.in = new ContentLengthInputStream(inbuffer, len);
             }
         }
         return request;
@@ -184,43 +165,28 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
 
         if (HEADERLOG.isDebugEnabled()) {
             HEADERLOG.debug("<< " + response.getStatusLine().toString());
-            Header[] headers = response.getAllHeaders();
-            for (int i = 0; i < headers.length; i++) {
-                HEADERLOG.debug("<< " + headers[i].toString());
+            for (HeaderIterator it = response.headerIterator(); it.hasNext(); ) {
+                HEADERLOG.debug("<< " + it.nextHeader().toString());
             }
         }
         
-        this.charbuffer.clear();
-        BasicStatusLine.format(this.charbuffer, response.getStatusLine());
-        this.datatransmitter.writeLine(this.charbuffer);
-        for (Iterator it = response.headerIterator(); it.hasNext(); ) {
-            Header header = (Header) it.next();
-            if (header instanceof BufferedHeader) {
-                this.datatransmitter.writeLine(((BufferedHeader)header).getBuffer());
-            } else {
-                this.charbuffer.clear();
-                BasicHeader.format(this.charbuffer, header);
-                this.datatransmitter.writeLine(this.charbuffer);
-            }
-        }
-        this.charbuffer.clear();
-        this.datatransmitter.writeLine(this.charbuffer);
+        this.responseWriter.write(response);
 
         // Prepare output stream
         this.out = null;
-        HttpVersion ver = response.getStatusLine().getHttpVersion();
+        ProtocolVersion ver = response.getStatusLine().getProtocolVersion();
         HttpEntity entity = response.getEntity();
         if (entity != null) {
             long len = entity.getContentLength();
             if (entity.isChunked() && ver.greaterEquals(HttpVersion.HTTP_1_1)) {
-                this.out = new ChunkedOutputStream(this.datatransmitter);
+                this.out = new ChunkedOutputStream(this.outbuffer);
             } else if (len >= 0) {
-                this.out = new ContentLengthOutputStream(this.datatransmitter, len);
+                this.out = new ContentLengthOutputStream(this.outbuffer, len);
             } else {
-                this.out = new IdentityOutputStream(this.datatransmitter); 
+                this.out = new IdentityOutputStream(this.outbuffer); 
             }
         } else {
-            this.datatransmitter.flush();
+            this.outbuffer.flush();
         }
     }
     
@@ -236,7 +202,7 @@ public class AxisHttpConnectionImpl implements AxisHttpConnection {
         if (this.out != null) {
             this.out.flush();
         } else {
-            this.datatransmitter.flush();
+            this.outbuffer.flush();
         }
     }
 

@@ -48,7 +48,7 @@ public class Name extends Token {
         catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
             throw new IllegalArgumentException(
-                    //Messages.getMessage("badNameType00") +
+                    " invalid value for name " +
                     "data=[" + stValue + "]");
         }
     }
@@ -62,7 +62,7 @@ public class Name extends Token {
     public void setValue(String stValue) throws IllegalArgumentException {
         if (!Name.isValid(stValue))
             throw new IllegalArgumentException(
-                    //Messages.getMessage("badNameType00") +
+                    " invalid value for name " +
                     " data=[" + stValue + "]");
         m_value = stValue;
     }

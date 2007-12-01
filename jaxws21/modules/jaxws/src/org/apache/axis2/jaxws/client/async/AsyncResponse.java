@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
@@ -130,9 +131,8 @@ public abstract class AsyncResponse implements Response {
     private void setThreadClassLoader(final ClassLoader cl) {
         if (this.classLoader != null) {
             if (!this.classLoader.getClass().equals(cl.getClass())) {
-                throw ExceptionFactory.makeWebServiceException("Attemping to use ClassLoader of type " + cl.getClass().toString() +
-                                                               ", which is incompatible with current ClassLoader of type " +
-                                                               this.classLoader.getClass().toString());
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("threadClsLoaderErr",
+                		cl.getClass().toString(),this.classLoader.getClass().toString()));
             }
         }
         else {
@@ -221,7 +221,7 @@ public abstract class AsyncResponse implements Response {
 
     public Object get() throws InterruptedException, ExecutionException {
         if (cancelled) {
-            throw new CancellationException("The task was cancelled.");
+            throw new CancellationException(Messages.getMessage("getErr"));
         }
 
         // Wait for the response to come back
@@ -244,7 +244,7 @@ public abstract class AsyncResponse implements Response {
     public Object get(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         if (cancelled) {
-            throw new CancellationException("The task was cancelled.");
+            throw new CancellationException(Messages.getMessage("getErr"));
         }
 
         // Wait for the response to come back
@@ -264,8 +264,7 @@ public abstract class AsyncResponse implements Response {
         // If the response still hasn't been returned, then we've timed out
         // and must throw a TimeoutException
         if (latch.getCount() > 0) {
-            throw new TimeoutException(
-                    "The client timed out while waiting for an asynchronous response");
+            throw new TimeoutException(Messages.getMessage("getErr1"));
         }
 
         return responseObject;
@@ -288,7 +287,7 @@ public abstract class AsyncResponse implements Response {
         // If we don't have a fault, then we have to have a MessageContext for the response.
         if (response == null) {
             latch.countDown();
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException(Messages.getMessage("processRespErr")));
         }
 
         // Avoid a reparse of the message. If we already retrived the object, return

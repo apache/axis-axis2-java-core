@@ -29,7 +29,6 @@
             </sequence>
         </complexType>
     </element>
-
     <element name="checkEligibility2">
         <complexType>
             <sequence>
@@ -45,6 +44,22 @@
                 <element minOccurs="0" name="expirationDate" type="string"/>
                 <element minOccurs="0" name="yearOfRedemption" type="int"/>
                 <element minOccurs="0" name="clientId" type="string"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <!-- circular element references -->
+    <element name="Element1" type="tns:ComplexType1"/>
+    <complexType name="ComplexType1">
+        <sequence>
+            <element ref="tns:Element1" minOccurs="0"/>
+        </sequence>
+    </complexType>
+    <element name="Element2">
+        <complexType>
+            <sequence>
+                <element name="param1" type="string"/>
+                <element ref="tns:Element2" minOccurs="0"/>
             </sequence>
         </complexType>
     </element>

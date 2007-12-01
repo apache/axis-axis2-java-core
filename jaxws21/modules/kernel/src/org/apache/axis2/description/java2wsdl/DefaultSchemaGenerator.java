@@ -154,9 +154,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         for (int count = 0; count < getExtraClasses().size(); ++count) {
             jam_service_parms.includeClass((String) getExtraClasses().get(count));
         }
-        JamService service = factory.createService(jam_service_parms);
+        JamService jamService = factory.createService(jam_service_parms);
         QName extraSchemaTypeName;
-        JamClassIterator jClassIter = service.getClasses();
+        JamClassIterator jClassIter = jamService.getClasses();
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
             JClass jclass = (JClass) jClassIter.next();
@@ -164,7 +164,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 /**
                  * Schema genertaion done in two stage 1. Load all the methods and
                  * create type for methods parameters (if the parameters are Bean
-                 * then it will create Complex types for those , and if the
+                 * then it will create Complex types foer those , and if the
                  * parameters are simple type which decribe in SimpleTypeTable
                  * nothing will happen) 2. In the next stage for all the methods
                  * messages and port types will be creteated
@@ -177,6 +177,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         targetNamespace = tns;
                         schemaTargetNameSpace = tns;
                     }
+                    if(annotation.getValue(AnnotationConstants.NAME) != null) {
+                        String serviceName = (annotation.getValue(AnnotationConstants.NAME)).asString();
+                        service.setName(serviceName);
+                    }
+
                 }
                 methods = processMethods(jclass.getDeclaredMethods());
 
@@ -387,9 +392,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     /**
-     * JAM convert first name of an attribute into UpperCase as an example if there is a instance
-     * variable called foo in a bean , then Jam give that as Foo so this method is to correct that
-     * error
+     * JAM converts the first letter of a field into uppercase, so field "foo" would end up
+     * called "Foo".  This method corrects that problem.
      *
      * @param wrongName
      * @return the right name, using english as the locale for case conversion
@@ -690,12 +694,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if ("javax.activation.DataHandler".equals(classType)) {
             return true;
         } else {
-            JClass supuerClass = clazz.getSuperclass();
-            if (supuerClass != null) {
-                return isDataHandler(supuerClass);
-            } else {
-                return false;
-            }
+            JClass superClass = clazz.getSuperclass();
+            return superClass != null && isDataHandler(superClass);
         }
     }
 
@@ -779,7 +779,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchema xmlSchema;
 
         if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
-            String targetNamespacePrefix = null;
+            String targetNamespacePrefix;
 
             if (targetNamespace.equals(schemaTargetNameSpace) &&
                     schema_namespace_prefix != null) {
@@ -924,7 +924,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected String getSimpleName(JMethod method) {
-        return method.getSimpleName();
+       return Utils.getSimpleName(method);
     }
 
     protected String getSimpleName(JClass type) {

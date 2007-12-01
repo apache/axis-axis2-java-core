@@ -95,10 +95,10 @@
 	        </includes>
 	</dependencySet> 
 	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${xbean.version}.${extension}</outputFileNameMapping>
+		<outputFileNameMapping>${artifactId}-${xmlbeans.version}.${extension}</outputFileNameMapping>
 	        <outputDirectory>lib</outputDirectory>
 	        <includes>
-	        	<include>xmlbeans:xbean:jar</include>
+	        	<include>org.apache.xmlbeans:xmlbeans:jar</include>
 	        </includes>
 	</dependencySet> 
 	<dependencySet>

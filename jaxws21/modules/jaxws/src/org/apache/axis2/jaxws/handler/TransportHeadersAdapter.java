@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -143,8 +144,8 @@ public class TransportHeadersAdapter implements Map {
             l.add(o);
             return l;
         } else {
-            throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass()
-                    + " to List<String>");
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("inputConvertionErr",o.getClass().toString()));
         }
     }
 
@@ -162,8 +163,8 @@ public class TransportHeadersAdapter implements Map {
                 return (String) l.get(0);
             }
         }
-        throw ExceptionFactory.makeWebServiceException("Cannot convert from " + o.getClass()
-                + " to String");
+        throw ExceptionFactory.makeWebServiceException(
+        		Messages.getMessage("inputConvertionErr1",o.getClass().toString()));
     }
 
 

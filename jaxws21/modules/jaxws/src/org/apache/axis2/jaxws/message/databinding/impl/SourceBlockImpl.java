@@ -136,6 +136,9 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             throws XMLStreamException {
 
         // Best solution is to use a StAXSource
+        // However StAXSource is not widely accepted.  
+        // For now, a StreamSource is always returned
+        /*
         if (staxSource != null) {
             try {
                 // TODO Constructor should be statically cached for performance
@@ -145,6 +148,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
             } catch (Exception e) {
             }
         }
+        */
 
         // TODO StreamSource is not performant...work is needed here to make this faster
         Reader2Writer r2w = new Reader2Writer(reader);

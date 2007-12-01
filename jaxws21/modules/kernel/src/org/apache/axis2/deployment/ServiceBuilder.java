@@ -130,11 +130,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (descriptionElement != null) {
                 OMElement descriptionValue = descriptionElement.getFirstElement();
                 if (descriptionValue != null) {
-                    StringWriter writer = new StringWriter();
-                    descriptionValue.build();
-                    descriptionValue.serialize(writer);
-                    writer.flush();
-                    service.setDocumentation(writer.toString());
+                    service.setDocumentation(descriptionValue);
                 } else {
                     service.setDocumentation(descriptionElement.getText());
                 }
@@ -383,8 +379,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                 processDataLocatorConfig(dataLocatorElement, service);
             }
 
-        } catch (XMLStreamException e) {
-            throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }
@@ -667,8 +661,18 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             String opname = op_name_att.getAttributeValue();
-            AxisOperation op_descrip;
-            op_descrip = service.getOperation(new QName(opname));
+            AxisOperation op_descrip = null;
+
+            // getting the namesapce from the attribute.
+            OMAttribute operationNamespace = operation.getAttribute(new QName(ATTRIBUTE_NAMESPACE));
+            if (operationNamespace != null){
+                String namespace = operationNamespace.getAttributeValue();
+                op_descrip = service.getOperation(new QName(namespace,opname));
+            }
+            if (op_descrip == null){
+                op_descrip = service.getOperation(new QName(opname));
+            }
+
             if(op_descrip==null){
                 op_descrip = service.getOperation(new QName(service.getTargetNamespace(),opname));
             }

@@ -24,6 +24,10 @@
     <parameter name="hotupdate">false</parameter>
     <parameter name="enableMTOM">false</parameter>
 
+    <!--If turned on with use the Accept header of the request to determine the contentType of the
+    response-->
+    <parameter name="httpContentNegotiation">false</parameter>
+
     <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
     <!--that behaviour.-->
     <parameter name="sendStacktraceDetailsWithFaults">true</parameter>
@@ -96,6 +100,10 @@
                          class="org.apache.axis2.transport.http.MultipartFormDataFormatter"/>
         <messageFormatter contentType="application/xml"
                          class="org.apache.axis2.transport.http.ApplicationXMLFormatter"/>
+        <messageFormatter contentType="text/xml"
+                         class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
+        <messageFormatter contentType="application/soap+xml"
+                         class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
     </messageFormatters>
 
     <!-- ================================================= -->
@@ -167,6 +175,20 @@
     </transportSender>
     <!--<transportSender name="java"-->
                      <!--class="org.apache.axis2.transport.java.JavaTransportSender"/>-->
+
+
+    <!-- ================================================= -->
+    <!--  SOAP Role Configuration                          -->
+    <!-- ================================================= -->
+    <!-- Use the following pattern to configure this axis2
+         instance to act in particular roles. Note that in
+         the absence of any configuration, Axis2 will act 
+         only in the ultimate receiver role -->
+    <!--
+    <SOAPRoleConfiguration isUltimateReceiver="true">
+    	<role>http://my/custom/role</role>
+    </SOAPRoleConfiguration>
+	-->
 
     <!-- ================================================= -->
     <!-- Phases  -->

@@ -74,8 +74,8 @@ public class POJODeployer implements Deployer {
                 File parentFile = file.getParentFile();
                 if (file != null) {
                     ClassLoader classLoader =
-                           Utils.getClassLoader(configCtx.getAxisConfiguration().
-                                   getSystemClassLoader(), parentFile);
+                            Utils.getClassLoader(configCtx.getAxisConfiguration().
+                                    getSystemClassLoader(), parentFile);
 
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
@@ -86,10 +86,10 @@ public class POJODeployer implements Deployer {
                                                  deploymentFileData.getFile().getAbsolutePath()));
 
                     JamServiceFactory factory = JamServiceFactory.getInstance();
-                    JamServiceParams jam_service_parms = factory.createServiceParams();
-                    jam_service_parms.addClassLoader(classLoader);
-                    jam_service_parms.includeClass(className);
-                    JamService service = factory.createService(jam_service_parms);
+                    JamServiceParams jamServiceParams = factory.createServiceParams();
+                    jamServiceParams.addClassLoader(classLoader);
+                    jamServiceParams.includeClass(className);
+                    JamService service = factory.createService(jamServiceParams);
                     JamClassIterator jClassIter = service.getClasses();
                     while (jClassIter.hasNext()) {
                         JClass jclass = (JClass) jClassIter.next();
@@ -108,13 +108,16 @@ public class POJODeployer implements Deployer {
                                 // try to see whether JAX-WS jars in the class path , if so use them
                                 // to process annotated pojo else use annogen to process the pojo class
                                 AxisService axisService;
-                                axisService = createAxisService(classLoader,
-                                                                className,deploymentFileData.getFile().toURL());
+                                axisService =
+                                        createAxisService(classLoader,
+                                                          className,
+                                                          deploymentFileData.getFile().toURL());
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
-                                AxisService axisService = createAxisServiceUsingAnnogen(className, 
-                                                                                        classLoader,
-                                                                                        deploymentFileData.getFile().toURL());
+                                AxisService axisService =
+                                        createAxisServiceUsingAnnogen(className,
+                                                                      classLoader,
+                                                                      deploymentFileData.getFile().toURL());
                                 configCtx.getAxisConfiguration().addService(axisService);
                             }
                         }
@@ -155,22 +158,22 @@ public class POJODeployer implements Deployer {
                             new URL[]{deploymentFileData.getFile().toURL()},
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
                             true,
-                            (File)configCtx.getAxisConfiguration().
+                            (File) configCtx.getAxisConfiguration().
                                     getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
                     JamServiceFactory factory = JamServiceFactory.getInstance();
-                    JamServiceParams jam_service_parms = factory.createServiceParams();
-                    jam_service_parms.addClassLoader(classLoader);
-                    jam_service_parms.includeClass(className);
-                    JamService service = factory.createService(jam_service_parms);
+                    JamServiceParams jamServiceParams = factory.createServiceParams();
+                    jamServiceParams.addClassLoader(classLoader);
+                    jamServiceParams.includeClass(className);
+                    JamService service = factory.createService(jamServiceParams);
                     JamClassIterator jClassIter = service.getClasses();
                     while (jClassIter.hasNext()) {
                         JClass jclass = (JClass) jClassIter.next();
                         if (jclass.getQualifiedName().equals(className)) {
                             /**
-                             * Schema genertaion done in two stage 1. Load all the methods and
+                             * Schema generation done in two stage 1. Load all the methods and
                              * create type for methods parameters (if the parameters are Bean
                              * then it will create Complex types for those , and if the
                              * parameters are simple type which decribe in SimpleTypeTable
@@ -181,14 +184,16 @@ public class POJODeployer implements Deployer {
                                     jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
                                 AxisService axisService;
-                                axisService = createAxisService(classLoader,
-                                                                className,deploymentFileData.getFile().toURL());
+                                axisService =
+                                        createAxisService(classLoader,
+                                                          className,
+                                                          deploymentFileData.getFile().toURL());
                                 axisServiceList.add(axisService);
                             }
                         }
                     }
                 }
-                if (axisServiceList.size() >0 ) {
+                if (axisServiceList.size() > 0) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     serviceGroup.setServiceGroupName(deploymentFileData.getName());
                     for (int i = 0; i < axisServiceList.size(); i++) {
@@ -197,25 +202,18 @@ public class POJODeployer implements Deployer {
                     }
                     configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
                 } else {
-                    log.info("No annotated class found in the jar: "  + deploymentFileData.getFile().getName());
+                    String msg = "Error:\n No annotated classes found in the jar: " +
+                                 deploymentFileData.getFile().getName() +
+                                 ". Service deployment failed.";
+                    log.error(msg);
+                    configCtx.getAxisConfiguration().getFaultyServices().
+                            put(deploymentFileData.getFile().getAbsolutePath(), msg);
                 }
             }
         } catch (Exception e) {
-            StringWriter errorWriter = new StringWriter();
-            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-            e.printStackTrace(error_ptintWriter);
-            String serviceStatus = "Error:\n" + errorWriter.toString();
-            configCtx.getAxisConfiguration().getFaultyServices().put(
-                    deploymentFileData.getFile().getAbsolutePath(),
-                    serviceStatus);
-        }catch (Throwable t) {
-            StringWriter errorWriter = new StringWriter();
-            PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
-            t.printStackTrace(error_ptintWriter);
-            String serviceStatus = "Error:\n" + errorWriter.toString();
-            configCtx.getAxisConfiguration().getFaultyServices().put(
-                    deploymentFileData.getFile().getAbsolutePath(),
-                    serviceStatus);
+            storeFaultyService(deploymentFileData, e);
+        } catch (Throwable t) {
+            storeFaultyService(deploymentFileData, t);
         } finally {
             if (threadClassLoader != null) {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
@@ -223,12 +221,21 @@ public class POJODeployer implements Deployer {
         }
     }
 
+    private void storeFaultyService(DeploymentFileData deploymentFileData, Throwable t) {
+        StringWriter errorWriter = new StringWriter();
+        PrintWriter ptintWriter = new PrintWriter(errorWriter);
+        t.printStackTrace(ptintWriter);
+        String error = "Error:\n" + errorWriter.toString();
+        configCtx.getAxisConfiguration().getFaultyServices().
+                put(deploymentFileData.getFile().getAbsolutePath(), error);
+    }
+
     private AxisService createAxisService(ClassLoader classLoader,
                                           String className,
                                           URL serviceLocation) throws ClassNotFoundException,
-            InstantiationException,
-            IllegalAccessException,
-            AxisFault {
+                                                                      InstantiationException,
+                                                                      IllegalAccessException,
+                                                                      AxisFault {
         AxisService axisService;
         try {
             Class claxx = Class.forName(
@@ -239,10 +246,29 @@ public class POJODeployer implements Deployer {
             Class pojoClass = Loader.loadClass(classLoader, className);
             axisService =
                     (AxisService) mthod.invoke(claxx, new Object[]{pojoClass});
+            if (axisService != null) {
+                Iterator operations = axisService.getOperations();
+                while (operations.hasNext()) {
+                    AxisOperation axisOperation = (AxisOperation) operations.next();
+                    if (axisOperation.getMessageReceiver() == null) {
+                        try {
+                            Class jaxwsMR = Loader.loadClass(
+                                    "org.apache.axis2.jaxws.server.JAXWSMessageReceiver");
+                            MessageReceiver jaxwsMRInstance =
+                                    (MessageReceiver) jaxwsMR.newInstance();
+                            axisOperation.setMessageReceiver(jaxwsMRInstance);
+                        } catch (Exception e) {
+                            log.debug("Error occurde while loading JAXWSMessageReceiver for "
+                                    + className );
+                        }
+                    }
+                }
+            }
+            axisService.setElementFormDefault(false);
             Utils.fillAxisService(axisService,
-                    configCtx.getAxisConfiguration(),
-                    new ArrayList(),
-                    new ArrayList());
+                                  configCtx.getAxisConfiguration(),
+                                  new ArrayList(),
+                                  new ArrayList());
             setMessageReceivers(axisService);
 
         } catch (Exception e) {
@@ -257,24 +283,24 @@ public class POJODeployer implements Deployer {
                                                       ClassLoader classLoader,
                                                       URL serviceLocation)
             throws ClassNotFoundException,
-            InstantiationException,
-            IllegalAccessException,
-            AxisFault {
+                   InstantiationException,
+                   IllegalAccessException,
+                   AxisFault {
         HashMap messageReciverMap = new HashMap();
         Class inOnlyMessageReceiver = Loader.loadClass(
                 "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
         MessageReceiver messageReceiver =
                 (MessageReceiver) inOnlyMessageReceiver.newInstance();
-        messageReciverMap.put( WSDL2Constants.MEP_URI_IN_ONLY,
-                                        messageReceiver);
+        messageReciverMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
+                              messageReceiver);
         Class inoutMessageReceiver = Loader.loadClass(
                 "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         MessageReceiver inOutmessageReceiver =
                 (MessageReceiver) inoutMessageReceiver.newInstance();
         messageReciverMap.put(WSDL2Constants.MEP_URI_IN_OUT,
-                                        inOutmessageReceiver);
+                              inOutmessageReceiver);
         messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
-                                                      inOutmessageReceiver);
+                              inOutmessageReceiver);
         AxisService axisService =
                 AxisService.createService(className,
                                           configCtx.getAxisConfiguration(),
@@ -293,8 +319,8 @@ public class POJODeployer implements Deployer {
             if (MEP != null) {
                 try {
                     if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
-                            || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)
-                            || WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)) {
+                        || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)
+                        || WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)) {
                         Class inOnlyMessageReceiver = Loader.loadClass(
                                 "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
                         MessageReceiver messageReceiver =
@@ -325,30 +351,30 @@ public class POJODeployer implements Deployer {
     }
 
     public void unDeploy(String fileName) {
-        if(fileName.endsWith(".class")){
+        if (fileName.endsWith(".class")) {
             String className = fileName.replaceAll(".class", "");
             try {
                 AxisServiceGroup serviceGroup =
                         configCtx.getAxisConfiguration().removeServiceGroup(className);
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                        fileName));
+                                             fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
-        } else if (fileName.endsWith(".jar")){
+        } else if (fileName.endsWith(".jar")) {
             try {
                 AxisServiceGroup serviceGroup =
                         configCtx.getAxisConfiguration().removeServiceGroup(fileName);
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                        fileName));
+                                             fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
         }
-     }
+    }
 }
 

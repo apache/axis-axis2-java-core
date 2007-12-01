@@ -122,8 +122,8 @@ public interface AddressingConstants {
                 "http://www.w3.org/2005/08/addressing";
         static final String WSAW_NAMESPACE =
             "http://www.w3.org/2006/05/addressing/wsdl";
-        static final String WSAM_NAMESPACE =
-            "http://www.w3.org/2007/02/addressing/metadata";
+        static final String WSAM_NAMESPACE = 
+        	"http://www.w3.org/2007/05/addressing/metadata";
         /**
          * @deprecated use {@link #WSA_DEFAULT_RELATIONSHIP_TYPE} instead.
          */

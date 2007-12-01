@@ -161,6 +161,7 @@ class EndpointDescriptionImpl
     //ANNOTATION: @HandlerChain
     private HandlerChain handlerChainAnnotation;
     private HandlerChainsType handlerChainsType;
+    private InputStream handlerChainSource;
 
     // Information common to both WebService and WebServiceProvider annotations
     private String annotation_WsdlLocation;
@@ -220,9 +221,9 @@ class EndpointDescriptionImpl
         // REVIEW: setting these should probably be done in the getters!  It needs to be done before we try to select a 
         //         port to use if one wasn't specified because we'll try to get to the annotations to get the PortType
         if (this.implOrSEIClass != null) {
-            webServiceAnnotation = (WebService)implOrSEIClass.getAnnotation(WebService.class);
+            webServiceAnnotation = (WebService)getAnnotation(implOrSEIClass,WebService.class);
             webServiceProviderAnnotation =
-                    (WebServiceProvider)implOrSEIClass.getAnnotation(WebServiceProvider.class);
+                    (WebServiceProvider)getAnnotation(implOrSEIClass,WebServiceProvider.class);
         }
         this.isDynamicPort = dynamicPort;
         if (DescriptionUtils.isEmpty(portName)) {
@@ -234,12 +235,8 @@ class EndpointDescriptionImpl
         // At this point, there must be a port QName set, either as passed in, or determined from the WSDL and/or annotations.
         // If not, that is an error.
         if (this.portQName == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("PortQName was null and could not be determined by runtime.  Class: " +
-                        theClass + "; ServiceDescription: " + parent);
-            }
-            throw ExceptionFactory.makeWebServiceException(
-                    "EndpointDescription: portQName could not be determined for class " + theClass);
+        	String msg = Messages.getMessage("endpointDescriptionErr1",theClass.getName(),parent.getClass().getName());
+            throw ExceptionFactory.makeWebServiceException(msg);
         }
 
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
@@ -255,23 +252,9 @@ class EndpointDescriptionImpl
         try {
             getServiceDescriptionImpl().getClientConfigurationFactory()
                     .completeAxis2Configuration(axisService);
-        } catch (DeploymentException e) {
-            // TODO RAS & NLS
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Caught DeploymentException attempting to complete configuration on AxisService: "
-                                + axisService + " for ServiceDesription: " + parent, e);
-            }
-            throw ExceptionFactory.makeWebServiceException(
-                    "Unable to complete configuration due to exception " + e, e);
         } catch (Exception e) {
-            // TODO RAS & NLS
-            if (log.isDebugEnabled()) {
-                log.debug("Caught Exception attempting to complete configuration on AxisService: "
-                        + axisService + " for ServiceDesription: " + parent, e);
-            }
-            throw ExceptionFactory.makeWebServiceException(
-                    "Unable to complete configuration due to exception " + e, e);
+        	String msg = Messages.getMessage("endpointDescriptionErr2",e.getClass().getName(),parent.getClass().getName());
+            throw ExceptionFactory.makeWebServiceException(msg, e);
         }
     }
 
@@ -295,12 +278,21 @@ class EndpointDescriptionImpl
         this.parentServiceDescription = parent;
         this.serviceImplName = serviceImplName;
         this.implOrSEIClass = null;
+        
 
         composite = getServiceDescriptionImpl().getDescriptionBuilderComposite();
         if (composite == null) {
-            throw ExceptionFactory.makeWebServiceException(
-                    "EndpointDescription.EndpointDescription: parents DBC is null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr3"));
         }
+        
+        if(composite.getHandlerChainAnnot() != null && composite.getHandlerChainSource() != null) {
+        	throw ExceptionFactory.makeWebServiceException(
+            Messages.getMessage("handlerSourceFail", composite.getClassName()));
+        }
+        
+        handlerChainSource = composite.getHandlerChainSource();
+        
+        handlerChainsType = composite.getHandlerChainsType();
 
         //Set the base level of annotation that we are processing...currently
         // a 'WebService' or a 'WebServiceProvider'
@@ -441,8 +433,7 @@ class EndpointDescriptionImpl
                 axisService.addParameter(wsdlDefParameter);
                 axisService.addParameter(wsdlLocationParameter);
             } catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException(
-                        "EndpointDescription: Unable to add parameters to AxisService");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr4"));
             }
         }
         else {
@@ -475,7 +466,7 @@ class EndpointDescriptionImpl
 
             } catch (Exception e) {
                 throw ExceptionFactory
-                    .makeWebServiceException("EndpointDescription: Unable to add parameters to AxisService");
+                    .makeWebServiceException(Messages.getMessage("endpointDescriptionErr4"),e);
             }
         }
         
@@ -535,9 +526,7 @@ class EndpointDescriptionImpl
             try {
                 axisService.addParameter(parameter);
             } catch (AxisFault e) {
-                // TODO: Throwing wrong exception
-                e.printStackTrace();
-                throw new UnsupportedOperationException("Can't add AxisService param: " + e);
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr5"),e);
             }
         }
     }
@@ -566,20 +555,14 @@ class EndpointDescriptionImpl
 
         if (!getServiceDescriptionImpl().isDBCMap()) {
 
-            webServiceAnnotation = (WebService)implOrSEIClass.getAnnotation(WebService.class);
+            webServiceAnnotation = (WebService)getAnnotation(implOrSEIClass,WebService.class);
             webServiceProviderAnnotation =
-                    (WebServiceProvider)implOrSEIClass.getAnnotation(WebServiceProvider.class);
+                    (WebServiceProvider)getAnnotation(implOrSEIClass,WebServiceProvider.class);
 
             if (webServiceAnnotation == null && webServiceProviderAnnotation == null)
-                // TODO: NLS
-                throw ExceptionFactory.makeWebServiceException(
-                        "Either WebService or WebServiceProvider annotation must be present on " +
-                                implOrSEIClass);
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr6",implOrSEIClass.getName()));
             else if (webServiceAnnotation != null && webServiceProviderAnnotation != null)
-                // TODO: NLS
-                throw ExceptionFactory.makeWebServiceException(
-                        "Both WebService or WebServiceProvider annotations cannot be presenton " +
-                                implOrSEIClass);
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr7",implOrSEIClass.getName()));
         }
         // If portName was specified, set it.  Otherwise, we will get it from the appropriate
         // annotation when the getter is called.
@@ -613,9 +596,8 @@ class EndpointDescriptionImpl
                         // does not extend Exception, so lets catch everything that extends Throwable
                         // rather than just Exception.
                     } catch (Throwable e) {
-                        // TODO: Throwing wrong exception
-                        e.printStackTrace();
-                        throw new UnsupportedOperationException("Can't create SEI class: " + e);
+                    	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr8"),e);
+
                     }
                 }
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(seiClass, this);
@@ -704,15 +686,10 @@ class EndpointDescriptionImpl
     void updateWithSEI(Class sei) {
         // Updating with an SEI is only valid for declared ports; it is not valid for dynamic ports.
         if (isDynamicPort()) {
-            // TODO: RAS and NLS
-            throw ExceptionFactory.makeWebServiceException(
-                    "Can not update an SEI on a dynamic port.  PortQName:" + portQName);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("updateWithSEIErr1",portQName.toString()));
         }
         if (sei == null) {
-            // TODO: RAS and NLS
-            throw ExceptionFactory.makeWebServiceException(
-                    "EndpointDescription.updateWithSEI was passed a null SEI.  PortQName:" +
-                            portQName);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("updateWithSEIErr2",portQName.toString()));
         }
 
         if (endpointInterfaceDescription != null) {
@@ -742,9 +719,7 @@ class EndpointDescriptionImpl
         }
 
         if (axisService == null) {
-            // TODO: RAS & NLS
-            throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for "
-                    + createAxisServiceName());
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr1",createAxisServiceName()));
         }
 
         // Save the Service QName as a parameter.
@@ -762,8 +737,7 @@ class EndpointDescriptionImpl
             axisService.addParameter(portParameter);
         }
         catch (AxisFault e) {
-            // TODO RAS
-            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);
         }
     }
 
@@ -793,9 +767,7 @@ class EndpointDescriptionImpl
         }
 
         if (axisService == null) {
-            // TODO: RAS & NLS
-            throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for "
-                    + createAxisServiceName());
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr1",createAxisServiceName()));
         }
 
         //Save the Port Type name
@@ -827,8 +799,7 @@ class EndpointDescriptionImpl
             axisService.addParameter(serviceClassNameParameter);
         }
         catch (AxisFault e) {
-            // TODO RAS
-            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);
         }
     }
 
@@ -882,8 +853,6 @@ class EndpointDescriptionImpl
         } catch (AxisFault e) {
             // REVIEW: If we couldn't use the WSDL, should we fail instead of continuing to process using annotations?
             //         Note that if we choose to fail, we need to distinguish the partial WSDL case (which can not fail)
-            // TODO: RAS/NLS  Need to update the message with the appropriate inserts
-//    		log.warn(Messages.getMessage("warnAxisFault", e.toString()), e);
             String wsdlLocation = (getServiceDescriptionImpl().getWSDLLocation() != null) ?
                     getServiceDescriptionImpl().getWSDLLocation().toString() : null;
             String implClassName = null;
@@ -892,10 +861,7 @@ class EndpointDescriptionImpl
             } else {
                 implClassName = (implOrSEIClass != null) ? implOrSEIClass.getName() : null;
             }
-            log.warn("The WSDL file could not be used due to an exception.  The WSDL will be ignored and annotations will be used.  Implementation class: "
-                             + implClassName
-                             + "; WSDL Location: "
-                             + wsdlLocation);
+            log.warn(Messages.getMessage("bldAxisSrvcFromWSDLErr",implClassName,wsdlLocation),e);
 
             isBuiltFromWSDL = false;
             return isBuiltFromWSDL;
@@ -997,9 +963,7 @@ class EndpointDescriptionImpl
         }
 
         if (!wsdlPortFound) {
-            // TODO: NLS and RAS
-            throw ExceptionFactory.makeWebServiceException(
-                    "WSDL Port not found for port " + portQName.getLocalPart());
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr3",portQName.getLocalPart()));
         }
     }
 
@@ -1263,7 +1227,7 @@ class EndpointDescriptionImpl
             } else {
                 if (implOrSEIClass != null) {
                     serviceModeAnnotation =
-                            (ServiceMode)implOrSEIClass.getAnnotation(ServiceMode.class);
+                            (ServiceMode)getAnnotation(implOrSEIClass,ServiceMode.class);
                 }
             }
         }
@@ -1298,7 +1262,7 @@ class EndpointDescriptionImpl
             } else {
                 if (implOrSEIClass != null) {
                     bindingTypeAnnotation =
-                            (BindingType)implOrSEIClass.getAnnotation(BindingType.class);
+                            (BindingType)getAnnotation(implOrSEIClass,BindingType.class);
                 }
             }
         }
@@ -1343,12 +1307,8 @@ class EndpointDescriptionImpl
             if (handlerChainAnnotation != null) {
                 String handlerFileName = handlerChainAnnotation.file();
 
-                // TODO RAS & NLS
                 if (log.isDebugEnabled()) {
-                    log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
-                            + handlerFileName
-                            + " className: "
-                            + composite.getClassName());
+                    log.debug(Messages.getMessage("handlerChainsTypeErr",handlerFileName,composite.getClassName()));
                 }
 
                 String className = getServiceDescriptionImpl().isDBCMap() ?
@@ -1365,8 +1325,17 @@ class EndpointDescriptionImpl
                 if(is == null) {
                     log.warn("Unable to load handlers from file: " + handlerFileName);                    
                 } else {
-                    handlerChainsType = DescriptionUtils.loadHandlerChains(is);
+                    handlerChainsType =
+                        DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
                 }
+            }
+            else if(handlerChainSource != null) {
+            	
+            	if(log.isDebugEnabled()) {
+            		log.debug("Loading handlers from provided source");
+            	}
+            	handlerChainsType = DescriptionUtils.loadHandlerChains(handlerChainSource,
+                                                          this.getClass().getClassLoader());
             }
         }
         return handlerChainsType;
@@ -1397,13 +1366,13 @@ class EndpointDescriptionImpl
                         if (seic != null) {
                             handlerChainAnnotation = seic.getHandlerChainAnnot();
                         }
-                        // TODO else clause for if to throw exception when seic == null
+                        //TODO else clause for if to throw exception when seic == null
                     }
                 }
             } else {
                 if (implOrSEIClass != null) {
                     handlerChainAnnotation =
-                            (HandlerChain)implOrSEIClass.getAnnotation(HandlerChain.class);
+                            (HandlerChain)getAnnotation(implOrSEIClass,HandlerChain.class);
                 }
             }
         }
@@ -1750,8 +1719,7 @@ class EndpointDescriptionImpl
                         WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(dbc.getWsdlURL(), wsdlDef);
                         getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
                     } catch (Exception e) {
-                        throw ExceptionFactory.makeWebServiceException(
-                                "EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
+                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("generateWSDLErr"),e);
                     }
                 } else {
                     // REVIEW:Determine if we should always throw an exception on this, or at this point
@@ -1834,6 +1802,20 @@ class EndpointDescriptionImpl
             return string.toString();
         }
         return string.toString();
+    }
+    
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cls.getAnnotation(annotation);
+            }
+        });
     }
 }
 

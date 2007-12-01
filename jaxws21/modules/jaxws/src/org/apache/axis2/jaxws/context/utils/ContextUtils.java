@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -79,9 +80,8 @@ public class ContextUtils {
                         wsdlLocationURI = wsdlLocation.toURI();
                     }
                     catch (URISyntaxException ex) {
-                        // TODO: NLS/RAS
-                        log.warn("Unable to convert WSDL location URL to URI.  URL: " +
-                                wsdlLocation.toString() + "; Service: " + description.getServiceQName(), ex);
+                        log.warn(Messages.getMessage("addPropertiesErr",
+                        		wsdlLocation.toString(),description.getServiceQName().toString()), ex);
                     }
                     soapMessageContext
                             .put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);

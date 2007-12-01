@@ -81,6 +81,7 @@ public class XmlSchema {
     public XmlSchema(String targetNamespace) {
         this();
         this.targetNamespace = targetNamespace;
+        this.namespaces.add(this.targetNamespace);
     }
 
     /**
@@ -112,6 +113,7 @@ public class XmlSchema {
 
             //set the target namesapce and other namespaces
             schemaElement.setAttribute("targetNamespace", this.targetNamespace);
+            schemaElement.setAttribute("elementFormDefault", "qualified");
 
             // add other namesapces
             String namespace;
@@ -124,6 +126,17 @@ public class XmlSchema {
                     namespacesToPrefixMap.put(namespace,prefix);
                 }
             }
+
+            // add imports
+            XmlImport xmlImport;
+            Element importElement;
+            for (Iterator iter = this.imports.iterator();iter.hasNext();){
+                xmlImport = (XmlImport) iter.next();
+                importElement = document.createElementNS(Constants.URI_2001_SCHEMA_XSD, "xsd:import");
+                importElement.setAttribute("namespace", xmlImport.getNamespace());
+                schemaElement.appendChild(importElement);
+            }
+
 
             // create complex type elements
             XmlType xmlType;

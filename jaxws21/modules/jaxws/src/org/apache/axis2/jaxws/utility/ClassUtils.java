@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,8 +28,12 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebFault;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 
 /** Contains static Class utility methods related to method parameter/argument marshalling. */
@@ -245,25 +250,26 @@ public class ClassUtils {
         // Or the class is in the jaxws.xml.ws package
 
         // Check for Impl
-        WebService wsAnn = (WebService)cls.getAnnotation(WebService.class);
+        WebService wsAnn = (WebService)getAnnotation(cls,WebService.class);
         if (wsAnn != null) {
             return true;
         }
 
         // Check for service
-        WebServiceClient wscAnn = (WebServiceClient)cls.getAnnotation(WebServiceClient.class);
+        WebServiceClient wscAnn = (WebServiceClient)getAnnotation(cls,WebServiceClient.class);
         if (wscAnn != null) {
             return true;
         }
 
         // Check for provider
-        WebServiceProvider wspAnn = (WebServiceProvider)cls.getAnnotation(WebServiceProvider.class);
+        WebServiceProvider wspAnn = (WebServiceProvider)
+            getAnnotation(cls,WebServiceProvider.class);
         if (wspAnn != null) {
             return true;
         }
 
         // Check for Exception
-        WebFault wfAnn = (WebFault)cls.getAnnotation(WebFault.class);
+        WebFault wfAnn = (WebFault)getAnnotation(cls,WebFault.class);
         if (wfAnn != null) {
             return true;
         }
@@ -283,6 +289,18 @@ public class ClassUtils {
         }
         return false;
     }
-
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
+    }
 }
 

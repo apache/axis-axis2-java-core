@@ -25,11 +25,17 @@
  */
 package server;
 
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.databinding.ADBException;
+import org.apache.axiom.om.OMFactory;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 /**
  *  EchoStringResponse bean class
  */
 public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean{
-    
+
     public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
             "http://test",
             "echoStringResponse",
@@ -79,6 +85,21 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
 
     }
 
+    public void serialize(final QName parentQName,
+                          final OMFactory factory,
+                          MTOMAwareXMLStreamWriter xmlWriter)
+            throws XMLStreamException, ADBException {
+        serialize(parentQName, factory, xmlWriter, false);
+    }
+
+    public void serialize(final QName parentQName,
+                          final OMFactory factory,
+                          MTOMAwareXMLStreamWriter xmlWriter,
+                          boolean serializeType)
+            throws XMLStreamException, ADBException {
+        throw new UnsupportedOperationException("Un implemented method");
+    }
+
     /**
      *  Factory class that keeps the parse method
      */
@@ -87,8 +108,8 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
         /**
          * static method to create the object
          */
-        
-    	public static EchoStringResponse parse(
+
+        public static EchoStringResponse parse(
                 javax.xml.stream.XMLStreamReader reader)
                 throws java.lang.Exception {
             EchoStringResponse object = new EchoStringResponse();
@@ -122,7 +143,7 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
 
             return object;
         }
-        
+
     }//end of factory class
 
 }

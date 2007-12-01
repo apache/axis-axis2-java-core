@@ -382,9 +382,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                 DescriptionFactory.updateEndpoint(serviceDescription, sei, portName,
                                                   DescriptionFactory.UpdateType.GET_PORT);
         if (endpointDesc == null) {
-            // TODO: NLS
             throw ExceptionFactory.makeWebServiceException(
-                    "Unable to getPort for port QName " + portName);
+            		Messages.getMessage("portErr",portName.toString()));
         }
 
         String[] interfacesNames = 
@@ -403,8 +402,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             try {
                 interfaces = loadClasses(classLoader, interfacesNames);
             } catch (ClassNotFoundException e2) {
-                // TODO: NLS
-                throw ExceptionFactory.makeWebServiceException("Unable to load proxy classes", e2);
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("portErr1"), e2);
             }
         }
         

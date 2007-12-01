@@ -53,7 +53,7 @@
     <xs:element name="excludeOperations">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="operation"/>
+               <xs:element name="operation" type="xs:string" />  
             </xs:sequence>
         </xs:complexType>
     </xs:element>

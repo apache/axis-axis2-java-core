@@ -136,17 +136,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = null;
-            try {
-                if (isValidInvocationParam(obj)) {
-                    requestMsg = createMessageFromValue(obj);
-                } else {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
-                }
-            } catch (Exception e) {
-                throw getProtocolException(e);
-            }
-
+            Message requestMsg = createRequestMessage(obj);
+           
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
 
@@ -229,16 +220,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = null;
-            try {
-                if (isValidInvocationParam(obj)) {
-                    requestMsg = createMessageFromValue(obj);
-                } else {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
-                }
-            } catch (Exception e){
-                throw getProtocolException(e);
-            }
+            Message requestMsg = createRequestMessage(obj);
 
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
@@ -305,12 +287,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = null;
-            if (isValidInvocationParam(obj)) {
-                requestMsg = createMessageFromValue(obj);
-            } else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
-            }
+            Message requestMsg = createRequestMessage(obj);
 
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
@@ -388,12 +365,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = null;
-            if (isValidInvocationParam(obj)) {
-                requestMsg = createMessageFromValue(obj);
-            } else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
-            }
+            Message requestMsg = createRequestMessage(obj);
 
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
@@ -471,37 +443,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
         return null;
     }
-    
-    private ProtocolException getProtocolException(Exception e) {
-        if (getBinding() instanceof SOAPBinding) {
-            // Throw a SOAPFaultException
-            if (log.isDebugEnabled()) {
-                log.debug("Constructing SOAPFaultException for " + e);
-            }
-            try {
-                SOAPFault soapFault = SOAPFactory.newInstance().createFault();
-                soapFault.setFaultString(e.getMessage());
-                return new SOAPFaultException(soapFault);
-            } catch (Exception ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Exception occurred during fault processing:", ex);
-                }
-                return ExceptionFactory.makeProtocolException(e.getMessage(), null);
-            }
-        } else if (getBinding() instanceof HTTPBinding) {
-            if (log.isDebugEnabled()) {
-                log.debug("Constructing ProtocolException for " + e);
-            }
-            HTTPException ex = new HTTPException(HttpURLConnection.HTTP_INTERNAL_ERROR);
-            ex.initCause(new Throwable(e.getMessage()));
-            return ex;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Constructing ProtocolException for " + e);
-            }
-            return ExceptionFactory.makeProtocolException(e.getMessage(), null);
-        }
-    }
 
     /**
      * Returns a boolean indicating whether or not the MessageContext contained a fault.
@@ -569,5 +510,25 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
         // If we've gotten this far, then all is good.
         return true;
+    }
+    
+    private Message createRequestMessage(Object obj) throws WebServiceException {
+        
+        // Check to see if the object is a valid invocation parameter.  
+        // Then create the message from the object.
+        // If an exception occurs, it is local to the client and therefore is a
+        // WebServiceException (and not ProtocolExceptions).
+        // This code complies with JAX-WS 2.0 sections 4.3.2, 4.3.3 and 4.3.4.
+        if (!isValidInvocationParam(obj)) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidParam"));
+        } 
+        Message requestMsg = null;
+        try {
+             requestMsg = createMessageFromValue(obj);
+        } catch (Throwable t) {
+            // The webservice exception wraps the thrown exception.
+            throw ExceptionFactory.makeWebServiceException(t);
+        }
+        return requestMsg;
     }
 }

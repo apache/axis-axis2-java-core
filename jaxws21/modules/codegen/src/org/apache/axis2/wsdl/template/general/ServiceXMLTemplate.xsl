@@ -66,6 +66,7 @@
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
 					<xsl:attribute name="mep"><xsl:value-of select="@mepURI"/></xsl:attribute>
+					<xsl:attribute name="namespace"><xsl:value-of select="@namespace"/></xsl:attribute>
 					<actionMapping>
 						<xsl:value-of select="@soapaction"/>
 					</actionMapping>

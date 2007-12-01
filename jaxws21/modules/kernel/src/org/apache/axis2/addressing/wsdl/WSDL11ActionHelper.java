@@ -47,6 +47,8 @@ public class WSDL11ActionHelper {
             new QName(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
     private static final QName finalWSAWNS =
             new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION);
+    private static final QName finalWSAMNS =
+        new QName(AddressingConstants.Final.WSAM_NAMESPACE, AddressingConstants.WSA_ACTION);
 
     /**
      * getActionFromInputElement
@@ -111,7 +113,12 @@ public class WSDL11ActionHelper {
     private static String getWSAWActionExtensionAttribute(AttributeExtensible ae) {
         // Search first for a wsaw:Action using the submission namespace
         Object attribute = ae.getExtensionAttribute(submissionWSAWNS);
-        // Then if that did not exist one using the w3c namespace
+        // Then if that did not exist one using the w3c WSAM namespace
+        if (attribute == null) {
+            attribute = ae.getExtensionAttribute(finalWSAMNS);
+        }
+        // Then if that did not exist one using the w3c WSAW namespace
+        // (for backwards compat reasons)
         if (attribute == null) {
             attribute = ae.getExtensionAttribute(finalWSAWNS);
         }

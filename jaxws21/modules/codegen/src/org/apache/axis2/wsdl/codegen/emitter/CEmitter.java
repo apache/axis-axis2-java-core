@@ -21,6 +21,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
@@ -44,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
@@ -253,7 +256,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         /////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
 
 
@@ -348,10 +351,15 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Element methodElement;
         String portTypeName = makeCClassName(axisService.getName());
 
-        Iterator operations = axisService.getOperations();
+        Iterator bindingOperations = this.axisBinding.getChildren();
         boolean opsFound = false;
-        while (operations.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation)operations.next();
+        AxisOperation axisOperation = null;
+        AxisBindingOperation axisBindingOperation = null;
+
+        while (bindingOperations.hasNext()) {
+
+            axisBindingOperation = (AxisBindingOperation) bindingOperations.next();
+            axisOperation = axisBindingOperation.getAxisOperation();
 
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
@@ -392,11 +400,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                              methodElement);
 
 
-                addSOAPAction(doc, methodElement, axisOperation.getName());
+                addSOAPAction(doc, methodElement, axisBindingOperation.getName());
                 //add header ops for input
-                addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+                addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
                 //add header ops for output
-                addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+                addHeaderOperations(soapHeaderOutputParameterList, axisBindingOperation, false);
 
                 PolicyInclude policyInclude = axisOperation.getPolicyInclude();
                 Policy policy = policyInclude.getPolicy();
@@ -410,9 +418,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 }
 
                 methodElement.appendChild(
-                        getInputElement(doc, axisOperation, soapHeaderInputParameterList));
+                        getInputElement(doc, axisBindingOperation, soapHeaderInputParameterList));
                 methodElement.appendChild(
-                        getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                        getOutputElement(doc, axisBindingOperation, soapHeaderOutputParameterList));
                 methodElement.appendChild(getFaultElement(doc, axisOperation));
 
                 rootElement.appendChild(methodElement);
@@ -447,9 +455,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                                  methodElement);
 
 
-                    addSOAPAction(doc, methodElement, axisOperation.getName());
-                    addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
-                    addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+                    addSOAPAction(doc, methodElement, axisBindingOperation.getName());
+                    addHeaderOperations(soapHeaderInputParameterList, axisBindingOperation, true);
+                    addHeaderOperations(soapHeaderOutputParameterList, axisBindingOperation, false);
 
                     /*
                      * Setting the policy of the operation
@@ -469,10 +477,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
                     methodElement.appendChild(getInputElement(doc,
-                                                              axisOperation,
+                                                              axisBindingOperation,
                                                               soapHeaderInputParameterList));
                     methodElement.appendChild(getOutputElement(doc,
-                                                               axisOperation,
+                                                               axisBindingOperation,
                                                                soapHeaderOutputParameterList));
                     methodElement.appendChild(getFaultElement(doc,
                                                               axisOperation));

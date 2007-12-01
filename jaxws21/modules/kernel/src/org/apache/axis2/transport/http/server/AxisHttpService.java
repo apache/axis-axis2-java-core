@@ -18,7 +18,18 @@
  */
 package org.apache.axis2.transport.http.server;
 
-import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -29,27 +40,29 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.RequestResponseTransport;
-import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.*;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseFactory;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.MethodNotSupportedException;
+import org.apache.http.ProtocolException;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.UnsupportedHttpVersionException;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAP11Constants;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Iterator;
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 
 /**
  * This class is an extension of the defaulf HTTP service responsible for
@@ -128,7 +141,7 @@ public class AxisHttpService {
         try {
             HttpRequest request = conn.receiveRequest();
             HttpParamsLinker.link(request, this.params);
-            HttpVersion ver = request.getRequestLine().getHttpVersion();
+            ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
             if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
                 // Downgrade protocol version if greater than HTTP/1.1 
                 ver = HttpVersion.HTTP_1_1;
@@ -313,7 +326,7 @@ public class AxisHttpService {
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
 
 		private CountDownLatch responseReadySignal = new CountDownLatch(1);
-        RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
+        RequestResponseTransportStatus status = RequestResponseTransportStatus.WAITING;
         AxisFault faultToBeThrownOut = null;
         private boolean responseWritten = false;
 
@@ -324,7 +337,6 @@ public class AxisHttpService {
         }
 
         public void awaitResponse() throws InterruptedException, AxisFault {
-            status = RequestResponseTransportStatus.WAITING;
             responseReadySignal.await();
 
             if (faultToBeThrownOut != null) {

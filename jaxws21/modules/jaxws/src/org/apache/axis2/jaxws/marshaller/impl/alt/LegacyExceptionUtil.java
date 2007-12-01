@@ -150,14 +150,8 @@ class LegacyExceptionUtil {
                     log.debug("Completed creation of the fault bean.");
                 }
             } else {
-                //if (log.isErrorEnabled()) {
-                //    log.debug("The fault bean could not be loaded...Fallback to using the fault exception: " + t.getClass());
-                //}
-                //return t;
-                throw ExceptionFactory
-                        .makeWebServiceException(Messages.getMessage("faultProcessingNotSupported",
-                                                                     "the @WebFault faultbean is missing for " +
-                                                                             t.getClass()));
+                throw ExceptionFactory.makeWebServiceException(
+                		Messages.getMessage("faultProcessingNotSupported",t.getClass().getName()));
             }
 
         } catch (Exception e) {

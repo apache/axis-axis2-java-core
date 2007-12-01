@@ -91,10 +91,7 @@ public class PropertyDescriptorPlus {
      */
     public Object get(Object targetBean) throws InvocationTargetException, IllegalAccessException {
             if(descriptor == null){
-                if(log.isDebugEnabled()){
-                    log.debug("Null Descriptor");
-                }
-                throw new RuntimeException("PropertyDescriptor not found");
+                throw new RuntimeException(Messages.getMessage("pDescrErr"));
             }
             Method method = descriptor.getReadMethod();
             if(method == null && descriptor.getPropertyType() == Boolean.class){
@@ -110,16 +107,13 @@ public class PropertyDescriptorPlus {
                        method = targetBean.getClass().getMethod(methodName, null);
                    }catch(NoSuchMethodException e){
                        if(log.isDebugEnabled()){
-                           log.debug("Mehtod not found" + methodName);
+                           log.debug("Method not found" + methodName);
                        }
                    }
                 }
             }
             if(method == null){
-                if(log.isDebugEnabled()){
-                    log.debug("No read Method found to read propertyvalue");
-                }
-                throw new RuntimeException("No read Method found to read property Value from jaxbObject: "+targetBean.getClass().getName());
+                throw new RuntimeException(Messages.getMessage("pDescrErr2",targetBean.getClass().getName()));
             }
             return method.invoke(targetBean, null);
     }
@@ -184,7 +178,6 @@ public class PropertyDescriptorPlus {
             if(paramTypes !=null && paramTypes.length ==1){
                 Class paramType = paramTypes[0];
                 if(paramType.isPrimitive() && propValue == null){
-                    // TODO NLS
                     //Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
                     //default values defined in JAXBObject/xmlSchema.
                     if(DEBUG_ENABLED){

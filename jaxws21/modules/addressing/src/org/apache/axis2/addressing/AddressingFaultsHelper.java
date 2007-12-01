@@ -138,10 +138,8 @@ public class AddressingFaultsHelper {
     //      wsa:InvalidCardinality
     public static void triggerInvalidCardinalityFault(MessageContext messageContext,
                                                       String incorrectHeaderName) throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug("triggerInvalidCardinalityFault: messageContext: " + messageContext +
-                    " incorrectHeaderName: " + incorrectHeaderName);
-        }
+        log.warn("triggerInvalidCardinalityFault: messageContext: " + messageContext +
+                 " incorrectHeaderName: " + incorrectHeaderName);
         String namespace =
                 (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
@@ -164,10 +162,8 @@ public class AddressingFaultsHelper {
     public static void triggerMissingAddressInEPRFault(MessageContext messageContext,
                                                        String incorrectHeaderName)
             throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug("triggerMissingAddressInEPRFault: messageContext: " + messageContext +
+        log.warn("triggerMissingAddressInEPRFault: messageContext: " + messageContext +
                     " incorrectHeaderName: " + incorrectHeaderName);
-        }
         String namespace =
                 (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
@@ -188,10 +184,8 @@ public class AddressingFaultsHelper {
 
     //      wsa:DuplicateMessageID
     //      wsa:ActionMismatch
-    public static void triggerActionMismatchFault(MessageContext messageContext) throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug("triggerActionMismatchFault: messageContext: " + messageContext);
-        }
+    public static void triggerActionMismatchFault(MessageContext messageContext, String soapAction, String wsaAction) throws AxisFault {
+        log.warn("triggerActionMismatchFault: messageContext: " + messageContext+" soapAction="+soapAction+" wsaAction="+wsaAction);
         String namespace =
                 (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
@@ -313,10 +307,8 @@ public class AddressingFaultsHelper {
     //    wsa:ActionNotSupported [Reason] the string: "The [action] cannot be processed at the receiver"
     public static void triggerActionNotSupportedFault(MessageContext messageContext,
                                                       String problemAction) throws AxisFault {
-        if (log.isDebugEnabled()) {
-            log.debug("triggerActionNotSupportedFault: messageContext: " + messageContext +
-                    " problemAction: " + problemAction);
-        }
+        log.warn("triggerActionNotSupportedFault: messageContext: " + messageContext +
+                 " problemAction: " + problemAction);
         triggerAddressingFault(messageContext, Final.FAULT_PROBLEM_ACTION_NAME, problemAction,
                                AddressingConstants.FAULT_ACTION_NOT_SUPPORTED, null,
                                AddressingMessages.getMessage(
@@ -331,7 +323,7 @@ public class AddressingFaultsHelper {
                                                String faultSubcode, String faultReason)
             throws AxisFault {
         Map faultInformation =
-                (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+                (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
             faultInformation = new HashMap();
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
@@ -383,7 +375,7 @@ public class AddressingFaultsHelper {
 
     public static OMElement getDetailElementForAddressingFault(MessageContext messageContext,
                                                                OMNamespace addressingNamespaceObject) {
-        Map faultInfo = (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Map faultInfo = (Map)messageContext.getLocalProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         OMElement problemDetail = null;
         if (faultInfo != null) {
             String faultyHeaderQName = (String)faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);

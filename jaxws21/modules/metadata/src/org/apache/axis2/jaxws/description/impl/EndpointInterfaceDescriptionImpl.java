@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -34,6 +35,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,8 +45,11 @@ import javax.jws.soap.SOAPBinding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -163,12 +168,7 @@ class EndpointInterfaceDescriptionImpl
             genericProviderAxisOp = 
                 AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
         } catch (AxisFault e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Unable to build AxisOperation for generic Provider; caught exception.", e);
-            }
-            // TODO: NLS & RAS
-            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation",
-                                                           e);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("eiDescrImplErr"),e);
         }
         
         genericProviderAxisOp.setName(new QName(JAXWS_NOWSDL_PROVIDER_OPERATION_NAME));
@@ -282,8 +282,7 @@ class EndpointInterfaceDescriptionImpl
                 methodList.add(method);
                 if (!Modifier.isPublic(method.getModifiers())) {
                     // JSR-181 says methods must be public (p14)
-                    // TODO NLS
-                    throw ExceptionFactory.makeWebServiceException("SEI methods must be public");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("seiMethodsErr"));
                 }
                 // TODO: other validation per JSR-181
             }
@@ -302,9 +301,7 @@ class EndpointInterfaceDescriptionImpl
      */
     void updateWithSEI(Class sei) {
         if (seiClass != null && seiClass != sei)
-            // TODO: It probably is invalid to try reset the SEI; but this isn't the right error processing
-            throw new UnsupportedOperationException(
-                    "The seiClass is already set; reseting it is not supported");
+        	throw ExceptionFactory.makeWebServiceException(new UnsupportedOperationException(Messages.getMessage("seiProcessingErr")));
         else if (seiClass != null && seiClass == sei)
             // We've already done the necessary updates for this SEI
             return;
@@ -555,7 +552,8 @@ class EndpointInterfaceDescriptionImpl
                 soapBindingAnnotation = dbc.getSoapBindingAnnot();
             } else {
                 if (seiClass != null) {
-                    soapBindingAnnotation = (SOAPBinding)seiClass.getAnnotation(SOAPBinding.class);
+                    soapBindingAnnotation = 
+                        (SOAPBinding)getAnnotation(seiClass,SOAPBinding.class);
                 }
             }
         }
@@ -664,8 +662,7 @@ class EndpointInterfaceDescriptionImpl
 
                 //Verify that we can find the SEI in the composite list
                 if (superDBC == null) {
-                    throw ExceptionFactory.makeWebServiceException(
-                            "EndpointInterfaceDescriptionImpl: cannot find super class that was specified for this class");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("seiNotFoundErr"));
                 }
 
                 //If the superclass contains a WebService annotation then retrieve its methods
@@ -927,7 +924,7 @@ class EndpointInterfaceDescriptionImpl
                 webServiceAnnotation = dbc.getWebServiceAnnot();
             } else {
                 if (seiClass != null) {
-                    webServiceAnnotation = (WebService)seiClass.getAnnotation(WebService.class);
+                    webServiceAnnotation = (WebService)getAnnotation(seiClass,WebService.class);
                 }
             }
         }
@@ -1020,5 +1017,17 @@ class EndpointInterfaceDescriptionImpl
         }
         return string.toString();
     }
-
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cls.getAnnotation(annotation);
+            }
+        });
+    }
 }

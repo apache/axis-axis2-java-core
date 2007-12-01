@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMFactory;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
@@ -36,6 +39,18 @@ public interface ADBBean {
      * @return Returns a pull parser for this ADBBean.
      */
     public XMLStreamReader getPullParser(QName adbBeanQName) throws XMLStreamException;
+
+
+    public void serialize(final QName parentQName,
+                          final OMFactory factory,
+                          MTOMAwareXMLStreamWriter xmlWriter)
+            throws XMLStreamException, ADBException;
+
+    public void serialize(final QName parentQName,
+                          final OMFactory factory,
+                          MTOMAwareXMLStreamWriter xmlWriter,
+                          boolean serializeType)
+            throws XMLStreamException, ADBException;
 
     /**
      * There will be a self factory in every generated data bound class XXX:

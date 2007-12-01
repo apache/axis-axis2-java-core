@@ -150,9 +150,17 @@ public class WSDL11Writer {
                servicesList.add(iter.next());
            }
            Service service;
+           String serviceNameFromFileName = fileName;
+           if (fileName.indexOf(".wsdl") > -1){
+                serviceNameFromFileName = fileName.substring(0,fileName.lastIndexOf(".wsdl"));
+           }
+
+           if (fileName.indexOf(".xsd") > -1){
+               serviceNameFromFileName = fileName.substring(0,fileName.lastIndexOf(".xsd"));
+           }
            for (Iterator iter = servicesList.iterator();iter.hasNext();){
                service = (Service) iter.next();
-               if (!service.getQName().getLocalPart().equals(fileName)){
+               if (!service.getQName().getLocalPart().equals(serviceNameFromFileName)){
                    definition.removeService(service.getQName());
                    removedServices.add(service);
                }

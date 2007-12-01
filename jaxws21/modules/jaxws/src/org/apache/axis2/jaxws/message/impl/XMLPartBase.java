@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.message.impl;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -48,6 +49,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * XMLPartBase class for an XMLPart An XMLPart is an abstraction of the xml portion of the message.
@@ -149,7 +152,8 @@ public abstract class XMLPartBase implements XMLPart {
                 // Okay
             } else
             if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                throw ExceptionFactory.makeWebServiceException("UNEXPECTED");  // TODO NLS
+                throw ExceptionFactory.
+                    makeWebServiceException(Messages.getMessage("restWithSOAPErr"));
             } else {
                 content = _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
                 contentType = SPINE;
@@ -516,7 +520,8 @@ public abstract class XMLPartBase implements XMLPart {
     }
 
     /* (non-Javadoc)
-      * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+      * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, 
+      * java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
       */
     public Block getHeaderBlock(String namespace, String localPart, Object context,
                                 BlockFactory blockFactory) throws WebServiceException {
@@ -526,6 +531,22 @@ public abstract class XMLPartBase implements XMLPart {
             block.setParent(getParent());
         }
         return block;
+    }
+    
+    
+
+    public List<Block> getHeaderBlocks(String namespace, String localPart, 
+                                      Object context, BlockFactory blockFactory, 
+                                      RolePlayer rolePlayer) throws WebServiceException {
+        List<Block> blocks =
+            getContentAsXMLSpine().getHeaderBlocks(namespace, localPart, 
+                                                   context, blockFactory, rolePlayer);
+        for(Block block:blocks) {
+            if (block != null) {
+                block.setParent(getParent());
+            }
+        }
+        return blocks;
     }
 
     /* (non-Javadoc)

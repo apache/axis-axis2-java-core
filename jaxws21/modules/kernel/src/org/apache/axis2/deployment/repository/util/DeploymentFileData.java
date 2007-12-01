@@ -40,7 +40,6 @@ public class DeploymentFileData {
     private Deployer deployer;
 
     public DeploymentFileData(File file) {
-        if (file == null) throw new IllegalArgumentException("Filename must not be null");
         this.file = file;
     }
 
@@ -113,7 +112,7 @@ public class DeploymentFileData {
                                                                 this.file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{this.file.toURL()};
-                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file);
+                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, false, file);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }

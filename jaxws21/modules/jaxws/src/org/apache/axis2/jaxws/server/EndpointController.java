@@ -99,7 +99,7 @@ public class EndpointController {
                 eic.setResponseMessageContext(response);
             }
             else {
-                throw ExceptionFactory.makeWebServiceException("No dispatcher found.");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -131,7 +131,7 @@ public class EndpointController {
                 dispatcher.invokeAsync(request, eic.getCallback());    
             }
             else {
-                throw ExceptionFactory.makeWebServiceException("No dispatcher found.");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -162,7 +162,7 @@ public class EndpointController {
                 dispatcher.invokeOneWay(request);    
             }
             else {
-                throw ExceptionFactory.makeWebServiceException("No dispatcher found.");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

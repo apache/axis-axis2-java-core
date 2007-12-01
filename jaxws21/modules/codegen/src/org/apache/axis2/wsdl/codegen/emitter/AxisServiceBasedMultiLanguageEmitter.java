@@ -154,9 +154,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         mepToClassMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
                 "org.apache.axis2.receivers.AbstractInMessageReceiver");
         mepToClassMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
-                "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
+                "org.apache.axis2.receivers.AbstractMessageReceiver");
         mepToClassMap.put(WSDL2Constants.MEP_URI_IN_OUT,
-                "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+                "org.apache.axis2.receivers.AbstractInOutMessageReceiver");
 
         //populate the MEP -> suffix map
         mepToSuffixMap = new HashMap();
@@ -269,13 +269,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return property;
     }
     
-    private Policy getBindingPolicyFromMessage(QName qName, String key) {
-
-        AxisBindingOperation axisBindingOperation = null;
-        if (axisBinding != null) {
-            axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
-        }
-
+    private Policy getBindingPolicyFromMessage(AxisBindingOperation axisBindingOperation,
+                                               String key) {
         AxisBindingMessage axisBindingMessage = null;
         
         if (axisBindingOperation != null) {
@@ -285,7 +280,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 try {
                     return axisBindingMessage.getEffectivePolicy();
                 } catch (RuntimeException ex){
-                    System.out.println("ERROR: Ignoring policy - " + ex.getMessage());
                     log.error(ex.getMessage(), ex);
                 }
             }
@@ -848,7 +842,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //////////////////////////////////////////////////////////
 //        System.out.println(DOM2Writer.nodeToString(rootElement));
-        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////
         return doc;
     }
 
@@ -1596,10 +1590,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
         ArrayList parameters = new ArrayList();
 
-
-        for (Iterator operationsIterator = axisService.getOperations();
-             operationsIterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+        AxisOperation axisOperation = null;
+        AxisBindingOperation axisBindingOperation = null;
+        for (Iterator bindingOperationsIter = this.axisBinding.getChildren();
+             bindingOperationsIter.hasNext();) {
+            axisBindingOperation = (AxisBindingOperation) bindingOperationsIter.next();
+            axisOperation = axisBindingOperation.getAxisOperation();
 
             // Add the parameters to a map with their type as the key
             // this step is needed to remove repetitions
@@ -1639,7 +1635,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // process the header parameters
             Element newChild;
             List headerParameterQNameList = new ArrayList();
-            addHeaderOperations(headerParameterQNameList, axisOperation, true);
+            addHeaderOperations(headerParameterQNameList, axisBindingOperation, true);
             List parameterElementList = getParameterElementList(doc, headerParameterQNameList,
                     WSDLConstants.SOAP_HEADER);
 
@@ -1650,7 +1646,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             headerParameterQNameList.clear();
             parameterElementList.clear();
-            addHeaderOperations(headerParameterQNameList, axisOperation, false);
+            addHeaderOperations(headerParameterQNameList, axisBindingOperation, false);
             parameterElementList = getParameterElementList(doc, headerParameterQNameList,
                     WSDLConstants.SOAP_HEADER);
 
@@ -1717,9 +1713,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
         }
 
+        axisOperation = null;
         for (Iterator operationsIterator = axisService.getOperations();
              operationsIterator.hasNext();) {
-            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+             axisOperation = (AxisOperation) operationsIterator.next();
             details = axisOperation.getParameter(Constants.DATABINDING_OPERATION_DETAILS);
             if (details != null) {
                 rootElement.appendChild(doc.importNode((Element) details.getValue(), true));
@@ -2104,13 +2101,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element methodElement;
         String serviceName = makeJavaClassName(axisService.getName());
 
-        Iterator operationNames = axisService.getOperationsNameList().iterator();
+        Iterator bindingOperations = this.axisBinding.getChildren();
         boolean opsFound = false;
-        QName operationName;
-        while (operationNames.hasNext()) {
-            operationName = (QName) operationNames.next();
-            AxisOperation axisOperation = axisService.getOperation(operationName);
-
+        AxisBindingOperation axisBindingOperation = null;
+        AxisOperation axisOperation = null;
+        while (bindingOperations.hasNext()) {
+            axisBindingOperation = (AxisBindingOperation) bindingOperations.next();
+            axisOperation = axisBindingOperation.getAxisOperation();
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
 
@@ -2122,7 +2119,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             if (mep == null) {
                 opsFound = true;
-                methodElement = generateMethodElement(doc, serviceName, axisOperation);
+                methodElement = generateMethodElement(doc, serviceName, axisBindingOperation);
                 rootElement.appendChild(methodElement);
 
             } else {
@@ -2131,7 +2128,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (mep.equals(axisOperation.getMessageExchangePattern())) {
                     //at this point we know it's true
                     opsFound = true;
-                    methodElement = generateMethodElement(doc, serviceName, axisOperation);
+                    methodElement = generateMethodElement(doc, serviceName, axisBindingOperation);
                     rootElement.appendChild(methodElement);
                     //////////////////////
                 }
@@ -2147,12 +2144,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      *
      * @param doc
      * @param endpointName
-     * @param axisOperation
+     * @param bindingOperation
      * @return generated element
      * @throws DOMException
      */
-    protected Element generateMethodElement(Document doc, String endpointName,
-                                          AxisOperation axisOperation) throws DOMException {
+    protected Element generateMethodElement(Document doc,
+                                            String endpointName,
+                                            AxisBindingOperation bindingOperation) throws DOMException {
+        AxisOperation axisOperation = bindingOperation.getAxisOperation();
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
@@ -2211,9 +2210,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "usdbimpl", "false", methodElement);
         }
 
-        addSOAPAction(doc, methodElement, axisOperation.getName());
+        addSOAPAction(doc, methodElement, bindingOperation.getName());
         addOutputAndFaultActions(doc, methodElement, axisOperation);
-        addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+        addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
         
 
@@ -2231,11 +2230,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
             methodElement.appendChild(getInputElement(doc,
-                    axisOperation, soapHeaderInputParameterList));
+                    bindingOperation, soapHeaderInputParameterList));
         }
         if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getOutputElement(doc,
-                    axisOperation,
+                    bindingOperation,
                     soapHeaderOutputParameterList));
         }
         methodElement.appendChild(getFaultElement(doc,
@@ -2588,26 +2587,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * populate the header parameters
      *
      * @param soapHeaderParameterQNameList
-     * @param axisOperation
+     * @param bindingOperation
      * @param input
      */
     protected void addHeaderOperations(List soapHeaderParameterQNameList,
-                                       AxisOperation axisOperation,
+                                       AxisBindingOperation bindingOperation,
                                        boolean input) {
+
+        AxisOperation axisOperation = bindingOperation.getAxisOperation();
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input) {
             if (WSDLUtil.isInputPresentForMEP(MEP)) {
 
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
-                        WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(),
+                        WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
                         WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
             }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
-                        WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(),
+                        WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
                         WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
             }
         }
@@ -2651,12 +2652,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Get the input element
      *
      * @param doc
-     * @param operation
+     * @param bindingOperation
      * @param headerParameterQNameList
      * @return DOM element
      */
-    protected Element getInputElement(Document doc, AxisOperation operation,
+    protected Element getInputElement(Document doc,
+                                      AxisBindingOperation bindingOperation,
                                       List headerParameterQNameList) {
+        AxisOperation operation = bindingOperation.getAxisOperation();
         Element inputElt = doc.createElement("input");
         String mep = operation.getMessageExchangePattern();
 
@@ -2688,7 +2691,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             /*
              * Setting the effective policy of input message
              */
-            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+            Policy policy = getBindingPolicyFromMessage(bindingOperation,
+                    WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
             if (policy != null) {
                 try {
@@ -2725,11 +2729,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Finds the output element.
      *
      * @param doc
-     * @param operation
+     * @param bindingOperation
      * @param headerParameterQNameList
      */
-    protected Element getOutputElement(Document doc, AxisOperation operation,
+    protected Element getOutputElement(Document doc,
+                                       AxisBindingOperation bindingOperation,
                                        List headerParameterQNameList) {
+        AxisOperation operation = bindingOperation.getAxisOperation();
         Element outputElt = doc.createElement("output");
         String mep = operation.getMessageExchangePattern();
 
@@ -2758,7 +2764,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             /*
              * Setting the effective policy for the output message.
              */
-            Policy policy = getBindingPolicyFromMessage(operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+            Policy policy = getBindingPolicyFromMessage(bindingOperation,
+                    WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
 
             if (policy != null) {
                 try {

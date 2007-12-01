@@ -364,12 +364,11 @@ public class DescriptionUtils {
         }
     }
     
-    public static HandlerChainsType loadHandlerChains(InputStream is) {
+    public static HandlerChainsType loadHandlerChains(InputStream is, ClassLoader classLoader) {
         try {
             // All the classes we need should be part of this package
             JAXBContext jc = JAXBContext
-                    .newInstance("org.apache.axis2.jaxws.description.xml.handler",
-                                 EndpointDescriptionImpl.class.getClassLoader());
+                    .newInstance("org.apache.axis2.jaxws.description.xml.handler", classLoader);
 
             Unmarshaller u = jc.createUnmarshaller();
 
@@ -379,7 +378,7 @@ public class DescriptionUtils {
         } catch (Exception e) {
             throw ExceptionFactory
                     .makeWebServiceException(
-                            "EndpointDescriptionImpl: loadHandlerList: thrown when attempting to unmarshall JAXB content");
+                            "DescriptionUtils: loadHandlerList: thrown when attempting to unmarshall JAXB content");
         }       
     }
     
@@ -531,8 +530,7 @@ public class DescriptionUtils {
             try {
                 axisService.addParameter(headerQNParameter);
             } catch (AxisFault e) {
-                // TODO: RAS
-                log.warn("Unable to add Parameter for header QNames to AxisService " + axisService, e);
+                log.warn(Messages.getMessage("regHandlerHeadersErr",axisService.getName(),e.getMessage()));
             }
         }  
     }

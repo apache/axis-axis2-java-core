@@ -155,8 +155,8 @@ public class MetadataFactoryRegistry {
                 }
             }
             catch(Throwable t) {
-                if(log.isWarnEnabled()) {
-                    log.warn("The MetadataFactoryRegistry could not process the configuration file: " + 
+                if(log.isDebugEnabled()) {
+                    log.debug("The MetadataFactoryRegistry could not process the configuration file: " + 
                              configurationFileLoc + " because of the following error: " + t.toString());
                 }
             }

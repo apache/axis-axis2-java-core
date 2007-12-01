@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -198,9 +199,7 @@ public class DescriptionFactoryImpl {
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDesciption was not created for class: " + serviceImplClass);
                 }
-                // TODO: NLS & RAS
-                throw ExceptionFactory.makeWebServiceException(
-                        "A ServiceDescription was not created for " + serviceImplClass);
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createServiceDescrErr", serviceImplClass.getName()));
             }
         }
         return serviceDesc;
@@ -230,18 +229,10 @@ public class DescriptionFactoryImpl {
                     }
                 } else {
 
-                    String msg =
-                            "The ServiceDescription failed to validate due to the following errors: \n" +
-                                    validator.toString();
-
-                    if (log.isDebugEnabled()) {
-                        log.debug("Validation Phase 2 failure: " + msg);
-                        log.debug("Failing composite: " + serviceImplComposite.toString());
-                        log.debug("Failing Service Description: " + serviceDescription.toString());
-                    }
-
-                    // TODO: Validate all service descriptions before failing
-                    // TODO: Get more detailed failure information from the Validator
+                    String msg = Messages.getMessage("createSrvcDescrDBCMapErr",
+                    		                         validator.toString(),
+                    		                         serviceImplComposite.toString(),
+                    		                         serviceDescription.toString());
                     throw ExceptionFactory.makeWebServiceException(msg);
                 }
             } else {

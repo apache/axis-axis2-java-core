@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -31,6 +32,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.util.List;
 
 /**
  * XMLSpine
@@ -196,7 +199,8 @@ interface XMLSpine {
     public int getNumHeaderBlocks() throws WebServiceException;
 
     /**
-     * getHeaderBlock Get the header block with the specified name The BlockFactory and object
+     * getHeaderBlock Get the first header block with the specified name.
+     * The BlockFactory and object
      * context are passed in to help create the proper kind of block.
      *
      * @param namespace
@@ -209,6 +213,27 @@ interface XMLSpine {
     public Block getHeaderBlock(String namespace, String localPart,
                                 Object context,
                                 BlockFactory blockFactory)
+            throws WebServiceException;
+    
+    /**
+     * getHeaderBlock 
+     * Get the header blocks with the specified name.
+     * The BlockFactory and object
+     * context are passed in to help create the proper kind of block.
+     *
+     * @param namespace
+     * @param localPart
+     * @param context
+     * @param blockFactory
+     * @param rolePlayer(if set) indicates the Roles that should be considered
+     * @return Block
+     * @throws WebServiceException
+     */
+    public List<Block> getHeaderBlocks(String namespace, 
+                                       String localPart,
+                                       Object context,
+                                       BlockFactory blockFactory, 
+                                       RolePlayer rolePlayer)
             throws WebServiceException;
 
     /**

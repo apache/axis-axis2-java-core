@@ -42,7 +42,7 @@
                 <include>org.codehaus.woodstox:wstx-asl:jar</include>
                 <include>org.apache.neethi:neethi:jar</include>
                 <include>stax:stax-api:jar</include>                
-                <include>xmlbeans:xbean:jar</include>
+                <include>org.apache.xmlbeans:xmlbeans:jar</include>
                 <include>org.apache.ws.commons.schema:XmlSchema:jar</include>
                 <include>log4j:log4j:jar</include>
                 <include>org.apache.woden:woden:jar</include>               

@@ -23,12 +23,17 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /** This class serves as a factory for ConfigurationContexts suitable in the client environment. */
 public class ClientConfigurationFactory {
+    
+    private static final Log log = LogFactory.getLog(ClientConfigurationFactory.class);
 
     /** Returns a ClientConfigurationFactory object. */
     public static ClientConfigurationFactory newInstance() {
@@ -42,15 +47,17 @@ public class ClientConfigurationFactory {
      */
     public synchronized ConfigurationContext getClientConfigurationContext() {
         ConfigurationContext configContext = null;
-        //TODO: Add logging 
         String repoPath = System.getProperty(Constants.AXIS2_REPO_PATH);
         String axisConfigPath = System.getProperty(Constants.AXIS2_CONFIG_PATH);
+        if(log.isDebugEnabled()){
+        	log.debug("Axis2 repository path : "+repoPath);
+        	log.debug("Axis2 Config path : "+axisConfigPath);
+        }
         try {
             configContext = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(repoPath, axisConfigPath);
         } catch (AxisFault e) {
-            // TODO: Add RAS logging and processing
-            e.printStackTrace();
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr",e.getMessage()));
         }
         return configContext;
     }

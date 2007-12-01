@@ -160,13 +160,13 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
             return getApplicationScopedProperties().containsKey(key);
         }
         if (responseMC != null) {
-            boolean containsKey = responseMC.getProperties().containsKey(key) || requestMC.getProperties().containsKey(key);
+            boolean containsKey = responseMC.containsKey(key) || requestMC.containsKey(key);
             if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
                 return containsKey;
             }
         }
         if ((getScope((String)key) == Scope.APPLICATION) || (!isApplicationAccessLocked())) {
-            return requestMC.getProperties().containsKey(key);
+            return requestMC.containsKey(key);
         }
         return false;
     }
@@ -239,7 +239,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         if (scopes.get(key) == null) {  // check the scopes object directly, not through getScope()!!
             setScope(key, Scope.HANDLER);
         }
-        if (requestMC.getProperties().containsKey(key)) {
+        if (requestMC.containsKey(key)) {
             return requestMC.setProperty(key, value);
         }
         if (responseMC != null) {
@@ -273,6 +273,7 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
         }
         
         // yes, remove from both and return the right object
+        // TODO This won't work because getProperties returns a temporary map
         Object retVal = null;
         if (responseMC != null) {
             retVal = responseMC.getProperties().remove(key);

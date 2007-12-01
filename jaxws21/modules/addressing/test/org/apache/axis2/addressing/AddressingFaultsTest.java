@@ -59,7 +59,7 @@ public class AddressingFaultsTest extends TestCase {
         messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
                                    AddressingConstants.Final.WSA_NAMESPACE);
         try {
-            AddressingFaultsHelper.triggerActionMismatchFault(messageContext);
+            AddressingFaultsHelper.triggerActionMismatchFault(messageContext, "soapAction", "wsaAction");
             fail("Should have thrown exception");
         } catch (AxisFault af) {
             // Expected

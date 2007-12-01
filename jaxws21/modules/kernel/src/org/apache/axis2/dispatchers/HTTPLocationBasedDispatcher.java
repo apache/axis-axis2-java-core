@@ -21,12 +21,15 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisBinding;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
@@ -81,8 +84,22 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
                             Map httpLocationTable = (Map) endpoint.getBinding()
                                     .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
                             if (httpLocationTable != null) {
-                                return getOperationFromHTTPLocation(httpLocation,
-                                                                    httpLocationTable);
+                                AxisOperation axisOperation =
+                                        getOperationFromHTTPLocation(httpLocation,
+                                                                     httpLocationTable);
+                                if (axisOperation != null) {
+                                    messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                               endpoint);
+                                    AxisBinding axisBinding = endpoint.getBinding();
+                                    if (axisBinding != null) {
+                                        AxisBindingOperation axisBindingOperation =
+                                                (AxisBindingOperation) axisBinding
+                                                        .getChild(axisOperation.getName());
+                                        messageContext.setProperty(Constants.AXIS_BINDING_OPERATION,
+                                                                   axisBindingOperation);
+                                        return axisOperation;
+                                    }
+                                }
                             }
                         }
                     }

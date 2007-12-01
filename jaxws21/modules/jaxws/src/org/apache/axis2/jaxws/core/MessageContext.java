@@ -52,7 +52,6 @@ public class MessageContext {
 
     private InvocationContext invocationCtx;
     private org.apache.axis2.context.MessageContext axisMsgCtx;
-    private Map<String, Object> properties;
     private EndpointDescription endpointDesc;
     private OperationDescription operationDesc;
     private QName operationName;    //FIXME: This should become the OperationDescription
@@ -60,10 +59,6 @@ public class MessageContext {
     private Mode mode;
     private boolean isOutbound;  // Outbound or inbound message context
     private boolean isServer = false; // Indicate if server role, default is false
-    
-    // TODO:  flag to set whether we delegate property setting up to the
-    // axis2 message context object or keep it local
-    private boolean DELEGATE_TO_AXISMC = true;
     
     /*
      * JAXWS runtime uses a request and response mc, but we need to know the pair.
@@ -85,10 +80,6 @@ public class MessageContext {
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
         isOutbound = true;
-        if (!DELEGATE_TO_AXISMC) {
-            properties = new HashMap<String, Object>();
-        }
-           
     }
     
     /**
@@ -98,9 +89,6 @@ public class MessageContext {
      * @throws WebServiceException
      */
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
-        if (!DELEGATE_TO_AXISMC) {
-            properties = new HashMap<String, Object>();
-        }
         // Assume inbound (caller must setOutbound)
         isOutbound = false;
 
@@ -130,65 +118,41 @@ public class MessageContext {
     }
 
     public Map<String, Object> getProperties() {
-        if (DELEGATE_TO_AXISMC) {
-            // only use properties that are local to the axis2 MC,
-            // not the options bag.  See org.apache.axis2.context.AbstractContext
-            Iterator names = axisMsgCtx.getPropertyNames();
-            HashMap tempProps = new HashMap<String, Object>();
-            for (; names.hasNext();) {
-                String name = (String)names.next();
-                tempProps.put(name, axisMsgCtx.getProperty(name));
-            }
-            //return new ReadOnlyProperties(tempProps);
-            return tempProps;
+        // only use properties that are local to the axis2 MC,
+        // not the options bag.  See org.apache.axis2.context.AbstractContext
+        Iterator names = axisMsgCtx.getPropertyNames();
+        HashMap tempProps = new HashMap<String, Object>();
+        for (; names.hasNext();) {
+            String name = (String)names.next();
+            tempProps.put(name, axisMsgCtx.getProperty(name));
         }
-        return properties;
+        //return new ReadOnlyProperties(tempProps);
+        return tempProps;
     }
     
     public void setProperties(Map<String, Object> _properties) {
-        if (DELEGATE_TO_AXISMC) {
-            // make sure copy is made, not just reference:
-            _properties.put(org.apache.axis2.context.MessageContext.COPY_PROPERTIES, true);
-            axisMsgCtx.setProperties(_properties);
-        } else {
-            getProperties().putAll(_properties);
-        }
+        // make sure copy is made, not just reference:
+        _properties.put(org.apache.axis2.context.MessageContext.COPY_PROPERTIES, true);
+        axisMsgCtx.setProperties(_properties);
     }
     
     public Object getProperty(String key) {
-        if (DELEGATE_TO_AXISMC) {
-            // only use properties that are local to the axis2 MC,
-            // not the options bag.  See org.apache.axis2.context.AbstractContext
-            Iterator names = axisMsgCtx.getPropertyNames();
-            for (; names.hasNext();) {
-                String name = (String)names.next();
-                if (name.equals(key)) {
-                    return axisMsgCtx.getProperty(key);
-                }
-            }
-            return null;
-        }
-        return getProperties().get(key);
+        // only use properties that are local to the axis2 MC.
+        return axisMsgCtx.getLocalProperty(key, false);
+    }
+    
+    public boolean containsKey(Object key) {
+        // Only use properties that are local to the axis2 MC.
+        // @see getProperty(String key)
+        return (key instanceof String && getProperty((String)key) != null);
     }
     
     // acts like Map.put(key, value)
     public Object setProperty(String key, Object value) {
-        if (DELEGATE_TO_AXISMC) {
-            // only use properties that are local to the axis2 MC,
-            // not the options bag.  See org.apache.axis2.context.AbstractContext
-            Object retval = null;
-            Iterator names = axisMsgCtx.getPropertyNames();
-            for (; names.hasNext();) {
-                String name = (String)names.next();
-                if (name.equals(key)) {
-                    retval = axisMsgCtx.getProperty(key);
-                }
-            }
-            axisMsgCtx.setProperty(key, value);
-            return retval;
-        } else {
-            return getProperties().put(key, value);
-        }
+        // only use properties that are local to the axis2 MC
+        Object retval = axisMsgCtx.getLocalProperty(key, false);
+        axisMsgCtx.setProperty(key, value);
+        return retval;
     }
 
     public EndpointDescription getEndpointDescription() {

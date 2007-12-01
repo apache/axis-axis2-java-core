@@ -485,7 +485,6 @@ public class AxisInvocationController extends InvocationController {
     * of performance.
     */
     private void setupProperties(MessageContext mc) {//, Options ops) {
-        Map<String, Object> properties = mc.getProperties();
 
         // Enable MTOM
         Message msg = mc.getMessage();
@@ -500,16 +499,16 @@ public class AxisInvocationController extends InvocationController {
 
         // Check to see if BASIC_AUTH is enabled.  If so, make sure
         // the properties are setup correctly.
-        if (properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                properties.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
+        if (mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+                mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
 
-            String userId = (String)properties.get(BindingProvider.USERNAME_PROPERTY);
+            String userId = (String)mc.getProperty(BindingProvider.USERNAME_PROPERTY);
             if (userId == null || userId == "") {
                 throw ExceptionFactory
                         .makeWebServiceException(Messages.getMessage("checkUserName"));
             }
 
-            String password = (String)properties.get(BindingProvider.PASSWORD_PROPERTY);
+            String password = (String)mc.getProperty(BindingProvider.PASSWORD_PROPERTY);
             if (password == null || password == "") {
                 throw ExceptionFactory
                         .makeWebServiceException(Messages.getMessage("checkPassword"));
@@ -517,8 +516,8 @@ public class AxisInvocationController extends InvocationController {
 
             URL url = null;
             try {
-                url = new URL((String)mc.getProperties()
-                        .get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
+                url = new URL((String)mc
+                        .getProperty(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
             }
             catch (MalformedURLException e) {
                 throw ExceptionFactory.makeWebServiceException(e);
@@ -533,10 +532,10 @@ public class AxisInvocationController extends InvocationController {
             basicAuthentication.setPreemptiveAuthentication(true);
 
             mc.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
-        } else if ((!properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                properties.containsKey(BindingProvider.PASSWORD_PROPERTY)) ||
-                (properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                        !properties.containsKey(BindingProvider.PASSWORD_PROPERTY))) {
+        } else if ((!mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+                mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) ||
+                (mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+                        !mc.containsKey(BindingProvider.PASSWORD_PROPERTY))) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("checkUsernameAndPassword"));
         }

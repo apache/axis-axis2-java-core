@@ -364,11 +364,11 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            String opName = jmethod.getSimpleName();
+            String opName = getSimpleName(jmethod);
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the operation there in services.xml then try to set it schema element name
             if (operation == null) {
-                operation = axisService.getOperation(new QName(jmethod.getSimpleName()));
+                operation = axisService.getOperation(new QName(getSimpleName(jmethod)));
             }
             MessageReceiver mr = axisService.getMessageReceiver(
                     operation.getMessageExchangePattern());
@@ -401,7 +401,7 @@ public class Utils {
             operation = AxisOperationFactory.getAxisOperation(
                     WSDLConstants.MEP_CONSTANT_IN_OUT);
         }
-        String opName = jmethod.getSimpleName();
+        String opName = getSimpleName(jmethod);
         operation.setName(new QName(opName));
         JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
         if (methodAnnon != null) {
@@ -412,6 +412,17 @@ public class Utils {
         }
         return operation;
     }
+
+    public static String getSimpleName(JMethod method) {
+        JAnnotation methodAnnon = method.getAnnotation(AnnotationConstants.WEB_METHOD);
+        if (methodAnnon != null) {
+            if (methodAnnon.getValue(AnnotationConstants.OPERATION_NAME) !=null) {
+                return methodAnnon.getValue(AnnotationConstants.OPERATION_NAME).asString();
+            }
+        }
+        return method.getSimpleName();
+    }
+
 
     public static OMElement getParameter(String name, String value, boolean locked) {
         OMFactory fac = OMAbstractFactory.getOMFactory();

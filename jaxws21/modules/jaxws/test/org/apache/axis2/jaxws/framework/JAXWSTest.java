@@ -90,6 +90,7 @@ import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
 import org.apache.axis2.jaxws.spi.BindingProviderTests;
+import org.apache.axis2.jaxws.spi.handler.HandlerResolverTests;
 import org.apache.axis2.jaxws.wsdl.schemareader.SchemaReaderTests;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource.DispatchXMessageDataSource;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXB;
@@ -136,7 +137,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BindingToProtocolTests.class);
         
         // ------ Addressing Tests ------
-        suite.addTestSuite(EndpointReferenceUtilsTests.class);
+        //suite.addTestSuite(EndpointReferenceUtilsTests.class);
         
         // ------ Metadata Tests ------
         suite.addTestSuite(WSDLTests.class);
@@ -150,6 +151,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(LogicalMessageContextTests.class);
         suite.addTestSuite(CompositeMessageContextTests.class);
         suite.addTestSuite(HandlerChainProcessorTests.class);
+        suite.addTestSuite(HandlerResolverTests.class);
         
         // ------ Message Tests ------
         suite.addTestSuite(JaxwsMessageBundleTests.class);

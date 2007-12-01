@@ -33,7 +33,6 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.InOnlyAxisOperation;

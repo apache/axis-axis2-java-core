@@ -48,14 +48,10 @@ public class ClientWorker implements Runnable {
 
     private static final Log log = LogFactory.getLog(ClientWorker.class);
 
-    /** the Axis2 configuration context */
-    private ConfigurationContext cfgCtx = null;
     /** the response message context that would be created */
     private MessageContext responseMsgCtx = null;
     /** the InputStream out of which the response body should be read */
     private InputStream in = null;
-    /** the original request message context */
-    private MessageContext outMsgCtx = null;
     /** the HttpResponse received */
     private HttpResponse response = null;
 
@@ -69,9 +65,7 @@ public class ClientWorker implements Runnable {
     public ClientWorker(ConfigurationContext cfgCtx, InputStream in,
         HttpResponse response, MessageContext outMsgCtx) {
 
-        this.cfgCtx = cfgCtx;
         this.in = in;
-        this.outMsgCtx = outMsgCtx;
         this.response = response;
 
         try {
@@ -165,13 +159,10 @@ public class ClientWorker implements Runnable {
             return;
         } catch (XMLStreamException e) {
             log.error("Error creating response SOAP envelope", e);
-        } catch (IOException e) {
-            log.error("Error closing input stream from which message was read", e);
         }
 
-        AxisEngine engine = new AxisEngine(cfgCtx);
         try {
-            engine.receive(responseMsgCtx);
+            AxisEngine.receive(responseMsgCtx);
         } catch (AxisFault af) {
             log.error("Fault processing response message through Axis2", af);
         }
@@ -183,9 +174,4 @@ public class ClientWorker implements Runnable {
         } catch (IOException ignore) {}
     }
 
-    // -------------- utility methods -------------
-    private void handleException(String msg, Exception e) throws AxisFault {
-        log.error(msg, e);
-        throw new AxisFault(msg, e);
-    }
 }

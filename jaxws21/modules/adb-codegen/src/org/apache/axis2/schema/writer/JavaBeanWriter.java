@@ -44,8 +44,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
-
 /**
  * Java Bean writer for the schema compiler.
  */
@@ -68,6 +66,8 @@ public class JavaBeanWriter implements BeanWriter {
     private boolean wrapClasses = false;
 
     private boolean writeClasses = false;
+
+    private boolean isUseWrapperClasses = false;
 
     private String packageName = null;
 
@@ -149,6 +149,8 @@ public class JavaBeanWriter implements BeanWriter {
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
             writeClasses = options.isWriteOutput();
+            isUseWrapperClasses = options.isUseWrapperClasses();
+
             if (!writeClasses) {
                 wrapClasses = false;
             } else {
@@ -491,6 +493,7 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
+        XSLTUtils.addAttribute(model, "isUseWrapperClasses", isUseWrapperClasses? "yes" : "false", rootElt);
         XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
                 .getNamespaceURI(), qName.getPrefix()), rootElt);
 
@@ -730,9 +733,18 @@ public class JavaBeanWriter implements BeanWriter {
                 //XSLTUtils.addAttribute(model, "restricted", "yes", property);
             }
 
+            long minOccurs = metainf.getMinOccurs(name);
+            if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)
+                    && isUseWrapperClasses && ((minOccurs == 0) || metainf.isNillable(name))) {
+                 // if this is an primitive class and user wants to use the
+                 // wrapper type we change the type to wrapper type.
+                 javaClassNameForElement = PrimitiveTypeWrapper.getWrapper(javaClassNameForElement);
+            }
+
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
 
             if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)) {
+
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
 

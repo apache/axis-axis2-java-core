@@ -79,7 +79,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.SocketException;
 import java.net.URL;
-import java.net.URISyntaxException;
 import java.security.PrivilegedAction;
 import java.util.*;
 
@@ -1115,27 +1114,72 @@ public class AxisService extends AxisDescription {
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
+                        SOAPAddress soapAddress = (SOAPAddress) extensibilityEle;
+                        String exsistingAddress = soapAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((SOAPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((SOAPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     } else if (extensibilityEle instanceof SOAP12Address){
+                        SOAP12Address soapAddress = (SOAP12Address) extensibilityEle;
+                        String exsistingAddress = soapAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((SOAP12Address) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((SOAP12Address) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((SOAP12Address) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((SOAP12Address) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     } else if (extensibilityEle instanceof HTTPAddress){
+                        HTTPAddress httpAddress = (HTTPAddress) extensibilityEle;
+                        String exsistingAddress = httpAddress.getLocationURI();
                         if (requestIP == null) {
-                            ((HTTPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                            ((HTTPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(getEPRs(), exsistingAddress));
                         } else {
-                            ((HTTPAddress) extensibilityEle).setLocationURI(calculateEPRs(requestIP)[0]);
+                            ((HTTPAddress) extensibilityEle).setLocationURI(
+                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
                         }
                     }
                     //TODO : change the Endpoint refrence addess as well.
                 }
             }
+        }
+    }
+
+    /**
+     * this method returns the new IP address corresponding to the
+     * already existing ip
+     * @param eprs
+     * @param epr
+     * @return corresponding Ip address
+     */
+    private String getLocationURI(String[] eprs, String epr) throws AxisFault {
+        String returnIP = null;
+        if (epr != null) {
+            if (epr.indexOf(":") > -1) {
+                String existingProtocol = epr.substring(0, epr.indexOf(":")).trim();
+                String eprProtocol;
+                for (int i = 0; i < eprs.length; i++) {
+                    eprProtocol = eprs[i].substring(0, eprs[i].indexOf(":")).trim();
+                    if (eprProtocol.equals(existingProtocol)) {
+                        returnIP = eprs[i];
+                        break;
+                    }
+                }
+                if (returnIP != null) {
+                    return returnIP;
+                } else {
+                    throw new AxisFault("Server does not have an epr for the wsdl epr==>" + epr);
+                }
+            } else {
+                throw new AxisFault("invalid epr is given epr ==> " + epr);
+            }
+        } else {
+            throw new AxisFault("No epr is given in the wsdl port");
         }
     }
 
@@ -1966,20 +2010,20 @@ public class AxisService extends AxisDescription {
 
         //populate the axis service with the necessary schema references
         ArrayList schema = this.schemaList;
-        Map changedScheamLocations = null;
+        Map changedSchemaLocations = null;
         if (!this.schemaLocationsAdjusted) {
             Hashtable nameTable = new Hashtable();
             Hashtable sourceURIToNewLocationMap = new Hashtable();
             //calculate unique names for the schemas
-            calcualteSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
+            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
             //adjust the schema locations as per the calculated names
-            changedScheamLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
+            changedSchemaLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
             //reverse the nametable so that there is a mapping from the
             //name to the schemaObject
             setSchemaMappingTable(swapMappingTable(nameTable));
             setSchemaLocationsAdjusted(true);
         }
-        return changedScheamLocations;
+        return changedSchemaLocations;
     }
 
 
@@ -1988,7 +2032,7 @@ public class AxisService extends AxisDescription {
      *
      * @param schemas
      */
-    private void calcualteSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
+    private void calculateSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
@@ -2000,11 +2044,12 @@ public class AxisService extends AxisDescription {
                 if (item instanceof XmlSchemaExternal) {
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
-                    if (s != null && sourceURIToNewLocationMap.get(s.getSourceURI()) == null) {
+
+                    if (s != null && getScheamLocationWithDot(sourceURIToNewLocationMap, s) == null) {
                         //insert the name into the table
                         insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
                         //recursively call the same procedure
-                        calcualteSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
+                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
                     }
                 }
             }
@@ -2105,13 +2150,21 @@ public class AxisService extends AxisDescription {
 
             String newscheamlocation = customSchemaNamePrefix == null ?
                     //use the default mode
-                    (getName() + "?xsd=" + sourceURIToNewLocationMap.get(s.getSourceURI())) :
+                    (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
                     //custom prefix is present - add the custom prefix
-                    (customSchemaNamePrefix + sourceURIToNewLocationMap.get(s.getSourceURI()));
+                    (customSchemaNamePrefix + getScheamLocationWithDot(sourceURIToNewLocationMap, s));
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
             xmlSchemaExternal.setSchemaLocation(newscheamlocation);
             importedScheams.put(schemaLocation, newscheamlocation);
         }
+    }
+
+    private Object getScheamLocationWithDot(Hashtable sourceURIToNewLocationMap, XmlSchema s) {
+        String o = (String) sourceURIToNewLocationMap.get(s.getSourceURI());
+        if (o !=null && o.indexOf(".") <0){
+            return o + ".xsd";
+        }
+        return o;
     }
 
     /**

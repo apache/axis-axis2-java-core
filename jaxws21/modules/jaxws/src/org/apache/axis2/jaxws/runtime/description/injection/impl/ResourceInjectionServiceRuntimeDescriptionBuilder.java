@@ -25,6 +25,9 @@ import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionSer
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
@@ -73,13 +76,13 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         // Getting this information is expensive, but fortunately is cached.
         List<Field> fields = getFields(implClass);
         for (Field field : fields) {
-            if (field.getAnnotation(Resource.class) != null) {
+            if (getAnnotation(field,Resource.class) != null) {
                 return true;
             }
         }
         List<Method> methods = getMethods(implClass);
         for (Method method : methods) {
-            if (method.getAnnotation(Resource.class) != null) {
+            if (getAnnotation(method,Resource.class) != null) {
                 return true;
             }
         }
@@ -90,7 +93,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
     static private Method getPostConstructMethod(Class implClass) {
         List<Method> methods = getMethods(implClass);
         for (Method method : methods) {
-            if (method.getAnnotation(PostConstruct.class) != null) {
+            if (getAnnotation(method,PostConstruct.class) != null) {
                 return method;
             }
         }
@@ -100,7 +103,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
     static private Method getPreDestroyMethod(Class implClass) {
         List<Method> methods = getMethods(implClass);
         for (Method method : methods) {
-            if (method.getAnnotation(PreDestroy.class) != null) {
+            if (getAnnotation(method,PreDestroy.class) != null) {
                 return method;
             }
         }
@@ -163,5 +166,19 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         );
 
         return methods;
+    }
+    
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
     }
 }

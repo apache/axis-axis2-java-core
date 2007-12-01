@@ -73,6 +73,7 @@ public class SimpleTypeMapper {
     public static Object getSimpleTypeObject(Class parameter, OMElement value) {
         String name = parameter.getName();
         String text = value.getText();
+        
         if(name.equals(STRING)) {
             return text;
         } else  if (text == null || text.length() == 0) {
@@ -80,7 +81,7 @@ public class SimpleTypeMapper {
         } else if (name.equals(INT)) {
             return new Integer(text);
         } else if (name.equals(BOOLEAN)) {
-            return Boolean.valueOf(text);
+            return new Boolean(ConverterUtil.convertToBoolean(text));
         } else if (name.equals(BYTE)) {
             return new Byte(text);
         } else if (name.equals(DOUBLE)) {

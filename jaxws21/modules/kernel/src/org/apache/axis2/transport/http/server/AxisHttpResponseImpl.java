@@ -21,17 +21,17 @@ package org.apache.axis2.transport.http.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpExecutionContext;
 import org.apache.http.protocol.HttpProcessor;
 
 public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo {
@@ -86,8 +86,8 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         }
         this.commited = true;
         
-        this.context.setAttribute(HttpExecutionContext.HTTP_CONNECTION, this.conn);
-        this.context.setAttribute(HttpExecutionContext.HTTP_RESPONSE, this.response);
+        this.context.setAttribute(ExecutionContext.HTTP_CONNECTION, this.conn);
+        this.context.setAttribute(ExecutionContext.HTTP_RESPONSE, this.response);
         
         BasicHttpEntity entity = new BasicHttpEntity();
         entity.setChunked(true);
@@ -108,7 +108,7 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
 
     public void sendError(int sc, final String msg) {
         assertNotCommitted();
-        HttpVersion ver = this.response.getHttpVersion();
+        ProtocolVersion ver = this.response.getProtocolVersion();
         this.response.setStatusLine(ver, sc, msg);
     }
 
@@ -127,8 +127,8 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         this.contentType = contentType;
     }
 
-    public HttpVersion getHttpVersion() {
-        return this.response.getHttpVersion();
+    public ProtocolVersion getProtocolVersion() {
+        return this.response.getProtocolVersion();
     }
 
     public void addHeader(final Header header) {
@@ -161,8 +161,12 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
         return this.response.getLastHeader(name);
     }
 
-    public Iterator headerIterator() {
+    public HeaderIterator headerIterator() {
         return this.response.headerIterator();
+    }
+
+    public HeaderIterator headerIterator(String name) {
+        return this.response.headerIterator(name);
     }
 
     public void removeHeader(final Header header) {

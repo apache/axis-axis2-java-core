@@ -22,12 +22,15 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
 import javax.wsdl.Definition;
+
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,6 +101,14 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
     private WsdlGenerator wsdlGenerator;
     private ClassLoader classLoader;
+    
+    // represents a stream to the XML handler chain configuration
+    // either this or the HandlerChainAnnot may be present, but 
+    // not both, they may both be null
+    private InputStream handlerChainSource;
+    
+    // JAXB object used to represent handler chain configuration info
+    private HandlerChainsType handlerChainsType = null;
 
     // Methods
     public WebServiceAnnot getWebServiceAnnot() {
@@ -454,6 +465,22 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public void setClassLoader(ClassLoader classLoader) {
 
         this.classLoader = classLoader;
+    }
+    
+    public void setHandlerChainSource(InputStream handlerChainSource) {
+    	this.handlerChainSource = handlerChainSource;
+    }
+    
+    public InputStream getHandlerChainSource() {
+    	return handlerChainSource;
+    }
+    
+    public HandlerChainsType getHandlerChainsType() {
+    	return handlerChainsType;
+    }
+    
+    public void setHandlerChainsType(HandlerChainsType handlerChainsType) {
+    	this.handlerChainsType = handlerChainsType;
     }
 
     /**

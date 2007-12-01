@@ -306,9 +306,8 @@ public abstract class InvocationController {
             // response object
             // back to the client app without calling
             // AsyncResponse.processResponse or processFault
-
-            throw ExceptionFactory
-                            .makeWebServiceException("A client outbound handler cause a message flow direction reversal.  This case is not yet implemented.");
+        	
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeAsyncErr"));
 
             // throw new AxisFault(request.getMessage());
         }

@@ -18,15 +18,15 @@
  */
 package org.apache.axis2.schema.references;
 
-import com.americanexpress.www.wsdl.ctn.utilities.atb.AtbRequestCheckEligibility_type0;
-import com.americanexpress.www.wsdl.ctn.utilities.atb.CheckEligibility1;
-import com.americanexpress.www.wsdl.ctn.utilities.atb.CheckEligibility2;
+import com.americanexpress.www.wsdl.ctn.utilities.atb.*;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.ADBException;
 
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 
 
@@ -98,4 +98,84 @@ public class ElementReferenceTest extends TestCase {
             fail();
         }
     }
+
+    public void testElement11(){
+
+        Element1 element1 = new Element1();
+        ComplexType1 complexType1 = new ComplexType1();
+        element1.setElement1(complexType1);
+
+        try {
+            OMElement omElement = element1.getOMElement(Element1.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            Element1 result = Element1.Factory.parse(xmlReader);
+            assertNotNull(result);
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testElement12(){
+
+        Element1 element1 = new Element1();
+        ComplexType1 complexType1 = new ComplexType1();
+        element1.setElement1(complexType1);
+        ComplexType1 complexType2 = new ComplexType1();
+        complexType1.setElement1(complexType2);
+        ComplexType1 complexType3 = new ComplexType1();
+        complexType2.setElement1(complexType3);
+
+
+        try {
+            OMElement omElement = element1.getOMElement(Element1.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            Element1 result = Element1.Factory.parse(xmlReader);
+            assertNotNull(result);
+            assertNotNull(result.getElement1());
+            assertNotNull(result.getElement1().getElement1());
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    public void testElement21(){
+        Element2 element2 = new Element2();
+        Element2_type0 element2_type0 = new Element2_type0();
+        element2.setElement2(element2_type0);
+        element2_type0.setParam1("test string1");
+
+        Element2_type0 element2_type1 = new Element2_type0();
+        element2_type1.setParam1("test string2");
+        element2_type0.setElement2(element2_type1);
+
+        try {
+            OMElement omElement = element2.getOMElement(Element2.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElmentString = omElement.toStringWithConsume();
+            System.out.println("OM element ==>" + omElmentString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElmentString.getBytes()));
+            Element2 result = Element2.Factory.parse(xmlReader);
+            assertEquals(result.getElement2().getParam1(),"test string1");
+            assertEquals(result.getElement2().getElement2().getParam1(), "test string2");
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+
 }
