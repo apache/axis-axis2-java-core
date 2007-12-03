@@ -403,8 +403,17 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             Set propertiesSet = new HashSet();
             Set propertiesNames = new HashSet();
 
+            ArrayList excludes = null;
+            if (service.getBeanExludeMap() !=null) {
+                excludes = (ArrayList) service.getBeanExludeMap().get(
+                        javaType.getQualifiedName());
+            }
             JProperty[] tempProperties = javaType.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
+                if(excludes != null && excludes.contains(
+                        getCorrectName(tempProperties[i].getSimpleName()))) {
+                    continue;
+                }
                 propertiesSet.add(tempProperties[i]);
             }
 

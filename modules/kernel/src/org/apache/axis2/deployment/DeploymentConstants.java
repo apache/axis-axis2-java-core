@@ -91,6 +91,7 @@ public interface DeploymentConstants {
     String TAG_DISPATCHER = "dispatcher";
     String TAG_DESCRIPTION = "Description";
     String TAG_CLASS_NAME = "class";
+    String TAG_EXCLUDE_PROPERTIES= "excludeProperties";
     String TAG_AFTER = "after";
     String TAG_BEFORE = "before";
     String TAG_SUPPORTED_POLICY_NAMESPACES = "supported-policy-namespaces";

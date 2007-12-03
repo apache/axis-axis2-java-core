@@ -34,7 +34,6 @@ import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
 import java.util.*;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
@@ -409,8 +408,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     /**
      * Generate schema construct for given type
-     *
-     * @param javaType
+     * @param javaType : Class to whcih need to generate Schema
+     * @return : Generated QName
      */
     private QName generateSchema(JClass javaType) throws Exception {
         String name = getQualifiedName(javaType);
@@ -502,7 +501,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             Set propertiesNames = new HashSet();
 
             JProperty[] tempProperties = javaType.getDeclaredProperties();
+            ArrayList excludes = null;
+            if (service.getBeanExludeMap() !=null) {
+                excludes = (ArrayList) service.getBeanExludeMap().get(
+                        javaType.getQualifiedName());
+            }
             for (int i = 0; i < tempProperties.length; i++) {
+                if(excludes != null && excludes.contains(
+                        getCorrectName(tempProperties[i].getSimpleName()))) {
+                    continue;
+                }
                 propertiesSet.add(tempProperties[i]);
             }
 

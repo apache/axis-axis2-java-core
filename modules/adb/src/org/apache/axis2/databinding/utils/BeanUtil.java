@@ -24,7 +24,9 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -103,18 +105,37 @@ public class BeanUtil {
                                             "elementName");
             }
 
+            AxisService axisService = MessageContext.getCurrentMessageContext().getAxisService();
+            ArrayList excludes = null;
+            if (axisService.getBeanExludeMap() !=null) {
+                excludes = (ArrayList) axisService.getBeanExludeMap().get(
+                        jClass.getQualifiedName());
+            }
             // properties from JAM
             ArrayList propertyList = new ArrayList();
             JProperty properties [] = jClass.getDeclaredProperties();
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
+                //Excluding properties if it is suppose to be
+                if(excludes != null && excludes.contains(
+                        getCorrectName(getCorrectName(property.getSimpleName())))) {
+                    continue;
+                }
                 propertyList.add(property);
             }
             JClass supClass = jClass.getSuperclass();
             while (!"java.lang.Object".equals(supClass.getQualifiedName())) {
                 properties = supClass.getDeclaredProperties();
+                  excludes = (ArrayList) axisService.getBeanExludeMap().get(
+                        supClass.getQualifiedName());
+
                 for (int i = 0; i < properties.length; i++) {
                     JProperty property = properties[i];
+                    //Excluding properties if it is suppose to be
+                    if(excludes != null && excludes.contains(
+                            getCorrectName(getCorrectName(property.getSimpleName())))) {
+                        continue;
+                    }
                     propertyList.add(property);
                 }
                 supClass = supClass.getSuperclass();

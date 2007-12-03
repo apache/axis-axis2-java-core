@@ -27,15 +27,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.MessageReceiver;
@@ -43,6 +35,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -124,6 +117,13 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(itr, service, service.getParent());
 
+            //If multiple services in one service group have different values for the PARENT_FIRST
+            //  parameter then the final value become the value specified by the last service in the group
+//            Parameter parameter = service.getParameter(DeploymentClassLoader.PARENT_FIRST);
+//            if (parameter !=null && "false".equals(parameter.getValue())) {
+//                ClassLoader serviceClassLoader = service.getClassLoader();
+//                ((DeploymentClassLoader)serviceClassLoader).setParentFirst(false);
+//            }
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -334,6 +334,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             // Set the default message receiver for the operations that were
             // not listed in the services.xml
             setDefaultMessageReceivers();
+            Utils.processBeanPropertyExclude(service);
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
                 if (!service.isWsdlFound()) {

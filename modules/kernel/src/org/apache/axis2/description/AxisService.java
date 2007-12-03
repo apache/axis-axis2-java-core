@@ -240,6 +240,9 @@ public class AxisService extends AxisDescription {
     // package to namespace mapping
     private Map p2nMap;
 
+    //To keep the bean property exclude map
+    private Map beanExludeMap;
+
     private TypeTable typeTable;
 
     // Data Locators for  WS-Mex Support
@@ -1876,6 +1879,7 @@ public class AxisService extends AxisDescription {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
+        Utils.processBeanPropertyExclude(axisService);
         axisService.setElementFormDefault(false);
         try {
             axisService.addSchema(schemaGenerator.generateSchema());
@@ -2559,5 +2563,14 @@ public class AxisService extends AxisDescription {
 
     public String toString() {
         return getName();
+    }
+
+
+    public Map getBeanExludeMap() {
+        return beanExludeMap;
+    }
+
+    public void setBeanExludeMap(Map beanExludeMap) {
+        this.beanExludeMap = beanExludeMap;
     }
 }
