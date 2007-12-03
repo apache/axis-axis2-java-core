@@ -18,14 +18,18 @@
  */
 package org.tempuri.complex;
 
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.tempuri.differenceEngine.WSDLController;
+import org.tempuri.differenceEngine.WSDLDifferenceEngine;
+import org.tempuri.elementQualifier.WSDLElementQualifier;
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
-import org.tempuri.BaseDataTypes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.StringReader;
+
 
 public class ComplexDataTypesTest extends XMLTestCase {
 
@@ -39,7 +43,12 @@ public class ComplexDataTypesTest extends XMLTestCase {
             builder.generateWSDL();
             FileReader control = new FileReader(wsdlLocation);
             StringReader test = new StringReader(new String(out.toByteArray()));
-            assertXMLEqual(control, test);
+            
+            Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.getControlParser(), control), 
+		               XMLUnit.buildDocument(XMLUnit.getControlParser(), test), 
+		               new WSDLDifferenceEngine(new WSDLController()), new WSDLElementQualifier());
+            if (!myDiff.similar()) 
+	            fail(myDiff.toString()); 
         } finally {
             XMLUnit.setIgnoreWhitespace(false);
         }

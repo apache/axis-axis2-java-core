@@ -20,9 +20,11 @@ package org.tempuri;
 
 import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.apache.axis2.integration.TestingUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.DifferenceEngine;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.Diff;
+import org.tempuri.elementQualifier.WSDLElementQualifier;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
@@ -40,7 +42,12 @@ public class BaseDataTypesTest extends XMLTestCase {
             builder.generateWSDL();
             FileReader control = new FileReader(wsdlLocation);
             StringReader test = new StringReader(new String(out.toByteArray()));
-            assertXMLEqual(control, test);
+            
+            Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.getControlParser(), control), 
+		               XMLUnit.buildDocument(XMLUnit.getControlParser(), test), 
+		               (DifferenceEngine) null, new WSDLElementQualifier());
+            if (!myDiff.similar()) 
+	            fail(myDiff.toString()); 
         } finally {
             XMLUnit.setIgnoreWhitespace(false);
         }
