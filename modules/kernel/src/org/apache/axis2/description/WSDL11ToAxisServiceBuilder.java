@@ -908,16 +908,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     private Port findPort(Map ports) {
         Port port;
+        Port returnPort = null;
         for (Iterator portsIterator = ports.values().iterator(); portsIterator.hasNext();) {
             port = (Port) portsIterator.next();
             List extensibilityElements = port.getExtensibilityElements();
             for (int i = 0; i < extensibilityElements.size(); i++) {
                 Object extElement = extensibilityElements.get(i);
                 if (extElement instanceof SOAP12Address) {
-                    // SOAP 1.2 address found - return that port and we are done
-                    return port;
+                    // SOAP 1.2 address found - keep this and loop until http address is found
+                    returnPort = port;
+                    String location = ((SOAP12Address)extElement).getLocationURI().trim();
+                    if ((location != null) && location.startsWith("http:")){
+                        // i.e we have found an http port so return from here
+                       break;
+                    }
                 }
             }
+        }
+
+        if (returnPort != null){
+            return returnPort;
         }
 
         for (Iterator portsIterator = ports.values().iterator(); portsIterator
@@ -927,10 +937,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (int i = 0; i < extensibilityElements.size(); i++) {
                 Object extElement = extensibilityElements.get(i);
                 if (extElement instanceof SOAPAddress) {
-                    // SOAP 1.1 address found - return that port and we are done
-                    return port;
+                    // SOAP 1.1 address found - keep this and loop until http address is found
+                    returnPort = port;
+                    String location = ((SOAPAddress)extElement).getLocationURI().trim();
+                    if ((location != null) && location.startsWith("http:")){
+                        // i.e we have found an http port so return from here
+                       break;
+                    }
                 }
             }
+        }
+
+        if (returnPort != null){
+            return returnPort;
         }
 
         for (Iterator portsIterator = ports.values().iterator(); portsIterator
@@ -940,13 +959,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (int i = 0; i < extensibilityElements.size(); i++) {
                 Object extElement = extensibilityElements.get(i);
                 if (extElement instanceof HTTPAddress) {
-                    // SOAP 1.1 address found - return that port and we are done
-                    return port;
+                    // HTTP address found - keep this and loop until http address is found
+                    returnPort = port;
+                    String location = ((HTTPAddress)extElement).getLocationURI().trim();
+                    if ((location != null) && location.startsWith("http:")){
+                        // i.e we have found an http port so return from here
+                       break;
+                    }
                 }
             }
         }
-        // None found - just return null.
-        return null;
+        return returnPort;
     }
 
     private Operation findOperation(PortType portType,
