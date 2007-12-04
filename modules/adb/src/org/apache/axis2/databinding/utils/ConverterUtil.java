@@ -159,7 +159,19 @@ public class ConverterUtil {
     }
 
     public static void appendDate(StringBuffer dateString, Calendar calendar) {
-        dateString.append(calendar.get(Calendar.YEAR)).append("-");
+
+        int year = calendar.get(Calendar.YEAR);
+
+        if (year < 1000){
+            dateString.append("0");
+        }
+        if (year < 100){
+            dateString.append("0");
+        }
+        if (year < 10) {
+            dateString.append("0");
+        }
+        dateString.append(year).append("-");
 
         // xml date month is started from 1 and calendar month is
         // started from 0. so have to add one
@@ -1465,6 +1477,7 @@ public class ConverterUtil {
 
                 if (attributeNameSpace.equals(Constants.XSD_NAMESPACE)) {
                     if ("base64Binary".equals(attributeType)) {
+                        xmlStreamReader.next();
                         returnObject = getDataHandlerObject(xmlStreamReader);
                     } else {
                         String attribValue = xmlStreamReader.getElementText();
