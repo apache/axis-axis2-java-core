@@ -19,43 +19,42 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaType;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
@@ -505,7 +504,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         QName inMessageElementQname;
-        Map inMessageElementDetails = new HashMap();
+        Map inMessageElementDetails = new LinkedHashMap();
         AxisMessage inMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_IN);
         if (inMessage != null) {
             QName qName = inMessage.getElementQName();
@@ -575,7 +574,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             return new URI [0];
         }
         AxisMessage outMessage = null;
-        Map outMessageElementDetails = new HashMap();                                    
+        Map outMessageElementDetails = new LinkedHashMap();
         if (isRPC && !WSDL2Constants.MEP_URI_IN_ONLY.equals(mep)) {
             outMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_OUT);
             QName qName = outMessage.getElementQName();
