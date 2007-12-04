@@ -128,7 +128,7 @@ public interface WSDL2Constants {
     String MESSAGE_LABEL_OUT = "Out";
 
     String RPC_IN = "#in";
-    String RPC_OUT = "#out";
+    String RPC_RETURN = "#return";
     String RPC_INOUT = "#inout";
 
     String HTTP_LOCATION_TABLE = "HTTPLocationTable";

@@ -647,7 +647,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         Iterator outElementIterator = outElementSet.iterator();
         while (outElementIterator.hasNext()) {
             String outElementName = (String) outElementIterator.next();
-            out = out + outElementName + " " + WSDL2Constants.RPC_OUT + " ";
+            out = out + outElementName + " " + WSDL2Constants.RPC_RETURN + " ";
         }
         return in + out + inOut;
     }
