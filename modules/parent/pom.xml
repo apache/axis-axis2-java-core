@@ -150,6 +150,9 @@
             <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
             <post>axis-dev@ws.apache.org</post>
             <archive>http://marc.theaimsgroup.com/?l=axis-dev</archive>
+			<otherArchives>
+        <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
+      </otherArchives>
         </mailingList>
         <mailingList>
             <name>Axis User List</name>
@@ -157,6 +160,17 @@
             <unsubscribe>axis-user-unsubscribe@ws.apache.org</unsubscribe>
             <post>axis-user@ws.apache.org</post>
             <archive>http://marc.theaimsgroup.com/?l=axis-user</archive>
+			<otherArchives>
+        <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
+      </otherArchives>
+        </mailingList>
+    </mailingLists>
+	<mailingList>
+            <name>CVS Commit Message List</name>
+            <subscribe>axis-cvs-subscribe@ws.apache.org</subscribe>
+            <unsubscribe>axis-cvs-unsubscribe@ws.apache.org</unsubscribe>
+            <post>axis-cvs@ws.apache.org</post>
+            <archive>http://markmail.org/search/list:org.apache.ws.axis-cvs</archive>
         </mailingList>
     </mailingLists>
     <developers>
