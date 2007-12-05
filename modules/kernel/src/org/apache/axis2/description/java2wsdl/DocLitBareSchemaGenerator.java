@@ -343,7 +343,8 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             JClass sup = javaType.getSuperclass();
 
             if ((sup != null) && !("java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
-                    !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
+                    !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)
+                    &&!("java.util".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
                 String superClassName = sup.getQualifiedName();
                 String superclassname = getSimpleName(sup);
                 String tgtNamespace;
