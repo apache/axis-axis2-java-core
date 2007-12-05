@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class BeanUtil {
@@ -126,17 +127,18 @@ public class BeanUtil {
             JClass supClass = jClass.getSuperclass();
             while (!"java.lang.Object".equals(supClass.getQualifiedName())) {
                 properties = supClass.getDeclaredProperties();
-                  excludes = (ArrayList) axisService.getBeanExludeMap().get(
-                        supClass.getQualifiedName());
-
-                for (int i = 0; i < properties.length; i++) {
-                    JProperty property = properties[i];
-                    //Excluding properties if it is suppose to be
-                    if(excludes != null && excludes.contains(
-                            getCorrectName(getCorrectName(property.getSimpleName())))) {
-                        continue;
+                Map map = axisService.getBeanExludeMap();
+                if (map != null) {
+                    excludes = (ArrayList) map.get(supClass.getQualifiedName());
+                    for (int i = 0; i < properties.length; i++) {
+                        JProperty property = properties[i];
+                        //Excluding properties if it is suppose to be
+                        if(excludes != null && excludes.contains(
+                                getCorrectName(getCorrectName(property.getSimpleName())))) {
+                            continue;
+                        }
+                        propertyList.add(property);
                     }
-                    propertyList.add(property);
                 }
                 supClass = supClass.getSuperclass();
             }
