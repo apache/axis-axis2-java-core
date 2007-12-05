@@ -538,7 +538,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 // and there is no property with the same name
 
                 if (tempFields[i].isPublic()) {
-
+                    if (excludes !=null && excludes.contains(tempFields[i].getSimpleName())) {
+                        continue;
+                    }
                     // skip field with same name as a property
                     if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
 

@@ -439,7 +439,9 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             for (int i = 0; i < tempFields.length; i++) {
                 // create a element for the field only if it is public
                 // and there is no property with the same name
-
+                if (excludes != null && excludes.contains(tempFields[i].getSimpleName())) {
+                    continue;
+                }
                 if (tempFields[i].isPublic()) {
 
                     // skip field with same name as a property
