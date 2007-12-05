@@ -34,34 +34,45 @@ public interface ContextManager extends ParameterInclude {
      * This could be addition of new properties, modifications of existing properties or
      * removal of properties.
      *
-     * @param context
+     * @param context The AbstractContext containing the properties to be replicated
      * @return The UUID of the message that was sent to the group communications framework
-     * @throws ClusteringFault
+     * @throws ClusteringFault If replication fails
      */
     String updateContext(AbstractContext context) throws ClusteringFault;
+
+    /**
+     * This method is called when one need to update/replicate only certains properties in the
+     * specified <code>context</code>
+     *
+     * @param context       The AbstractContext containing the properties to be replicated
+     * @param propertyNames The names of the specific properties that should be replicated
+     * @return The UUID of the message that was sent to the group communications framework
+     * @throws ClusteringFault If replication fails
+     */
+    String updateContext(AbstractContext context, String[] propertyNames) throws ClusteringFault;
 
     /**
      * This method is called when properties in a collection of {@link AbstractContext}s are updated.
      * This could be addition of new properties, modifications of existing properties or
      * removal of properties.
      *
-     * @param contexts
+     * @param contexts The AbstractContexts containing the properties to be replicated
      * @return The UUID of the message that was sent to the group communications framework
-     * @throws ClusteringFault
+     * @throws ClusteringFault If replication fails
      */
     String updateContexts(AbstractContext[] contexts) throws ClusteringFault;
 
     /**
      * This method is called when a new {@link AbstractContext} is removed from the system
      *
-     * @param context
+     * @param context The AbstractContext to be removed
      * @return The UUID of the message that was sent to the group communications framework
-     * @throws ClusteringFault
+     * @throws ClusteringFault If context removal fails
      */
     String removeContext(AbstractContext context) throws ClusteringFault;
 
     /**
-     * @param context
+     * @param context AbstractContext
      * @return True - if the provided {@link AbstractContext}  is clusterable
      */
     boolean isContextClusterable(AbstractContext context);
@@ -69,20 +80,20 @@ public interface ContextManager extends ParameterInclude {
     /**
      * Indicates whether a particular message has been ACKed by all members of a cluster
      *
-     * @param messageUniqueId
+     * @param messageUniqueId The UUID of the message in concern
      * @return true - if all memebers have ACKed the message with ID <code>messageUniqueId</code>
      *         false - otherwise
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while checking whether a message is ACKed
      */
     boolean isMessageAcknowledged(String messageUniqueId) throws ClusteringFault;
 
     /**
-     * @param listener
+     * @param listener ContextManagerListener
      */
     void setContextManagerListener(ContextManagerListener listener);
 
     /**
-     * @param configurationContext
+     * @param configurationContext ConfigurationContext
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
@@ -92,7 +103,8 @@ public interface ContextManager extends ParameterInclude {
      * <p/>
      * Generally, we can use the context class name as the context type.
      *
-     * @param contextType
+     * @param contextType The type of the context such as ConfigurationContext,
+     *                    ServiceGroupContext & ServiceContext
      * @param patterns    The patterns
      */
     void setReplicationExcludePatterns(String contextType, List patterns);

@@ -32,5 +32,5 @@ public final class ClusteringConstants {
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
     public static final String TIME_TO_SEND = "local_cluster.time.to.send";
     public static final String BLOCK_ALL_REQUESTS = "local_wso2wsas.block.requests";
-    public static final String LOCAL_IP_ADDRESS = "local.ip.address";
+    public static final String LOCAL_IP_ADDRESS = "axis2.local.ip.address";
 }

@@ -134,7 +134,7 @@ public class TribesClusterManager implements ClusterManager {
         controlCmdProcessor.setChannelSender(sender);
         channel = new GroupChannel();
 
-        String localIP = System.getProperty("local.ip.address"); //TODO: Use ClusteringConstants.LOCAL_IP_ADDRESS
+        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS); 
         if (localIP != null) {
             ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
             receiver.setAddress(localIP);
@@ -291,13 +291,8 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     public boolean isParameterLocked(String parameterName) {
-
         Parameter parameter = (Parameter) parameters.get(parameterName);
-        if (parameter != null) {
-            return parameter.isLocked();
-        }
-
-        return false;
+        return parameter != null && parameter.isLocked();
     }
 
     public void removeParameter(Parameter param) throws AxisFault {

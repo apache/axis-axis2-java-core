@@ -65,6 +65,17 @@ public class DefaultContextManager implements ContextManager {
         return null;
     }
 
+    public String updateContext(AbstractContext context,
+                                String[] propertyNames) throws ClusteringFault {
+        ContextClusteringCommand cmd =
+                ContextClusteringCommandFactory.getUpdateCommand(context, propertyNames);
+        if (cmd != null) {
+            processor.process(cmd);
+            return cmd.getUniqueId();
+        }
+        return null;
+    }
+
     public String updateContexts(AbstractContext[] contexts) throws ClusteringFault {
         ContextClusteringCommandCollection cmd =
                 ContextClusteringCommandFactory.getCommandCollection(contexts,
