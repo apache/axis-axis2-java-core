@@ -106,9 +106,12 @@ public class BeanUtil {
                                             "elementName");
             }
 
-            AxisService axisService = MessageContext.getCurrentMessageContext().getAxisService();
+            AxisService axisService = null;
+            if (MessageContext.getCurrentMessageContext() !=null) {
+                axisService = MessageContext.getCurrentMessageContext().getAxisService();
+            }
             ArrayList excludes = null;
-            if (axisService.getBeanExludeMap() !=null) {
+            if (axisService !=null && axisService.getBeanExludeMap() !=null) {
                 excludes = (ArrayList) axisService.getBeanExludeMap().get(
                         jClass.getQualifiedName());
             }
@@ -117,6 +120,9 @@ public class BeanUtil {
             JProperty properties [] = jClass.getDeclaredProperties();
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
+                if (excludes != null && excludes.contains("*")) {
+                    continue;
+                }
                 //Excluding properties if it is suppose to be
                 if(excludes != null && excludes.contains(
                         getCorrectName(getCorrectName(property.getSimpleName())))) {
@@ -132,6 +138,9 @@ public class BeanUtil {
                     excludes = (ArrayList) map.get(supClass.getQualifiedName());
                     for (int i = 0; i < properties.length; i++) {
                         JProperty property = properties[i];
+                        if (excludes != null && excludes.contains("*")) {
+                            continue;
+                        }
                         //Excluding properties if it is suppose to be
                         if(excludes != null && excludes.contains(
                                 getCorrectName(getCorrectName(property.getSimpleName())))) {

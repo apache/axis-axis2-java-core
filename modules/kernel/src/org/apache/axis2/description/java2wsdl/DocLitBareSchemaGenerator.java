@@ -411,8 +411,12 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             }
             JProperty[] tempProperties = javaType.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
-                if(excludes != null && excludes.contains(
-                        getCorrectName(tempProperties[i].getSimpleName()))) {
+                JProperty tempProperty = tempProperties[i];
+                if (excludes !=null && excludes.contains("*")){
+                      continue;
+                }
+                if (excludes != null && excludes.contains(
+                        getCorrectName(tempProperty.getSimpleName()))) {
                     continue;
                 }
                 propertiesSet.add(tempProperties[i]);
@@ -440,10 +444,19 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             for (int i = 0; i < tempFields.length; i++) {
                 // create a element for the field only if it is public
                 // and there is no property with the same name
-                if (excludes != null && excludes.contains(tempFields[i].getSimpleName())) {
-                    continue;
-                }
                 if (tempFields[i].isPublic()) {
+
+                    if (tempFields[i].isStatic()) {
+//                        We do not need to expose static fields
+                        continue;
+                    }
+                    if (excludes != null && excludes.contains("*")) {
+                        continue;
+                    }
+                    if (excludes != null &&
+                            excludes.contains(tempFields[i].getSimpleName())) {
+                        continue;
+                    }
 
                     // skip field with same name as a property
                     if (!propertiesNames.contains(tempFields[i].getSimpleName())) {

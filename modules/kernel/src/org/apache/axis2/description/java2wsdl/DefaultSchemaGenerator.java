@@ -508,8 +508,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         javaType.getQualifiedName());
             }
             for (int i = 0; i < tempProperties.length; i++) {
-                if(excludes != null && excludes.contains(
-                        getCorrectName(tempProperties[i].getSimpleName()))) {
+                JProperty tempProperty = tempProperties[i];
+                if (excludes !=null && excludes.contains("*")){
+                      continue;
+                }
+                if (excludes != null && excludes.contains(
+                        getCorrectName(tempProperty.getSimpleName()))) {
                     continue;
                 }
                 propertiesSet.add(tempProperties[i]);
@@ -537,9 +541,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             for (int i = 0; i < tempFields.length; i++) {
                 // create a element for the field only if it is public
                 // and there is no property with the same name
-
                 if (tempFields[i].isPublic()) {
-                    if (excludes !=null && excludes.contains(tempFields[i].getSimpleName())) {
+                    if (tempFields[i].isStatic()){
+//                        We do not need to expose static fields
+                        continue;
+                    }
+                    if (excludes != null && excludes.contains("*")) {
+                        continue;
+                    }
+                    if (excludes !=null &&
+                            excludes.contains(tempFields[i].getSimpleName())) {
                         continue;
                     }
                     // skip field with same name as a property
@@ -705,8 +716,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if ("javax.activation.DataHandler".equals(classType)) {
             return true;
         } else {
-            JClass superClass = clazz.getSuperclass();
-            return superClass != null && isDataHandler(superClass);
+            JClass supuerClass = clazz.getSuperclass();
+            if (supuerClass != null) {
+                return isDataHandler(supuerClass);
+            } else {
+                return false;
+            }
         }
     }
 
