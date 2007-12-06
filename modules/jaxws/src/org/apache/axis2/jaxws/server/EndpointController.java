@@ -196,12 +196,13 @@ public class EndpointController {
             eic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
         }
 
-        if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
-            Protocol protocol = request.getMessage().getProtocol();
-            MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
-            eic.setResponseMessageContext(faultContext);
-            return false;
-        }
+        //Not needed since this is already handled when eic reaches this level
+        //if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
+        //    Protocol protocol = request.getMessage().getProtocol();
+        //    MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
+        //    eic.setResponseMessageContext(faultContext);
+        //    return false;
+        //}
 
         MessageContext responseMsgContext = null;
 
