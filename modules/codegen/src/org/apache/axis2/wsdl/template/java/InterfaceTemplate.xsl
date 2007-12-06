@@ -55,8 +55,9 @@
          <xsl:variable name="outputtype"><xsl:value-of select="output/param[@location='body']/@type"></xsl:value-of></xsl:variable>
          <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param[@location='body']/@complextype"></xsl:value-of></xsl:variable>
          <xsl:variable name="outputparamcount"><xsl:value-of select="count(output/param[@location='body']/param)"></xsl:value-of></xsl:variable>
+         <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
 
-        <!-- start of the sync block -->                                          
+        <!-- start of the sync block -->
          <xsl:if test="$isSync='1'">
 
         /**
@@ -105,6 +106,7 @@
                     <xsl:when test="$outputparamcount=1"><xsl:value-of select="output/param[@location='body']/param/@type"/></xsl:when>
                     <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of
                             select="$outputcomplextype"/></xsl:when>
+                    <xsl:when test="($outputparamcount=0) and ($isUnwrapParameters)">void</xsl:when>
                     <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise>
                     </xsl:choose>
                         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
@@ -114,7 +116,6 @@
                             <xsl:when test="$inputcount=1">
                                 <!-- Even when the parameters are 1 we have to see whether we have the
                               wrapped parameters -->
-                                <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
                                 <xsl:choose>
                                     <xsl:when test="$isUnwrapParameters">
                                        <xsl:for-each select="input/param[@location='body' and @type!='']/param">

@@ -69,6 +69,7 @@
             <xsl:variable name="outParamComplexType" select="output/param[@location='body']/@complextype"></xsl:variable>
             <xsl:variable name="outParamCount" select="count(output/param[@location='body']/param)"></xsl:variable>
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
+            <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
             <xsl:choose>
                 <!-- Code generation for in-out only. Need to consider the other meps also
                     They should be parts of this xsl:choose loop -->
@@ -84,6 +85,8 @@
                         </xsl:when>
                         <xsl:when test="string-length(normalize-space($outParamComplexType)) > 0">
                             <xsl:value-of select="$outParamComplexType"/><xsl:text> </xsl:text>result
+                        </xsl:when>
+                        <xsl:when test="($outParamCount=0) and ($isUnwrapParameters)">
                         </xsl:when>
                         <xsl:when test="string-length(normalize-space($outParamType)) > 0">
                             <xsl:value-of select="$outParamType"/><xsl:text> </xsl:text>result
