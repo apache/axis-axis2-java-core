@@ -361,20 +361,24 @@
 
             <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1]) or
                     generate-id($outputElement) = generate-id(key('outOperationName', $opname)[1])">
-                <xsl:if test="string-length(normalize-space($outputElementComplexType)) > 0">
-                    <!-- in server side we do not want to unwrap the output type -->
-                    <!--
-                    private <xsl:value-of select="$outputElementComplexType"/> get<xsl:value-of select="$opname"/>(
-                    <xsl:value-of select="$outputElementType"/> wrappedType){
-                        return wrappedType.get<xsl:value-of select="$outputElementShortType"/>();
-                    } -->
-                    private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$opname"/>(
-                    <xsl:value-of select="$outputElementComplexType"/> innerType){
-                        <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();
-                        wrappedElement.set<xsl:value-of select="$outputElementShortType"/>(innerType);
-                        return wrappedElement;
-                    }
-                </xsl:if>
+
+                <xsl:choose>
+                    <xsl:when test="string-length(normalize-space($outputElementComplexType)) > 0" >
+                         private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$opname"/>(
+                            <xsl:value-of select="$outputElementComplexType"/> innerType){
+                                <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();
+                                wrappedElement.set<xsl:value-of select="$outputElementShortType"/>(innerType);
+                                return wrappedElement;
+                         }
+                    </xsl:when>
+                    <xsl:otherwise>
+                         private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$opname"/>(){
+                                <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();
+                                return wrappedElement;
+                         }
+                    </xsl:otherwise>
+                </xsl:choose>
+
             </xsl:if>
             </xsl:if>
       </xsl:if>
