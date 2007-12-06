@@ -269,8 +269,9 @@ public class POJODeployer implements Deployer {
                                   configCtx.getAxisConfiguration(),
                                   new ArrayList(),
                                   new ArrayList());
-            setMessageReceivers(axisService);
-
+            //Not needed at this case, the message receivers always set to RPC if this executes
+            //setMessageReceivers(axisService);
+            
         } catch (Exception e) {
             // Seems like the jax-ws jars missin in the class path .
             // lets tryu annogen
