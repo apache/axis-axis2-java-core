@@ -131,7 +131,7 @@ public class BeanUtil {
                 propertyList.add(property);
             }
             JClass supClass = jClass.getSuperclass();
-            while (!"java.lang.Object".equals(supClass.getQualifiedName())) {
+            while (!supClass.getQualifiedName().startsWith("java.")) {
                 properties = supClass.getDeclaredProperties();
                 Map map = axisService.getBeanExludeMap();
                 if (map != null) {
