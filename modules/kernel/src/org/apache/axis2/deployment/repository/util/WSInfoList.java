@@ -64,7 +64,7 @@ public class WSInfoList implements DeploymentConstants {
      * @param file actual jar files for either Module or service
      */
     public synchronized void addWSInfoItem(File file, Deployer deployer , int type) {
-        WSInfo info = (WSInfo) currentJars.get(file.getAbsolutePath());
+        WSInfo info = (WSInfo) currentJars.get(file.getName());
         if (info != null) {
             if (deploymentEngine.isHotUpdate() && isModified(file, info)) {
 //            info.setLastModifiedDate(file.lastModified());
@@ -151,7 +151,7 @@ public class WSInfoList implements DeploymentConstants {
         WSInfo info = (WSInfo) currentJars.get(fileName);
         if(info==null){
             info = new WSInfo(file.getName(), file.lastModified(), deployer ,type);
-            currentJars.put(file.getName(),info);
+            currentJars.put(file.getName(), info);
             DeploymentFileData fileData = new DeploymentFileData(file, deployer);
             deploymentEngine.addWSToDeploy(fileData);
         }
