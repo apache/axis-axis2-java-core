@@ -634,13 +634,6 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
 
-            QName schemaQName = metainf.getSchemaQNameForQName(name);
-            if(!schemaQName.getNamespaceURI().equals(name.getNamespaceURI())){
-                XSLTUtils.addAttribute(model, "child-nsuri", schemaQName.getNamespaceURI(), property);
-                XSLTUtils.addAttribute(model, "child-nsprefix", getPrefixForURI(schemaQName.getNamespaceURI(), null), property);
-
-            }
-
             if (metainf.getAnyStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "any", "yes", property);
             }

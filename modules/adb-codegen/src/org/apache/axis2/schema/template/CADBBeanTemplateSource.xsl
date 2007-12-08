@@ -425,12 +425,10 @@
           </xsl:if>
 
           <!-- these two are requried -->
-          <xsl:for-each select="property">
-            <xsl:if test="position()=1"> <!-- check for at least one element exists -->
+          <xsl:if test="count(property)!=0"> <!-- check for at least one element exists -->
              axis2_char_t* text_value = NULL;
              axutil_qname_t *qname = NULL;
-            </xsl:if>
-          </xsl:for-each>
+          </xsl:if>
 
           <!-- qname specifc values -->
             <xsl:if test="property/@type='axutil_qname_t*'">
@@ -439,7 +437,7 @@
               axiom_namespace_t *qname_ns;
             </xsl:if>
           <xsl:choose>
-            <xsl:when test="@simple">
+            <xsl:when test="@simple and count(property)!=0">
             axiom_element_t *text_element = NULL;
             axiom_node_t *text_node = NULL;
             
@@ -519,7 +517,7 @@
 
                     current_element = (axiom_element_t *)axiom_node_get_data_element(parent, env);
                     qname = axiom_element_get_qname(current_element, env, parent);
-                    if (axutil_qname_equals(qname, env, <xsl:value-of select="$name"/>-> qname))
+                    if (axutil_qname_equals(qname, env, <xsl:value-of select="$name"/>-> qname)<xsl:if test="not($nsuri) or $nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$originalName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                     {
                         <xsl:choose>
                           <xsl:when test="$anon">
@@ -904,7 +902,7 @@
                                   element_qname = axutil_qname_create(env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
                                   </xsl:otherwise>
                                 </xsl:choose>
-                                  if (axutil_qname_equals(element_qname, env, qname))
+                                  if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                                   {
                                        /* found the requried element */
                                        break;
@@ -914,7 +912,7 @@
                            </xsl:choose>
 
                            if (<xsl:if test="@ours">adb_<xsl:value-of select="@type"/>_is_particle() || </xsl:if> <!-- is particle test should be done here -->
-                                (current_node &amp;&amp; current_element &amp;&amp; axutil_qname_equals(element_qname, env, qname)))
+                                (current_node &amp;&amp; current_element &amp;&amp; (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)))
                            {
                               is_early_node_valid = AXIS2_TRUE;
                               <!-- changes to following choose tag should be changed in another 2 places -->
@@ -1266,7 +1264,7 @@
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
-                                  if (axutil_qname_equals(element_qname, env, qname))
+                                  if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                                   {
                                       is_early_node_valid = AXIS2_TRUE;
                                       if (sequence_broken)
@@ -1619,7 +1617,7 @@
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
-                                  if (axutil_qname_equals(element_qname, env, qname)
+                                  if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                                   {
                                        /* found the requried element */
                                        element_found = 1;
@@ -2263,10 +2261,8 @@
                unsigned int end_input_str_len = 0;
             </xsl:if>
             <!-- Following is in special situatioin where no properties exist -->
-            <xsl:if test="(property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)) or count(property)=0"> 
                axiom_data_source_t *data_source = NULL;
                axutil_stream_t *stream = NULL;
-            </xsl:if>
 
             <xsl:if test="not(@type)"> <!-- So this is the root of the serialization call tree -->
                 int next_ns_index_value = 0;
@@ -2302,7 +2298,6 @@
             </xsl:otherwise> <!--otherwise for @simple -->
             </xsl:choose>
 
-            <xsl:if test="@simple or (property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)) or count(property)=0">
                 <xsl:if test="@type">
                     current_node = parent;
                     data_source = (axiom_data_source_t *)axiom_node_get_data_element(current_node, env);
@@ -2318,7 +2313,6 @@
                     stream = axiom_data_source_get_stream(data_source, env);
                   </xsl:if>
                 </xsl:if>
-            </xsl:if>
 
 
             
