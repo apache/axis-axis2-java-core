@@ -797,7 +797,7 @@
                                writeQName((javax.xml.namespace.QName)localObject,xmlWriter);
                            </xsl:when>
                            <xsl:otherwise>
-                               xmlWriter.writeCharacters(localObject.toString());
+                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString((<xsl:value-of select="@type"/>)localObject));
                            </xsl:otherwise>
                        </xsl:choose>
                   </xsl:for-each>

@@ -15,10 +15,7 @@
  */
 package org.apache.axis2.schema.union2;
 
-import org.tempuri.union2.TestUnionElement2;
-import org.tempuri.union2.TestUnion1;
-import org.tempuri.union2.TestListElement1;
-import org.tempuri.union2.TestList1;
+import org.tempuri.union2.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
@@ -30,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 
 
 public class Union2Test extends TestCase {
@@ -101,6 +99,30 @@ public class Union2Test extends TestCase {
             fail();
         }
 
+    }
 
+    public void testFuzzDateType(){
+        TestFuzzyDateType testFuzzyDateType = new TestFuzzyDateType();
+
+        FuzzyDateType fuzzyDateType = new FuzzyDateType();
+        fuzzyDateType.setObject(new Date());
+
+        testFuzzyDateType.setTestFuzzyDateType(fuzzyDateType);
+
+        try {
+            OMElement omElement = testFuzzyDateType.getOMElement(
+                    TestFuzzyDateType.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader =
+                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestFuzzyDateType result = TestFuzzyDateType.Factory.parse(xmlReader);
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

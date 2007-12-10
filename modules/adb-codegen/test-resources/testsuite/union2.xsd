@@ -31,4 +31,9 @@
             <s:attribute name="attribute1" type="tns:TestList1"/>
         </s:complexType>
     </s:element>
+    <s:element name="TestFuzzyDateType" type="tns:fuzzyDateType"/>
+    <s:simpleType name="fuzzyDateType">
+        <s:union memberTypes="s:date s:dateTime s:gYear s:gYearMonth">
+        </s:union>
+    </s:simpleType>
 </s:schema>
