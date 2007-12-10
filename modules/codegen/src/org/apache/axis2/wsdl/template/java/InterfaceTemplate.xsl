@@ -156,8 +156,9 @@
           */
         public void start<xsl:value-of select="@name"/>(
 
-             <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
-         <xsl:choose>
+            <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+            <xsl:choose>
                     <xsl:when test="$inputcount=1">
                         <!-- Even when the parameters are 1 we have to see whether we have the
                       wrapped parameters -->
@@ -175,7 +176,7 @@
                     </xsl:when>
                     <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
                 </xsl:choose>
-                <xsl:if test="$inputcount=1">,</xsl:if>
+                <xsl:if test="($inputcount=1) and not($isUnwrapParameters and $inputWrappedCount=0)">,</xsl:if>
                 <xsl:for-each select="input/param[not(@location='body') and @type!='']">
                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>,
                 </xsl:for-each>
