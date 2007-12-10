@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.message.databinding.impl;
+package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;

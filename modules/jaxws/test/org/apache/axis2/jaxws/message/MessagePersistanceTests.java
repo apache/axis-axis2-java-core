@@ -24,6 +24,7 @@ import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants.Configuration;
+import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
@@ -291,7 +292,7 @@ public class MessagePersistanceTests extends TestCase {
         omse = (OMSourcedElement) child;
         assertTrue(!omse.isExpanded());
         ds = omse.getDataSource();
-        assertTrue(ds instanceof ByteArrayDataSource);
+        assertTrue(ds instanceof JAXBDataSource);
         
         // Simulate transport
         baos = new ByteArrayOutputStream();
@@ -547,7 +548,7 @@ public class MessagePersistanceTests extends TestCase {
         omse = (OMSourcedElement) child;
         assertTrue(!omse.isExpanded());
         ds = omse.getDataSource();
-        assertTrue(ds instanceof ByteArrayDataSource);
+        assertTrue(ds instanceof JAXBDataSource);
         
         // Simulate transport on the copied message
         baos = new ByteArrayOutputStream();
@@ -562,9 +563,9 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(restoredText.contains("Body"));
         assertTrue(restoredText.indexOf("MIMEBoundary_Axis2Rocks") > 0);
         
-        // TODO Currently the attachments are inlined when the JAXBBlock is copied.  
-        //assertTrue(restoredText.indexOf(sampleText) > 0);
-        //assertTrue(restoredText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);
+        // Make sure that attachment is not inlined
+        assertTrue(restoredText.indexOf(sampleText) > 0);
+        assertTrue(restoredText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);
         
     }
     
