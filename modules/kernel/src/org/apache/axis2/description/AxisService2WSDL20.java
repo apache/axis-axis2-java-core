@@ -239,8 +239,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 
                 // If SOAP 1.2 binding is disabled, do not add.
                 String propertySOAPVersion = (String)axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
-                if (propertySOAPVersion != null) {
-                    if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                    if (disableSOAP12) {
                         continue;
                     }
                 }
