@@ -92,6 +92,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
@@ -268,13 +269,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         return property;
     }
-    
+
     private Policy getBindingPolicyFromMessage(AxisBindingOperation axisBindingOperation,
                                                String key) {
         AxisBindingMessage axisBindingMessage = null;
-        
+
         if (axisBindingOperation != null) {
-        
+
             axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
             if (axisBindingMessage != null) {
                 try {
@@ -1775,7 +1776,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
              operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
             elt = doc.createElement("name");
-            elt.appendChild(doc.createTextNode(axisOperation.getName().getLocalPart()));
+            String localPart = axisOperation.getName().getLocalPart();
+            elt.appendChild(doc.createTextNode(JavaUtils.xmlNameToJava(localPart)));
 
             //what needs to be put here as the opertation namespace is actually the
             //traget namespace of the service
@@ -2171,7 +2173,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "comment", comment, methodElement);
 
         String messageExchangePattern = axisOperation.getMessageExchangePattern();
-        
+
         //Jaxws Specific
         if("jax-ws".equals(codeGenConfiguration.getOutputLanguage())){
             boolean wrapped = false;
@@ -2184,7 +2186,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "parameterstyle", (wrapped)?"WRAPPPED":"BARE", methodElement);
         }
 
-        
+
         addAttribute(doc, "dbsupportname",
                 endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
@@ -2193,7 +2195,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "mepURI", messageExchangePattern, methodElement);
         Parameter wsdl2StyleParameter = axisOperation.getParameter(WSDL2Constants.OPERATION_STYLE);
         if (wsdl2StyleParameter != null) {
-        	// provide WSDL2 styles to allow templates to take advantage of them, if desired 
+            // provide WSDL2 styles to allow templates to take advantage of them, if desired
             addAttribute(doc, "wsdl2Styles", arrayToString((URI[])wsdl2StyleParameter.getValue()), methodElement);
         }
 
@@ -2214,7 +2216,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, bindingOperation, true);
 //        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-        
+
 
         if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
             if("jax-ws".equals(codeGenConfiguration.getOutputLanguage())){
@@ -2369,19 +2371,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * or a comma-separated list when size > 1.
      */
     private String arrayToString(Object[] array) {
-    	if (array == null || array.length == 0) {
-    		return "";
-    	}
-    	int size = array.length;
-    	if (size == 1) {
-    		return String.valueOf(array[0]);
-    	}
-    	StringBuffer result = new StringBuffer(String.valueOf(array[0]));
-    	for (int i=1; i<size; i++) {
-    		result.append(",");
-    		result.append(String.valueOf(array[i]));
-    	}
-    	return result.toString();
+        if (array == null || array.length == 0) {
+            return "";
+        }
+        int size = array.length;
+        if (size == 1) {
+            return String.valueOf(array[0]);
+        }
+        StringBuffer result = new StringBuffer(String.valueOf(array[0]));
+        for (int i=1; i<size; i++) {
+            result.append(",");
+            result.append(String.valueOf(array[i]));
+        }
+        return result.toString();
     }
 
     /**
@@ -2687,10 +2689,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             for (int i = 0; i < parameterElementList.size(); i++) {
                 inputElt.appendChild((Element) parameterElementList.get(i));
             }
-            
+
             /*
-             * Setting the effective policy of input message
-             */
+            * Setting the effective policy of input message
+            */
             Policy policy = getBindingPolicyFromMessage(bindingOperation,
                     WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
@@ -2703,7 +2705,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     throw new RuntimeException("can't serialize the policy ..");
                 }
             }
-            
+
         }
         return inputElt;
     }
@@ -2760,10 +2762,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             for (int i = 0; i < outputElementList.size(); i++) {
                 outputElt.appendChild((Element) outputElementList.get(i));
             }
-            
+
             /*
-             * Setting the effective policy for the output message.
-             */
+            * Setting the effective policy for the output message.
+            */
             Policy policy = getBindingPolicyFromMessage(bindingOperation,
                     WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
 
@@ -3021,7 +3023,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (codeGenConfiguration.getOutputLanguage().equals("jax-ws") && useHolderClass_jaxws) {
             Class primitive = JavaUtils.getWrapperClass(paramType);
             if(primitive != null){
-                paramType = primitive.getName();    
+                paramType = primitive.getName();
             }
         }
 
@@ -3042,7 +3044,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //if the opName and partName are present , add them
         if (opName != null) {
-            addAttribute(doc, "opname", opName.getLocalPart(), paramElement);
+            String localPart = opName.getLocalPart();
+            addAttribute(doc, "opname", JavaUtils.xmlNameToJava(localPart), paramElement);
         }
 
         if (paramQName != null) {
@@ -3060,7 +3063,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (codeGenConfiguration.getOutputLanguage().equals("jax-ws")) {
                     javaName = JavaUtils.xmlNameToJavaIdentifier(JavaUtils.xmlNameToJava(partName));
                 } else {
-                    javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));   
+                    javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));
                 }
             }
             addAttribute(doc, "partname", javaName, paramElement);
@@ -3114,7 +3117,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // add this as a body parameter
         addAttribute(doc, "location", "body", paramElement);
-        addAttribute(doc, "opname", operation.getName().getLocalPart(), paramElement);
+        String localPart = operation.getName().getLocalPart();
+        addAttribute(doc, "opname", JavaUtils.xmlNameToJava(localPart), paramElement);
 
         //if the unwrapping or backWordCompatibility flag is on then we have to
         //put the element complex type if it exits
@@ -3131,7 +3135,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (JavaUtils.isJavaKeyword(partName)) {
                 javaName = JavaUtils.makeNonJavaKeyword(partName);
             } else {
-                javaName = JavaUtils.xmlNameToJavaIdentifier(JavaUtils.xmlNameToJava(partName));   
+                javaName = JavaUtils.xmlNameToJavaIdentifier(JavaUtils.xmlNameToJava(partName));
             }
             addAttribute(doc, "partname", javaName, paramElement);
         }
