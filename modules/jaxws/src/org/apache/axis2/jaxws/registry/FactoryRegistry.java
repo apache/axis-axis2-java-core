@@ -45,16 +45,36 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycl
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
-/** FactoryRegistry Registry containing Factories related to the JAX-WS Implementation */
+/** 
+ * FactoryRegistry Registry containing Factories related to the JAX-WS Implementation.
+ * The expected scenario is:
+ *   1) Most or all of the factories are registered during startup.
+ *   2) There are a large number of getFactory calls
+ *   3) There may be an infrequent call to setFactory.
+ *   
+ * Thus a "copy on put" approach is used.  This ensures that the "gets" are 
+ * fast (because they are unsynchronized).  The "puts" are slower because they
+ * create a new copy of the HashMap.
+ * See http://www.ibm.com/developerworks/java/library/j-hashmap.html
+ **/
 public class FactoryRegistry {
 
-    private final static Map<Class, Object> table;
-
+    private static volatile Map<Class, Object> table;
+    private static Object lockbox = new Object();
+    
     static {
-        table = new Hashtable<Class, Object>();
+        init();
+    }
+    
+    private static final void init() {
+        
+        // An unsynchronized Map is used to ensure that gets are fast.
+        table = new HashMap<Class, Object>();
+        
+        // Load Factories
         table.put(XMLStringBlockFactory.class, new XMLStringBlockFactoryImpl());
         table.put(EndpointDispatcherFactory.class, new EndpointDispatcherFactoryImpl());
         table.put(JAXBBlockFactory.class, new JAXBBlockFactoryImpl());
@@ -76,21 +96,26 @@ public class FactoryRegistry {
     }
 
     /**
-     * getFactory
-     *
+     * Get the factory.  This may be called frequently.
      * @param intface of the Factory
      * @return Object that is the factory implementation for the intface
      */
     public static Object getFactory(Class intface) {
-        return table.get(intface);
+        Map m = table;
+        return m.get(intface);
     }
 
     /**
-     * setFactory
+     * Add the factory.  This should be called infrequently.
      * @param intface
      * @param factoryObject
      */
     public static void setFactory(Class intface, Object factoryObject) {
-        table.put(intface, factoryObject);
+        synchronized(lockbox) {
+            // Use copy and put approach to ensure that "get" speed is fast.
+            Map<Class, Object> newMap = new HashMap<Class, Object>(table);
+            newMap.put(intface, factoryObject);
+            table = newMap;
+        }
     }
 }
