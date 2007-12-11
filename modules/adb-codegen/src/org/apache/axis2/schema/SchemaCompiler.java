@@ -645,24 +645,25 @@ public class SchemaCompiler {
             }
 
             // here what we want is to set the schema type name for the element
-            if (referencedElement.getSchemaType() != null) {
-                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())){
-                    if ((referencedElement.getSchemaTypeName() != null)
-                            && this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())){
-                       // this element refers to an defined xml schema type
-                       this.processedElementRefMap.put(referencedElement.getQName(),
+            if (referencedElement.getSchemaTypeName() != null){
+                // i.e this element refers to an complex type name
+                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
+                    if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
+                        this.processedElementRefMap.put(referencedElement.getQName(),
                                 this.baseSchemaTypeMap.get(referencedElement.getSchemaTypeName()));
                     } else {
-                        processSchema(referencedElement, referencedElement.getSchemaType(), resolvedSchema, true);
-                        // if this is an anonomous complex type we have to set this
+                        XmlSchema resolvedTypeSchema = getParentSchema(resolvedSchema,
+                                referencedElement.getSchemaTypeName(),
+                                COMPONENT_TYPE);
+                        XmlSchemaType xmlSchemaType = resolvedTypeSchema.getTypeByName(
+                                referencedElement.getSchemaTypeName().getLocalPart());
+                        processSchema(referencedElement, xmlSchemaType, resolvedTypeSchema, true);
                         this.processedElementRefMap.put(referencedElement.getQName(),
                                 this.processedTypemap.get(referencedElement.getSchemaTypeName()));
                     }
-
                 }
                 String javaClassName;
-                if ((referencedElement.getSchemaTypeName() != null)
-                        && this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
+                if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
                     // here we have to do nothing since we do not generate a name
                 } else {
                     javaClassName = (String) this.processedTypemap.get(referencedElement.getSchemaTypeName());
@@ -671,8 +672,21 @@ public class SchemaCompiler {
                     xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                             javaClassName);
                 }
+            } else if (referencedElement.getSchemaType() != null) {
+                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
 
+                    processSchema(referencedElement, referencedElement.getSchemaType(), resolvedSchema, true);
+                    // if this is an anonomous complex type we have to set this
+                    this.processedElementRefMap.put(referencedElement.getQName(),
+                            this.processedTypemap.get(referencedElement.getSchemaTypeName()));
 
+                }
+                
+                String javaClassName = (String) this.processedTypemap.get(referencedElement.getSchemaTypeName());
+                referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                        javaClassName);
+                xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                        javaClassName);
             }
 
             // schema type name is present but not the schema type object
@@ -2652,11 +2666,11 @@ public class SchemaCompiler {
         boolean isExists = false;
         switch (componetType) {
             case COMPONENT_TYPE : {
-                isExists = (schema.getTypeByName(componentQName) != null);
+                isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ELEMENT : {
-                isExists = (schema.getElementByName(componentQName) != null);
+                isExists = (schema.getElementByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ATTRIBUTE : {

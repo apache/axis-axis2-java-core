@@ -36,4 +36,14 @@
         <s:union memberTypes="s:date s:dateTime s:gYear s:gYearMonth">
         </s:union>
     </s:simpleType>
+
+    <s:element name="TestElement">
+        <s:complexType>
+            <s:sequence>
+               <s:element name="creationDate" type="s:string"/>
+               <s:element name="CreationDate" type="s:string"/> 
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+
 </s:schema>
