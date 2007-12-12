@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.util;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 import org.apache.axis2.metadata.resource.ResourceFinder;
@@ -84,44 +85,9 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     }
                 });
         this.wsdlURL = wsdlURL;
+       
         try {
-            URL url = wsdlURL;
-            String filePath = null;
-            boolean isFileProtocol =
-                    (url != null && "file".equals(url.getProtocol())) ? true : false;
-            if (isFileProtocol) {
-                filePath = (url != null) ? url.getPath() : null;
-                //Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
-                boolean isRelativePath =
-                        (filePath != null && !new File(filePath).isAbsolute()) ? true : false;
-                if (isRelativePath) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("WSDL URL has a relative path");
-                    }
-                    //Lets read the complete WSDL URL for relative path from class loader
-                    //Use relative path of url to fetch complete URL.
-                    url = getAbsoluteURL(classLoader, filePath);
-                    if (url == null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("WSDL URL for relative path not found in ClassLoader");
-                            log.warn(
-                                    "Unable to read WSDL from relative path, check the relative path");
-                            log.info("Relative path example: file:/WEB-INF/wsdl/<wsdlfilename>");
-                            log.warn(
-                                    "Using relative path as default wsdl URL to create wsdl Definition.");
-                        }
-                        url = wsdlURL;
-                    }
-                    else {
-                        if(log.isDebugEnabled()) {
-                            log.debug("WSDL URL found for relative path: " + filePath + " scheme: " +
-                                    url.getProtocol());
-                        }
-                    }
-                }
-            }
-
-            URLConnection urlCon = url.openConnection();
+            URLConnection urlCon = getURLConnection(this.wsdlURL);
             InputStream is = null;
             try {
                 is = getInputStream(urlCon);
@@ -131,8 +97,9 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     log.debug("Could not open url connection. Trying to use " +
                     "classloader to get another URL.");
                 }
+                String filePath = wsdlURL != null ? wsdlURL.getPath() : null;
                 if(filePath != null) {
-                    url = getAbsoluteURL(classLoader, filePath);
+                    URL url = getAbsoluteURL(classLoader, filePath);
                     if(url == null) {
                         if(log.isDebugEnabled()) {
                             log.debug("Could not locate URL for wsdl. Reporting error");
@@ -170,6 +137,63 @@ public class WSDL4JWrapper implements WSDLWrapper {
         } catch (Exception ex) {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
         }
+    }
+    
+    /**
+     * This is a helper method to retrieve a URLConnection object
+     * based on a URL for the WSDL document.
+     */
+    private URLConnection getURLConnection(URL url) throws IOException {
+        String filePath = null;
+        boolean isFileProtocol =
+                (url != null && "file".equals(url.getProtocol())) ? true : false;
+        if (isFileProtocol) {
+            filePath = (url != null) ? url.getPath() : null;
+            //Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
+            boolean isRelativePath =
+                    (filePath != null && !new File(filePath).isAbsolute()) ? true : false;
+            if (isRelativePath) {
+                if (log.isDebugEnabled()) {
+                    log.debug("WSDL URL has a relative path");
+                }
+                //Lets read the complete WSDL URL for relative path from class loader
+                //Use relative path of url to fetch complete URL.
+                url = getAbsoluteURL(getThreadClassLoader(), filePath);
+                if (url == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("WSDL URL for relative path not found in ClassLoader");
+                        log.warn(
+                                "Unable to read WSDL from relative path, check the relative path");
+                        log.info("Relative path example: file:/WEB-INF/wsdl/<wsdlfilename>");
+                        log.warn(
+                                "Using relative path as default wsdl URL to create wsdl Definition.");
+                    }
+                    url = wsdlURL;
+                }
+                else {
+                    if(log.isDebugEnabled()) {
+                        log.debug("WSDL URL found for relative path: " + filePath + " scheme: " +
+                                url.getProtocol());
+                    }
+                }
+            }
+        }
+        URLConnection connection = null;
+        if(url != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Retrieving URLConnection from WSDL URL");
+            }
+            connection = url.openConnection();
+        }
+        return connection;
+    }
+    
+    private ClassLoader getThreadClassLoader() {
+        return (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
 
     private URL getAbsoluteURL(ClassLoader classLoader, String filePath){
@@ -255,6 +279,14 @@ public class WSDL4JWrapper implements WSDLWrapper {
         } catch (PrivilegedActionException e) {
             throw (WSDLException)e.getException();
         }
+        WSDLReaderConfigurator configurator = (WSDLReaderConfigurator) MetadataFactoryRegistry.
+        	getFactory(WSDLReaderConfigurator.class);
+        if(configurator != null) {
+        	if(log.isDebugEnabled()) {
+        		log.debug("Calling configureReaderInstance with: " + configurator.getClass().getName());
+        	}
+        	configurator.configureReaderInstance(reader);
+        }
         return reader;
     }
 
@@ -327,17 +359,57 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
         if (wsdlExplicitURL != null) {
             try {
-                def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                    public Object run() throws WSDLException {
-                        WSDLReader reader = getWSDLReader();
-                        return reader.readWSDL(wsdlExplicitURL);
+                URLConnection urlConn = getURLConnection(wsdlURL);
+                if(urlConn != null) {
+                    try {
+                        InputStream is = getInputStream(urlConn);
+                        if(is != null) {
+                            final ModuleWSDLLocator locator = new ModuleWSDLLocator(wsdlExplicitURL, is, 
+                                    getThreadClassLoader());
+                            if(log.isDebugEnabled()) {
+                                log.debug("Loading WSDL using ModuleWSDLLocator from base " +
+                                		"location: " + wsdlExplicitURL);
+                            }
+                            def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                                public Object run() throws WSDLException {
+                                    WSDLReader reader = getWSDLReader();
+                                    return reader.readWSDL(locator);
+                                }
+                            });
+                        }
                     }
-                });
+                    catch(Exception e) {
+                        if(log.isDebugEnabled()) {
+                            log.debug("Using ModuleWSDLLocator was not successful for loading " +
+                            		"WSDL due to the following error: " + e.toString() + ". The " +
+                            		"WSDL will be read from the WSDL location: " + wsdlExplicitURL);
+                        }
+                    }
+                }
+                if(def == null) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Loading WSDL from location: " + wsdlExplicitURL);
+                    }
+                    def = (Definition) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                        public Object run() throws WSDLException {
+                            WSDLReader reader = getWSDLReader();
+                            return reader.readWSDL(wsdlExplicitURL);
+                        }
+                    });
+                }
+                
             } catch (PrivilegedActionException e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Exception thrown from AccessController: " + e);
                 }
                 throw ExceptionFactory.makeWebServiceException(e.getException());
+            }
+            catch(IOException ioe) {
+                if(log.isDebugEnabled()) {
+                    log.debug("An error occurred while attempting to load the WSDL " +
+                    		"file at the following location: " + wsdlExplicitURL);
+                }
+                throw ExceptionFactory.makeWebServiceException(ioe);
             }
         }
 

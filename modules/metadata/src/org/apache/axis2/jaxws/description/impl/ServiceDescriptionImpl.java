@@ -492,6 +492,15 @@ class ServiceDescriptionImpl
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
                     }
+                } else {
+                	String wsdlLocation = null;
+                	wsdlLocation = composite.getWebServiceAnnot() != null ? composite.getWebServiceAnnot().wsdlLocation() :
+                		composite.getWebServiceProviderAnnot().wsdlLocation();
+                	if(wsdlLocation != null
+                			&&
+                			!"".equals(wsdlLocation)) {
+                		setWSDLDefinitionOnDBC(wsdlLocation);
+                	}
                 }
 
             } else if (composite.getWebServiceAnnot() != null) {
@@ -515,6 +524,27 @@ class ServiceDescriptionImpl
                         this.wsdlURL = composite.getWsdlURL();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
                                                              composite.getWsdlDefinition());
+                    } else {
+                    	String wsdlLocation = null;
+                    	// first check to see if the wsdlLocation is on the SEI
+                    	if(seic != null
+                    			&&
+                    			seic.getWebServiceAnnot() != null) {
+                    		wsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
+                    	}
+                    	
+                    	// now check the impl
+                    	if(wsdlLocation == null
+                    	        ||
+                    	        "".equals(wsdlLocation)) {
+                    		wsdlLocation = composite.getWebServiceAnnot().wsdlLocation();
+                    	}
+                    	
+                    	if(wsdlLocation != null
+                    	        &&
+                    	        !"".equals(wsdlLocation)) {
+                    		setWSDLDefinitionOnDBC(wsdlLocation);
+                    	}
                     }
                 } catch (WSDLException e) {
                     throw ExceptionFactory.makeWebServiceException(
@@ -547,6 +577,42 @@ class ServiceDescriptionImpl
                         Messages.getMessage("wsdlException", e.getMessage()), e);
             }
         }
+    }
+    
+    /**
+     * This method accepts a location of a WSDL document and attempts to
+     * load and set the WSDL definition on the DBC object.
+     * @param wsdlLocation
+     */
+    private void setWSDLDefinitionOnDBC(String wsdlLocation) {
+    	if(log.isDebugEnabled()) {
+			log.debug("Attempting to load WSDL file from location specified in annotation: " +
+					wsdlLocation);
+		}
+		if(composite.getClassLoader() == null) {
+			if(log.isDebugEnabled()) {
+				log.debug("A classloader could not be found for class: " + composite.
+						getClassName() + ". The WSDL file: " + wsdlLocation + " will not be " +
+								"processed, and the ServiceDescription will be built from " +
+								"annotations");
+			}
+		}
+		try {
+		    if(log.isDebugEnabled()) {
+		        log.debug("Attempting to read WSDL: " + wsdlLocation + " for web " +
+		        		"service endpoint: " + composite.getClassName());
+		    }
+			URL url = composite.getClassLoader().getResource(wsdlLocation);
+			this.wsdlWrapper = new WSDL4JWrapper(url);
+			composite.setWsdlDefinition(wsdlWrapper.getDefinition());
+		}
+		catch(Exception e) {
+			if(log.isDebugEnabled()) {
+				log.debug("The WSDL file: " + wsdlLocation + " for class: " + composite.getClassName() + 
+						"could not be processed. The ServiceDescription will be built from " +
+								"annotations");
+			}
+		}
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
