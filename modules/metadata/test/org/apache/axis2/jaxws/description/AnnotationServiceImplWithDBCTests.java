@@ -34,6 +34,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -196,10 +197,7 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
     }
     
     public void testLoadWSDLImpl() {
-    	String sep = java.io.File.separator;
-    	String wsdlRelativeLocation = ".." + sep + ".." + sep + "test-resources" + sep + "wsdl" + sep;
-        String wsdlFileName = "EchoMessageService.wsdl";
-        String wsdlLocation = wsdlRelativeLocation + wsdlFileName;
+        String wsdlLocation = getEchoMessageServiceWSDLLocation();
 
         // Build up a DBC, including the WSDL Definition and the annotation information for 
         // the impl class.
@@ -209,7 +207,6 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         DescriptionBuilderComposite dbc = dbcMap.get(EchoMessageService.class.getName());
         assertNotNull(dbc);
         dbc.setClassLoader(this.getClass().getClassLoader());
-        assertNotNull(this.getClass().getClassLoader().getResource((wsdlLocation)));
 
         WebServiceAnnot webServiceAnnot = dbc.getWebServiceAnnot();
         assertNotNull(webServiceAnnot);
@@ -228,10 +225,7 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
     }
     
     public void testLoadWSDLSEI() {
-    	String sep = java.io.File.separator;
-    	String wsdlRelativeLocation = ".." + sep + ".." + sep + "test-resources" + sep + "wsdl" + sep;
-        String wsdlFileName = "EchoMessageService.wsdl";
-        String wsdlLocation = wsdlRelativeLocation + wsdlFileName;
+        String wsdlLocation = getEchoMessageServiceWSDLLocation();
 
         // Build up a DBC, including the WSDL Definition and the annotation information for 
         // the impl class.
@@ -243,7 +237,6 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         DescriptionBuilderComposite seiDBC = dbcMap.get(EchoMessageServiceInterface.class.getName());
         assertNotNull(seiDBC);
         dbc.setClassLoader(this.getClass().getClassLoader());
-        assertNotNull(this.getClass().getClassLoader().getResource((wsdlLocation)));
 
         WebServiceAnnot webServiceAnnot = seiDBC.getWebServiceAnnot();
         assertNotNull(webServiceAnnot);
@@ -259,6 +252,20 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         
         // make sure the WSDL definition was read in from the appropriate location
         assertNotNull(((ServiceDescriptionWSDL) sd).getWSDLDefinition());
+    }
+    
+    private String getEchoMessageServiceWSDLLocation() {
+    	String loc = null;
+    	String sep = java.io.File.separator;
+        loc = sep + "test-resources" + sep + "wsdl" + sep + "EchoMessageService.wsdl";
+        try {
+        	String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+            loc = baseDir + loc;
+        }
+        catch(IOException ioe) {
+        	ioe.printStackTrace();
+        }
+    	return loc;
     }
     
     @WebService(serviceName = "EchoMessageService", portName = "EchoMessagePort", targetNamespace = "http://nonanonymous.complextype.test.org", wsdlLocation = "test-resources/wsdl/EchoMessageService.wsdl")

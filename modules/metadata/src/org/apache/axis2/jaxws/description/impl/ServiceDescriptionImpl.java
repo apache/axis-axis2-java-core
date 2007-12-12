@@ -58,6 +58,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -602,7 +603,7 @@ class ServiceDescriptionImpl
 		        log.debug("Attempting to read WSDL: " + wsdlLocation + " for web " +
 		        		"service endpoint: " + composite.getClassName());
 		    }
-			URL url = composite.getClassLoader().getResource(wsdlLocation);
+		    URL url = getWSDLURL(wsdlLocation);
 			this.wsdlWrapper = new WSDL4JWrapper(url);
 			composite.setWsdlDefinition(wsdlWrapper.getDefinition());
 		}
@@ -613,6 +614,32 @@ class ServiceDescriptionImpl
 								"annotations");
 			}
 		}
+    }
+    
+    /**
+     * This method will handle obtaining a URL for the given WSDL location.
+     */
+    private URL getWSDLURL(String wsdlLocation) {
+    	URL url = composite.getClassLoader().getResource(wsdlLocation);
+		if(url == null) {
+			if(log.isDebugEnabled()) {
+				log.debug("URL for wsdl file: " + wsdlLocation + " could not be " +
+						"determined by classloader... looking for file reference");
+			}
+			File file = new File(wsdlLocation);
+			if(file != null) {
+				try {
+					url = file.toURL();
+				}
+				catch(Exception e) {
+					if(log.isDebugEnabled()) {
+						log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation + 
+								" by using file reference");
+					}
+				}
+			}
+		}
+		return url;
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
