@@ -144,6 +144,7 @@
             <xsl:variable name="outputtype">
               <xsl:choose>
                 <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
+                <xsl:when test="not(output/param/@type)">axis2_status_t</xsl:when>
                 <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
@@ -192,23 +193,34 @@
                     </xsl:if>
                     ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:if test="input/param/@type!=''">,</xsl:if>
                                                 <xsl:if test="input/param/@type!=''">input_val<xsl:value-of select="$position"/></xsl:if> );
-                    if ( NULL == ret_val<xsl:value-of select="$position"/> )
-                    {
-                        AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
-                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
-                        return NULL; 
-                    }
-                    ret_node = <xsl:choose>
-                                   <xsl:when test="output/param/@ours">
-                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
-                               adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
-                               <xsl:if test="input/param/@type!=''">
-                                adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
-                               </xsl:if>
-                                   </xsl:when>
-                                   <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
-                                </xsl:choose>
-                    return ret_node;
+                    <xsl:choose>
+                    <xsl:when test="output/param/@type">
+                        if ( NULL == ret_val<xsl:value-of select="$position"/> )
+                        {
+                            AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
+                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
+                            return NULL; 
+                        }
+                        ret_node = <xsl:choose>
+                                       <xsl:when test="output/param/@ours">
+                                   adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                                   adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
+                                   <xsl:if test="input/param/@type!=''">
+                                    adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
+                                   </xsl:if>
+                                       </xsl:when>
+                                       <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
+                                    </xsl:choose>
+                        return ret_node;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        if( AXIS2_FAILURE == ret_val<xsl:value-of select="$position"/> )
+                        {
+                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
+                        }
+                        return NULL;
+                    </xsl:otherwise>
+                    </xsl:choose>
 
                     <!-- below was  prior to the databinding -->
                     <!-- <xsl:if test="$outputtype!=''">return </xsl:if>
