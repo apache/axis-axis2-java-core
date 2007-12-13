@@ -259,7 +259,7 @@ public class RepositoryListener implements DeploymentConstants {
     private void findFileForGivenDirectory(String dir, String extension) {
         try {
             File directory = deploymentEngine.getRepositoryDir();
-            String[] strings = dir.split(File.separator);
+            String[] strings = dir.split("/");
             for (int i = 0; i < strings.length; i++) {
                 directory = new File(directory, strings[i]);
             }
