@@ -258,7 +258,12 @@ public class RepositoryListener implements DeploymentConstants {
 
     private void findFileForGivenDirectory(String dir, String extension) {
         try {
-            File directory = new File(deploymentEngine.getRepositoryDir(), dir);
+            File directory = deploymentEngine.getRepositoryDir();
+            String[] strings = dir.split(File.separator);
+            for (int i = 0; i < strings.length; i++) {
+                directory = new File(directory, strings[i]);
+            }
+
             if (directory.exists()) {
                 File[] files = directory.listFiles();
                 if (files != null && files.length > 0) {
