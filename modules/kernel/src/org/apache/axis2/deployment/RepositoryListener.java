@@ -37,14 +37,13 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class RepositoryListener implements DeploymentConstants {
     protected static final Log log = LogFactory.getLog(RepositoryListener.class);
 
     protected DeploymentEngine deploymentEngine;
-    private HashMap directoryToExtensionMappingMap;
 
     /** Reference to a WSInfoList */
     protected WSInfoList wsInfoList;
@@ -235,13 +234,13 @@ public class RepositoryListener implements DeploymentConstants {
     public void init() {
         wsInfoList.init();
         checkModules();
-        directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
         deploymentEngine.doDeploy();
     }
 
     //This will load the files from the directories
     // specified by axis2.xml (As <deployer>)
     private void loadOtherDirectories() {
+        Map directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
         if (directoryToExtensionMappingMap.size() > 0) {
             Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
             while (keys.hasNext()) {
