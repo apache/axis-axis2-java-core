@@ -112,7 +112,7 @@
          * @param env pointer to environment struct
          * @return newly created <xsl:value-of select="$axis2_name"/>_t object
          */
-        AXIS2_EXTERN <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_create(
             const axutil_env_t *env );
 

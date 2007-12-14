@@ -137,7 +137,7 @@
 
 
        /************************* Function Implmentations ********************************/
-        AXIS2_EXTERN <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_create(
             const axutil_env_t *env)
         {
@@ -793,7 +793,7 @@
                         </xsl:when>
                         <xsl:when test="@ours">
                             element =  (void*)adb_<xsl:value-of select="@type"/>_create(env);
-                            adb_<xsl:value-of select="@type"/>_deserialize_from_string(element, env, attrib_text, parent);
+                            adb_<xsl:value-of select="@type"/>_deserialize_from_string((<xsl:value-of select="$nativePropertyType"/>)element, env, attrib_text, parent);
                            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
                                                           env, (<xsl:value-of select="$nativePropertyType"/>)element);
                         </xsl:when>
@@ -2604,7 +2604,7 @@
                    else
                    {
                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Nil value found in non-optional attribute <xsl:value-of select="$propertyName"/>");
-                      return AXIS2_FAILURE;
+                      return NULL;
                    }
                    </xsl:if>
                 </xsl:if> <!-- if for attribute, -->
@@ -2849,7 +2849,7 @@
                       else
                       {
                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Nil value found in non-optional attribute <xsl:value-of select="$propertyName"/>");
-                         return AXIS2_FAILURE;
+                         return NULL;
                       }
                       </xsl:if> 
                   }<!-- End bracket for if(parent_tag_closed)-->
@@ -2910,7 +2910,7 @@
                           <xsl:otherwise>
                             <!-- just return an error -->
                             AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Nil value found in non-nillable property <xsl:value-of select="$propertyName"/>");
-                            return AXIS2_FAILURE;
+                            return NULL;
                           </xsl:otherwise>
                         </xsl:choose>
                       </xsl:if>
@@ -3464,8 +3464,8 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env)
              {
-                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+                /* AXIS2_ENV_CHECK(env, NULL);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, NULL); */
 
                 return <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>;
              }
@@ -3568,8 +3568,8 @@
                     const axutil_env_t *env, int i)
             {
                 <xsl:value-of select="$PropertyTypeArrayParam"/> ret_val;
-                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+                /* AXIS2_ENV_CHECK(env, NULL);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, NULL); */
                 if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
                 {
                     return (<xsl:value-of select="$nativePropertyType"/>)0;
@@ -3809,8 +3809,8 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env)
             {
-                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+                AXIS2_ENV_CHECK(env, -1);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, -1);
                 if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
                 {
                     return 0;
@@ -3927,8 +3927,8 @@
                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                    const axutil_env_t *env)
            {
-               AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-               AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+               AXIS2_ENV_CHECK(env, AXIS2_FALSE);
+               AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FALSE);
                
                return !<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/>;
            }
@@ -3953,8 +3953,8 @@
                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                    const axutil_env_t *env, int i)
            {
-               AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-               AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+               AXIS2_ENV_CHECK(env, AXIS2_FALSE);
+               AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FALSE);
                
                return (<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> == AXIS2_FALSE ||
                         NULL == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> || 
