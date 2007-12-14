@@ -168,7 +168,8 @@
          /**
           * auto generated method signature
           * for "<xsl:value-of select="@qname"/>" operation.
-          <xsl:for-each select="input/param[@type!='']">* @param _<xsl:value-of select="@name"/></xsl:for-each>
+          *<xsl:for-each select="input/param[@type!='']"><xsl:text>
+          </xsl:text>* @param _<xsl:value-of select="@name"/></xsl:for-each>
           * @return
           */
          <xsl:choose>
@@ -177,10 +178,8 @@
          </xsl:choose>
          <xsl:text> </xsl:text>
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
-                                              <xsl:variable name="inputtype">
-                                                  <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
-                                              </xsl:variable>
-                                              <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                              <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                              <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                               </xsl:for-each>)
          {
             axis2_svc_client_t *svc_client = NULL;
@@ -201,18 +200,17 @@
 
 
             <!-- for service client currently suppported only 1 input param -->
-            <xsl:for-each select="input/param[@type!='']">
-                <xsl:if test="position()=1">
-                    <xsl:choose>
-                        <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(_<xsl:value-of select="@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
-                        </xsl:when>
-                        <xsl:otherwise>
-                            payload = _<xsl:value-of select="@name"/>;
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:if>
-            </xsl:for-each>
+            <xsl:variable name="firstParam" select="input/param[1]"/>
+            <xsl:if test="$firstParam/@type!=''">
+               <xsl:choose>
+                   <xsl:when test="$firstParam/@ours">
+                       payload = adb_<xsl:value-of select="$firstParam/@type"/>_serialize(_<xsl:value-of select="$firstParam/@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                   </xsl:when>
+                   <xsl:otherwise>
+                       payload = _<xsl:value-of select="$firstParam/@name"/>;
+                   </xsl:otherwise>
+               </xsl:choose>
+            </xsl:if>
 
             options = axis2_stub_get_options( stub, env);
             if ( NULL == options )
@@ -289,17 +287,16 @@
           * auto generated method signature for asynchronous invocations
           * for "<xsl:value-of select="@qname"/>" operation.
           <!--  select only the body parameters  -->
-          <xsl:for-each select="input/param[@type!='']">* @param _<xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
+          *<xsl:for-each select="input/param[@type!='']"><xsl:text>
+          </xsl:text>* @param _<xsl:value-of select="@name"/></xsl:for-each>
           * @param on_complete callback to handle on complete
           * @param on_error callback to handle on error
           */
          <xsl:variable name="callbackoncomplete"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_complete</xsl:text></xsl:variable>
          <xsl:variable name="callbackonerror"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_error</xsl:text></xsl:variable>
          void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
-                                                    <xsl:variable name="inputtype">
-                                                        <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
-                                                    </xsl:variable>
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                                    <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                    <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                   </xsl:for-each>,
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t *) ,
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t *, int ) )
@@ -319,19 +316,17 @@
             </xsl:if>
 
             <!-- for service client currently suppported only 1 input param -->
-            <xsl:for-each select="input/param[@type!='']">
-                <xsl:if test="position()=1">
-                    <xsl:choose>
-                        <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(_<xsl:value-of select="@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
-                        </xsl:when>
-                        <xsl:otherwise>
-                            payload = _<xsl:value-of select="@name"/>;
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:if>
-            </xsl:for-each>
-
+            <xsl:variable name="firstParam" select="input/param[1]"/>
+            <xsl:if test="$firstParam/@type!=''">
+               <xsl:choose>
+                   <xsl:when test="$firstParam/@ours">
+                       payload = adb_<xsl:value-of select="$firstParam/@type"/>_serialize(_<xsl:value-of select="$firstParam/@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                   </xsl:when>
+                   <xsl:otherwise>
+                       payload = _<xsl:value-of select="$firstParam/@name"/>;
+                   </xsl:otherwise>
+               </xsl:choose>
+            </xsl:if>
 
             options = axis2_stub_get_options( stub, env);
             if (NULL == options)
@@ -394,10 +389,8 @@
           */
          axis2_status_t
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env <xsl:for-each select="input/param[@type!='']"> ,
-                                                 <xsl:variable name="inputtype">
-                                                    <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
-                                                 </xsl:variable>
-                                                 <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                                 <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                 <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                               </xsl:for-each>)
          {
             axis2_status_t status;
@@ -410,19 +403,17 @@
             axiom_node_t *payload = NULL;
 
             <!-- for service client currently suppported only 1 input param -->
-            <xsl:for-each select="input/param[@type!='']">
-                <xsl:if test="position()=1">
-                    <xsl:choose>
-                        <xsl:when test="@ours">
-                            payload = adb_<xsl:value-of select="@type"/>_serialize(_<xsl:value-of select="@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
-                        </xsl:when>
-                        <xsl:otherwise>
-                            payload = _<xsl:value-of select="@name"/>;
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:if>
-            </xsl:for-each>
-
+            <xsl:variable name="firstParam" select="input/param[1]"/>
+            <xsl:if test="$firstParam/@type!=''">
+               <xsl:choose>
+                   <xsl:when test="$firstParam/@ours">
+                       payload = adb_<xsl:value-of select="$firstParam/@type"/>_serialize(_<xsl:value-of select="$firstParam/@name"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                   </xsl:when>
+                   <xsl:otherwise>
+                       payload = _<xsl:value-of select="$firstParam/@name"/>;
+                   </xsl:otherwise>
+               </xsl:choose>
+            </xsl:if>
 
             options = axis2_stub_get_options( stub, env);
             if ( NULL == options )
