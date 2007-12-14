@@ -39,6 +39,7 @@ import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
@@ -240,8 +241,8 @@ public class AxisService extends AxisDescription {
     // package to namespace mapping
     private Map p2nMap;
 
-    //To keep the bean property exclude map
-    private Map beanExludeMap;
+    // to keep the exclude property details
+    private ExcludeInfo excludeInfo;
 
     private TypeTable typeTable;
 
@@ -2565,12 +2566,11 @@ public class AxisService extends AxisDescription {
         return getName();
     }
 
-
-    public Map getBeanExludeMap() {
-        return beanExludeMap;
+    public ExcludeInfo getExcludeInfo() {
+        return excludeInfo;
     }
 
-    public void setBeanExludeMap(Map beanExludeMap) {
-        this.beanExludeMap = beanExludeMap;
+    public void setExcludeInfo(ExcludeInfo excludeInfo) {
+        this.excludeInfo = excludeInfo;
     }
 }

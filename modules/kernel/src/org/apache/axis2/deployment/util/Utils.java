@@ -679,18 +679,18 @@ public class Utils {
         if (excludeBeanProperty != null) {
             OMElement parameterElement = excludeBeanProperty.getParameterElement();
             Iterator bneasItr =parameterElement.getChildrenWithName(new QName("bean"));
-            HashMap beanMap = new HashMap();
+            ExcludeInfo excludeInfo = new ExcludeInfo();
             while (bneasItr.hasNext()) {
                 OMElement bean = (OMElement) bneasItr.next();
                 String clazz = bean.getAttributeValue(
                         new QName(DeploymentConstants.TAG_CLASS_NAME));
-                String value = bean.getAttributeValue(
+                String excludePropertees = bean.getAttributeValue(
                         new QName(DeploymentConstants.TAG_EXCLUDE_PROPERTIES));
-                if (clazz != null && value != null) {
-                    beanMap.put(clazz,getArrayFromString(value));
-                }
+                String includeProperties = bean.getAttributeValue(
+                        new QName(DeploymentConstants.TAG_INCLUDE_PROPERTIES));
+                excludeInfo.putBeanInfo(clazz, new BeanExcludeInfo(excludePropertees,includeProperties));
             }
-            service.setBeanExludeMap(beanMap);
+            service.setExcludeInfo(excludeInfo);
         }
     }
 

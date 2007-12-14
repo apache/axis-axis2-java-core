@@ -20,6 +20,7 @@ package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -404,22 +405,18 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
             Set propertiesSet = new HashSet();
             Set propertiesNames = new HashSet();
 
-            ArrayList excludes = null;
-            if (service.getBeanExludeMap() !=null) {
-                excludes = (ArrayList) service.getBeanExludeMap().get(
+            BeanExcludeInfo beanExcludeInfo = null;
+            if (service.getExcludeInfo() !=null) {
+                beanExcludeInfo = service.getExcludeInfo().getBeanExcludeInfoForClass(
                         javaType.getQualifiedName());
             }
             JProperty[] tempProperties = javaType.getDeclaredProperties();
             for (int i = 0; i < tempProperties.length; i++) {
                 JProperty tempProperty = tempProperties[i];
-                if (excludes !=null && excludes.contains("*")){
-                      continue;
+                String propertyName = getCorrectName(tempProperty.getSimpleName());
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)){
+                    propertiesSet.add(tempProperty);
                 }
-                if (excludes != null && excludes.contains(
-                        getCorrectName(tempProperty.getSimpleName()))) {
-                    continue;
-                }
-                propertiesSet.add(tempProperties[i]);
             }
 
             JProperty[] properties = (JProperty[]) propertiesSet.toArray(new JProperty[0]);
@@ -450,18 +447,13 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 //                        We do not need to expose static fields
                         continue;
                     }
-                    if (excludes != null && excludes.contains("*")) {
-                        continue;
-                    }
-                    if (excludes != null &&
-                            excludes.contains(tempFields[i].getSimpleName())) {
-                        continue;
-                    }
+                    String propertyName = getCorrectName(tempFields[i].getSimpleName());
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)) {
+                        // skip field with same name as a property
+                        if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
 
-                    // skip field with same name as a property
-                    if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
-
-                        FieldMap.put(tempFields[i].getSimpleName(), tempFields[i]);
+                            FieldMap.put(tempFields[i].getSimpleName(), tempFields[i]);
+                        }
                     }
                 }
 

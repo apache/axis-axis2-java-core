@@ -28,5 +28,5 @@ import org.apache.axis2.context.MessageContext;
  *
  * @deprecated not needed, since in-only MessageReceivers can throw faults
  */
-public abstract class AbstractRobustInMessageReceiver extends AbstractMessageReceiver {
+public abstract class AbstractRobustInMessageReceiver extends  AbstractMessageReceiver{
 }

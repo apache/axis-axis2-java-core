@@ -69,6 +69,7 @@ public class JavaUtils {
                 || ':' == c
                 || '\u00B7' == c
                 || '\u0387' == c
+                || '-' == c
                 || '\u06DD' == c
                 || '\u06DE' == c;
     } // isPunctuation
