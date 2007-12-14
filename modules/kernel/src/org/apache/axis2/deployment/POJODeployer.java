@@ -352,6 +352,7 @@ public class POJODeployer implements Deployer {
     }
 
     public void unDeploy(String fileName) {
+        fileName = Utils.getShortFileName(fileName);
         if (fileName.endsWith(".class")) {
             String className = fileName.replaceAll(".class", "");
             try {

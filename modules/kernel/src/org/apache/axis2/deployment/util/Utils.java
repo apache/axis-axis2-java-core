@@ -709,4 +709,8 @@ public class Utils {
        return list;
     }
 
+    public static String getShortFileName(String filename){
+        File file = new File(filename);
+        return file.getName();
+    }
 }

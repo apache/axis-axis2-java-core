@@ -23,6 +23,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -160,6 +161,7 @@ public class ServiceDeployer implements Deployer {
 
     public void unDeploy(String fileName) throws DeploymentException {
         try {
+            fileName = Utils.getShortFileName(fileName);
             fileName = DeploymentEngine.getAxisServiceName(fileName);
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
             if (serviceGroup != null) {
