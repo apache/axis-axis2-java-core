@@ -59,11 +59,18 @@ import java.util.Set;
 public class AxisService2WSDL20 implements WSDL2Constants {
 
     private AxisService axisService;
+    private String serviceName;
     private String[] eprs = null;
     private OMNamespace wsaw;
 
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
+        this.serviceName = service.getName();
+    }
+
+    public AxisService2WSDL20(AxisService service, String serviceName) {
+        this.axisService = service;
+        this.serviceName = serviceName;
     }
 
     /**
@@ -216,7 +223,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         if (endpointMap != null && endpointMap.size() > 0) {
             String[] eprs = axisService.getEPRs();
             if (eprs == null) {
-                eprs = new String[]{axisService.getName()};
+                eprs = new String[]{serviceName};
             }
             OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
@@ -278,7 +285,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                    interfaceName,
                                                    axisService.getNamespaceMap(),
                                                    axisService.getWSAddressingFlag(),
-                                                   axisService.getName(),wsaw));
+                                                   serviceName,wsaw));
             }
 
             descriptionElement.addChild(serviceElement);
@@ -287,21 +294,23 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             // There are no andpoints defined hence generate default bindings and endpoints
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
-                                                                tns));
+                                                                tns, serviceName));
             if (!disableSOAP12) {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
-                                                                tns));
+                                                                tns, serviceName));
             }
             if (!disableREST) {
                 descriptionElement.addChild(
                         WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
                                                                   whttp,
-                                                                  tns));
+                                                                  tns, serviceName));
             }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST, disableSOAP12, eprs));
+                                                                           axisService, disableREST,
+                                                                           disableSOAP12, eprs,
+                                                                          serviceName));
         }
 
         return descriptionElement;
@@ -375,7 +384,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
         serviceElement.addAttribute(
                 omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
-                                            axisService.getName()));
+                                            serviceName));
         serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME,
                                                                 null, tns.getPrefix() + ":" +
                 interfaceName));
