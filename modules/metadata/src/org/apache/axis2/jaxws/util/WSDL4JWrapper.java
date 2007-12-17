@@ -206,14 +206,43 @@ public class WSDL4JWrapper implements WSDLWrapper {
                 URLClassLoader urlLoader = (URLClassLoader)classLoader;
                 url = getURLFromJAR(urlLoader, wsdlURL);
             }
+            else {
+                URLClassLoader nestedLoader = (URLClassLoader) getNestedClassLoader(URLClassLoader.class, classLoader);
+                if (nestedLoader != null) {
+                    url = getURLFromJAR(nestedLoader, wsdlURL);
+                }
+            }
         }
         return url;    
     }
-    private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) {
+    
+    private ClassLoader getNestedClassLoader(Class type, ClassLoader root) {
+        if (log.isDebugEnabled()) {
+            log.debug("Searching for nested URLClassLoader");
+        }
+        while (!(root instanceof URLClassLoader)) {
+            if (root == null) {
+                break;
+            }
+            
+            root = root.getParent();
+            if (log.isDebugEnabled() && root != null) {
+                log.debug("Checking parent ClassLoader: " + root.getClass().getName());
+            }
+        }
 
-    	URL[] urlList = null;
+        return root;
+    }
+    
+    private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) {
+        URL[] urlList = null;
     	ResourceFinderFactory rff =(ResourceFinderFactory)MetadataFactoryRegistry.getFactory(ResourceFinderFactory.class);
-    	ResourceFinder cf = rff.getResourceFinder();
+        ResourceFinder cf = rff.getResourceFinder();
+        if (log.isDebugEnabled()) {
+            log.debug("ResourceFinderFactory: " + rff.getClass().getName());
+            log.debug("ResourceFinder: " + cf.getClass().getName());
+        }
+    	
     	urlList = cf.getURLs(urlLoader);
     	if(urlList == null){
     	    if(log.isDebugEnabled()){
