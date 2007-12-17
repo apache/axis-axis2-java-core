@@ -669,13 +669,13 @@ public class Utils {
 
     /**
      * This method is to process bean exclude parameter and the XML format of that would be
-     * <parameter name="excludeBeanProperties">
+     * <parameter name="beanPropertyRules">
      *     <bean class="full qualified class name" excludeProperties="name,age"/>+
      * </parameter>
      * @param service , AxisService object
      */
     public static void processBeanPropertyExclude(AxisService  service){
-        Parameter excludeBeanProperty = service.getParameter("excludeBeanProperties");
+        Parameter excludeBeanProperty = service.getParameter("beanPropertyRules");
         if (excludeBeanProperty != null) {
             OMElement parameterElement = excludeBeanProperty.getParameterElement();
             Iterator bneasItr =parameterElement.getChildrenWithName(new QName("bean"));
