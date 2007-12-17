@@ -2280,8 +2280,8 @@
                        <xsl:when test="$nsuri and $nsuri != ''"> 
                            ns1 = axiom_namespace_create (env,
                                              "<xsl:value-of select="$nsuri"/>",
-                                             NULL); <!-- we are usinig "" instead of <xsl:value-of select="@child-nsuri"/>  -->
-                           axutil_hash_set(namespaces, "<xsl:value-of select="$nsuri"/>", AXIS2_HASH_KEY_STRING, axutil_strdup(env, ""));
+                                             "n"); <!-- we are usinig "" instead of <xsl:value-of select="@child-nsuri"/>  -->
+                           axutil_hash_set(namespaces, "<xsl:value-of select="$nsuri"/>", AXIS2_HASH_KEY_STRING, axutil_strdup(env, "n"));
                        </xsl:when>
                        <xsl:otherwise> 
                            ns1 = NULL; 
@@ -2289,7 +2289,9 @@
                     </xsl:choose>
                     <!-- if not(@type) then no doubt the parent is NULL --> 
                     parent_element = axiom_element_create (env, NULL, "<xsl:value-of select="$originalName"/>", ns1 , &amp;parent);
-                    axiom_element_declare_default_namespace(parent_element, env, "<xsl:value-of select="$nsuri"/>");
+                    
+                    <!-- axiom_element_declare_default_namespace(parent_element, env, "<xsl:value-of select="$nsuri"/>"); -->
+                    axiom_element_set_namespace(parent_element, env, ns1, parent);
 
 
                </xsl:if>
