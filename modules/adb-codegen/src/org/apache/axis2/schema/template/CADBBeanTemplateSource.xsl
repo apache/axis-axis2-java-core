@@ -479,12 +479,8 @@
                  <!-- TODO axutil_qname_t *element_qname = NULL; -->
             </xsl:if>
             axutil_qname_t *element_qname = NULL; 
-            <xsl:for-each select="property">
-             <xsl:if test="position()=1">
+            <xsl:if test="count(property)!=0">
                axiom_node_t *first_node = NULL;
-             </xsl:if>
-            </xsl:for-each>
-            <xsl:if test="property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)">
                axis2_bool_t is_early_node_valid = AXIS2_TRUE;
                axiom_node_t *current_node = NULL;
                axiom_element_t *current_element = NULL;
