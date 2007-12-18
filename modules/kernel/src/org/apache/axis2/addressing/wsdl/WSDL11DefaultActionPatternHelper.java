@@ -130,7 +130,7 @@ public class WSDL11DefaultActionPatternHelper {
                                                                 String portTypeName,
                                                                 String operationName,
                                                                 String inputName) {
-        if (messageExchangePattern == null && inputName == null) {
+    	if (messageExchangePattern == null && inputName == null) {
             throw new IllegalArgumentException(
                     "One of messageExchangePattern or inputName must the non-null to generate an action.");
         }
@@ -144,9 +144,14 @@ public class WSDL11DefaultActionPatternHelper {
             delimiter = COLON;
         }
 
+        // N.B. Unlike core Axis2 processing WSDL, JAX-WS accotation processing passes in the
+        // out-in MEP when constructing the client, hence we need to take account of it here
+        // in addition to the expected in-out
         if (inputName == null) {
             inputName = operationName;
             if (messageExchangePattern.indexOf("in-out") >= 0) {
+                inputName += REQUEST;
+            } else if (messageExchangePattern.indexOf("out-in") >= 0) {
                 inputName += REQUEST;
             }
         }
@@ -270,6 +275,9 @@ public class WSDL11DefaultActionPatternHelper {
             delimiter = COLON;
         }
 
+        // N.B. Unlike core Axis2 processing WSDL, JAX-WS annotation processing passes in the
+        // out-in MEP when constructing the client, hence we need to take account of it here
+        // in addition to the expected in-out
         if (outputName == null) {
             outputName = operationName;
             if (messageExchangePattern.indexOf("in-out") >= 0) {
