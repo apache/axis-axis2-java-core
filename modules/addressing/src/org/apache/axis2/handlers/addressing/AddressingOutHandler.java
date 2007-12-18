@@ -207,7 +207,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             String messageID = messageContextOptions.getMessageId();
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
-            	ArrayList attributes = (ArrayList)messageContext.getProperty(
+            	ArrayList attributes = (ArrayList)messageContext.getLocalProperty(
                         AddressingConstants.MESSAGEID_ATTRIBUTES);
                 createSOAPHeaderBlock(messageID, WSA_MESSAGE_ID, attributes);
             }
@@ -223,27 +223,31 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (action == null || action.length()==0) {
                 if (messageContext.getAxisOperation() != null) {
                     action = messageContext.getAxisOperation().getOutputAction();
+                    if(action!=null){
+                    	// Set this action back to obviate possible action mismatch problems
+                    	messageContext.setWSAAction(action);
+                    }
                     if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(messageContext.getLogIDString() +
                                 " processWSAAction: action from AxisOperation: " + action);
                     }
                 }
-            }
-
-            // Use the correct fault action for the selected namespace
-            if(isFinalAddressingNamespace){
-            	if(Submission.WSA_FAULT_ACTION.equals(action)){
-            		action = Final.WSA_FAULT_ACTION;
-            		messageContextOptions.setAction(action);
-            	}
             }else{
-            	if(Final.WSA_FAULT_ACTION.equals(action)){
-            		action = Submission.WSA_FAULT_ACTION;
-            		messageContextOptions.setAction(action);
-            	}else if(Final.WSA_SOAP_FAULT_ACTION.equals(action)){
-                    action = Submission.WSA_FAULT_ACTION;
-                    messageContextOptions.setAction(action);
-            	}
+	            // Use the correct fault action for the selected namespace
+	            if(isFinalAddressingNamespace){
+	            	if(Submission.WSA_FAULT_ACTION.equals(action)){
+	            		action = Final.WSA_FAULT_ACTION;
+	            		messageContextOptions.setAction(action);
+	            	}
+	            }else{
+	            	if(Final.WSA_FAULT_ACTION.equals(action)){
+	            		action = Submission.WSA_FAULT_ACTION;
+	            		messageContextOptions.setAction(action);
+	            	}else if(Final.WSA_SOAP_FAULT_ACTION.equals(action)){
+	                    action = Submission.WSA_FAULT_ACTION;
+	                    messageContextOptions.setAction(action);
+	            	}
+	            }
             }
 
             // If we need to add a wsa:Action header
@@ -270,7 +274,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                 " processWSAAction: Adding action to header: " + action);
                     }
                     // Otherwise just add the header
-                    ArrayList attributes = (ArrayList)messageContext.getProperty(
+                    ArrayList attributes = (ArrayList)messageContext.getLocalProperty(
                             AddressingConstants.ACTION_ATTRIBUTES);
                     createSOAPHeaderBlock(action, WSA_ACTION, attributes);
                 }
