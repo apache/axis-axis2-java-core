@@ -77,10 +77,10 @@ public class CStructWriter implements BeanWriter {
     // useful when  only a list of external elements need to be processed
 
     public static final String DEFAULT_CLASS_NAME = "axiom_node_t*";
-    public static final String DEFAULT_CLASS_ARRAY_NAME = "axutil_array_list_t";
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "axutil_array_list_t*";
 
     public static final String DEFAULT_ATTRIB_CLASS_NAME = "axiom_attribute_t*";
-    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axutil_array_list_t";
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axutil_array_list_t*";
 
 
 
