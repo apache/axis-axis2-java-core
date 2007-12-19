@@ -21,6 +21,7 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
@@ -471,19 +472,22 @@ public class Utils {
         // Else, extract it from the SOAPBody
         if (result == null) {
             SOAPEnvelope envelope = messageContext.getEnvelope();
-            if (envelope == null || envelope.getBody() == null ||
-                envelope.getBody().getFault() == null) {
-                // Not going to be able to 
-                throw new IllegalArgumentException(
-                        "The MessageContext does not have an associated SOAPFault.");
+            SOAPFault soapFault;
+            SOAPBody soapBody;
+            if (envelope != null && (soapBody = envelope.getBody()) != null) {
+                if ((soapFault = soapBody.getFault()) != null) {
+                    return new AxisFault(soapFault, messageContext);
+                }
+                // If its a REST response the content is not a SOAP envelop and hence we will
+                // Have use the soap body as the exception
+                if (messageContext.isDoingREST() && soapBody.getFirstElement() != null) {
+                    return new AxisFault(soapBody.getFirstElement().toString());
+                }
             }
-            SOAPFault soapFault = envelope.getBody().getFault();
-
-            // The AxisFault returned needs to have the MessageContext set on it so that 
-            // other programming models can potentially handle the fault with an 
-            // alternate deserialization.
-            result = new AxisFault(soapFault, messageContext);
+            // Not going to be able to
+            throw new IllegalArgumentException(
+                    "The MessageContext does not have an associated SOAPFault.");
         }
         return result;
-    }    
+    }
 }
