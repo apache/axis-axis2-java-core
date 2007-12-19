@@ -773,7 +773,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * This is the helper Class use in processing of doGet, doPut , doDelete and doPost.
      */
     protected class RestRequestProcessor {
-        private MessageContext messageContext;
+        protected MessageContext messageContext;
         private HttpServletRequest request;
         private HttpServletResponse response;
 
