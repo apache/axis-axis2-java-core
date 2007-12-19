@@ -1480,7 +1480,6 @@
                                           if(text_value != NULL)
                                           {
                                               /* we keeps long in arrays from their pointers */
-                                              text_value = axiom_element_get_text(current_element, env, current_node);
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(long));
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
@@ -1524,7 +1523,6 @@
                                           if(text_value != NULL)
                                           {
                                               element = (void*)axutil_date_time_create(env);
-                                              text_value = axiom_element_get_text(current_element, env, current_node);
                                               status = axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
                                                                               text_value);
                                               if(AXIS2_FAILURE ==  status)
@@ -1549,7 +1547,6 @@
                                           if(text_value != NULL)
                                           {
                                               element = (void*)axutil_base64_binary_create(env);
-                                              text_value = axiom_element_get_text(current_element, env, current_node);
                                               status = axutil_base64_binary_set_encoded_binary((axutil_base64_binary_t*)element, env,
                                                                               text_value);
                                               if(AXIS2_FAILURE ==  status)
