@@ -1476,6 +1476,7 @@
                                           </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                               /* we keeps long in arrays from their pointers */
@@ -1498,6 +1499,7 @@
                                           axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                                if (!axutil_strcasecmp (text_value , "true"))
@@ -1518,6 +1520,7 @@
                                           </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                               element = (void*)axutil_date_time_create(env);
@@ -1542,6 +1545,7 @@
                                           </xsl:if>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                               element = (void*)axutil_base64_binary_create(env);
@@ -1835,6 +1839,7 @@
                                           axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                               if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
