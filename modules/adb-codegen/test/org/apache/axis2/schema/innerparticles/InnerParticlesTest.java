@@ -308,5 +308,37 @@ public class InnerParticlesTest extends TestCase {
         }
     }
 
+    public void testTestComplexTypeElement(){
+        TestComplexTypeElement testComplexTypeElement = new TestComplexTypeElement();
+
+        TestComplexType testComplexType = new TestComplexType();
+        testComplexTypeElement.setTestComplexTypeElement(testComplexType);
+
+        TestElement_type0 testElement_type0 = new TestElement_type0();
+        testElement_type0.setParam("param");
+        testComplexType.setTestElement(testElement_type0);
+
+        TestComplexTypeSequence_type0 testComplexTypeSequence_type0 = new TestComplexTypeSequence_type0();
+        testComplexType.setTestComplexTypeSequence_type0(testComplexTypeSequence_type0);
+
+        try {
+            OMElement omElement = testComplexTypeElement.getOMElement(
+                    TestComplexTypeElement.MY_QNAME,OMAbstractFactory.getOMFactory());
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
+                    new ByteArrayInputStream(omElementString.getBytes()));
+            TestComplexTypeElement result = TestComplexTypeElement.Factory.parse(xmlReader);
+            assertEquals(result.getTestComplexTypeElement().getTestElement().getParam(),"param");
+        } catch (ADBException e) {
+            fail();
+        } catch (XMLStreamException e) {
+            fail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
 
 }

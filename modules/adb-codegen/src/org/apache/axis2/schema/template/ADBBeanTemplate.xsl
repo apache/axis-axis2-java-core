@@ -3488,7 +3488,9 @@
                                     }
                                 </xsl:if>
                             </xsl:if>
-                            <xsl:if test="$ordered and $min!=0">
+                            <!-- in a particle class all inner elements may be min=0 their validation done
+                                 inside the sequce class -->
+                            <xsl:if test="$ordered and $min!=0 and not($particleClassType)">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
