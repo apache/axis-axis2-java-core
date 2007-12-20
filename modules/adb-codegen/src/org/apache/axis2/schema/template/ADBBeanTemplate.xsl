@@ -68,6 +68,7 @@
         <xsl:variable name="mapperClass" select="@mapperClass"/>
         <xsl:variable name="particleClass" select="@particleClass"/>
         <xsl:variable name="hasParticleType" select="@hasParticleType"/>
+        <xsl:variable name="usewrapperclasses" select="@usewrapperclasses"/>
     <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
@@ -85,7 +86,6 @@
             *  <xsl:value-of select="$name"/> bean class
             */
         </xsl:if>
-
         public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> <xsl:if test="@isAbstract and @unwrapped and not(@skip-write)">abstract</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
         <xsl:if test="$union and not($restriction) and not($extension)"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
@@ -478,6 +478,9 @@
                                    <xsl:when test="@primitive and not(@array)">
                                        // setting primitive attribute tracker to true
                                        <xsl:choose>
+                                           <xsl:when test="$usewrapperclasses">
+                                              if (false) {
+                                           </xsl:when>
                                            <xsl:when test="$propertyType='int'">
                                                if (param==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>
@@ -938,6 +941,9 @@
                                     <xsl:choose>
                                         <xsl:when test="@primitive">
                                             <xsl:choose>
+                                               <xsl:when test="$usewrapperclasses">
+                                                  if (true) {
+                                               </xsl:when>
                                                <xsl:when test="$propertyType='int'">
                                                    if (<xsl:value-of select="$varName"/>!=java.lang.Integer.MIN_VALUE) {
                                                </xsl:when>
@@ -1339,6 +1345,9 @@
                                    for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         <xsl:if test="@primitive">
                                             <xsl:choose>
+                                               <xsl:when test="$usewrapperclasses">
+                                                  if (true) {
+                                               </xsl:when>
                                                <xsl:when test="$propertyBaseType='int'">
                                                    if (<xsl:value-of select="$varName"/>[i]!=java.lang.Integer.MIN_VALUE) {
                                                </xsl:when>
@@ -1566,6 +1575,9 @@
                                     <xsl:if test="@primitive">
                                        <!-- we have to check for nillability with min value -->
                                        <xsl:choose>
+                                           <xsl:when test="$usewrapperclasses">
+                                                  if (false) {
+                                           </xsl:when>
                                            <xsl:when test="$propertyType='int'">
                                                if (<xsl:value-of select="$varName"/>==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>
@@ -1750,6 +1762,9 @@
 
                                <!-- we have to check for nillability with min value -->
                                        <xsl:choose>
+                                           <xsl:when test="$usewrapperclasses">
+                                                  if (false) {
+                                           </xsl:when>
                                            <xsl:when test="$propertyType='int'">
                                                if (<xsl:value-of select="$varName"/>==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>

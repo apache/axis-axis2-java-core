@@ -44,6 +44,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
+
 /**
  * Java Bean writer for the schema compiler.
  */
@@ -493,7 +494,6 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
-        XSLTUtils.addAttribute(model, "isUseWrapperClasses", isUseWrapperClasses? "yes" : "false", rootElt);
         XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
                 .getNamespaceURI(), qName.getPrefix()), rootElt);
 
@@ -515,6 +515,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (metainf.isAnonymous()) {
             XSLTUtils.addAttribute(model, "anon", "yes", rootElt);
+        }
+
+        if (isUseWrapperClasses){
+            XSLTUtils.addAttribute(model, "usewrapperclasses", "yes", rootElt);
         }
 
         if (metainf.isExtension()) {
