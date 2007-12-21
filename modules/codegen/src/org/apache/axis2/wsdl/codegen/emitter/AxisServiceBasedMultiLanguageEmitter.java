@@ -1380,7 +1380,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         axisService.setCustomSchemaNameSuffix(".xsd");//suffix with .xsd - the file name extension
         //force the mappings to be reconstructed
         axisService.setSchemaLocationsAdjusted(false);
-        Map changedMap = axisService.populateSchemaMappings();
+        //when generating the code we should copy all the schemas to
+        // resource folder.
+        Map changedMap = axisService.populateSchemaMappings(true);
 
         // add these two attribute to use the user defined wsdl to use.
         try {
