@@ -41,12 +41,17 @@ import org.apache.axis2.jaxws.server.ServiceInstanceFactory;
 import org.apache.axis2.jaxws.server.ServiceInstanceFactoryImpl;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactoryImpl;
+import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
+import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.impl.EndpointLifecycleManagerFactoryImpl;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.ws.WebServiceContext;
 
 /** 
  * FactoryRegistry Registry containing Factories related to the JAX-WS Implementation.
@@ -84,11 +89,20 @@ public class FactoryRegistry {
         table.put(MessageFactory.class, new MessageFactoryImpl());
         table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
         table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
-        table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+        table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactoryImpl());
         table.put(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
+        
+        // register the implementation responsible for both WebServiceContext 
+        // injection and the updating of the WebServiceContext instances that
+        // have already been injected, we will register these by two different
+        // classes because it is possible that the implementation is in different
+        // classes
+        WebServiceContextInjectorImpl wsciImpl = new WebServiceContextInjectorImpl();
+        table.put(WebServiceContext.class, wsciImpl);
+        table.put(WebServiceContextInjector.class, wsciImpl);
     }
 
     /** FactoryRegistry is currently a static singleton */
