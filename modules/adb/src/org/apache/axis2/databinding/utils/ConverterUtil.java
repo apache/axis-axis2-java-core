@@ -873,6 +873,8 @@ public class ConverterUtil {
             minite = Integer.parseInt(source.substring(14, 16));
             second = Integer.parseInt(source.substring(17, 19));
 
+            int milliSecondPartLength = 0;
+
             if (source.length() > 19)  {
                 String rest = source.substring(19);
                 if (rest.startsWith(".")) {
@@ -881,19 +883,21 @@ public class ConverterUtil {
                         // this is in gmt time zone
                         timeZoneOffSet = 0;
                         miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("Z")));
-
+                        milliSecondPartLength = rest.substring(1,rest.lastIndexOf("Z")).trim().length();
                     } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
                         // this is given in a general time zione
                         String timeOffSet = null;
                         if (rest.lastIndexOf("+") > 0) {
                             timeOffSet = rest.substring(rest.lastIndexOf("+") + 1);
                             miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("+")));
+                            milliSecondPartLength = rest.substring(1, rest.lastIndexOf("+")).trim().length();
                             // we keep +1 or -1 to finally calculate the value
                             timeZoneOffSet = 1;
 
                         } else if (rest.lastIndexOf("-") > 0) {
                             timeOffSet = rest.substring(rest.lastIndexOf("-") + 1);
                             miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("-")));
+                            milliSecondPartLength = rest.substring(1, rest.lastIndexOf("-")).trim().length();
                             // we keep +1 or -1 to finally calculate the value
                             timeZoneOffSet = -1;
                         }
@@ -908,6 +912,7 @@ public class ConverterUtil {
                     } else {
                         // i.e it does not have time zone
                         miliSecond = Integer.parseInt(rest.substring(1));
+                        milliSecondPartLength = rest.substring(1).trim().length();
                     }
 
                 } else {
@@ -938,6 +943,15 @@ public class ConverterUtil {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minite);
             calendar.set(Calendar.SECOND, second);
+            if (milliSecondPartLength != 3){
+                // milisecond part represenst the fraction of the second so we have to
+                // find the fraction and multiply it by 1000. So if milisecond part
+                // has three digits nothing required
+                miliSecond = miliSecond * 1000;
+                for (int i = 0; i < milliSecondPartLength; i++) {
+                    miliSecond = miliSecond / 10;
+                }
+            }
             calendar.set(Calendar.MILLISECOND, miliSecond);
             calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
 
