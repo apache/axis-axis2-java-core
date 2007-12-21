@@ -1023,7 +1023,9 @@ public class AxisService extends AxisDescription {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 originalImprotString = wsdlImport.getLocationURI();
-                wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+                if (!originalImprotString.startsWith("http")){
+                    wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+                }
                 changeImportAndIncludeLocations(wsdlImport.getDefinition());
             }
         }
@@ -2006,12 +2008,18 @@ public class AxisService extends AxisDescription {
         }
     }
 
+    public Map populateSchemaMappings(){
+        // when calling from other than codegen. i.e from deployment
+        // engine we don't have to override the absolute http locations.
+        return populateSchemaMappings(false);
+    }
+
     /**
      * runs the schema mappings if it has not been run previously
      * it is best that this logic be in the axis service since one can
      * call the axis service to populate the schema mappings
      */
-    public Map populateSchemaMappings() {
+    public Map populateSchemaMappings(boolean overrideAbsoluteAddress) {
 
         //populate the axis service with the necessary schema references
         ArrayList schema = this.schemaList;
@@ -2020,7 +2028,7 @@ public class AxisService extends AxisDescription {
             Hashtable nameTable = new Hashtable();
             Hashtable sourceURIToNewLocationMap = new Hashtable();
             //calculate unique names for the schemas
-            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
+            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap, overrideAbsoluteAddress);
             //adjust the schema locations as per the calculated names
             changedSchemaLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
             //reverse the nametable so that there is a mapping from the
@@ -2037,7 +2045,10 @@ public class AxisService extends AxisDescription {
      *
      * @param schemas
      */
-    private void calculateSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
+    private void calculateSchemaNames(List schemas,
+                                      Hashtable nameTable,
+                                      Hashtable sourceURIToNewLocationMap,
+                                      boolean overrideAbsoluteAddress) {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
@@ -2052,9 +2063,10 @@ public class AxisService extends AxisDescription {
 
                     if (s != null && getScheamLocationWithDot(sourceURIToNewLocationMap, s) == null) {
                         //insert the name into the table
-                        insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
+                        insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap, overrideAbsoluteAddress);
                         //recursively call the same procedure
-                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
+                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}),
+                                nameTable, sourceURIToNewLocationMap, overrideAbsoluteAddress);
                     }
                 }
             }
@@ -2067,24 +2079,37 @@ public class AxisService extends AxisDescription {
      * @param nameTable
      * @param s
      */
-    private void insertIntoNameTable(Hashtable nameTable, XmlSchema s, Hashtable sourceURIToNewLocationMap) {
+    private void insertIntoNameTable(Hashtable nameTable,
+                                     XmlSchema s,
+                                     Hashtable sourceURIToNewLocationMap,
+                                     boolean overrideAbsoluteAddress) {
         String sourceURI = s.getSourceURI();
-        String newURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
-        if (newURI.endsWith(".xsd")) {
-            //remove the .xsd extention
-            newURI = newURI.substring(0, newURI.lastIndexOf("."));
+        // check whether the sourece uri is an absolute one and are
+        // we allowed to override it.
+        // if the absolute uri overriding is not allowed the use the
+        // original sourceURI as new one
+        if (sourceURI.startsWith("http") && !overrideAbsoluteAddress) {
+            nameTable.put(s, sourceURI);
+            sourceURIToNewLocationMap.put(sourceURI, sourceURI);
         } else {
-            newURI = "xsd" + count++;
+            String newURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
+            if (newURI.endsWith(".xsd")) {
+                //remove the .xsd extention
+                newURI = newURI.substring(0, newURI.lastIndexOf("."));
+            } else {
+                newURI = "xsd" + count++;
+            }
+
+            newURI = customSchemaNameSuffix != null ? newURI + customSchemaNameSuffix : newURI;
+            // make it unique
+            while (nameTable.containsValue(newURI)) {
+                newURI = newURI + count++;
+            }
+
+            nameTable.put(s, newURI);
+            sourceURIToNewLocationMap.put(sourceURI, newURI);
         }
 
-        newURI = customSchemaNameSuffix != null? newURI + customSchemaNameSuffix: newURI;
-        // make it unique
-        while(nameTable.containsValue(newURI)){
-            newURI = newURI + count++;
-        }
-
-        nameTable.put(s, newURI);
-        sourceURIToNewLocationMap.put(sourceURI,newURI);
     }
 
     /**
