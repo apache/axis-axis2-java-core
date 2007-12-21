@@ -62,11 +62,21 @@
         private java.util.HashMap faultExceptionClassNameMap = new java.util.HashMap();
         private java.util.HashMap faultMessageMap = new java.util.HashMap();
 
+        private static int counter = 0;
+
+        private synchronized int getUniqueSuffix(){
+            // reset the counter if it is greater than 10000
+            if (counter > 10000){
+                counter = 0;
+            }
+            return counter++;
+        }
+
     
     private void populateAxisService() throws org.apache.axis2.AxisFault {
 
      //creating the Service with a unique name
-     _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + this.hashCode());
+     _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + getUniqueSuffix());
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
