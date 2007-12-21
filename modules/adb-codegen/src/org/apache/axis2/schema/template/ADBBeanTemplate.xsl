@@ -3511,7 +3511,7 @@
                                     throw new org.apache.axis2.databinding.ADBException("Unexpected subelement " + reader.getLocalName());
                                 }
                             </xsl:if>
-                            <xsl:if test="$particleClassType and ($choice or ($min=0))">
+                            <xsl:if test="$particleClassType and ($choice or ($min=0)) and not($shortTypeName='OMElement')">
                                 <!-- since we can not validate the parser before going to next class
                                  we have to sollow an excpetions : todo find a better solsution-->
                                  } catch (java.lang.Exception e) {}
