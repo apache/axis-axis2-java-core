@@ -60,6 +60,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Templates templateCache;
 
+    private List nameList;
+
     private Map packageNameToClassNamesMap;
 
     private static int count = 0;
@@ -313,7 +315,7 @@ public class JavaBeanWriter implements BeanWriter {
         } else {
             this.rootDir = rootDir;
         }
-
+        this.nameList = new ArrayList();
         this.packageNameToClassNamesMap = new HashMap();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
@@ -333,12 +335,20 @@ public class JavaBeanWriter implements BeanWriter {
         String packageName = getPackage(namespaceURI);
 
         String originalName = qName.getLocalPart();
+        String className = null;
 
-        if (!this.packageNameToClassNamesMap.containsKey(packageName)){
-            this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+        // when wrapping classes all the data binding and exception class should have
+        // a unique name since package name is not being applied.
+        // otherewise we can make unique with the package name
+        if (!wrapClasses){
+            className = makeUniqueJavaClassName(this.nameList, originalName);
+        } else {
+            if (!this.packageNameToClassNamesMap.containsKey(packageName)) {
+                this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+            }
+            className = makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
         }
-        String className =
-                makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
+
 
         String packagePrefix = null;
 
