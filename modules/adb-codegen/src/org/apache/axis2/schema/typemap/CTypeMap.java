@@ -29,9 +29,12 @@ import java.util.Map;
  */
 public class CTypeMap implements TypeMap{
 
-    public Map getTypeMap()
-    {
+    public Map getTypeMap(){
          return CTypeInfo.getTypeMap();
+    }
+
+    public Map getSoapEncodingTypesMap() {
+        return null;
     }
 
 }

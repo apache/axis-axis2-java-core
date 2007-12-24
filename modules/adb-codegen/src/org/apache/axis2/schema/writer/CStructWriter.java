@@ -159,7 +159,10 @@ public class CStructWriter implements BeanWriter {
      * @throws org.apache.axis2.schema.SchemaCompilationException
      *
      */
-    public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    public String write(XmlSchemaElement element,
+                        Map typeMap,
+                        Map groupTypeMap,
+                        BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
             QName qName = element.getQName();
@@ -183,6 +186,7 @@ public class CStructWriter implements BeanWriter {
      */
     public String write(QName qName,
                         Map typeMap,
+                        Map groupTypeMap,
                         BeanWriterMetaInfoHolder metainf,
                         boolean isAbstract)
             throws SchemaCompilationException {
@@ -228,7 +232,10 @@ public class CStructWriter implements BeanWriter {
      *
      * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
-    public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    public String write(XmlSchemaSimpleType simpleType,
+                        Map typeMap,
+                        Map groupTypeMap,
+                        BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
             //determine the package for this type.
             QName qName = simpleType.getQName();

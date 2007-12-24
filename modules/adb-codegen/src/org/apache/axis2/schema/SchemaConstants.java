@@ -83,6 +83,57 @@ public class SchemaConstants {
     public static final QName XSD_NORMALIZEDSTRING = new QName(URI_DEFAULT_SCHEMA_XSD, "normalizedString");
     public static final QName XSD_TOKEN = new QName(URI_DEFAULT_SCHEMA_XSD, "token");
 
+    //soap encoding constants
+    public static final String URI_DEFAULT_SCHEMA_SOAP_ENCODING = "http://schemas.xmlsoap.org/soap/encoding/";
+    public static final QName SOAP_ENCODING_ARRAY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "Array");
+    public static final QName SOAP_ENCODING_STRUCT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "Struct");
+    public static final QName SOAP_ENCODING_BASE64 = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "base64");
+    public static final QName SOAP_ENCODING_DURATION = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "duration");
+    public static final QName SOAP_ENCODING_DATETIME = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "dateTime");
+    public static final QName SOAP_ENCODING_NOTATION = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "NOTATION");
+    public static final QName SOAP_ENCODING_TIME = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "time");
+    public static final QName SOAP_ENCODING_DATE = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "date");
+    public static final QName SOAP_ENCODING_GYEARMONTH = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "gYearMonth");
+    public static final QName SOAP_ENCODING_GYEAR = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "gYear");
+    public static final QName SOAP_ENCODING_GMONTHDAY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "gMonthDay");
+    public static final QName SOAP_ENCODING_GDAY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "gDay");
+    public static final QName SOAP_ENCODING_GMONTH = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "gMonth");
+    public static final QName SOAP_ENCODING_BOOLEAN = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "boolean");
+    public static final QName SOAP_ENCODING_BASE64BINARY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "base64Binary");
+    public static final QName SOAP_ENCODING_HEXBINARY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "hexBinary");
+    public static final QName SOAP_ENCODING_FLOAT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "float");
+    public static final QName SOAP_ENCODING_DOUBLE = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "double");
+    public static final QName SOAP_ENCODING_ANYURI = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "anyURI");
+    public static final QName SOAP_ENCODING_QNAME = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "QName");
+    public static final QName SOAP_ENCODING_STRING = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "string");
+    public static final QName SOAP_ENCODING_NORMALIZEDSTRING = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "normalizedString");
+    public static final QName SOAP_ENCODING_TOKEN = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "token");
+    public static final QName SOAP_ENCODING_LANGUAGE = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "language");
+    public static final QName SOAP_ENCODING_NAME = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "Name");
+    public static final QName SOAP_ENCODING_NMTOKEN = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "NMTOKEN");
+    public static final QName SOAP_ENCODING_NCNAME = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "NCName");
+    public static final QName SOAP_ENCODING_NMTOKENS = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "NMTOKENS");
+    public static final QName SOAP_ENCODING_ID = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "ID");
+    public static final QName SOAP_ENCODING_IDREF = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "IDREF");
+    public static final QName SOAP_ENCODING_ENTITY = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "ENTITY");
+    public static final QName SOAP_ENCODING_IDREFS = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "IDREFS");
+    public static final QName SOAP_ENCODING_ENTITIES = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "ENTITIES");
+    public static final QName SOAP_ENCODING_DECIMAL = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "decimal");
+    public static final QName SOAP_ENCODING_INTEGER = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "integer");
+    public static final QName SOAP_ENCODING_NONPOSITIVEINTEGER = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "nonPositiveInteger");
+    public static final QName SOAP_ENCODING_NEGATIVEINTEGER = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "negativeInteger");
+    public static final QName SOAP_ENCODING_LONG = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "long");
+    public static final QName SOAP_ENCODING_INT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "int");
+    public static final QName SOAP_ENCODING_SHORT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "short");
+    public static final QName SOAP_ENCODING_BYTE = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "byte");
+    public static final QName SOAP_ENCODING_NONNEGATIVEINTEGER = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "nonNegativeInteger");
+    public static final QName SOAP_ENCODING_UNSIGNEDLONG = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "unsignedLong");
+    public static final QName SOAP_ENCODING_UNSIGNEDINT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "unsignedInt");
+    public static final QName SOAP_ENCODING_UNSIGNEDSHORT = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "unsignedShort");
+    public static final QName SOAP_ENCODING_UNSIGNEDBYTE = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "unsignedByte");
+    public static final QName SOAP_ENCODING_POSITIVEINTEGER = new QName(URI_DEFAULT_SCHEMA_SOAP_ENCODING, "positiveInteger");
+
+
     //bit patterns for the types
     public static final int ATTRIBUTE_TYPE = 0x0001;
     public static final int ELEMENT_TYPE = 0x0002;

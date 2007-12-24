@@ -2878,7 +2878,18 @@
                                                               reader.next();
                                                           } else {
                                                         </xsl:if>
-                                                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                            <xsl:choose>
+                                                                <!-- if the base property type is a soap encoding array then extension
+                                                                  mapper class should also passed-->
+                                                                <xsl:when test="$basePropertyType='org.apache.axis2.databinding.types.soapencoding.Array'">
+                                                                    <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader,
+                                                                                    <xsl:value-of select="$mapperClass"/>.class));
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>
+
                                                         <xsl:if test="@nillable">}</xsl:if>
                                                         //loop until we find a start element that is not part of this array
                                                         boolean <xsl:value-of select="$loopBoolName"/> = false;
@@ -2903,7 +2914,17 @@
                                                                           reader.next();
                                                                       } else {
                                                                     </xsl:if>
-                                                                    <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                                    <xsl:choose>
+                                                                        <!-- if the base property type is a soap encoding array then extension
+                                                                          mapper class should also passed-->
+                                                                        <xsl:when test="$basePropertyType='org.apache.axis2.databinding.types.soapencoding.Array'">
+                                                                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader,
+                                                                                            <xsl:value-of select="$mapperClass"/>.class));
+                                                                        </xsl:when>
+                                                                        <xsl:otherwise>
+                                                                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                                        </xsl:otherwise>
+                                                                    </xsl:choose>
                                                                     <xsl:if test="@nillable">}</xsl:if>
                                                                 }else{
                                                                     <xsl:value-of select="$loopBoolName"/> = true;
@@ -3297,7 +3318,18 @@
                                           </xsl:if>
                                       }else{
                                     </xsl:if>
-                                        object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
+                                        <xsl:choose>
+                                            <!-- if the base property type is a soap encoding array then extension
+                                              mapper class should also passed-->
+                                            <xsl:when test="$propertyType='org.apache.axis2.databinding.types.soapencoding.Array'">
+                                                object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader,
+                                                                <xsl:value-of select="$mapperClass"/>.class));
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+
                                     <xsl:if test="($isType or $anon) and not($particleClassType)">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
