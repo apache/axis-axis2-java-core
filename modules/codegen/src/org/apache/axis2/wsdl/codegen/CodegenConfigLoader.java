@@ -258,6 +258,17 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                     commandLineOption.getOptionValue());
         }
 
+        //setting http proxy host and http proxy port
+        commandLineOption = loadOption(null, WSDL2JavaConstants.HTTP_PROXY_HOST_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            System.setProperty("http.proxyHost", commandLineOption.getOptionValue());
+        }
+
+        commandLineOption = loadOption(null, WSDL2JavaConstants.HTTP_PROXY_PORT_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            System.setProperty("http.proxyPort", commandLineOption.getOptionValue());
+        }
+
         // setting the overrid and all ports options
         config.setAllPorts(loadOption(WSDL2JavaConstants.All_PORTS_OPTION,
                                       WSDL2JavaConstants.All_PORTS_OPTION_LONG,
