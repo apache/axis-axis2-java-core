@@ -885,6 +885,7 @@
                <xsl:if test="not($extension) or @anon">
                   if (serializeType){
                </xsl:if>
+
                    java.lang.String namespacePrefix = registerPrefix(xmlWriter,"<xsl:value-of select="$nsuri"/>");
                    if ((namespacePrefix != null) &amp;&amp; (namespacePrefix.trim().length() > 0)){
                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","type",
@@ -2577,7 +2578,8 @@
 
                    }
                 </xsl:if>
-                <xsl:if test="$isType or $anon or $union">
+                <!-- partical classes can not have any types -->
+                <xsl:if test="(($isType or $anon or $union) and not($particleClass))">
                 if (reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","type")!=null){
                   java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                         "type");
