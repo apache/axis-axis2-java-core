@@ -1768,15 +1768,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // SOAP 1.1 body element found!
             if (extElement instanceof SOAPBody) {
                 SOAPBody soapBody = (SOAPBody) extElement;
-                if ((soapBody.getUse() != null) && (soapBody.getUse().equals(ENCODED_USE))) {
-                    throw new WSDLProcessingException("Encoded use is not supported");
-                }
                 partsList = soapBody.getParts();
             } else if (extElement instanceof SOAP12Body) {
                 SOAP12Body soapBody = (SOAP12Body) extElement;
-                if ((soapBody.getUse() != null) && (soapBody.getUse().equals(ENCODED_USE))) {
-                    throw new WSDLProcessingException("Encoded use is not supported");
-                }
                 partsList = soapBody.getParts();
             } else if (extElement instanceof MIMEMultipartRelated) {
                 MIMEMultipartRelated minMimeMultipartRelated = (MIMEMultipartRelated) extElement;
@@ -1795,15 +1789,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             mimePartExtensibilityElement = (ExtensibilityElement) mimePartElementsIter.next();
                             if (mimePartExtensibilityElement instanceof SOAPBody) {
                                 SOAPBody soapBody = (SOAPBody) mimePartExtensibilityElement;
-                                if ((soapBody.getUse() != null) && (soapBody.getUse().equals(ENCODED_USE))) {
-                                    throw new WSDLProcessingException("Encoded use is not supported");
-                                }
                                 partsList = soapBody.getParts();
                             } else if (mimePartExtensibilityElement instanceof SOAP12Body) {
                                 SOAP12Body soapBody = (SOAP12Body) mimePartExtensibilityElement;
-                                if ((soapBody.getUse() != null) && (soapBody.getUse().equals(ENCODED_USE))) {
-                                    throw new WSDLProcessingException("Encoded use is not supported");
-                                }
                                 partsList = soapBody.getParts();
                             }
                         }
