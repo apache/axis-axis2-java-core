@@ -1264,11 +1264,12 @@
                         </xsl:when>
                         <xsl:otherwise> <!-- when it is all the way an array -->
                            <xsl:if test="@any">
-                            /* 'any' arrays are not handling correctly. */
+                            /* 'any' arrays are not handling correctly when there are other elements mixed with the 'any' element. */
                            </xsl:if>
                            <xsl:choose>
                              <xsl:when test="../@ordered or not($anon or $istype)"> <!-- all the elements should follow this -->
                                 <xsl:choose>
+                                  <xsl:when test="@any"></xsl:when>
                                   <xsl:when test="@nsuri and @nsuri != ''">
                                     element_qname = axutil_qname_create(env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>", NULL);
                                   </xsl:when>
@@ -1284,11 +1285,13 @@
                                   {
                                      continue;
                                   }
+                                  <xsl:if test="not(@any)">
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
                                   if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                                   {
+                                  </xsl:if>
                                       is_early_node_valid = AXIS2_TRUE;
                                       if (sequence_broken)
                                       {
@@ -1608,11 +1611,13 @@
                                      }
 
                                      i ++;
+                                 <xsl:if test="not(@any)">
                                   }
                                   else
                                   {
                                       sequence_broken = 1;
                                   }
+                                  </xsl:if>
                                }
 
                                current_node = tmp_node;
@@ -1622,6 +1627,7 @@
                              </xsl:when>
                              <xsl:otherwise> <!-- otherwse for "../@ordered or not($anon or $istype)" -->
                                 <xsl:choose>
+                                  <xsl:when test="@any"></xsl:when>
                                   <xsl:when test="@nsuri and @nsuri != ''">
                                     element_qname = axutil_qname_create(env, "<xsl:value-of select="$propertyName"/>", "<xsl:value-of select="@nsuri"/>", NULL);
                                   </xsl:when>
@@ -1638,11 +1644,13 @@
                                   {
                                      continue;
                                   }
+                                  <xsl:if test="not(@any)">
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
                                   if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
                                   {
+                                  </xsl:if>
                                        /* found the requried element */
                                        element_found = 1;
                                       <!-- changes to following choose tag should be changed in another 2 places -->
@@ -1951,7 +1959,9 @@
                                      }
 
                                      i ++;
+                                  <xsl:if test="not(@any)">
                                   }
+                                  </xsl:if>
                                }
                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                    arr_list);
