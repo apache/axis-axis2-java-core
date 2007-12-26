@@ -233,7 +233,7 @@
              </xsl:for-each>
              }
           printf("<xsl:value-of select="$skeletonname"/> service ERROR: invalid OM parameters in request\n");
-          return content_node;
+          return NULL;
     }
 
     axiom_node_t* AXIS2_CALL
