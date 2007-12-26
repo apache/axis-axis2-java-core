@@ -1137,9 +1137,11 @@
                                       text_value = NULL; /* just to avoid warning */
                                       <xsl:choose>
                                         <xsl:when test="@any">
-                                          axiom_node_detach(current_node, env);
+                                          axiom_node_t *current_property_node = current_node;
+                                          current_node = axiom_node_get_next_sibling(current_node, env);
+                                          axiom_node_detach(current_property_node, env);
                                           status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                          current_node);
+                                                                          current_property_node);
                                         </xsl:when>
                                         <xsl:otherwise>
                                           if(axiom_node_get_first_child(current_node, env))
@@ -1279,7 +1281,8 @@
                                 </xsl:choose>
                                for (i = 0, sequence_broken = 0, tmp_node = current_node = <xsl:choose>
                                              <xsl:when test="position()=1">first_node</xsl:when>
-                                             <xsl:otherwise>axiom_node_get_next_sibling(current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; current_node = axiom_node_get_next_sibling(current_node, env))
+                                             <xsl:otherwise>axiom_node_get_next_sibling(current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>) 
+                                             <!-- We are not moving current_node to next sibling here if it an any type, because we already have done the move -->
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
                                   {
@@ -1524,8 +1527,27 @@
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                           text_value = NULL; /* just to avoid warning */
-                                          axiom_node_detach(current_node, env);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
+                                          <xsl:choose>
+                                            <xsl:when test="@any">
+                                              axiom_node_t *current_property_node = current_node;
+                                              current_node = axiom_node_get_next_sibling(current_node, env);
+                                              axiom_node_detach(current_property_node, env);
+                                              axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                              if(axiom_node_get_first_child(current_node, env))
+                                              {
+                                                  axiom_node_t *current_property_node = axiom_node_get_first_child(current_node, env);
+                                                  axiom_node_detach(current_property_node, env);
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
+                                              }
+                                              else
+                                              {
+                                                  status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                              NULL);
+                                              }
+                                            </xsl:otherwise>
+                                          </xsl:choose>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
@@ -1638,7 +1660,8 @@
                                 /*
                                  * because elements are not ordered we should surf all the sibling to pick the right one
                                  */
-                               for (i = 0, current_node = first_node; current_node != NULL; current_node = axiom_node_get_next_sibling(current_node, env))
+                               for (i = 0, current_node = first_node; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>)
+                                             <!-- We are not moving current_node to next sibling here if it an any type, because we already have done the move -->
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
                                   {
@@ -1867,8 +1890,24 @@
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                           text_value = NULL; /* just to avoid warning */
-                                          axiom_node_detach(current_node, env);
-                                          axutil_array_list_add_at(arr_list, env, i, (void*)current_node);
+                                          <xsl:choose>
+                                            <xsl:when test="@any">
+                                              axiom_node_t *current_property_node = current_node;
+                                              current_node = axiom_node_get_next_sibling(current_node, env);
+                                              axiom_node_detach(current_property_node, env);
+                                              axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
+                                              status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                              current_property_node);
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                              if(axiom_node_get_first_child(current_node, env))
+                                              {
+                                                  axiom_node_t *current_property_node = axiom_node_get_first_child(current_node, env);
+                                                  axiom_node_detach(current_property_node, env);
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
+                                              }
+                                            </xsl:otherwise>
+                                          </xsl:choose>
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
