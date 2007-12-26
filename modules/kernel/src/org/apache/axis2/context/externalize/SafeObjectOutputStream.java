@@ -19,8 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectOutput;
@@ -50,7 +48,7 @@ import java.util.Map;
  * @see SafeObjectInputStream
  *
  */
-public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutput,
+public class SafeObjectOutputStream implements ObjectOutput,
         ObjectStreamConstants, ExternalizeConstants {
     
     private static final Log log = LogFactory.getLog(SafeObjectOutputStream.class);
@@ -682,7 +680,7 @@ public class SafeObjectOutputStream implements Closeable, Flushable, ObjectOutpu
             return;
         }
         if (obj != null) {
-            String name = obj.getClass().getCanonicalName();
+            String name = obj.getClass().getName();
             Object value = notSerializableList.get(name);
             if (value == null) {
                 notSerializableList.put(name, name);

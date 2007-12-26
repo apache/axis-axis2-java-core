@@ -18,8 +18,6 @@ package org.apache.axis2.context.externalize;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamConstants;
@@ -28,8 +26,8 @@ import java.io.ObjectStreamConstants;
  * DebugObjectOutputStream delegates to an ObjectOutput object.
  * Each method logs in/out trace information
  */
-public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOutput, Closeable,
-        Flushable {
+public class DebugObjectOutputStream implements ObjectStreamConstants, ObjectOutput
+        {
     private static final Log log = LogFactory.getLog(DebugObjectOutputStream.class);
     private static final boolean isDebug = log.isDebugEnabled();
     ObjectOutput out;

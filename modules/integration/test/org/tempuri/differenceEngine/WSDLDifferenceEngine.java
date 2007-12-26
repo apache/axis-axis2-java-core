@@ -24,6 +24,8 @@ import org.custommonkey.xmlunit.DifferenceEngine;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.w3c.dom.Attr;
 
+import java.lang.reflect.Method;
+
 /**
  * This class extends the DifferenceEngine class to overwrite the methods that
  * incorrectly fail Diff.similar() for certain equivalent but not identical
@@ -100,7 +102,12 @@ public class WSDLDifferenceEngine extends DifferenceEngine {
     	
     	if (value == null || index == -1 || index == protocol)
     		return null;
-    	
-    	return attr.lookupNamespaceURI(value.substring(0, index));
+
+        try {
+            Method m = Attr.class.getMethod("lookupNamespaceURI", new Class[]{String.class});
+            return (String) m.invoke(attr, new Object[]{value.substring(0, index)});
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

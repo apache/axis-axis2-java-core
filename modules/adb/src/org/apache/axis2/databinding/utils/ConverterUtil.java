@@ -1087,7 +1087,7 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Object o = objectList.get(i);
                 if (o != null) {
-                    array[i] = Boolean.parseBoolean(o.toString());
+                    array[i] = o.toString().equalsIgnoreCase("true");
                 }
             }
             returnArray = array;

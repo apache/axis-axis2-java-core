@@ -1071,7 +1071,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
                 URI uri = null;
                 if (url != null) {
-                    uri = url.toURI();
+                    uri = new URI(url.toString());
                 }
 
                 // Check if the uri has relative path 
