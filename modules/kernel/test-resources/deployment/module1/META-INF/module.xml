@@ -48,4 +48,6 @@
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <parameter name="para1" locked="xsd:true">10</parameter>
     </operation>
+    <phase name="NewPhase" before="Dispatch" after="Security" flow="InFlow"/>
+    <phase name="NewPhase" before="Dispatch"  flow="InFaultFlow"/>
 </module>

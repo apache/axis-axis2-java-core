@@ -20,28 +20,56 @@
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Phase;
 
 import javax.xml.stream.XMLStreamException;
+import java.util.ArrayList;
 
 public class DeploymentTotalTest extends TestCase {
     AxisConfiguration er;
 
-    public void testparseService1() throws AxisFault, XMLStreamException {
+
+    protected void setUp() throws Exception {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
         er = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
+         // OK, no exceptions.  Now make sure we read the correct file...
+    }
 
-        // OK, no exceptions.  Now make sure we read the correct file...
+    public void testparseService1() throws AxisFault, XMLStreamException {
         Parameter param = er.getParameter("FavoriteColor");
         assertNotNull("No FavoriteColor parameter in axis2.xml!", param);
-
         assertEquals("purple", param.getValue());
+    }
+
+    public void testDynamicPhase() {
+        ArrayList inFlow = er.getInFlowPhases();
+        boolean found = false;
+        int index = 0;
+        for (int i = 0; i < inFlow.size(); i++) {
+            Phase phase = (Phase) inFlow.get(i);
+            if (phase.getName().equals("NewPhase")) {
+                found = true;
+                index = i;
+            }
+        }
+        assertEquals("Phase has insert into a wrong location" ,index,3);
+        assertTrue("Problem in Dynamic Phases for Inflow", found);
+        inFlow = er.getInFaultFlowPhases();
+        found = false;
+        for (int i = 0; i < inFlow.size(); i++) {
+            Phase phase = (Phase) inFlow.get(i);
+            if (phase.getName().equals("NewPhase")) {
+                found = true;
+            }
+        }
+        assertTrue("Problem in Dynamic Phases for InFaultflow", found);
     }
 
 }

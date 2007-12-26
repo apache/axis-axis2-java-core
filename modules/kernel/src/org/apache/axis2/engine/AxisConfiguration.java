@@ -32,6 +32,7 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
@@ -815,14 +816,14 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * This method needs to remain for a few Axis2 releases to support
      * legacy apps still using it.
-     * 
+     *
      * @param qname
      * @deprecated Use {@link #isEngaged(String)}
      */
     public boolean isEngaged(QName qname) {
         return isEngaged(qname.getLocalPart());
     }
-    
+
     public boolean isEngaged(String moduleId) {
         AxisModule module = getModule(moduleId);
         if (module == null) {
@@ -1105,5 +1106,128 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
+    }
+
+    /**
+     * This method can be used to insert a phase at the runtime for a given location
+     * And the relative location can be specified by beforePhase and afterPhase. Parameters
+     * Either or both of them can be null , if both the parameters are null then the phase
+     * will be added some where in the global phase. If one of them are null then the phase
+     * will be added
+     *  - If the beforePhase is null then the phase will be added after the afterPhase
+     *  - If the after phase is null then the phase will be added before the beforePhase
+     * Type of the flow will be specified by the parameter flow.
+     *   1 - Inflow
+     *   2 - out flow
+     *   3 - fault in flow
+     *   4 - fault out flow
+     *
+     * @param phaseName : Not null parameter , specifying the phase name
+     * @param beforePhase : can be null , will tell the name of before phase
+     * @param afterPhase : Can be null and will tell the name of after phase
+     * @param flow : Type of the flow
+     * @throws org.apache.axis2.AxisFault : If something went wrong
+     */
+    public void insertPhase(String phaseName ,
+                            String beforePhase,
+                            String afterPhase ,
+                            int flow) throws AxisFault {
+
+
+        switch (flow) {
+            case PhaseMetadata.IN_FLOW : {
+                ArrayList phaseList = phasesinfo.getINPhases();
+                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                if (phaseList != null) {
+                    phasesinfo.setINPhases(phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.OUT_FLOW : {
+                ArrayList phaseList = phasesinfo.getOUTPhases();
+                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                if (phaseList != null) {
+                    phasesinfo.setOUTPhases(phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.FAULT_OUT_FLOW : {
+                ArrayList phaseList = phasesinfo.getOutFaultPhaseList();
+                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                if (phaseList != null) {
+                    phasesinfo.setOUT_FaultPhases(phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.FAULT_IN_FLOW : {
+                ArrayList phaseList = phasesinfo.getIN_FaultPhases();
+                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                if (phaseList != null) {
+                    phasesinfo.setIN_FaultPhases(phaseList);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * This method will added a given phase into the location specified by the phase before
+     * and phase after.  If given phase are not found then an exception will be thrown.
+     * @param beforePhase : Name of the before phase
+     * @param phaseList : ArrayList of phase
+     * @param afterPhase : Name of the after phase
+     * @param phaseName : name of the phase we need to add
+     * @throws AxisFault : If something went wrong
+     * @return : Modified list
+     */
+    private ArrayList findAndInsertPhase(String beforePhase,
+                                         ArrayList phaseList,
+                                         String afterPhase,
+                                         String phaseName) throws AxisFault {
+        int beforeIndex = -1;
+        int afterIndex = -1;
+        for (int i = 0; i < phaseList.size(); i++) {
+            Phase phase = (Phase) phaseList.get(i);
+            if (phase.getPhaseName().equals(beforePhase)) {
+                beforeIndex = i;
+            } else if (phase.getPhaseName().equals(afterPhase)){
+                afterIndex = i;
+            } else if (phase.getPhaseName().equals(phaseName)){
+                return null;
+            }
+        }
+        if (beforeIndex == -1 && afterIndex == -1) {
+            throw new AxisFault("Trying to add a phase " + phaseName + " before "
+                    + beforePhase + " and after " + afterPhase + " but none of the phases " +
+                    "found in the system please refer to axis2.xml for available phases");
+        }
+
+        if (afterIndex > beforeIndex) {
+            throw new AxisFault("Trying to add a phase " + phaseName + " before "
+                    + beforePhase + " and after " + afterPhase + " phase order is invalid , " +
+                    "please refer axis2.xml for the correct phase order");
+        }
+        Phase phase = new Phase();
+        phase.setName(phaseName);
+        if (beforeIndex == -1){
+            if (afterIndex == phaseList.size() -1) {
+                // Need to add to the last phase since the after phase is the
+                // last phase in the system
+                phaseList.add(phase);
+            } else {
+                phaseList.add(afterIndex, phase);
+            }
+        } else   if (afterIndex == -1) {
+            if (beforeIndex == 0) {
+                // Need to add to the first place of the phase since the before
+                // phase index is 0
+                phaseList.add(0, phase);
+            } else {
+                phaseList.add(beforeIndex, phase);
+            }
+        } else {
+            phaseList.add(afterIndex, phase);
+        }
+        return phaseList;
     }
 }

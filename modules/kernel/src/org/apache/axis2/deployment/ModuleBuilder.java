@@ -23,12 +23,9 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -88,7 +85,11 @@ public class ModuleBuilder extends DescriptionBuilder {
             OMElement moduleElement = buildOM();
             // Setting Module Class , if it is there
             OMAttribute moduleClassAtt = moduleElement.getAttribute(new QName(TAG_CLASS_NAME));
+            // processing Parameters
+            // Processing service level parameters
+            Iterator itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
+            processParameters(itr, module, module.getParent());
             if (moduleClassAtt != null) {
                 String moduleClass = moduleClassAtt.getAttributeValue();
 
@@ -150,12 +151,6 @@ public class ModuleBuilder extends DescriptionBuilder {
                                          module.getPolicyInclude());
             }
 
-            // processing Parameters
-            // Processing service level parameters
-            Iterator itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
-
-            processParameters(itr, module, module.getParent());
-
             // process INFLOW
             OMElement inFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN));
 
@@ -212,7 +207,13 @@ public class ModuleBuilder extends DescriptionBuilder {
 
                 module.addOperation(operation);
             }
+
+            // Processing Dynamic Phase
+            Iterator phaseItr = moduleElement.getChildrenWithName(new QName(TAG_PHASE));
+            processModulePhase(phaseItr);
         } catch (XMLStreamException e) {
+            throw new DeploymentException(e);
+        } catch(AxisFault e) {
             throw new DeploymentException(e);
         }
     }
@@ -314,5 +315,40 @@ public class ModuleBuilder extends DescriptionBuilder {
         }
 
         return operations;
+    }
+
+    /**
+     * This will process the phase list and then added the phases specified in module.xml to
+     * axisConfiguration. The format of a phase element will something like
+     *  <phase name="Foo" after="After_phase_Name" before="Before_Phase_Name"
+     *  flow="[InFlow,OutFlow,OutFaultFlow,InFaultFlow]"/>
+     *  Here before and after can be null
+     * @param phases : OMElement iterator
+     * @throws AxisFault : If something went wrong
+     */
+    private void processModulePhase(Iterator phases) throws AxisFault {
+        if (phases == null){
+            return;
+        }
+        while (phases.hasNext()) {
+            OMElement element = (OMElement) phases.next();
+            String phaseName = element.getAttributeValue(new QName(ATTRIBUTE_NAME));
+            String after = element.getAttributeValue(new QName(TAG_AFTER));
+            String before = element.getAttributeValue(new QName(TAG_BEFORE));
+            String flowName = element.getAttributeValue(new QName("flow"));
+            int flowInex ;
+            if (TAG_FLOW_IN.equals(flowName)){
+                flowInex = PhaseMetadata.IN_FLOW ;
+            } else if (TAG_FLOW_OUT.equals(flowName)) {
+                flowInex = PhaseMetadata.OUT_FLOW ;
+            } else if (TAG_FLOW_OUT_FAULT.equals(flowName)) {
+                flowInex = PhaseMetadata.FAULT_OUT_FLOW;
+            } else if (TAG_FLOW_IN_FAULT.equals(flowName)) {
+                flowInex = PhaseMetadata.FAULT_IN_FLOW;
+            } else {
+                throw new DeploymentException(" Flow can not be null for the phase name " + phaseName);
+            }
+            axisConfig.insertPhase(phaseName,before,after,flowInex);
+        }
     }
 }
