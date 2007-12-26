@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.schema.typemap;
 
-import org.apache.axis2.wsdl.codegen.emitter.CTypeInfo;
 import org.apache.axis2.schema.SchemaConstants;
+import org.apache.axis2.namespace.Constants;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -28,16 +28,153 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The java type map. uses a static map for caching
- * Most code from Axis 1 Codebase*
- * Most code JavaTypeMap
+ * The C type map. uses a static map for caching
  */
 public class CTypeMap implements TypeMap{
 
+    private static Map typeMap = new HashMap();
+
+    // Type map for the standard schema types
     public Map getTypeMap(){
-         return CTypeInfo.getTypeMap();
+         return typeMap;
     }
 
+    static {
+        // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
+        CTypeMap.addTypemapping(SchemaConstants.XSD_STRING,
+                                 "axis2_char_t*");
+
+        // The XSD Primitives are mapped to axis2/c primitives.
+        CTypeMap.addTypemapping(SchemaConstants.XSD_BOOLEAN, "axis2_bool_t");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DOUBLE, "double");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_FLOAT, "float");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_INT, "int");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_INTEGER,
+                                 "int");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_LONG, "long");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_SHORT, "short");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_BYTE, "axis2_byte_t");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ANY, "axiom_node_t*");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DECIMAL, "double");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ANYTYPE,
+                                 "axiom_node_t*");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_QNAME,
+                                 "axutil_qname_t*");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DATE,
+                                 "axutil_date_time_t*");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_TIME,
+                                 "axutil_date_time_t*");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DATETIME,
+                                 "axutil_date_time_t*");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_BASE64,
+                                 "axutil_base64_binary_t*");
+
+        CTypeMap.addTypemapping(SchemaConstants.XSD_HEXBIN,
+                                 "axiom_node_t*");
+
+        // These are the g* types (gYearMonth, etc) which map to Axis types
+        // These types are mapped to an integer
+        CTypeMap.addTypemapping(SchemaConstants.XSD_YEARMONTH,
+                                 "axutil_date_time_t*");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_YEAR,
+                                 "int");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_MONTH,
+                                 "int");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DAY,
+                                 "int");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_MONTHDAY,
+                                 "axutil_date_time_t*");
+
+        // xsd:token
+        CTypeMap.addTypemapping(SchemaConstants.XSD_TOKEN, "axis2_char_t*");
+
+        // a xsd:normalizedString
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NORMALIZEDSTRING,
+                                 "axis2_char_t*");
+
+        // a xsd:unsignedLong
+        CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDLONG,
+                                 "unsigned long");
+
+        // a xsd:unsignedInt
+        CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDINT,
+                                 "unsigned int");
+
+        // a xsd:unsignedShort
+        CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDSHORT,
+                                 "unsigned short");
+
+        // a xsd:unsignedByte
+        CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDBYTE,
+                                 "axis2_byte_t");
+
+        // a xsd:nonNegativeInteger
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NONNEGATIVEINTEGER,
+                                 "unsigned int");
+
+        // a xsd:negativeInteger
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NEGATIVEINTEGER,
+                                 "int");
+
+        // a xsd:positiveInteger
+        CTypeMap.addTypemapping(SchemaConstants.XSD_POSITIVEINTEGER,
+                                 "unsigned int");
+
+        // a xsd:nonPositiveInteger
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NONPOSITIVEINTEGER,
+                                 "unsigned int");
+
+        // a xsd:Name
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NAME, "axis2_char_t*");
+
+        // a xsd:NCName
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NCNAME, "axis2_char_t*");
+
+        // a xsd:ID
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ID, "axis2_char_t*");
+
+        // a xsd:language
+        CTypeMap.addTypemapping(SchemaConstants.XSD_LANGUAGE, "axis2_char_t*");
+
+        // a xsd:NmToken
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NMTOKEN, "axis2_char_t*");
+
+        // a xsd:NmTokens
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NMTOKENS, "axis2_char_t*");
+
+        // a xsd:NOTATION
+        CTypeMap.addTypemapping(SchemaConstants.XSD_NOTATION, "axiom_node_t*");
+
+        // a xsd:XSD_ENTITY
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ENTITY, "axis2_char_t*");
+
+        // a xsd:XSD_ENTITIES
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ENTITIES, "axis2_char_t*");
+
+        // a xsd:XSD_IDREF
+        CTypeMap.addTypemapping(SchemaConstants.XSD_IDREF, "axis2_char_t*");
+
+        // a xsd:XSD_XSD_IDREFS
+        CTypeMap.addTypemapping(SchemaConstants.XSD_IDREFS, "axis2_char_t*");
+
+        // a xsd:Duration
+        CTypeMap.addTypemapping(SchemaConstants.XSD_DURATION, "axutil_duration_t*");
+
+        // a xsd:anyURI
+        CTypeMap.addTypemapping(SchemaConstants.XSD_ANYURI,
+                                 "axutil_uri_t*");
+    }
+
+    private static void addTypemapping(QName name, String str) {
+        CTypeMap.typeMap.put(name, str);
+    }
+
+    // Type map for the soap encoding types
     public Map getSoapEncodingTypesMap() {
         return soapEncodingTypeMap;
     }
@@ -47,43 +184,91 @@ public class CTypeMap implements TypeMap{
     static {
         // populate the soapEncodingTypeMap
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_ARRAY,
-                org.apache.axis2.databinding.types.soapencoding.Array.class.getName());
+                "axutil_array_list_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_STRUCT,
-                org.apache.axis2.databinding.types.soapencoding.Struct.class.getName());
+                "axiom_node_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_BASE64,
-                org.apache.axis2.databinding.types.soapencoding.Base64.class.getName());
+                "axutil_base64_binary_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_DURATION,
-                org.apache.axis2.databinding.types.soapencoding.Duration.class.getName());
+                "axutil_duration_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_DATETIME,
-                org.apache.axis2.databinding.types.soapencoding.DateTime.class.getName());
+                "axutil_date_time_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NOTATION,
-                org.apache.axis2.databinding.types.soapencoding.NOTATION.class.getName());
+                "axiom_node_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_TIME,
-                org.apache.axis2.databinding.types.soapencoding.Time.class.getName());
+                "axutil_date_time_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_DATE,
-                org.apache.axis2.databinding.types.soapencoding.Date.class.getName());
+                "axutil_date_time_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_GYEARMONTH,
-                org.apache.axis2.databinding.types.soapencoding.GYearMonth.class.getName());
+                "axutil_date_time_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_GYEAR,
-                org.apache.axis2.databinding.types.soapencoding.GYear.class.getName());
+                "int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_GMONTHDAY,
-                org.apache.axis2.databinding.types.soapencoding.GMonthDay.class.getName());
+                "axutil_date_time_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_GDAY,
-                org.apache.axis2.databinding.types.soapencoding.GDay.class.getName());
+                "int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_GMONTH,
-                org.apache.axis2.databinding.types.soapencoding.GMonth.class.getName());
+                "int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_BOOLEAN,
-                org.apache.axis2.databinding.types.soapencoding._boolean.class.getName());
+                "axis2_bool_t");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_BASE64BINARY,
-                org.apache.axis2.databinding.types.soapencoding.Base64Binary.class.getName());
+                "axutil_base64_binary_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_HEXBINARY,
-                org.apache.axis2.databinding.types.soapencoding.HexBinary.class.getName());
+                "axiom_node_t*");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_FLOAT,
-                org.apache.axis2.databinding.types.soapencoding._float.class.getName());
+                "float");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_DOUBLE,
-                org.apache.axis2.databinding.types.soapencoding._double.class.getName());
+                "double");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_ANYURI,
-                org.apache.axis2.databinding.types.soapencoding.AnyURI.class.getName());
+                "axutil_uri_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_QNAME,
+                "axutil_qname_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_STRING,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NORMALIZEDSTRING,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_TOKEN,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_LANGUAGE,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NAME,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NMTOKEN,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NCNAME,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_ID,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_IDREF,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_ENTITY,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_IDREFS,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_ENTITIES,
+                "axis2_char_t*");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_DECIMAL,
+                "double");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_INTEGER,
+                "int");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NONPOSITIVEINTEGER,
+                "int");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NEGATIVEINTEGER,
+                "int");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_LONG,
+                "long");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_INT,
+                "int");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_SHORT,
+                "short");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_BYTE,
+                "axis2_byte_t");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NONNEGATIVEINTEGER,
+                "unsigned int");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_UNSIGNEDLONG,
+                "unsigned long");
+        addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_UNSIGNEDINT,
+                "unsigned int");
     }
 
     private static void addSoapEncodingTypeMapping(QName name, String className) {
