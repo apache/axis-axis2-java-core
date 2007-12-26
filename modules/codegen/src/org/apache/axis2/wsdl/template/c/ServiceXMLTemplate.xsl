@@ -38,7 +38,7 @@
             </description>
 			<xsl:for-each select="method">
 				<operation>
-					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
+					<xsl:attribute name="name"><xsl:value-of select="@localpart"/></xsl:attribute>
             <xsl:if test="@soapaction">
               <parameter>
                 <xsl:attribute name="name"><xsl:text>wsamapping</xsl:text></xsl:attribute>
