@@ -1697,6 +1697,7 @@
                                           if(text_value != NULL)
                                           {
                                                 axutil_array_list_add_at(arr_list, env, i, (void*)text_value);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1755,6 +1756,7 @@
                                           if(text_value != NULL)
                                           {
                                                 axutil_array_list_add_at(arr_list, env, i, (void*)axutil_uri_parse_string(env, text_value));
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1768,6 +1770,7 @@
                                           if(text_value != NULL)
                                           {
                                                 axutil_array_list_add_at(arr_list, env, i, (void*)axutil_duration_create_from_string(env, text_value));
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1784,6 +1787,7 @@
                                               element = AXIS2_MALLOC(env-> allocator, 64);
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)(*text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1800,6 +1804,7 @@
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(int));
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1816,6 +1821,7 @@
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(int));
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1832,6 +1838,7 @@
                                                element = AXIS2_MALLOC(env-> allocator, sizeof(short));
                                                (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoi(text_value);
                                                axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1848,6 +1855,7 @@
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(float));
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1864,6 +1872,7 @@
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(double));
                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atof(text_value);
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1880,6 +1889,7 @@
                                                element = AXIS2_MALLOC(env-> allocator, sizeof(long));
                                                (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atol(text_value);
                                                axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1921,6 +1931,7 @@
                                               {
                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
                                               }
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -1944,6 +1955,7 @@
                                                   return AXIS2_FAILURE;
                                               }
                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
@@ -3927,10 +3939,7 @@
 
                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
-               if(NULL != <xsl:value-of select="$name"/>)
-               {
-                   return AXIS2_FAILURE;
-               }
+               
 
                <xsl:if test="@isarray or @ours or @type='axis2_char_t*' or @type='axutil_qname_t*' or @type='axutil_duration_t*' or @type='axutil_uri_t*' or @type='axutil_date_time_t*' or @type='axutil_base64_binary_t*'">
                 <!-- handles arrays -->

@@ -131,6 +131,8 @@
 
 
 
+        /********************************** Getters and Setters **************************************/
+        <xsl:if test="count(property[@array])!=0">/******** Deprecated for array types, Use 'Getters and Setters for Arrays' instead ***********/</xsl:if>
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
@@ -166,8 +168,6 @@
                 </xsl:choose>
             </xsl:variable>
         
-        /********************************** Getters and Setters **************************************/
-        <xsl:if test="count(property[@array])!=0">/******** Deprecated for array types, Use 'Getters and Setters for Arrays' instead ***********/</xsl:if>
 
         /**
          * Getter for <xsl:value-of select="$propertyName"/>. <xsl:if test="@isarray">Deprecated for array types, Use <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at instead</xsl:if>
@@ -540,7 +540,7 @@
             axiom_node_t* <xsl:value-of select="$name"/>_om_node, axiom_element_t *<xsl:value-of select="$name"/>_om_element, int tag_closed, axutil_hash_t *namespaces, int *next_ns_index);
 
         /**
-         * Check whether the <xsl:value-of select="$axis2_name"/> is a particle class (E.g. A group)
+         * Check whether the <xsl:value-of select="$axis2_name"/> is a particle class (E.g. group, inner sequence)
          * @return whether this is a particle class.
          */
         axis2_bool_t AXIS2_CALL
