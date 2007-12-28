@@ -1137,11 +1137,13 @@
                                       text_value = NULL; /* just to avoid warning */
                                       <xsl:choose>
                                         <xsl:when test="@any">
+                                        {
                                           axiom_node_t *current_property_node = current_node;
                                           current_node = axiom_node_get_next_sibling(current_node, env);
                                           axiom_node_detach(current_property_node, env);
                                           status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                           current_property_node);
+                                        }
                                         </xsl:when>
                                         <xsl:otherwise>
                                           if(axiom_node_get_first_child(current_node, env))
@@ -1296,12 +1298,14 @@
                                   {
                                   </xsl:if>
                                       is_early_node_valid = AXIS2_TRUE;
+                                      <xsl:if test="not(@any)">
                                       if (sequence_broken)
                                       {
                                         /* found element out of order */
                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "elements found out of order for array<xsl:value-of select="$propertyName"/> missing");
                                         return AXIS2_FAILURE;
                                       }
+                                      </xsl:if>
                                       tmp_node = current_node; /* always update the current node */
                                       element_found = 1;
                                       <!-- changes to following choose tag should be changed in another 2 places -->
@@ -1529,10 +1533,12 @@
                                           text_value = NULL; /* just to avoid warning */
                                           <xsl:choose>
                                             <xsl:when test="@any">
+                                            {
                                               axiom_node_t *current_property_node = current_node;
                                               current_node = axiom_node_get_next_sibling(current_node, env);
                                               axiom_node_detach(current_property_node, env);
                                               axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
+                                            }
                                             </xsl:when>
                                             <xsl:otherwise>
                                               if(axiom_node_get_first_child(current_node, env))
@@ -1902,12 +1908,14 @@
                                           text_value = NULL; /* just to avoid warning */
                                           <xsl:choose>
                                             <xsl:when test="@any">
+                                            {
                                               axiom_node_t *current_property_node = current_node;
                                               current_node = axiom_node_get_next_sibling(current_node, env);
                                               axiom_node_detach(current_property_node, env);
                                               axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
                                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                               current_property_node);
+                                            }
                                             </xsl:when>
                                             <xsl:otherwise>
                                               if(axiom_node_get_first_child(current_node, env))
