@@ -19,6 +19,8 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
+import org.apache.axis2.i18n.Messages;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -42,9 +44,10 @@ public class ServiceXMLWriter extends FileWriter {
                                                      ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
-        if (!fileExists) {
+        if (!fileExists || this.isOverride) {
             this.stream = new FileOutputStream(outputFile);
         }
+        
     }
 }
 
