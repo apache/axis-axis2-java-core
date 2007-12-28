@@ -61,11 +61,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CodeGenerationUtility {
     private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
@@ -88,19 +84,27 @@ public class CodeGenerationUtility {
                 return new DefaultTypeMapper();
             }
 
-            final ArrayList xmlObjectsVector = new ArrayList();
+            final Map schemaToInputSourceMap = new HashMap();
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
 
-            final String baseURI = cgconfig.getBaseURI();
+            String baseURI = cgconfig.getBaseURI();
+            if (!baseURI.endsWith("/")){
+               baseURI = baseURI + "/";
+            }
+
 
             for (int i = 0; i < schemas.size(); i++) {
                 XmlSchema schema = (XmlSchema)schemas.get(i);
                 InputSource inputSource =
                         new InputSource(new StringReader(getSchemaAsString(schema)));
-                inputSource.setSystemId(schema.getTargetNamespace());
-                xmlObjectsVector.add(inputSource);
+                //here we have to set a proper system ID. otherwise when processing the
+                // included schaemas for this schema we have a problem
+                // it creates the system ID using this target namespace value
+                inputSource.setSystemId(baseURI + "xsd" + i + ".xsd");
+                inputSource.setPublicId(schema.getTargetNamespace());
+                schemaToInputSourceMap.put(schema,inputSource);
             }
 
             File outputDir = new File(cgconfig.getOutputLocation(), "src");
@@ -109,23 +113,32 @@ public class CodeGenerationUtility {
             Map nsMap = cgconfig.getUri2PackageNameMap();
             EntityResolver resolver = new EntityResolver() {
                 public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                    for (int i = 0; i < schemas.size(); i++) {
-                        XmlSchema schema = (XmlSchema) schemas.get(i);
-                        if(schema.getTargetNamespace().equals(publicId)){
-                            InputSource inputSource =
-                                    new InputSource(new StringReader(getSchemaAsString(schema)));
-                            inputSource.setSystemId(schema.getTargetNamespace());
-                            return inputSource;
+                    InputSource returnInputSource = null;
+                    XmlSchema key = null;
+                    for (Iterator iter = schemaToInputSourceMap.keySet().iterator();iter.hasNext();) {
+                        key = (XmlSchema) iter.next();
+                        if (key.getTargetNamespace().equals(publicId)) {
+                            returnInputSource = (InputSource) schemaToInputSourceMap.get(key);
+                            // we have the requried schema
+                            break;
                         }
                     }
-                    return null;
+                    if (returnInputSource == null){
+                        // then we have to find this using the file system
+                        if (systemId != null){
+                            returnInputSource = new InputSource(systemId);
+                        }
+                    }
+                    return returnInputSource;
                 }
             };
 
-            for (int i = 0; i < xmlObjectsVector.size(); i++) {
+            XmlSchema key = null;
+            for (Iterator schemaIter = schemaToInputSourceMap.keySet().iterator();
+                 schemaIter.hasNext();) {
 
                 SchemaCompiler sc = XJC.createSchemaCompiler();
-                XmlSchema schema = (XmlSchema)schemas.get(i);
+                key = (XmlSchema) schemaIter.next();
 
                 if (nsMap != null) {
                     Iterator iterator = nsMap.entrySet().iterator();
@@ -136,8 +149,8 @@ public class CodeGenerationUtility {
                         registerNamespace(sc, namespace, pkg);
                     }
                 } else {
-                    String namespace = schema.getTargetNamespace();
-                    String pkg = extractNamespace(schema);
+                    String namespace = key.getTargetNamespace();
+                    String pkg = extractNamespace(key);
                     registerNamespace(sc, namespace, pkg);
                 }
 
@@ -165,7 +178,7 @@ public class CodeGenerationUtility {
                     }
                 });
 
-                sc.parseSchema((InputSource) xmlObjectsVector.get(i));
+                sc.parseSchema((InputSource) schemaToInputSourceMap.get(key));
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
