@@ -81,6 +81,9 @@ public interface CommandLineOptionConstants {
         String HTTP_PROXY_HOST_OPTION_LONG = "proxy-host";
         String HTTP_PROXY_PORT_OPTION_LONG = "proxy-port";
 
+        String HTTP_PROXY_HOST_OPTION_LONG = "http-proxy-host";
+        String HTTP_PROXY_PORT_OPTION_LONG = "http-proxy-port";
+
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";
 
