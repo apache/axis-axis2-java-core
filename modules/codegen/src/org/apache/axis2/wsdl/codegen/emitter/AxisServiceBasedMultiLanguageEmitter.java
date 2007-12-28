@@ -93,6 +93,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
@@ -2824,6 +2825,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "localname",
                         msg.getElementQName().getLocalPart(),
                         paramElement);
+
+                if (msg.getElementQName() != null) {
+                    Element qNameElement = doc.createElement("qname");
+                    addAttribute(doc, "nsuri", msg.getElementQName().getNamespaceURI(), qNameElement);
+                    addAttribute(doc, "localname", msg.getElementQName().getLocalPart(), qNameElement);
+                    paramElement.appendChild(qNameElement);
+                }
                 //the type represents the type that will be wrapped by this
                 //name
                 String typeMapping =
