@@ -34,6 +34,9 @@
         <xsl:variable name="particleClass"><xsl:value-of select="@particleClass"/></xsl:variable> <!-- particle classes are used to represent schema groups -->
         <xsl:variable name="hasParticleType"><xsl:value-of select="@hasParticleType"/></xsl:variable> <!-- particle classes are used to represent schema groups -->
        
+        <xsl:variable name="simple"><xsl:value-of select="@simple"/></xsl:variable>
+        <xsl:variable name="choice"><xsl:value-of select="@choice"/></xsl:variable>
+
         /**
          * <xsl:value-of select="$axis2_name"/>.c
          *
@@ -82,7 +85,11 @@
                 <!-- For arrays is_valid_* tracks for whether at least one element of the array is non-NULL -->
                 <xsl:text>axis2_bool_t is_valid_</xsl:text><xsl:value-of select="$CName"/>;
 
+
             </xsl:for-each>
+            <xsl:if test="$choice">
+                axis2_char_t *current_choice;
+            </xsl:if>
         };
 
 
@@ -188,6 +195,10 @@
               </xsl:choose>
 
               <xsl:value-of select="$name"/>->qname = qname;
+            </xsl:if>
+
+            <xsl:if test="$choice">
+                <xsl:value-of select="$name"/>->current_choice = "";
             </xsl:if>
 
             return <xsl:value-of select="$name"/>;
@@ -409,7 +420,9 @@
         <xsl:value-of select="$axis2_name"/>_deserialize(
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env,
-                axiom_node_t **dp_parent)
+                axiom_node_t **dp_parent,
+                axis2_bool_t *dp_is_early_node_valid,
+                axis2_bool_t dont_care_minoccurs)
         {
           axiom_node_t *parent = *dp_parent;
           
@@ -466,13 +479,13 @@
                int element_found = 0;
                axutil_array_list_t *arr_list = NULL;
             </xsl:if>
-            <xsl:if test="@ordered and property/@isarray">
+            <xsl:if test="(@ordered or @choice) and property/@isarray">
                int sequence_broken = 0;
                axiom_node_t *tmp_node = NULL;
             </xsl:if>
             <xsl:variable name="element_qname_var_requred">
                   <xsl:for-each select="property">
-                    <xsl:if test="(not(@attribute) and @isarray) or not(../@ordered)">
+                    <xsl:if test="(not(@attribute) and @isarray) or not($ordered)">
                         yes
                     </xsl:if>
                   </xsl:for-each>
@@ -810,7 +823,7 @@
                     }
                     </xsl:if>
                 </xsl:when>
-                <xsl:when test="../@simple"></xsl:when> <!-- just to avoid preceeding code to be parsed in a simple type -->
+                <xsl:when test="$simple"></xsl:when> <!-- just to avoid preceeding code to be parsed in a simple type -->
                 <xsl:otherwise> <!-- when it is an element not(@attribute) -->
                   <!-- handles arrays -->
                    <xsl:if test="@isarray">
@@ -825,14 +838,15 @@
                       * building <xsl:value-of select="$propertyName"/> element
                       */
                      <!-- array and non array build is so different so big choose, when is requried-->
-                     <!-- the method of picking the element is depend on the ../@ordered -->
+                     <!-- the method of picking the element is depend on the $ordered -->
                      <xsl:choose>
                        <xsl:when test="not(@isarray)">  <!--not an array so continue normal -->
                            <xsl:choose>
-                             <xsl:when test="$ordered or not($anon or $istype)"> <!-- since non-anon has just only one sub element-->
+                             <xsl:when test="$ordered or not($anon or $istype) or $choice"> <!-- since non-anon and choices has just only one sub element-->
                                <xsl:choose>
                                  <xsl:when test="position()=1">
                                    current_node = first_node;
+                                   is_early_node_valid = AXIS2_FALSE;
                                    <!-- Wait until AXIOM_ELEMENT -->
                                    <xsl:if test="not(@any)">
                                     while(current_node &amp;&amp; axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
@@ -911,27 +925,32 @@
                                        break;
                                   }
                                }
-                             </xsl:otherwise> <!-- close for ../@ordered or not($anon or $istype) -->
+                             </xsl:otherwise> <!-- close for $ordered or not($anon or $istype) -->
                            </xsl:choose>
 
                            if (<xsl:if test="@ours">adb_<xsl:value-of select="@type"/>_is_particle() || </xsl:if> <!-- is particle test should be done here -->
                                 (current_node <xsl:if test="not(@any)">  &amp;&amp; current_element &amp;&amp; (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)</xsl:if>))
                            {
-                              is_early_node_valid = AXIS2_TRUE;
+                              if( current_node <xsl:if test="not(@any)">  &amp;&amp; current_element &amp;&amp; (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)</xsl:if>)
+                              {
+                                is_early_node_valid = AXIS2_TRUE;
+                              }
                               <!-- changes to following choose tag should be changed in another 2 places -->
                                  <xsl:choose>
                                     <xsl:when test="@ours">
                                       element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
 
                                       status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element,
-                                                                            env, &amp;current_node);
+                                                                            env, &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
                                       if(AXIS2_FAILURE == status)
                                       {
                                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building adb object for element <xsl:value-of select="$propertyName"/>");
-                                          return AXIS2_FAILURE;
                                       }
-                                      status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                      else
+                                      {
+                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                    (<xsl:value-of select="$nativePropertyType"/>)element);
+                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
@@ -1201,10 +1220,12 @@
                                                   axutil_date_time_free(element, env);
                                               }
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
-                                              return AXIS2_FAILURE;
                                           }
-                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                          else
+                                          {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                        (<xsl:value-of select="$nativePropertyType"/>)element);
+                                          }
                                       }
                                       <xsl:if test="not(@nillable)">
                                       else
@@ -1229,10 +1250,12 @@
                                                  axutil_base64_binary_free((axutil_base64_binary_t*)element, env);
                                               }
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
-                                              return AXIS2_FAILURE;
                                           }
-                                          status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                          else
+                                          {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                        (<xsl:value-of select="$nativePropertyType"/>)element);
+                                          }
                                       }
                                       <xsl:if test="not(@nillable)">
                                       else
@@ -1252,11 +1275,15 @@
                                  if(AXIS2_FAILURE ==  status)
                                  {
                                      AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in setting the value for <xsl:value-of select="$propertyName"/> ");
+                                     if(element_qname)
+                                     {
+                                         axutil_qname_free(element_qname, env);
+                                     }
                                      return AXIS2_FAILURE;
                                  }
                               }
-                           <xsl:if test="not(@minOccurs=0)">
-                              else
+                           <xsl:if test="not(@minOccurs=0) and not($choice)">
+                              else if(!dont_care_minoccurs)
                               {
                                   if(element_qname)
                                   {
@@ -1273,7 +1300,7 @@
                             /* 'any' arrays are not handling correctly when there are other elements mixed with the 'any' element. */
                            </xsl:if>
                            <xsl:choose>
-                             <xsl:when test="../@ordered or not($anon or $istype)"> <!-- all the elements should follow this -->
+                             <xsl:when test="$ordered or not($anon or $istype) or $choice"> <!-- all the elements should follow this -->
                                 <xsl:choose>
                                   <xsl:when test="@any"></xsl:when>
                                   <xsl:when test="@nsuri and @nsuri != ''">
@@ -1283,9 +1310,10 @@
                                     element_qname = axutil_qname_create(env, "<xsl:value-of select="$propertyName"/>", NULL, NULL);
                                   </xsl:otherwise>
                                 </xsl:choose>
+                               
                                for (i = 0, sequence_broken = 0, tmp_node = current_node = <xsl:choose>
                                              <xsl:when test="position()=1">first_node</xsl:when>
-                                             <xsl:otherwise>axiom_node_get_next_sibling(current_node, env)</xsl:otherwise></xsl:choose>; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>) 
+                                             <xsl:otherwise>(is_early_node_valid?axiom_node_get_next_sibling(current_node, env):current_node)</xsl:otherwise></xsl:choose>; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>) 
                                              <!-- We are not moving current_node to next sibling here if it an any type, because we already have done the move -->
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
@@ -1305,6 +1333,10 @@
                                       {
                                         /* found element out of order */
                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "elements found out of order for array<xsl:value-of select="$propertyName"/> missing");
+                                        if(element_qname)
+                                        {
+                                           axutil_qname_free(element_qname, env);
+                                        }
                                         return AXIS2_FAILURE;
                                       }
                                       </xsl:if>
@@ -1316,14 +1348,16 @@
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
                                           
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                                 &amp;current_node);
+                                                                                 &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
                                           
                                           if(AXIS2_FAILURE ==  status)
                                           {
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
-                                              return AXIS2_FAILURE;
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          else
+                                          {
+                                            axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
@@ -1590,9 +1624,11 @@
                                                   AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
                                                                       " %d :: %s", env->error->error_number,
                                                                       AXIS2_ERROR_GET_MESSAGE(env->error));
-                                                  return AXIS2_FAILURE;
                                               }
-                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                              else
+                                              {
+                                                axutil_array_list_add_at(arr_list, env, i, element);
+                                              }
                                           }
                                           <xsl:if test="not(@nillable)">
                                           else
@@ -1614,9 +1650,11 @@
                                                   AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
                                                                       " %d :: %s", env->error->error_number,
                                                                       AXIS2_ERROR_GET_MESSAGE(env->error));
-                                                  return AXIS2_FAILURE;
                                               }
-                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                              else
+                                              {
+                                                axutil_array_list_add_at(arr_list, env, i, element);
+                                              }
                                           }
                                           <xsl:if test="not(@nillable)">
                                           else
@@ -1634,9 +1672,11 @@
                                      </xsl:choose>
                                      if(AXIS2_FAILURE ==  status)
                                      {
-                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in setting the value for <xsl:value-of select="$propertyName"/> "
-                                                             " %d :: %s", env->error->error_number,
-                                                             AXIS2_ERROR_GET_MESSAGE(env->error));
+                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in setting the value for <xsl:value-of select="$propertyName"/> ");
+                                         if(element_qname)
+                                         {
+                                            axutil_qname_free(element_qname, env);
+                                         }
                                          return AXIS2_FAILURE;
                                      }
 
@@ -1651,11 +1691,18 @@
                                }
 
                                current_node = tmp_node;
-                               status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                               if(0 == axutil_array_list_size(arr_list,env))
+                               {
+                                    axutil_array_list_free(arr_list, env);
+                               }
+                               else
+                               {
+                                    status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                    arr_list);
+                               }
 
                              </xsl:when>
-                             <xsl:otherwise> <!-- otherwse for "../@ordered or not($anon or $istype)" -->
+                             <xsl:otherwise> <!-- otherwse for "$ordered or not($anon or $istype)" -->
                                 <xsl:choose>
                                   <xsl:when test="@any"></xsl:when>
                                   <xsl:when test="@nsuri and @nsuri != ''">
@@ -1668,6 +1715,7 @@
                                 /*
                                  * because elements are not ordered we should surf all the sibling to pick the right one
                                  */
+                               <!-- For non-ordered arrays we are not using is_early_node_valid? -->
                                for (i = 0, current_node = first_node; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>)
                                              <!-- We are not moving current_node to next sibling here if it an any type, because we already have done the move -->
                                {
@@ -1683,6 +1731,7 @@
                                   {
                                   </xsl:if>
                                        /* found the requried element */
+                                       is_early_node_valid = AXIS2_TRUE;
                                        element_found = 1;
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
@@ -1690,15 +1739,17 @@
                                           element = (void*)adb_<xsl:value-of select="@type"/>_create(env);
                                           
                                           status =  adb_<xsl:value-of select="@type"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
-                                                                                 &amp;current_node);
+                                                                                 &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
                                           if(AXIS2_FAILURE ==  status)
                                           {
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
                                                                   " %d :: %s", env->error->error_number,
                                                                   AXIS2_ERROR_GET_MESSAGE(env->error));
-                                              return AXIS2_FAILURE;
                                           }
-                                          axutil_array_list_add_at(arr_list, env, i, element);
+                                          else
+                                          {
+                                            axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
                                         </xsl:when>
                                         <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
@@ -1915,8 +1966,6 @@
                                               current_node = axiom_node_get_next_sibling(current_node, env);
                                               axiom_node_detach(current_property_node, env);
                                               axutil_array_list_add_at(arr_list, env, i, (void*)current_property_node);
-                                              status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                              current_property_node);
                                             }
                                             </xsl:when>
                                             <xsl:otherwise>
@@ -1959,12 +2008,12 @@
                                                                               text_value);
                                               if(AXIS2_FAILURE ==  status)
                                               {
-                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                      " %d :: %s", env->error->error_number,
-                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
-                                                  return AXIS2_FAILURE;
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
                                               }
-                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                              else
+                                              {
+                                                axutil_array_list_add_at(arr_list, env, i, element);
+                                              }
                                           }
                                           <xsl:if test="not(@nillable)">
                                           else
@@ -1984,12 +2033,12 @@
                                                                               text_value);
                                               if(AXIS2_FAILURE ==  status)
                                               {
-                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> "
-                                                                      " %d :: %s", env->error->error_number,
-                                                                      AXIS2_ERROR_GET_MESSAGE(env->error));
-                                                  return AXIS2_FAILURE;
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
                                               }
-                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                              else
+                                              {
+                                                 axutil_array_list_add_at(arr_list, env, i, element);
+                                              }
                                           }
                                           <xsl:if test="not(@nillable)">
                                           else
@@ -2013,9 +2062,7 @@
                                          {
                                              axutil_qname_free(element_qname, env);
                                          }
-                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in setting the value for <xsl:value-of select="$propertyName"/> "
-                                                             " %d :: %s", env->error->error_number,
-                                                             AXIS2_ERROR_GET_MESSAGE(env->error));
+                                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in setting the value for <xsl:value-of select="$propertyName"/> ");
                                          return AXIS2_FAILURE;
                                      }
 
@@ -2026,7 +2073,7 @@
                                }
                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
                                                                    arr_list);
-                             </xsl:otherwise> <!--closing otherwise for "../@ordered  or not($anon or $istype)" -->
+                             </xsl:otherwise> <!--closing otherwise for "$ordered  or not($anon or $istype)" -->
                            </xsl:choose> <!-- chooses for ordered or not @ordered or not($anon or $istype)-->
                         </xsl:otherwise> <!-- closing when it is all the way an array -->
                       </xsl:choose> <!-- check array or not -->
@@ -2043,6 +2090,7 @@
 
             <xsl:if test="$particleClass">
                 *dp_parent = current_node;
+                *dp_is_early_node_valid = is_early_node_valid;
             </xsl:if>
           return status;
        }
@@ -2957,9 +3005,15 @@
                       </xsl:if> 
                   }<!-- End bracket for if(parent_tag_closed)-->
                 </xsl:when>
-                <xsl:when test="../@simple"></xsl:when> <!--Just to ignore parsing following code at simple types-->
+                <xsl:when test="$simple"></xsl:when> <!--Just to ignore parsing following code at simple types-->
                 <xsl:otherwise>
  
+                <xsl:if test="$choice">
+                if(0 == axutil_strcmp(<xsl:value-of select="$name"/>->current_choice, "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>"))
+                {
+                </xsl:if>
+
+
                    <xsl:choose>
                      <xsl:when test="@nsuri and @nsuri != ''">
                        if(!(p_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "<xsl:value-of select="@nsuri"/>", AXIS2_HASH_KEY_STRING)))
@@ -3484,6 +3538,11 @@
                      }
                    </xsl:if>
                  } <!-- else for non nillable -->
+
+                 <xsl:if test="$choice">
+                 }
+                 </xsl:if>
+
                 </xsl:otherwise> <!-- othewise for non attributes -->
               </xsl:choose>
             </xsl:for-each>
@@ -3602,6 +3661,9 @@
                 if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> &amp;&amp;
                         arg_<xsl:value-of select="$CName"/> == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>)
                 {
+                    <xsl:if test="$choice">
+                        <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                    </xsl:if>
                     return AXIS2_SUCCESS; 
                 }
 
@@ -3648,6 +3710,14 @@
                 <!-- first reset whatever already in there -->
                 <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
 
+                <xsl:if test="(@ours or not($propertyType='unsigned char' or $propertyType='unsigned int' or $propertyType='unsigned short' or $propertyType='unsigned long' or $propertyType='char' or $propertyType='int' or $propertyType='short' or $propertyType='float' or $propertyType='axis2_byte_t' or $propertyType='double' or $propertyType='long' or $propertyType='axis2_bool_t'))">
+                if(NULL == arg_<xsl:value-of select="$CName"/>)
+                {
+                    /* We are already done */
+                    return AXIS2_SUCCESS;
+                }
+                </xsl:if>
+
                 <xsl:choose>
                     <xsl:when test="@isarray">
                         <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = arg_<xsl:value-of select="$CName"/>;
@@ -3671,6 +3741,9 @@
                         <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
                     </xsl:otherwise>
                 </xsl:choose>
+                <xsl:if test="$choice">
+                    <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                </xsl:if>
                 return AXIS2_SUCCESS;
              }
 
@@ -3723,6 +3796,7 @@
                 void *element = NULL;
                 int size = 0;
                 int j;
+                int k;
                 axis2_bool_t non_nil_exists = AXIS2_FALSE;
 
                 <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
@@ -3743,6 +3817,9 @@
                   </xsl:otherwise>
                 </xsl:choose>
                 {
+                    <xsl:if test="$choice">
+                        <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                    </xsl:if>
                     return AXIS2_SUCCESS; 
                 }
 
@@ -3756,13 +3833,17 @@
                         if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> != NULL)
                         {
                             size = axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
-                            for(j = 0; j &lt; size; j ++ )
+                            for(j = 0, k = 0; j &lt; size; j ++ )
                             {
                                 if(i == j) continue; <!-- should not count the ith element -->
                                 if(NULL != axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i))
                                 {
+                                    k ++;
                                     non_nil_exists = AXIS2_TRUE;
-                                    break;
+                                    if(k >= <xsl:value-of select="@minOccurs"/>)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -3781,6 +3862,11 @@
                        return AXIS2_FAILURE;
                    }
                 </xsl:if>
+                if( k &lt; <xsl:value-of select="@minOccurs"/>)
+                {
+                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Size of the array of <xsl:value-of select="$propertyName"/> is beinng set to be smaller than the specificed number of minOccurs(<xsl:value-of select="@minOccurs"/>)");
+                       return AXIS2_FAILURE;
+                }
 
                 if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
                 {
@@ -3850,6 +3936,9 @@
                         <!-- No need to worry further -->
                         <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_FALSE;
                         axutil_array_list_set(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, i, NULL);
+                        <xsl:if test="$choice">
+                            <!-- Should not check the current_choice here, since this is a setting to null -->
+                        </xsl:if>
                         return AXIS2_SUCCESS;
                     }
                 </xsl:if>
@@ -3875,6 +3964,9 @@
                   </xsl:otherwise>
                 </xsl:choose>
                 <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
+                <xsl:if test="$choice">
+                    <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                </xsl:if>
                 return AXIS2_SUCCESS;
             }
 

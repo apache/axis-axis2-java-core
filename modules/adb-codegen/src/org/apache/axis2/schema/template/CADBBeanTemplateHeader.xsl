@@ -133,6 +133,8 @@
 
         /********************************** Getters and Setters **************************************/
         <xsl:if test="count(property[@array])!=0">/******** Deprecated for array types, Use 'Getters and Setters for Arrays' instead ***********/</xsl:if>
+        <xsl:if test="@choice">/******** In a case of a choose among elements, the last one to set will be chooosen *********/</xsl:if>
+                
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
@@ -484,14 +486,20 @@
          * Deserialize an XML to adb objects
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
-         * @param parent double pointer to the parent node to deserialize
+         * @param dp_parent double pointer to the parent node to deserialize
+         * @param dp_is_early_node_valid double pointer to a flag (is_early_node_valid?)
+         * @param dont_care_minoccurs Dont set errors on validating minoccurs, 
+         *              (Parent will order this in a case of choice)
          * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
          */
         axis2_status_t AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_deserialize(
             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
-            const axutil_env_t *env, axiom_node_t** parent);
-            
+            const axutil_env_t *env,
+            axiom_node_t** dp_parent,
+            axis2_bool_t *dp_is_early_node_valid,
+            axis2_bool_t dont_care_minoccurs);
+                            
             <!-- Here the double pointer is used to change the parent pointer - This can be happned when deserialize is called in a particle class -->
 
        /**
