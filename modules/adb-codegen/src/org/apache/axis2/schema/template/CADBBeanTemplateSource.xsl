@@ -122,10 +122,12 @@
             </xsl:variable>
 
             <xsl:if test="not(@nillable or @optional)">
-                axis2_status_t AXIS2_CALL
-                <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil_at(
+                <xsl:if test="@isarray">
+                 axis2_status_t AXIS2_CALL
+                 <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil_at(
                         <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>, 
                         const axutil_env_t *env, int i);
+                </xsl:if>
 
                 axis2_status_t AXIS2_CALL
                 <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil(
@@ -3592,7 +3594,8 @@
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
                 AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
                 
-                if(arg_<xsl:value-of select="$CName"/> == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>)
+                if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> &amp;&amp;
+                        arg_<xsl:value-of select="$CName"/> == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>)
                 {
                     return AXIS2_SUCCESS; 
                 }
@@ -3724,7 +3727,8 @@
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
                 AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
                 
-                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> &amp;&amp;
+                if( <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> &amp;&amp;
+                    <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> &amp;&amp;
                 <xsl:choose>
                   <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
                     arg_<xsl:value-of select="$CName"/> == *((<xsl:value-of select="$PropertyTypeArrayParam"/>)axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i)))
