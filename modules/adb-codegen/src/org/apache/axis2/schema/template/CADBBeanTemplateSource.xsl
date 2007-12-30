@@ -2396,7 +2396,7 @@
             </xsl:otherwise> <!--otherwise for @simple -->
             </xsl:choose>
 
-                <xsl:if test="@type">
+                <xsl:if test="@type or @simple">
                     current_node = parent;
                     data_source = (axiom_data_source_t *)axiom_node_get_data_element(current_node, env);
                     if (!data_source)
@@ -2406,7 +2406,7 @@
                         return NULL;
                   </xsl:if>
                 <xsl:if test="count(property)!=0">
-                  <xsl:if test="not(@type)">
+                  <xsl:if test="not(@type) and not(@simple)">
                     data_source = axiom_data_source_create(env, parent, &amp;current_node);
                     stream = axiom_data_source_get_stream(data_source, env);
                   </xsl:if>
@@ -2720,6 +2720,11 @@
             </xsl:if>
 
             <xsl:if test="@simple">
+               if(!parent_tag_closed)
+               {
+                  text_value = "&gt;"; <!-- The ending tag of the parent -->
+                  axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+               }
                <!-- how if this type is a qname :(, simply we are not handling that situation.. -->
                text_value = <xsl:value-of select="$axis2_name"/>_serialize_to_string(<xsl:value-of select="$name"/>, env, namespaces);
                axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
