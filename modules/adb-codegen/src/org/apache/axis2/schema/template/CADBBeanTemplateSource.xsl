@@ -2576,7 +2576,7 @@
                             i &lt; <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env); i ++)
                 {
                   <xsl:value-of select="$nativePropertyType"/> element;
-                  axis2_char_t *seperator = (i == <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env))?"":ADB_DEFAULT_LIST_SEPERATOR;
+                  axis2_char_t *seperator = (i == <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env) - 1)?"":ADB_DEFAULT_LIST_SEPERATOR;
                   element = <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(<xsl:value-of select="$name"/>, env, i);
                     
                  <xsl:choose>
