@@ -3166,7 +3166,11 @@
                }
                <!-- how if this type is a qname :(, simply we are not handling that situation.. -->
                text_value = <xsl:value-of select="$axis2_name"/>_serialize_to_string(<xsl:value-of select="$name"/>, env, namespaces);
-               axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+               if(text_value)
+               {
+                    axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+                    AXIS2_FREE(env->allocator, text_value);
+               }
             </xsl:if>
 
             <xsl:for-each select="property">
@@ -3374,9 +3378,12 @@
                            adb_<xsl:value-of select="@type"/>_declare_parent_namespaces(<xsl:value-of select="$propertyInstanceName"/>,
                                                                                       env, parent_element, namespaces, next_ns_index);
                            text_value = adb_<xsl:value-of select="@type"/>_serialize_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, namespaces);
-                           text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
-                           axiom_element_add_attribute (parent_element, env, text_attri, parent);
-                           AXIS2_FREE(env-> allocator, text_value);
+                           if(text_value)
+                           {
+                               text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
+                               axiom_element_add_attribute (parent_element, env, text_attri, parent);
+                               AXIS2_FREE(env-> allocator, text_value);
+                           }
                         </xsl:when>
                         <xsl:otherwise>
                           <!--TODO: add new attributes types -->
