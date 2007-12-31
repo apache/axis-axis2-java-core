@@ -1122,48 +1122,42 @@ public class AxisConfiguration extends AxisDescription {
      *   3 - fault in flow
      *   4 - fault out flow
      *
-     * @param phaseName : Not null parameter , specifying the phase name
-     * @param beforePhase : can be null , will tell the name of before phase
-     * @param afterPhase : Can be null and will tell the name of after phase
-     * @param flow : Type of the flow
+     * @param d the Deployable representing the Phase to deploy
+     * @param flow the type of the flow
      * @throws org.apache.axis2.AxisFault : If something went wrong
      */
-    public void insertPhase(String phaseName ,
-                            String beforePhase,
-                            String afterPhase ,
-                            int flow) throws AxisFault {
-
+    public void insertPhase(Deployable d, int flow) throws AxisFault {
 
         switch (flow) {
             case PhaseMetadata.IN_FLOW : {
-                ArrayList phaseList = phasesinfo.getINPhases();
-                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                List phaseList = phasesinfo.getINPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setINPhases(phaseList);
+                    phasesinfo.setINPhases((ArrayList)phaseList);
                 }
                 break;
             }
             case PhaseMetadata.OUT_FLOW : {
-                ArrayList phaseList = phasesinfo.getOUTPhases();
-                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                List phaseList = phasesinfo.getOUTPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setOUTPhases(phaseList);
+                    phasesinfo.setOUTPhases((ArrayList)phaseList);
                 }
                 break;
             }
             case PhaseMetadata.FAULT_OUT_FLOW : {
-                ArrayList phaseList = phasesinfo.getOutFaultPhaseList();
-                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                List phaseList = phasesinfo.getOutFaultPhaseList();
+                phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setOUT_FaultPhases(phaseList);
+                    phasesinfo.setOUT_FaultPhases((ArrayList)phaseList);
                 }
                 break;
             }
             case PhaseMetadata.FAULT_IN_FLOW : {
-                ArrayList phaseList = phasesinfo.getIN_FaultPhases();
-                phaseList = findAndInsertPhase(beforePhase, phaseList, afterPhase, phaseName);
+                List phaseList = phasesinfo.getIN_FaultPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setIN_FaultPhases(phaseList);
+                    phasesinfo.setIN_FaultPhases((ArrayList)phaseList);
                 }
                 break;
             }
@@ -1171,63 +1165,45 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * This method will added a given phase into the location specified by the phase before
-     * and phase after.  If given phase are not found then an exception will be thrown.
-     * @param beforePhase : Name of the before phase
-     * @param phaseList : ArrayList of phase
-     * @param afterPhase : Name of the after phase
-     * @param phaseName : name of the phase we need to add
-     * @throws AxisFault : If something went wrong
-     * @return : Modified list
+     * Insert a Phase
+     * @param d
+     * @param phaseList
+     * @return
+     * @throws AxisFault
      */
-    private ArrayList findAndInsertPhase(String beforePhase,
-                                         ArrayList phaseList,
-                                         String afterPhase,
-                                         String phaseName) throws AxisFault {
-        int beforeIndex = -1;
-        int afterIndex = -1;
-        for (int i = 0; i < phaseList.size(); i++) {
-            Phase phase = (Phase) phaseList.get(i);
-            if (phase.getPhaseName().equals(beforePhase)) {
-                beforeIndex = i;
-            } else if (phase.getPhaseName().equals(afterPhase)){
-                afterIndex = i;
-            } else if (phase.getPhaseName().equals(phaseName)){
-                return null;
+    private List findAndInsertPhase(Deployable d, List phaseList) throws AxisFault {
+        DeployableChain ec = new DeployableChain();
+        String last = null;
+        for (Iterator i = phaseList.iterator(); i.hasNext();) {
+            Phase phase = (Phase)i.next();
+            String name = phase.getName();
+            Deployable existing = new Deployable(name);
+            existing.setTarget(phase);
+            if (last != null) {
+                // Set up explicit chain relationship for preexisting phases, for now.
+                ec.addRelationship(last, name);
             }
-        }
-        if (beforeIndex == -1 && afterIndex == -1) {
-            throw new AxisFault("Trying to add a phase " + phaseName + " before "
-                    + beforePhase + " and after " + afterPhase + " but none of the phases " +
-                    "found in the system please refer to axis2.xml for available phases");
-        }
-
-        if (afterIndex > beforeIndex) {
-            throw new AxisFault("Trying to add a phase " + phaseName + " before "
-                    + beforePhase + " and after " + afterPhase + " phase order is invalid , " +
-                    "please refer axis2.xml for the correct phase order");
+            last = name;
+            try {
+                ec.deploy(existing);
+            } catch (Exception e) {
+                // This should never happen when building a simple list like the above
+                throw AxisFault.makeFault(e);
+            }
         }
         Phase phase = new Phase();
-        phase.setName(phaseName);
-        if (beforeIndex == -1){
-            if (afterIndex == phaseList.size() -1) {
-                // Need to add to the last phase since the after phase is the
-                // last phase in the system
-                phaseList.add(phase);
-            } else {
-                phaseList.add(afterIndex, phase);
-            }
-        } else   if (afterIndex == -1) {
-            if (beforeIndex == 0) {
-                // Need to add to the first place of the phase since the before
-                // phase index is 0
-                phaseList.add(0, phase);
-            } else {
-                phaseList.add(beforeIndex, phase);
-            }
-        } else {
-            phaseList.add(afterIndex, phase);
+        phase.setName(d.getName());
+        d.setTarget(phase);
+
+        try {
+            ec.deploy(d);
+            ec.rebuild();
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
         }
+        
+        phaseList = ec.getChain();
+
         return phaseList;
     }
 }

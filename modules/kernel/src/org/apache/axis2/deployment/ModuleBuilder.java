@@ -28,6 +28,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.Deployable;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.modules.Module;
@@ -297,7 +298,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
-            if (policyRefElements != null && policyElements.hasNext()) {
+            if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyRefElements, module.getPolicyInclude());
             }
 
@@ -333,22 +334,38 @@ public class ModuleBuilder extends DescriptionBuilder {
         while (phases.hasNext()) {
             OMElement element = (OMElement) phases.next();
             String phaseName = element.getAttributeValue(new QName(ATTRIBUTE_NAME));
+
+            Deployable d = new Deployable(phaseName);
             String after = element.getAttributeValue(new QName(TAG_AFTER));
+            if (after != null) {
+                String [] afters = after.split(",");
+                for (int i = 0; i < afters.length; i++) {
+                    String s = afters[i];
+                    d.addPredecessor(s);
+                }
+            }
             String before = element.getAttributeValue(new QName(TAG_BEFORE));
+            if (before != null) {
+                String [] befores = before.split(",");
+                for (int i = 0; i < befores.length; i++) {
+                    String s = befores[i];
+                    d.addSuccessor(s);
+                }
+            }
             String flowName = element.getAttributeValue(new QName("flow"));
-            int flowInex ;
+            int flowIndex ;
             if (TAG_FLOW_IN.equals(flowName)){
-                flowInex = PhaseMetadata.IN_FLOW ;
+                flowIndex = PhaseMetadata.IN_FLOW ;
             } else if (TAG_FLOW_OUT.equals(flowName)) {
-                flowInex = PhaseMetadata.OUT_FLOW ;
+                flowIndex = PhaseMetadata.OUT_FLOW ;
             } else if (TAG_FLOW_OUT_FAULT.equals(flowName)) {
-                flowInex = PhaseMetadata.FAULT_OUT_FLOW;
+                flowIndex = PhaseMetadata.FAULT_OUT_FLOW;
             } else if (TAG_FLOW_IN_FAULT.equals(flowName)) {
-                flowInex = PhaseMetadata.FAULT_IN_FLOW;
+                flowIndex = PhaseMetadata.FAULT_IN_FLOW;
             } else {
                 throw new DeploymentException(" Flow can not be null for the phase name " + phaseName);
             }
-            axisConfig.insertPhase(phaseName,before,after,flowInex);
+            axisConfig.insertPhase(d, flowIndex);
         }
     }
 }

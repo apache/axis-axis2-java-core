@@ -50,26 +50,24 @@ public class DeploymentTotalTest extends TestCase {
 
     public void testDynamicPhase() {
         ArrayList inFlow = er.getInFlowPhases();
-        boolean found = false;
         int index = 0;
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
             if (phase.getName().equals("NewPhase")) {
-                found = true;
                 index = i;
             }
         }
-        assertEquals("Phase has insert into a wrong location" ,index,3);
-        assertTrue("Problem in Dynamic Phases for Inflow", found);
+        assertEquals("Wrong index for NewPhase!", 3, index);
+
         inFlow = er.getInFaultFlowPhases();
-        found = false;
+        boolean found = false;
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
             if (phase.getName().equals("NewPhase")) {
                 found = true;
             }
         }
-        assertTrue("Problem in Dynamic Phases for InFaultflow", found);
+        assertTrue("NewPhase wasn't found in InFaultFlow", found);
     }
 
 }

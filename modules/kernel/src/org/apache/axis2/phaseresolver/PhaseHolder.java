@@ -26,7 +26,6 @@ import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,15 +44,15 @@ public class PhaseHolder {
     /**
      * If the phase name is equal to "*" that implies , the handler should be
      * added to each and every phase in the system for a given flow  , and at that
-     * point if the phase rule contains any before or aftere then they will be
+     * point if the phase rule contains any befores or afters then they will be
      * ignored. Phase first and phase last are supported , but make sure you dont
      * break any of the phase rules.
      * <p/>
      * If the phase name is not above then the hadler will be added to the phase
      * specified by  the phase rule , and no rules will be ignored.
      *
-     * @param handlerDesc
-     * @throws PhaseException
+     * @param handlerDesc HandlerDescription to deploy
+     * @throws PhaseException if there's a problem
      */
     public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
         PhaseRule rule = handlerDesc.getRules();
@@ -82,7 +81,8 @@ public class PhaseHolder {
     /**
      * this method is used to get the actual phase object given in the phase array list
      *
-     * @param phaseName
+     * @param phaseName the name of the desired Phase
+     * @return the matching Phase, or null
      */
     private Phase getPhase(String phaseName) {
         for (int i = 0; i < phaseList.size(); i++) {
