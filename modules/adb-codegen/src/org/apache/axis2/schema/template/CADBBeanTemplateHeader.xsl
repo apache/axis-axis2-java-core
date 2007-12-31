@@ -29,6 +29,9 @@
 
         #define ADB_DEFAULT_DIGIT_LIMIT 64
         #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
+        <xsl:if test="itemtype">
+        #define ADB_DEFAULT_LIST_SEPERATOR " "
+        </xsl:if>
 
         /**
         *  <xsl:value-of select="$axis2_name"/> wrapped class classes ( structure for C )
@@ -106,6 +109,9 @@
 
         #define ADB_DEFAULT_DIGIT_LIMIT 64
         #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
+        <xsl:if test="itemtype">
+        #define ADB_DEFAULT_LIST_SEPERATOR " "
+        </xsl:if>
 
         /******************************* Create and Free functions *********************************/
 
@@ -134,7 +140,7 @@
         /********************************** Getters and Setters **************************************/
         <xsl:if test="count(property[@array])!=0">/******** Deprecated for array types, Use 'Getters and Setters for Arrays' instead ***********/</xsl:if>
         <xsl:if test="@choice">/******** In a case of a choose among elements, the last one to set will be chooosen *********/</xsl:if>
-                
+        <xsl:if test="@list">/******* This is a list, please use Getters and 'Setters for Array' Instead of following *****/</xsl:if>
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType">
@@ -209,8 +215,73 @@
 
         </xsl:for-each>
 
-        <xsl:if test="count(property[@array])!=0">
+        <!-- The following take care of list items -->
+
+        <xsl:for-each select="itemtype">
+            <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+            <xsl:variable name="propertyName"><xsl:value-of select="$name"></xsl:value-of></xsl:variable>
+            <xsl:variable name="CName"><xsl:value-of select="$name"></xsl:value-of></xsl:variable>
+
+            <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
+               <xsl:choose>
+                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                 <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+              <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
+                 <xsl:choose>
+                   <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                   <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                 </xsl:choose>
+              </xsl:variable>
+            <xsl:variable name="paramComment"><xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text></xsl:variable>
+        
+
+        /**
+         * Getter for <xsl:value-of select="$propertyName"/>. Deprecated for array types, Use <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at instead
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return <xsl:value-of select="$paramComment"/>
+         */
+        <xsl:value-of select="$propertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+
+        /**
+         * Setter for <xsl:value-of select="$propertyName"/>. Deprecated for array types, Use <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at
+         * or <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/> instead.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param arg_<xsl:value-of select="$CName"/><xsl:text> </xsl:text> <xsl:value-of select="$paramComment"/>
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env,
+            <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>);
+
+        /**
+         * Resetter for <xsl:value-of select="$propertyName"/>
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+
+        </xsl:for-each>
+
+
+        <xsl:if test="count(property[@array])!=0 or count(itemtype)!=0">
         /****************************** Getters and Setters For Arrays **********************************/
+        /************ Array Specific Operations: get_at, set_at, add, remove_at, sizeof *****************/
 
         /**
          * E.g. use of get_at, set_at, add and sizeof
@@ -223,8 +294,11 @@
          *     // Setting ith value from property_object variable
          *     adb_element_set_property_at(adb_object, env, i, property_object);
          *
-         *     // Appending the ith value to the end of the array from property_object variable
+         *     // Appending the value to the end of the array from property_object variable
          *     adb_element_add_property(adb_object, env, property_object);
+         *
+         *     // Removing the ith value from an array
+         *     adb_element_remove_property_at(adb_object, env, i);
          *     
          * }
          *
@@ -270,7 +344,7 @@
         <xsl:if test="@isarray">
         
         /**
-         * Get ith element of <xsl:value-of select="$propertyName"/>.
+         * Get the ith element of <xsl:value-of select="$propertyName"/>.
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param i index of the item to return
@@ -282,7 +356,7 @@
                 const axutil_env_t *env, int i);
 
         /**
-         * Set ith element of <xsl:value-of select="$propertyName"/>.
+         * Set the ith element of <xsl:value-of select="$propertyName"/>. (If the ith already exist, it will be replaced)
          * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
          * @param env pointer to environment struct
          * @param i index of the item to return
@@ -320,8 +394,109 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env);
 
+        /**
+         * Remove the ith element of <xsl:value-of select="$propertyName"/>.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param i index of the item to remove
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_remove_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i);
+
         </xsl:if> <!-- xsl:if test="@isarray" -->
         </xsl:for-each> <!-- xsl:for-each select="property" -->
+
+        <!-- The section covers the list types -->
+        <xsl:for-each select="itemtype">
+            <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+            <xsl:variable name="propertyName"><xsl:value-of select="$name"></xsl:value-of></xsl:variable>
+            <xsl:variable name="CName"><xsl:value-of select="$name"></xsl:value-of></xsl:variable>
+
+            <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
+               <xsl:choose>
+                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                 <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+              <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
+                 <xsl:choose>
+                   <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                   <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                 </xsl:choose>
+              </xsl:variable>
+            <xsl:variable name="paramComment"><xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text></xsl:variable>
+         
+        /**
+         * Get the ith element of <xsl:value-of select="$propertyName"/>.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param i index of the item to return
+         * @return ith <xsl:value-of select="$nativePropertyType"/> of the array
+         */
+        <xsl:value-of select="$nativePropertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i);
+
+        /**
+         * Set the ith element of <xsl:value-of select="$propertyName"/>. (If the ith already exist, it will be replaced)
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param i index of the item to return
+         * @param <xsl:text>arg_</xsl:text> <xsl:value-of select="$CName"/> element to set <xsl:value-of select="$nativePropertyType"/> to the array
+         * @return ith <xsl:value-of select="$nativePropertyType"/> of the array
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i,
+                 <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>);
+
+
+        /**
+         * Add to <xsl:value-of select="$propertyName"/>.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param <xsl:text>arg_</xsl:text> <xsl:value-of select="$CName"/> element to add <xsl:value-of select="$nativePropertyType"/> to the array
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env,
+                <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>);
+
+        /**
+         * Get the size of the <xsl:value-of select="$propertyName"/> array.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct.
+         * @return the size of the <xsl:value-of select="$propertyName"/> array.
+         */
+        int AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env);
+
+        /**
+         * Remove the ith element of <xsl:value-of select="$propertyName"/>.
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param i index of the item to remove
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_remove_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i);
+
+   
+        </xsl:for-each>
 
 
         /******************************* Checking and Setting NIL values *********************************/

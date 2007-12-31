@@ -23,6 +23,7 @@
 
     <xsl:template match="class">
         <xsl:variable name="name">_<xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="just_name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="istype"><xsl:value-of select="@type"/></xsl:variable>
 
@@ -87,6 +88,19 @@
 
 
             </xsl:for-each>
+
+            <!-- The section covers the storage for list types, -->
+            <xsl:for-each select="itemtype">
+                <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+                <xsl:variable name="propertyName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+                <xsl:variable name="CName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+ 
+                <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>property_<xsl:value-of select="$CName"/>;
+                <xsl:text>axis2_bool_t is_valid_</xsl:text><xsl:value-of select="$CName"/>;
+
+            </xsl:for-each>
+
+
             <xsl:if test="$choice">
                 axis2_char_t *current_choice;
             </xsl:if>
@@ -132,13 +146,13 @@
                 <xsl:if test="@isarray">
                  axis2_status_t AXIS2_CALL
                  <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil_at(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>, 
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>, 
                         const axutil_env_t *env, int i);
                 </xsl:if>
 
                 axis2_status_t AXIS2_CALL
                 <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                         const axutil_env_t *env);
             </xsl:if>
 
@@ -223,6 +237,12 @@
                 <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
             </xsl:for-each>
 
+            <!-- The section covers the list types -->
+            <xsl:for-each select="itemtype">
+                <xsl:variable name="CName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+                <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
+            </xsl:for-each>
+
             <xsl:if test="not(@type)">
               if(<xsl:value-of select="$name"/>->qname)
               {
@@ -252,11 +272,22 @@
             <xsl:if test="property/@type='axutil_date_time_t*' or property/@type='axutil_base64_binary_t*'">
               void *element = NULL;
             </xsl:if>
-            <xsl:if test="property/@type='axutil_qname_t*'">
+            <xsl:if test="itemtype/@type='axutil_date_time_t*' or itemtype/@type='axutil_base64_binary_t*'">
+              void *element = NULL;
+            </xsl:if>
+            <xsl:if test="property/@type='axutil_qname_t*' or itemtype/@type='axutil_qname_t*'">
               axis2_char_t *cp = NULL;
               axis2_bool_t prefix_found = AXIS2_FALSE;
               axiom_namespace_t *qname_ns;
             </xsl:if>
+
+            <xsl:if test="itemtype">
+               int i;
+               axis2_char_t *token_value = NULL;
+               axis2_char_t *original_node_value = NULL;
+               axis2_bool_t the_last_token = AXIS2_FALSE;
+            </xsl:if>
+
               <xsl:for-each select="property"> <!-- only one property would be in a simpletype -->
                 <xsl:variable name="propertyType">
                    <xsl:choose>
@@ -412,6 +443,190 @@
                   </xsl:otherwise>
                 </xsl:choose>   
               </xsl:for-each>
+
+            <!-- The section covers the list types, this is a loop always occurs just 1 time-->
+            <xsl:for-each select="itemtype">
+                <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+                <xsl:variable name="propertyName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+                <xsl:variable name="CName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+ 
+                <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
+                   <xsl:choose>
+                     <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                     <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                     <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                   </xsl:choose>
+                </xsl:variable>
+                  <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
+                     <xsl:choose>
+                       <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                       <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                       <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                       <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:variable>
+                
+                <xsl:variable name="propertyInstanceName">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:variable>
+                <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
+                
+                /* just to make sure we are not altering the original */
+                node_value = original_node_value = axutil_strdup(env, node_value);
+
+                for(token_value = node_value, the_last_token = AXIS2_FALSE; !the_last_token; node_value ++)
+                {
+                    if(*node_value == ' ' || *node_value == '\t' || *node_value == '\r'
+                            || *node_value == '\n' || *node_value == '\0')
+                    {
+                        if(*node_value == '\0')
+                        {
+                            the_last_token = AXIS2_TRUE;
+                        }
+                        else
+                        {
+                            *node_value = '\0';
+                        }
+                        
+
+                <xsl:choose>
+                  <!-- add int s -->
+                  <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(token_value));
+                  </xsl:when>
+
+                  <!-- add axis2_char_t s -->
+                  <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, (char)(*token_value)); <!-- This should be checked -->
+                  </xsl:when>
+
+                  <!-- add short s -->
+                  <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(token_value));
+                  </xsl:when>
+
+                  <!-- add long s -->
+                  <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atol(token_value));
+                  </xsl:when>
+
+                  <!-- add float s -->
+                  <xsl:when test="$nativePropertyType='float'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atof(token_value));
+                  </xsl:when>
+                  <!-- add double s -->
+                  <xsl:when test="$nativePropertyType='double'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atof(token_value));
+                  </xsl:when>
+
+                  <!-- add axis2_char_t s -->
+                  <xsl:when test="$nativePropertyType='axis2_char_t*'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, token_value);
+                  </xsl:when>
+
+                  <!-- add axutil_qname_t s -->
+                  <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+                    prefix_found = AXIS2_FALSE;
+                    for(cp = token_value; *cp; cp ++)
+                    {
+                        if(*cp == ':')
+                        {
+                            *cp = '\0';
+                            cp ++;
+                            prefix_found  = AXIS2_TRUE;
+                            break;
+                        }
+                    }
+
+                    if(prefix_found)
+                    {
+                        /* node value contain the prefix */
+                        qname_ns = axiom_element_find_namespace_uri(axiom_node_get_data_element(parent, env), env, token_value, parent);
+                    }
+                    else
+                    {
+                        /* Then it is the default namespace */
+                        cp = token_value;
+                        qname_ns = axiom_element_get_default_namespace(axiom_node_get_data_element(parent, env), env, parent);
+                    }
+
+                     <!-- we are done extracting info, just set the extracted value to the qname -->
+
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env,
+                                                    axutil_qname_create(
+                                                          env, 
+                                                          cp, /* cp contain the localname */
+                                                          axiom_namespace_get_uri(qname_ns, env),
+                                                          axiom_namespace_get_prefix(qname_ns, env)));
+                  </xsl:when>
+
+                  <!-- add axutil_uri_t s -->
+                  <xsl:when test="$nativePropertyType='axutil_uri_t*'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_uri_parse_string(env, token_value));
+                  </xsl:when>
+
+                  <!-- add axutil_duration_t s -->
+                  <xsl:when test="$nativePropertyType='axutil_duration_t*'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_duration_create_from_string(env, token_value));
+                  </xsl:when>
+
+                  <!-- add axis2_bool_t s -->
+                  <xsl:when test="$nativePropertyType='axis2_bool_t'">
+                     if (!axutil_strcmp(token_value, "TRUE") || !axutil_strcmp(token_value, "true"))
+                     {
+                         <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, AXIS2_TRUE);
+                     }
+                     else
+                     {
+                         <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, AXIS2_FALSE);
+                     }
+                  </xsl:when>
+                  <!-- add axis2_byte_t s -->
+                  <xsl:when test="$nativePropertyType='axis2_byte_t'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(token_value));
+                  </xsl:when>
+                  <!-- add date_time_t* s -->
+                  <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                     element = (void*)axutil_date_time_create(env);
+                     axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
+                                                                token_value);
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, (<xsl:value-of select="$nativePropertyType"/>)element);
+                  </xsl:when>
+                  <!-- add hex_binary_t* s -->
+                  <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
+                     element = (void*)axutil_base64_binary_create(env);
+                     axutil_base64_binary_add_encoded_binary((<xsl:value-of select="$nativePropertyType"/>)element, env,
+                                                                token_value);
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, (<xsl:value-of select="$nativePropertyType"/>)element);
+                  </xsl:when>
+                  <xsl:when test="@ours">
+                     <!-- It seems this is in an unreachable path -->
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <!--TODO: add new attributes types -->
+                     /* can not handle the attribute type <xsl:value-of select="$nativePropertyType"/>*/
+                     status = AXIS2_FAILURE;
+                  </xsl:otherwise>
+                </xsl:choose>   
+                    token_value = node_value + 1;
+                  }
+              }
+              AXIS2_FREE(env->allocator, original_node_value);
+
+             </xsl:for-each>
               return status;
             }
         </xsl:if>
@@ -440,7 +655,7 @@
           </xsl:if>
 
           <!-- these two are requried -->
-          <xsl:if test="count(property)!=0"> <!-- check for at least one element exists -->
+          <xsl:if test="count(property)!=0  or count(itemtype)!=0"> <!-- check for at least one element exists -->
              axis2_char_t* text_value = NULL;
              axutil_qname_t *qname = NULL;
           </xsl:if>
@@ -452,7 +667,7 @@
               axiom_namespace_t *qname_ns;
             </xsl:if>
           <xsl:choose>
-            <xsl:when test="@simple and count(property)!=0">
+            <xsl:when test="@simple and (count(property)!=0 or count(itemtype)!=0)">
             axiom_element_t *text_element = NULL;
             axiom_node_t *text_node = NULL;
             
@@ -2183,6 +2398,11 @@
                 axis2_char_t *text_value = NULL;
                 axis2_char_t *qname_uri = NULL;
                 axis2_char_t *qname_prefix = NULL;
+                <xsl:if test="itemtype">
+                   int i;
+                   int allocated_len = 0;
+                   axis2_char_t *tmp_value;
+                </xsl:if>
 
                 <xsl:for-each select="property">
                   <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
@@ -2233,7 +2453,7 @@
                     <!-- add char s -->
                     <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                        text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
-                       sprintf (text_value, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                       sprintf (text_value, "%c", <xsl:value-of select="$propertyInstanceName"/>);
                     </xsl:when>
 
                     <!-- add short s -->
@@ -2326,6 +2546,177 @@
                     </xsl:otherwise>
                   </xsl:choose>
                 </xsl:for-each>
+
+            <!-- The section covers the list types, this is a loop always occurs just 1 time-->
+            <xsl:for-each select="itemtype">
+                <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+                <xsl:variable name="propertyName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+                <xsl:variable name="CName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+ 
+                <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
+                   <xsl:choose>
+                     <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                     <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                     <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                   </xsl:choose>
+                </xsl:variable>
+                  <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
+                     <xsl:choose>
+                       <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                       <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                       <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                       <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:variable>
+                
+                <xsl:variable name="propertyInstanceName">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:variable>
+                <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
+
+                for(i = 0, allocated_len = 2, text_value = (axis2_char_t*) axutil_strdup(env, ""); 
+                            i &lt; <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env); i ++)
+                {
+                  <xsl:value-of select="$nativePropertyType"/> element;
+                  axis2_char_t *seperator = (i == <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env))?"":ADB_DEFAULT_LIST_SEPERATOR;
+                  element = <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(<xsl:value-of select="$name"/>, env, i);
+                    
+                 <xsl:choose>
+                    <!-- add int s -->
+                    <xsl:when test="$nativePropertyType='int' or $nativePropertyType='unsigned int'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%d%s", text_value, element, seperator);
+                    </xsl:when>
+                    <!-- add axis2_byte_t s -->
+                    <xsl:when test="$nativePropertyType='axis2_byte_t'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%d%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add char s -->
+                    <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%c%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add short s -->
+                    <xsl:when test="$nativePropertyType='short' or $nativePropertyType='unsigned short'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%d%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add long s -->
+                    <xsl:when test="$nativePropertyType='long' or $nativePropertyType='unsigned long'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%d%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add float s -->
+                    <xsl:when test="$nativePropertyType='float'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%f%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add double s -->
+                    <xsl:when test="$nativePropertyType='double'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%f%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add axis2_char_t* s -->
+                    <xsl:when test="$nativePropertyType='axis2_char_t*'">
+                       allocated_len += sizeof (axis2_char_t) * axutil_strlen(element) + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%s%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <!-- add axutil_uri_t s -->
+                    <xsl:when test="$nativePropertyType='axutil_uri_t*'">
+                       tmp_value = axutil_uri_to_string(element, env, AXIS2_URI_UNP_OMITUSERINFO);
+                       allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                    </xsl:when>
+
+                    <!-- add axutil_duration_t s -->
+                    <xsl:when test="$nativePropertyType='axutil_duration_t*'">
+                       tmp_value = axutil_duration_serialize_duration(element, env);
+                       allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                    </xsl:when>
+
+                    <!-- add axutil_qname_t s -->
+                    <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+                      <!-- namespaces are declared in _declare_parent_namespaces -->
+                      qname_uri = axutil_qname_get_uri(element, env);
+                      if(qname_uri == NULL)
+                      {
+                           tmp_value = axutil_qname_get_localpart(element, env);
+                           allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                           text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                           sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                      }
+                      else
+                      {
+                        qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_STRING);
+                        if(qname_prefix != NULL)
+                        {
+                            tmp_value = axutil_qname_get_localpart(element, env);
+                            allocated_len += sizeof (axis2_char_t) * (ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT  + 1 +
+                                                            axutil_strlen(tmp_value) + 2);
+                            text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                            
+                            sprintf(text_value, "%s%s:%s%s", text_value, qname_prefix,
+                                                      tmp_value, seperator);
+                        }
+                        else
+                        {
+                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Failed in serialize_to_string value for <xsl:value-of select="$propertyName"/>, "
+                                                        "Prefix is not declared beofre using");
+                            return NULL;
+                        }
+                     }
+                    </xsl:when>
+
+                    <!-- add axis2_bool_t s -->
+                    <xsl:when test="$nativePropertyType='axis2_bool_t'">
+                       <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
+                           tmp_value = (element)?"true":"false";
+                           allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                           text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                           sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                    </xsl:when>
+                    <!-- add axis2_date_time_t s -->
+                    <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                           tmp_value = axutil_date_time_serialize_date_time(element, env);
+                           allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                           text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                           sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                    </xsl:when>
+                    <!-- add axis2_base64_binary_t s -->
+                    <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
+                           tmp_value = axutil_base64_binary_get_encoded_binary(element, env);
+                           allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
+                           text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                           sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
+                    </xsl:when>
+                    <xsl:when test="@ours">
+                        <!-- This should be in an unreachable path -->
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <!--TODO: add new property types -->
+                      /* can not handle the property type <xsl:value-of select="$nativePropertyType"/>*/
+                    </xsl:otherwise>
+                  </xsl:choose>
+                }
+                </xsl:for-each>
+
                 return text_value;
             }
         </xsl:if>
@@ -2560,7 +2951,7 @@
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
                                                             (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
                                                                 axutil_strlen("<xsl:value-of select="$propertyName"/>")));
-                           sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
+                           sprintf(text_value, " %s%s%s=\"%c\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
                            AXIS2_FREE(env-> allocator, text_value);
@@ -2863,7 +3254,7 @@
                         <!-- add int s -->
                         <xsl:when test="$nativePropertyType='char' or $nativePropertyType='unsigned char'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
-                           sprintf (text_value, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                           sprintf (text_value, "%c", <xsl:value-of select="$propertyInstanceName"/>);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                            AXIS2_FREE(env-> allocator, text_value);
@@ -3218,10 +3609,10 @@
                         <xsl:when test="$nativePropertyType='char'">
                            <xsl:choose>
                              <xsl:when test="@isarray">
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%d", *((<xsl:value-of select="$nativePropertyType"/>*)element));
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%c", *((<xsl:value-of select="$nativePropertyType"/>*)element));
                              </xsl:when>
                              <xsl:otherwise>
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$propertyInstanceName"/>);
                              </xsl:otherwise>
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
@@ -3236,10 +3627,10 @@
                         <xsl:when test="$nativePropertyType='unsigned char'">
                            <xsl:choose>
                              <xsl:when test="@isarray">
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%d", *((<xsl:value-of select="$nativePropertyType"/>*)element));
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%c", *((<xsl:value-of select="$nativePropertyType"/>*)element));
                              </xsl:when>
                              <xsl:otherwise>
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%c", <xsl:value-of select="$propertyInstanceName"/>);
                              </xsl:otherwise>
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
@@ -4055,6 +4446,18 @@
                 }
                 return axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
             }
+
+            /**
+             * remove the ith element, same as set_nil_at.
+             */
+            axis2_status_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_remove_<xsl:value-of select="$CName"/>_at(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env, int i)
+            {
+                return <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_nil_at(<xsl:value-of select="$name"/>, env, i);
+            }
+
            </xsl:if> <!-- closes the isarray -->
 
            /**
@@ -4335,6 +4738,503 @@
            </xsl:if> <!-- end of checkiing is array -->
         </xsl:for-each>
 
+        <!-- The section covers the list types, this almost rewrite above setters/getters -->
+        <xsl:for-each select="itemtype">
+            <xsl:variable name="propertyType">axutil_array_list_t*</xsl:variable>
+            <xsl:variable name="propertyName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+            <xsl:variable name="CName"><xsl:value-of select="$just_name"></xsl:value-of></xsl:variable>
+
+            <xsl:variable name="nativePropertyType"> <!--these are used in arrays to take the native type-->
+               <xsl:choose>
+                 <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                 <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                 <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+              <xsl:variable name="PropertyTypeArrayParam"> <!--these are used in arrays to take the type stored in the arraylist-->
+                 <xsl:choose>
+                   <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                   <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                 </xsl:choose>
+              </xsl:variable>
+            
+            <xsl:variable name="propertyInstanceName">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:variable>
+            <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
+         
+        /**
+         * Get the ith element of <xsl:value-of select="$propertyName"/>.
+         */
+        <xsl:value-of select="$nativePropertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i)
+        {
+                <xsl:value-of select="$PropertyTypeArrayParam"/> ret_val;
+
+                <xsl:choose>
+                  <xsl:when test="$nativePropertyType='unsigned short' or $nativePropertyType='unsigned char' or $nativePropertyType='unsigned int' or $nativePropertyType='unsigned long' or $nativePropertyType='short' or $nativePropertyType='axis2_byte_t' or $nativePropertyType='axis2_bool_t' or $nativePropertyType='char' or $nativePropertyType='int' or $nativePropertyType='float' or $nativePropertyType='double' or $nativePropertyType='long'">
+                    AXIS2_ENV_CHECK(env, (<xsl:value-of select="$nativePropertyType"/>)0);
+                    AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, (<xsl:value-of select="$nativePropertyType"/>)0);
+                  </xsl:when>
+                  <xsl:otherwise>
+                    AXIS2_ENV_CHECK(env, NULL);
+                    AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, NULL);
+                  </xsl:otherwise>
+                </xsl:choose>
+
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    return (<xsl:value-of select="$nativePropertyType"/>)0;
+                }
+                ret_val = (<xsl:value-of select="$PropertyTypeArrayParam"/>)axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i);
+                <xsl:choose>
+                  <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_byte_t' or @type='axis2_bool_t'">
+                    return *ret_val;
+                  </xsl:when>
+                  <xsl:otherwise>
+                    return ret_val;
+                  </xsl:otherwise>
+                </xsl:choose>
+            
+        }
+
+        /**
+         * Set the ith element of <xsl:value-of select="$propertyName"/>. (If the ith already exist, it will be replaced)
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i,
+                 <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
+        {
+                void *element = NULL;
+                int size = 0;
+                int j;
+
+                <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
+                   <xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text> ptr_param_</xsl:text><xsl:value-of select="$CName"/>;
+                </xsl:if>
+
+                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+                
+                if( <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> &amp;&amp;
+                    <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> &amp;&amp;
+                <xsl:choose>
+                  <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
+                    arg_<xsl:value-of select="$CName"/> == *((<xsl:value-of select="$PropertyTypeArrayParam"/>)axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i)))
+                  </xsl:when>
+                  <xsl:otherwise>
+                    arg_<xsl:value-of select="$CName"/> == (<xsl:value-of select="$nativePropertyType"/>)axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i))
+                  </xsl:otherwise>
+                </xsl:choose>
+                {
+                    return AXIS2_SUCCESS; 
+                }
+
+
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = axutil_array_list_create(env, 10);
+                }
+                
+                /* check whether there already exist an element */
+                element = axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i);
+                if(NULL != element)
+                {
+                  <!-- Some repeated code -->
+                  <!-- For all inside the choose, propertyInstanceName = element -->
+                  <xsl:choose>
+                     <xsl:when test="@ours">
+                        adb_<xsl:value-of select="@type"/>_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='unsigned short' or $nativePropertyType='unsigned char' or $nativePropertyType='unsigned int' or $nativePropertyType='unsigned long' or $nativePropertyType='short' or $nativePropertyType='axis2_byte_t' or $nativePropertyType='axis2_bool_t' or $nativePropertyType='char' or $nativePropertyType='int' or $nativePropertyType='float' or $nativePropertyType='double' or $nativePropertyType='long'">
+                        <!-- free ints, longs, float in array-->
+                        /* we keep primtives as pointers in arrasy, so need to free them */
+                        AXIS2_FREE(env-> allocator, element);
+                     </xsl:when>
+            
+                     <!-- free axis2_char_t s -->
+                     <xsl:when test="$nativePropertyType='axis2_char_t*' and not(@isarray)">
+                        AXIS2_FREE(env-> allocator, <xsl:value-of select="$propertyInstanceName"/>);
+                     </xsl:when>
+            
+                     <!-- free nodes -->
+                     <xsl:when test="$nativePropertyType='axiom_node_t*'">
+                      axiom_node_free_tree (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+                      axutil_qname_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_uri_t*'">
+                      axutil_uri_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_duration_t*'">
+                      axutil_duration_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                      axutil_date_time_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$propertyType='axutil_base64_binary_t*'">
+                      axutil_base64_binary_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+                       <xsl:when test="$propertyType='axutil_duration_t*'">
+                      axutil_duration_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <!--TODO: This should be extended for all the types that should be freed.. -->
+                     <xsl:otherwise>
+                       /* This is an unknown type or a primitive. Please free this manually*/
+                     </xsl:otherwise>
+                  </xsl:choose>
+                }
+
+                
+                <xsl:choose>
+                  <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
+                   <xsl:text>ptr_param_</xsl:text><xsl:value-of select="$CName"/> =  (<xsl:value-of select="$PropertyTypeArrayParam"/>)
+                            AXIS2_MALLOC(env->allocator, sizeof(<xsl:value-of select="@type"/>));
+                   if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                   {
+                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Failed in allocatting memory for new value of <xsl:value-of select="$propertyName"/>");
+                       return AXIS2_FAILURE;
+                       
+                   }
+                   <xsl:text>*ptr_param_</xsl:text><xsl:value-of select="$CName"/> = <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>;
+                   axutil_array_list_set(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, i, <xsl:text>ptr_param_</xsl:text><xsl:value-of select="$CName"/>);
+                  </xsl:when>
+                  <xsl:when test="@type='axis2_char_t*'">
+                   axutil_array_list_set(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, i, axutil_strdup(env, <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>));
+                  </xsl:when>
+                  <xsl:otherwise>
+                   axutil_array_list_set(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, i, <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>);
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
+                return AXIS2_SUCCESS;
+
+        }
+
+        /**
+         * Add to <xsl:value-of select="$propertyName"/>.
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env,
+                <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
+        {
+                <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
+                   <xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text> ptr_param_</xsl:text><xsl:value-of select="$CName"/>;
+                </xsl:if>
+
+                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = axutil_array_list_create(env, 10);
+                }
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Failed in allocatting memory for <xsl:value-of select="$propertyName"/>");
+                    return AXIS2_FAILURE;
+                }
+
+                <xsl:choose>
+                  <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
+                   <xsl:text>ptr_param_</xsl:text><xsl:value-of select="$CName"/> =  (<xsl:value-of select="$PropertyTypeArrayParam"/>)
+                            AXIS2_MALLOC(env->allocator, sizeof(<xsl:value-of select="@type"/>));
+                   if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                   {
+                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Failed in allocatting memory for new value of <xsl:value-of select="$propertyName"/>");
+                       return AXIS2_FAILURE;
+                       
+                   }
+                   <xsl:text>*ptr_param_</xsl:text><xsl:value-of select="$CName"/> = <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>;
+                   axutil_array_list_add(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, <xsl:text>ptr_param_</xsl:text><xsl:value-of select="$CName"/>);
+                  </xsl:when>
+                  <xsl:when test="@type='axis2_char_t*'">
+                   axutil_array_list_add(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, axutil_strdup(env, <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>));
+                  </xsl:when>
+                  <xsl:otherwise>
+                   axutil_array_list_add(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, <xsl:text>arg_</xsl:text><xsl:value-of select="$CName"/>);
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
+                return AXIS2_SUCCESS;
+
+        }
+
+        /**
+         * Get the size of the <xsl:value-of select="$propertyName"/> array.
+         */
+        int AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_sizeof_<xsl:value-of select="$CName"/>(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>, 
+                    const axutil_env_t *env)
+        {
+                AXIS2_ENV_CHECK(env, -1);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, -1);
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    return 0;
+                }
+                return axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
+        }
+
+
+        /**
+         * Remove the ith element of <xsl:value-of select="$propertyName"/>.
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_remove_<xsl:value-of select="$CName"/>_at(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, int i)
+        {
+                void *element = NULL;
+                int size = 0;
+                int j;
+
+                int k = 0;
+
+                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+
+
+                if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
+                {
+                    <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_FALSE;
+                    <!-- just assume it s null -->
+                    return AXIS2_SUCCESS;
+                }
+
+                /* check whether there already exist an element */
+                element = axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i);
+                if(NULL != element)
+                {
+                  <!-- Some repeated code -->
+                  <!-- For all inside the choose, propertyInstanceName = element -->
+                  <xsl:choose>
+                     <xsl:when test="@ours">
+                        adb_<xsl:value-of select="@type"/>_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='unsigned short' or $nativePropertyType='unsigned char' or $nativePropertyType='unsigned int' or $nativePropertyType='unsigned long' or $nativePropertyType='short' or $nativePropertyType='axis2_byte_t' or $nativePropertyType='axis2_bool_t' or $nativePropertyType='char' or $nativePropertyType='int' or $nativePropertyType='float' or $nativePropertyType='double' or $nativePropertyType='long'">
+                        <!-- free ints, longs, float in array-->
+                        /* we keep primtives as pointers in arrasy, so need to free them */
+                        AXIS2_FREE(env-> allocator, element);
+                     </xsl:when>
+            
+                     <!-- free axis2_char_t s -->
+                     <xsl:when test="$nativePropertyType='axis2_char_t*' and not(@isarray)">
+                        AXIS2_FREE(env-> allocator, <xsl:value-of select="$propertyInstanceName"/>);
+                     </xsl:when>
+            
+                     <!-- free nodes -->
+                     <xsl:when test="$nativePropertyType='axiom_node_t*'">
+                      axiom_node_free_tree (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+                      axutil_qname_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_uri_t*'">
+                      axutil_uri_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_duration_t*'">
+                      axutil_duration_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                      axutil_date_time_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$propertyType='axutil_base64_binary_t*'">
+                      axutil_base64_binary_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+                       <xsl:when test="$propertyType='axutil_duration_t*'">
+                      axutil_duration_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <!--TODO: This should be extended for all the types that should be freed.. -->
+                     <xsl:otherwise>
+                       /* This is an unknown type or a primitive. Please free this manually*/
+                     </xsl:otherwise>
+                  </xsl:choose>
+                }
+
+                <!-- for all the other case just set the ith element NULL -->
+                axutil_array_list_set(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> , env, i, NULL);
+                
+                return AXIS2_SUCCESS;
+        }
+
+
+        /**
+         * Getter for <xsl:value-of select="$propertyName"/>.
+         */
+        <xsl:value-of select="$propertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env)
+        {
+             <xsl:choose>
+               <xsl:when test="$propertyType='unsigned short' or $propertyType='unsigned char' or $propertyType='unsigned int' or $propertyType='unsigned long' or $propertyType='short' or $propertyType='axis2_byte_t' or $propertyType='axis2_bool_t' or $propertyType='char' or $propertyType='int' or $propertyType='float' or $propertyType='double' or $propertyType='long'">
+                 AXIS2_ENV_CHECK(env, (<xsl:value-of select="$propertyType"/>)0);
+                 AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, (<xsl:value-of select="$propertyType"/>)0);
+               </xsl:when>
+               <xsl:otherwise>
+                 AXIS2_ENV_CHECK(env, NULL);
+                 AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, NULL);
+               </xsl:otherwise>
+             </xsl:choose>
+
+             return <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>;
+        }
+
+        /**
+         * Setter for <xsl:value-of select="$propertyName"/>.
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env,
+            <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>)
+        {
+
+                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+                
+                if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> &amp;&amp;
+                        arg_<xsl:value-of select="$CName"/> == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>)
+                {
+                    <xsl:if test="$choice">
+                        <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                    </xsl:if>
+                    return AXIS2_SUCCESS; 
+                }
+
+                <!-- first reset whatever already in there -->
+                <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
+
+                <xsl:if test="(@ours or not($propertyType='unsigned char' or $propertyType='unsigned int' or $propertyType='unsigned short' or $propertyType='unsigned long' or $propertyType='char' or $propertyType='int' or $propertyType='short' or $propertyType='float' or $propertyType='axis2_byte_t' or $propertyType='double' or $propertyType='long' or $propertyType='axis2_bool_t'))">
+                if(NULL == arg_<xsl:value-of select="$CName"/>)
+                {
+                    /* We are already done */
+                    return AXIS2_SUCCESS;
+                }
+                </xsl:if>
+
+                <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = arg_<xsl:value-of select="$CName"/>;
+                <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
+
+                return AXIS2_SUCCESS;
+            
+        }
+
+        /**
+         * Resetter for <xsl:value-of select="$propertyName"/>
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env)
+        {
+               int i = 0;
+               int count = 0;
+               void *element = NULL;
+
+               AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+               AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+               
+
+                <!-- This is always an array -->
+                  if (<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> != NULL)
+                  {
+                      count = axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
+                      for(i = 0; i &lt; count; i ++)
+                      {
+                         element = axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i);
+            
+                <!-- the following element can be inside array or exist independently-->
+                if(<xsl:value-of select="$justPropertyInstanceName"/> != NULL)
+                {
+                   <!-- how to free all the ours things -->
+                   <xsl:choose>
+                     <xsl:when test="@ours">
+                        adb_<xsl:value-of select="@type"/>_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='unsigned short' or $nativePropertyType='unsigned char' or $nativePropertyType='unsigned int' or $nativePropertyType='unsigned long' or $nativePropertyType='short' or $nativePropertyType='axis2_byte_t' or $nativePropertyType='axis2_bool_t' or $nativePropertyType='char' or $nativePropertyType='int' or $nativePropertyType='float' or $nativePropertyType='double' or $nativePropertyType='long'">
+                        <!-- free ints, longs, float in array-->
+                        /* we keep primtives as pointers in arrays, so need to free them */
+                        AXIS2_FREE(env-> allocator, element);
+                     </xsl:when>
+            
+                     <!-- free axis2_char_t s -->
+                     <xsl:when test="$nativePropertyType='axis2_char_t*'">
+                        AXIS2_FREE(env-> allocator, <xsl:value-of select="$propertyInstanceName"/>);
+                     </xsl:when>
+            
+                     <!-- free nodes -->
+                     <xsl:when test="$nativePropertyType='axiom_node_t*'">
+                      axiom_node_free_tree (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+                      axutil_qname_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_uri_t*'">
+                      axutil_uri_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_duration_t*'">
+                      axutil_duration_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
+                      axutil_date_time_free(<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <xsl:when test="$propertyType='axutil_base64_binary_t*'">
+                      axutil_base64_binary_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+                       <xsl:when test="$propertyType='axutil_duration_t*'">
+                      axutil_duration_free (<xsl:value-of select="$propertyInstanceName"/>, env);
+                     </xsl:when>
+            
+                     <!--TODO: This should be extended for all the types that should be freed.. -->
+                     <xsl:otherwise>
+                       /* This is an unknown type or a primitive. Please free this manually*/
+                     </xsl:otherwise>
+                   </xsl:choose>
+                   <xsl:value-of select="$justPropertyInstanceName"/> = NULL;
+                }
+            
+                <!--/xsl:if-->
+                <!-- close tags arrays -->
+                      }
+                      axutil_array_list_free(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
+                  }
+               <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_FALSE; 
+               return AXIS2_SUCCESS;
+
+        }
+
+
+        </xsl:for-each>
     </xsl:template>
 
 </xsl:stylesheet>
