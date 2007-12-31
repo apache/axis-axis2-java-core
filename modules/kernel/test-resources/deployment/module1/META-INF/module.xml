@@ -24,6 +24,9 @@
         <handler name="h2" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationInPhase"/>
         </handler>
+        <handler name="h6" class="org.apache.axis2.registry.Handler3">
+            <order phase="NewPhase"/>
+        </handler>
     </InFlow>
 
     <OutFlow>

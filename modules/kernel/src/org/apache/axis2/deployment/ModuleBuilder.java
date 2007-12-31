@@ -132,6 +132,10 @@ public class ModuleBuilder extends DescriptionBuilder {
                 module.setModuleDescription("module description not found");
             }
 
+            // Processing Dynamic Phase
+            Iterator phaseItr = moduleElement.getChildrenWithName(new QName(TAG_PHASE));
+            processModulePhase(phaseItr);
+            
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
@@ -209,9 +213,6 @@ public class ModuleBuilder extends DescriptionBuilder {
                 module.addOperation(operation);
             }
 
-            // Processing Dynamic Phase
-            Iterator phaseItr = moduleElement.getChildrenWithName(new QName(TAG_PHASE));
-            processModulePhase(phaseItr);
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch(AxisFault e) {

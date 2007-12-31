@@ -28,6 +28,11 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
 
+/**
+ * A DeployableChain is a container which manages dependencies between Deployables.  You
+ * deploy() them in, then call rebuild() which will set up a chain, correctly ordered according
+ * to the constraints in the Deployables.
+ */
 public class DeployableChain {
     /** The actual things (handlers or phases) */
     List chain = new ArrayList();
@@ -35,10 +40,11 @@ public class DeployableChain {
     Deployable first;
     Deployable last;
 
+    /** A Map of name -> List (of Strings).  Each List contains the key's successors */
     Map activeConstraints = new HashMap();
-    private Map deployed = new HashMap();
 
-    Map activePhaseConstraints = new HashMap();
+    /** A Map of name -> Deployable for all deployed items */
+    private Map deployed = new HashMap();
 
     /**
      * Deploy a Deployable into this chain.  Note that this does NOT order yet.  The idea
@@ -51,11 +57,17 @@ public class DeployableChain {
      */
     public void deploy(Deployable deployable) throws Exception {
         String name = deployable.getName();
+        Set mySuccessors = deployable.getSuccessors();
+        Set myPredecessors = deployable.getPredecessors();
 
         if (deployable.isFirst()) {
             if (first != null) {
                 throw new Exception("'" + first.getName() + "' is already first, can't deploy '" +
                     name + "' as first also.");
+            }
+            if (myPredecessors != null) {
+                throw new Exception("Deploying '" + name +
+                        "' - can't both be first and have predecessors!");
             }
             first = deployable;
         }
@@ -65,20 +77,11 @@ public class DeployableChain {
                 throw new Exception("'" + last.getName() + "' is already last, can't deploy '" +
                         name + "' as last also.");
             }
+            if (mySuccessors != null) {
+                throw new Exception("Deploying '" + name +
+                        "' - can't both be last and have successors!");
+            }
             last = deployable;
-        }
-
-        // Now check internal consistency
-        Set mySuccessors = deployable.getSuccessors();
-        Set myPredecessors = deployable.getPredecessors();
-
-        if (mySuccessors != null && deployable.isLast()) {
-            throw new Exception("Deploying '" + name +
-                    "' - can't both be last and have successors!");
-        }
-        if (myPredecessors != null && deployable.isFirst()) {
-            throw new Exception("Deploying '" + name +
-                    "' - can't both be first and have predecessors!");
         }
 
         Deployable previous = (Deployable)deployed.get(name);
@@ -87,15 +90,16 @@ public class DeployableChain {
         } else {
             // If something by this name already exists, ensure it's compatible
             if (previous.isFirst() != deployable.isFirst()) {
-                throw new Exception();
+                throw new Exception("Can't deploy '" + name + "', values for first don't match!");
             }
             if (previous.isLast() != deployable.isLast()) {
-                throw new Exception();
+                throw new Exception("Can't deploy '" + name + "', values for last don't match!");
             }
             Object target = previous.getTarget();
             if (target != null) {
                 if (deployable.getTarget() != null && !target.equals(deployable.getTarget())) {
-                    throw new Exception();
+                    throw new Exception("Can't deploy '" + name +
+                            "',  targets must either match or be null.");
                 }
             } else {
                 previous.setTarget(deployable.getTarget());
@@ -228,6 +232,12 @@ public class DeployableChain {
         }
     }
 
+    /**
+     * Adds a before/after relationship to the active constraints.
+     *
+     * @param before name of the Deployable that must come first
+     * @param after name of the Deployable that must come later
+     */
     public void addRelationship(String before, String after) {
         Set successors = (Set)activeConstraints.get(before);
         if (successors == null) {
@@ -237,7 +247,13 @@ public class DeployableChain {
         successors.add(after);
     }
 
+    /**
+     * Get the chain - once rebuild() has been called this will be the chain of target objects.
+     *
+     * @return a List of target objects in the correct order
+     */
     public List getChain() {
+        // todo - should this call rebuild() automatically (if dirty flag is set)?
         return chain;
     }
 }

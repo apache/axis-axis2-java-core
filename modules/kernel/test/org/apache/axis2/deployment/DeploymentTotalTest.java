@@ -31,25 +31,24 @@ import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
 
 public class DeploymentTotalTest extends TestCase {
-    AxisConfiguration er;
-
+    AxisConfiguration axisConfig;
 
     protected void setUp() throws Exception {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
-        er = ConfigurationContextFactory
+        axisConfig = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
          // OK, no exceptions.  Now make sure we read the correct file...
     }
 
     public void testparseService1() throws AxisFault, XMLStreamException {
-        Parameter param = er.getParameter("FavoriteColor");
+        Parameter param = axisConfig.getParameter("FavoriteColor");
         assertNotNull("No FavoriteColor parameter in axis2.xml!", param);
         assertEquals("purple", param.getValue());
     }
 
     public void testDynamicPhase() {
-        ArrayList inFlow = er.getInFlowPhases();
+        ArrayList inFlow = axisConfig.getInFlowPhases();
         int index = 0;
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
@@ -59,7 +58,7 @@ public class DeploymentTotalTest extends TestCase {
         }
         assertEquals("Wrong index for NewPhase!", 3, index);
 
-        inFlow = er.getInFaultFlowPhases();
+        inFlow = axisConfig.getInFaultFlowPhases();
         boolean found = false;
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
