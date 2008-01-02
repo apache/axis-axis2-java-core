@@ -19,10 +19,10 @@
 
 package org.apache.axis2.databinding.utils;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -30,6 +30,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class MultirefHelper {
 
@@ -168,6 +169,138 @@ public class MultirefHelper {
     public void clean() {
         elementMap.clear();
         objectmap.clear();
+    }
+
+    /**
+     * this method is used to process the href attributes which may comes with the incomming soap mesaage
+     * <soap:body>
+     * <operation>
+     * <arg1 href="#obj1"/>
+     * </operation>
+     * <multiref id="obj1">
+     * <name>the real argument</name>
+     * <color>blue</color>
+     * </multiref>
+     * </soap:body>
+     * here we assume first child of the soap body has the main object structure and others contain the
+     * multiref parts.
+     * Soap spec says that those multiref parts must be top level elements.
+     *
+     * @param soapEnvelope
+     */
+
+    public static void processHrefAttributes(SOAPEnvelope soapEnvelope)
+            throws AxisFault {
+        // first populate the multiref parts to a hash table.
+        SOAPBody soapBody = soapEnvelope.getBody();
+        // first build the whole tree
+        soapBody.build();
+        OMElement omElement = null;
+        OMAttribute idAttribute = null;
+        Map idAndOMElementMap = new HashMap();
+        for (Iterator iter = soapBody.getChildElements(); iter.hasNext();) {
+            omElement = (OMElement) iter.next();
+            // the attribute id is an unqualified attribute
+            idAttribute = omElement.getAttribute(new QName(null, "id"));
+            if (idAttribute != null) {
+                // for the first element there may not have an id
+                idAndOMElementMap.put(idAttribute.getAttributeValue(), omElement);
+            }
+        }
+
+        // start processing from the first child
+        processHrefAttributes(idAndOMElementMap, soapBody.getFirstElement(), OMAbstractFactory.getOMFactory());
+
+    }
+
+    public static void processHrefAttributes(Map idAndOMElementMap,
+                                         OMElement elementToProcess,
+                                         OMFactory omFactory)
+            throws AxisFault {
+
+        // first check whether this element has an href value.
+        // href is also an unqualifed attribute
+        OMAttribute hrefAttribute = elementToProcess.getAttribute(new QName(null, "href"));
+        if (hrefAttribute != null) {
+            // i.e this has an href attribute
+            String hrefAttributeValue = hrefAttribute.getAttributeValue();
+            if (!hrefAttributeValue.startsWith("#")) {
+                throw new AxisFault("In valid href ==> " + hrefAttributeValue + " does not starts with #");
+            } else {
+                OMElement referedOMElement =
+                        (OMElement) idAndOMElementMap.get(hrefAttributeValue.substring(1));
+                if (referedOMElement == null) {
+                    throw new AxisFault("In valid href ==> " + hrefAttributeValue + " can not find" +
+                            "the matching element");
+                } else {
+                    // now we have to remove the hrefAttribute and add all the child elements to the
+                    // element being proccesed
+                    elementToProcess.removeAttribute(hrefAttribute);
+                    OMElement clonedReferenceElement = getClonedOMElement(referedOMElement, omFactory);
+                    OMNode omNode = null;
+                    for (Iterator iter = clonedReferenceElement.getChildren(); iter.hasNext();) {
+                        omNode = (OMNode) iter.next();
+                        elementToProcess.addChild(omNode.detach());
+                    }
+
+                    // add attributes
+                    OMAttribute omAttribute = null;
+                    for (Iterator iter = clonedReferenceElement.getAllAttributes(); iter.hasNext();) {
+                        omAttribute = (OMAttribute) iter.next();
+                        // we do not have to populate the id attribute
+                        if (!omAttribute.getLocalName().equals("id")) {
+                            elementToProcess.addAttribute(omAttribute);
+                        }
+                    }
+                }
+            }
+        }
+
+        // call recursively to proces all elements
+        OMElement childOMElement = null;
+        for (Iterator iter = elementToProcess.getChildElements(); iter.hasNext();) {
+            childOMElement = (OMElement) iter.next();
+            processHrefAttributes(idAndOMElementMap, childOMElement, omFactory);
+        }
+    }
+
+    /**
+     * returns an cloned om element for this OMElement
+     *
+     * @param omElement
+     * @return cloned omElement
+     */
+    public static OMElement getClonedOMElement(OMElement omElement, OMFactory omFactory) throws AxisFault {
+
+        OMElement newOMElement = omFactory.createOMElement(omElement.getQName());
+
+        // copying attributes
+        OMAttribute omAttribute = null;
+        OMAttribute newOMAttribute = null;
+        for (Iterator iter = omElement.getAllAttributes(); iter.hasNext();) {
+            omAttribute = (OMAttribute) iter.next();
+            if (!omAttribute.getAttributeValue().equals("id")) {
+                newOMAttribute = omFactory.createOMAttribute(
+                        omAttribute.getLocalName(),
+                        omAttribute.getNamespace(),
+                        omAttribute.getAttributeValue());
+                newOMElement.addAttribute(newOMAttribute);
+            }
+        }
+        OMNode omNode = null;
+        OMText omText = null;
+        for (Iterator iter = omElement.getChildren(); iter.hasNext();) {
+            omNode = (OMNode) iter.next();
+            if (omNode instanceof OMText) {
+                omText = (OMText) omNode;
+                newOMElement.addChild(omFactory.createOMText(omText.getText()));
+            } else if (omNode instanceof OMElement) {
+                newOMElement.addChild(getClonedOMElement((OMElement) omNode, omFactory));
+            } else {
+                throw new AxisFault("Unknown child element type ==> " + omNode.getClass().getName());
+            }
+        }
+        return newOMElement;
     }
 
 }
