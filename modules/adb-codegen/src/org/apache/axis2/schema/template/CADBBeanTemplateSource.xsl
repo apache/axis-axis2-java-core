@@ -131,7 +131,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned char' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -461,7 +461,7 @@
                      <xsl:choose>
                        <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                        <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                       <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                       <xsl:when test="@type='unsigned char' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
@@ -2564,7 +2564,7 @@
                      <xsl:choose>
                        <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                        <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                       <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                       <xsl:when test="@type='unsigned char' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                        <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                      </xsl:choose>
                   </xsl:variable>
@@ -4015,6 +4015,11 @@
                    <xsl:otherwise><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
+            <xsl:variable name="constValue">
+                <xsl:choose>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                </xsl:choose>
+            </xsl:variable>
 
             /**
              * getter for <xsl:value-of select="$propertyName"/>.
@@ -4045,7 +4050,7 @@
             <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env,
-                    <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>)
+                    <xsl:if test="not(@isarray)"><xsl:value-of select="$constValue"/></xsl:if><xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>)
              {
                 <xsl:if test="@isarray">
                  int size = 0;
@@ -4189,7 +4194,7 @@
             <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env, int i,
-                    <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text><xsl:value-of select="$CName"/>)
+                    <xsl:value-of select="$constValue"/><xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text><xsl:value-of select="$CName"/>)
             {
                 void *element = NULL;
                 int size = 0;
@@ -4375,7 +4380,7 @@
             <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axutil_env_t *env,
-                    <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
+                    <xsl:value-of select="$constValue"/><xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
              {
                 <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
                    <xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text> ptr_param_</xsl:text><xsl:value-of select="$CName"/>;
@@ -4762,13 +4767,18 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
             
             <xsl:variable name="propertyInstanceName">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:variable>
             <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
+            <xsl:variable name="constValue">
+                <xsl:choose>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                </xsl:choose>
+            </xsl:variable>
          
         /**
          * Get the ith element of <xsl:value-of select="$propertyName"/>.
@@ -4814,7 +4824,7 @@
         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_at(
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env, int i,
-                 <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
+                <xsl:value-of select="$constValue"/><xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
         {
                 void *element = NULL;
                 int size = 0;
@@ -4937,7 +4947,7 @@
         <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env,
-                <xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
+                <xsl:value-of select="$constValue"/><xsl:value-of select="$nativePropertyType"/><xsl:text> arg_</xsl:text> <xsl:value-of select="$CName"/>)
         {
                 <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='unsigned long' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long' or @type='axis2_bool_t' or @type='axis2_byte_t'">
                    <xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text> ptr_param_</xsl:text><xsl:value-of select="$CName"/>;
