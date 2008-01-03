@@ -710,10 +710,32 @@ class EndpointDescriptionImpl
         Parameter portParameter = new Parameter();
         portParameter.setName(WSDL11ToAllAxisServicesBuilder.WSDL_PORT);
         portParameter.setValue(portQName.getLocalPart());
+        
+        // Store the service class fully qualified name
+        Parameter serviceClassNameParam = new Parameter();
+        serviceClassNameParam.setName(MDQConstants.CLIENT_SERVICE_CLASS);
+        String serviceClassName = this.getServiceDescriptionImpl().getServiceClassName();
+        if(log.isDebugEnabled()) {
+            log.debug("Setting service class name parameter to: " + serviceClassName + 
+                      " on AxisService: " + axisService + "@" + axisService.hashCode());
+        }
+        serviceClassNameParam.setValue(serviceClassName);
+        
+        // Store the sei class fully qualified name, if it is available
+        Parameter seiClassNameParam = new Parameter();
+        seiClassNameParam.setName(MDQConstants.CLIENT_SEI_CLASS);
+        String seiClassName = implOrSEIClass != null ? implOrSEIClass.getName() : null;
+        if(log.isDebugEnabled()) {
+            log.debug("Setting sei class name parameter to: " + seiClassName + 
+                      " on AxisService: " + axisService + "@" + axisService.hashCode());
+        }
+        seiClassNameParam.setValue(seiClassName);
 
         try {
             axisService.addParameter(serviceNameParameter);
             axisService.addParameter(portParameter);
+            axisService.addParameter(serviceClassNameParam);
+            axisService.addParameter(seiClassNameParam);
         }
         catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);

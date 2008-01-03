@@ -1643,6 +1643,13 @@ class ServiceDescriptionImpl
     private void resetServiceRuntimeDescription() {
         runtimeDescMap.clear();
     }
+    
+    /**
+     * Return the name of the client-side service class if it exists.
+     */
+    protected String getServiceClassName() {
+        return (this.serviceClass != null ? this.serviceClass.getName() : null);
+    }
 
     /** Return a string representing this Description object and all the objects it contains. */
     public String toString() {

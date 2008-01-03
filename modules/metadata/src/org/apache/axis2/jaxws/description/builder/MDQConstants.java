@@ -48,4 +48,8 @@ public class MDQConstants {
 
     public static final String RETURN_TYPE_FUTURE = "java.util.concurrent.Future";
     public static final String RETURN_TYPE_RESPONSE = "javax.xml.ws.Response";
+    
+    public static final String CLIENT_SERVICE_CLASS = "CLIENT_SERVICE_CLASS";
+    public static final String CLIENT_SEI_CLASS = "CLIENT_SEI_CLASS";
+    
 }
