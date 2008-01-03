@@ -496,8 +496,8 @@ public class AxisInvocationController extends InvocationController {
 
         // Check to see if BASIC_AUTH is enabled.  If so, make sure
         // the properties are setup correctly.
-        if (mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
+        if (mc.containsKey(BindingProvider.USERNAME_PROPERTY) ||
+            mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
 
             String userId = (String)mc.getProperty(BindingProvider.USERNAME_PROPERTY);
             if (userId == null || userId == "") {
@@ -505,10 +505,9 @@ public class AxisInvocationController extends InvocationController {
                         .makeWebServiceException(Messages.getMessage("checkUserName"));
             }
 
-            String password = (String)mc.getProperty(BindingProvider.PASSWORD_PROPERTY);
-            if (password == null || password == "") {
-                throw ExceptionFactory
-                        .makeWebServiceException(Messages.getMessage("checkPassword"));
+            String password = null;
+            if (mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
+                password = (String) mc.getProperty(BindingProvider.PASSWORD_PROPERTY);
             }
 
             URL url = null;
@@ -529,12 +528,6 @@ public class AxisInvocationController extends InvocationController {
             basicAuthentication.setPreemptiveAuthentication(true);
 
             mc.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
-        } else if ((!mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                mc.containsKey(BindingProvider.PASSWORD_PROPERTY)) ||
-                (mc.containsKey(BindingProvider.USERNAME_PROPERTY) &&
-                        !mc.containsKey(BindingProvider.PASSWORD_PROPERTY))) {
-            throw ExceptionFactory
-                    .makeWebServiceException(Messages.getMessage("checkUsernameAndPassword"));
         }
     }
 

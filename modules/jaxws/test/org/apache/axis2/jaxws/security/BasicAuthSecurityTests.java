@@ -35,8 +35,8 @@ public class BasicAuthSecurityTests extends TestCase {
     private QName SERVICE_QNAME = new QName("http://ws.apache.org/axis2", "BasicAuthSecurityService");
     private QName PORT_QNAME = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
 
-	private String USER_ID = "testid";
-	private String PASSWORD = "testid";
+    private String USER_ID = "testid";
+    private String PASSWORD = "testid";
 
     protected void setUp() throws Exception {
             super.setUp();
@@ -61,6 +61,8 @@ public class BasicAuthSecurityTests extends TestCase {
         TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         String retVal = dispatch.invoke(xmlString);
         TestLogger.logger.debug(">> Response [" + retVal + "]");
+        
+        assertTrue(retVal != null);
     }
     
     public void testBasicAuth_uid_pwd() throws Exception {
@@ -77,6 +79,8 @@ public class BasicAuthSecurityTests extends TestCase {
         TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
         String retVal = dispatch.invoke(xmlString);
         TestLogger.logger.debug(">> Response [" + retVal + "]");
+        
+        assertTrue(retVal != null);
     }
     
     public void testBasicAuth_uid()throws Exception{
@@ -90,16 +94,8 @@ public class BasicAuthSecurityTests extends TestCase {
         dispatch.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USER_ID);
 
         TestLogger.logger.debug(">> Invoking Dispatch<String> BasicAuthSecurityService");
-        
-        try{
-        	String retVal = dispatch.invoke(xmlString);
-            TestLogger.logger.debug(">> Response [" + retVal + "]");
-            
-            fail("Set USERID with no PASSWORD: WebServiceException is expected");
-        }
-        catch(WebServiceException wse){
-            TestLogger.logger.debug(getName() + ": " + wse);
-        }
+        String retVal = dispatch.invoke(xmlString);
+       	TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
     
     public void testBasicAuth_pwd()throws Exception{
