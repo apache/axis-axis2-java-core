@@ -36,6 +36,7 @@ import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
 import org.apache.woden.XMLElement;
+import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.BindingFaultImpl;
 import org.apache.woden.internal.wsdl20.BindingOperationImpl;
@@ -120,6 +121,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private boolean isAllPorts;
 
+    private URIResolver customWSDLResolver;
+
 //    As bindings are processed add it to this array so that we dont process the same binding twice
     private Map processedBindings;
 
@@ -178,6 +181,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     public void setAllPorts(boolean allPorts) {
         isAllPorts = allPorts;
+    }
+
+    /**
+     * sets a custom WSDL locator
+     *
+     * @param customResolver
+     */
+    public void setCustomWSDLResolver(URIResolver customResolver) {
+        this.customWSDLResolver = customResolver;
     }
 
     public AxisService populateService() throws AxisFault {
@@ -431,6 +443,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Document document = documentBuilder.parse(in);
 
                     WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+                    if (customWSDLResolver != null) {
+                        reader.setURIResolver(customWSDLResolver);
+                    }
                     // This turns on WSDL validation which is set off by default.
                     reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
                     WSDLSource wsdlSource = reader.createWSDLSource();
@@ -1095,8 +1110,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Description readInTheWSDLFile(String wsdlURI) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        if (customWSDLResolver != null) {
+            reader.setURIResolver(customWSDLResolver);
+        }
         // This turns on WSDL validation which is set off by default.
-//        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
+        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
         
 //      Log when and from where the WSDL is loaded.
         if (log.isDebugEnabled()) {

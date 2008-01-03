@@ -226,6 +226,8 @@ public class ArchiveReader implements DeploymentConstants {
                             serviceArchiveFile.getCanonicalFile().toURI().toString());
 
                 } else if (axisServiceBuilder instanceof WSDL20ToAllAxisServicesBuilder) {
+                    ((WSDL20ToAllAxisServicesBuilder) axisServiceBuilder).setCustomWSDLResolver(
+                            new AARBasedWSDLLocator(baseURI, serviceArchiveFile, in));
                     // trying to use the jar scheme as the base URI. I think this can be used to handle
                     // wsdl 1.1 as well without using a custom URI resolver. Need to look at it later.
                     axisServiceBuilder.setBaseUri(
@@ -399,21 +401,33 @@ public class ArchiveReader implements DeploymentConstants {
         OMElement element = (OMElement) XMLUtils.toOM(in);
         OMNamespace documentElementNS = element.getNamespace();
         if (documentElementNS != null) {
-            WSDL11ToAllAxisServicesBuilder wsdlToAxisServiceBuilder;
+            WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             element.serialize(out);
             if (Constants.NS_URI_WSDL11.
                     equals(documentElementNS.getNamespaceURI())) {
                 wsdlToAxisServiceBuilder = new WSDL11ToAllAxisServicesBuilder(
                         new ByteArrayInputStream(out.toByteArray()));
-                wsdlToAxisServiceBuilder.setCustomWSDLResolver(new WarBasedWSDLLocator(wsdlUrl,
+                ((WSDL11ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).setCustomWSDLResolver(new WarBasedWSDLLocator(wsdlUrl,
                                                                                          loader,
                                                                                          new ByteArrayInputStream(
                                                                                                  out.toByteArray())));
                 wsdlToAxisServiceBuilder.setCustomResolver(
                         new WarFileBasedURIResolver(loader));
-                return wsdlToAxisServiceBuilder.populateAllServices();
-            } else {
+                return ((WSDL11ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).populateAllServices();
+            } else if (WSDL2Constants.WSDL_NAMESPACE.
+                    equals(documentElementNS.getNamespaceURI())){
+                wsdlToAxisServiceBuilder = new WSDL20ToAllAxisServicesBuilder(
+                        new ByteArrayInputStream(out.toByteArray()));
+                ((WSDL20ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).setCustomWSDLResolver(new WarBasedWSDLLocator(wsdlUrl,
+                                                                                         loader,
+                                                                                         new ByteArrayInputStream(
+                                                                                                 out.toByteArray())));
+                wsdlToAxisServiceBuilder.setCustomResolver(
+                        new WarFileBasedURIResolver(loader));
+                return ((WSDL20ToAllAxisServicesBuilder)wsdlToAxisServiceBuilder).populateAllServices();
+            }
+            else {
                 throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
             }
         }

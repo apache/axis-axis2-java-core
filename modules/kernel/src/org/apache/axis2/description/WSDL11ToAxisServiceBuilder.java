@@ -242,7 +242,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * sets a custom WSDL locator
      *
-     * @param customWSDLResolver
+     * @param customResolver
      */
     public void setCustomWSDLResolver(WSDLLocator customResolver) {
         this.customWSDLResolver = customResolver;
