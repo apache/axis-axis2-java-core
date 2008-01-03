@@ -59,6 +59,24 @@ public abstract class AbstractContext {
     }
 
     /**
+     * @param context
+     * @return true if the context is an ancestor
+     */
+    public boolean isAncestor(AbstractContext context) {
+        if (context == null) {
+            return false;
+        }
+        for (AbstractContext ancestor = getParent();
+            ancestor != null;
+            ancestor = ancestor.getParent()) {
+            if (ancestor == context) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * @return The properties
      * @deprecated Use {@link #getPropertyNames()}, {@link #getProperty(String)},
      *             {@link #setProperty(String, Object)} & {@link #removeProperty(String)}instead.

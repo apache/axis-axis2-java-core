@@ -919,21 +919,29 @@ public class MessageContext extends AbstractContext
 
         // My own context hierarchy may not all be present. So look for whatever
         // nearest level is present and ask that to find the property.
+        //
+        // If the context is already an ancestor, it was checked during
+        // the super.getProperty call.  In such cases, the second check 
+        // is not performed.
         if (operationContext != null) {
-            return operationContext.getProperty(name);
-        }
-        if (serviceContext != null) {
-            return serviceContext.getProperty(name);
-        }
-        if (serviceGroupContext != null) {
-            return serviceGroupContext.getProperty(name);
-        }
-        if (configurationContext != null) {
-            return configurationContext.getProperty(name);
+            if (!isAncestor(operationContext)) {
+                obj = operationContext.getProperty(name);
+            }
+        } else if (serviceContext != null) {
+            if (!isAncestor(serviceContext)) {
+                obj = serviceContext.getProperty(name);
+            }
+        } else if (serviceGroupContext != null) {
+            if (!isAncestor(serviceGroupContext)) {
+                obj =  serviceGroupContext.getProperty(name);
+            }
+        } else if (configurationContext != null) {
+            if (!isAncestor(configurationContext)) {
+                obj = configurationContext.getProperty(name);
+            }
         }
 
-        // tough
-        return null;
+        return obj;
     }
 
     /**
