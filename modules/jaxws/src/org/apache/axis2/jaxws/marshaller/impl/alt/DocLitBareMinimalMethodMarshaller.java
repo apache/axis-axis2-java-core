@@ -283,6 +283,11 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
 
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasResponseSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {
@@ -343,6 +348,11 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
 
             // Put values onto the message...marshalling by type
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasRequestSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {

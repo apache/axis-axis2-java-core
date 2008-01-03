@@ -182,6 +182,10 @@ class OperationDescriptionImpl
     private boolean             _setAttachmentDesc = false;
     private AttachmentDescription attachmentDesc = null;
     
+    private boolean hasRequestSwaRefAttachments = false;
+    private boolean hasResponseSwaRefAttachments = false;
+    private Map<String, AttachmentDescription> partAttachmentMap;
+    
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
     // For JAX-WS client async methods, this is the corresponding Sync method; for everything else,
@@ -190,8 +194,7 @@ class OperationDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
-    private Map<String, AttachmentDescription> partAttachmentMap;
-    
+
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
@@ -1951,6 +1954,22 @@ class OperationDescriptionImpl
 
     public void addPartAttachmentDescription(String partName, AttachmentDescription attachmentDesc) {
         partAttachmentMap.put(partName, attachmentDesc);
+    }
+    
+    public boolean hasRequestSwaRefAttachments() {
+        return hasRequestSwaRefAttachments;
+    }
+    
+    public void setHasRequestSwaRefAttachments(boolean b) {
+        hasRequestSwaRefAttachments = b;
+    }
+    
+    public boolean hasResponseSwaRefAttachments() {
+        return hasResponseSwaRefAttachments;
+    }
+    
+    public void setHasResponseSwaRefAttachments(boolean b) {
+        hasResponseSwaRefAttachments = b;
     }
             
     public String toString() {
