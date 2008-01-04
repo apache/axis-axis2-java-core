@@ -1367,22 +1367,31 @@ public class AxisService extends AxisDescription {
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
         if ((soapAction == null) || soapAction.length() == 0) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: "+soapAction +" is null or ''. Returning null.");
+        	}
             return null;
         }
         // If the action maps to an alais that is not unique, then it can't be used to map to 
         // an operation.
         if (invalidOperationsAliases.contains(soapAction)) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: "+soapAction +" is an invalid operation alias. Returning null.");
+        	}
             return null;
         }
 
         AxisOperation operation = (AxisOperation) getChild(new QName(soapAction));
 
         if (operation != null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: Operation ("+operation+","+operation.getName()+") for soapAction: "+soapAction+" found as child.");
+        	}
             return operation;
         }
 
         operation = (AxisOperation) operationsAliasesMap.get(soapAction);
-
+        
         return operation;
     }
 
