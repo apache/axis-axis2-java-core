@@ -66,6 +66,18 @@ public class OMBlockImpl extends BlockImpl implements OMBlock {
         OMElement om = (OMElement)busObj;
         return om.getXMLStreamReader();
     }
+    
+    @Override
+    protected Object _getBOFromOM(OMElement om, Object busContext)
+        throws XMLStreamException, WebServiceException {
+        return om;
+    }
+    
+    @Override
+    protected OMElement _getOMFromBO(Object busObject, Object busContext)
+        throws XMLStreamException, WebServiceException {
+        return (OMElement) busObject;
+    }
 
     @Override
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)

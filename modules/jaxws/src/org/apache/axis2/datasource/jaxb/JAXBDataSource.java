@@ -67,6 +67,10 @@ public class JAXBDataSource extends OMDataSourceExtBase {
     public Object getObject() {
         return jaxb;
     }
+    
+    public JAXBDSContext getContext() {
+        return context;
+    }
 
     public XMLStreamReader getReader() throws XMLStreamException {
 

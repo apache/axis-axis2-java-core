@@ -18,10 +18,13 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
+import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.datasource.XMLStringDataSource;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -102,6 +105,28 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             throw ExceptionFactory.makeWebServiceException(je);
         }
         return busObject;
+    }
+    
+    @Override
+    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+        throws XMLStreamException, WebServiceException {
+        
+        // Shortcut to get business object from existing data source
+        if (omElement instanceof OMSourcedElement) {
+            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
+            if (ds instanceof JAXBDataSource) {
+                // Update the business context to use the one provided
+                // by the datasource
+                try {
+                    JAXBDSContext dsContext = ((JAXBDataSource) ds).getContext();
+                    busContext = new JAXBBlockContext(dsContext.getJAXBContext());
+                } catch (JAXBException e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+                return ((JAXBDataSource) ds).getObject();
+            }
+        }
+        return super._getBOFromOM(omElement, busContext);
     }
 
     /**
