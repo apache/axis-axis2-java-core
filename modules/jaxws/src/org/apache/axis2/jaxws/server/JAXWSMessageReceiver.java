@@ -80,12 +80,8 @@ public class JAXWSMessageReceiver implements MessageReceiver {
 
         org.apache.axis2.description.Parameter svcClassParam =
                 service.getParameter(PARAM_SERVICE_CLASS);
-    	ClassLoader prevCl = Thread.currentThread().getContextClassLoader(); 
         try {
-        	//Set the service class loader
-            ClassLoader newCl = service.getClassLoader();
-        	Thread.currentThread().setContextClassLoader(newCl);
-        	
+
             if (svcClassParam == null) {
                 throw new RuntimeException(
                         Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
@@ -180,8 +176,6 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                     ThreadContextMigratorUtil.performContextCleanup(
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 }
-                //Revert back from service class loader to the previous class loader
-                Thread.currentThread().setContextClassLoader(prevCl);
             }
 
         } catch (Exception e) {
@@ -199,9 +193,6 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             // The AxisEngine expects an AxisFault
             throw AxisFault.makeFault(wse);
 
-        } finally {
-        	// In a case of exception also swith from service cl to previous cl
-        	Thread.currentThread().setContextClassLoader(prevCl);
         }
 
         //This assumes that we are on the ultimate execution thread
