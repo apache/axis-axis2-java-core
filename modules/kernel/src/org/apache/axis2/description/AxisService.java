@@ -730,7 +730,7 @@ public class AxisService extends AxisDescription {
         }
         if (log.isDebugEnabled()) {
             log.debug("mapActionToOperation: Mapping Action to Operation: action: " + action +
-                      "; operation: " + axisOperation);
+                      "; operation: " + axisOperation+ "named: "+axisOperation.getName());
         }
 
         // First check if this action has already been flagged as invalid because it is a duplicate.
