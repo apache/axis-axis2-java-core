@@ -1157,15 +1157,7 @@ public class SchemaCompiler {
 
             // process attributes
             //process attributes - first look for the explicit attributes
-            XmlSchemaObjectCollection attribs = extension.getAttributes();
-            Iterator attribIterator = attribs.getIterator();
-            while (attribIterator.hasNext()) {
-                Object o = attribIterator.next();
-                if (o instanceof XmlSchemaAttribute) {
-                    processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
-
-                }
-            }
+            processAttributes(extension.getAttributes(),metaInfHolder,parentSchema);
 
             //process any attribute
             //somehow the xml schema parser does not seem to pickup the any attribute!!
@@ -1216,15 +1208,7 @@ public class SchemaCompiler {
             processParticle(restriction.getBaseTypeName(),restriction.getParticle(), metaInfHolder, parentSchema);
 
             //process attributes - first look for the explicit attributes
-            XmlSchemaObjectCollection attribs = restriction.getAttributes();
-            Iterator attribIterator = attribs.getIterator();
-            while (attribIterator.hasNext()) {
-                Object o = attribIterator.next();
-                if (o instanceof XmlSchemaAttribute) {
-                    processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
-
-                }
-            }
+            processAttributes(restriction.getAttributes(),metaInfHolder,parentSchema);
 
             //process any attribute
             //somehow the xml schema parser does not seem to pickup the any attribute!!

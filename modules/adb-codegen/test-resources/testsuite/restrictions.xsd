@@ -189,7 +189,21 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-
-
+    <xsd:element name="GetExemplarResponseTypeElement" type="tns:getExemplarResponseType"/>
+    <xsd:complexType name="getExemplarResponseType">
+        <xsd:complexContent>
+            <xsd:restriction base="xsd:anyType">
+                <xsd:sequence>
+                    <xsd:element name="exemplar" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:attributeGroup ref="tns:ResponseAttributeGroup"/>
+                <xsd:attribute name="supportedMethods" type="xsd:string" use="optional"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:attributeGroup name="ResponseAttributeGroup">
+        <xsd:attribute name="responseCode" type="xsd:integer" use="optional" default="0"/>
+        <xsd:attribute name="responseMessage" type="xsd:string" use="optional"/>
+    </xsd:attributeGroup>
 
 </xsd:schema>
