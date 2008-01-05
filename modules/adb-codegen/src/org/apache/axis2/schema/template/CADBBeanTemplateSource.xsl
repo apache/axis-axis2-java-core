@@ -470,7 +470,7 @@
                 <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
                 
                 /* just to make sure we are not altering the original */
-                node_value = original_node_value = axutil_strdup(env, node_value);
+                node_value = original_node_value = (axis2_char_t*)axutil_strdup(env, node_value);
 
                 for(token_value = node_value, the_last_token = AXIS2_FALSE; !the_last_token; node_value ++)
                 {
@@ -1432,7 +1432,7 @@
                                           {
                                               if(element != NULL)
                                               {
-                                                  axutil_date_time_free(element, env);
+                                                  axutil_date_time_free((axutil_date_time_t*)element, env);
                                               }
                                               AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "failed in building element <xsl:value-of select="$propertyName"/> ");
                                           }
@@ -2197,7 +2197,7 @@
                                           text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
-                                              if (!strcmp (text_value , "true") || !strcmp (text_value, "TRUE"))
+                                              if (!axutil_strcasecmp (text_value , "true"))
                                               {
                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
                                               }
@@ -2526,7 +2526,7 @@
                     <!-- add axis2_bool_t s -->
                     <xsl:when test="$nativePropertyType='axis2_bool_t'">
                        <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
-                       text_value = (axis2_char_t*)axutil_strdup(env, (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false");
+                       text_value = (axis2_char_t*)(axutil_strdup(env, (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false"));
                     </xsl:when>
                     <!-- add axis2_date_time_t s -->
                     <xsl:when test="$nativePropertyType='axutil_date_time_t*'">
@@ -2687,7 +2687,7 @@
                     <!-- add axis2_bool_t s -->
                     <xsl:when test="$nativePropertyType='axis2_bool_t'">
                        <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
-                           tmp_value = (element)?"true":"false";
+                           tmp_value = (axis2_char_t*)((element)?"true":"false");
                            allocated_len += sizeof (axis2_char_t) * axutil_strlen(tmp_value) + 1;
                            text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
                            sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
@@ -3063,7 +3063,7 @@
                            }
                            else
                            {
-                               text_value = axutil_strdup(env, axutil_qname_get_localpart(<xsl:value-of select="$propertyInstanceName"/>, env));
+                               text_value = (axis2_char_t*)axutil_strdup(env, axutil_qname_get_localpart(<xsl:value-of select="$propertyInstanceName"/>, env));
                            }
 
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
@@ -3081,7 +3081,7 @@
                         <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                            <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
-                           text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";
+                           text_value = (axis2_char_t*)((<xsl:value-of select="$propertyInstanceName"/>)?"true":"false");
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
                                                             (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
                                                              axutil_strlen(text_value) + 
@@ -3357,7 +3357,7 @@
                         <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
                            <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
-                           text_value =  (<xsl:value-of select="$propertyInstanceName"/>)?axutil_strdup(env, "true"):axutil_strdup(env, "false");
+                           text_value =  (axis2_char_t*)((<xsl:value-of select="$propertyInstanceName"/>)?axutil_strdup(env, "true"):axutil_strdup(env, "false"));
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                            AXIS2_FREE(env->allocator, text_value);

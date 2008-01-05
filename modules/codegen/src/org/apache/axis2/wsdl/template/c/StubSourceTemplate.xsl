@@ -143,14 +143,11 @@
       <xsl:choose>
         <xsl:when test="output/param/@ours">
             <xsl:choose>
-                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">
-                    adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
+                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
                     <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise>
-                    axis2_<xsl:value-of select="output/param/@type"/>_t*</xsl:otherwise>
-                </xsl:choose>
-            
-                </xsl:when>
+                    <xsl:otherwise>axis2_<xsl:value-of select="output/param/@type"/>_t*</xsl:otherwise>
+            </xsl:choose>
+        </xsl:when>
         <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -281,8 +278,136 @@
             </xsl:choose>
         }
         </xsl:if>  <!--close for  test="$isSync='1'-->
+       </xsl:if> <!-- close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out' -->
+
+  </xsl:for-each>
+
+
+
+  <xsl:for-each select="method">
+    <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
+    <xsl:variable name="outputtype">
+      <xsl:choose>
+        <xsl:when test="output/param/@ours">
+            <xsl:choose>
+                    <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
+                    <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
+                    <xsl:otherwise>axis2_<xsl:value-of select="output/param/@type"/>_t*</xsl:otherwise>
+                </xsl:choose>
+            
+                </xsl:when>
+        <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="caps-outputtype"><xsl:value-of select="output/param/@caps-type"></xsl:value-of></xsl:variable>
+    <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
+    <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
+    <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
+
+    <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
+    <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
+
+
+     <xsl:if test="$mep='12'">
         <!-- Async method generation -->
         <xsl:if test="$isAsync='1'">
+
+        struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data
+        {   
+            void *data;
+            axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/>, void *data);
+            axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data);
+        };
+
+        static axis2_status_t AXIS2_CALL axis2_stub_on_error_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>(axis2_callback_t *callback, const axutil_env_t *env, int exception)
+        {
+            axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int, void *data);
+            struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data* callback_data = NULL;
+            void *user_data = NULL;
+
+            axis2_status_t status;
+        
+            callback_data = (struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data*)axis2_callback_get_data(callback);
+        
+            user_data = callback_data->data;
+            on_error = callback_data->on_error;
+        
+            status = on_error(env, exception, user_data);
+
+            if(callback_data)
+            {
+                AXIS2_FREE(env->allocator, callback_data);
+            }
+            return status;
+        } 
+
+        axis2_status_t AXIS2_CALL axis2_stub_on_complete_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>(axis2_callback_t *callback, const axutil_env_t *env)
+        {
+            axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/>, void *data);
+            struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data* callback_data = NULL;
+            void *user_data = NULL;
+            axis2_status_t status;
+ 
+            <xsl:if test="output/param/@ours">
+           	    <!-- this means data binding is enable -->
+                <xsl:value-of select="$outputtype"/> ret_val = NULL;
+            </xsl:if>
+
+            axiom_node_t *ret_node = NULL;
+            axiom_soap_envelope_t *soap_envelope = NULL;
+
+            callback_data = (struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data*)axis2_callback_get_data(callback);
+
+            soap_envelope = axis2_callback_get_envelope(callback, env);
+            if(soap_envelope)
+            {
+                axiom_soap_body_t *soap_body;
+                soap_body = axiom_soap_envelope_get_body(soap_envelope, env);
+                if(soap_body)
+                {
+                    axiom_node_t *body_node = axiom_soap_body_get_base_node(soap_body, env);
+                    if(body_node)
+                    {
+                        ret_node = axiom_node_get_first_child(body_node, env);
+                    }
+                }
+            }
+
+            user_data = callback_data->data;
+            on_complete = callback_data->on_complete;
+
+            <xsl:choose>
+                <xsl:when test="output/param/@ours">
+                    if(ret_node != NULL)
+                    {
+                        ret_val = adb_<xsl:value-of select="output/param/@type"/>_create(env);
+     
+                        if(adb_<xsl:value-of select="output/param/@type"/>_deserialize(ret_val, env, &amp;ret_node, NULL, AXIS2_FALSE ) == AXIS2_FAILURE)
+                        {
+                            AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the LendResponse_deserialize: "
+                                                                    "This should be due to an invalid XML");
+                            adb_<xsl:value-of select="output/param/@type"/>_free(ret_val, env);
+                            ret_val = NULL;
+                        }
+                     }
+                     else
+                     {
+                         ret_val = NULL; 
+                     }
+                     status = on_complete(env, ret_val, user_data);
+                </xsl:when>
+                <xsl:otherwise>
+                     status = on_complete(env, ret_node, user_data);
+                </xsl:otherwise>
+            </xsl:choose>
+ 
+            if(callback_data)
+            {
+                AXIS2_FREE(env->allocator, callback_data);
+            }
+            return status;
+        }
+
         /**
           * auto generated method signature for asynchronous invocations
           * for "<xsl:value-of select="@qname"/>" operation.
@@ -292,14 +417,13 @@
           * @param on_complete callback to handle on complete
           * @param on_error callback to handle on error
           */
-         <xsl:variable name="callbackoncomplete"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_complete</xsl:text></xsl:variable>
-         <xsl:variable name="callbackonerror"><xsl:value-of select="$callbackname"></xsl:value-of><xsl:text>_on_error</xsl:text></xsl:variable>
          void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                     <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                     <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                   </xsl:for-each>,
-                                                  axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t *) ,
-                                                  axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t *, int ) )
+                                                  void *user_data,
+                                                  axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/>, void *data) ,
+                                                  axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) )
          {
 
             axis2_callback_t *callback = NULL;
@@ -314,7 +438,16 @@
             <xsl:if test="$style='doc'">
             axutil_string_t *soap_act = NULL;
             </xsl:if>
+            
+            struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data *callback_data;
 
+            callback_data = (struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data*) AXIS2_MALLOC(env->allocator, 
+                                    sizeof(struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data));
+            if(NULL == callback_data)
+            {
+                AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "Can not allocate memeory for the callback data structures");
+                return;
+            }
             <!-- for service client currently suppported only 1 input param -->
             <xsl:variable name="firstParam" select="input/param[1]"/>
             <xsl:if test="$firstParam/@type!=''">
@@ -327,6 +460,8 @@
                    </xsl:otherwise>
                </xsl:choose>
             </xsl:if>
+
+
 
             options = axis2_stub_get_options( stub, env);
             if (NULL == options)
@@ -358,9 +493,15 @@
 
             callback = axis2_callback_create(env);
             /* Set our on_complete fucntion pointer to the callback object */
-            axis2_callback_set_on_complete(callback, on_complete);
+            axis2_callback_set_on_complete(callback, axis2_stub_on_complete_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>);
             /* Set our on_error function pointer to the callback object */
-            axis2_callback_set_on_error(callback, on_error);
+            axis2_callback_set_on_error(callback, axis2_stub_on_error_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>);
+
+            callback_data-> data = user_data;
+            callback_data-> on_complete = on_complete;
+            callback_data-> on_error = on_error;
+
+            axis2_callback_set_data(callback, (void*)callback_data);
 
             /* Send request */
             axis2_svc_client_send_receive_non_blocking(svc_client, env, payload, callback);
