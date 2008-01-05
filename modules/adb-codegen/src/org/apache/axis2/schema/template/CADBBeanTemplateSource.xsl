@@ -367,13 +367,13 @@
                     if(prefix_found)
                     {
                         /* node value contain the prefix */
-                        qname_ns = axiom_element_find_namespace_uri(axiom_node_get_data_element(parent, env), env, node_value, parent);
+                        qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, node_value, parent);
                     }
                     else
                     {
                         /* Then it is the default namespace */
                         cp = node_value;
-                        qname_ns = axiom_element_get_default_namespace(axiom_node_get_data_element(parent, env), env, parent);
+                        qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
                     }
 
                      <!-- we are done extracting info, just set the extracted value to the qname -->
@@ -546,13 +546,13 @@
                     if(prefix_found)
                     {
                         /* node value contain the prefix */
-                        qname_ns = axiom_element_find_namespace_uri(axiom_node_get_data_element(parent, env), env, token_value, parent);
+                        qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, token_value, parent);
                     }
                     else
                     {
                         /* Then it is the default namespace */
                         cp = token_value;
-                        qname_ns = axiom_element_get_default_namespace(axiom_node_get_data_element(parent, env), env, parent);
+                        qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
                     }
 
                      <!-- we are done extracting info, just set the extracted value to the qname -->
@@ -953,13 +953,13 @@
                           if(prefix_found)
                           {
                               /* node value contain  the prefix */
-                              qname_ns = axiom_element_find_namespace_uri(axiom_node_get_data_element(parent, env), env, attrib_text, parent);
+                              qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, attrib_text, parent);
                           }
                           else
                           {
                               /* Then it is the default namespace */
                               cp = attrib_text;
-                              qname_ns = axiom_element_get_default_namespace(axiom_node_get_data_element(parent, env), env, parent);
+                              qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
                           }
                        
                           <!-- we are done extracting info, just set the extracted value to the qname -->
