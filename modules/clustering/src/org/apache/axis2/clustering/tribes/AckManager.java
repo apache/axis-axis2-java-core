@@ -45,7 +45,7 @@ public final class AckManager {
      * When a particular member send an ACK for a particular message, the ACK is stored here
      *
      * @param messageUniqueId ID of the message being ACKed
-     * @param memberId The ID of the member who ACKed the above message
+     * @param memberId        The ID of the member who ACKed the above message
      */
     public static void addAcknowledgement(String messageUniqueId,
                                           String memberId) {
@@ -67,9 +67,9 @@ public final class AckManager {
      * and then return false.
      *
      * @param messageUniqueId ID of the message being ACKed
-     * @param sender
+     * @param sender          The utility for sending the message
      * @return true - if all members have ACKed the message, false - otherwise
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while retrannsmitting a message
      */
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
@@ -86,7 +86,7 @@ public final class AckManager {
 
         // Check that all members in the memberList are same as the total member list,
         // which will indicate that all members have ACKed the message
-        Member[] members = sender.getChannel().getMembers();
+        Member[] members = MembershipManager.getMembers();
         if (members.length == 0) {
             isAcknowledged = true;
         } else {

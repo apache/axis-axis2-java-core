@@ -28,7 +28,8 @@ public class TribesUtil {
 
     private static Log log = LogFactory.getLog(TribesUtil.class);
 
-    public static void printMembers(Member[] members) {
+    public static void printMembers() {
+        Member[] members = MembershipManager.getMembers();
         if (members != null) {
             int length = members.length;
             if (length > 0) {
@@ -56,20 +57,5 @@ public class TribesUtil {
 
     public static String getLocalHost(Channel channel) {
         return getHost(channel.getLocalMember(true));
-    }
-
-    public static Member getLongestAliveMember(Member[] members) {
-        Member longestAliveMember = null;
-        if (members.length > 0) {
-            long longestAliveTime = members[0].getMemberAliveTime();
-            for (int i = 0; i < members.length; i++) {
-                Member member = members[i];
-                if (longestAliveTime < member.getMemberAliveTime()) {
-                    longestAliveTime = member.getMemberAliveTime();
-                    longestAliveMember = member;
-                }
-            }
-        }
-        return longestAliveMember;
     }
 }

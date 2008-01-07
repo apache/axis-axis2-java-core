@@ -22,7 +22,6 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.ClusteringCommand;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.RequestBlockingHandler;
@@ -31,6 +30,7 @@ import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ClusteringContextListener;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.context.ConfigurationContext;
@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class TribesClusterManager implements ClusterManager {
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
@@ -199,21 +198,21 @@ public class TribesClusterManager implements ClusterManager {
         }
         sender.setChannel(channel);
 
-        Member[] members = channel.getMembers();
+//        Member[] members = channel.getMembers();
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
-        TribesUtil.printMembers(members);
+        TribesUtil.printMembers();
 
         // If configuration management is enabled, get the latest config from a neighbour  TODO: from the longest living neighbour
         if (configurationManager != null) {
             configurationManager.setSender(sender);
-            getInitializationMessage(members, sender, new GetConfigurationCommand());
+            getInitializationMessage(sender, new GetConfigurationCommand());
         }
 
         // If context replication is enabled, get the latest state from a neighbour  TODO: from the longest living neighbour
         if (contextManager != null) {
             contextManager.setSender(sender);
             channelListener.setContextManager(contextManager);
-            getInitializationMessage(members, sender, new GetStateCommand());
+            getInitializationMessage(sender, new GetStateCommand());
             ClusteringContextListener contextListener = new ClusteringContextListener(sender);
             configurationContext.addContextListener(contextListener);
         }
@@ -225,20 +224,18 @@ public class TribesClusterManager implements ClusterManager {
      * Get some information from a neighbour. This information will be used by this node to
      * initialize itself
      *
-     * @param members
-     * @param sender
-     * @param command
+     * @param sender  The utility for sending messages to the channel
+     * @param command The control command to send
      */
-    private void getInitializationMessage(Member[] members,
-                                          ChannelSender sender,
-                                          ClusteringCommand command) {
-        // If there is at least one member in the Tribe, get the current initialization info from a member
-        Random random = new Random();
+    private void getInitializationMessage(ChannelSender sender, ControlCommand command) {
+        // If there is at least one member in the cluster,
+        //  get the current initialization info from a member
         int numberOfTries = 0; // Don't keep on trying indefinitely
 
         // Keep track of members to whom we already sent an initialization command
         // Do not send another request to these members
         List sentMembersList = new ArrayList();
+        Member[] members = MembershipManager.getMembers();
         while (members.length > 0 &&
                configurationContext.
                        getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
@@ -246,13 +243,9 @@ public class TribesClusterManager implements ClusterManager {
 
             // While there are members and GetStateResponseCommand is not received do the following
             try {
-                members = channel.getMembers();
-
-                //TODO: Can get longest alive member, willdo with membership awareness
-                members[0].getMemberAliveTime();
-
-                int memberIndex = random.nextInt(members.length);
-                Member member = members[memberIndex];
+                Member member = (numberOfTries == 0) ?
+                                MembershipManager.getLongestAliveMember() : // First try to get from the longest alive member
+                                MembershipManager.getRandomMember(); // Else get from a random member
                 if (!sentMembersList.contains(TribesUtil.getHost(member))) {
                     long tts = sender.sendToMember(command, member);
                     configurationContext.
@@ -260,12 +253,13 @@ public class TribesClusterManager implements ClusterManager {
                                                      new Long(tts));
                     sentMembersList.add(TribesUtil.getHost(member));
                     log.debug("WAITING FOR STATE INITIALIZATION MESSAGE...");
-                    Thread.sleep(tts + 5);
+                    Thread.sleep(tts + 5 * (numberOfTries + 1));
                 }
             } catch (Exception e) {
                 log.error(e);
                 break;
             }
+            members = MembershipManager.getMembers();
             numberOfTries++;
         }
     }
@@ -334,9 +328,6 @@ public class TribesClusterManager implements ClusterManager {
 
     public boolean synchronizeAllMembers() {
         Parameter syncAllParam = getParameter(ClusteringConstants.SYNCHRONIZE_ALL_MEMBERS);
-        if (syncAllParam == null) {
-            return true;
-        }
-        return Boolean.parseBoolean((String) syncAllParam.getValue());
+        return syncAllParam == null || Boolean.parseBoolean((String) syncAllParam.getValue());
     }
 }
