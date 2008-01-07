@@ -256,7 +256,7 @@ public class TribesClusterManager implements ClusterManager {
                     Thread.sleep(tts + 5 * (numberOfTries + 1));
                 }
             } catch (Exception e) {
-                log.error(e);
+                log.error("Cannot get initialization information", e);
                 break;
             }
             members = MembershipManager.getMembers();

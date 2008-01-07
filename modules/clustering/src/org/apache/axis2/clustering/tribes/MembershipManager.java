@@ -42,7 +42,9 @@ public class MembershipManager {
     public synchronized static Member getLongestAliveMember() {
         Member longestAliveMember = null;
         if (members.size() > 0) {
-            long longestAliveTime = ((Member) members.get(0)).getMemberAliveTime();
+            Member member0 = (Member) members.get(0);
+            long longestAliveTime = member0.getMemberAliveTime();
+            longestAliveMember = member0;
             for (int i = 0; i < members.size(); i++) {
                 Member member = (Member) members.get(i);
                 if (longestAliveTime < member.getMemberAliveTime()) {

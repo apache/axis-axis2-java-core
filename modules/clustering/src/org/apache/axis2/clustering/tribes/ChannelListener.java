@@ -143,7 +143,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         try {
             processMessage(msg, sender);
         } catch (Exception e) {
-            log.error(e);
+            log.error("Cannot process message", e);
         }
     }
 
