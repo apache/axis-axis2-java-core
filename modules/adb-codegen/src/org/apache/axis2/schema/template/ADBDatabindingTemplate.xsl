@@ -78,12 +78,13 @@
                         <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
                         <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
                         <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
-                        <xsl:variable name="wrappedParameterCount" select="count(../../param[@type!='' and @direction='in' and @opname=$opname]/param)"></xsl:variable>
+                        <!--<xsl:variable name="wrappedParameterCount" select="count(../../param[@type!='' and @direction='in' and @opname=$opname]/param)"></xsl:variable>-->
+                        <xsl:variable name="isUnwrapParameters" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@unwrappParameters"/>
                         <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1])">
 
                          <!-- if the unwrapping mode is on then we have to generate the unwrapped methods -->
                          <xsl:choose>
-                                <xsl:when test="$wrappedParameterCount &gt; 0">
+                                <xsl:when test="$isUnwrapParameters">
                                     <!-- geneate the toEnvelope method-->
                                 private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory,
                                     <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
@@ -131,43 +132,43 @@
 
 
                                 </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- Assumption - the parameter is always an ADB element-->
+                                        private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent)
+                                        throws org.apache.axis2.AxisFault{
 
+                                             <xsl:choose>
+                                                <xsl:when test="$helpermode">
+                                                    try{
+                                                        org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                                                        emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
+                                                        param,
+                                                        <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                                                        return emptyEnvelope;
+                                                        } catch(org.apache.axis2.databinding.ADBException e){
+                                                            throw org.apache.axis2.AxisFault.makeFault(e);
+                                                        }
+                                                </xsl:when>
+                                                <xsl:when test="$inputElementType = 'org.apache.axiom.om.OMElement'">
+                                                    org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                                                    emptyEnvelope.getBody().addChild(param);
+                                                    return emptyEnvelope;
+                                                 </xsl:when>
+                                                <xsl:otherwise>
+                                                    try{
+
+                                                            org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+                                                            emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                                                            return emptyEnvelope;
+                                                        } catch(org.apache.axis2.databinding.ADBException e){
+                                                            throw org.apache.axis2.AxisFault.makeFault(e);
+                                                        }
+                                                </xsl:otherwise>
+                                        </xsl:choose>
+
+                                        }
+                                </xsl:otherwise>
                          </xsl:choose>
-                            <!-- Assumption - the parameter is always an ADB element-->
-                            private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent)
-                            throws org.apache.axis2.AxisFault{
-
-                                 <xsl:choose>
-                                    <xsl:when test="$helpermode">
-                                        try{
-                                            org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                            emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
-                                            param,
-                                            <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
-                                            return emptyEnvelope;
-                                            } catch(org.apache.axis2.databinding.ADBException e){
-                                                throw org.apache.axis2.AxisFault.makeFault(e);
-                                            }
-                                    </xsl:when>
-                                    <xsl:when test="$inputElementType = 'org.apache.axiom.om.OMElement'">
-                                        org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                        emptyEnvelope.getBody().addChild(param);
-                                        return emptyEnvelope;
-                                     </xsl:when>
-                                    <xsl:otherwise>
-                                        try{
-
-                                                org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
-                                                return emptyEnvelope;
-                                            } catch(org.apache.axis2.databinding.ADBException e){
-                                                throw org.apache.axis2.AxisFault.makeFault(e);
-                                            }
-                                    </xsl:otherwise>
-                            </xsl:choose>
-
-                            }
-
                              <!-- to support for backword compatiblity we have to add and wrapp method-->
                              /* methods to provide back word compatibility */
 
