@@ -43,11 +43,20 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
+
+    /**
+     * The time a message lives in the receivedMessages Map
+     */
+    private static final int TIME_TO_LIVE = 5 * 60 * 1000; // 5 mins
 
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
@@ -55,17 +64,27 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     private ChannelSender channelSender;
 
     private ConfigurationContext configurationContext;
+    private boolean synchronizeAllMembers;
+
+    private Map receivedMessages = new HashMap();
 
     public ChannelListener(ConfigurationContext configurationContext,
                            DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
                            TribesControlCommandProcessor controlCommandProcessor,
-                           ChannelSender sender) {
+                           ChannelSender sender,
+                           boolean synchronizeAllMembers) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
         this.channelSender = sender;
         this.configurationContext = configurationContext;
+        this.synchronizeAllMembers = synchronizeAllMembers;
+
+        Timer cleanupTimer = new Timer();
+        cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
+                                         TIME_TO_LIVE,
+                                         TIME_TO_LIVE);
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -104,9 +123,10 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             msg = XByteBuffer.deserialize(message,
                                           0,
                                           message.length,
-                                          (ClassLoader[])classLoaders.toArray(new ClassLoader[classLoaders.size()])); 
+                                          (ClassLoader[]) classLoaders.toArray(new ClassLoader[classLoaders.size()]));
         } catch (Exception e) {
-            log.error(e);
+            log.error("Cannot deserialize received message", e);
+            return;
         }
 
         // If the system has not still been intialized, reject all incoming messages, except the
@@ -128,27 +148,57 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
-        //TODO: Reject duplicates that can be received due to retransmissions
-        //TODO: ACK implosion?
+        //TODO: Handle ACK implosion?
 
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
+            String msgId = ctxCmd.getUniqueId();
+
+            // Check for duplicate messages and ignore duplicates in order to support at-most-once semantics
+            if (receivedMessages.containsKey(msgId)) {
+                log.debug("Received duplicate message " + ctxCmd);
+                receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was last received
+                return;
+            }
+            receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
+
+            // Process the message
             contextManager.process(ctxCmd);
 
             // Sending ACKs for ContextClusteringCommandCollection or
             // UpdateContextCommand is sufficient
-            if (msg instanceof ContextClusteringCommandCollection ||
-                msg instanceof UpdateContextCommand) {
-                AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
+            if (synchronizeAllMembers) { // Send ACK only if the relevant cluster config parameter is set
+                if (msg instanceof ContextClusteringCommandCollection ||
+                    msg instanceof UpdateContextCommand) {
+                    AckCommand ackCmd = new AckCommand(msgId);
 
-                // Send the ACK
-                this.channelSender.sendToMember(ackCmd, sender);
+                    // Send the ACK
+                    this.channelSender.sendToMember(ackCmd, sender);
+                }
             }
         } else if (msg instanceof ConfigurationClusteringCommand &&
                    configurationManager != null) {
             configurationManager.process((ConfigurationClusteringCommand) msg);
         } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
             controlCommandProcessor.process((ControlCommand) msg, sender);
+        }
+    }
+
+    private class ReceivedMessageCleanupTask extends TimerTask {
+
+        public void run() {
+            List toBeRemoved = new ArrayList();
+            for (Iterator iterator = receivedMessages.keySet().iterator(); iterator.hasNext();) {
+                String msgId = (String) iterator.next();
+                Long recdTime = (Long) receivedMessages.get(msgId);
+                if (System.currentTimeMillis() - recdTime.longValue() >= TIME_TO_LIVE) {
+                    toBeRemoved.add(msgId);
+                }
+            }
+            for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
+                String msgId = (String) iterator.next();
+                receivedMessages.remove(msgId);
+            }
         }
     }
 }

@@ -128,7 +128,8 @@ public class TribesClusterManager implements ClusterManager {
                                               configurationManager,
                                               contextManager,
                                               controlCmdProcessor,
-                                              sender);
+                                              sender,
+                                              synchronizeAllMembers());
 
         controlCmdProcessor.setChannelSender(sender);
         channel = new GroupChannel();
@@ -202,13 +203,13 @@ public class TribesClusterManager implements ClusterManager {
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(members);
 
-        // If configuration management is enabled, get the latest config from a neighbour
+        // If configuration management is enabled, get the latest config from a neighbour  TODO: from the longest living neighbour
         if (configurationManager != null) {
             configurationManager.setSender(sender);
             getInitializationMessage(members, sender, new GetConfigurationCommand());
         }
 
-        // If context replication is enabled, get the latest state from a neighbour
+        // If context replication is enabled, get the latest state from a neighbour  TODO: from the longest living neighbour
         if (contextManager != null) {
             contextManager.setSender(sender);
             channelListener.setContextManager(contextManager);
@@ -233,7 +234,7 @@ public class TribesClusterManager implements ClusterManager {
                                           ClusteringCommand command) {
         // If there is at least one member in the Tribe, get the current initialization info from a member
         Random random = new Random();
-        int numberOfTries = 0; // Don't keep on trying infinitely
+        int numberOfTries = 0; // Don't keep on trying indefinitely
 
         // Keep track of members to whom we already sent an initialization command
         // Do not send another request to these members
@@ -246,6 +247,10 @@ public class TribesClusterManager implements ClusterManager {
             // While there are members and GetStateResponseCommand is not received do the following
             try {
                 members = channel.getMembers();
+
+                //TODO: Can get longest alive member, willdo with membership awareness
+                members[0].getMemberAliveTime();
+
                 int memberIndex = random.nextInt(members.length);
                 Member member = members[memberIndex];
                 if (!sentMembersList.contains(TribesUtil.getHost(member))) {

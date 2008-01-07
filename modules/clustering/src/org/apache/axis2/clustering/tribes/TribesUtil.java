@@ -57,4 +57,19 @@ public class TribesUtil {
     public static String getLocalHost(Channel channel) {
         return getHost(channel.getLocalMember(true));
     }
+
+    public static Member getLongestAliveMember(Member[] members) {
+        Member longestAliveMember = null;
+        if (members.length > 0) {
+            long longestAliveTime = members[0].getMemberAliveTime();
+            for (int i = 0; i < members.length; i++) {
+                Member member = members[i];
+                if (longestAliveTime < member.getMemberAliveTime()) {
+                    longestAliveTime = member.getMemberAliveTime();
+                    longestAliveMember = member;
+                }
+            }
+        }
+        return longestAliveMember;
+    }
 }
