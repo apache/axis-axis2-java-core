@@ -117,6 +117,7 @@ public class AddNumbersHandlerTests extends TestCase {
                     new QName("http://org/test/addnumbershandler", "AddNumbersHandlerPort");
 
             Service myService = Service.create(serviceName);
+            
             myService.addPort(portName, null, axisEndpoint);
             Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, 
                                                                    Service.Mode.MESSAGE);
@@ -138,7 +139,37 @@ public class AddNumbersHandlerTests extends TestCase {
             Source response = myDispatch.invoke(createRequestSource());
             String resString = getString(response);
             if (!resString.contains("<return>16</return>")) {
-                fail("Response string should contain <return>17</return>, but does not.  The resString was: \"" + resString + "\"");
+                fail("Response string should contain <return>16</return>, but does not.  The resString was: \"" + resString + "\"");
+            }
+
+            TestLogger.logger.debug("----------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    public void testAddNumbersHandlerDispatchMyResolver() {
+        try {
+            QName serviceName =
+                    new QName("http://org/test/addnumbershandler", "AddNumbersHandlerService");
+            QName portName =
+                    new QName("http://org/test/addnumbershandler", "AddNumbersHandlerPort");
+
+            Service myService = Service.create(serviceName);
+            
+            myService.setHandlerResolver(new MyHandlerResolver());
+            
+            myService.addPort(portName, null, axisEndpoint);
+            Dispatch<Source> myDispatch = myService.createDispatch(portName, Source.class, 
+                                                                   Service.Mode.MESSAGE);
+
+            //Invoke the Dispatch
+            TestLogger.logger.debug(">> Invoking Async Dispatch");
+            Source response = myDispatch.invoke(createRequestSource());
+            String resString = getString(response);
+            if (!resString.contains("<return>16</return>")) {
+                fail("Response string should contain <return>16</return>, but does not.  The resString was: \"" + resString + "\"");
             }
 
             TestLogger.logger.debug("----------------------------------");
@@ -556,17 +587,20 @@ public class AddNumbersHandlerTests extends TestCase {
     }
     
     public void testAddNumbersHandlerHandlerResolver() {
-        try {
-        System.out.println("----------------------------------");
-        System.out.println("test: " + getName());
-        AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
-        List<Handler> handlers = service.getHandlerResolver().getHandlerChain(null);
-        assertNotNull("Default handlers list should not be null but empty.", handlers);
-        System.out.println("----------------------------------");
-        } catch (Exception e) {
-        e.printStackTrace();
-        fail(e.getMessage());
-        }
-        } 
+		try {
+			System.out.println("----------------------------------");
+			System.out.println("test: " + getName());
+			AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
+			List<Handler> handlers = service.getHandlerResolver()
+					.getHandlerChain(null);
+			assertNotNull(
+					"Default handlers list should not be null but empty.",
+					handlers);
+			System.out.println("----------------------------------");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	} 
 
 }

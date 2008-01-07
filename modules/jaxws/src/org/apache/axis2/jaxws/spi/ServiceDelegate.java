@@ -149,8 +149,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc);
         
-        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
