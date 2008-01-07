@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- *
+ * This class is responsible for handling all ACKs by the members in a cluster
  */
 public final class AckManager {
     private static Log log = LogFactory.getLog(AckManager.class);
@@ -41,6 +41,12 @@ public final class AckManager {
         messageAckTable.put(command.getUniqueId(), new MessageACK(command));
     }
 
+    /**
+     * When a particular member send an ACK for a particular message, the ACK is stored here
+     *
+     * @param messageUniqueId ID of the message being ACKed
+     * @param memberId The ID of the member who ACKed the above message
+     */
     public static void addAcknowledgement(String messageUniqueId,
                                           String memberId) {
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
@@ -51,19 +57,30 @@ public final class AckManager {
         }
     }
 
-    public static void removeMessage(String messageUniqueId){
+    public static void removeMessage(String messageUniqueId) {
         messageAckTable.remove(messageUniqueId);
     }
 
+    /**
+     * Check whether a particular message has been ACKed by all members in a cluster. If we find that
+     * a particular message is not ACKed, we will retransmit the message to the member who did not ACK
+     * and then return false.
+     *
+     * @param messageUniqueId ID of the message being ACKed
+     * @param sender
+     * @return true - if all members have ACKed the message, false - otherwise
+     * @throws ClusteringFault
+     */
     public static boolean isMessageAcknowledged(String messageUniqueId,
                                                 ChannelSender sender) throws ClusteringFault {
 
         boolean isAcknowledged = false;
-        if(messageUniqueId == null){
+        boolean isReturnValueSet = false;
+        if (messageUniqueId == null) {
             return true;
         }
         MessageACK ack = (MessageACK) messageAckTable.get(messageUniqueId);
-        if(ack == null){  // If the message is not found, treat it as ACKed
+        if (ack == null) {  // If the message is not found, treat it as ACKed
             return true;
         }
 
@@ -90,21 +107,29 @@ public final class AckManager {
                                   " to member " + memberHost);
                     }
 
-                    isAcknowledged = false;
-                    break;
+                    if (!isReturnValueSet) {
+                        isAcknowledged = false;
+                        isReturnValueSet = true;
+                    }
                 } else {
-                    isAcknowledged = true;
+                    if (!isReturnValueSet) {
+                        isAcknowledged = true;
+                    }
                 }
             }
         }
 
-        // If a message is ACKed, we don't have to keep track of it in our ackTbl anymore
+        // If a message is ACKed by all members, we don't have to keep track of
+        // it in our ackTbl anymore
         if (isAcknowledged) {
             messageAckTable.remove(messageUniqueId);
         }
         return isAcknowledged;
     }
 
+    /**
+     * Data structure for holding the ACKs for each message
+     */
     private static class MessageACK {
         private ContextClusteringCommand command;
         private List memberList = new Vector();

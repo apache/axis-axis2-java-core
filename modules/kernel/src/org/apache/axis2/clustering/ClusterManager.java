@@ -21,9 +21,8 @@ package org.apache.axis2.clustering;
 
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.Handler;
+import org.apache.axis2.description.ParameterInclude;
 
 /**
  * This is the main interface in the Axis2 clustering implementation.
@@ -70,5 +69,15 @@ public interface ClusterManager extends ParameterInclude {
      * @param configurationContext
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
+
+    /**
+     * Method to check whether all members in the cluster have to be kep in sync at all times.
+     * Typically, this will require each member in the cluster to ACKnowledge receipt of a
+     * particular message, which may have a significant performance hit.
+     *
+     * @return true - if all members in the cluster should be kept in sync at all times,
+     *         false otherwise
+     */
+    boolean synchronizeAllMembers();
 
 }

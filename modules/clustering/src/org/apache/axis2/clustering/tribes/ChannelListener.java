@@ -148,8 +148,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                    configurationManager != null) {
             configurationManager.process((ConfigurationClusteringCommand) msg);
         } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
-            controlCommandProcessor.process((ControlCommand) msg,
-                                            sender);
+            controlCommandProcessor.process((ControlCommand) msg, sender);
         }
     }
 }

@@ -20,17 +20,31 @@
 
 package org.apache.axis2.clustering;
 
+/**
+ * All constants used by the Axis2 clustering implementation
+ */
 public final class ClusteringConstants {
 
     private ClusteringConstants() {
     }
 
     public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
+
+    /**
+     * The clustering domain/group. Nodes in the same group will belong to the same multicast domain.
+     * There will not be interference between nodes in different group.
+     */
     public static final String DOMAIN = "domain";
+
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
     public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
     public static final String TIME_TO_SEND = "local_cluster.time.to.send";
     public static final String BLOCK_ALL_REQUESTS = "local_wso2wsas.block.requests";
     public static final String LOCAL_IP_ADDRESS = "axis2.local.ip.address";
+
+    /**
+     * Synchronize the states of all members in the cluster
+     */
+    public static final String SYNCHRONIZE_ALL_MEMBERS = "synchronizeAll";
 }

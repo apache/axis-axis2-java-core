@@ -33,6 +33,9 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Replicates serializable properties
+ */
 public final class Replicator {
 
     private static final Log log = LogFactory.getLog(Replicator.class);
@@ -77,7 +80,9 @@ public final class Replicator {
             AbstractContext[] contextArray =
                     (AbstractContext[]) contexts.toArray(new AbstractContext[contexts.size()]);
             String msgUUID = contextManager.updateContexts(contextArray);
-            waitForACKs(contextManager, msgUUID, msgContext.getRootContext());
+            if (getClusterManager(msgContext).synchronizeAllMembers()) {
+                waitForACKs(contextManager, msgUUID, msgContext.getRootContext());
+            }
         }
     }
 
@@ -95,7 +100,9 @@ public final class Replicator {
         ContextManager contextManager = getContextManager(abstractContext);
         if (!abstractContext.getPropertyDifferences().isEmpty()) {
             String msgUUID = contextManager.updateContext(abstractContext);
-            waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
+            if (getClusterManager(abstractContext).synchronizeAllMembers()) {
+                waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
+            }
         }
     }
 
@@ -116,14 +123,18 @@ public final class Replicator {
         ContextManager contextManager = getContextManager(abstractContext);
         String msgUUID = contextManager.updateContext(abstractContext, propertyNames);
         if (msgUUID != null) {
-            waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
+            if (getClusterManager(abstractContext).synchronizeAllMembers()) {
+                waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
+            }
         }
     }
 
+    private static ClusterManager getClusterManager(AbstractContext abstractContext) {
+        return abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
+    }
+
     private static ContextManager getContextManager(AbstractContext abstractContext) {
-        ClusterManager clusterManager =
-                abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
-        return clusterManager.getContextManager();
+        return getClusterManager(abstractContext).getContextManager();
     }
 
     /**
@@ -162,6 +173,7 @@ public final class Replicator {
     private static void waitForACKs(ContextManager contextManager,
                                     String msgUUID,
                                     ConfigurationContext configCtx) throws ClusteringFault {
+
         long start = System.currentTimeMillis();
 
         // Wait till all members have ACKed receipt & successful processing of

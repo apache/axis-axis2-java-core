@@ -24,6 +24,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,6 +73,42 @@ public class ChannelSender implements MessageSender {
         return timeToSend;
     }
 
+    public long sendToGroup(ClusteringCommand msg, Member[] members) throws ClusteringFault {
+        if (channel == null) {
+            return 0;
+        }
+        long timeToSend = 0;
+
+        // Keep retrying, since at the point of trying to send the msg, a member may leave the group
+        // causing a view change. All nodes in a view should get the msg
+        //TODO: Sometimes Tribes incorrectly detects that a member has left a group
+        while (true) {
+            if (channel.getMembers().length > 0) {
+                try {
+                    long start = System.currentTimeMillis();
+                    channel.send(channel.getMembers(), toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
+                    timeToSend = System.currentTimeMillis() - start;
+                    log.debug("Sent " + msg + " to group");
+                    break;
+                } catch (NotSerializableException e) {
+                    String message = "Could not send command message " + msg +
+                                     " to group since it is not serializable.";
+                    log.error(message, e);
+                    throw new ClusteringFault(message, e);
+                } catch (ChannelException e) {
+                    
+                } catch (Exception e) {
+                    String message = "Error sending command message : " + msg +
+                                     ". Reason " + e.getMessage();
+                    log.warn(message, e);
+                }
+            } else {
+                break;
+            }
+        }
+        return timeToSend;
+    }
+
     private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(bos);
@@ -105,7 +142,7 @@ public class ChannelSender implements MessageSender {
                 log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }
         } catch (NotSerializableException e) {
-            String message = "Could not send command message to " + TribesUtil.getHost(member)  +
+            String message = "Could not send command message to " + TribesUtil.getHost(member) +
                              " since it is not serializable.";
             log.error(message, e);
             throw new ClusteringFault(message, e);

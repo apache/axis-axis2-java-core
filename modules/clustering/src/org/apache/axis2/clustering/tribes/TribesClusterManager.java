@@ -46,6 +46,7 @@ import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
+import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,8 +84,6 @@ public class TribesClusterManager implements ClusterManager {
 
     public void init() throws ClusteringFault {
 
-        // Until the clustering stuff is properly initialized, we have to block.
-        configurationContext.setProperty(ClusteringConstants.BLOCK_ALL_REQUESTS, "true");
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
         for (Iterator iterator = axisConfig.getInFlowPhases().iterator();
              iterator.hasNext();) {
@@ -134,7 +133,8 @@ public class TribesClusterManager implements ClusterManager {
         controlCmdProcessor.setChannelSender(sender);
         channel = new GroupChannel();
 
-        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS); 
+        // Set the IP address that will be advertised by this node
+        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
         if (localIP != null) {
             ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
             receiver.setAddress(localIP);
@@ -174,10 +174,10 @@ public class TribesClusterManager implements ClusterManager {
        mcastProps.setProperty("tcpListenPort", "4000");
        mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
-        /*TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-        tcpFailureDetector.setPrevious(nbc);
+        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+        tcpFailureDetector.setPrevious(dfi);
         channel.addInterceptor(tcpFailureDetector);
-        tcpFailureDetector.*/
+//        tcpFailureDetector.
 
         channel.addChannelListener(channelListener);
         TribesMembershipListener membershipListener = new TribesMembershipListener();
@@ -189,7 +189,9 @@ public class TribesClusterManager implements ClusterManager {
                 channel.stop(Channel.DEFAULT);
                 throw new ClusteringFault("Cannot join cluster using IP " + localHost +
                                           ". Please set an IP address other than " +
-                                          localHost + " in your /etc/hosts file and retry.");
+                                          localHost + " in your /etc/hosts file or set the " +
+                                          ClusteringConstants.LOCAL_IP_ADDRESS +
+                                          " System property and retry.");
             }
         } catch (ChannelException e) {
             throw new ClusteringFault("Error starting Tribes channel", e);
@@ -200,12 +202,14 @@ public class TribesClusterManager implements ClusterManager {
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(members);
 
-        if (configurationManager != null) { // If configuration management is enabled, get the latest config from a neighbour
+        // If configuration management is enabled, get the latest config from a neighbour
+        if (configurationManager != null) {
             configurationManager.setSender(sender);
             getInitializationMessage(members, sender, new GetConfigurationCommand());
         }
 
-        if (contextManager != null) { // If context replication is enabled, get the latest state from a neighbour
+        // If context replication is enabled, get the latest state from a neighbour
+        if (contextManager != null) {
             contextManager.setSender(sender);
             channelListener.setContextManager(contextManager);
             getInitializationMessage(members, sender, new GetStateCommand());
@@ -214,7 +218,6 @@ public class TribesClusterManager implements ClusterManager {
         }
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
-        configurationContext.removeProperty(ClusteringConstants.BLOCK_ALL_REQUESTS);
     }
 
     /**
@@ -322,5 +325,13 @@ public class TribesClusterManager implements ClusterManager {
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
         }
+    }
+
+    public boolean synchronizeAllMembers() {
+        Parameter syncAllParam = getParameter(ClusteringConstants.SYNCHRONIZE_ALL_MEMBERS);
+        if (syncAllParam == null) {
+            return true;
+        }
+        return Boolean.parseBoolean((String) syncAllParam.getValue());
     }
 }
