@@ -39,21 +39,21 @@ public class MembershipManager {
         return (Member[]) members.toArray(new Member[members.size()]);
     }
 
-    public synchronized static Member getLongestAliveMember() {
-        Member longestAliveMember = null;
+    public synchronized static Member getLongestLivingMember() {
+        Member longestLivingMember = null;
         if (members.size() > 0) {
             Member member0 = (Member) members.get(0);
             long longestAliveTime = member0.getMemberAliveTime();
-            longestAliveMember = member0;
+            longestLivingMember = member0;
             for (int i = 0; i < members.size(); i++) {
                 Member member = (Member) members.get(i);
                 if (longestAliveTime < member.getMemberAliveTime()) {
                     longestAliveTime = member.getMemberAliveTime();
-                    longestAliveMember = member;
+                    longestLivingMember = member;
                 }
             }
         }
-        return longestAliveMember;
+        return longestLivingMember;
     }
 
     public synchronized static Member getRandomMember() {

@@ -244,7 +244,7 @@ public class TribesClusterManager implements ClusterManager {
             // While there are members and GetStateResponseCommand is not received do the following
             try {
                 Member member = (numberOfTries == 0) ?
-                                MembershipManager.getLongestAliveMember() : // First try to get from the longest alive member
+                                MembershipManager.getLongestLivingMember() : // First try to get from the longest alive member
                                 MembershipManager.getRandomMember(); // Else get from a random member
                 if (!sentMembersList.contains(TribesUtil.getHost(member))) {
                     long tts = sender.sendToMember(command, member);

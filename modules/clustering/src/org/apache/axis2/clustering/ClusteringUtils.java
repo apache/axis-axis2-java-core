@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
@@ -63,6 +64,9 @@ public class ClusteringUtils {
         } else {
             serviceArchive = new File(axis2Repo + File.separator + "services" +
                                       File.separator + serviceGroupName);
+        }
+        if(!serviceArchive.exists()){
+            throw new FileNotFoundException("File " + serviceArchive + " not found");
         }
         AxisServiceGroup asGroup =
                 DeploymentEngine.loadServiceGroup(serviceArchive, configCtx);
