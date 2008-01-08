@@ -470,24 +470,26 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             }
             // Now add reference parameters we found in the WSDL (if any)
             AxisService service = messageContext.getAxisService();
-            AxisEndpoint endpoint = service.getEndpoint(service.getEndpointName());
-            if(endpoint != null){
-            	ArrayList referenceparameters = (ArrayList) endpoint.getParameterValue(REFERENCE_PARAMETER_PARAMETER);
-            	if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
-                    log.trace("processToEPRReferenceInformation: Reference Parameters from WSDL:" + referenceparameters);
-                }
-            	if(referenceparameters!=null){
-            		Iterator iterator = referenceparameters.iterator();
-                    while (iterator.hasNext()) {
-                        OMElement omElement = (OMElement)iterator.next();
-                        OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
-                        if (isFinalAddressingNamespace) {
-                            newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
-                                                   Final.WSA_TYPE_ATTRIBUTE_VALUE,
-                                                   addressingNamespaceObject);
-                        }
-                        header.addChild(newElement);
-                    }
+            if(service != null){
+            	AxisEndpoint endpoint = service.getEndpoint(service.getEndpointName());
+            	if(endpoint != null){
+            		ArrayList referenceparameters = (ArrayList) endpoint.getParameterValue(REFERENCE_PARAMETER_PARAMETER);
+            		if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            			log.trace("processToEPRReferenceInformation: Reference Parameters from WSDL:" + referenceparameters);
+            		}
+            		if(referenceparameters!=null){
+            			Iterator iterator = referenceparameters.iterator();
+            			while (iterator.hasNext()) {
+            				OMElement omElement = (OMElement)iterator.next();
+            				OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
+            				if (isFinalAddressingNamespace) {
+            					newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+            							Final.WSA_TYPE_ATTRIBUTE_VALUE,
+            							addressingNamespaceObject);
+            				}
+            				header.addChild(newElement);
+            			}
+            		}
             	}
             }
         }
