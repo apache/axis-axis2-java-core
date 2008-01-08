@@ -20,7 +20,6 @@
 
         #include "<xsl:value-of select="$svcop-prefix"/>.h"
         #include &lt;axis2_svc_skeleton.h&gt;
-        #include &lt;axutil_array_list.h&gt;
         #include &lt;stdio.h&gt;
         #include &lt;axis2_svc.h&gt;
 
@@ -76,7 +75,6 @@
 
         svc_skeleton->ops = &amp;<xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var;
 
-	    svc_skeleton->func_array = NULL;
 
 	    return svc_skeleton;
 	}
@@ -94,12 +92,6 @@
 	<xsl:value-of select="$method-prefix"/>_free(axis2_svc_skeleton_t *svc_skeleton,
 				 const axutil_env_t *env)
 	{
-        /* Free the function array */
-        if (svc_skeleton->func_array)
-        {
-            axutil_array_list_free(svc_skeleton->func_array, env);
-            svc_skeleton->func_array = NULL;
-        }
 
         /* Free the service skeleton */
         if (svc_skeleton)
