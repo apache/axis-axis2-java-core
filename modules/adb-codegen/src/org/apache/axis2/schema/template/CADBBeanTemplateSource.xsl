@@ -758,9 +758,9 @@
                     {
                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
                               "Failed in building adb object for <xsl:value-of select="$originalName"/> : "
-                              "Expected %s but returned %s", 
-                              axutil_qname_to_string(qname, env),
-                              axutil_qname_to_string(<xsl:value-of select="$name"/>-> qname, env));
+                              "Expected %s but returned %s",
+                              axutil_qname_to_string(<xsl:value-of select="$name"/>-> qname, env),
+                              axutil_qname_to_string(qname, env));
                         <!-- TODO: ADB specific error should be defined and set here -->
                         return AXIS2_FAILURE;
                     }
