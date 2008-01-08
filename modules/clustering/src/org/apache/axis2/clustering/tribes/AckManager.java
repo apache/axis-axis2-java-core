@@ -94,7 +94,9 @@ public final class AckManager {
                 Member member = members[i];
                 String memberHost = TribesUtil.getHost(member);
                 if (member.isReady() && !ack.hasACKed(memberHost)) {
-                    log.debug("[NO ACK] from member " + memberHost);
+                    if (log.isDebugEnabled()) {
+                        log.debug("[NO ACK] from member " + memberHost);
+                    }
 
                     // If a new member joined the cluster recently,
                     // we need to retransmit the message to this member, if an ACK has not been
@@ -103,8 +105,10 @@ public final class AckManager {
                         !ack.isRestransmittedToMember(memberHost)) { // TODO: Check
 
                         sender.sendToMember(ack.getCommand(), member);
-                        log.debug("Retransimitting msg " + ack.getCommand().getUniqueId() +
-                                  " to member " + memberHost);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Retransimitting msg " + ack.getCommand().getUniqueId() +
+                                      " to member " + memberHost);
+                        }
                     }
 
                     if (!isReturnValueSet) {

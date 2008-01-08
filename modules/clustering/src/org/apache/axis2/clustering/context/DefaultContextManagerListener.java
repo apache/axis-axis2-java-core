@@ -27,12 +27,9 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultContextManagerListener implements ContextManagerListener {
 
     private ConfigurationContext configurationContext;
-    private static final Log log = LogFactory.getLog(DefaultContextManagerListener.class);
 
     public void contextUpdated(ContextClusteringCommand message) throws ClusteringFault {
-        log.debug("Enter: DefaultContextManagerListener::contextRemoved");
         message.execute(configurationContext);
-        log.debug("Exit: DefaultContextManagerListener::contextRemoved");
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {

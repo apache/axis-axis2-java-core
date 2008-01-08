@@ -49,30 +49,27 @@ public class ChannelSender implements MessageSender {
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
-        //TODO: Sometimes Tribes incorrectly detects that a member has left a group
-//        while (true) {
         if (members.length > 0) {
             try {
                 long start = System.currentTimeMillis();
                 channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
                 timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + msg + " to group");
-//                    break;
             } catch (NotSerializableException e) {
                 String message = "Could not send command message " + msg +
                                  " to group since it is not serializable.";
                 log.error(message, e);
                 throw new ClusteringFault(message, e);
             } catch (ChannelException e) {
-                //TODO: What to do for faulty members
                 ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
                 for (int i = 0; i < faultyMembers.length; i++) {
                     ChannelException.FaultyMember faultyMember = faultyMembers[i];
                     Member member = faultyMember.getMember();
                     log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
                               faultyMember.getCause(), faultyMember.getCause());
-
-                    //TODO: Shall we try to resend to these members?
+                    if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
+                        sendToMember(msg, member);
+                    }
                 }
 
             } catch (Exception e) {
@@ -81,10 +78,6 @@ public class ChannelSender implements MessageSender {
                 log.warn(message, e);
             }
         }
-//            else {
-//                break;
-//            }
-//        }
         return timeToSend;
     }
 
@@ -128,7 +121,10 @@ public class ChannelSender implements MessageSender {
         } catch (ChannelException e) {
             ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
             log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
-                          faultyMembers[0].getCause(), faultyMembers[0].getCause());
+                      faultyMembers[0].getCause(), faultyMembers[0].getCause());
+            if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
+                sendToMember(cmd, member);
+            }
         } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();

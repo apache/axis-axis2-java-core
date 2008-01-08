@@ -37,6 +37,8 @@ public class GetConfigurationCommand extends ControlCommand {
         AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         for (Iterator iter = axisConfig.getServiceGroups(); iter.hasNext();) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) iter.next();
+
+            //TODO: Exclude all services loaded from modules. How to handle data services etc.?
             serviceGroupNames.add(serviceGroup.getServiceGroupName());
         }
         this.serviceGroupNames =

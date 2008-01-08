@@ -66,7 +66,9 @@ public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
             sgCtx.setId(serviceGroupContextId);
             configContext.addServiceGroupContextIntoSoapSessionTable(sgCtx);  // TODO: Check this
         }
-        log.debug("###### Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
+        if (log.isDebugEnabled()) {
+            log.debug("Gonna update SG prop in " + serviceGroupContextId + "===" + sgCtx);
+        }
         propertyUpdater.updateProperties(sgCtx);
     }
 

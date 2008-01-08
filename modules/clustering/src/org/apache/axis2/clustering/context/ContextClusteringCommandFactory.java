@@ -170,7 +170,9 @@ public final class ContextClusteringCommandFactory {
                         if (!isExcluded(key,
                                         context.getClass().getName(),
                                         excludedPropertyPatterns)) {
-                            log.debug("sending property =" + key + "-" + prop);
+                            if (log.isDebugEnabled()) {
+                                log.debug("sending property =" + key + "-" + prop);
+                            }
                             PropertyDifference diff = (PropertyDifference) diffs.get(key);
                             diff.setValue(prop);
                             updateCmd.addProperty(diff);
@@ -187,7 +189,9 @@ public final class ContextClusteringCommandFactory {
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
-                            log.debug("sending property =" + key + "-" + prop);
+                            if (log.isDebugEnabled()) {
+                                log.debug("sending property =" + key + "-" + prop);
+                            }
                             PropertyDifference diff = new PropertyDifference(key, prop, false);
                             updateCmd.addProperty(diff);
                         }
@@ -208,7 +212,9 @@ public final class ContextClusteringCommandFactory {
 
                 // First check whether it is serializable
                 if (prop instanceof Serializable) {
-                    log.debug("sending property =" + key + "-" + prop);
+                    if (log.isDebugEnabled()) {
+                        log.debug("sending property =" + key + "-" + prop);
+                    }
                     PropertyDifference diff = (PropertyDifference) diffs.get(key);
                     diff.setValue(prop);
                     updateCmd.addProperty(diff);

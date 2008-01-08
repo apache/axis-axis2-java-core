@@ -139,7 +139,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             log.warn("Received message before cluster initialization has been completed");
             return;
         }
-        log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
+        if (log.isDebugEnabled()) {
+            log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
+        }
         try {
             processMessage(msg, sender);
         } catch (Exception e) {
@@ -156,7 +158,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
             // Check for duplicate messages and ignore duplicates in order to support at-most-once semantics
             if (receivedMessages.containsKey(msgId)) {
-                log.debug("Received duplicate message " + ctxCmd);
+                if (log.isDebugEnabled()) {
+                    log.debug("Received duplicate message " + ctxCmd);
+                }
                 receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was last received
                 return;
             }
@@ -198,6 +202,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
                 String msgId = (String) iterator.next();
                 receivedMessages.remove(msgId);
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed message " + msgId + " from received message buffer");
+                }
             }
         }
     }
