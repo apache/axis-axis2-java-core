@@ -152,8 +152,9 @@ public abstract class XMLPartBase implements XMLPart {
                 // Okay
             } else
             if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                throw ExceptionFactory.
-                    makeWebServiceException(Messages.getMessage("restWithSOAPErr"));
+                // throw ExceptionFactory.
+                //    makeWebServiceException(Messages.getMessage("restWithSOAPErr"));
+                // Okey
             } else {
                 content = _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
                 contentType = SPINE;

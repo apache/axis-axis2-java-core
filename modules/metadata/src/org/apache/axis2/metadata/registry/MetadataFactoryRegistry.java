@@ -90,7 +90,7 @@ public class MetadataFactoryRegistry {
         private static void loadConfigFromFile() {
             String pairSeparator = "|";
             try {
-                ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader();
+                ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader(null);
                 URL url = null;
                 url = classLoader.getResource(configurationFileLoc);
                 if(url == null) {

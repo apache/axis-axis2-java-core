@@ -56,13 +56,13 @@ public class ClassLoaderUtils {
     }
     
     /** @return ClassLoader */
-    public static ClassLoader getContextClassLoader() {
-        ClassLoader cl = null;
+    public static ClassLoader getContextClassLoader(final ClassLoader classLoader) {
+        ClassLoader cl;
         try {
             cl = (ClassLoader)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();
+                            return classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
                         }
                     }
             );

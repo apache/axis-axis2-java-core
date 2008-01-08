@@ -330,7 +330,7 @@ class DescriptionBuilderUtils {
             //Use the thread context class loader to load the class.
             try {
                 returnClass = ClassLoaderUtils.forName(classToLoad, false,
-                                                       ClassLoaderUtils.getContextClassLoader());
+                                                       ClassLoaderUtils.getContextClassLoader(null));
             }
             catch (Throwable ex) {
                 //Use the default classloader to load the class.

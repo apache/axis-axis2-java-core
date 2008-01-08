@@ -570,7 +570,7 @@ class EndpointDescriptionImpl
                     try {
                         // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
                         seiClass = ClassLoaderUtils.forName(seiClassName, false,
-                                                            ClassLoaderUtils.getContextClassLoader());
+                                                            ClassLoaderUtils.getContextClassLoader(this.axisService != null ? this.axisService.getClassLoader() : null));
                         // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
                         // does not extend Exception, so lets catch everything that extends Throwable
                         // rather than just Exception.
