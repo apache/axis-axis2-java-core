@@ -20,11 +20,47 @@
 
 package org.apache.axis2.description;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.SocketException;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Import;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.http.HTTPAddress;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.xml.WSDLWriter;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.java2wsdl.*;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -37,10 +73,15 @@ import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.deployment.util.ExcludeInfo;
-import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.MessageReceiver;
@@ -51,8 +92,8 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
-import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,24 +105,12 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.JMethod;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.wsdl.*;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.extensions.http.HTTPAddress;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.wsdl.xml.WSDLWriter;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.SocketException;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.*;
 
 /**
  * Class AxisService
@@ -230,9 +259,6 @@ public class AxisService extends AxisDescription {
     private String endpointName;
     private String endpointURL;
 
-    // Flag representing whether WS-Addressing is required to use this service.
-    // Reflects the wsaw:UsingAddressing wsdl extension element
-    private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
 
     //To keep a ref to ObjectSupplier instance
@@ -276,15 +302,18 @@ public class AxisService extends AxisDescription {
         this.endpointMap.put(key, axisEndpoint);
     }
 
+    /**
+     * @deprecated Use AddressingHelper.getAddressingRequirementParemeterValue
+     */
     public String getWSAddressingFlag() {
-        return wsaddressingFlag;
+        return AddressingHelper.getAddressingRequirementParemeterValue(this);
     }
 
+    /**
+     * @deprecated Use AddressingHelper.setAddressingRequirementParemeterValue
+     */
     public void setWSAddressingFlag(String ar) {
-        wsaddressingFlag = ar;
-        if (wsaddressingFlag == null) {
-            wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
-        }
+    	AddressingHelper.setAddressingRequirementParemeterValue(this, ar);
     }
 
     public boolean isSchemaLocationsAdjusted() {
@@ -1381,8 +1410,15 @@ public class AxisService extends AxisDescription {
             return null;
         }
 
-        AxisOperation operation = (AxisOperation) getChild(new QName(soapAction));
-
+        AxisOperation operation = null;
+        Iterator children = getChildren();
+        while(children.hasNext() && (operation == null)){
+        	AxisOperation op = (AxisOperation)children.next();
+        	if(op.getName().getLocalPart().equals(soapAction)){
+        		operation = op;
+        	}
+        }
+        
         if (operation != null) {
         	if(log.isDebugEnabled()){
         		log.debug("getOperationBySOAPAction: Operation ("+operation+","+operation.getName()+") for soapAction: "+soapAction+" found as child.");

@@ -19,10 +19,18 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -87,6 +95,19 @@ import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -494,7 +515,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdl4jDefinition,
                                axisEndpoint, BINDING);
-
+        processEmbeddedEPR(wsdl4jPort.getExtensibilityElements(), axisEndpoint);
         addDocumentation(axisEndpoint, wsdl4jPort.getDocumentationElement());
         if (processedBindings.containsKey(wsdl4jBinding.getQName())) {
             axisEndpoint.setBinding(
@@ -513,10 +534,31 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     isSetMessageQNames);
             processedBindings.put(wsdl4jBinding.getQName(), axisBinding);
         }
-
     }
 
-    private void populatePortType(PortType wsdl4jPortType,
+    private void processEmbeddedEPR(List extensibilityElements, AxisEndpoint axisEndpoint) {
+    	Iterator eelts = extensibilityElements.iterator();
+    	while(eelts.hasNext()){
+    		ExtensibilityElement ee = (ExtensibilityElement)eelts.next();
+    		if(AddressingConstants.Final.WSA_ENDPOINT_REFERENCE.equals(ee.getElementType())){
+    			try {
+    				Element elt = ((UnknownExtensibilityElement)ee).getElement();
+    				OMElement eprOMElement = XMLUtils.toOM(elt);
+    				EndpointReference epr = EndpointReferenceHelper.fromOM(eprOMElement);
+    				Map referenceParameters = epr.getAllReferenceParameters();
+    				if(referenceParameters != null){
+    					axisEndpoint.addParameter(AddressingConstants.REFERENCE_PARAMETER_PARAMETER, new ArrayList(referenceParameters.values()));
+    				}
+    			} catch (Exception e) {
+    				if(log.isDebugEnabled()){
+    					log.debug("Exception encountered processing embedded wsa:EndpointReference", e);
+    				}
+    			}
+    		}
+    	}
+    }
+
+	private void populatePortType(PortType wsdl4jPortType,
                                   Definition portTypeWSDL) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
@@ -2126,11 +2168,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     if (originOfExtensibilityElements.equals(PORT)
                         || originOfExtensibilityElements.equals(BINDING)) {
                         if (Boolean.TRUE.equals(unknown.getRequired())) {
-                            axisService
-                                    .setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
+                        	AddressingHelper.setAddressingRequirementParemeterValue(axisService, AddressingConstants.ADDRESSING_REQUIRED);
                         } else {
-                            axisService
-                                    .setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
+                        	AddressingHelper.setAddressingRequirementParemeterValue(axisService, AddressingConstants.ADDRESSING_OPTIONAL);
                         }
                     }
 

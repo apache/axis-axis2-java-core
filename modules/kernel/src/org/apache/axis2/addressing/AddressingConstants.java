@@ -55,6 +55,7 @@ public interface AddressingConstants {
     // ====================== Addressing Requirement Levels ==================
     // These are used to represent the requirement level on WS-Addressing indicated
     // in a services.xml or a WSDL file.
+    static final String ADDRESSING_REQUIREMENT_PARAMETER = "addressingRequirementParameter";
     // ADDRESSING_UNSPECIFIED is the equivalent of no UsingAddressing flag in a
     // WSDL file and the default of the WSAddressingRequred attribute in service.xml
     static final String ADDRESSING_UNSPECIFIED = "unspecified";
@@ -104,6 +105,12 @@ public interface AddressingConstants {
     static final String DISABLE_OUTBOUND_ADDRESSING_VALIDATION =
             "disableAddressingOutboundValidation";
 
+    /**
+     * This parameter is used to attach OMElement ReferenceParameters found in an EPR embedded in a
+     * WSDL to an AxisEndpoint object.
+     */
+    static final String REFERENCE_PARAMETER_PARAMETER = "referenceParameters";
+    
     static final String WSAM_INVOCATION_PATTERN_PARAMETER_NAME = "wsamInvocationPattern";
     static final String WSAM_INVOCATION_PATTERN_SYNCHRONOUS = "synchronous";
     static final String WSAM_INVOCATION_PATTERN_ASYNCHRONOUS = "asynchronous";
@@ -173,6 +180,7 @@ public interface AddressingConstants {
         static final QName WSAW_USING_ADDRESSING =
                 new QName(WSAW_NAMESPACE, USING_ADDRESSING);
         static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE, USING_ADDRESSING);
+        static final QName WSA_ENDPOINT_REFERENCE = new QName(WSA_NAMESPACE,"EndpointReference");
 
         final QName QNAME_WSA_TO = new QName(WSA_NAMESPACE, WSA_TO);
         final QName QNAME_WSA_FROM = new QName(WSA_NAMESPACE, WSA_FROM);

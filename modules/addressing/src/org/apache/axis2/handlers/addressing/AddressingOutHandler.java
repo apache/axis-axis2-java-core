@@ -38,6 +38,8 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.addressing.i18n.AddressingMessages;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -379,7 +381,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                     createSOAPHeaderBlock(address, WSA_TO, epr.getAddressAttributes());
                 }
-                processToEPRReferenceInformation(epr.getAllReferenceParameters(), header);
+                processToEPRReferenceInformation(epr.getAllReferenceParameters());
             }
         }
 
@@ -449,22 +451,44 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          * @param parent               is the element to which the referenceparameters should be
          *                             attached
          */
-        private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent) {
-            if (referenceInformation != null && parent != null) {
+        private void processToEPRReferenceInformation(Map referenceInformation) {
+            if (referenceInformation != null) {
                 if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace("processToEPRReferenceInformation: " + referenceInformation);
                 }
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    OMElement newElement = ElementHelper.importOMElement(omElement, parent.getOMFactory());
+                    OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                                addressingNamespaceObject);
                     }
-                    parent.addChild(newElement);
+                    header.addChild(newElement);
                 }
+            }
+            // Now add reference parameters we found in the WSDL (if any)
+            AxisService service = messageContext.getAxisService();
+            AxisEndpoint endpoint = service.getEndpoint(service.getEndpointName());
+            if(endpoint != null){
+            	ArrayList referenceparameters = (ArrayList) endpoint.getParameterValue(REFERENCE_PARAMETER_PARAMETER);
+            	if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    log.trace("processToEPRReferenceInformation: Reference Parameters from WSDL:" + referenceparameters);
+                }
+            	if(referenceparameters!=null){
+            		Iterator iterator = referenceparameters.iterator();
+                    while (iterator.hasNext()) {
+                        OMElement omElement = (OMElement)iterator.next();
+                        OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
+                        if (isFinalAddressingNamespace) {
+                            newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+                                                   Final.WSA_TYPE_ATTRIBUTE_VALUE,
+                                                   addressingNamespaceObject);
+                        }
+                        header.addChild(newElement);
+                    }
+            	}
             }
         }
 

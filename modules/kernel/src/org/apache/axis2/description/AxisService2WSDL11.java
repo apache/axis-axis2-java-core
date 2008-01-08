@@ -7,6 +7,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.ExternalPolicySerializer;
@@ -585,13 +586,13 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
         // Add WS-Addressing UsingAddressing element if appropriate
         // SHOULD be on the binding element per the specification
-        if (axisService.getWSAddressingFlag().equals(
+        if (AddressingHelper.getAddressingRequirementParemeterValue(axisService).equals(
                 AddressingConstants.ADDRESSING_OPTIONAL)) {
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
                     wsaw);
-        } else if (axisService.getWSAddressingFlag().equals(
+        } else if (AddressingHelper.getAddressingRequirementParemeterValue(axisService).equals(
                 AddressingConstants.ADDRESSING_REQUIRED)) {
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
@@ -717,13 +718,13 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
         // Add WS-Addressing UsingAddressing element if appropriate
         // SHOULD be on the binding element per the specification
-        if (axisService.getWSAddressingFlag().equals(
+        if (AddressingHelper.getAddressingRequirementParemeterValue(axisService).equals(
                 AddressingConstants.ADDRESSING_OPTIONAL)) {
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,
                                 DEFAULT_WSDL_NAMESPACE_PREFIX + ":required", "true",
                     wsaw);
-        } else if (axisService.getWSAddressingFlag().equals(
+        } else if (AddressingHelper.getAddressingRequirementParemeterValue(axisService).equals(
                 AddressingConstants.ADDRESSING_REQUIRED)) {
             WSDLSerializationUtil.addExtensionElement(fac, binding,
                                 AddressingConstants.USING_ADDRESSING,

@@ -23,6 +23,7 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -154,7 +155,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {
                 String addressingRequiredString = addressingRequiredatt.getAttributeValue();
-                service.setWSAddressingFlag(addressingRequiredString);
+                AddressingHelper.setAddressingRequirementParemeterValue(service, addressingRequiredString);
             }
 
             //Setting service target namespace if any
