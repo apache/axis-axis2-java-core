@@ -177,7 +177,6 @@ public class TribesClusterManager implements ClusterManager {
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
         tcpFailureDetector.setPrevious(dfi);
         channel.addInterceptor(tcpFailureDetector);
-//        tcpFailureDetector.
 
         channel.addChannelListener(channelListener);
         TribesMembershipListener membershipListener = new TribesMembershipListener();
@@ -202,13 +201,13 @@ public class TribesClusterManager implements ClusterManager {
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers();
 
-        // If configuration management is enabled, get the latest config from a neighbour  TODO: from the longest living neighbour
+        // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
             configurationManager.setSender(sender);
             getInitializationMessage(sender, new GetConfigurationCommand());
         }
 
-        // If context replication is enabled, get the latest state from a neighbour  TODO: from the longest living neighbour
+        // If context replication is enabled, get the latest state from a neighbour  
         if (contextManager != null) {
             contextManager.setSender(sender);
             channelListener.setContextManager(contextManager);
