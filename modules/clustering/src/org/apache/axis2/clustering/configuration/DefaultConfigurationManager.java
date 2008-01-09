@@ -190,7 +190,9 @@ public class DefaultConfigurationManager implements ConfigurationManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        listener.setConfigurationContext(configurationContext);
+        if (listener != null) {
+            listener.setConfigurationContext(configurationContext);
+        }
     }
 
     public void addParameter(Parameter param) throws AxisFault {

@@ -68,7 +68,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>false</skip>
+                    <excludes>
+                        <exclude>**/UpdateStateTest.java</exclude>
+                        <exclude>**/ConfigurationManagerTest.java</exclude>
+                    </excludes>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>

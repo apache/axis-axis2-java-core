@@ -161,20 +161,19 @@ public final class ContextClusteringCommandFactory {
                 Map diffs = context.getPropertyDifferences();
                 for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
                     String key = (String) iter.next();
-                    Object prop = context.getPropertyNonReplicable(key);
+                    Object value = context.getPropertyNonReplicable(key);
 
-                    // First check whether it is serializable
-                    if (prop instanceof Serializable) {
+                    if (value instanceof Serializable || value == null) { // in the case of removing properties, the value can be null
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key,
                                         context.getClass().getName(),
                                         excludedPropertyPatterns)) {
                             if (log.isDebugEnabled()) {
-                                log.debug("sending property =" + key + "-" + prop);
+                                log.debug("sending property =" + key + "-" + value);
                             }
                             PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                            diff.setValue(prop);
+                            diff.setValue(value);
                             updateCmd.addProperty(diff);
                         }
                     }
@@ -184,15 +183,15 @@ public final class ContextClusteringCommandFactory {
             synchronized (context) {
                 for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
                     String key = (String) iter.next();
-                    Object prop = context.getPropertyNonReplicable(key);
-                    if (prop instanceof Serializable) { // First check whether it is serializable
+                    Object value = context.getPropertyNonReplicable(key);
+                    if (value instanceof Serializable || value == null) { // in the case of removing properties, the value can be null
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
                             if (log.isDebugEnabled()) {
-                                log.debug("sending property =" + key + "-" + prop);
+                                log.debug("sending property =" + key + "-" + value);
                             }
-                            PropertyDifference diff = new PropertyDifference(key, prop, false);
+                            PropertyDifference diff = new PropertyDifference(key, value, false);
                             updateCmd.addProperty(diff);
                         }
                     }

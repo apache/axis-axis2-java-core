@@ -67,6 +67,7 @@ public class TribesClusterManager implements ClusterManager {
     private ConfigurationContext configurationContext;
     private TribesControlCommandProcessor controlCmdProcessor;
     private ChannelListener channelListener;
+    private ChannelSender channelSender;
 
     public TribesClusterManager() {
         parameters = new HashMap();
@@ -121,17 +122,18 @@ public class TribesClusterManager implements ClusterManager {
             }
         }
 
-        ChannelSender sender = new ChannelSender();
-
+        channelSender = new ChannelSender();
         channelListener = new ChannelListener(configurationContext,
                                               configurationManager,
                                               contextManager,
                                               controlCmdProcessor,
-                                              sender,
+                                              channelSender,
                                               synchronizeAllMembers());
 
-        controlCmdProcessor.setChannelSender(sender);
+        controlCmdProcessor.setChannelSender(channelSender);
         channel = new GroupChannel();
+
+
 
         // Set the IP address that will be advertised by this node
         String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
@@ -195,7 +197,7 @@ public class TribesClusterManager implements ClusterManager {
         } catch (ChannelException e) {
             throw new ClusteringFault("Error starting Tribes channel", e);
         }
-        sender.setChannel(channel);
+        channelSender.setChannel(channel);
 
 //        Member[] members = channel.getMembers();
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
@@ -203,16 +205,16 @@ public class TribesClusterManager implements ClusterManager {
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
-            configurationManager.setSender(sender);
-            getInitializationMessage(sender, new GetConfigurationCommand());
+            configurationManager.setSender(channelSender);
+            getInitializationMessage(channelSender, new GetConfigurationCommand());
         }
 
         // If context replication is enabled, get the latest state from a neighbour  
         if (contextManager != null) {
-            contextManager.setSender(sender);
+            contextManager.setSender(channelSender);
             channelListener.setContextManager(contextManager);
-            getInitializationMessage(sender, new GetStateCommand());
-            ClusteringContextListener contextListener = new ClusteringContextListener(sender);
+            getInitializationMessage(channelSender, new GetStateCommand());
+            ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
         }
         configurationContext.
@@ -234,6 +236,7 @@ public class TribesClusterManager implements ClusterManager {
         // Keep track of members to whom we already sent an initialization command
         // Do not send another request to these members
         List sentMembersList = new ArrayList();
+        sentMembersList.add(TribesUtil.getLocalHost(channel));
         Member[] members = MembershipManager.getMembers();
         while (members.length > 0 &&
                configurationContext.
@@ -265,10 +268,12 @@ public class TribesClusterManager implements ClusterManager {
 
     public void setConfigurationManager(ConfigurationManager configurationManager) {
         this.configurationManager = (DefaultConfigurationManager) configurationManager;
+        this.configurationManager.setSender(channelSender);
     }
 
     public void setContextManager(ContextManager contextManager) {
         this.contextManager = (DefaultContextManager) contextManager;
+        this.contextManager.setSender(channelSender);
     }
 
     public void addParameter(Parameter param) throws AxisFault {
@@ -322,6 +327,12 @@ public class TribesClusterManager implements ClusterManager {
         controlCmdProcessor.setConfigurationContext(configurationContext);
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
+        }
+        if (configurationManager != null) {
+            configurationManager.setConfigurationContext(configurationContext);
+        }
+        if (contextManager != null) {
+            contextManager.setConfigurationContext(configurationContext);
         }
     }
 

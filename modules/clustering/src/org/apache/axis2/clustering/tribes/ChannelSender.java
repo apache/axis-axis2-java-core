@@ -71,7 +71,6 @@ public class ChannelSender implements MessageSender {
                         sendToMember(msg, member);
                     }
                 }
-
             } catch (Exception e) {
                 String message = "Error sending command message : " + msg +
                                  ". Reason " + e.getMessage();

@@ -37,6 +37,7 @@ import java.util.*;
 public class DefaultContextManager implements ContextManager {
 
     private ConfigurationContext configContext;
+    private ContextManagerListener listener;
 
     private Map parameters = new HashMap();
 
@@ -105,13 +106,17 @@ public class DefaultContextManager implements ContextManager {
     }
 
     public void setContextManagerListener(ContextManagerListener listener) {
+        this.listener = listener;
         if (configContext != null) {
-            listener.setConfigurationContext(configContext);
+            this.listener.setConfigurationContext(configContext);
         }
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configContext = configurationContext;
+        if(listener != null){
+            listener.setConfigurationContext(configContext);
+        }
     }
 
     public void setReplicationExcludePatterns(String contextType, List patterns) {

@@ -42,7 +42,7 @@ public abstract class UpdateContextCommand extends ContextClusteringCommand {
     public void addProperty(PropertyDifference diff) {
         if (propertyUpdater.getProperties() == null) {
             propertyUpdater.setProperties(new HashMap());
-        }
+        }                                        
         propertyUpdater.addContextProperty(diff);
     }
 }

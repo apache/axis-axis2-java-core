@@ -81,12 +81,10 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationContext = configurationContext;
         this.synchronizeAllMembers = synchronizeAllMembers;
 
-        if (synchronizeAllMembers) {
-            Timer cleanupTimer = new Timer();
-            cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
-                                             TIME_TO_LIVE,
-                                             TIME_TO_LIVE);
-        }
+        Timer cleanupTimer = new Timer();
+        cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
+                                         TIME_TO_LIVE,
+                                         TIME_TO_LIVE);
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -138,12 +136,15 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             && !(msg instanceof GetStateResponseCommand) &&
             !(msg instanceof GetConfigurationResponseCommand)) {
 
-            log.warn("Received message before cluster initialization has been completed");
+            log.warn("Received message " + msg +
+                     " before cluster initialization has been completed from " +
+                     TribesUtil.getHost(sender));
             return;
         }
         if (log.isDebugEnabled()) {
             log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
         }
+
         try {
             processMessage(msg, sender);
         } catch (Exception e) {
@@ -159,16 +160,14 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             String msgId = ctxCmd.getUniqueId();
 
             // Check for duplicate messages and ignore duplicates in order to support at-most-once semantics
-            if (synchronizeAllMembers) { // Duplicates can be received only if an ACK & retransmit mechanism is used
-                if (receivedMessages.containsKey(msgId)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Received duplicate message " + ctxCmd);
-                    }
-                    return;
+            if (receivedMessages.containsKey(msgId)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Received duplicate message " + ctxCmd);
                 }
-                synchronized (receivedMessages) {
-                    receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
-                }
+                return;
+            }
+            synchronized (receivedMessages) {
+                receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
             }
 
             // Process the message
