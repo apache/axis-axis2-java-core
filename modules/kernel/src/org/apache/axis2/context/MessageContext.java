@@ -1626,7 +1626,7 @@ public class MessageContext extends AbstractContext
      * if SOAP with Attachments is enabled.
      *
      * @param contentID   :
-     *                    will be the content ID of the MIME part
+     *                    will be the content ID of the MIME part (without the "cid:" prefix)
      * @param dataHandler
      */
     public void addAttachment(String contentID, DataHandler dataHandler) {
@@ -1656,7 +1656,7 @@ public class MessageContext extends AbstractContext
      * content ID. Returns "NULL" if a attachment cannot be found by the given content ID.
      *
      * @param contentID :
-     *                  Content ID of the MIME attachment
+     *                  Content ID of the MIME attachment (without the "cid:" prefix)
      * @return Data handler of the attachment
      */
     public DataHandler getAttachment(String contentID) {
@@ -1670,7 +1670,7 @@ public class MessageContext extends AbstractContext
      * Removes the attachment with the given content ID from the Attachments Map
      * Do nothing if a attachment cannot be found by the given content ID.
      *
-     * @param contentID of the attachment
+     * @param contentID of the attachment (without the "cid:" prefix)
      */
     public void removeAttachment(String contentID) {
         if (attachments != null) {

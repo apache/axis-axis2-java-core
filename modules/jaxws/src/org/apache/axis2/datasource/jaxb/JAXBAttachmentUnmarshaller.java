@@ -149,8 +149,13 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
     }
     
     protected DataHandler getDataHandler(String cid) {
+        String blobcid = cid;
+        if (blobcid.startsWith("cid:")) {
+            blobcid = blobcid.substring(4);
+        }
+        // Get the attachment from the messagecontext using the blob cid
         if (msgContext != null) {
-            return msgContext.getAttachment(cid);
+            return msgContext.getAttachment(blobcid);
         }
         return null;
     }

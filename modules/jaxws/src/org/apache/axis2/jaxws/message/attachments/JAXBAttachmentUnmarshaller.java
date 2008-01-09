@@ -19,8 +19,6 @@
 package org.apache.axis2.jaxws.message.attachments;
 
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 
@@ -40,8 +38,10 @@ public class JAXBAttachmentUnmarshaller extends org.apache.axis2.datasource.jaxb
     }
 
     protected DataHandler getDataHandler(String cid) {
+        
+        // Get the attachment from the message using the cid
         if (message != null) {
-            return super.getDataHandler(cid);
+            return message.getDataHandler(cid);
         } 
         return null;
     }

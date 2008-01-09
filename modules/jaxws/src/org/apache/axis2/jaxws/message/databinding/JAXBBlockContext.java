@@ -87,10 +87,12 @@ public class JAXBBlockContext extends JAXBDSContext {
         this.message = message;
     }
 
+    @Override
     protected AttachmentMarshaller createAttachmentMarshaller(XMLStreamWriter writer) {
         return new JAXBAttachmentMarshaller(getMessage(), writer);
     }
     
+    @Override
     protected AttachmentUnmarshaller createAttachmentUnmarshaller() {
         return new JAXBAttachmentUnmarshaller(getMessage());
     }
