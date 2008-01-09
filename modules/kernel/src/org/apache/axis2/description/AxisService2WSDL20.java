@@ -28,6 +28,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
@@ -284,7 +285,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                         .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
                                                    interfaceName,
                                                    axisService.getNamespaceMap(),
-                                                   axisService.getWSAddressingFlag(),
+                                                   AddressingHelper.getAddressingRequirementParemeterValue(axisService),
                                                    serviceName,wsaw));
             }
 
