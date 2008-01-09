@@ -36,7 +36,6 @@ import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
 import org.apache.woden.XMLElement;
-import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.BindingFaultImpl;
 import org.apache.woden.internal.wsdl20.BindingOperationImpl;
@@ -44,6 +43,7 @@ import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsI
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
+import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.types.NamespaceDeclaration;
 import org.apache.woden.wsdl20.Binding;
@@ -66,6 +66,8 @@ import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtens
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
+import org.apache.woden.wsdl20.extensions.rpc.RPCInterfaceOperationExtensions;
+import org.apache.woden.wsdl20.extensions.rpc.Argument;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultReferenceExtensions;
@@ -995,6 +997,26 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (interfaceOperationExtensions != null) {
             Parameter parameter = new Parameter(WSDL2Constants.ATTR_WSDLX_SAFE, Boolean.valueOf(
                     interfaceOperationExtensions.isSafety()));
+            axisOperation.addParameter(parameter);
+        }
+
+        RPCInterfaceOperationExtensions rpcInterfaceOperationExtensions;
+        try {
+            rpcInterfaceOperationExtensions = (RPCInterfaceOperationExtensions) operation
+                    .getComponentExtensionsForNamespace(
+                            new URI(WSDL2Constants.URI_WSDL2_RPC));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("WSDL2 extensions not defined for this operation");
+        }
+
+        if (rpcInterfaceOperationExtensions != null) {
+            String rpcsig = "";
+            Argument[] signatures = rpcInterfaceOperationExtensions.getRPCSignature();
+            for (int i = 0; i < signatures.length; i++) {
+                Argument sigArgument = signatures[i];
+                rpcsig = rpcsig + sigArgument.getName().getLocalPart() + " " + sigArgument.getDirection() + " ";
+            }
+            Parameter parameter = new Parameter(WSDL2Constants.ATTR_WRPC_SIGNATURE, rpcsig);
             axisOperation.addParameter(parameter);
         }
 
