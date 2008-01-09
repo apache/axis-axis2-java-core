@@ -19,6 +19,9 @@
 
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ import java.util.StringTokenizer;
 /** Common Java Utilites */
 public class JavaUtils extends org.apache.axis2.util.JavaUtils {
 
+    private static Log log = LogFactory.getLog(JavaUtils.class);
+    
     /** Private Constructor...All methods of this class are static */
     private JavaUtils() {
     }
@@ -40,6 +45,9 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
     public static String getPackageFromNamespace(String namespace) {
         // The following steps correspond to steps described in the JAXB Specification
 
+        if (log.isDebugEnabled()) {
+            log.debug("namespace (" +namespace +")");
+        }
         // Step 1: Scan off the host name
         String hostname = null;
         String path = null;
@@ -57,6 +65,11 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
                 hostname = namespace;
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("hostname (" +hostname +")");
+            log.debug("path (" +path +")");
+        }
+        
 
         // Step 3: Tokenize the host name using ":" and "/"
         StringTokenizer st = new StringTokenizer(hostname, ":/");
@@ -95,16 +108,22 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
 
         // Step 6: Tokenize the first word with "." and reverse the order. (the www is also removed).
         // TODO This is not exactly equivalent to the JAXB Rule.
-        StringTokenizer st2 = new StringTokenizer(words[0], ".");
         ArrayList<String> list = new ArrayList<String>();
-        while (st2.hasMoreTokens()) {
-            // Add the strings so they are in reverse order
-            list.add(0, st2.nextToken());
+        if (words.length > 0) {
+            StringTokenizer st2 = new StringTokenizer(words[0], ".");
+        
+            while (st2.hasMoreTokens()) {
+                // Add the strings so they are in reverse order
+                list.add(0, st2.nextToken());
+            }
         }
+        
         // Remove www
-        String last = list.get(list.size() - 1);
-        if (last.equals("www")) {
-            list.remove(list.size() - 1);
+        if (list.size() > 0) {
+            String last = list.get(list.size() - 1);
+            if (last.equals("www")) {
+                list.remove(list.size() - 1);
+            }
         }
         // Now each of words is represented by list
         for (int i = 1; i < words.length; i++) {
@@ -147,6 +166,10 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             } else {
                 name = name + "." + list.get(i);
             }
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("package name (" +name +")");
         }
         return name;
     }

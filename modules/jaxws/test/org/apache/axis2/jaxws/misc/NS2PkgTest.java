@@ -27,7 +27,7 @@ import org.apache.axis2.jaxws.utility.JavaUtils;
 import junit.framework.TestCase;
 
 /**
- * Tests Namespace to Package Algorithmh
+ * Tests Namespace to Package Algorithm
  *
  */
 public class NS2PkgTest extends TestCase {
@@ -37,6 +37,22 @@ public class NS2PkgTest extends TestCase {
         String expectedPkg1 = "org.example.newbusiness";
         
         String pkg = JavaUtils.getPackageFromNamespace(ns1);
-        assertTrue(expectedPkg1.equals(pkg));
+        assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
+    }
+    
+    public void test02() throws Exception {
+        String ns1 = "urn://example-org/NewBusiness";
+        String expectedPkg1 = "org.example";
+        
+        String pkg = JavaUtils.getPackageFromNamespace(ns1);
+        assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
+    }
+    
+    public void test03() throws Exception {
+        String ns1 = "";
+        String expectedPkg1 = "";
+        
+        String pkg = JavaUtils.getPackageFromNamespace(ns1);
+        assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
     }
 }
