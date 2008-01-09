@@ -24,6 +24,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.FileNotFoundException;
 import java.util.Iterator;
@@ -33,6 +35,8 @@ import java.util.Iterator;
  */
 public class GetConfigurationResponseCommand extends ControlCommand {
 
+    private static final Log log = LogFactory.getLog(GetConfigurationResponseCommand.class);
+
     private String[] serviceGroups;
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
@@ -41,6 +45,7 @@ public class GetConfigurationResponseCommand extends ControlCommand {
         // Run this code only if this node is not already initialized
         if (configContext.
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+            log.info("Received configuration initialization message");
             if (serviceGroups != null) {
 
                 // Load all the service groups that are sent by the neighbour
@@ -58,6 +63,8 @@ public class GetConfigurationResponseCommand extends ControlCommand {
                         }
                     }
                 }
+
+                //TODO: Check this code. Need to see what happens to Data Services etc. also services deployed from within modules
 
                 // Unload all service groups which were not sent by the neighbour,
                 // but have been currently loaded

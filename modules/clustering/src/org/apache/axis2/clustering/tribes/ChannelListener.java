@@ -81,10 +81,12 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationContext = configurationContext;
         this.synchronizeAllMembers = synchronizeAllMembers;
 
-        Timer cleanupTimer = new Timer();
-        cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
-                                         TIME_TO_LIVE,
-                                         TIME_TO_LIVE);
+        if (synchronizeAllMembers) {
+            Timer cleanupTimer = new Timer();
+            cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
+                                             TIME_TO_LIVE,
+                                             TIME_TO_LIVE);
+        }
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -157,14 +159,17 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             String msgId = ctxCmd.getUniqueId();
 
             // Check for duplicate messages and ignore duplicates in order to support at-most-once semantics
-            if (receivedMessages.containsKey(msgId)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Received duplicate message " + ctxCmd);
+            if (synchronizeAllMembers) { // Duplicates can be received only if an ACK & retransmit mechanism is used
+                if (receivedMessages.containsKey(msgId)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Received duplicate message " + ctxCmd);
+                    }
+                    return;
                 }
-                receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was last received
-                return;
+                synchronized (receivedMessages) {
+                    receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
+                }
             }
-            receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
 
             // Process the message
             contextManager.process(ctxCmd);
@@ -192,18 +197,20 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
         public void run() {
             List toBeRemoved = new ArrayList();
-            for (Iterator iterator = receivedMessages.keySet().iterator(); iterator.hasNext();) {
-                String msgId = (String) iterator.next();
-                Long recdTime = (Long) receivedMessages.get(msgId);
-                if (System.currentTimeMillis() - recdTime.longValue() >= TIME_TO_LIVE) {
-                    toBeRemoved.add(msgId);
+            synchronized (receivedMessages) {
+                for (Iterator iter = receivedMessages.keySet().iterator(); iter.hasNext();) {
+                    String msgId = (String) iter.next();
+                    Long recdTime = (Long) receivedMessages.get(msgId);
+                    if (System.currentTimeMillis() - recdTime.longValue() >= TIME_TO_LIVE) {
+                        toBeRemoved.add(msgId);
+                    }
                 }
-            }
-            for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
-                String msgId = (String) iterator.next();
-                receivedMessages.remove(msgId);
-                if (log.isDebugEnabled()) {
-                    log.debug("Removed message " + msgId + " from received message buffer");
+                for (Iterator iter = toBeRemoved.iterator(); iter.hasNext();) {
+                    String msgId = (String) iter.next();
+                    receivedMessages.remove(msgId);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Removed message " + msgId + " from received message buffer");
+                    }
                 }
             }
         }
