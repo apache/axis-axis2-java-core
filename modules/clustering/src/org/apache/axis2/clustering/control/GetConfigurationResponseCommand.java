@@ -64,7 +64,7 @@ public class GetConfigurationResponseCommand extends ControlCommand {
                     }
                 }
 
-                //TODO: Check this code. Need to see what happens to Data Services etc. also services deployed from within modules
+                //TODO: We support only AAR files for now
 
                 // Unload all service groups which were not sent by the neighbour,
                 // but have been currently loaded
@@ -86,9 +86,9 @@ public class GetConfigurationResponseCommand extends ControlCommand {
                              serviceIter.hasNext();) {
                             AxisService service = (AxisService) serviceIter.next();
                             if (service.isClientSide() ||
-                                service.getParameter(AxisModule.MODULE_SERVICE) != null) {
+                                service.getParameter(AxisModule.MODULE_SERVICE) != null) { // Do not unload service groups containing client side services or ones deployed from within modules
                                 mustUnloadServiceGroup = false;
-                                break; // Do not unload service groups containing client side services
+                                break;
                             }
                         }
                         if (mustUnloadServiceGroup) {
