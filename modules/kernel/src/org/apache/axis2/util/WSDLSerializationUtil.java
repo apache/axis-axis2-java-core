@@ -257,7 +257,11 @@ public class WSDLSerializationUtil {
         return binding;
     }
 
-private static void generateDefaultSOAPBindingOperations(AxisService axisService, OMFactory omFactory, OMElement binding, OMNamespace wsdl, OMNamespace tns, OMNamespace wsoap) {        Iterator iterator = axisService.getChildren();
+    private static void generateDefaultSOAPBindingOperations(AxisService axisService,
+                                                             OMFactory omFactory, OMElement binding,
+                                                             OMNamespace wsdl, OMNamespace tns,
+                                                             OMNamespace wsoap) {
+        Iterator iterator = axisService.getChildren();
         while (iterator.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) iterator.next();
             if (axisOperation.isControlOperation()) {
@@ -468,7 +472,9 @@ private static void generateDefaultSOAPBindingOperations(AxisService axisService
         }
     }
 
-    public static void addWSDLDocumentationElement(AxisDescription axisDescription, OMElement omElement, OMFactory omFactory, OMNamespace wsdl) {
+    public static void addWSDLDocumentationElement(AxisDescription axisDescription,
+                                                   OMElement omElement, OMFactory omFactory,
+                                                   OMNamespace wsdl) {
         OMNode documentationNode = axisDescription.getDocumentationNode();
         OMElement documentation;
         if (documentationNode != null) {
