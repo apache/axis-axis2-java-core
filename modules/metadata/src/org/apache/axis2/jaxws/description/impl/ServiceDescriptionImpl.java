@@ -515,13 +515,24 @@ class ServiceDescriptionImpl
                         getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
 
                 try {
-                    if (seic.getWsdlDefinition() != null) {
-                        //set the sdimpl from the SEI composite
+                    if (seic == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The SEI class " + composite.getWebServiceAnnot().endpointInterface() + " was not found.");
+                        }
+                    }
+                    if (seic != null && seic.getWsdlDefinition() != null) {
+                        // set the wsdl def from the SEI composite
+                        if (log.isDebugEnabled()) {
+                            log.debug("Get the wsdl definition from the SEI composite.");
+                        }
                         this.wsdlURL = seic.getWsdlURL();
                         this.wsdlWrapper =
                                 new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
                     } else if (composite.getWsdlDefinition() != null) {
-                        //set the sdimpl from the impl. class composite
+                        //set the wsdl def from the impl. class composite
+                        if (log.isDebugEnabled()) {
+                            log.debug("Get the wsdl definition from the impl class composite.");
+                        }
                         this.wsdlURL = composite.getWsdlURL();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
                                                              composite.getWsdlDefinition());
@@ -531,20 +542,29 @@ class ServiceDescriptionImpl
                     	if(seic != null
                     			&&
                     			seic.getWebServiceAnnot() != null) {
-                    		wsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("Get the wsdl location from the SEI composite.");
+                    	    }
+                    	    wsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
                     	}
                     	
                     	// now check the impl
                     	if(wsdlLocation == null
                     	        ||
                     	        "".equals(wsdlLocation)) {
-                    		wsdlLocation = composite.getWebServiceAnnot().wsdlLocation();
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("Get the wsdl location from the impl class composite.");
+                            }
+                    	    wsdlLocation = composite.getWebServiceAnnot().wsdlLocation();
                     	}
                     	
                     	if(wsdlLocation != null
                     	        &&
                     	        !"".equals(wsdlLocation)) {
-                    		setWSDLDefinitionOnDBC(wsdlLocation);
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("wsdl location =" + wsdlLocation);
+                    	    }
+                    	    setWSDLDefinitionOnDBC(wsdlLocation);
                     	}
                     }
                 } catch (WSDLException e) {
