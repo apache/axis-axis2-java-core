@@ -103,8 +103,11 @@ public interface ContextManager extends ParameterInclude {
      * <p/>
      * Generally, we can use the context class name as the context type.
      *
-     * @param contextType The type of the context such as ConfigurationContext,
-     *                    ServiceGroupContext & ServiceContext
+     * @param contextType The type of the context such as
+     *                    org.apache.axis2.context.ConfigurationContext,
+     *                    org.apache.axis2.context.ServiceGroupContext &
+     *                    org.apache.axis2.context.ServiceContext.
+     *                    Also "defaults" is a special type, which will apply to all contexts
      * @param patterns    The patterns
      */
     void setReplicationExcludePatterns(String contextType, List patterns);
