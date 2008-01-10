@@ -511,7 +511,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             for (int i = 0; i < tempProperties.length; i++) {
                 JProperty tempProperty = tempProperties[i];
                 String propertyName = getCorrectName(tempProperty.getSimpleName());
-                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)){
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
                     propertiesSet.add(tempProperty);
                 }
             }
@@ -544,7 +544,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         continue;
                     }
                     String propertyName = getCorrectName(tempFields[i].getSimpleName());
-                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)) {
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
                         // skip field with same name as a property
                         if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
 

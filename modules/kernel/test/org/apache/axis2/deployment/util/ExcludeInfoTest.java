@@ -27,17 +27,17 @@ public class ExcludeInfoTest extends TestCase {
         excludeInfo.putBeanInfo("org.kp.anuhak.meta.[A-z]*",new BeanExcludeInfo("[A-z]*",null));
 
         BeanExcludeInfo beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass("org.kp.anuhak.cdr.test.TestClass");
-        assertFalse(beanExcludeInfo.isExcluedProperty("TestProperty"));
-        assertTrue(beanExcludeInfo.isExcluedProperty("TestBool"));
-        assertFalse(beanExcludeInfo.isExcluedProperty("isTestBool"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("TestProperty"));
+        assertTrue(beanExcludeInfo.isExcludedProperty("TestBool"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("isTestBool"));
 
         beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass("org.kp.anuhak.cdr.types.TestClass");
-        assertFalse(beanExcludeInfo.isExcluedProperty("TestProperty"));
-        assertTrue(beanExcludeInfo.isExcluedProperty("TestString"));
-        assertFalse(beanExcludeInfo.isExcluedProperty("isTestBool"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("TestProperty"));
+        assertTrue(beanExcludeInfo.isExcludedProperty("TestString"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("isTestBool"));
 
         beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass("org.kp.anuhak.meta.TestClass");
-        assertTrue(beanExcludeInfo.isExcluedProperty("TestProperty"));
+        assertTrue(beanExcludeInfo.isExcludedProperty("TestProperty"));
 
     }
 }

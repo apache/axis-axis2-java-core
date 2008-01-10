@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.deployment.util;
 
-import java.util.Locale;
-
 /**
  * this class is used to keep the excludeProperties and includePropertes
  * of the given bean when generating the wsdl, and serializing.
@@ -56,7 +54,7 @@ public class BeanExcludeInfo {
      * @param property
      * @return is exclude the property or not
      */
-    public boolean isExcluedProperty(String property){
+    public boolean isExcludedProperty(String property){
        boolean isExclude = false;
        if ((excludeProperties != null) && (excludeProperties.trim().length() > 0)){
            if (property.matches(excludeProperties)){

@@ -56,7 +56,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class BeanUtil {
@@ -123,7 +122,7 @@ public class BeanUtil {
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
                 String propertyName = getCorrectName(property.getSimpleName());
-                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)){
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
                     propertyList.add(property);
                 }
 
@@ -138,7 +137,7 @@ public class BeanUtil {
                 for (int i = 0; i < properties.length; i++) {
                     JProperty property = properties[i];
                     String propertyName = getCorrectName(property.getSimpleName());
-                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)) {
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
                         propertyList.add(property);
                     }
                 }

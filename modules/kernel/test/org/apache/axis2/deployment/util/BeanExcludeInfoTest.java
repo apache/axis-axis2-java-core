@@ -22,8 +22,8 @@ public class BeanExcludeInfoTest extends TestCase {
 
     public void testIsExcludedProperty(){
         BeanExcludeInfo beanExcludeInfo = new BeanExcludeInfo("[A-z]*String|DayPhoneTTY","DayPhoneTTYString");
-        assertTrue(beanExcludeInfo.isExcluedProperty("DetailsString"));
-        assertFalse(beanExcludeInfo.isExcluedProperty("DayPhoneTTYString"));
-        assertFalse(beanExcludeInfo.isExcluedProperty("ElementDetils"));
+        assertTrue(beanExcludeInfo.isExcludedProperty("DetailsString"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("DayPhoneTTYString"));
+        assertFalse(beanExcludeInfo.isExcludedProperty("ElementDetils"));
     }
 }
