@@ -119,6 +119,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         OMNamespace tns = omFactory
                 .createOMNamespace(axisService.getTargetNamespace(),
                                    axisService.getTargetNamespacePrefix());
+        if (nameSpacesMap != null && !nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
+            descriptionElement.declareDefaultNamespace(WSDL2Constants.WSDL_NAMESPACE);
+        }
         if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
             wsoap = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
