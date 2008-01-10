@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and         
  * limitations under the License.                                              
  */
-package org.apache.axis2.clustering.tribes;
+package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
 import org.apache.axis2.clustering.control.AckCommand;
+import org.apache.axis2.clustering.TestDO;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +30,7 @@ import java.io.ObjectOutputStream;
  */
 public class ObjectSerializationTest extends TestCase {
 
-    public void testSerialization() {
+    public void testSerialization() throws IOException, ClassNotFoundException {
         AckCommand ackCommand = new AckCommand("uuid");
         ackCommand.setMemberId("123456");
 
@@ -40,7 +41,7 @@ public class ObjectSerializationTest extends TestCase {
         assertEquals(ackCommand.getUniqueId(), ackCommand2.getUniqueId());
     }
 
-    public void testSerialization2() {
+    public void testSerialization2() throws IOException, ClassNotFoundException {
         TestDO testDO = new TestDO("name", "value");
         TestDO testDO2 = (TestDO) copy(testDO);
 
@@ -54,28 +55,20 @@ public class ObjectSerializationTest extends TestCase {
      * Returns a copy of the object, or null if the object cannot
      * be serialized.
      */
-    public Object copy(Object orig) {
+    public Object copy(Object orig) throws ClassNotFoundException, IOException {
         Object obj = null;
-        try {
-            // Write the object out to a byte array
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(orig);
-            out.flush();
-            out.close();
+        // Write the object out to a byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(orig);
+        out.flush();
+        out.close();
 
-            // Make an input stream from the byte array and read
-            // a copy of the object back in.
-            ObjectInputStream in = new ObjectInputStream(
-                    new ByteArrayInputStream(bos.toByteArray()));
-            obj = in.readObject();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        }
+        // Make an input stream from the byte array and read
+        // a copy of the object back in.
+        ObjectInputStream in = new ObjectInputStream(
+                new ByteArrayInputStream(bos.toByteArray()));
+        obj = in.readObject();
         return obj;
     }
 }

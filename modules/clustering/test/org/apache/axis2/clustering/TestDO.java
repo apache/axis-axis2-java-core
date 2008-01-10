@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and         
  * limitations under the License.                                              
  */
-package org.apache.axis2.clustering.tribes;
+package org.apache.axis2.clustering;
 
 import java.io.Serializable;
 

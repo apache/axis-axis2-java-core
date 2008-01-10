@@ -28,6 +28,7 @@ import org.apache.axis2.clustering.tribes.TribesClusterManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -174,7 +175,6 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceGroupContext() throws Exception {
-//        String sgcID = UUIDGenerator.getUUID();
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);
@@ -219,6 +219,60 @@ public class ContextReplicationTest extends TestCase {
 
         Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
+    }
+
+    public void testSetPropertyInServiceContext() throws Exception {
+
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext1 = serviceGroupContext1.getServiceContext(service1);
+        configurationContext1.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+        assertNotNull(serviceContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext2 = serviceGroupContext2.getServiceContext(service2);
+        configurationContext2.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+        assertNotNull(serviceContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceContext2.getProperty(key1));
+    }
+
+    public void testSetPropertyInServiceContext2() throws Exception {
+
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext1 = serviceGroupContext1.getServiceContext(service1);
+        configurationContext1.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+        assertNotNull(serviceContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext2 = serviceGroupContext2.getServiceContext(service2);
+        configurationContext2.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+        assertNotNull(serviceContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceContext2.getProperty(key1));
     }
 
     protected void tearDown() throws Exception {
