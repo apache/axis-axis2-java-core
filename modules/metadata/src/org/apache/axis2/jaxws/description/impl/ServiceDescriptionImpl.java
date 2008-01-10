@@ -1008,20 +1008,31 @@ class ServiceDescriptionImpl
                 if (interfaceString.equals(MDQConstants.PROVIDER_SOAP)) {
 
                     // Make sure BindingType is SOAP/HTTP with SOAPMessage
-                    // object, Default for Binding Type is SOAP/HTTP
-                    if (!DescriptionUtils.isEmpty(bindingType)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP11HTTP_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP12HTTP_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))
-                    	
-                        throw ExceptionFactory.makeWebServiceException(
-                        		Messages.getMessage("validatePIsErr2",composite.getClassName()));
+					// object, Default for Binding Type is SOAP/HTTP
+					if (!DescriptionUtils.isEmpty(bindingType)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP11HTTP_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP12HTTP_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP11JMS_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP11JMS_MTOM_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP12JMS_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP12JMS_MTOM_BINDING))
 
+						throw ExceptionFactory.makeWebServiceException(Messages
+								.getMessage("validatePIsErr2", composite
+										.getClassName()));
+                
+                
+                
                 } else if (interfaceString
                         .equals(MDQConstants.PROVIDER_DATASOURCE)) {
 

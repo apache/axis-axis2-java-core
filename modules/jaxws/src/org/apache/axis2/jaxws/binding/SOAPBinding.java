@@ -68,9 +68,9 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
              * "http://schemas.xmlsoap.org/wsdl/soap/http" (SOAP1.1)
              * "http://www.w3.org/2003/05/soap/bindings/HTTP/" (SOAP1.2)
              */
-            if (bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_BINDING)
-                            || bindingId.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                bindingNamespace = SOAP12_ENV_NS;
+        	
+            if (BindingUtils.isSOAP12Binding(bindingId)){
+            	bindingNamespace = SOAP12_ENV_NS;
             } else {
                 // TODO currently defaults to SOAP11. Should we be more stricct
                 // about checking?

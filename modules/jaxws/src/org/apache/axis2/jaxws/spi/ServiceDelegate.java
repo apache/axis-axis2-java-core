@@ -19,11 +19,11 @@
 
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.ws.handler.HandlerResolver;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.binding.BindingImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
 import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
@@ -48,19 +48,17 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
+
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * The ServiceDelegate serves as the backing implementation for all of the methods in the {@link
@@ -380,16 +378,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
         if (bindingId != null) {
             //TODO: create all the bindings here
-            if (bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)) {
+            if (BindingUtils.isSOAPBinding(bindingId)) {            	
                 //instantiate soap11 binding implementation here and call setBinding in BindingProvider
                 return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            }
-
-            if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
-                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            }
-
+            } 
+            
             if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
                 //instantiate http binding implementation here and call setBinding in BindingProvider
                 return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);

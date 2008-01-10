@@ -19,7 +19,9 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -41,8 +43,6 @@ import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.ws.soap.SOAPBinding;
-import org.apache.axis2.AxisFault;
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
@@ -216,9 +216,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         endpointDesc = mc.getEndpointDescription();
         String bindingType = endpointDesc.getBindingType();
         if (bindingType != null) {
-            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                mc.getMessage().setMTOMEnabled(true);
+            if (BindingUtils.isMTOMBinding(bindingType)) {
+        		mc.getMessage().setMTOMEnabled(true);
             }
         }
         
@@ -311,8 +310,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 
         String bindingType = epDesc.getBindingType();
         if (bindingType != null) {
-            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) || 
-                bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            if (BindingUtils.isMTOMBinding(bindingType)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MTOM enabled for the response message.");
                 }

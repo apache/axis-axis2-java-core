@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -52,7 +53,6 @@ import javax.xml.transform.Source;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPBinding;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -261,10 +261,9 @@ public class ProviderDispatcher extends JavaDispatcher {
             // Enable MTOM if indicated by the binding
             String bindingType = endpointDesc.getBindingType();
             if (bindingType != null) {
-                if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                        bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                    message.setMTOMEnabled(true);
-                }
+            	if (BindingUtils.isMTOMBinding(bindingType)) {
+            		message.setMTOMEnabled(true);
+            	}
             }
 
             // Save off the protocol info so we can use it when creating the response message.
@@ -343,10 +342,9 @@ public class ProviderDispatcher extends JavaDispatcher {
             // Enable MTOM if indicated by the binding
             String bindingType = endpointDesc.getBindingType();
             if (bindingType != null) {
-                if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                        || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                    m.setMTOMEnabled(true);
-                }
+            	if (BindingUtils.isMTOMBinding(bindingType)) {
+                	m.setMTOMEnabled(true);
+            	}
             }
 
             response = MessageContextUtils.createResponseMessageContext(request);
@@ -608,23 +606,22 @@ public class ProviderDispatcher extends JavaDispatcher {
     }
     
     private void initialize(MessageContext mc) {
-    	
+
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
 
         endpointDesc = mc.getEndpointDescription();
         String bindingType = endpointDesc.getBindingType();
 
         if (bindingType != null) {
-            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                    || bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            if (BindingUtils.isMTOMBinding(bindingType)) {
                 mc.getMessage().setMTOMEnabled(true);
             }
         }
-        
+
         //Set SOAP Operation Related properties in SOAPMessageContext.
 
-        ContextUtils.addWSDLProperties_provider(mc);    
-        }
+        ContextUtils.addWSDLProperties_provider(mc);
+    }
 
 
 }

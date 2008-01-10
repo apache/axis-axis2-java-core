@@ -20,7 +20,7 @@
 package org.apache.axis2.jaxws.server.endpoint;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -75,12 +75,10 @@ public class Utils {
                     log.debug("        binding type: " + bindingType);
                 }
                 
-                if (protocol.equals(Protocol.soap11)) {
-                    return (SOAPBinding.SOAP11HTTP_BINDING.equalsIgnoreCase(bindingType)) ||
-                            (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(bindingType));
+                if (protocol.equals(Protocol.soap11)) { 
+                	return (BindingUtils.isSOAP11Binding(bindingType));
                 } else if (protocol.equals(Protocol.soap12)) {
-                    return (SOAPBinding.SOAP12HTTP_BINDING.equalsIgnoreCase(bindingType)) ||
-                            (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equalsIgnoreCase(bindingType));
+                	return (BindingUtils.isSOAP12Binding(bindingType));               	
                 } else if (protocol.equals(Protocol.rest)) {
                     return HTTPBinding.HTTP_BINDING.equalsIgnoreCase(bindingType);
                 }                

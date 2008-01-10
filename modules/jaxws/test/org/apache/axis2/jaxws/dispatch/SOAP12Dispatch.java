@@ -18,8 +18,7 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -32,6 +31,9 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 
@@ -117,6 +119,47 @@ public class SOAP12Dispatch extends TestCase {
         assertTrue(responseText.contains("echoStringResponse"));        
     }
     
+    /**
+     * Test sending a SOAP 1.2 request in PAYLOAD mode using SOAP/JMS
+     */
+    public void testSOAP12JMSDispatchPayloadMode() throws Exception {
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+		service.addPort(QNAME_PORT, MDQConstants.SOAP12JMS_BINDING, URL_ENDPOINT);
+        Dispatch<Source> dispatch = service.createDispatch(
+                QNAME_PORT, Source.class, Mode.PAYLOAD);
+        
+        // Create the Source object with the payload contents.  Since
+        // we're in PAYLOAD mode, we don't have to worry about the envelope.
+        byte[] bytes = sampleRequest.getBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        StreamSource request = new StreamSource(bais);
+        
+        // Send the SOAP 1.2 request
+        Source response = dispatch.invoke(request);
+
+        assertTrue("The response was null.  We expected content to be returned.", response != null);
+        
+        // Convert the response to a more consumable format
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        StreamResult result = new StreamResult(baos);
+        
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer trans = factory.newTransformer();
+        trans.transform(response, result);
+        
+        // Check to make sure the contents are correct.  Again, since we're
+        // in PAYLOAD mode, we shouldn't have anything related to the envelope
+        // in the return, just the contents of the Body.
+        String responseText = baos.toString();
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+
+    }
+    
+
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */

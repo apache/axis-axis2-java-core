@@ -18,9 +18,10 @@
  */
 package org.apache.axis2.jaxws.binding;
 
-import javax.xml.ws.Binding;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+
+import javax.xml.ws.Binding;
 
 public class BindingUtils {
 
@@ -56,12 +57,47 @@ public class BindingUtils {
         if (url != null && (url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
                 url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
                 url.equals(SOAPBinding.SOAP12HTTP_BINDING)|| 
-                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
+                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
+                url.equals(MDQConstants.SOAP11JMS_BINDING) ||
+                url.equals(MDQConstants.SOAP11JMS_MTOM_BINDING) ||
+                url.equals(MDQConstants.SOAP12JMS_BINDING) ||
+                url.equals(MDQConstants.SOAP12JMS_MTOM_BINDING) )) {
             return true;
         }
         return false;
     }
     
+    public static boolean isSOAP11Binding(String url) {
+        if (url != null && (url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+                url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                url.equals(MDQConstants.SOAP11JMS_BINDING) ||
+                url.equals(MDQConstants.SOAP11JMS_MTOM_BINDING)  )) {
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isSOAP12Binding(String url) {
+        if (url != null && (url.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
+                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
+                url.equals(MDQConstants.SOAP12JMS_BINDING) ||
+                url.equals(MDQConstants.SOAP12JMS_MTOM_BINDING)  )) {
+            return true;
+        }
+        return false;
+    }
+    
+    public static boolean isMTOMBinding(String url) {
+        if (url != null && 
+               (url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                       url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
+                       url.equals(MDQConstants.SOAP11JMS_MTOM_BINDING) ||
+                       url.equals(MDQConstants.SOAP12JMS_MTOM_BINDING)   )) {
+            return true;
+        }
+        return false;
+    }
+       
     public static boolean isHTTPBinding(String url) {
         if (url != null && url.equals(HTTPBinding.HTTP_BINDING)) {
             return true;

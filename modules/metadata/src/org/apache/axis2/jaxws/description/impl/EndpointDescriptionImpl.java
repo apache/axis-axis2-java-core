@@ -18,39 +18,9 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.http.HTTPBinding;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.SOAPBinding;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -75,10 +45,38 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jws.HandlerChain;
+import javax.jws.WebService;
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPBinding;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.SOAPBinding;
+
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 /** @see ../EndpointDescription */
 /*
@@ -1415,11 +1413,14 @@ class EndpointDescriptionImpl
 
     public String getWSDLBindingType() {
         String wsdlBindingType = null;
+        String soapTransport = null;
         Binding wsdlBinding = getWSDLBinding();
         if (wsdlBinding != null) {
+        	
             // If a WSDL binding was found, we need to find the proper extensibility
-            // element and return the namespace.  The namespace will be different
-            // for SOAP 1.1 vs. SOAP 1.2 bindings and HTTP.
+            // element and return the namespace.  The namespace for the binding element will 
+        	// determine whether it is SOAP 1.1 vs. SOAP 1.2 vs. HTTP (or other). If the namespace 
+        	// indicates SOAP we then need to determine what the transport is (HTTP vs. JMS)
             // TODO: What do we do if no extensibility element exists?
             List<ExtensibilityElement> elements = wsdlBinding.getExtensibilityElements();
             Iterator<ExtensibilityElement> itr = elements.iterator();
@@ -1428,24 +1429,46 @@ class EndpointDescriptionImpl
                 if (javax.wsdl.extensions.soap.SOAPBinding.class.isAssignableFrom(e.getClass())) {
                     javax.wsdl.extensions.soap.SOAPBinding soapBnd =
                             (javax.wsdl.extensions.soap.SOAPBinding)e;
+                    
+                    //representation: this is soap:binding = elementType where NamespaceURI is "soap"
+                    // The transport is represented by the 'transport' attribute within this binding element
                     wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
+
+                    soapTransport = soapBnd.getTransportURI();
+
+
                     break;
+                
                 } else if (SOAP12Binding.class.isAssignableFrom(e.getClass())) {
                     SOAP12Binding soapBnd = (SOAP12Binding)e;
                     wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
+                    soapTransport = soapBnd.getTransportURI();
                     break;
+                
                 } else if (HTTPBinding.class.isAssignableFrom(e.getClass())) {
                     HTTPBinding httpBnd = (HTTPBinding)e;
                     wsdlBindingType = httpBnd.getElementType().getNamespaceURI();
                     break;
                 }
             }
-            // We need to convert the wsdl-based SOAP and HTTP namespace into the expected namespace for 
-            //SOAPBindings or HTTPBindings
+
+            // We need to convert the wsdl-based SOAP and HTTP namespace into the expected Binding Type for 
+            //HTTP or SOAPBindings with the appropriate transport (HTTP, JMS, etc.)
+
             if (SOAP11_WSDL_BINDING.equals(wsdlBindingType)) {
-                wsdlBindingType = SOAPBinding.SOAP11HTTP_BINDING;
+                if (MDQConstants.SOAP11JMS_BINDING.equals(soapTransport)) {
+                    wsdlBindingType =  MDQConstants.SOAP11JMS_BINDING;
+                } else {
+                    //REVIEW: We are making the assumption that if not JMS, then HTTP
+                    wsdlBindingType = SOAPBinding.SOAP11HTTP_BINDING;
+                } 
             } else if (SOAP12_WSDL_BINDING.equals(wsdlBindingType)) {
-                wsdlBindingType = SOAPBinding.SOAP12HTTP_BINDING; 
+                if (MDQConstants.SOAP12JMS_BINDING.equals(soapTransport)) {
+                    wsdlBindingType =  MDQConstants.SOAP12JMS_BINDING;
+                } else {
+                    //REVIEW: We are making the assumption that if not JMS, then HTTP
+                    wsdlBindingType = SOAPBinding.SOAP12HTTP_BINDING;
+                } 
             } else if (HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
                 wsdlBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
             }
@@ -1486,7 +1509,11 @@ class EndpointDescriptionImpl
                 bindingId.equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
+                bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
+                bindingId.equals(MDQConstants.SOAP11JMS_BINDING) ||
+                bindingId.equals(MDQConstants.SOAP12JMS_BINDING) ||
+                bindingId.equals(MDQConstants.SOAP11JMS_MTOM_BINDING) ||
+                bindingId.equals(MDQConstants.SOAP12JMS_MTOM_BINDING))) {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("addPortErr0", getPortQName().toString()));
         }
