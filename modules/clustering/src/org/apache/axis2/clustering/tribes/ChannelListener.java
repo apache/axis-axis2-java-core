@@ -106,7 +106,8 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
      * @return boolean
      */
     public boolean accept(Serializable msg, Member sender) {
-        return true;
+        return configurationContext.
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) != null;
     }
 
     /**

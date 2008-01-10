@@ -161,9 +161,10 @@ public final class ContextClusteringCommandFactory {
                 Map diffs = context.getPropertyDifferences();
                 for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
                     String key = (String) iter.next();
-                    Object value = context.getPropertyNonReplicable(key);
+                    PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                    Object value = diff.getValue();
 
-                    if (value instanceof Serializable || value == null) { // in the case of removing properties, the value can be null
+                    if (value instanceof Serializable) {
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key,
@@ -172,8 +173,6 @@ public final class ContextClusteringCommandFactory {
                             if (log.isDebugEnabled()) {
                                 log.debug("sending property =" + key + "-" + value);
                             }
-                            PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                            diff.setValue(value);
                             updateCmd.addProperty(diff);
                         }
                     }
@@ -184,7 +183,7 @@ public final class ContextClusteringCommandFactory {
                 for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
                     String key = (String) iter.next();
                     Object value = context.getPropertyNonReplicable(key);
-                    if (value instanceof Serializable || value == null) { // in the case of removing properties, the value can be null
+                    if (value instanceof Serializable) { 
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {

@@ -115,7 +115,7 @@ public abstract class AbstractContext {
 
             // Assume that a property is which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            addPropertyDifference(key);
+            addPropertyDifference(key, obj);
         }
         return obj;
     }
@@ -137,7 +137,7 @@ public abstract class AbstractContext {
 
             // Assume that a property is which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            addPropertyDifference(key);
+            addPropertyDifference(key, obj);
         }
         return obj;
     }
@@ -168,10 +168,10 @@ public abstract class AbstractContext {
             this.properties = new HashMap();
         }
         properties.put(key, value);
-        addPropertyDifference(key);
+        addPropertyDifference(key, value);
     }
 
-    private void addPropertyDifference(String key) {
+    private void addPropertyDifference(String key, Object value) {
         ConfigurationContext cc = getRootContext();
         if (cc == null) {
             return;
@@ -186,7 +186,7 @@ public abstract class AbstractContext {
         // Narrowed the synchronization so that we only wait
         // if a property difference is added.
         synchronized(this) {
-            propertyDifferences.put(key, new PropertyDifference(key, false));
+            propertyDifferences.put(key, new PropertyDifference(key, value, false));
         }
     }
 
@@ -211,10 +211,13 @@ public abstract class AbstractContext {
      * @param key
      */
     public synchronized void removeProperty(String key) {
-        if (properties != null) {
-            properties.remove(key);
+        Object value = properties.get(key);
+        if (value != null) {
+            if (properties != null) {
+                properties.remove(key);
+            }
+            propertyDifferences.put(key, new PropertyDifference(key, value, true));
         }
-        propertyDifferences.put(key, new PropertyDifference(key, true));
     }
 
     /**

@@ -44,19 +44,23 @@ public class ContextReplicationTest extends TestCase {
 
     private static final String TEST_SERVICE_NAME = "testService";
 
+    // --------------- Cluster-1 ------------------------------------------------------
     private ClusterManager clusterManager1;
     private ContextManager ctxMan1;
     private ConfigurationManager configMan1;
     private ConfigurationContext configurationContext1;
     private AxisServiceGroup serviceGroup1;
     private AxisService service1;
+    //---------------------------------------------------------------------------------
 
+    // --------------- Cluster-2 ------------------------------------------------------
     private ClusterManager clusterManager2;
     private ContextManager ctxMan2;
     private ConfigurationManager configMan2;
     private ConfigurationContext configurationContext2;
     private AxisServiceGroup serviceGroup2;
     private AxisService service2;
+    //---------------------------------------------------------------------------------
 
     protected void setUp() throws Exception {
         System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, HttpUtils.getIpAddress());

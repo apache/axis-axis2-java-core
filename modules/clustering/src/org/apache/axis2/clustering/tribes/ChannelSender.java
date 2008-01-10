@@ -52,7 +52,8 @@ public class ChannelSender implements MessageSender {
         if (members.length > 0) {
             try {
                 long start = System.currentTimeMillis();
-                channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
+                channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+//                channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
                 timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + msg + " to group");
             } catch (NotSerializableException e) {
@@ -106,7 +107,8 @@ public class ChannelSender implements MessageSender {
         try {
             if (member.isReady()) {
                 long start = System.currentTimeMillis();
-                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_USE_ACK);
+                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+//                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_USE_ACK);
                 timeToSend = System.currentTimeMillis() - start;
                 log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
             }

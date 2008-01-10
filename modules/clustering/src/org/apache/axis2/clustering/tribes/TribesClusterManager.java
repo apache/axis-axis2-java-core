@@ -266,7 +266,7 @@ public class TribesClusterManager implements ClusterManager {
                             setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
                                                      new Long(tts));
                     sentMembersList.add(TribesUtil.getHost(member));
-                    log.debug("WAITING FOR STATE INITIALIZATION MESSAGE...");
+                    log.debug("WAITING FOR INITIALIZATION MESSAGE...");
                     Thread.sleep(tts + 5 * (numberOfTries + 1));
                 }
             } catch (Exception e) {
