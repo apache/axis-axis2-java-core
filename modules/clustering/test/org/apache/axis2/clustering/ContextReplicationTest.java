@@ -34,8 +34,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.server.HttpUtils;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -426,7 +426,7 @@ public class ContextReplicationTest extends TestCase {
         assertNull(value); // The property should not have gotten replicated
     }
 
-     public void testReplicationExclusion2() throws Exception {
+    public void testReplicationExclusion2() throws Exception {
         String key1 = "local_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
@@ -439,6 +439,39 @@ public class ContextReplicationTest extends TestCase {
 
         String value = (String) configurationContext2.getProperty(key1);
         assertNull(value); // The property should not have gotten replicated
+    }
+
+    public void testReplicationExclusion3() throws Exception {
+        String key1 = "local1_configCtxKey";
+        String val1 = "configCtxVal1";
+        configurationContext1.setProperty(key1, val1);
+
+        String key2 = "local2_configCtxKey";
+        String val2 = "configCtxVal2";
+        configurationContext1.setProperty(key2, val2);
+
+        String key3 = "local3_configCtxKey";
+        String val3 = "configCtxVal3";
+        configurationContext1.setProperty(key3, val3);
+
+        List exclusionPatterns1 = new ArrayList();
+        exclusionPatterns1.add("local1_*");
+        List exclusionPatterns2 = new ArrayList();
+        exclusionPatterns2.add("local2_*");
+        ctxMan1.setReplicationExcludePatterns("org.apache.axis2.context.ConfigurationContext",
+                                              exclusionPatterns1);
+        ctxMan1.setReplicationExcludePatterns("defaults",
+                                              exclusionPatterns2);
+        ctxMan1.updateContext(configurationContext1);
+        Thread.sleep(1000); // Give some time for the replication to take place
+
+        String value1 = (String) configurationContext2.getProperty(key1);
+        assertNull(value1); // The property should not have gotten replicated
+        String value2 = (String) configurationContext2.getProperty(key2);
+        assertNull(value2); // The property should not have gotten replicated
+        String value3 = (String) configurationContext2.getProperty(key3);
+        assertEquals(val3, value3); // The property should have gotten replicated
+
     }
 
     protected void tearDown() throws Exception {
