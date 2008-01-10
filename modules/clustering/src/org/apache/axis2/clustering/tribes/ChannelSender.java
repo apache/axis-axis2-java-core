@@ -61,16 +61,14 @@ public class ChannelSender implements MessageSender {
                 log.error(message, e);
                 throw new ClusteringFault(message, e);
             } catch (ChannelException e) {
-                ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
-                for (int i = 0; i < faultyMembers.length; i++) {
-                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
-                    Member member = faultyMember.getMember();
-                    log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
-                              faultyMember.getCause(), faultyMember.getCause());
-                    if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
-                        sendToMember(msg, member);
-                    }
-                }
+                log.error("Could not send message to some members", e);
+//                ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+//                for (int i = 0; i < faultyMembers.length; i++) {
+//                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
+//                    Member member = faultyMember.getMember();
+//                    log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
+//                              faultyMember.getCause(), faultyMember.getCause());
+//                }
             } catch (Exception e) {
                 String message = "Error sending command message : " + msg +
                                  ". Reason " + e.getMessage();
@@ -118,12 +116,13 @@ public class ChannelSender implements MessageSender {
             log.error(message, e);
             throw new ClusteringFault(message, e);
         } catch (ChannelException e) {
-            ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
-            log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
-                      faultyMembers[0].getCause(), faultyMembers[0].getCause());
-            if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
-                sendToMember(cmd, member);
-            }
+            log.error("Could not send message to " + TribesUtil.getHost(member));
+//            ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+//            log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
+//                      faultyMembers[0].getCause(), faultyMembers[0].getCause());
+//            if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
+//                sendToMember(cmd, member);
+//            }
         } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();

@@ -99,10 +99,21 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationContext = configurationContext;
     }
 
+    /**
+     * Invoked by the channel to determine if the listener will process this message or not.
+     * @param msg Serializable
+     * @param sender Member
+     * @return boolean
+     */
     public boolean accept(Serializable msg, Member sender) {
         return true;
     }
 
+    /**
+     * Receive a message from the channel
+     * @param msg Serializable
+     * @param sender - the source of the message
+     */
     public void messageReceived(Serializable msg, Member sender) {
         try {
             AxisConfiguration configuration = configurationContext.getAxisConfiguration();

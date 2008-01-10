@@ -63,7 +63,7 @@ public interface ContextManager extends ParameterInclude {
     String updateContexts(AbstractContext[] contexts) throws ClusteringFault;
 
     /**
-     * This method is called when a new {@link AbstractContext} is removed from the system
+     * This method is called when {@link AbstractContext} is removed from the system
      *
      * @param context The AbstractContext to be removed
      * @return The UUID of the message that was sent to the group communications framework

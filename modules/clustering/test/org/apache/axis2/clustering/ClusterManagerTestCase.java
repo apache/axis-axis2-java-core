@@ -95,10 +95,10 @@ public abstract class ClusterManagerTestCase extends TestCase {
         System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, HttpUtils.getIpAddress());
         try {
             clusterManager1.init();
-            System.out.println("############ ClusterManager-1 successfully initialized");
+            System.out.println("ClusterManager-1 successfully initialized");
             System.out.println("*** PLEASE IGNORE THE java.net.ConnectException STACKTRACES. THIS IS EXPECTED ***");
             clusterManager2.init();
-            System.out.println("############ ClusterManager-2 successfully initialized");
+            System.out.println("ClusterManager-2 successfully initialized");
         } catch (ClusteringFault e) {
             String message =
                     "Could not initialize ClusterManagers. Please check the network connection";
