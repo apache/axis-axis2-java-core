@@ -479,7 +479,4 @@ public class ContextReplicationTest extends TestCase {
         clusterManager1.shutdown();
         clusterManager2.shutdown();
     }
-    /*public void test2() {
-
-    }*/
 }
