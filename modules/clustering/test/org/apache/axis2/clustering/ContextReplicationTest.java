@@ -27,12 +27,15 @@ import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.tribes.TribesClusterManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.server.HttpUtils;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -197,6 +200,37 @@ public class ContextReplicationTest extends TestCase {
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
     }
 
+    public void testRemovePropertyFromServiceGroupContext() throws Exception {
+
+        // Add the property
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(TEST_SERVICE_NAME);
+        configurationContext1.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(TEST_SERVICE_NAME);
+        configurationContext2.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceGroupContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceGroupContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceGroupContext2.getProperty(key1));
+
+        // Remove the property
+        serviceGroupContext2.removeProperty(key1);
+        assertNull(serviceGroupContext2.getProperty(key1));
+        ctxMan1.updateContext(serviceGroupContext2);
+        Thread.sleep(1000);
+        assertNull(serviceGroupContext1.getProperty(key1));
+    }
+
     public void testSetPropertyInServiceGroupContext2() throws Exception {
         String sgcID = UUIDGenerator.getUUID();
 
@@ -219,6 +253,39 @@ public class ContextReplicationTest extends TestCase {
 
         Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
+    }
+
+    public void testRemovePropertyFromServiceGroupContext2() throws Exception {
+
+        // Add the property
+        String sgcID = UUIDGenerator.getUUID();
+
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(sgcID);
+        configurationContext1.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(sgcID);
+        configurationContext2.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceGroupContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceGroupContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceGroupContext2.getProperty(key1));
+
+        // Remove the property
+        serviceGroupContext2.removeProperty(key1);
+        assertNull(serviceGroupContext2.getProperty(key1));
+        ctxMan1.updateContext(serviceGroupContext2);
+        Thread.sleep(1000);
+        assertNull(serviceGroupContext1.getProperty(key1));
     }
 
     public void testSetPropertyInServiceContext() throws Exception {
@@ -273,6 +340,105 @@ public class ContextReplicationTest extends TestCase {
 
         Thread.sleep(1000);
         assertEquals(val1, serviceContext2.getProperty(key1));
+    }
+
+    public void testRemovePropertyFromServiceContext() throws Exception {
+
+        // Add the property
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext1 = serviceGroupContext1.getServiceContext(service1);
+        configurationContext1.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+        assertNotNull(serviceContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext2 = serviceGroupContext2.getServiceContext(service2);
+        configurationContext2.addServiceGroupContextIntoApplicationScopeTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+        assertNotNull(serviceContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceContext2.getProperty(key1));
+
+        // Remove the property
+        serviceContext2.removeProperty(key1);
+        assertNull(serviceContext2.getProperty(key1));
+        ctxMan1.updateContext(serviceContext2);
+        Thread.sleep(1000);
+        assertNull(serviceContext1.getProperty(key1));
+    }
+
+    public void testRemovePropertyFromServiceContext2() throws Exception {
+
+        // Add the property
+        ServiceGroupContext serviceGroupContext1 =
+                configurationContext1.createServiceGroupContext(serviceGroup1);
+        serviceGroupContext1.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext1 = serviceGroupContext1.getServiceContext(service1);
+        configurationContext1.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext1);
+        assertNotNull(serviceGroupContext1);
+        assertNotNull(serviceContext1);
+
+        ServiceGroupContext serviceGroupContext2 =
+                configurationContext2.createServiceGroupContext(serviceGroup2);
+        serviceGroupContext2.setId(TEST_SERVICE_NAME);
+        ServiceContext serviceContext2 = serviceGroupContext2.getServiceContext(service2);
+        configurationContext2.addServiceGroupContextIntoSoapSessionTable(serviceGroupContext2);
+        assertNotNull(serviceGroupContext2);
+        assertNotNull(serviceContext2);
+
+        String key1 = "sgCtxKey";
+        String val1 = "sgCtxVal1";
+        serviceContext1.setProperty(key1, val1);
+        ctxMan1.updateContext(serviceContext1);
+
+        Thread.sleep(1000);
+        assertEquals(val1, serviceContext2.getProperty(key1));
+
+        // Remove the property
+        serviceContext2.removeProperty(key1);
+        assertNull(serviceContext2.getProperty(key1));
+        ctxMan1.updateContext(serviceContext2);
+        Thread.sleep(1000);
+        assertNull(serviceContext1.getProperty(key1));
+    }
+
+    public void testReplicationExclusion1() throws Exception {
+        String key1 = "local_configCtxKey";
+        String val1 = "configCtxVal1";
+        configurationContext1.setProperty(key1, val1);
+        List exclusionPatterns = new ArrayList();
+        exclusionPatterns.add("local_*");
+        ctxMan1.setReplicationExcludePatterns("defaults", exclusionPatterns);
+        ctxMan1.updateContext(configurationContext1);
+        Thread.sleep(1000); // Give some time for the replication to take place
+
+        String value = (String) configurationContext2.getProperty(key1);
+        assertNull(value); // The property should not have gotten replicated
+    }
+
+     public void testReplicationExclusion2() throws Exception {
+        String key1 = "local_configCtxKey";
+        String val1 = "configCtxVal1";
+        configurationContext1.setProperty(key1, val1);
+        List exclusionPatterns = new ArrayList();
+        exclusionPatterns.add("local_*");
+        ctxMan1.setReplicationExcludePatterns("org.apache.axis2.context.ConfigurationContext",
+                                              exclusionPatterns);
+        ctxMan1.updateContext(configurationContext1);
+        Thread.sleep(1000); // Give some time for the replication to take place
+
+        String value = (String) configurationContext2.getProperty(key1);
+        assertNull(value); // The property should not have gotten replicated
     }
 
     protected void tearDown() throws Exception {

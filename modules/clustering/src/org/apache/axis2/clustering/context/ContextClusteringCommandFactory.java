@@ -231,20 +231,22 @@ public final class ContextClusteringCommandFactory {
                                       String ctxClassName,
                                       Map excludedPropertyPatterns) {
 
-        // First check in the default excludes
-        List defaultExcludes =
+        // Check in the excludes list specific to the context
+        List specificExcludes =
+                (List) excludedPropertyPatterns.get(ctxClassName);
+        boolean isExcluded = false;
+        if (specificExcludes != null) {
+            isExcluded = isExcluded(specificExcludes, propertyName);
+        }
+        if (!isExcluded) {
+            // check in the default excludes
+            List defaultExcludes =
                 (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
-        if (defaultExcludes == null) {
-            return false;
+            if (defaultExcludes != null) {
+                isExcluded = isExcluded(defaultExcludes, propertyName);
+            }
         }
-        if (isExcluded(defaultExcludes, propertyName)) {
-            return true;
-        } else {
-            // If not, check in the excludes list specific to the context
-            List specificExcludes =
-                    (List) excludedPropertyPatterns.get(ctxClassName);
-            return isExcluded(specificExcludes, propertyName);
-        }
+        return isExcluded;
     }
 
     private static boolean isExcluded(List list, String propertyName) {
