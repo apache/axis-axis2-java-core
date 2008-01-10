@@ -134,12 +134,12 @@ public class BeanUtil {
                 ExcludeInfo excludeInfo = axisService.getExcludeInfo();
                 if (excludeInfo != null) {
                     beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getQualifiedName());
-                    for (int i = 0; i < properties.length; i++) {
-                        JProperty property = properties[i];
-                        String propertyName = getCorrectName(property.getSimpleName());
-                        if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)) {
-                            propertyList.add(property);
-                        }
+                }
+                for (int i = 0; i < properties.length; i++) {
+                    JProperty property = properties[i];
+                    String propertyName = getCorrectName(property.getSimpleName());
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcluedProperty(propertyName)) {
+                        propertyList.add(property);
                     }
                 }
                 supClass = supClass.getSuperclass();
