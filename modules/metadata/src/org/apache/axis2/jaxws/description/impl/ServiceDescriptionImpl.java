@@ -168,9 +168,15 @@ class ServiceDescriptionImpl
         // If there's a WSDL URL specified in the sparse composite, that is a override, for example
         // from a JSR-109 deployment descriptor, and that's the one to use.
         if (sparseCompositeWsdlURL != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
+            }
             this.wsdlURL = sparseCompositeWsdlURL;
         } else {
             this.wsdlURL = wsdlURL;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Wsdl Location value used: " + this.wsdlURL);
         }
         // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
@@ -199,6 +205,13 @@ class ServiceDescriptionImpl
                     wsdlUrl = createWsdlURL(wsdlLocation);
                 }
                 if (wsdlUrl == null) {
+                    // This check is necessary because Unix/Linux file paths begin
+                    // with a '/'. When adding the prefix 'jar:file:/' we may end
+                    // up with '//' after the 'file:' part. This causes the URL 
+                    // object to treat this like a remote resource
+                    if(wsdlLocation.indexOf("/") == 0) {
+                        wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+                    }
                     wsdlUrl = createWsdlURL("file:/" + wsdlLocation);
                 }
                 

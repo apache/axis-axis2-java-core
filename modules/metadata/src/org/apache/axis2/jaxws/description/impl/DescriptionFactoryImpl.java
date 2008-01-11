@@ -120,7 +120,7 @@ public class DescriptionFactoryImpl {
                         log.debug("Client-side service description created with service class: " + serviceClass
                                   + ", Service QN: " + serviceQName
                                   + ", and DBC: " + sparseComposite);
-                        log.debug(serviceDesc.toString());
+                        log.debug(serviceDescImpl.toString());
                     }
 
                 } else {

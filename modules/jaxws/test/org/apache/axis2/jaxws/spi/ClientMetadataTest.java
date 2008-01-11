@@ -524,7 +524,16 @@ public class ClientMetadataTest extends TestCase {
         // If the wsdlLocation in the composite specifies a protocol (like file: or http:) then
         // it should be used as-is.  Otherwise (as shown by the other tests), it is treated as
         // a path on the local filesystem.
-        String fullWsdlLocation = "file:/" + getWsdlLocation(overridenWsdl);
+        String wsdlLocation = getWsdlLocation(overridenWsdl);
+        // This check is necessary because Unix/Linux file paths begin
+        // with a '/'. When adding the prefix 'jar:file:/' we may end
+        // up with '//' after the 'file:' part. This causes the URL 
+        // object to treat this like a remote resource
+        if(wsdlLocation.indexOf("/") == 0) {
+            wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+        }
+
+        String fullWsdlLocation = "file:/" + wsdlLocation;
         WebServiceClientAnnot wsClientAnno = WebServiceClientAnnot.createWebServiceClientAnnotImpl(null, null, fullWsdlLocation);
         composite.setWebServiceClientAnnot(wsClientAnno);
         ServiceDelegate.setServiceMetadata(composite);
@@ -565,7 +574,16 @@ public class ClientMetadataTest extends TestCase {
      */
     public void testInvalidWsdlLocationOverrideWithProtocol() {
         DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
-        String fullWsdlLocation = "http:/" + getWsdlLocation("InvalidFileName.wsdl");
+        String wsdlLocation = getWsdlLocation("InvalidFileName.wsdl");
+        // This check is necessary because Unix/Linux file paths begin
+        // with a '/'. When adding the prefix 'jar:file:/' we may end
+        // up with '//' after the 'file:' part. This causes the URL 
+        // object to treat this like a remote resource
+        if(wsdlLocation.indexOf("/") == 0) {
+            wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+        }
+
+        String fullWsdlLocation = "http:/" + wsdlLocation;
         
         WebServiceClientAnnot wsClientAnno = WebServiceClientAnnot.createWebServiceClientAnnotImpl(null, null, fullWsdlLocation);
         composite.setWebServiceClientAnnot(wsClientAnno);
