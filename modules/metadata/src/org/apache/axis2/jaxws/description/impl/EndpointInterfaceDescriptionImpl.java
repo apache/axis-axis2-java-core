@@ -68,7 +68,8 @@ class EndpointInterfaceDescriptionImpl
     private Map<QName, List<OperationDescription>> dispatchableOperations = new HashMap<QName, List<OperationDescription>>();
     // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
     // specify an @WebService.endpointInterface.
-    private Class seiClass;
+    // TODO: (JLB) Remove commented out code
+//    private Class seiClass;
     private DescriptionBuilderComposite dbc;
 
     //Logging setup
@@ -114,27 +115,38 @@ class EndpointInterfaceDescriptionImpl
         }
     }
 
+    /**
+     * Construct a service requester (aka client-side) EndpointInterfaceDescription for the
+     * given SEI class.  This constructor is used if hierachy is being built fully from annotations
+     * and not WSDL.
+     * @param sei
+     * @param parent
+     */
     EndpointInterfaceDescriptionImpl(Class sei, EndpointDescriptionImpl parent) {
-        seiClass = sei;
         parentEndpointDescription = parent;
+        dbc = new DescriptionBuilderComposite();
+        dbc.setCorrespondingClass(sei);
 
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
-        // TODO:  Testcases that do and do not include @WebMethod anno
-        for (Method method : getSEIMethods(seiClass)) {
+        for (Method method : getSEIMethods(dbc.getCorrespondingClass())) {
             OperationDescription operation = new OperationDescriptionImpl(method, this);
             addOperation(operation);
         } 
     }
 
     /**
-     * Build from AxisService
+     * Construct a service requester (aka client-side) EndpointInterfaceDescrption for
+     * an SEI represented by an AxisService.  This constructor is used if the hierachy is
+     * being built fully from WSDL.  The AxisService and underlying AxisOperations were built
+     * based on the WSDL, so we will use them to create the necessary objects.
      *
      * @param parent
      */
     EndpointInterfaceDescriptionImpl(EndpointDescriptionImpl parent) {
         parentEndpointDescription = parent;
+        dbc = new DescriptionBuilderComposite();
         AxisService axisService = parentEndpointDescription.getAxisService();
         if (axisService != null) {
             ArrayList publishedOperations = axisService.getPublishedOperations();
@@ -206,8 +218,6 @@ class EndpointInterfaceDescriptionImpl
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
-
-        // TODO:  Testcases that do and do not include @WebMethod anno
 
         //We are processing the SEI composite
         //For every MethodDescriptionComposite in this list, call OperationDescription 
@@ -300,13 +310,17 @@ class EndpointInterfaceDescriptionImpl
      * @param sei
      */
     void updateWithSEI(Class sei) {
-        if (seiClass != null && seiClass != sei)
-        	throw ExceptionFactory.makeWebServiceException(new UnsupportedOperationException(Messages.getMessage("seiProcessingErr")));
-        else if (seiClass != null && seiClass == sei)
+        Class seiClass = dbc.getCorrespondingClass();
+        if (seiClass != null && seiClass != sei) {
+            throw ExceptionFactory.makeWebServiceException(new UnsupportedOperationException(Messages.getMessage("seiProcessingErr")));
+        }
+        else if (seiClass != null && seiClass == sei) {
             // We've already done the necessary updates for this SEI
             return;
+        }
         else if (sei != null) {
             seiClass = sei;
+            dbc.setCorrespondingClass(sei);
             // Update (or possibly add) the OperationDescription for each of the methods on the SEI.
             for (Method seiMethod : getSEIMethods(seiClass)) {
 
@@ -537,7 +551,7 @@ class EndpointInterfaceDescriptionImpl
     }
 
     public Class getSEIClass() {
-        return seiClass;
+        return dbc.getCorrespondingClass();
     }
     // Annotation-realted getters
 
@@ -548,20 +562,12 @@ class EndpointInterfaceDescriptionImpl
         // TODO: Test with sei Null, not null, SOAP Binding annotated, not annotated
 
         if (soapBindingAnnotation == null) {
-            if (dbc != null) {
-                soapBindingAnnotation = dbc.getSoapBindingAnnot();
-            } else {
-                if (seiClass != null) {
-                    soapBindingAnnotation = 
-                        (SOAPBinding)getAnnotation(seiClass,SOAPBinding.class);
-                }
-            }
+            soapBindingAnnotation = dbc.getSoapBindingAnnot();
         }
         return soapBindingAnnotation;
     }
 
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
-        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingStyle();
     }
 
@@ -577,7 +583,6 @@ class EndpointInterfaceDescriptionImpl
     }
 
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
-        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingUse();
     }
 
@@ -593,7 +598,6 @@ class EndpointInterfaceDescriptionImpl
     }
 
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
-        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingParameterStyle();
     }
 
@@ -913,20 +917,12 @@ class EndpointInterfaceDescriptionImpl
 
 
     public String getTargetNamespace() {
-        // REVIEW: WSDL/Anno mertge
         return getAnnoWebServiceTargetNamespace();
     }
 
     public WebService getAnnoWebService() {
-        // TODO Auto-generated method stub
         if (webServiceAnnotation == null) {
-            if (dbc != null) {
-                webServiceAnnotation = dbc.getWebServiceAnnot();
-            } else {
-                if (seiClass != null) {
-                    webServiceAnnotation = (WebService)getAnnotation(seiClass,WebService.class);
-                }
-            }
+            webServiceAnnotation = dbc.getWebServiceAnnot();
         }
         return webServiceAnnotation;
     }
@@ -940,16 +936,10 @@ class EndpointInterfaceDescriptionImpl
                 // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
                 // as described in JAX-WS 2.0, section 3.2" which is JAX-WS 2.0 Sec 3.2, pg 29.
                 // FIXME: Hardcoded protocol for namespace
-                if (dbc != null)
-                    webServiceTargetNamespace =
-                            DescriptionUtils.makeNamespaceFromPackageName(
-                                    DescriptionUtils.getJavaPackageName(dbc.getClassName()),
-                                    "http");
-                else
-                    webServiceTargetNamespace =
-                            DescriptionUtils.makeNamespaceFromPackageName(
-                                    DescriptionUtils.getJavaPackageName(seiClass), "http");
-
+                webServiceTargetNamespace =
+                    DescriptionUtils.makeNamespaceFromPackageName(
+                            DescriptionUtils.getJavaPackageName(dbc.getClassName()),
+                            "http");
             }
         }
         return webServiceTargetNamespace;

@@ -77,6 +77,15 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         // so we can also set the handlerchain
         if (binding == null) {
             binding = BindingUtils.createBinding(endpointDesc);
+            
+            // See if the metadata from creating the service indicates that MTOM should be enabled
+            if (binding instanceof SOAPBinding) {
+                boolean enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
+                if (enableMTOMFromMetadata) {
+                    ((SOAPBinding) binding).setMTOMEnabled(true);
+                }
+            }
+            
             if(log.isDebugEnabled()){
                 log.debug("Lookign for Handler Resolver");
             }

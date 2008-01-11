@@ -30,9 +30,23 @@ public class HandlerChainAnnot implements javax.jws.HandlerChain {
     private HandlerChainAnnot() {
 
     }
+    
+    private HandlerChainAnnot(String file, String name) {
+        this.file = file;
+        this.name = name;
+    }
 
     public static HandlerChainAnnot createHandlerChainAnnotImpl() {
         return new HandlerChainAnnot();
+    }
+    
+    public static HandlerChainAnnot createFromAnnotation(Annotation annotation) {
+        HandlerChainAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.jws.HandlerChain) {
+            javax.jws.HandlerChain hc = (javax.jws.HandlerChain) annotation;
+            returnAnnot = new HandlerChainAnnot(hc.file(), hc.name());
+        }
+        return returnAnnot;
     }
 
     public String file() {

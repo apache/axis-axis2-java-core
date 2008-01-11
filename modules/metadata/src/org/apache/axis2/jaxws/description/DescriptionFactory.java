@@ -68,6 +68,29 @@ public class DescriptionFactory {
                                                               Class serviceClass) {
         return DescriptionFactoryImpl.createServiceDescription(wsdlURL, serviceQName, serviceClass);
     }
+    
+    
+    /**
+     * Create the initial ServiceDescripton hierachy on the CLIENT side.  This allows a sparse DBC
+     * to be specified in addition to the service class.  The sparce DBC can be used to override
+     * the class annotation member values.  
+     * 
+     * @see #createServiceDescription(URL, QName, Class)
+     *  
+     * @param wsdlURL
+     * @param serviceQName
+     * @param serviceClass
+     * @param sparseComposite
+     * @param sparseCompositeKey
+     * @return
+     */
+    public static ServiceDescription createServiceDescription(URL wsdlURL, 
+            QName serviceQName, Class serviceClass, DescriptionBuilderComposite sparseComposite,
+            Object sparseCompositeKey) {
+        return DescriptionFactoryImpl.createServiceDescription(wsdlURL, serviceQName, 
+                                                               serviceClass, sparseComposite,
+                                                               sparseCompositeKey);
+    }
 
     /**
      * Retrieve or create the EndpointDescription hierachy associated with an existing CLIENT side
@@ -94,8 +117,32 @@ public class DescriptionFactory {
                                                      Class sei, QName portQName,
                                                      DescriptionFactory.UpdateType updateType) {
         return DescriptionFactoryImpl
-                .updateEndpoint(serviceDescription, sei, portQName, updateType);
-    }
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType);
+    }    
+    
+    /**
+     * Retrieve or create an EndpointDescription hierachy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  Additonal metdata may be specified in a sparse
+     * composite.  That metadata may come from a JSR-109 client deployment descriptor, for example,
+     * or from resource injection of an WebServiceRef or other Resource annotation.
+     * 
+     * @see #updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     *  
+     * @param serviceDescription
+     * @param sei
+     * @param portQName
+     * @param updateType
+     * @param composite
+     * @return
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+            Class sei, QName portQName,
+            DescriptionFactory.UpdateType updateType,
+            DescriptionBuilderComposite composite,
+            Object sparseCompositeKey) {
+        return DescriptionFactoryImpl
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);
+}
 
     /**
      * Create a full ServiceDescription hierachy on the SERVER side for EACH service implementation

@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.xml.namespace.QName;
@@ -135,4 +136,11 @@ public interface EndpointDescription {
     public abstract QName getServiceQName();
 
     public abstract Service.Mode getServiceMode();
+
+    /**
+     * Return the DescriptionBuilderComposite, if any, used to build this service description.
+     * @return
+     */
+    public DescriptionBuilderComposite getDescriptionBuilderComposite();
+
 }

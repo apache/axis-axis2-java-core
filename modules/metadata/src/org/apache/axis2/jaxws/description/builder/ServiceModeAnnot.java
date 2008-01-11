@@ -42,6 +42,15 @@ public class ServiceModeAnnot implements javax.xml.ws.ServiceMode {
     public static ServiceModeAnnot createWebServiceAnnotImpl(Service.Mode value) {
         return new ServiceModeAnnot(value);
     }
+    
+    public static ServiceModeAnnot createFromAnnotation(Annotation annotation) {
+        ServiceModeAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.xml.ws.ServiceMode) {
+            javax.xml.ws.ServiceMode sm = (javax.xml.ws.ServiceMode) annotation;
+            returnAnnot = new ServiceModeAnnot(sm.value());
+        }
+        return returnAnnot;
+    }
 
     public Service.Mode value() {
         return this.value;

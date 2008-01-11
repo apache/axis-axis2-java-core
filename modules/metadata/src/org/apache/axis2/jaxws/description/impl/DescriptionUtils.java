@@ -145,25 +145,6 @@ public class DescriptionUtils {
     }
 
     /**
-     * Return the name of the class without any package qualifier. This method should be DEPRECATED
-     * when DBC support is complete
-     *
-     * @param theClass
-     * @return the name of the class sans package qualification.
-     */
-    static String getSimpleJavaClassName(Class theClass) {
-        String returnName = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // We need the "simple name", so strip off any package information from the name
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            int startOfClassIndex = endOfPackageIndex + 1;
-            returnName = fqName.substring(startOfClassIndex);
-        }
-        return returnName;
-    }
-
-    /**
      * Return the name of the class without any package qualifier.
      *
      * @param theClass
@@ -181,26 +162,6 @@ public class DescriptionUtils {
             returnName = fqName.substring(startOfClassIndex);
         }
         return returnName;
-    }
-
-    /**
-     * Returns the package name from the class.  If no package, then returns null This method should
-     * be DEPRECATED when DBC support is complete
-     *
-     * @param theClass
-     * @return
-     */
-    static String getJavaPackageName(Class theClass) {
-        String returnPackage = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // Get the package name, if there is one
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            if (endOfPackageIndex >= 0) {
-                returnPackage = fqName.substring(0, endOfPackageIndex);
-            }
-        }
-        return returnPackage;
     }
 
     /**

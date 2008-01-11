@@ -28,7 +28,8 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
     private Class type;
     private Class value;
     private String mappedName = "";
-
+    
+    // TODO: (JLB) Remove the String versions of the Class attributes?
     private String typeString = "";
     private String valueString = "";
 
@@ -37,6 +38,20 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
 
     }
 
+    private WebServiceRefAnnot(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName) {
+        this.name = name;
+        this.wsdlLocation = wsdlLocation;
+        this.type = type;
+        this.value = value;
+        this.mappedName = mappedName;
+    }
+
+    // TODO: (JLB) Deprecate or remove this; has both Class and String for value and type
     private WebServiceRefAnnot(
             String name,
             String wsdlLocation,
@@ -58,6 +73,25 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         return new WebServiceRefAnnot();
     }
 
+    public static WebServiceRefAnnot createWebServiceRefAnnotImpl(
+            String name,
+            String wsdlLocation,
+            Class type,
+            Class value,
+            String mappedName) {
+        return new WebServiceRefAnnot(name,
+                                      wsdlLocation,
+                                      type,
+                                      value,
+                                      mappedName);
+    }
+
+    // TODO: (JLB) Why is there both a class and String for type and value?
+    // There isn't on the actual annotation, only the class is there
+    // Looks like SERV1/ws/code/websvcs/src/com/ibm/ws/websvcs/annotations/adapters/WebServiceRefAdapter.java
+    // only reference in WAS to the string "createWebServiceRefAnnotImpl", and it sets the String values, not the classes
+    // Check with Dustin, can they give us the class (instead of string) since we may not have the right classloader
+    // to create the class when the getter is called.
     public static WebServiceRefAnnot createWebServiceRefAnnotImpl(
             String name,
             String wsdlLocation,
@@ -102,11 +136,13 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         return wsdlLocation;
     }
 
+    // TODO: (JLB) Remove this?
     /** @return Returns the typeString. */
     public String getTypeString() {
         return typeString;
     }
 
+    // TODO: (JLB) Remove this?
     /** @return Returns the valueString. */
     public String getValueString() {
         return valueString;
@@ -142,11 +178,13 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef {
         return wsdlLocation;
     }
 
+    // TODO: (JLB) Remove this?
     /** @param typeString The typeString to set. */
     public void setTypeString(String typeString) {
         this.typeString = typeString;
     }
 
+    // TODO: (JLB) Remove this?
     /** @param valueString The valueString to set. */
     public void setValueString(String valueString) {
         this.valueString = valueString;
