@@ -1412,6 +1412,9 @@ public class AxisService extends AxisDescription {
 
         AxisOperation operation = null;
         Iterator children = getChildren();
+        // I could not find any spec statement that explicitly forbids using a short name in the SOAPAction header or wsa:Action element,
+        // so I believe this to be valid.  There may be customers using the shortname as the SOAPAction in their client code that would
+        // also require this support.
         while(children.hasNext() && (operation == null)){
         	AxisOperation op = (AxisOperation)children.next();
         	if(op.getName().getLocalPart().equals(soapAction)){
