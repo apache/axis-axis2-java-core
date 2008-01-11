@@ -186,7 +186,7 @@ class OutInAxisOperationClient extends OperationClient {
          * async calls alone.
          */
         boolean useAsync = false;
-        if (!options.isUseSeparateListener()) {
+        if (!mc.getOptions().isUseSeparateListener()) {
             Boolean useAsyncOption =
                     (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
             if (useAsyncOption != null) {
@@ -206,7 +206,7 @@ class OutInAxisOperationClient extends OperationClient {
             }
         }
 
-        if (useAsync || options.isUseSeparateListener()) {
+        if (useAsync || mc.getOptions().isUseSeparateListener()) {
             sendAsync(useAsync, mc);
         } else {
             if (block) {
@@ -224,7 +224,7 @@ class OutInAxisOperationClient extends OperationClient {
             throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("useAsync=" + useAsync + ", seperateListener=" +
-                    options.isUseSeparateListener());
+                    mc.getOptions().isUseSeparateListener());
         }
         /**
          * We are following the async path. If the user hasn't set a callback object then we must
