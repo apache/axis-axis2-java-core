@@ -153,6 +153,7 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
             log.error(msg, e);
             throw new AxisFault(msg, e);
         } catch(RuntimeException e) {
+            log.error(e.getMessage(), e);
             throw AxisFault.makeFault(e);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
