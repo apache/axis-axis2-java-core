@@ -73,6 +73,6 @@ public class UpdateServiceGroupContextCommand extends UpdateContextCommand {
     }
 
     public String toString() {
-        return "UpdateServiceGroupContextCommand(" + uniqueId + ")";
+        return "UpdateServiceGroupContextCommand";
     }
 }

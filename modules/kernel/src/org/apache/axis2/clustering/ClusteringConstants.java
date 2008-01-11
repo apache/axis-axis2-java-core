@@ -39,7 +39,8 @@ public final class ClusteringConstants {
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
     public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
-    public static final String TIME_TO_SEND = "local_cluster.time.to.send";
+    public static final String RECD_CONFIG_INIT_MSG = "local_recd.config.init.method";
+    public static final String RECD_STATE_INIT_MSG = "local_recd.state.init.method";
     public static final String BLOCK_ALL_REQUESTS = "local_wso2wsas.block.requests";
     public static final String LOCAL_IP_ADDRESS = "axis2.local.ip.address";
 

@@ -102,6 +102,6 @@ public class UpdateServiceContextCommand extends UpdateContextCommand {
     }
 
     public String toString() {
-        return "UpdateServiceContextCommand(" + uniqueId + ")";
+        return "UpdateServiceContextCommand";
     }
 }

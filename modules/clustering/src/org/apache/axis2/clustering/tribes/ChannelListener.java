@@ -25,9 +25,6 @@ import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
-import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
-import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
-import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
@@ -37,54 +34,33 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
 
-    /**
-     * The time a message lives in the receivedMessages Map
-     */
-    private static final int TIME_TO_LIVE = 5 * 60 * 1000; // 5 mins
-
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
     private TribesControlCommandProcessor controlCommandProcessor;
-    private ChannelSender channelSender;
 
     private ConfigurationContext configurationContext;
-    private boolean synchronizeAllMembers;
-
-    private Map receivedMessages = new HashMap();
 
     public ChannelListener(ConfigurationContext configurationContext,
                            DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
-                           TribesControlCommandProcessor controlCommandProcessor,
-                           ChannelSender sender,
-                           boolean synchronizeAllMembers) {
+                           TribesControlCommandProcessor controlCommandProcessor) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
-        this.channelSender = sender;
         this.configurationContext = configurationContext;
-        this.synchronizeAllMembers = synchronizeAllMembers;
-
-        Timer cleanupTimer = new Timer();
-        cleanupTimer.scheduleAtFixedRate(new ReceivedMessageCleanupTask(),
-                                         TIME_TO_LIVE,
-                                         TIME_TO_LIVE);
     }
 
     public void setContextManager(DefaultContextManager contextManager) {
@@ -106,8 +82,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
      * @return boolean
      */
     public boolean accept(Serializable msg, Member sender) {
-        return configurationContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) != null;
+        return true;
     }
 
     /**
@@ -137,8 +112,9 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                                           message.length,
                                           (ClassLoader[]) classLoaders.toArray(new ClassLoader[classLoaders.size()]));
         } catch (Exception e) {
-            log.error("Cannot deserialize received message", e);
-            return;
+            String errMsg = "Cannot deserialize received message";
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
         }
 
         // If the system has not still been intialized, reject all incoming messages, except the
@@ -160,70 +136,20 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         try {
             processMessage(msg, sender);
         } catch (Exception e) {
-            log.error("Cannot process message", e);
+            String errMsg = "Cannot process received message";
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
         }
     }
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
-        //TODO: Handle ACK implosion?
-
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
-            String msgId = ctxCmd.getUniqueId();
-
-            // Check for duplicate messages and ignore duplicates in order to support at-most-once semantics
-            if (receivedMessages.containsKey(msgId)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Received duplicate message " + ctxCmd);
-                }
-                return;
-            }
-            synchronized (receivedMessages) {
-                receivedMessages.put(msgId, new Long(System.currentTimeMillis()));// Let's keep track of the message as well as the time at which it was first received
-            }
-
-            // Process the message
-            contextManager.process(ctxCmd);
-
-            // Sending ACKs for ContextClusteringCommandCollection or
-            // UpdateContextCommand is sufficient
-            if (synchronizeAllMembers) { // Send ACK only if the relevant cluster config parameter is set
-                if (msg instanceof ContextClusteringCommandCollection ||
-                    msg instanceof UpdateContextCommand) {
-                    AckCommand ackCmd = new AckCommand(msgId);
-
-                    // Send the ACK
-                    this.channelSender.sendToMember(ackCmd, sender);
-                }
-            }
-        } else if (msg instanceof ConfigurationClusteringCommand &&
-                   configurationManager != null) {
+            ctxCmd.execute(configurationContext);
+        } else if (msg instanceof ConfigurationClusteringCommand && configurationManager != null) {
             configurationManager.process((ConfigurationClusteringCommand) msg);
         } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
             controlCommandProcessor.process((ControlCommand) msg, sender);
-        }
-    }
-
-    private class ReceivedMessageCleanupTask extends TimerTask {
-
-        public void run() {
-            List toBeRemoved = new ArrayList();
-            synchronized (receivedMessages) {
-                for (Iterator iter = receivedMessages.keySet().iterator(); iter.hasNext();) {
-                    String msgId = (String) iter.next();
-                    Long recdTime = (Long) receivedMessages.get(msgId);
-                    if (System.currentTimeMillis() - recdTime.longValue() >= TIME_TO_LIVE) {
-                        toBeRemoved.add(msgId);
-                    }
-                }
-                for (Iterator iter = toBeRemoved.iterator(); iter.hasNext();) {
-                    String msgId = (String) iter.next();
-                    receivedMessages.remove(msgId);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Removed message " + msgId + " from received message buffer");
-                    }
-                }
-            }
         }
     }
 }

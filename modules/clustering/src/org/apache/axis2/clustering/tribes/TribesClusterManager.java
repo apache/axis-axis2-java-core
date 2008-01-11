@@ -47,7 +47,6 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
-import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
@@ -128,9 +127,7 @@ public class TribesClusterManager implements ClusterManager {
         channelListener = new ChannelListener(configurationContext,
                                               configurationManager,
                                               contextManager,
-                                              controlCmdProcessor,
-                                              channelSender,
-                                              synchronizeAllMembers());
+                                              controlCmdProcessor);
 
         controlCmdProcessor.setChannelSender(channelSender);
         channel = new GroupChannel();
@@ -159,6 +156,8 @@ public class TribesClusterManager implements ClusterManager {
         } else {
             domain = "apache.axis2.domain".getBytes();
         }
+
+        // Add a DomainFilterInterceptor
         channel.getMembershipService().setDomain(domain);
         DomainFilterInterceptor dfi = new DomainFilterInterceptor();
         dfi.setDomain(domain);
@@ -186,10 +185,17 @@ public class TribesClusterManager implements ClusterManager {
        mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
 //        OrderInterceptor orderInterceptor = new OrderInterceptor();
-        
 
+
+        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor(channel);
+        channel.addInterceptor(atMostOnceInterceptor);
+        atMostOnceInterceptor.setPrevious(dfi);
+
+        // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-        tcpFailureDetector.setPrevious(dfi);
+//        tcpFailureDetector.setPrevious(dfi);
+        tcpFailureDetector.setPrevious(atMostOnceInterceptor);
         channel.addInterceptor(tcpFailureDetector);
 
         channel.addChannelListener(channelListener);
@@ -211,7 +217,6 @@ public class TribesClusterManager implements ClusterManager {
         }
         channelSender.setChannel(channel);
 
-//        Member[] members = channel.getMembers();
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers();
 
@@ -250,6 +255,7 @@ public class TribesClusterManager implements ClusterManager {
         List sentMembersList = new ArrayList();
         sentMembersList.add(TribesUtil.getLocalHost(channel));
         Member[] members = MembershipManager.getMembers();
+
         while (members.length > 0 &&
                configurationContext.
                        getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
@@ -261,13 +267,10 @@ public class TribesClusterManager implements ClusterManager {
                                 MembershipManager.getLongestLivingMember() : // First try to get from the longest alive member
                                 MembershipManager.getRandomMember(); // Else get from a random member
                 if (!sentMembersList.contains(TribesUtil.getHost(member))) {
-                    long tts = sender.sendToMember(command, member);
-                    configurationContext.
-                            setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
-                                                     new Long(tts));
+                    sender.sendToMember(command, member);
                     sentMembersList.add(TribesUtil.getHost(member));
                     log.debug("WAITING FOR INITIALIZATION MESSAGE...");
-                    Thread.sleep(tts + 5 * (numberOfTries + 1));
+                    Thread.sleep(10 * (numberOfTries + 1));
                 }
             } catch (Exception e) {
                 log.error("Cannot get initialization information", e);

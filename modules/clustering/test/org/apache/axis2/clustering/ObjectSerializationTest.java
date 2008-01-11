@@ -16,8 +16,6 @@
 package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
-import org.apache.axis2.clustering.control.AckCommand;
-import org.apache.axis2.clustering.TestDO;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,17 +29,6 @@ import java.io.ObjectOutputStream;
 public class ObjectSerializationTest extends TestCase {
 
     public void testSerialization() throws IOException, ClassNotFoundException {
-        AckCommand ackCommand = new AckCommand("uuid");
-        ackCommand.setMemberId("123456");
-
-        AckCommand ackCommand2 = (AckCommand) copy(ackCommand);
-
-        assertNotNull(ackCommand2);
-        assertFalse(ackCommand.equals(ackCommand2));
-        assertEquals(ackCommand.getUniqueId(), ackCommand2.getUniqueId());
-    }
-
-    public void testSerialization2() throws IOException, ClassNotFoundException {
         TestDO testDO = new TestDO("name", "value");
         TestDO testDO2 = (TestDO) copy(testDO);
 

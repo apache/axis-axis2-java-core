@@ -22,9 +22,7 @@ package org.apache.axis2.clustering.context;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
-import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.clustering.tribes.ChannelSender;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
@@ -32,7 +30,11 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.Parameter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class DefaultContextManager implements ContextManager {
 
@@ -42,7 +44,6 @@ public class DefaultContextManager implements ContextManager {
     private Map parameters = new HashMap();
 
     private ChannelSender sender;
-    private ContextReplicationProcessor processor = new ContextReplicationProcessor();
 
     private Map excludedReplicationPatterns = new HashMap();
 
@@ -54,55 +55,41 @@ public class DefaultContextManager implements ContextManager {
     public DefaultContextManager() {
     }
 
-    public String updateContext(AbstractContext context) throws ClusteringFault {
+    public void updateContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand cmd =
                 ContextClusteringCommandFactory.getUpdateCommand(context,
                                                                  excludedReplicationPatterns,
                                                                  false);
         if (cmd != null) {
-            processor.process(cmd);
-            return cmd.getUniqueId();
+            sender.sendToGroup(cmd);
         }
-        return null;
     }
 
-    public String updateContext(AbstractContext context,
+    public void updateContext(AbstractContext context,
                                 String[] propertyNames) throws ClusteringFault {
         ContextClusteringCommand cmd =
                 ContextClusteringCommandFactory.getUpdateCommand(context, propertyNames);
         if (cmd != null) {
-            processor.process(cmd);
-            return cmd.getUniqueId();
+            sender.sendToGroup(cmd);
         }
-        return null;
     }
 
-    public String updateContexts(AbstractContext[] contexts) throws ClusteringFault {
+    public void updateContexts(AbstractContext[] contexts) throws ClusteringFault {
         ContextClusteringCommandCollection cmd =
                 ContextClusteringCommandFactory.getCommandCollection(contexts,
                                                                      excludedReplicationPatterns);
-        processor.process(cmd);
-        return cmd.getUniqueId();
+        sender.sendToGroup(cmd);
     }
 
-    public String removeContext(AbstractContext context) throws ClusteringFault {
+    public void removeContext(AbstractContext context) throws ClusteringFault {
         ContextClusteringCommand cmd = ContextClusteringCommandFactory.getRemoveCommand(context);
-        processor.process(cmd);
-        return cmd.getUniqueId();
+        sender.sendToGroup(cmd);
     }
 
     public boolean isContextClusterable(AbstractContext context) {
         return (context instanceof ConfigurationContext) ||
                (context instanceof ServiceContext) ||
                (context instanceof ServiceGroupContext);
-    }
-
-    public boolean isMessageAcknowledged(String messageUniqueId) throws ClusteringFault {
-        return AckManager.isMessageAcknowledged(messageUniqueId, sender);
-    }
-
-    public void process(ContextClusteringCommand command) throws ClusteringFault {
-        command.execute(configContext);
     }
 
     public void setContextManagerListener(ContextManagerListener listener) {
@@ -114,7 +101,7 @@ public class DefaultContextManager implements ContextManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configContext = configurationContext;
-        if(listener != null){
+        if (listener != null) {
             listener.setConfigurationContext(configContext);
         }
     }
@@ -156,43 +143,4 @@ public class DefaultContextManager implements ContextManager {
         throw new UnsupportedOperationException();
     }
     // ---------------------------------------------------------------------------------------------
-
-    private class ContextReplicationProcessor {
-        public void process(final ContextClusteringCommand cmd) throws ClusteringFault {
-
-            // If the sender is NULL, it means the TribesClusterManager is still being initialized
-            // So we need to busy wait.
-            if (sender == null) {
-                Thread processorThread = new Thread("ProcessorThread") {
-                    public void run() {
-                        do {
-                            try {
-                                Thread.sleep(300);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } while (sender == null);
-                        try {
-                            long tts = sender.sendToGroup(cmd);
-                            configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
-                                                                   new Long(tts));
-                        } catch (ClusteringFault clusteringFault) {
-                            AckManager.removeMessage(cmd.getUniqueId());
-                            throw new RuntimeException(clusteringFault);
-                        }
-                    }
-                };
-                processorThread.start();
-            } else {
-                try {
-                    long tts = sender.sendToGroup(cmd);
-                    configContext.setNonReplicableProperty(ClusteringConstants.TIME_TO_SEND,
-                                                           new Long(tts));
-                } catch (ClusteringFault clusteringFault) {
-                    AckManager.removeMessage(cmd.getUniqueId());
-                    throw clusteringFault;
-                }
-            }
-        }
-    }
 }

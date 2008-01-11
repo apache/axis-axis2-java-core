@@ -39,23 +39,21 @@ public class ChannelSender implements MessageSender {
     private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
 
-    public long sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if (channel == null) {
-            return 0;
+            return;
         }
-        long timeToSend = 0;
-
         Member[] members = MembershipManager.getMembers();
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
         if (members.length > 0) {
             try {
-                long start = System.currentTimeMillis();
-                channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
-//                channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
-                timeToSend = System.currentTimeMillis() - start;
-                log.debug("Sent " + msg + " to group");
+                channel.send(members, toByteMessage(msg),
+                             Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent " + msg + " to group");
+                }
             } catch (NotSerializableException e) {
                 String message = "Could not send command message " + msg +
                                  " to group since it is not serializable.";
@@ -76,7 +74,6 @@ public class ChannelSender implements MessageSender {
                 log.warn(message, e);
             }
         }
-        return timeToSend;
     }
 
     private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {
@@ -96,21 +93,22 @@ public class ChannelSender implements MessageSender {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          toByteMessage(msg),
                          Channel.SEND_OPTIONS_USE_ACK);
-            log.debug("Sent " + msg + " to self");
+            if (log.isDebugEnabled()) {
+                log.debug("Sent " + msg + " to self");
+            }
         } catch (Exception e) {
             throw new ClusteringFault(e);
         }
     }
 
-    public long sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
-        long timeToSend = 0;
+    public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
             if (member.isReady()) {
-                long start = System.currentTimeMillis();
-                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
-//                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_USE_ACK);
-                timeToSend = System.currentTimeMillis() - start;
-                log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
+                channel.send(new Member[]{member}, toByteMessage(cmd),
+                             Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
+                }
             }
         } catch (NotSerializableException e) {
             String message = "Could not send command message to " + TribesUtil.getHost(member) +
@@ -130,7 +128,6 @@ public class ChannelSender implements MessageSender {
                              ". Reason " + e.getMessage();
             log.warn(message, e);
         }
-        return timeToSend;
     }
 
     public Channel getChannel() {

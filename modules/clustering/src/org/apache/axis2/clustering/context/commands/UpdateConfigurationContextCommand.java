@@ -31,6 +31,6 @@ public class UpdateConfigurationContextCommand extends UpdateContextCommand {
     }
 
     public String toString() {
-        return "UpdateConfigurationContextCommand(" + uniqueId + ")";
+        return "UpdateConfigurationContextCommand";
     }
 }

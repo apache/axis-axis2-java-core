@@ -26,7 +26,6 @@ import org.apache.axis2.clustering.context.commands.UpdateConfigurationContextCo
 import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
 import org.apache.axis2.clustering.context.commands.UpdateServiceContextCommand;
 import org.apache.axis2.clustering.context.commands.UpdateServiceGroupContextCommand;
-import org.apache.axis2.clustering.tribes.AckManager;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
@@ -64,8 +63,6 @@ public final class ContextClusteringCommandFactory {
                 commands.add(cmd);
             }
         }
-        collection.setUniqueId(UUIDGenerator.getUUID());
-        AckManager.addInitialAcknowledgement(collection);
         return collection;
     }
 
@@ -82,15 +79,12 @@ public final class ContextClusteringCommandFactory {
 
         UpdateContextCommand cmd = toUpdateContextCommand(context);
         if (cmd != null) {
-            cmd.setUniqueId(UUIDGenerator.getUUID());
             fillProperties(cmd,
                            context,
                            excludedPropertyPatterns,
                            includeAllProperties);
             if (cmd.isPropertiesEmpty()) {
                 cmd = null;
-            } else {
-                AckManager.addInitialAcknowledgement(cmd);
             }
         }
 
@@ -107,13 +101,10 @@ public final class ContextClusteringCommandFactory {
 
         UpdateContextCommand cmd = toUpdateContextCommand(context);
         if (cmd != null) {
-            cmd.setUniqueId(UUIDGenerator.getUUID());
             fillProperties(cmd, context, propertyNames);
             if (cmd.isPropertiesEmpty()) {
                 cmd = null;
-            } else {
-                AckManager.addInitialAcknowledgement(cmd);
-            }
+            } 
         }
 
         synchronized (context) {
@@ -272,7 +263,6 @@ public final class ContextClusteringCommandFactory {
         if (abstractContext instanceof ServiceGroupContext) {
             ServiceGroupContext sgCtx = (ServiceGroupContext) abstractContext;
             DeleteServiceGroupContextCommand cmd = new DeleteServiceGroupContextCommand();
-            cmd.setUniqueId(UUIDGenerator.getUUID());
             cmd.setServiceGroupContextId(sgCtx.getId());
 
             return cmd;

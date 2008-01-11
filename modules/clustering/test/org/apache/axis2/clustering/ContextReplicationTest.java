@@ -31,6 +31,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.server.HttpUtils;
 
@@ -38,11 +39,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Tests the replication of properties placed the ConfigurationContext, ServiceGroupContext &
+ * ServiceContext
  */
 public class ContextReplicationTest extends TestCase {
 
     private static final String TEST_SERVICE_NAME = "testService";
+
+    private static final Parameter domainParam =
+            new Parameter(ClusteringConstants.DOMAIN, "axis2.domain." + UUIDGenerator.getUUID());
 
     // --------------- Cluster-1 ------------------------------------------------------
     private ClusterManager clusterManager1;
@@ -73,6 +78,7 @@ public class ContextReplicationTest extends TestCase {
         ctxMan1 = getContextManager();
         configMan1 = getConfigurationManager();
         clusterManager1 = getClusterManager(configurationContext1, ctxMan1, configMan1);
+        clusterManager1.addParameter(domainParam);
         clusterManager1.init();
         System.out.println("ClusterManager-1 successfully initialized");
 
@@ -84,6 +90,7 @@ public class ContextReplicationTest extends TestCase {
         ctxMan2 = getContextManager();
         configMan2 = getConfigurationManager();
         clusterManager2 = getClusterManager(configurationContext2, ctxMan2, configMan2);
+        clusterManager2.addParameter(domainParam);
         clusterManager2.init();
         System.out.println("ClusterManager-2 successfully initialized");
     }
@@ -139,8 +146,6 @@ public class ContextReplicationTest extends TestCase {
             String val1 = "configCtxVal1";
             configurationContext1.setProperty(key1, val1);
             ctxMan1.updateContext(configurationContext1);
-            Thread.sleep(1000); // Give some time for the replication to take place
-
             String value = (String) configurationContext2.getProperty(key1);
             assertEquals(val1, value);
         }
@@ -150,8 +155,6 @@ public class ContextReplicationTest extends TestCase {
             String val2 = "configCtxVal1";
             configurationContext2.setProperty(key2, val2);
             ctxMan2.updateContext(configurationContext2);
-            Thread.sleep(1000); // Give some time for the replication to take place
-
             String value = (String) configurationContext1.getProperty(key2);
             assertEquals(val2, value);
         }
@@ -165,8 +168,6 @@ public class ContextReplicationTest extends TestCase {
         {
             configurationContext1.setProperty(key1, val1);
             ctxMan1.updateContext(configurationContext1);
-            Thread.sleep(1000); // Give some time for the replication to take place
-
             String value = (String) configurationContext2.getProperty(key1);
             assertEquals(val1, value);
         }
@@ -174,8 +175,6 @@ public class ContextReplicationTest extends TestCase {
         // Next remove this property from cluster 2, replicate it, and check that it is unavailable in cluster 1
         configurationContext2.removeProperty(key1);
         ctxMan2.updateContext(configurationContext2);
-        Thread.sleep(1000); // Give some time for the replication to take place
-
         String value = (String) configurationContext1.getProperty(key1);
         assertNull(configurationContext2.getProperty(key1));
         assertNull(value);
@@ -199,8 +198,6 @@ public class ContextReplicationTest extends TestCase {
         String val1 = "sgCtxVal1";
         serviceGroupContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceGroupContext1);
-
-        Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
     }
 
@@ -223,15 +220,12 @@ public class ContextReplicationTest extends TestCase {
         String val1 = "sgCtxVal1";
         serviceGroupContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceGroupContext1);
-
-        Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
 
         // Remove the property
         serviceGroupContext2.removeProperty(key1);
         assertNull(serviceGroupContext2.getProperty(key1));
         ctxMan1.updateContext(serviceGroupContext2);
-        Thread.sleep(1000);
         assertNull(serviceGroupContext1.getProperty(key1));
     }
 
@@ -255,7 +249,6 @@ public class ContextReplicationTest extends TestCase {
         serviceGroupContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceGroupContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
     }
 
@@ -281,14 +274,12 @@ public class ContextReplicationTest extends TestCase {
         serviceGroupContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceGroupContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceGroupContext2.getProperty(key1));
 
         // Remove the property
         serviceGroupContext2.removeProperty(key1);
         assertNull(serviceGroupContext2.getProperty(key1));
         ctxMan1.updateContext(serviceGroupContext2);
-        Thread.sleep(1000);
         assertNull(serviceGroupContext1.getProperty(key1));
     }
 
@@ -315,7 +306,6 @@ public class ContextReplicationTest extends TestCase {
         serviceContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceContext2.getProperty(key1));
     }
 
@@ -342,7 +332,6 @@ public class ContextReplicationTest extends TestCase {
         serviceContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceContext2.getProperty(key1));
     }
 
@@ -370,14 +359,12 @@ public class ContextReplicationTest extends TestCase {
         serviceContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceContext2.getProperty(key1));
 
         // Remove the property
         serviceContext2.removeProperty(key1);
         assertNull(serviceContext2.getProperty(key1));
         ctxMan1.updateContext(serviceContext2);
-        Thread.sleep(1000);
         assertNull(serviceContext1.getProperty(key1));
     }
 
@@ -405,14 +392,12 @@ public class ContextReplicationTest extends TestCase {
         serviceContext1.setProperty(key1, val1);
         ctxMan1.updateContext(serviceContext1);
 
-        Thread.sleep(1000);
         assertEquals(val1, serviceContext2.getProperty(key1));
 
         // Remove the property
         serviceContext2.removeProperty(key1);
         assertNull(serviceContext2.getProperty(key1));
         ctxMan1.updateContext(serviceContext2);
-        Thread.sleep(1000);
         assertNull(serviceContext1.getProperty(key1));
     }
 
@@ -424,7 +409,6 @@ public class ContextReplicationTest extends TestCase {
         exclusionPatterns.add("local_*");
         ctxMan1.setReplicationExcludePatterns("defaults", exclusionPatterns);
         ctxMan1.updateContext(configurationContext1);
-        Thread.sleep(1000); // Give some time for the replication to take place
 
         String value = (String) configurationContext2.getProperty(key1);
         assertNull(value); // The property should not have gotten replicated
@@ -439,7 +423,6 @@ public class ContextReplicationTest extends TestCase {
         ctxMan1.setReplicationExcludePatterns("org.apache.axis2.context.ConfigurationContext",
                                               exclusionPatterns);
         ctxMan1.updateContext(configurationContext1);
-        Thread.sleep(1000); // Give some time for the replication to take place
 
         String value = (String) configurationContext2.getProperty(key1);
         assertNull(value); // The property should not have gotten replicated
@@ -467,7 +450,6 @@ public class ContextReplicationTest extends TestCase {
         ctxMan1.setReplicationExcludePatterns("defaults",
                                               exclusionPatterns2);
         ctxMan1.updateContext(configurationContext1);
-        Thread.sleep(1000); // Give some time for the replication to take place
 
         String value1 = (String) configurationContext2.getProperty(key1);
         assertNull(value1); // The property should not have gotten replicated

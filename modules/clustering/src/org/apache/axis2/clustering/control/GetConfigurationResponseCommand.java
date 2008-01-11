@@ -44,8 +44,10 @@ public class GetConfigurationResponseCommand extends ControlCommand {
 
         // Run this code only if this node is not already initialized
         if (configContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                getPropertyNonReplicable(ClusteringConstants.RECD_CONFIG_INIT_MSG) == null) {
             log.info("Received configuration initialization message");
+            configContext.
+                setNonReplicableProperty(ClusteringConstants.RECD_CONFIG_INIT_MSG, "true");
             if (serviceGroups != null) {
 
                 // Load all the service groups that are sent by the neighbour
