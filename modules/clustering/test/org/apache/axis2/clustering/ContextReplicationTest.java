@@ -37,6 +37,12 @@ import org.apache.axis2.transport.http.server.HttpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.net.MulticastSocket;
+import java.net.InetAddress;
+import java.net.DatagramPacket;
+import java.net.ServerSocket;
+import java.net.InetSocketAddress;
+import java.io.IOException;
 
 /**
  * Tests the replication of properties placed the ConfigurationContext, ServiceGroupContext &
@@ -67,7 +73,108 @@ public class ContextReplicationTest extends TestCase {
     private AxisService service2;
     //---------------------------------------------------------------------------------
 
+    private static boolean canMulticast;
+
+    private int getPort(int portStart, int retries) throws IOException {
+        InetSocketAddress addr = null;
+        ServerSocket socket = new ServerSocket();
+        int port = -1;
+        while (retries > 0) {
+            try {
+                addr = new InetSocketAddress(InetAddress.getByName(InetAddress.getLocalHost().getHostAddress()),
+                                             portStart);
+                socket.bind(addr);
+                port = portStart;
+                System.out.println("Can bind Server Socket to:" + addr);
+                socket.close();
+                break;
+            } catch (IOException x) {
+                retries--;
+                if (retries <= 0) {
+                    System.out.println("Unable to bind server socket to:" + addr +
+                                       " throwing error.");
+                    throw x;
+                }
+                portStart++;
+            }
+        }
+        return port;
+    }
+
+    private void checkMulticast() {
+
+        // Which port should we listen to
+        final int port;
+        try {
+            port = getPort(4000, 1000);
+        } catch (IOException e) {
+            e.printStackTrace();
+            canMulticast = false;
+            return;
+        }
+
+        // Which address
+        final String group = "225.4.5.6";
+
+        Thread receiver = new Thread() {
+            public void run() {
+                try {
+                    MulticastSocket s = new MulticastSocket(port);
+                    s.joinGroup(InetAddress.getByName(group));
+
+                    // Create a DatagramPacket and do a receive
+                    byte buf[] = new byte[1024];
+                    DatagramPacket pack = new DatagramPacket(buf, buf.length);
+                    s.receive(pack);
+
+                    System.out.println("Received data from: " + pack.getAddress().toString() +
+                                       ":" + pack.getPort() + " with length: " +
+                                       pack.getLength());
+                    s.leaveGroup(InetAddress.getByName(group));
+                    s.close();
+                    canMulticast = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    canMulticast = false;
+                }
+            }
+        };
+        receiver.start();
+
+        Thread sender = new Thread() {
+            public void run() {
+                try {
+                    MulticastSocket s = new MulticastSocket();
+                    byte buf[] = new byte[10];
+                    for (int i = 0; i < buf.length; i++) {
+                        buf[i] = (byte) i;
+                    }
+                    DatagramPacket pack = new DatagramPacket(buf, buf.length,
+                                                             InetAddress.getByName(group), port);
+                    s.setTimeToLive(2);
+                    s.send(pack);
+                    System.out.println("Sent test data");
+                    s.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    canMulticast = false;
+                }
+            }
+        };
+        sender.start();
+    }
+
+    public static void main(String[] args) {
+        new ContextReplicationTest().checkMulticast();
+    }
+
     protected void setUp() throws Exception {
+        checkMulticast();
+        if (!canMulticast) {
+            System.out.println("[WARNING] Aborting clustering test since multicasting cannot be carried out");
+            return;
+        }
+
         System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, HttpUtils.getIpAddress());
 
         // First cluster
@@ -141,6 +248,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInConfigurationContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         {
             String key1 = "configCtxKey";
             String val1 = "configCtxVal1";
@@ -161,6 +272,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromConfigurationContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         String key1 = "configCtxKey";
         String val1 = "configCtxVal1";
 
@@ -181,6 +296,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceGroupContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);
@@ -202,6 +320,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceGroupContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         // Add the property
         ServiceGroupContext serviceGroupContext1 =
@@ -230,6 +351,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceGroupContext2() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         String sgcID = UUIDGenerator.getUUID();
 
         ServiceGroupContext serviceGroupContext1 =
@@ -253,6 +378,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceGroupContext2() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         // Add the property
         String sgcID = UUIDGenerator.getUUID();
@@ -284,6 +412,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);
@@ -310,6 +441,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceContext2() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         ServiceGroupContext serviceGroupContext1 =
                 configurationContext1.createServiceGroupContext(serviceGroup1);
@@ -336,6 +470,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceContext() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         // Add the property
         ServiceGroupContext serviceGroupContext1 =
@@ -369,6 +506,9 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceContext2() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
 
         // Add the property
         ServiceGroupContext serviceGroupContext1 =
@@ -402,6 +542,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion1() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         String key1 = "local_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
@@ -415,6 +559,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion2() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         String key1 = "local_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
@@ -429,6 +577,10 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion3() throws Exception {
+        if (!canMulticast) {
+            return;
+        }
+
         String key1 = "local1_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
@@ -462,7 +614,11 @@ public class ContextReplicationTest extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        clusterManager1.shutdown();
-        clusterManager2.shutdown();
+        if (clusterManager1 != null) {
+            clusterManager1.shutdown();
+        }
+        if (clusterManager2 != null) {
+            clusterManager2.shutdown();
+        }
     }
 }
