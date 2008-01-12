@@ -38,6 +38,12 @@ public class ChannelSender implements MessageSender {
 
     private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
+    private boolean synchronizeAllMembers;
+
+    public ChannelSender(Channel channel, boolean synchronizeAllMembers) {
+        this.channel = channel;
+        this.synchronizeAllMembers = synchronizeAllMembers;
+    }
 
     public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if (channel == null) {
@@ -49,8 +55,12 @@ public class ChannelSender implements MessageSender {
         // causing a view change. All nodes in a view should get the msg
         if (members.length > 0) {
             try {
-                channel.send(members, toByteMessage(msg),
-                             Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                if (synchronizeAllMembers) {
+                    channel.send(members, toByteMessage(msg),
+                                 Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                } else {
+                    channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_ASYNCHRONOUS);
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("Sent " + msg + " to group");
                 }
@@ -61,13 +71,13 @@ public class ChannelSender implements MessageSender {
                 throw new ClusteringFault(message, e);
             } catch (ChannelException e) {
                 log.error("Could not send message to some members", e);
-//                ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
-//                for (int i = 0; i < faultyMembers.length; i++) {
-//                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
-//                    Member member = faultyMember.getMember();
-//                    log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
-//                              faultyMember.getCause(), faultyMember.getCause());
-//                }
+                ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+                for (int i = 0; i < faultyMembers.length; i++) {
+                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
+                    Member member = faultyMember.getMember();
+                    log.error("Member " + TribesUtil.getHost(member) + " is faulty",
+                              faultyMember.getCause());
+                }
             } catch (Exception e) {
                 String message = "Error sending command message : " + msg +
                                  ". Reason " + e.getMessage();
@@ -117,24 +127,13 @@ public class ChannelSender implements MessageSender {
             throw new ClusteringFault(message, e);
         } catch (ChannelException e) {
             log.error("Could not send message to " + TribesUtil.getHost(member));
-//            ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
-//            log.error("Member " + TribesUtil.getHost(member) + " is faulty. Cause " +
-//                      faultyMembers[0].getCause(), faultyMembers[0].getCause());
-//            if (!(e.getCause() instanceof java.net.ConnectException)) { // If it is not a connection exception, we try to resend the message
-//                sendToMember(cmd, member);
-//            }
+            ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+            log.error("Member " + TribesUtil.getHost(member) + " is faulty",
+                      faultyMembers[0].getCause());
         } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();
             log.warn(message, e);
         }
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 }

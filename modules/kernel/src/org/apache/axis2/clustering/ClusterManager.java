@@ -70,14 +70,4 @@ public interface ClusterManager extends ParameterInclude {
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
-    /**
-     * Method to check whether all members in the cluster have to be kep in sync at all times.
-     * Typically, this will require each member in the cluster to ACKnowledge receipt of a
-     * particular message, which may have a significant performance hit.
-     *
-     * @return true - if all members in the cluster should be kept in sync at all times,
-     *         false otherwise
-     */
-    boolean synchronizeAllMembers();
-
 }

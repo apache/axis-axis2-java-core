@@ -123,14 +123,12 @@ public class TribesClusterManager implements ClusterManager {
             }
         }
 
-        channelSender = new ChannelSender();
-        channelListener = new ChannelListener(configurationContext,
-                                              configurationManager,
-                                              contextManager,
-                                              controlCmdProcessor);
+        channel = new GroupChannel();
+        channelSender = new ChannelSender(channel, synchronizeAllMembers());
+        channelListener = new ChannelListener(configurationContext, configurationManager,
+                                              contextManager, controlCmdProcessor);
 
         controlCmdProcessor.setChannelSender(channelSender);
-        channel = new GroupChannel();
 
         // Set the maximum number of retries, if message sending to a particular node fails
         Parameter maxRetriesParam = getParameter("maxRetries");
@@ -186,7 +184,6 @@ public class TribesClusterManager implements ClusterManager {
 
 //        OrderInterceptor orderInterceptor = new OrderInterceptor();
 
-
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
         AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor(channel);
         channel.addInterceptor(atMostOnceInterceptor);
@@ -215,7 +212,6 @@ public class TribesClusterManager implements ClusterManager {
         } catch (ChannelException e) {
             throw new ClusteringFault("Error starting Tribes channel", e);
         }
-        channelSender.setChannel(channel);
 
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers();
@@ -351,6 +347,14 @@ public class TribesClusterManager implements ClusterManager {
         }
     }
 
+    /**
+     * Method to check whether all members in the cluster have to be kep in sync at all times.
+     * Typically, this will require each member in the cluster to ACKnowledge receipt of a
+     * particular message, which may have a significant performance hit.
+     *
+     * @return true - if all members in the cluster should be kept in sync at all times, false
+     *         otherwise
+     */
     public boolean synchronizeAllMembers() {
         Parameter syncAllParam = getParameter(ClusteringConstants.SYNCHRONIZE_ALL_MEMBERS);
         return syncAllParam == null || Boolean.parseBoolean((String) syncAllParam.getValue());
