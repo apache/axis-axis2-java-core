@@ -80,6 +80,7 @@ import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
+import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
 import org.apache.woden.xml.XMLAttr;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
@@ -1083,7 +1084,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         QName elementQName = null;
 
         if (WSDL2Constants.NMTOKEN_ELEMENT.equals(messageContentModelName)) {
-            elementQName = messageReference.getElementDeclaration().getName();
+            ElementDeclaration elementDeclaration = messageReference.getElementDeclaration();
+            if (elementDeclaration == null) {
+                InterfaceMessageReferenceElement messageReferenceElement =
+                        messageReference.toElement();
+                QName qName = messageReferenceElement.getElement().getQName();
+                throw new AxisFault("Unable to find element " + qName.toString() + " reffered to by operation " + axisOperation.getName().getLocalPart());
+            }
+            elementQName = elementDeclaration.getName();
         } else if (WSDL2Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
             elementQName = Constants.XSD_ANY;
         } else
