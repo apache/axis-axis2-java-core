@@ -99,7 +99,7 @@ public class WarBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
             URL resource = classLoader.getResource(searchingStr);
             if (resource != null) {
                 try {
-                    return resource.toURI();
+                    return new URI(resource.toString());
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
