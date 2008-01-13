@@ -57,6 +57,7 @@ import org.apache.http.MethodNotSupportedException;
 import org.apache.http.ProtocolException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.UnsupportedHttpVersionException;
+import org.apache.http.RequestLine;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
@@ -140,6 +141,10 @@ public class AxisHttpService {
         HttpResponse response;
         try {
             HttpRequest request = conn.receiveRequest();
+            RequestLine requestLine = request.getRequestLine();
+            if (requestLine != null) {
+                msgContext.setProperty(HTTPConstants.HTTP_METHOD, requestLine.getMethod());
+            }
             HttpParamsLinker.link(request, this.params);
             ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
             if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
