@@ -26,21 +26,14 @@ import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.catalina.tribes.Member;
 
 /**
  * 
  */
-public class TribesControlCommandProcessor {
+public class ControlCommandProcessor {
     private ConfigurationContext configurationContext;
 
-    private ChannelSender channelSender;
-
-    public void setChannelSender(ChannelSender channelSender) {
-        this.channelSender = channelSender;
-    }
-
-    public TribesControlCommandProcessor(ConfigurationContext configurationContext) {
+    public ControlCommandProcessor(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
     }
 
@@ -48,7 +41,7 @@ public class TribesControlCommandProcessor {
         this.configurationContext = configurationContext;
     }
 
-    public void process(ControlCommand command, Member sender) throws ClusteringFault {
+    public ControlCommand process(ControlCommand command) throws ClusteringFault {
 
         if (command instanceof GetStateCommand) {
 
@@ -56,28 +49,27 @@ public class TribesControlCommandProcessor {
             // this node cannot send a response to the state requester. So we simply return.
             if (configurationContext.
                     getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
-                return;
+                return null;
             }
             command.execute(configurationContext);
             GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
             getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
-            channelSender.sendToMember(getStateRespCmd, sender);
+            return getStateRespCmd;
         } else if (command instanceof GetConfigurationCommand) {
 
             // If a GetConfigurationCommand is received by a node which has not yet initialized
             // this node cannot send a response to the state requester. So we simply return.
             if (configurationContext.
                     getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
-                return;
+                return null;
             }
             command.execute(configurationContext);
             GetConfigurationResponseCommand
                     getConfigRespCmd = new GetConfigurationResponseCommand();
             getConfigRespCmd.
                     setServiceGroups(((GetConfigurationCommand) command).getServiceGroupNames());
-            channelSender.sendToMember(getConfigRespCmd, sender);
-        } else {
-            command.execute(configurationContext);
+            return getConfigRespCmd;
         }
+        return null;
     }
 }

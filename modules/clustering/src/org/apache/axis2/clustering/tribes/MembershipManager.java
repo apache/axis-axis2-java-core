@@ -56,8 +56,12 @@ public class MembershipManager {
         return longestLivingMember;
     }
 
+    public static void removeAllMembers() {
+        members.clear();
+    }
+
     public synchronized static Member getRandomMember() {
-        if(members.size() == 0){
+        if (members.size() == 0) {
             return null;
         }
         int memberIndex = new Random().nextInt(members.size());

@@ -35,13 +35,14 @@ public class GetStateResponseCommand extends ControlCommand {
     private ContextClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
-
+        log.info("Received state initialization message");
+        
         // Run this code only if this node is not already initialized
         if (configContext.
                 getPropertyNonReplicable(ClusteringConstants.RECD_STATE_INIT_MSG) == null) {
             configContext.
                 setNonReplicableProperty(ClusteringConstants.RECD_STATE_INIT_MSG, "true");
-            log.info("Received state initialization message");
+//            log.info("Received state initialization message");
             if (commands != null) {
                 for (int i = 0; i < commands.length; i++) {
                     commands[i].execute(configContext);

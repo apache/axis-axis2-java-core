@@ -25,6 +25,7 @@ import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.tribes.TribesClusterManager;
+import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -187,7 +188,7 @@ public class ContextReplicationTest extends TestCase {
         clusterManager1 = getClusterManager(configurationContext1, ctxMan1, configMan1);
         clusterManager1.addParameter(domainParam);
         clusterManager1.init();
-        System.out.println("ClusterManager-1 successfully initialized");
+        System.out.println("---------- ClusterManager-1 successfully initialized -----------");
 
         // Second cluster
         configurationContext2 =
@@ -199,7 +200,7 @@ public class ContextReplicationTest extends TestCase {
         clusterManager2 = getClusterManager(configurationContext2, ctxMan2, configMan2);
         clusterManager2.addParameter(domainParam);
         clusterManager2.init();
-        System.out.println("ClusterManager-2 successfully initialized");
+        System.out.println("---------- ClusterManager-2 successfully initialized -----------");
     }
 
     protected ClusterManager getClusterManager(ConfigurationContext configCtx,
@@ -616,9 +617,13 @@ public class ContextReplicationTest extends TestCase {
         super.tearDown();
         if (clusterManager1 != null) {
             clusterManager1.shutdown();
+            System.out.println("------ CLuster-1 shutdown complete ------");
         }
         if (clusterManager2 != null) {
             clusterManager2.shutdown();
+            System.out.println("------ CLuster-2 shutdown complete ------");
         }
+        MembershipManager.removeAllMembers();
+        Thread.sleep(500);
     }
 }

@@ -45,6 +45,8 @@ import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
+import org.apache.catalina.tribes.group.Response;
+import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.transport.ReceiverBase;
@@ -65,14 +67,15 @@ public class TribesClusterManager implements ClusterManager {
 
     private HashMap parameters;
     private ManagedChannel channel;
+    private RpcChannel rpcChannel;
     private ConfigurationContext configurationContext;
-    private TribesControlCommandProcessor controlCmdProcessor;
+    private ControlCommandProcessor controlCmdProcessor;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
 
     public TribesClusterManager() {
         parameters = new HashMap();
-        controlCmdProcessor = new TribesControlCommandProcessor(configurationContext);
+        controlCmdProcessor = new ControlCommandProcessor(configurationContext);
     }
 
     public ContextManager getContextManager() {
@@ -127,8 +130,6 @@ public class TribesClusterManager implements ClusterManager {
         channelSender = new ChannelSender(channel, synchronizeAllMembers());
         channelListener = new ChannelListener(configurationContext, configurationManager,
                                               contextManager, controlCmdProcessor);
-
-        controlCmdProcessor.setChannelSender(channelSender);
 
         // Set the maximum number of retries, if message sending to a particular node fails
         Parameter maxRetriesParam = getParameter("maxRetries");
@@ -185,13 +186,12 @@ public class TribesClusterManager implements ClusterManager {
 //        OrderInterceptor orderInterceptor = new OrderInterceptor();
 
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor(channel);
+        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
         channel.addInterceptor(atMostOnceInterceptor);
         atMostOnceInterceptor.setPrevious(dfi);
 
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-//        tcpFailureDetector.setPrevious(dfi);
         tcpFailureDetector.setPrevious(atMostOnceInterceptor);
         channel.addInterceptor(tcpFailureDetector);
 
@@ -213,23 +213,30 @@ public class TribesClusterManager implements ClusterManager {
             throw new ClusteringFault("Error starting Tribes channel", e);
         }
 
+        // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
+        // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
+        RpcChannel rpcChannel =
+                new RpcChannel(domain, channel,
+                               new InitializationRequestHandler(controlCmdProcessor));
+
         log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers();
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
             configurationManager.setSender(channelSender);
-            getInitializationMessage(channelSender, new GetConfigurationCommand());
+            initializeSystem(rpcChannel, new GetConfigurationCommand());
         }
 
-        // If context replication is enabled, get the latest state from a neighbour  
+        // If context replication is enabled, get the latest state from a neighbour
         if (contextManager != null) {
             contextManager.setSender(channelSender);
             channelListener.setContextManager(contextManager);
-            getInitializationMessage(channelSender, new GetStateCommand());
+            initializeSystem(rpcChannel, new GetStateCommand());
             ClusteringContextListener contextListener = new ClusteringContextListener(channelSender);
             configurationContext.addContextListener(contextListener);
         }
+
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
     }
@@ -238,10 +245,12 @@ public class TribesClusterManager implements ClusterManager {
      * Get some information from a neighbour. This information will be used by this node to
      * initialize itself
      *
-     * @param sender  The utility for sending messages to the channel
-     * @param command The control command to send
+     * @param rpcChannel The utility for sending RPC style messages to the channel
+     * @param command    The control command to send
+     * @throws ClusteringFault If initialization code failed on this node
      */
-    private void getInitializationMessage(ChannelSender sender, ControlCommand command) {
+    private void initializeSystem(RpcChannel rpcChannel, ControlCommand command)
+            throws ClusteringFault {
         // If there is at least one member in the cluster,
         //  get the current initialization info from a member
         int numberOfTries = 0; // Don't keep on trying indefinitely
@@ -251,29 +260,34 @@ public class TribesClusterManager implements ClusterManager {
         List sentMembersList = new ArrayList();
         sentMembersList.add(TribesUtil.getLocalHost(channel));
         Member[] members = MembershipManager.getMembers();
+        if(members.length == 0) return;
 
-        while (members.length > 0 &&
-               configurationContext.
-                       getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-               && numberOfTries < 50) {
-
-            // While there are members and GetStateResponseCommand is not received do the following
+        while (members.length > 0 && numberOfTries < 50) {
+            Member member = (numberOfTries == 0) ?
+                            MembershipManager.getLongestLivingMember() : // First try to get from the longest member alive 
+                            MembershipManager.getRandomMember(); // Else get from a random member
+            String memberHost = TribesUtil.getHost(member);
             try {
-                Member member = (numberOfTries == 0) ?
-                                MembershipManager.getLongestLivingMember() : // First try to get from the longest alive member
-                                MembershipManager.getRandomMember(); // Else get from a random member
-                if (!sentMembersList.contains(TribesUtil.getHost(member))) {
-                    sender.sendToMember(command, member);
-                    sentMembersList.add(TribesUtil.getHost(member));
-                    log.debug("WAITING FOR INITIALIZATION MESSAGE...");
-                    Thread.sleep(10 * (numberOfTries + 1));
+                if (!sentMembersList.contains(memberHost)) {
+                    Response[] responses = rpcChannel.send(new Member[]{member},
+                                                           command,
+                                                           RpcChannel.FIRST_REPLY,
+                                                           Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                           10000);
+                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                    break;
                 }
-            } catch (Exception e) {
-                log.error("Cannot get initialization information", e);
-                break;
+            } catch (ChannelException e) {
+                log.error("Cannot get initialization information from " +
+                          memberHost + ". Will retry in 2 secs.", e);
+                sentMembersList.add(memberHost);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ignored) {
+                }
             }
-            members = MembershipManager.getMembers();
             numberOfTries++;
+            members = MembershipManager.getMembers();
         }
     }
 
@@ -320,6 +334,8 @@ public class TribesClusterManager implements ClusterManager {
         log.debug("Enter: TribesClusterManager::shutdown");
         if (channel != null) {
             try {
+                channel.removeChannelListener(rpcChannel);
+                channel.removeChannelListener(channelListener);
                 channel.stop(Channel.DEFAULT);
             } catch (ChannelException e) {
 

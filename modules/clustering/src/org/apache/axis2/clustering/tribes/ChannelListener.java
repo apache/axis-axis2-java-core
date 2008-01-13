@@ -35,6 +35,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.catalina.tribes.group.RpcMessage;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,14 +50,14 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
-    private TribesControlCommandProcessor controlCommandProcessor;
+    private ControlCommandProcessor controlCommandProcessor;
 
     private ConfigurationContext configurationContext;
 
     public ChannelListener(ConfigurationContext configurationContext,
                            DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
-                           TribesControlCommandProcessor controlCommandProcessor) {
+                           ControlCommandProcessor controlCommandProcessor) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
@@ -82,7 +83,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
      * @return boolean
      */
     public boolean accept(Serializable msg, Member sender) {
-        return true;
+        return !(msg instanceof RpcMessage);  // RpcMessages  will not be handled by this listener
     }
 
     /**
@@ -104,8 +105,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                 AxisModule module = (AxisModule) iter.next();
                 classLoaders.add(module.getModuleClassLoader());
             }
-
-
             byte[] message = ((ByteMessage) msg).getMessage();
             msg = XByteBuffer.deserialize(message,
                                           0,
@@ -120,10 +119,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         // If the system has not still been intialized, reject all incoming messages, except the
         // GetStateResponseCommand message
         if (configurationContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-            && !(msg instanceof GetStateResponseCommand) &&
-            !(msg instanceof GetConfigurationResponseCommand)) {
-
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
             log.warn("Received message " + msg +
                      " before cluster initialization has been completed from " +
                      TribesUtil.getHost(sender));
@@ -148,8 +144,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
             ctxCmd.execute(configurationContext);
         } else if (msg instanceof ConfigurationClusteringCommand && configurationManager != null) {
             configurationManager.process((ConfigurationClusteringCommand) msg);
-        } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
-            controlCommandProcessor.process((ControlCommand) msg, sender);
-        }
+        } 
     }
 }

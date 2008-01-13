@@ -61,15 +61,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     /**
      * The time a message lives in the receivedMessages Map
      */
-    private static final int TIMEOUT = 5 * 60 * 1000;
-
-    private Channel channel;
-
-
-    public AtMostOnceInterceptor(Channel channel) {
-        this();
-        this.channel = channel;
-    }
+    private static final int TIMEOUT = 60 * 1000;
 
     public AtMostOnceInterceptor() {
 
@@ -87,6 +79,9 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
                 for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
                     ChannelMessage msg = (ChannelMessage) iterator.next();
                     receivedMessages.remove(msg);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cleaned up message ");
+                    }
                 }
             }
         };
@@ -96,25 +91,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     public void messageReceived(ChannelMessage msg) {
         super.messageReceived(msg);
         if (receivedMessages.get(msg) == null) {  // If it is a new message, keep track of it
-            /*XByteBuffer message1 = msg.getMessage();
-
-
-            try {
-                List classLoaders = new ArrayList();
-                classLoaders.add(AtMostOnceInterceptor.class.getClassLoader());
-                Serializable msg2 = XByteBuffer.deserialize(message1.getBytes(),
-                                                            0,
-                                                            message1.getBytes().length,
-                                                            (ClassLoader[]) classLoaders.toArray(new ClassLoader[classLoaders.size()]));
-                log.debug("###### added new msg " + TribesUtil.getLocalHost(channel) + " msg2=" + msg2);
-            } catch (Exception e) {
-                log.error("Cannot deserialize received message", e);
-                return;
-            }*/
-
-
             receivedMessages.put(msg, new Long(System.currentTimeMillis()));
-            super.messageReceived(msg);
         } else {  // If it is a duplicate message, discard it. i.e. dont call super.messageReceived
             log.info("Duplicate message received from " + TribesUtil.getHost(msg.getAddress()));
         }
