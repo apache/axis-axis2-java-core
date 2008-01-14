@@ -107,7 +107,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
                             throw new WSDLException("WSDL4JWrapper : ", e.getMessage(), e);
                         }
                     else {
-                        urlCon = url.openConnection();
+                        urlCon = openConnection(url);
                         if(log.isDebugEnabled()) {
                              log.debug("Found URL for WSDL from jar");
                         }
@@ -183,9 +183,21 @@ public class WSDL4JWrapper implements WSDLWrapper {
             if(log.isDebugEnabled()) {
                 log.debug("Retrieving URLConnection from WSDL URL");
             }
-            connection = url.openConnection();
+            connection = openConnection(url);
         }
         return connection;
+    }
+    
+    private URLConnection openConnection(final URL url) throws IOException {
+        try {
+            return (URLConnection) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws IOException {
+                    return url.openConnection();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+           throw (IOException) e.getException();
+        }
     }
     
     private ClassLoader getThreadClassLoader() {
