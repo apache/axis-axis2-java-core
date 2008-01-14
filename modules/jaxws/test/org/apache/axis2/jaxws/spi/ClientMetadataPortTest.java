@@ -303,9 +303,8 @@ public class ClientMetadataPortTest extends TestCase {
         String endpointAddress1 = (String) requestContext1.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
         assertNotNull(endpointAddress1);
         // FIXME: We should get the first port in the WSDL, but that isn't working
+        // Depending on the JDK in use, the 2nd or 3rd port is returned
 //        assertTrue(endpointAddress.endsWith(multiPortWsdl_portLocalPart1));
-        // FIXME: This isnt working either
-//        assertTrue(endpointAddress1.endsWith(multiPortWsdl_portLocalPart3));
         
         // Set a prefered port and create the service
         QName portQN2 = new QName(namespaceURI, multiPortWsdl_portLocalPart2);
@@ -348,9 +347,8 @@ public class ClientMetadataPortTest extends TestCase {
             String endpointAddress1 = (String) requestContext1.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
             assertNotNull(endpointAddress1);
             // FIXME: We should get the first port in the WSDL, but that isn't working
+            // Depending on the JDK in use, the 2nd or 3rd port is returned
 //            assertTrue(endpointAddress.endsWith(multiPortWsdl_portLocalPart1));
-            // FIXME: This isnt working either
-//            assertTrue(endpointAddress1.endsWith(multiPortWsdl_portLocalPart3));
             
             // Set a prefered port and create the service
             QName portQN2 = new QName(namespaceURI, multiPortWsdl_portLocalPart2);
@@ -388,9 +386,8 @@ public class ClientMetadataPortTest extends TestCase {
             String endpointAddress3 = (String) requestContext3.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
             assertNotNull(endpointAddress1);
             // FIXME: We should get the first port in the WSDL, but that isn't working
+            // Depending on the JDK in use, the 2nd or 3rd port is returned
 //            assertTrue(endpointAddress.endsWith(multiPortWsdl_portLocalPart1));
-            // FIXME: This isnt working either
-//            assertTrue(endpointAddress1.endsWith(multiPortWsdl_portLocalPart3));
 
         } finally {
             ClientMetadataTest.restoreOriginalFactory();
