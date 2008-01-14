@@ -23,6 +23,19 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 public class AxisServiceTest extends TestCase {
+    public static final String PARAM_NAME = "CustomParameter";
+    public static final Object PARAM_VALUE = new Object();
+
+    class MyObserver implements ParameterObserver {
+        public boolean gotIt = false;
+
+        public void parameterChanged(String name, Object value) {
+            if (PARAM_NAME.equals(name)) {
+                assertEquals("Wrong value", PARAM_VALUE, value);
+                gotIt = true;
+            }
+        }
+    }
 
     public void testAddMessageElementQNameToOperationMappingBasic() {
         AxisService service = new AxisService();
@@ -71,5 +84,13 @@ public class AxisServiceTest extends TestCase {
         
         assertEquals(null, service.getOperationByMessageElementQName(opName));       
     }
-    
+
+    public void testParameterObserver() throws Exception {
+        AxisService service = new AxisService();
+
+        MyObserver observer = new MyObserver();
+        service.addParameterObserver(observer);
+        service.addParameter(PARAM_NAME, PARAM_VALUE);
+        assertTrue("Didn't get notification", observer.gotIt);
+    }
 }
