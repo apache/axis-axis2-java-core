@@ -49,6 +49,7 @@ import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
+import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
@@ -60,6 +61,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class TribesClusterManager implements ClusterManager {
+    public static final int MSG_ORDER_OPTION = 512;
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
     private DefaultConfigurationManager configurationManager;
@@ -72,6 +74,7 @@ public class TribesClusterManager implements ClusterManager {
     private ControlCommandProcessor controlCmdProcessor;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
+    private MembershipManager membershipManager;
 
     public TribesClusterManager() {
         parameters = new HashMap();
@@ -125,9 +128,9 @@ public class TribesClusterManager implements ClusterManager {
                 }
             }
         }
-
+        membershipManager = new MembershipManager();
         channel = new GroupChannel();
-        channelSender = new ChannelSender(channel, synchronizeAllMembers());
+        channelSender = new ChannelSender(channel, membershipManager, synchronizeAllMembers());
         channelListener = new ChannelListener(configurationContext, configurationManager,
                                               contextManager, controlCmdProcessor);
 
@@ -183,20 +186,22 @@ public class TribesClusterManager implements ClusterManager {
        mcastProps.setProperty("tcpListenPort", "4000");
        mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
 
-//        OrderInterceptor orderInterceptor = new OrderInterceptor();
+        // Add the OrderInterceptor to preserve sender ordering 
+        OrderInterceptor orderInterceptor = new OrderInterceptor();
+        orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
+        channel.addInterceptor(orderInterceptor);
 
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
         AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
         channel.addInterceptor(atMostOnceInterceptor);
-        atMostOnceInterceptor.setPrevious(dfi);
 
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-        tcpFailureDetector.setPrevious(atMostOnceInterceptor);
         channel.addInterceptor(tcpFailureDetector);
 
         channel.addChannelListener(channelListener);
-        TribesMembershipListener membershipListener = new TribesMembershipListener();
+
+        TribesMembershipListener membershipListener = new TribesMembershipListener(membershipManager);
         channel.addMembershipListener(membershipListener);
         try {
             channel.start(Channel.DEFAULT);
@@ -219,8 +224,8 @@ public class TribesClusterManager implements ClusterManager {
                 new RpcChannel(domain, channel,
                                new InitializationRequestHandler(controlCmdProcessor));
 
-        log.info("Local Tribes Member " + TribesUtil.getLocalHost(channel));
-        TribesUtil.printMembers();
+        log.info("Local Member " + TribesUtil.getLocalHost(channel));
+        TribesUtil.printMembers(membershipManager);
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
@@ -259,13 +264,13 @@ public class TribesClusterManager implements ClusterManager {
         // Do not send another request to these members
         List sentMembersList = new ArrayList();
         sentMembersList.add(TribesUtil.getLocalHost(channel));
-        Member[] members = MembershipManager.getMembers();
+        Member[] members = membershipManager.getMembers();
         if(members.length == 0) return;
 
-        while (members.length > 0 && numberOfTries < 50) {
+        while (members.length > 0 && numberOfTries < 5) {
             Member member = (numberOfTries == 0) ?
-                            MembershipManager.getLongestLivingMember() : // First try to get from the longest member alive 
-                            MembershipManager.getRandomMember(); // Else get from a random member
+                            membershipManager.getLongestLivingMember() : // First try to get from the longest member alive
+                            membershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getHost(member);
             try {
                 if (!sentMembersList.contains(memberHost)) {
@@ -274,8 +279,10 @@ public class TribesClusterManager implements ClusterManager {
                                                            RpcChannel.FIRST_REPLY,
                                                            Channel.SEND_OPTIONS_ASYNCHRONOUS,
                                                            10000);
-                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
-                    break;
+                    if (responses.length > 0) {
+                        ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                        break;
+                    }
                 }
             } catch (ChannelException e) {
                 log.error("Cannot get initialization information from " +
@@ -284,10 +291,14 @@ public class TribesClusterManager implements ClusterManager {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ignored) {
+                    log.debug("Interrupted", ignored);
                 }
             }
             numberOfTries++;
-            members = MembershipManager.getMembers();
+            members = membershipManager.getMembers();
+            if(numberOfTries >= members.length){
+                break;
+            }
         }
     }
 

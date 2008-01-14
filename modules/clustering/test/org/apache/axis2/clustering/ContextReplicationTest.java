@@ -25,7 +25,6 @@ import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.tribes.TribesClusterManager;
-import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -36,14 +35,14 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.server.HttpUtils;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.MulticastSocket;
-import java.net.InetAddress;
-import java.net.DatagramPacket;
-import java.net.ServerSocket;
-import java.net.InetSocketAddress;
-import java.io.IOException;
 
 /**
  * Tests the replication of properties placed the ConfigurationContext, ServiceGroupContext &
@@ -127,7 +126,6 @@ public class ContextReplicationTest extends TestCase {
                     byte buf[] = new byte[1024];
                     DatagramPacket pack = new DatagramPacket(buf, buf.length);
                     s.receive(pack);
-
                     System.out.println("Received data from: " + pack.getAddress().toString() +
                                        ":" + pack.getPort() + " with length: " +
                                        pack.getLength());
@@ -163,6 +161,13 @@ public class ContextReplicationTest extends TestCase {
             }
         };
         sender.start();
+
+        // Join the receiver until we can verify whether multicasting can be done
+        try {
+            receiver.join(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -267,6 +272,7 @@ public class ContextReplicationTest extends TestCase {
             String val2 = "configCtxVal1";
             configurationContext2.setProperty(key2, val2);
             ctxMan2.updateContext(configurationContext2);
+            Thread.sleep(1000);
             String value = (String) configurationContext1.getProperty(key2);
             assertEquals(val2, value);
         }
@@ -347,7 +353,7 @@ public class ContextReplicationTest extends TestCase {
         // Remove the property
         serviceGroupContext2.removeProperty(key1);
         assertNull(serviceGroupContext2.getProperty(key1));
-        ctxMan1.updateContext(serviceGroupContext2);
+        ctxMan2.updateContext(serviceGroupContext2);
         assertNull(serviceGroupContext1.getProperty(key1));
     }
 
@@ -408,7 +414,7 @@ public class ContextReplicationTest extends TestCase {
         // Remove the property
         serviceGroupContext2.removeProperty(key1);
         assertNull(serviceGroupContext2.getProperty(key1));
-        ctxMan1.updateContext(serviceGroupContext2);
+        ctxMan2.updateContext(serviceGroupContext2);
         assertNull(serviceGroupContext1.getProperty(key1));
     }
 
@@ -502,7 +508,7 @@ public class ContextReplicationTest extends TestCase {
         // Remove the property
         serviceContext2.removeProperty(key1);
         assertNull(serviceContext2.getProperty(key1));
-        ctxMan1.updateContext(serviceContext2);
+        ctxMan2.updateContext(serviceContext2);
         assertNull(serviceContext1.getProperty(key1));
     }
 
@@ -538,7 +544,7 @@ public class ContextReplicationTest extends TestCase {
         // Remove the property
         serviceContext2.removeProperty(key1);
         assertNull(serviceContext2.getProperty(key1));
-        ctxMan1.updateContext(serviceContext2);
+        ctxMan2.updateContext(serviceContext2);
         assertNull(serviceContext1.getProperty(key1));
     }
 
@@ -623,7 +629,7 @@ public class ContextReplicationTest extends TestCase {
             clusterManager2.shutdown();
             System.out.println("------ CLuster-2 shutdown complete ------");
         }
-        MembershipManager.removeAllMembers();
+//        MembershipManager.removeAllMembers();
         Thread.sleep(500);
     }
 }

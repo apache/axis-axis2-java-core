@@ -28,8 +28,8 @@ public class TribesUtil {
 
     private static Log log = LogFactory.getLog(TribesUtil.class);
 
-    public static void printMembers() {
-        Member[] members = MembershipManager.getMembers();
+    public static void printMembers(MembershipManager membershipManager) {
+        Member[] members = membershipManager.getMembers();
         if (members != null) {
             int length = members.length;
             if (length > 0) {

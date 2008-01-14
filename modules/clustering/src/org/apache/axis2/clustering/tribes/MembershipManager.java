@@ -25,21 +25,21 @@ import java.util.Random;
  * Responsible for managing the membership
  */
 public class MembershipManager {
-    private static final List members = new ArrayList();
+    private final List members = new ArrayList();
 
-    public synchronized static void memberAdded(Member member) {
+    public synchronized void memberAdded(Member member) {
         members.add(member);
     }
 
-    public synchronized static void memberDisappeared(Member member) {
+    public synchronized void memberDisappeared(Member member) {
         members.remove(member);
     }
 
-    public synchronized static Member[] getMembers() {
+    public synchronized Member[] getMembers() {
         return (Member[]) members.toArray(new Member[members.size()]);
     }
 
-    public synchronized static Member getLongestLivingMember() {
+    public synchronized Member getLongestLivingMember() {
         Member longestLivingMember = null;
         if (members.size() > 0) {
             Member member0 = (Member) members.get(0);
@@ -56,11 +56,11 @@ public class MembershipManager {
         return longestLivingMember;
     }
 
-    public static void removeAllMembers() {
+    public synchronized void removeAllMembers() {
         members.clear();
     }
 
-    public synchronized static Member getRandomMember() {
+    public synchronized Member getRandomMember() {
         if (members.size() == 0) {
             return null;
         }

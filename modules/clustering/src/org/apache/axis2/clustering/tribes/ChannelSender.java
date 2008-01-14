@@ -39,9 +39,13 @@ public class ChannelSender implements MessageSender {
     private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
     private boolean synchronizeAllMembers;
+    private MembershipManager membershipManager;
 
-    public ChannelSender(Channel channel, boolean synchronizeAllMembers) {
+    public ChannelSender(Channel channel,
+                         MembershipManager membershipManager,
+                         boolean synchronizeAllMembers) {
         this.channel = channel;
+        this.membershipManager = membershipManager;
         this.synchronizeAllMembers = synchronizeAllMembers;
     }
 
@@ -49,7 +53,7 @@ public class ChannelSender implements MessageSender {
         if (channel == null) {
             return;
         }
-        Member[] members = MembershipManager.getMembers();
+        Member[] members = membershipManager.getMembers();
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
@@ -57,7 +61,9 @@ public class ChannelSender implements MessageSender {
             try {
                 if (synchronizeAllMembers) {
                     channel.send(members, toByteMessage(msg),
-                                 Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                                 Channel.SEND_OPTIONS_USE_ACK |
+                                 Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+                                 TribesClusterManager.MSG_ORDER_OPTION);
                 } else {
                     channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_ASYNCHRONOUS);
                 }

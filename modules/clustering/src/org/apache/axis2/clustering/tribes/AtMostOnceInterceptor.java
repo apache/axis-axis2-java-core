@@ -15,45 +15,21 @@
  */
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.RemoteProcessException;
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ByteMessage;
-import org.apache.catalina.tribes.util.UUIDGenerator;
-import org.apache.catalina.tribes.io.ChannelData;
-import org.apache.catalina.tribes.io.XByteBuffer;
-import org.apache.catalina.tribes.membership.Membership;
-import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
-import org.apache.catalina.tribes.group.InterceptorPayload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.AxisModule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TimerTask;
-import java.util.Timer;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-import java.net.Socket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketTimeoutException;
-import java.net.ConnectException;
-import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Message intereceptor for handling at-most-once message processing semantics
  */
-public class AtMostOnceInterceptor extends ChannelInterceptorBase {
+public class AtMostOnceInterceptor extends ChannelInterceptorBase {          
 
     private static Log log = LogFactory.getLog(AtMostOnceInterceptor.class);
     private static final Map receivedMessages = new HashMap();
@@ -64,36 +40,58 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     private static final int TIMEOUT = 60 * 1000;
 
     public AtMostOnceInterceptor() {
-
-        TimerTask cleanupTask = new TimerTask() {
-            public void run() {
-                List toBeRemoved = new ArrayList();
-                for (Iterator iterator = receivedMessages.keySet().iterator();
-                     iterator.hasNext();) {
-                    ChannelMessage msg = (ChannelMessage) iterator.next();
-                    long arrivalTime = ((Long) receivedMessages.get(msg)).longValue();
-                    if (System.currentTimeMillis() - arrivalTime >= TIMEOUT) {
-                        toBeRemoved.add(msg);
-                    }
-                }
-                for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
-                    ChannelMessage msg = (ChannelMessage) iterator.next();
-                    receivedMessages.remove(msg);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Cleaned up message ");
-                    }
-                }
-            }
-        };
-        new Timer().scheduleAtFixedRate(cleanupTask, TIMEOUT, TIMEOUT);
+        Thread cleanupThread = new Thread(new MessageCleanupTask());
+        cleanupThread.setPriority(Thread.MIN_PRIORITY);
+        cleanupThread.start();
     }
 
     public void messageReceived(ChannelMessage msg) {
-        super.messageReceived(msg);
-        if (receivedMessages.get(msg) == null) {  // If it is a new message, keep track of it
-            receivedMessages.put(msg, new Long(System.currentTimeMillis()));
-        } else {  // If it is a duplicate message, discard it. i.e. dont call super.messageReceived
-            log.info("Duplicate message received from " + TribesUtil.getHost(msg.getAddress()));
+        synchronized (receivedMessages) {
+            if (receivedMessages.get(msg) == null) {  // If it is a new message, keep track of it
+                receivedMessages.put(msg, new Long(System.currentTimeMillis()));
+                super.messageReceived(msg);
+            } else {  // If it is a duplicate message, discard it. i.e. dont call super.messageReceived
+                log.info("Duplicate message received from " + TribesUtil.getHost(msg.getAddress()));
+            }
+        }
+    }
+
+    private class MessageCleanupTask implements Runnable {
+
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(TIMEOUT);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    List toBeRemoved = new ArrayList();
+                    synchronized (receivedMessages) {
+                        for (Iterator iterator = receivedMessages.keySet().iterator();
+                             iterator.hasNext();) {
+                            ChannelMessage msg = (ChannelMessage) iterator.next();
+                            long arrivalTime = ((Long) receivedMessages.get(msg)).longValue();
+                            if (System.currentTimeMillis() - arrivalTime >= TIMEOUT) {
+                                toBeRemoved.add(msg);
+                            }
+                        }
+                        long start = System.currentTimeMillis();
+                        for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
+                            ChannelMessage msg = (ChannelMessage) iterator.next();
+                            receivedMessages.remove(msg);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Cleaned up message ");
+                            }
+                            if(System.currentTimeMillis() - start > 30000){
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Exception occurred while trying to cleanup messages", e);
+                }
+            }
         }
     }
 }
