@@ -37,7 +37,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     /**
      * The time a message lives in the receivedMessages Map
      */
-    private static final int TIMEOUT = 60 * 1000;
+    private static final int TIMEOUT = 5 * 60 * 1000;
 
     public AtMostOnceInterceptor() {
         Thread cleanupThread = new Thread(new MessageCleanupTask());
@@ -67,6 +67,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
                 }
                 try {
                     List toBeRemoved = new ArrayList();
+                    Thread.yield();
                     synchronized (receivedMessages) {
                         for (Iterator iterator = receivedMessages.keySet().iterator();
                              iterator.hasNext();) {
@@ -74,17 +75,16 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
                             long arrivalTime = ((Long) receivedMessages.get(msg)).longValue();
                             if (System.currentTimeMillis() - arrivalTime >= TIMEOUT) {
                                 toBeRemoved.add(msg);
+                                if(toBeRemoved.size() > 10000){ // Do not allow this thread to run for too long
+                                    break;
+                                }
                             }
                         }
-                        long start = System.currentTimeMillis();
                         for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
                             ChannelMessage msg = (ChannelMessage) iterator.next();
                             receivedMessages.remove(msg);
                             if (log.isDebugEnabled()) {
                                 log.debug("Cleaned up message ");
-                            }
-                            if(System.currentTimeMillis() - start > 30000){
-                                break;
                             }
                         }
                     }
