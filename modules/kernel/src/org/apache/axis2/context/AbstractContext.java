@@ -42,7 +42,7 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map properties;
-    private transient Map propertyDifferences = new HashMap();
+    private transient Map propertyDifferences;
 
     protected AbstractContext(AbstractContext parent) {
         this.parent = parent;
@@ -115,7 +115,7 @@ public abstract class AbstractContext {
 
             // Assume that a property is which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            addPropertyDifference(key, obj);
+            addPropertyDifference(key, obj, false);
         }
         return obj;
     }
@@ -137,7 +137,7 @@ public abstract class AbstractContext {
 
             // Assume that a property is which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
-            addPropertyDifference(key, obj);
+            addPropertyDifference(key, obj, false);
         }
         return obj;
     }
@@ -168,26 +168,46 @@ public abstract class AbstractContext {
             this.properties = new HashMap();
         }
         properties.put(key, value);
-        addPropertyDifference(key, value);
+        addPropertyDifference(key, value, false);
     }
 
-    private void addPropertyDifference(String key, Object value) {
+    private void addPropertyDifference(String key, Object value,  boolean isRemoved) {
+        
+        if (!needPropertyDifferences()) {
+            return;
+        }
+        // Narrowed the synchronization so that we only wait
+        // if a property difference is added.
+        synchronized(this) {
+            // Lazizly create propertyDifferences map
+            if (propertyDifferences == null) {
+                propertyDifferences = new HashMap();
+            }
+            propertyDifferences.put(key, new PropertyDifference(key, value, isRemoved));
+        }
+    }
+    
+    /**
+     * @return true if we need to store property differences for this 
+     * context in this scenario.
+     */
+    private boolean needPropertyDifferences() {
+        
+        // Don't store property differences if there are no 
+        // cluster members.
+        
         ConfigurationContext cc = getRootContext();
         if (cc == null) {
-            return;
+            return false;
         }
         // Add the property differences only if Context replication is enabled,
         // and there are members in the cluster
         ClusterManager clusterManager = cc.getAxisConfiguration().getClusterManager();
         if (clusterManager == null ||
             clusterManager.getContextManager() == null) {
-            return;
+            return false;
         }
-        // Narrowed the synchronization so that we only wait
-        // if a property difference is added.
-        synchronized(this) {
-            propertyDifferences.put(key, new PropertyDifference(key, value, false));
-        }
+        return true;
     }
 
     /**
@@ -216,7 +236,7 @@ public abstract class AbstractContext {
             if (properties != null) {
                 properties.remove(key);
             }
-            propertyDifferences.put(key, new PropertyDifference(key, value, true));
+            addPropertyDifference(key, value, true);
         }
     }
 
@@ -240,6 +260,9 @@ public abstract class AbstractContext {
      * @return The property differences
      */
     public synchronized Map getPropertyDifferences() {
+        if (propertyDifferences == null) {
+            propertyDifferences = new HashMap();
+        }
         return propertyDifferences;
     }
 
@@ -249,7 +272,9 @@ public abstract class AbstractContext {
      * been sent.
      */
     public synchronized void clearPropertyDifferences() {
-        propertyDifferences.clear();
+        if (propertyDifferences != null) {
+            propertyDifferences.clear();
+        }
     }
 
     /**
