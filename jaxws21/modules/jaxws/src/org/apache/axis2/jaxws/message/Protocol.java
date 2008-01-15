@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,10 +54,15 @@ public enum Protocol {
         protocolMappings.put(Protocol.SOAP11_WSDL_BINDING, Protocol.soap11);
         protocolMappings.put(SOAPBinding.SOAP11HTTP_BINDING, Protocol.soap11);
         protocolMappings.put(SOAPBinding.SOAP11HTTP_MTOM_BINDING, Protocol.soap11);
+        protocolMappings.put(MDQConstants.SOAP11JMS_BINDING, Protocol.soap11);
+        protocolMappings.put(MDQConstants.SOAP11JMS_MTOM_BINDING, Protocol.soap11);
+
         protocolMappings.put(Protocol.SOAP12_WSDL_BINDING, Protocol.soap12);
         protocolMappings.put(SOAPBinding.SOAP12HTTP_BINDING, Protocol.soap12);
         protocolMappings.put(SOAPBinding.SOAP12HTTP_MTOM_BINDING, Protocol.soap12);
         protocolMappings.put(HTTPBinding.HTTP_BINDING, Protocol.rest);
+        protocolMappings.put(MDQConstants.SOAP12JMS_BINDING, Protocol.soap12);
+        protocolMappings.put(MDQConstants.SOAP12JMS_MTOM_BINDING, Protocol.soap12);
         
         // Add each of the URLs with a "/" at the end for flexibility
         Map<String, Protocol> updates = new HashMap<String, Protocol>();

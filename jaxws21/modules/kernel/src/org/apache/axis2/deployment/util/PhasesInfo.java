@@ -151,6 +151,10 @@ public class PhasesInfo {
         return OUTPhases;
     }
 
+    public ArrayList getOutFaultPhaseList(){
+        return OUT_FaultPhases;
+    }
+
     public ArrayList getOUT_FaultPhases() throws DeploymentException {
         ArrayList globalPhaseList = new ArrayList();
         boolean messageOut = false;

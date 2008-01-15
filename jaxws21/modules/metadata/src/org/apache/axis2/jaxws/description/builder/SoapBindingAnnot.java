@@ -31,9 +31,26 @@ public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding {
     private SoapBindingAnnot() {
 
     }
+    
+    private SoapBindingAnnot(Style style, Use use, ParameterStyle paramStyle) {
+        this.style = style;
+        this.use = use;
+        this.parameterStyle = paramStyle;
+    }
 
     public static SoapBindingAnnot createSoapBindingAnnotImpl() {
         return new SoapBindingAnnot();
+    }
+    public static SoapBindingAnnot createFromAnnotation(Annotation annotation) {
+        SoapBindingAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.jws.soap.SOAPBinding) {
+            javax.jws.soap.SOAPBinding sb = (javax.jws.soap.SOAPBinding) annotation;
+            returnAnnot = new SoapBindingAnnot(sb.style(),
+                                               sb.use(),
+                                               sb.parameterStyle());
+        }
+        
+        return returnAnnot;
     }
 
     public Style style() {

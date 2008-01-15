@@ -69,12 +69,24 @@ public class DescriptionFactoryImpl {
     }
 
     /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(URL, QName, Class, DescriptionBuilderComposite)
+     */
+    public static ServiceDescription createServiceDescription(URL wsdlURL, 
+                                                              QName serviceQName, 
+                                                              Class serviceClass) {
+        return createServiceDescription(wsdlURL, serviceQName, serviceClass, null, null);
+        
+    }
+
+    /**
      * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(URL,
      *      QName, Class)
      */
     public static ServiceDescription createServiceDescription(URL wsdlURL,
                                                               QName serviceQName,
-                                                              Class serviceClass) {
+                                                              Class serviceClass,
+                                                              DescriptionBuilderComposite sparseComposite,
+                                                              Object sparseCompositeKey) {
         ConfigurationContext configContext = DescriptionFactory.createClientConfigurationFactory()
                 .getClientConfigurationContext();
         DescriptionKey key = new DescriptionKey(serviceQName, wsdlURL, serviceClass, configContext);
@@ -102,7 +114,21 @@ public class DescriptionFactoryImpl {
                     log.debug(" creating new ServiceDescriptionImpl");
                 }
 
-                ServiceDescriptionImpl serviceDescImpl = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                ServiceDescriptionImpl serviceDescImpl = null;
+                if (sparseComposite != null) {
+                    serviceDescImpl = new ServiceDescriptionImpl(wsdlURL, serviceQName,
+                                                                 serviceClass, sparseComposite, 
+                                                                 sparseCompositeKey);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Client-side service description created with service class: " + serviceClass
+                                  + ", Service QN: " + serviceQName
+                                  + ", and DBC: " + sparseComposite);
+                        log.debug(serviceDescImpl.toString());
+                    }
+
+                } else {
+                    serviceDescImpl = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+                }
                 serviceDescImpl.setAxisConfigContext(configContext);
                 
                 serviceDesc = serviceDescImpl;
@@ -115,6 +141,11 @@ public class DescriptionFactoryImpl {
                     log.debug("Caching new ServiceDescription in the cache");
                 }
                 cache.put(key, serviceDesc);
+            } else {
+                // A service description was found in the cache.  If a sparse composite was
+                // specified, then set it on the found service desc
+                ((ServiceDescriptionImpl) serviceDesc).getDescriptionBuilderComposite().
+                    setSparseComposite(sparseCompositeKey, sparseComposite);
             }
         }
         return serviceDesc;
@@ -257,11 +288,22 @@ public class DescriptionFactoryImpl {
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
             DescriptionFactory.UpdateType updateType) {
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, null);
+    }
+    
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType, DescriptionBuilderComposite)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, QName portQName,
+            DescriptionFactory.UpdateType updateType, 
+            DescriptionBuilderComposite composite,
+            Object compositeKey) {
         EndpointDescription endpointDesc = null;
         synchronized(serviceDescription) {
                 endpointDesc = 
                 ((ServiceDescriptionImpl)serviceDescription)
-                        .updateEndpointDescription(sei, portQName, updateType);
+                        .updateEndpointDescription(sei, portQName, updateType, composite, compositeKey);
         }
         EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
         

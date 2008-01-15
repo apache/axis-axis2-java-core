@@ -76,6 +76,12 @@ public class AxisBinding extends AxisDescription {
             return obj;
         }
 
+        // need this here to guarantee that we dont return a SOAP version for HTTP Bindings
+        if (WSDL2Constants.ATTR_WSOAP_VERSION.equals(name) &&
+                WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
+            return null;
+        }
+
         obj = WSDL20DefaultValueHolder.getDefaultValue(name);
 
         return obj;

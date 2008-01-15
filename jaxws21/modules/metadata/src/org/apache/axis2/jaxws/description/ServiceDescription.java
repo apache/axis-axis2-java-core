@@ -99,5 +99,19 @@ public interface ServiceDescription {
     public void setServiceRuntimeDesc(ServiceRuntimeDescription ord);
     
     public boolean isServerSide();
-
+    
+    /**
+     * Answer if MTOM is enabled for the service represented by this Service Description.  This
+     * is currently only supported on the service-requester side; it is not supported on the 
+     * service-provider side.  If the key is non-null, it is used to look up an sparse metadata
+     * that may have been specified when the Service Description was created.
+     *  
+     * @param key If non-null, used to look up any sparse metadata that may have been specified
+     *     when the service was created.
+     * @return TRUE if mtom was enabled either in the sparse metadata or in the composite; FALSE
+     *     othewise.
+     */
+    public boolean isMTOMEnabled(Object key);
+    
+    public QName getPreferredPort(Object key);
 }

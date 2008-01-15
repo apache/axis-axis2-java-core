@@ -65,7 +65,7 @@ public abstract class BindingImpl implements Binding {
         if (this.bindingId == null) {
             // server
             this.bindingId = endpointDesc.getBindingType();
-	}
+        }
         
         framework = new ClientFramework();
         framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);

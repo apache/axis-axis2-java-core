@@ -41,6 +41,15 @@ public class BindingTypeAnnot implements javax.xml.ws.BindingType {
     public static BindingTypeAnnot createBindingTypeAnnotImpl(String value) {
         return new BindingTypeAnnot(value);
     }
+    
+    public static BindingTypeAnnot createFromAnnotation(Annotation annotation) {
+        BindingTypeAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.xml.ws.BindingType) {
+            javax.xml.ws.BindingType bt = (javax.xml.ws.BindingType) annotation;
+            returnAnnot = new BindingTypeAnnot(bt.value());
+        }
+        return returnAnnot;
+    }
 
     /** @return Returns the value. */
     public String value() {

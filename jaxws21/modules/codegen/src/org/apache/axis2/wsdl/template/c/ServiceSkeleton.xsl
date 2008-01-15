@@ -20,8 +20,8 @@
 
         #include "<xsl:value-of select="$svcop-prefix"/>.h"
         #include &lt;axis2_svc_skeleton.h&gt;
-        #include &lt;axutil_array_list.h&gt;
         #include &lt;stdio.h&gt;
+        #include &lt;axis2_svc.h&gt;
 
         /**
          * functions prototypes
@@ -75,7 +75,6 @@
 
         svc_skeleton->ops = &amp;<xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var;
 
-	    svc_skeleton->func_array = NULL;
 
 	    return svc_skeleton;
 	}
@@ -85,11 +84,6 @@
 	<xsl:value-of select="$method-prefix"/>_init(axis2_svc_skeleton_t *svc_skeleton,
 	                        const axutil_env_t *env)
 	{
-	    svc_skeleton->func_array = axutil_array_list_create(env, 10);
-        <xsl:for-each select="method">
-	      axutil_array_list_add(svc_skeleton->func_array, env, axutil_strdup(env, "<xsl:value-of select="@localpart"/>"));
-        </xsl:for-each>
-
 	    /* Any initialization stuff of <xsl:value-of select="$svcname"/> goes here */
 	    return AXIS2_SUCCESS;
 	}
@@ -98,12 +92,6 @@
 	<xsl:value-of select="$method-prefix"/>_free(axis2_svc_skeleton_t *svc_skeleton,
 				 const axutil_env_t *env)
 	{
-        /* Free the function array */
-        if (svc_skeleton->func_array)
-        {
-            axutil_array_list_free(svc_skeleton->func_array, env);
-            svc_skeleton->func_array = NULL;
-        }
 
         /* Free the service skeleton */
         if (svc_skeleton)
@@ -143,16 +131,17 @@
             <xsl:variable name="outputtype">
               <xsl:choose>
                 <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
+                <xsl:when test="not(output/param/@type)">axis2_status_t</xsl:when>
                 <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
             <xsl:value-of select="$outputtype"/> ret_val<xsl:value-of select="$position"/><xsl:if test="output/param/@ours"> = NULL</xsl:if>;
-            <xsl:for-each select="input/param[@type!='']">
+            <xsl:if test="input/param/@type!=''">
               <xsl:variable name="inputtype">
-                <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
+                <xsl:if test="input/param/@ours">adb_</xsl:if><xsl:value-of select="input/param/@type"/><xsl:if test="input/param/@ours">_t*</xsl:if>
               </xsl:variable>
-              <xsl:value-of select="$inputtype"/> input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/><xsl:if test="input/param/@ours"> = NULL</xsl:if>;
-            </xsl:for-each>
+              <xsl:value-of select="$inputtype"/> input_val<xsl:value-of select="$position"/><xsl:if test="input/param/@ours"> = NULL</xsl:if>;
+            </xsl:if>
           </xsl:for-each>
 
           operation_ctx = axis2_msg_ctx_get_op_ctx(msg_ctx, env);
@@ -172,40 +161,53 @@
 
                 if ( axutil_strcmp(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
                 {
-                    <xsl:for-each select="input/param[@type!='']">
-                    input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
-                        <xsl:when test="@ours">
-                        adb_<xsl:value-of select="@type"/>_create( env);
-                        if( AXIS2_FAILURE == adb_<xsl:value-of select="@type"/>_deserialize(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, &amp;content_node ))
+                    <xsl:if test="input/param/@type!=''">
+                    input_val<xsl:value-of select="$position"/> = <xsl:choose>
+                        <xsl:when test="input/param/@ours">
+                        adb_<xsl:value-of select="input/param/@type"/>_create( env);
+                        if( AXIS2_FAILURE == adb_<xsl:value-of select="input/param/@type"/>_deserialize(input_val<xsl:value-of select="$position"/>, env, &amp;content_node, NULL, AXIS2_FALSE))
                         {
-                            adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
+                            adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
                       
                             AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
-                            AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="@type"/>_deserialize: "
+                            AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="input/param/@type"/>_deserialize: "
                                         "This should be due to an invalid XML");
                             return NULL;      
                         }
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
                         </xsl:choose>
-                    ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env,
-                                                input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> );
-                    if ( NULL == ret_val<xsl:value-of select="$position"/> )
-                    {
-                        AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
-                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
-                        return NULL; 
-                    }
-                    ret_node = <xsl:choose>
-                                   <xsl:when test="@ours">
-                               adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
-                               adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
-                               adb_<xsl:value-of select="@type"/>_free(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
-                                   </xsl:when>
-                                   <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
-                                </xsl:choose>
-                    return ret_node;
-                    </xsl:for-each>
+                    </xsl:if>
+                    ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:if test="input/param/@type!=''">,</xsl:if>
+                                                <xsl:if test="input/param/@type!=''">input_val<xsl:value-of select="$position"/></xsl:if> );
+                    <xsl:choose>
+                    <xsl:when test="output/param/@type">
+                        if ( NULL == ret_val<xsl:value-of select="$position"/> )
+                        {
+                            AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
+                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
+                            return NULL; 
+                        }
+                        ret_node = <xsl:choose>
+                                       <xsl:when test="output/param/@ours">
+                                   adb_<xsl:value-of select="$outputtype"/>_serialize(ret_val<xsl:value-of select="$position"/>, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                                   adb_<xsl:value-of select="$outputtype"/>_free(ret_val<xsl:value-of select="$position"/>, env);
+                                   <xsl:if test="input/param/@type!=''">
+                                    adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
+                                   </xsl:if>
+                                       </xsl:when>
+                                       <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
+                                    </xsl:choose>
+                        return ret_node;
+                    </xsl:when>
+                    <xsl:otherwise>
+                        if( AXIS2_FAILURE == ret_val<xsl:value-of select="$position"/> )
+                        {
+                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
+                        }
+                        return NULL;
+                    </xsl:otherwise>
+                    </xsl:choose>
 
                     <!-- below was  prior to the databinding -->
                     <!-- <xsl:if test="$outputtype!=''">return </xsl:if>
@@ -218,7 +220,7 @@
              </xsl:for-each>
              }
           printf("<xsl:value-of select="$skeletonname"/> service ERROR: invalid OM parameters in request\n");
-          return content_node;
+          return NULL;
     }
 
     axiom_node_t* AXIS2_CALL

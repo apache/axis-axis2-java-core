@@ -178,6 +178,7 @@
                                     getEnvelopeNamespaces(msgContext.getEnvelope()));
                                                 <!-- Even when the parameters are 1 we have to see whether we have the
                                               wrapped parameters -->
+                                               <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
                                                <xsl:if test="string-length(normalize-space($returntype)) &gt; 0"><xsl:value-of select="$returnvariable"/> =
                                                    <!-- set the response wrappers if unwrapping on -->
                                                    <xsl:choose>
@@ -188,9 +189,12 @@
                                                        <xsl:when test="string-length(normalize-space($returncomplextype)) &gt; 0">
                                                            wrap<xsl:value-of select="$operationName"/>(
                                                        </xsl:when>
+                                                       <xsl:when test="($returnparamcount=0) and ($isUnwrapParameters)">
+                                                           wrap<xsl:value-of select="$operationName"/>();
+                                                       </xsl:when>
                                                    </xsl:choose>
                                                </xsl:if>
-                                               <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
+
                                                 <xsl:choose>
                                                     <xsl:when test="($isUnwrapParameters)">
                                                         <!-- generate the references. the getters need to be

@@ -517,6 +517,10 @@ public abstract class AbstractHTTPSender {
                     HTTPConstants.COMPRESSION_GZIP);
         }
 
+        String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
+        if (cookiePolicy != null) {
+            method.getParams().setCookiePolicy(cookiePolicy);   
+        }
         httpClient.executeMethod(config, method);
     }
 

@@ -343,6 +343,15 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         org.apache.axis2.transport.mail.Constants.MAILTO + ":" +
                         msg.getFrom()[0].toString());
                 transportInfo.setFrom(fromEPR);
+            } else {
+                String returnPath =
+                        getMailHeader(msg, org.apache.axis2.transport.mail.Constants.RETURN_PATH);
+                returnPath = parseHeaderForLessThan(returnPath);
+                if (returnPath != null) {
+                    EndpointReference fromEPR = new EndpointReference(
+                            org.apache.axis2.transport.mail.Constants.MAILTO + ":" + returnPath);
+                    transportInfo.setFrom(fromEPR);
+                }
             }
 
             // Save Message-Id to set as In-Reply-To on reply
@@ -488,6 +497,15 @@ public class SimpleMailListener implements Runnable, TransportListener {
         } catch (MessagingException e) {
             throw new AxisFault(e.getMessage(),e);
         }
+    }
+
+    private String parseHeaderForLessThan(String value) {
+        if (value != null) {
+            if (value.length() > 1 && value.startsWith("<") && value.endsWith(">")) {
+                value = value.substring(1, value.length()-1);
+            }
+        }
+        return value;
     }
 
     private String parseHeaderForQuotes(String value) {

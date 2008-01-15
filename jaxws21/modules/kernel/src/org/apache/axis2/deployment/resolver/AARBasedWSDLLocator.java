@@ -20,6 +20,8 @@ package org.apache.axis2.deployment.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.woden.resolver.URIResolver;
+import org.apache.woden.WSDLException;
 import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
@@ -31,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -42,7 +45,7 @@ import java.util.zip.ZipInputStream;
  * The logic here is that we only care about the import location
  * all imports must be relative to the META-INF folder
  */
-public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocator {
+public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocator, URIResolver {
 
     protected static final Log log = LogFactory
             .getLog(AARBasedWSDLLocator.class);
@@ -130,5 +133,22 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
 
     public void close() {
         //TODO: FIXME:    
+    }
+
+    public URI resolveURI(URI uri) throws WSDLException, IOException {
+        lastImportLocation = URI.create(baseURI).resolve(uri);
+
+        if (isAbsolute(uri.toString())) {
+            return uri;
+        } else {
+            String absolutePath = aarFile.getAbsolutePath();
+            try {
+                return new URI("jar:file://" + absolutePath + "!/" + lastImportLocation);
+            } catch (URISyntaxException e) {
+                log.debug(e);
+            }
+        }
+        log.info("AARBasedWSDLLocator: Unable to resolve " + lastImportLocation);
+        return null;
     }
 }

@@ -112,10 +112,12 @@
                  )
             </xsl:when>
             <xsl:otherwise>
+                <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
                 public <xsl:choose>
                     <xsl:when test="$count=0 or $outputtype=''">void</xsl:when>
                     <xsl:when test="$outputparamcount=1"><xsl:value-of select="output/param[@location='body']/param/@type"/></xsl:when>
                     <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of select="$outputcomplextype"/></xsl:when>
+                    <xsl:when test="($outputparamcount=0) and ($isUnwrapParameters)">void</xsl:when>
                     <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
                 <xsl:text> </xsl:text><xsl:value-of select="@name"/>
                 (

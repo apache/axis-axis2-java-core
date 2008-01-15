@@ -43,6 +43,7 @@ import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsI
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
+import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.types.NamespaceDeclaration;
 import org.apache.woden.wsdl20.Binding;
@@ -65,6 +66,8 @@ import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtens
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
+import org.apache.woden.wsdl20.extensions.rpc.RPCInterfaceOperationExtensions;
+import org.apache.woden.wsdl20.extensions.rpc.Argument;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.soap.SOAPBindingFaultReferenceExtensions;
@@ -77,6 +80,7 @@ import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.apache.woden.wsdl20.xml.DocumentableElement;
 import org.apache.woden.wsdl20.xml.DocumentationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
+import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
 import org.apache.woden.xml.XMLAttr;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
@@ -91,10 +95,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -121,6 +123,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Service wsdlService;
 
     private boolean isAllPorts;
+
+    private URIResolver customWSDLResolver;
 
 //    As bindings are processed add it to this array so that we dont process the same binding twice
     private Map processedBindings;
@@ -180,6 +184,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     public void setAllPorts(boolean allPorts) {
         isAllPorts = allPorts;
+    }
+
+    /**
+     * sets a custom WSDL locator
+     *
+     * @param customResolver
+     */
+    public void setCustomWSDLResolver(URIResolver customResolver) {
+        this.customWSDLResolver = customResolver;
     }
 
     public AxisService populateService() throws AxisFault {
@@ -433,6 +446,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Document document = documentBuilder.parse(in);
 
                     WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+                    if (customWSDLResolver != null) {
+                        reader.setURIResolver(customWSDLResolver);
+                    }
                     // This turns on WSDL validation which is set off by default.
                     reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
                     WSDLSource wsdlSource = reader.createWSDLSource();
@@ -985,6 +1001,26 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisOperation.addParameter(parameter);
         }
 
+        RPCInterfaceOperationExtensions rpcInterfaceOperationExtensions;
+        try {
+            rpcInterfaceOperationExtensions = (RPCInterfaceOperationExtensions) operation
+                    .getComponentExtensionsForNamespace(
+                            new URI(WSDL2Constants.URI_WSDL2_RPC));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("WSDL2 extensions not defined for this operation");
+        }
+
+        if (rpcInterfaceOperationExtensions != null) {
+            String rpcsig = "";
+            Argument[] signatures = rpcInterfaceOperationExtensions.getRPCSignature();
+            for (int i = 0; i < signatures.length; i++) {
+                Argument sigArgument = signatures[i];
+                rpcsig = rpcsig + sigArgument.getName().getLocalPart() + " " + sigArgument.getDirection() + " ";
+            }
+            Parameter parameter = new Parameter(WSDL2Constants.ATTR_WRPC_SIGNATURE, rpcsig);
+            axisOperation.addParameter(parameter);
+        }
+
         InterfaceMessageReference[] interfaceMessageReferences = operation
                 .getInterfaceMessageReferences();
         for (int i = 0; i < interfaceMessageReferences.length; i++) {
@@ -1048,7 +1084,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         QName elementQName = null;
 
         if (WSDL2Constants.NMTOKEN_ELEMENT.equals(messageContentModelName)) {
-            elementQName = messageReference.getElementDeclaration().getName();
+            ElementDeclaration elementDeclaration = messageReference.getElementDeclaration();
+            if (elementDeclaration == null) {
+                InterfaceMessageReferenceElement messageReferenceElement =
+                        messageReference.toElement();
+                QName qName = messageReferenceElement.getElement().getQName();
+                throw new AxisFault("Unable to find element " + qName.toString() + " reffered to by operation " + axisOperation.getName().getLocalPart());
+            }
+            elementQName = elementDeclaration.getName();
         } else if (WSDL2Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
             elementQName = Constants.XSD_ANY;
         } else
@@ -1097,8 +1140,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Description readInTheWSDLFile(String wsdlURI) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        if (customWSDLResolver != null) {
+            reader.setURIResolver(customWSDLResolver);
+        }
         // This turns on WSDL validation which is set off by default.
-//        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
+        reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
         
 //      Log when and from where the WSDL is loaded.
         if (log.isDebugEnabled()) {

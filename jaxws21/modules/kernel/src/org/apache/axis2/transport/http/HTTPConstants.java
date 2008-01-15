@@ -458,6 +458,12 @@ public class HTTPConstants {
     public static final String COMPRESSION_GZIP = "gzip";
 
     /**
+     * Field to set the coockie policy of commons http client
+     * http://jakarta.apache.org/httpcomponents/httpclient-3.x/cookies.html
+      */
+    public static final String COOKIE_POLICY = "COOKIE_POLICY";
+
+    /**
      * If you want the HTTP sender to indicate that it can accept a gziped
      * response, set this message context property to true. The sender will
      * automatically unzip the response if its gzipped.

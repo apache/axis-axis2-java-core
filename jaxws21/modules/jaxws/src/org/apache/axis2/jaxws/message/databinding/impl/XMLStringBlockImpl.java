@@ -18,8 +18,13 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.datasource.XMLStringDataSource;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -30,6 +35,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -66,15 +72,27 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
         super(omElement, null, qName, factory);
     }
 
-    @Override
     protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
             throws XMLStreamException {
         // Create a Reader2Writer converter and get the output as a String
         Reader2Writer r2w = new Reader2Writer(reader);
         return r2w.getAsString();
     }
-
+    
     @Override
+    protected Object _getBOFromOM(OMElement omElement, Object busContext)
+        throws XMLStreamException, WebServiceException {
+        
+        // Shortcut to get business object from existing data source
+        if (omElement instanceof OMSourcedElement) {
+            OMDataSource ds = ((OMSourcedElement) omElement).getDataSource();
+            if (ds instanceof XMLStringDataSource) {
+                return ((XMLStringDataSource) ds).getObject();
+            }
+        }
+        return super._getBOFromOM(omElement, busContext);
+    }
+
     protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
             throws XMLStreamException {
         // Create an XMLStreamReader from the inputFactory using the String as the sources
@@ -83,7 +101,6 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
         return StAXUtils.createXMLStreamReader(sr);
     }
 
-    @Override
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
             throws XMLStreamException {
         // There is no fast way to output the String to a writer, so get the reader
@@ -124,6 +141,10 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
 
     public boolean isDestructiveWrite() {
         return false;
+    }
+    
+    public OMDataSourceExt copy() throws OMException {
+        return new XMLStringDataSource((String) getObject());
     }
 
 

@@ -152,8 +152,9 @@ public class XFormURLEncodedBuilder implements Builder {
                                 WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
                         for (int i = 0; i < parts.length; i++) {
                             int separator = parts[i].indexOf("=");
+                            String value = parts[i].substring(separator + 1);
                             parameterMap.put(parts[i].substring(0, separator),
-                                             parts[i].substring(separator + 1));
+                                             URIEncoderDecoder.decode(value));
                         }
                     } else {
                         break;

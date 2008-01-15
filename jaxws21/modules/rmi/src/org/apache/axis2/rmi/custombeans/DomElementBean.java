@@ -181,7 +181,7 @@ public class DomElementBean extends AbstractRMIBean {
                 serializeDomElement((Element) node, writer, namespacePrefix);
             } else if (node instanceof Text) {
                 textNode = (Text) node;
-                writer.writeCharacters(textNode.getWholeText());
+                writer.writeCharacters(textNode.getNodeValue());
             } else {
                 throw new XmlSerializingException("Unknown dom element node found node type ==>"
                         + node.getNodeType());

@@ -48,4 +48,16 @@ public class MDQConstants {
 
     public static final String RETURN_TYPE_FUTURE = "java.util.concurrent.Future";
     public static final String RETURN_TYPE_RESPONSE = "javax.xml.ws.Response";
+    
+    public static final String CLIENT_SERVICE_CLASS = "CLIENT_SERVICE_CLASS";
+    public static final String CLIENT_SEI_CLASS = "CLIENT_SEI_CLASS";
+    
+    //Represent SOAP/JMS Bindings
+    //REVIEW: SOAP-JMS may be using the same NS for SOAP11 and SOAP12, 
+    //  if so we could remove some duplicate values below
+    public static final String SOAP11JMS_BINDING = "http://www.example.org/2006/06/soap/bindings/JMS/";
+    public static final String SOAP12JMS_BINDING = "http://www.example.org/2006/06/soap/bindings/JMS/";
+    public static final String SOAP11JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
+    public static final String SOAP12JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
+
 }

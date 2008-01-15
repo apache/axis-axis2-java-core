@@ -139,6 +139,20 @@ public class AxisFault extends RemoteException {
         this(faultReason, cause);
         setFaultCode(faultCode);
     }
+    
+    /**
+     * Constructor
+     *
+     * @param faultCode       - fault code of the message as a QName
+     * @param faultSubCodes   - list sub fault codes as a list if QNames
+     * @param faultReason - the reason for the fault. The language will be defaulted to 'en'
+     * @param cause embedded fault which caused this one
+     */
+    public AxisFault(QName faultCode,List faultSubCodes, String faultReason, Throwable cause) {
+        this(faultReason, cause);
+        setFaultCode(faultCode);
+        setFaultSubCodes(faultSubCodes);
+    }
 
     /**
      * Constructor
@@ -496,7 +510,11 @@ public class AxisFault extends RemoteException {
     public void setFaultCode(QName soapFaultCode) {
         this.faultCode = soapFaultCode;
     }
-
+    
+    public void setFaultSubCodes(List faultSubCodes) {
+        this.faultSubCodes = faultSubCodes;
+    }
+    
     public void setFaultCode(String soapFaultCode) {
         // TODO: is it really safe to assume that the passed string is always the localpart?
         // What if someone passes soapenv:Sender?

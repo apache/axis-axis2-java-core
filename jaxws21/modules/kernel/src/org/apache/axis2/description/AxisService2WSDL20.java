@@ -19,52 +19,58 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaType;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class AxisService2WSDL20 implements WSDL2Constants {
 
     private AxisService axisService;
+    private String serviceName;
     private String[] eprs = null;
     private OMNamespace wsaw;
 
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
+        this.serviceName = service.getName();
+    }
+
+    public AxisService2WSDL20(AxisService service, String serviceName) {
+        this.axisService = service;
+        this.serviceName = serviceName;
     }
 
     /**
@@ -94,7 +100,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         // Declare all the defined namespaces in the document
         WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
 
-        descriptionElement.declareNamespace(axisService.getTargetNamespace(), axisService.getTargetNamespacePrefix());
+        descriptionElement.declareNamespace(axisService.getTargetNamespace(),
+                                            axisService.getTargetNamespacePrefix());
         wsaw = descriptionElement.declareNamespace(AddressingConstants.Final.WSAW_NAMESPACE, "wsaw");
         // Need to add the targetnamespace as an attribute according to the wsdl 2.0 spec
         OMAttribute targetNamespace = omFactory
@@ -112,9 +119,6 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         OMNamespace tns = omFactory
                 .createOMNamespace(axisService.getTargetNamespace(),
                                    axisService.getTargetNamespacePrefix());
-        if (nameSpacesMap != null && !nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
-            descriptionElement.declareDefaultNamespace(WSDL2Constants.WSDL_NAMESPACE);
-        }
         if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.URI_WSDL2_SOAP)) {
             wsoap = omFactory
                     .createOMNamespace(WSDL2Constants.URI_WSDL2_SOAP,
@@ -153,7 +157,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         // Add the documentation element
-        WSDLSerializationUtil.addWSDLDocumentationElement(axisService, descriptionElement, omFactory, wsdl);
+        WSDLSerializationUtil
+                .addWSDLDocumentationElement(axisService, descriptionElement, omFactory, wsdl);
 
         // Add types element
         OMElement typesElement = omFactory.createOMElement(WSDL2Constants.TYPES_LOCAL_NALE, wsdl);
@@ -217,7 +222,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         if (endpointMap != null && endpointMap.size() > 0) {
             String[] eprs = axisService.getEPRs();
             if (eprs == null) {
-                eprs = new String[]{axisService.getName()};
+                eprs = new String[]{serviceName};
             }
             OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
@@ -239,9 +244,10 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 }
                 
                 // If SOAP 1.2 binding is disabled, do not add.
-                String propertySOAPVersion = (String)axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
-                if (propertySOAPVersion != null) {
-                    if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                String propertySOAPVersion =
+                        (String) axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(propertySOAPVersion)) {
+                    if (disableSOAP12) {
                         continue;
                     }
                 }
@@ -278,8 +284,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                         .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
                                                    interfaceName,
                                                    axisService.getNamespaceMap(),
-                                                   axisService.getWSAddressingFlag(),
-                                                   axisService.getName(),wsaw));
+                                                   AddressingHelper.getAddressingRequirementParemeterValue(axisService),
+                                                   serviceName,wsaw));
             }
 
             descriptionElement.addChild(serviceElement);
@@ -288,21 +294,23 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             // There are no andpoints defined hence generate default bindings and endpoints
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP11Binding(omFactory, axisService, wsdl, wsoap,
-                                                                tns));
+                                                                tns, serviceName));
             if (!disableSOAP12) {
             descriptionElement.addChild(
                     WSDLSerializationUtil.generateSOAP12Binding(omFactory, axisService, wsdl, wsoap,
-                                                                tns));
+                                                                tns, serviceName));
             }
             if (!disableREST) {
                 descriptionElement.addChild(
                         WSDLSerializationUtil.generateHTTPBinding(omFactory, axisService, wsdl,
                                                                   whttp,
-                                                                  tns));
+                                                                  tns, serviceName));
             }
             descriptionElement
                     .addChild(WSDLSerializationUtil.generateServiceElement(omFactory, wsdl, tns,
-                                                                           axisService, disableREST, disableSOAP12, eprs));
+                                                                           axisService, disableREST,
+                                                                           disableSOAP12, eprs,
+                                                                          serviceName));
         }
 
         return descriptionElement;
@@ -376,7 +384,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, wsdl);
         serviceElement.addAttribute(
                 omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
-                                            axisService.getName()));
+                                            serviceName));
         serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.INTERFACE_LOCAL_NAME,
                                                                 null, tns.getPrefix() + ":" +
                 interfaceName));
@@ -403,10 +411,12 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
                 omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
-        WSDLSerializationUtil.addWSDLDocumentationElement(axisOperation, axisOperationElement, omFactory, wsdl);
+        WSDLSerializationUtil
+                .addWSDLDocumentationElement(axisOperation, axisOperationElement, omFactory, wsdl);
         axisOperationElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                       null,
-                                                                      axisOperation.getName().getLocalPart()));
+                                                                      axisOperation
+                                                                              .getName().getLocalPart()));
         URI[] opStyle = (URI[]) axisOperation.getParameterValue(WSDL2Constants.OPERATION_STYLE);
         if (opStyle == null) {
             opStyle = checkStyle(axisOperation);
@@ -444,7 +454,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         AxisMessage inMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_IN_MESSAGE);
         if (inMessage != null) {
             OMElement inMessageElement = omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, wsdl);
-            inMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
+            inMessageElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_ELEMENT, null,
+                    WSDLSerializationUtil.getElementName(inMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(inMessageElement, axisOperation.getInputAction(),wsaw);
             WSDLSerializationUtil.addWSDLDocumentationElement(inMessage, inMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(inMessageElement);
@@ -454,7 +466,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         AxisMessage outMessage = (AxisMessage) axisOperation.getChild(WSDLConstants.WSDL_MESSAGE_OUT_MESSAGE);
         if (outMessage != null) {
             OMElement outMessageElement = omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, wsdl);
-            outMessageElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ELEMENT, null, WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
+            outMessageElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_ELEMENT, null,
+                    WSDLSerializationUtil.getElementName(outMessage, nameSpaceMap)));
             WSDLSerializationUtil.addWSAWActionAttribute(outMessageElement, axisOperation.getOutputAction(),wsaw);
             WSDLSerializationUtil.addWSDLDocumentationElement(outMessage, outMessageElement, omFactory, wsdl);
             axisOperationElement.addChild(outMessageElement);
@@ -472,9 +486,14 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 } else {
                     faultElement = omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, wsdl);
                 }
-                faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + faultMessage.getName()));
-                WSDLSerializationUtil.addWSAWActionAttribute(faultElement, axisOperation.getFaultAction(faultMessage.getName()),wsaw);
-                WSDLSerializationUtil.addWSDLDocumentationElement(faultMessage, faultElement, omFactory, wsdl);
+                faultElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF,
+                                                                      null, tns.getPrefix() + ":" +
+                        faultMessage.getName()));
+                WSDLSerializationUtil.addWSAWActionAttribute(faultElement,
+                                                             axisOperation.getFaultAction(
+                                                                     faultMessage.getName()), wsaw);
+                WSDLSerializationUtil
+                        .addWSDLDocumentationElement(faultMessage, faultElement, omFactory, wsdl);
                 axisOperationElement.addChild(faultElement);
             }
         }
@@ -505,7 +524,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
 
         QName inMessageElementQname;
-        Map inMessageElementDetails = new HashMap();
+        Map inMessageElementDetails = new LinkedHashMap();
         AxisMessage inMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_IN);
         if (inMessage != null) {
             QName qName = inMessage.getElementQName();
@@ -524,7 +543,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                     XmlSchemaParticle particle = complexType.getParticle();
                     if (particle != null && particle instanceof XmlSchemaSequence){
                         XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
-                        XmlSchemaObjectCollection schemaObjectCollection = xmlSchemaSequence.getItems();
+                        XmlSchemaObjectCollection schemaObjectCollection =
+                                xmlSchemaSequence.getItems();
                         if (schemaObjectCollection != null) {
                             Iterator iterator = schemaObjectCollection.getIterator();
                             while (iterator.hasNext()) {
@@ -536,7 +556,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                 if (innerElement.getRefName() != null) {
                                     return new URI [0];
                                 }
-                                if (innerElement.getMinOccurs() != 1 || innerElement.getMaxOccurs() != 1) {
+                                if (innerElement.getMinOccurs() != 1 ||
+                                        innerElement.getMaxOccurs() != 1) {
                                     isMultipart = false;
                                 }
                                 XmlSchemaType schemaType = innerElement.getSchemaType();
@@ -575,7 +596,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
             return new URI [0];
         }
         AxisMessage outMessage = null;
-        Map outMessageElementDetails = new HashMap();                                    
+        Map outMessageElementDetails = new LinkedHashMap();
         if (isRPC && !WSDL2Constants.MEP_URI_IN_ONLY.equals(mep)) {
             outMessage = axisOperation.getMessage(WSDL2Constants.MESSAGE_LABEL_OUT);
             QName qName = outMessage.getElementQName();
@@ -638,7 +659,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         int count = 0;
         if (isRPC) {
             styles.add(new URI(WSDL2Constants.STYLE_RPC));
-            axisOperation.addParameter(WSDL2Constants.ATTR_WRPC_SIGNATURE, generateRPCSignature(inMessageElementDetails,  outMessageElementDetails));
+            axisOperation.addParameter(WSDL2Constants.ATTR_WRPC_SIGNATURE, generateRPCSignature(
+                    inMessageElementDetails, outMessageElementDetails));
             count ++;
         }
         if (isIRI) {
@@ -672,7 +694,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         Iterator outElementIterator = outElementSet.iterator();
         while (outElementIterator.hasNext()) {
             String outElementName = (String) outElementIterator.next();
-            out = out + outElementName + " " + WSDL2Constants.RPC_OUT + " ";
+            out = out + outElementName + " " + WSDL2Constants.RPC_RETURN + " ";
         }
         return in + out + inOut;
     }

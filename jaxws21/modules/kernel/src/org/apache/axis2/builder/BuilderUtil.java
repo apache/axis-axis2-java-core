@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -60,6 +61,7 @@ import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -136,16 +138,17 @@ public class BuilderUtil {
                         boolean nillable = innerElement.isNillable();
                         String name =
                                 qName != null ? qName.getLocalPart() : innerElement.getName();
-                        String value;
+                            Object value;
                         OMNamespace ns = (qName == null ||
                                 qName.getNamespaceURI() == null
                                 || qName.getNamespaceURI().length() == 0) ?
                                 null : soapFactory.createOMNamespace(
                                 qName.getNamespaceURI(), null);
-                        while ((value = (String) requestParameterMap.get(name)) != null) {
 
-                            soapFactory.createOMElement(name, ns,
-                                                        bodyFirstChild).setText(value);
+                            // FIXME changed
+                            while ((value = requestParameterMap.get(name)) != null) {
+                                addRequestParameter(soapFactory,
+                                        bodyFirstChild, ns, name, value);
                             minOccurs--;
                         }
                         if (minOccurs > 0) {
@@ -182,12 +185,31 @@ public class BuilderUtil {
             Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
             while (requestParamMapIter.hasNext()) {
                 String key = (String) requestParamMapIter.next();
-                String value = (String) requestParameterMap.get(key);
+                Object value = requestParameterMap.get(key);
                 if (value != null) {
-                    soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+                    addRequestParameter(soapFactory, bodyFirstChild, null, key,
+                            value);
                 }
 
             }
+        }
+    }
+
+    private static void addRequestParameter(SOAPFactory soapFactory,
+                                            OMElement bodyFirstChild,
+                                            OMNamespace ns,
+                                            String key,
+                                            Object parameter) {
+        if (parameter instanceof DataHandler) {
+            DataHandler dataHandler = (DataHandler)parameter;
+            OMText dataText = bodyFirstChild.getOMFactory().createOMText(
+                    dataHandler, true);
+            soapFactory.createOMElement(key, ns, bodyFirstChild).addChild(
+                    dataText);
+        } else {
+            String textValue = parameter.toString();
+            soapFactory.createOMElement(key, ns, bodyFirstChild).setText(
+                    textValue);
         }
     }
 
@@ -213,7 +235,7 @@ public class BuilderUtil {
         String encoding = getCharSetEncoding(is2, charSetEncoding);
         return new BufferedReader(new InputStreamReader(is2, encoding));
     }
-    
+
     /**
      * Convenience method to get a PushbackInputStream so that we can read the BOM
      * @param is
@@ -222,7 +244,7 @@ public class BuilderUtil {
     public static PushbackInputStream getPushbackInputStream(InputStream is) {
         return new PushbackInputStream(is, BOM_SIZE);
     }
-    
+
     /**
      * Use the BOM Mark to identify the encoding to be used. Fall back to
      * default encoding specified
@@ -235,9 +257,9 @@ public class BuilderUtil {
         String encoding;
         byte bom[] = new byte[BOM_SIZE];
         int n, unread;
-        
+
         n = is2.read(bom, 0, bom.length);
-        
+
         if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
             encoding = "UTF-8";
             if (log.isDebugEnabled()) {
@@ -271,7 +293,7 @@ public class BuilderUtil {
             }
             unread = n - 4;
         } else {
-            
+
             // Unicode BOM mark not found, unread all bytes
             encoding = defaultEncoding;
             if (log.isDebugEnabled()) {
@@ -279,7 +301,7 @@ public class BuilderUtil {
             }
             unread = n;
         }
-        
+
         if (unread > 0) {
             is2.unread(bom, (n - unread), unread);
         }
@@ -375,7 +397,7 @@ public class BuilderUtil {
         try {
             PushbackInputStream pis = getPushbackInputStream(attachments.getSOAPPartInputStream());
             String actualCharSetEncoding = getCharSetEncoding(pis, charSetEncoding);
-            
+
             streamReader = StAXUtils.createXMLStreamReader(pis, actualCharSetEncoding);
         } catch (IOException e) {
             throw new XMLStreamException(e);
@@ -504,7 +526,7 @@ public class BuilderUtil {
             if (log.isDebugEnabled()) {
                 log.debug("Creating an Attachments map.  The content-length is" + contentLength);
             }
-            attachments = 
+            attachments =
                 new Attachments(inStream,
                                 contentTypeString,
                                 fileCacheForAttachments,
@@ -515,14 +537,14 @@ public class BuilderUtil {
             if (log.isDebugEnabled()) {
                 log.debug("Creating an Attachments map.");
             }
-            attachments = 
+            attachments =
                 new Attachments(inStream,
                                 contentTypeString,
                                 fileCacheForAttachments,
                                 attachmentRepoDir,
                                 attachmentSizeThreshold);
         }
-            
+
         return attachments;
     }
 

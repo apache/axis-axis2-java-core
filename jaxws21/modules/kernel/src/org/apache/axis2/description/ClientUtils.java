@@ -97,7 +97,7 @@ public class ClientUtils {
             }
         }
         TransportInDescription transportIn = null;
-        if (options.isUseSeparateListener()) {
+        if (options.isUseSeparateListener() || msgCtxt.getOptions().isUseSeparateListener()) {
             if ((listenerTransportProtocol != null) && !"".equals(listenerTransportProtocol)) {
                 transportIn = ac.getTransportIn(listenerTransportProtocol);
                 ListenerManager listenerManager =

@@ -17,6 +17,8 @@ package org.apache.axis2.clustering.control;
 
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 
@@ -37,7 +39,20 @@ public class GetConfigurationCommand extends ControlCommand {
         AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         for (Iterator iter = axisConfig.getServiceGroups(); iter.hasNext();) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) iter.next();
-            serviceGroupNames.add(serviceGroup.getServiceGroupName());
+            boolean excludeSG = false;
+            for (Iterator serviceIter = serviceGroup.getServices(); serviceIter.hasNext();) {
+                AxisService service = (AxisService) serviceIter.next();
+                if (service.getParameter(AxisModule.MODULE_SERVICE) != null ||
+                    service.isClientSide()) { // No need to send services deployed through modules or client side services
+                    excludeSG = true;
+                    break;
+                }
+            }
+
+            //TODO: Exclude all services loaded from modules. How to handle data services etc.?
+            if (!excludeSG) {
+                serviceGroupNames.add(serviceGroup.getServiceGroupName());
+            }
         }
         this.serviceGroupNames =
                 (String[]) serviceGroupNames.toArray(new String[serviceGroupNames.size()]);

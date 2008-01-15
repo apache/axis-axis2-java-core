@@ -25,9 +25,6 @@ import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.DefaultContextManager;
-import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
-import org.apache.axis2.clustering.context.commands.UpdateContextCommand;
-import org.apache.axis2.clustering.control.AckCommand;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
@@ -37,6 +34,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.catalina.tribes.group.RpcMessage;
 import org.apache.catalina.tribes.io.XByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,20 +50,17 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
-    private TribesControlCommandProcessor controlCommandProcessor;
-    private ChannelSender channelSender;
+    private ControlCommandProcessor controlCommandProcessor;
 
     private ConfigurationContext configurationContext;
 
     public ChannelListener(ConfigurationContext configurationContext,
                            DefaultConfigurationManager configurationManager,
                            DefaultContextManager contextManager,
-                           TribesControlCommandProcessor controlCommandProcessor,
-                           ChannelSender sender) {
+                           ControlCommandProcessor controlCommandProcessor) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
         this.controlCommandProcessor = controlCommandProcessor;
-        this.channelSender = sender;
         this.configurationContext = configurationContext;
     }
 
@@ -80,10 +76,21 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         this.configurationContext = configurationContext;
     }
 
+    /**
+     * Invoked by the channel to determine if the listener will process this message or not.
+     * @param msg Serializable
+     * @param sender Member
+     * @return boolean
+     */
     public boolean accept(Serializable msg, Member sender) {
-        return true;
+        return !(msg instanceof RpcMessage);  // RpcMessages  will not be handled by this listener
     }
 
+    /**
+     * Receive a message from the channel
+     * @param msg Serializable
+     * @param sender - the source of the message
+     */
     public void messageReceived(Serializable msg, Member sender) {
         try {
             AxisConfiguration configuration = configurationContext.getAxisConfiguration();
@@ -98,58 +105,45 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                 AxisModule module = (AxisModule) iter.next();
                 classLoaders.add(module.getModuleClassLoader());
             }
-
-
             byte[] message = ((ByteMessage) msg).getMessage();
             msg = XByteBuffer.deserialize(message,
                                           0,
                                           message.length,
-                                          (ClassLoader[])classLoaders.toArray(new ClassLoader[classLoaders.size()])); 
+                                          (ClassLoader[]) classLoaders.toArray(new ClassLoader[classLoaders.size()]));
         } catch (Exception e) {
-            log.error(e);
+            String errMsg = "Cannot deserialize received message";
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
         }
 
         // If the system has not still been intialized, reject all incoming messages, except the
         // GetStateResponseCommand message
         if (configurationContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null
-            && !(msg instanceof GetStateResponseCommand) &&
-            !(msg instanceof GetConfigurationResponseCommand)) {
-
-            log.warn("Received message before cluster initialization has been completed");
+                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+            log.warn("Received message " + msg +
+                     " before cluster initialization has been completed from " +
+                     TribesUtil.getHost(sender));
             return;
         }
-        log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
+        if (log.isDebugEnabled()) {
+            log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
+        }
+
         try {
             processMessage(msg, sender);
         } catch (Exception e) {
-            log.error(e);
+            String errMsg = "Cannot process received message";
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
         }
     }
 
     private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
-        //TODO: Reject duplicates that can be received due to retransmissions
-        //TODO: ACK implosion?
-
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
-            contextManager.process(ctxCmd);
-
-            // Sending ACKs for ContextClusteringCommandCollection or
-            // UpdateContextCommand is sufficient
-            if (msg instanceof ContextClusteringCommandCollection ||
-                msg instanceof UpdateContextCommand) {
-                AckCommand ackCmd = new AckCommand(ctxCmd.getUniqueId());
-
-                // Send the ACK
-                this.channelSender.sendToMember(ackCmd, sender);
-            }
-        } else if (msg instanceof ConfigurationClusteringCommand &&
-                   configurationManager != null) {
+            ctxCmd.execute(configurationContext);
+        } else if (msg instanceof ConfigurationClusteringCommand && configurationManager != null) {
             configurationManager.process((ConfigurationClusteringCommand) msg);
-        } else if (msg instanceof ControlCommand && controlCommandProcessor != null) {
-            controlCommandProcessor.process((ControlCommand) msg,
-                                            sender);
-        }
+        } 
     }
 }

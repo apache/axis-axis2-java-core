@@ -47,11 +47,12 @@ import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implements EndpointLifecycleManager {
+public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implements
+        EndpointLifecycleManager {
     public static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
     private static final Log log = LogFactory.getLog(EndpointLifecycleManagerImpl.class);
 
-    public EndpointLifecycleManagerImpl(Object endpointInstance) {      
+    public EndpointLifecycleManagerImpl(Object endpointInstance) {
         this.instance = endpointInstance;
     }
 
@@ -62,22 +63,18 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
       * @see org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager#createServiceInstance(org.apache.axis2.jaxws.core.MessageContext, java.lang.Class)
       */
     public Object createServiceInstance(MessageContext mc, Class serviceImplClass)
-            throws LifecycleException, ResourceInjectionException {
+                                                                                  throws LifecycleException,
+                                                                                  ResourceInjectionException {
         org.apache.axis2.context.MessageContext msgContext = mc.getAxisMessageContext();
 
         // Get the ServiceDescription and injectionDesc which contain
         // cached information
         ServiceDescription serviceDesc = mc.getEndpointDescription().getServiceDescription();
-        ResourceInjectionServiceRuntimeDescription injectionDesc = null;
-        if (serviceDesc != null) {
-            injectionDesc =
-                    ResourceInjectionServiceRuntimeDescriptionFactory
-                            .get(serviceDesc, serviceImplClass);
-        }
+        ResourceInjectionServiceRuntimeDescription injectionDesc =
+                getInjectionDesc(serviceDesc, serviceImplClass);
 
-        // See if there is an existing service object
-        ServiceContext serviceContext = msgContext.getServiceContext();
-        Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
+
+        Object serviceimpl = retrieveServiceInstance(mc);
         if (serviceimpl != null) {
             this.instance = serviceimpl;
 
@@ -87,16 +84,8 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
 
             // If resource injection is needed, create the SOAPMessageContext and update the WebServiceContext
             // Create MessageContext for current invocation.
-            if (injectionDesc != null && injectionDesc.hasResourceAnnotation()) {
-                javax.xml.ws.handler.MessageContext soapMessageContext =
-                        createSOAPMessageContext(mc);
-                //Get WebServiceContext from ServiceContext
-                WebServiceContext ws =
-                        (WebServiceContext)serviceContext.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
-                //Add the MessageContext for current invocation
-                if (ws != null) {
-                    updateWebServiceContext(ws, soapMessageContext);
-                }
+            if (hasResourceAnnotation(injectionDesc)) {
+                performWebServiceContextUpdate(mc);
             }
 
             //since service impl is there in service context , take that from there
@@ -112,25 +101,109 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
 
             // If resource injection is needed, create the SOAPMessageContext and build the WebServiceContext
             // Create MessageContext for current invocation.
-            if (injectionDesc != null && injectionDesc.hasResourceAnnotation()) {
-                javax.xml.ws.handler.MessageContext soapMessageContext =
-                        createSOAPMessageContext(mc);
-                // Create WebServiceContext
-                WebServiceContextImpl wsContext = new WebServiceContextImpl();
-                //Add MessageContext for this request.
-                wsContext.setSoapMessageContext(soapMessageContext);
-                // Inject WebServiceContext
-                injectWebServiceContext(mc, wsContext, serviceimpl);
-                serviceContext.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
+            if (hasResourceAnnotation(injectionDesc)) {
+                performWebServiceContextInjection(mc, serviceimpl);
             }
+
 
             //Invoke PostConstruct
             if (injectionDesc != null && injectionDesc.getPostConstructMethod() != null) {
                 invokePostConstruct(injectionDesc.getPostConstructMethod());
             }
+            ServiceContext serviceContext = msgContext.getServiceContext();
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
         }
+    }
+
+    /**
+     * This method locates an existing service implementation instance if
+     * one has been previously stored away.
+     */
+    protected Object retrieveServiceInstance(MessageContext mc) {
+        Object instance = null;
+        ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
+        instance = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
+        return instance;
+    }
+
+    /**
+     * This method will provide the necessary function in order to inject
+     * a WebServiceContext instance on a member of the service implementation class.
+     */
+    protected void performWebServiceContextInjection(MessageContext mc, Object serviceImpl)
+                                                                                           throws ResourceInjectionException {
+        WebServiceContext wsContext = createWebServiceContext(mc);
+        // Inject WebServiceContext
+        injectWebServiceContext(mc, wsContext, serviceImpl);
+        saveWebServiceContext(mc, wsContext);
+    }
+
+    /**
+     * This method will provide the necessary function in order to update
+     * an existing WebServiceContext instance with a MessageContext for
+     * the current request.
+     */
+    protected void performWebServiceContextUpdate(MessageContext mc)
+                                                                    throws ResourceInjectionException {
+        javax.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
+        ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
+
+        //Get WebServiceContext from ServiceContext
+        WebServiceContext ws =
+                (WebServiceContext) serviceContext.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
+
+        //Add the MessageContext for current invocation
+        if (ws != null) {
+            updateWebServiceContext(ws, soapMessageContext);
+        }
+    }
+
+    /**
+     * This method will provide the function necessary to save the WebServiceContext
+     * associated with the endpoint.
+     */
+    protected void saveWebServiceContext(MessageContext mc, WebServiceContext wsContext) {
+        ServiceContext sc = mc.getAxisMessageContext().getServiceContext();
+        sc.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
+    }
+
+    /**
+     * This method will be responsible for creating an instance of a WebServiceContext
+     * and initializing the instance with a MessageContext.
+     */
+    protected WebServiceContext createWebServiceContext(MessageContext mc) {
+        javax.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
+        // Create WebServiceContext
+        WebServiceContextImpl wsContext = new WebServiceContextImpl();
+        //Add MessageContext for this request.
+        wsContext.setSoapMessageContext(soapMessageContext);
+        return wsContext;
+    }
+
+    /**
+     * This method will retrieve a ResourceInjectionServiceRuntimeDescription if one
+     * is associated with the current ServiceDescription.
+     */
+    protected ResourceInjectionServiceRuntimeDescription getInjectionDesc(
+                                                                          ServiceDescription serviceDesc,
+                                                                          Class serviceImplClass) {
+        ResourceInjectionServiceRuntimeDescription injectionDesc = null;
+        if (serviceDesc != null) {
+            injectionDesc =
+                    ResourceInjectionServiceRuntimeDescriptionFactory.get(serviceDesc,
+                                                                          serviceImplClass);
+        }
+
+        return injectionDesc;
+    }
+
+    /**
+     * This method indicates whether or not we need to perform WebServiceContext injection
+     * on a field within our endpoint instance.
+     */
+    protected boolean hasResourceAnnotation(ResourceInjectionServiceRuntimeDescription injectionDesc) {
+        return (injectionDesc != null && injectionDesc.hasResourceAnnotation());
     }
 
     private Object createServiceInstance(AxisService service, Class serviceImplClass) {
@@ -139,8 +212,7 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
         }
 
         if (serviceImplClass == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr5"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr5"));
         }
 
         Object instance = null;
@@ -151,51 +223,53 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
 
                 Parameter serviceObjectParam =
                         service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
-                Class serviceObjectMaker = Loader.loadClass(classLoader, ((String)
-                        serviceObjectParam.getValue()).trim());
+                Class serviceObjectMaker =
+                        Loader.loadClass(classLoader,
+                                         ((String) serviceObjectParam.getValue()).trim());
 
                 // Find static getServiceObject() method, call it if there
-                Method method = serviceObjectMaker.
-                        getMethod("getServiceObject",
-                                new Class[]{AxisService.class});
+                Method method =
+                        serviceObjectMaker.getMethod("getServiceObject",
+                                                     new Class[] { AxisService.class });
                 if (method != null) {
-                    return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
+                    return method.invoke(serviceObjectMaker.newInstance(), new Object[] { service });
                 }
             }
             instance = serviceImplClass.newInstance();
         } catch (IllegalAccessException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr6", serviceImplClass.getName()));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr6",
+                                                                               serviceImplClass.getName()));
         } catch (InstantiationException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr6", serviceImplClass.getName()));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr6",
+                                                                               serviceImplClass.getName()));
         } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
-                    "EndpointControllerErr6", serviceImplClass.getName()));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr6",
+                                                                               serviceImplClass.getName()));
         }
 
         return instance;
     }
 
-    private javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc) {
+    protected javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc) {
         SoapMessageContext soapMessageContext =
-                (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
+                (SoapMessageContext) MessageContextFactory.createSoapMessageContext(mc);
         ContextUtils.addProperties(soapMessageContext, mc);
         return soapMessageContext;
     }
 
-    private void injectWebServiceContext(MessageContext mc, WebServiceContext wsContext,
-                                         Object serviceInstance) throws ResourceInjectionException {
+    protected void injectWebServiceContext(MessageContext mc, WebServiceContext wsContext,
+                                           Object serviceInstance)
+                                                                  throws ResourceInjectionException {
         ResourceInjector ri =
                 ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
         ri.inject(wsContext, serviceInstance);
     }
 
-    private void updateWebServiceContext(WebServiceContext wsContext,
-                                         javax.xml.ws.handler.MessageContext soapMessageContext)
-            throws ResourceInjectionException {
-        WebServiceContextInjector wci = (WebServiceContextInjector)ResourceInjectionFactory
-                .createResourceInjector(WebServiceContext.class);
+    protected void updateWebServiceContext(WebServiceContext wsContext,
+                                           javax.xml.ws.handler.MessageContext soapMessageContext)
+                                                                                                  throws ResourceInjectionException {
+        WebServiceContextInjector wci =
+                (WebServiceContextInjector) ResourceInjectionFactory.createResourceInjector(WebServiceContextInjector.class);
         wci.addMessageContext(wsContext, soapMessageContext);
 
     }

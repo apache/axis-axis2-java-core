@@ -24,6 +24,9 @@
         <handler name="h2" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationInPhase"/>
         </handler>
+        <handler name="h6" class="org.apache.axis2.registry.Handler3">
+            <order phase="NewPhase"/>
+        </handler>
     </InFlow>
 
     <OutFlow>
@@ -48,4 +51,6 @@
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <parameter name="para1" locked="xsd:true">10</parameter>
     </operation>
+    <phase name="NewPhase" before="Dispatch" after="Security" flow="InFlow"/>
+    <phase name="NewPhase" before="Dispatch"  flow="InFaultFlow"/>
 </module>

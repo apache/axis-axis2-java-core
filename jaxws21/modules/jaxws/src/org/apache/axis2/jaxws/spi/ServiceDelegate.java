@@ -18,12 +18,13 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.ws.handler.HandlerResolver;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
@@ -33,6 +34,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -51,8 +53,11 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.http.HTTPBinding;
+
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.PrivilegedActionException;
@@ -66,6 +71,9 @@ import java.util.concurrent.Executor;
  */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private static final Log log = LogFactory.getLog(ServiceDelegate.class);
+    private static ThreadLocal<DescriptionBuilderComposite> sparseServiceCompositeThreadLocal = new ThreadLocal<DescriptionBuilderComposite>();
+    private static ThreadLocal<DescriptionBuilderComposite> sparsePortCompositeThreadLocal = new ThreadLocal<DescriptionBuilderComposite>();
+    
     private Executor executor;
 
     private ServiceDescription serviceDescription;
@@ -73,6 +81,116 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private ServiceClient serviceClient = null;
 
     private HandlerResolver handlerResolver = null;
+    
+    /**
+     * NON-STANDARD SPI! Set any metadata to be used on the creation of the NEXT Service by this thread.
+     * NOTE that this uses ThreadLocal to store the metadata, and that ThreadLocal is cleared after it is
+     * used to create a Service.  That means:
+     * 1) The thread that sets the metadata to use MUST be the thread that creates the Service
+     * 2) Creation of the Service should be the very next thing the thread does
+     * 3) The metadata will be set to null when the Service is created, so to create another 
+     *    service with the same metadata, it will need to be set again prior to creating the
+     *    service
+     * 4) The metadata can be set prior to creating both generic Service and generated Service 
+     *    instances.      
+     * 
+     * This allows creating a generic Service (javax.xml.ws.Service) or a generated Service
+     * (subclass of javax.xml.ws.Service) specifying additional metadata via a
+     * sparse composite.  This can be used by a runtime to create a Service for a requester using
+     * additional metadata such as might come from a deployment descriptor or from resource
+     * injection processing of @Resource or @WebServiceRef(s) annotations.  Additional metadata
+     * may include things like @WebServiceClient.wsdlLocation or a @HandlerChain specification.
+     * 
+     *    @see javax.xml.ws.Service#create(QName)
+     *    @see javax.xml.ws.Service#create(URL, QName)
+     * 
+     * @param composite Additional metadata (if any) to be used in creation of the service
+     */
+    static public void setServiceMetadata(DescriptionBuilderComposite composite) {
+        sparseServiceCompositeThreadLocal.set(composite);
+    }
+    
+    /**
+     * NON-STANDARD SPI! Returns the composite that will be used on the creation of the next 
+     * Service by this thread.
+     * 
+     * @see #setServiceMetadata(DescriptionBuilderComposite)
+     * 
+     * @return composite that will be used on the creation of the next Service by this thread, or null
+     *         if no composite is to be used.
+     */
+    static DescriptionBuilderComposite getServiceMetadata() {
+        return sparseServiceCompositeThreadLocal.get();
+    }
+    
+    /**
+     * Remove any composite so that creation of the next Service by this thread will NOT be 
+     * affected by any additional metadata.
+     * 
+     * @see #setServiceMetadata(DescriptionBuilderComposite)
+     * 
+     */
+    static void resetServiceMetadata() {
+        sparseServiceCompositeThreadLocal.set(null);
+    }
+    
+    /**
+     * NON-STANDARD SPI! Set any metadata to be used on the creation of the NEXT Port by this thread.
+     * NOTE that this uses ThreadLocal to store the metadata, and that ThreadLocal is cleared after it is
+     * used to create a Port.  That means:
+     * 1) The thread that sets the metadata to use MUST be the thread that creates the Port
+     * 2) Creation of the Port should be the very next thing the thread does
+     * 3) The metadata will be set to null when the Port is created, so to create another 
+     *    Port with the same metadata, it will need to be set again prior to creating the
+     *    Port
+     * 4) The metadata can be set prior to creating Port which specifies a QName via 
+     *    Service.getPort(QName, Class) or one that only specifies the SEI class via 
+     *    Service.getPort(Class)
+     * 5) Metadata can not be specified for dynamic ports, i.e. those added via 
+     *    Service.addPort(...).
+     * 6) Metadata can not be specfied when creating a dispatch client, i.e. via 
+     *    Service.createDispatch(...)
+     * 7) The Service used to create the port can be the generic service or a generated 
+     *    service.      
+     * 
+     * This allows creating Port specifying additional metadata via a sparse composite.  
+     * This can be used by a runtime to create a Port for a requester using
+     * additional metadata such as might come from a deployment descriptor or from resource
+     * injection processing.  Additional metadata might include things like 
+     * a @HandlerChain specification.
+     * 
+     *    @see javax.xml.ws.Service#getPort(Class)
+     *    @see javax.xml.ws.Service#getPort(QName, Class)
+     * 
+     * @param composite Additional metadata (if any) to be used in creation of the port
+     */
+    static public void setPortMetadata(DescriptionBuilderComposite composite) {
+        sparsePortCompositeThreadLocal.set(composite);
+    }
+
+    /**
+     * NON-STANDARD SPI! Returns the composite that will be used on the creation of the next 
+     * Port by this thread.
+     * 
+     * @see #setPortMetadata(DescriptionBuilderComposite)
+     * 
+     * @return composite that will be used on the creation of the next Port by this thread, or null
+     *         if no composite is to be used.
+     */
+    static DescriptionBuilderComposite getPortMetadata() {
+        return sparsePortCompositeThreadLocal.get();
+    }
+    
+    /**
+     * Remove any composite so that creation of the next Port by this thread will NOT be 
+     * affected by any additional metadata.
+     * 
+     * @see #setPortMetadata(DescriptionBuilderComposite)
+     * 
+     */
+    static void resetPortMetadata() {
+       sparsePortCompositeThreadLocal.set(null);
+    }
     
     public ServiceDelegate(URL url, QName qname, Class clazz) throws WebServiceException {
         super();
@@ -82,7 +200,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
         }
-        serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
+        // Get any metadata that is to be used to build up this service, then reset it so it isn't used
+        // to create any other services.
+        DescriptionBuilderComposite sparseComposite = getServiceMetadata();
+        resetServiceMetadata();
+        if (sparseComposite != null) {
+            serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz, sparseComposite, this);
+        } else {
+            serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
+        }
         // TODO: This check should be done when the Service Description is created above; that should throw this exception.
         // That is because we (following the behavior of the RI) require the WSDL be fully specified (not partial) on the client
         if (isValidWSDLLocation()) {
@@ -378,9 +504,22 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     Messages.getMessage("getPortInvalidSEI", portName.toString(), "null"));
         }
 
-        EndpointDescription endpointDesc =
+        DescriptionBuilderComposite sparseComposite = getPortMetadata();
+        resetPortMetadata();
+        EndpointDescription endpointDesc = null;
+        if (sparseComposite != null) {
+            endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, sei, portName,
-                                                  DescriptionFactory.UpdateType.GET_PORT);
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  sparseComposite, this);
+        }
+        else {
+            endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, sei, portName,
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  null, this);
+            
+        }
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(
             		Messages.getMessage("portErr",portName.toString()));
@@ -561,6 +700,23 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private boolean isServiceDefined(QName serviceName) {
         return getWSDLWrapper().getService(serviceName) != null;
+    }
+
+    private BindingImpl addBinding(EndpointDescription endpointDesc, String bindingId) {
+        // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
+        if (bindingId != null) {
+            //TODO: create all the bindings here
+            if (BindingUtils.isSOAPBinding(bindingId)) {            	
+                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
+                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
+            } 
+            
+            if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
+                //instantiate http binding implementation here and call setBinding in BindingProvider
+                return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);
+            }
+        } 
+        return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
     }
 
     private boolean isValidDispatchType(Class clazz) {

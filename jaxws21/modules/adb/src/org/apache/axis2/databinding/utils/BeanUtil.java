@@ -24,7 +24,11 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
+import org.apache.axis2.deployment.util.ExcludeInfo;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -103,19 +107,39 @@ public class BeanUtil {
                                             "elementName");
             }
 
+            AxisService axisService = null;
+            if (MessageContext.getCurrentMessageContext() != null) {
+                axisService = MessageContext.getCurrentMessageContext().getAxisService();
+            }
+            BeanExcludeInfo beanExcludeInfo = null;
+            if (axisService != null && axisService.getExcludeInfo() != null) {
+                beanExcludeInfo = axisService.getExcludeInfo().getBeanExcludeInfoForClass(
+                        jClass.getQualifiedName());
+            }
             // properties from JAM
             ArrayList propertyList = new ArrayList();
             JProperty properties [] = jClass.getDeclaredProperties();
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
-                propertyList.add(property);
+                String propertyName = getCorrectName(property.getSimpleName());
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
+                    propertyList.add(property);
+                }
+
             }
             JClass supClass = jClass.getSuperclass();
-            while (!"java.lang.Object".equals(supClass.getQualifiedName())) {
+            while (!supClass.getQualifiedName().startsWith("java.")) {
                 properties = supClass.getDeclaredProperties();
+                ExcludeInfo excludeInfo = axisService.getExcludeInfo();
+                if (excludeInfo != null) {
+                    beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getQualifiedName());
+                }
                 for (int i = 0; i < properties.length; i++) {
                     JProperty property = properties[i];
-                    propertyList.add(property);
+                    String propertyName = getCorrectName(property.getSimpleName());
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
+                        propertyList.add(property);
+                    }
                 }
                 supClass = supClass.getSuperclass();
             }

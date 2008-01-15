@@ -138,14 +138,14 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
+        
         if (name.getURI() == null
-                || name.getURI().trim().length() == 0
-                || name.getPrefix() == null
-                || name.getPrefix().trim().length() == 0) {
+                || name.getURI().trim().length() == 0) {
             throw new SOAPException("SOAP1.1 and SOAP1.2 requires all HeaderElements to have " +
-                    "qualified namespace.");
+                    "a namespace.");
         }
-        OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
+        String prefix = name.getPrefix() == null ? "" : name.getPrefix();
+        OMNamespace ns = new NamespaceImpl(name.getURI(), prefix);
 
         SOAPHeaderBlock headerBlock = null;
         if (this.element.getOMFactory() instanceof SOAP11Factory) {

@@ -2,6 +2,11 @@ package org.apache.axis2.metadata.registry;
 
 import java.io.File;
 
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+
+import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
+
 import junit.framework.TestCase;
 
 
@@ -25,6 +30,32 @@ public class MetadataFactoryRegistryTests extends TestCase {
             assertNotNull(obj);
             assertEquals(obj.getClass().getName(), TestImplementation.class.getName()); 
         }
+    }
+    
+    public void testRegisterWSDLReaderConfigurator() {
+    	Exception e = null;
+    	WSDLReader reader = null;
+    	try {
+    		WSDLFactory factory = WSDLFactory.newInstance();
+        	reader = factory.newWSDLReader();
+    	}
+    	catch(Exception e2) {
+    		e.printStackTrace();
+    		e = e2;
+    	}
+    	assertNull(e);
+    	assertNotNull(reader);
+    	WSDLReaderConfigurator configurator = (WSDLReaderConfigurator) MetadataFactoryRegistry.
+    		getFactory(WSDLReaderConfigurator.class);
+    	assertNotNull(configurator);
+    	try {
+    		configurator.configureReaderInstance(reader);
+    	}
+    	catch(Exception e2) {
+    		e = e2;
+    	}
+    	assertNull(e);
+    	assertEquals(reader.getFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE), false);
     }
 
     // This interface class will be used to test the file based registration

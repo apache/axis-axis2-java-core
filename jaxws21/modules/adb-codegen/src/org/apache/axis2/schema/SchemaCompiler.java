@@ -49,6 +49,9 @@ public class SchemaCompiler {
 
     private CompilerOptions options;
     private HashMap processedTypemap;
+    // have to keep a seperate group type map since same
+    // name can be used to group and complextype
+    private HashMap processedGroupTypeMap;
 
     //the list of processedElements for the outer elements
     private HashMap processedElementMap;
@@ -137,6 +140,8 @@ public class SchemaCompiler {
 
         //instantiate the maps
         processedTypemap = new HashMap();
+        processedGroupTypeMap = new HashMap();
+
         processedElementMap = new HashMap();
         simpleTypesMap = new HashMap();
         processedElementList = new ArrayList();
@@ -156,6 +161,8 @@ public class SchemaCompiler {
 
         //load the base types
         baseSchemaTypeMap = SchemaPropertyLoader.getTypeMapperInstance().getTypeMap();
+        // adding all the soap encoding schema classes
+        processedTypemap.putAll(SchemaPropertyLoader.getTypeMapperInstance().getSoapEncodingTypesMap());
 
 
     }
@@ -475,7 +482,7 @@ public class SchemaCompiler {
         }
 
 
-        String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
+        String writtenClassName = writer.write(xsElt, processedTypemap, processedGroupTypeMap, metainf);
         //register the class name
         xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, writtenClassName);
         processedElementMap.put(xsElt.getQName(), writtenClassName);
@@ -645,13 +652,43 @@ public class SchemaCompiler {
             }
 
             // here what we want is to set the schema type name for the element
-            if (referencedElement.getSchemaType() != null) {
-                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())){
+            if (referencedElement.getSchemaTypeName() != null){
+                // i.e this element refers to an complex type name
+                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
+                    if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
+                        this.processedElementRefMap.put(referencedElement.getQName(),
+                                this.baseSchemaTypeMap.get(referencedElement.getSchemaTypeName()));
+                    } else {
+                        XmlSchema resolvedTypeSchema = getParentSchema(resolvedSchema,
+                                referencedElement.getSchemaTypeName(),
+                                COMPONENT_TYPE);
+                        XmlSchemaType xmlSchemaType = resolvedTypeSchema.getTypeByName(
+                                referencedElement.getSchemaTypeName().getLocalPart());
+                        processSchema(referencedElement, xmlSchemaType, resolvedTypeSchema, true);
+                        this.processedElementRefMap.put(referencedElement.getQName(),
+                                this.processedTypemap.get(referencedElement.getSchemaTypeName()));
+                    }
+                }
+                String javaClassName;
+                if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
+                    // here we have to do nothing since we do not generate a name
+                } else {
+                    javaClassName = (String) this.processedTypemap.get(referencedElement.getSchemaTypeName());
+                    referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            javaClassName);
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            javaClassName);
+                }
+            } else if (referencedElement.getSchemaType() != null) {
+                if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
+
                     processSchema(referencedElement, referencedElement.getSchemaType(), resolvedSchema, true);
                     // if this is an anonomous complex type we have to set this
                     this.processedElementRefMap.put(referencedElement.getQName(),
                             this.processedTypemap.get(referencedElement.getSchemaTypeName()));
+
                 }
+                
                 String javaClassName = (String) this.processedTypemap.get(referencedElement.getSchemaTypeName());
                 referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                         javaClassName);
@@ -733,7 +770,8 @@ public class SchemaCompiler {
     private boolean isAlreadyProcessed(QName qName) {
         return processedTypemap.containsKey(qName) ||
                 simpleTypesMap.containsKey(qName) ||
-                baseSchemaTypeMap.containsKey(qName);
+                baseSchemaTypeMap.containsKey(qName) ||
+                processedGroupTypeMap.containsKey(qName);
     }
 
 
@@ -943,7 +981,8 @@ public class SchemaCompiler {
      */
     private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        String javaClassName = writer.write(complexType.getQName(), processedTypemap, metaInfHolder, complexType.isAbstract());
+        String javaClassName = writer.write(complexType.getQName(),
+                processedTypemap, processedGroupTypeMap, metaInfHolder, complexType.isAbstract());
         processedTypeMetaInfoMap.put(complexType.getQName(), metaInfHolder);
         return javaClassName;
     }
@@ -960,7 +999,7 @@ public class SchemaCompiler {
 
     private String writeComplexParticle(QName qname,BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-       String javaClassName = writer.write(qname, processedTypemap, metaInfHolder,false);
+       String javaClassName = writer.write(qname, processedTypemap, processedGroupTypeMap, metaInfHolder,false);
         processedTypeMetaInfoMap.put(qname, metaInfHolder);
         return javaClassName;
     }
@@ -974,7 +1013,7 @@ public class SchemaCompiler {
      */
     private void writeSimpleType(XmlSchemaSimpleType simpleType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        writer.write(simpleType, processedTypemap, metaInfHolder);
+        writer.write(simpleType, processedTypemap, processedGroupTypeMap, metaInfHolder);
         processedTypeMetaInfoMap.put(simpleType.getQName(), metaInfHolder);
     }
 
@@ -1118,15 +1157,7 @@ public class SchemaCompiler {
 
             // process attributes
             //process attributes - first look for the explicit attributes
-            XmlSchemaObjectCollection attribs = extension.getAttributes();
-            Iterator attribIterator = attribs.getIterator();
-            while (attribIterator.hasNext()) {
-                Object o = attribIterator.next();
-                if (o instanceof XmlSchemaAttribute) {
-                    processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
-
-                }
-            }
+            processAttributes(extension.getAttributes(),metaInfHolder,parentSchema);
 
             //process any attribute
             //somehow the xml schema parser does not seem to pickup the any attribute!!
@@ -1177,15 +1208,7 @@ public class SchemaCompiler {
             processParticle(restriction.getBaseTypeName(),restriction.getParticle(), metaInfHolder, parentSchema);
 
             //process attributes - first look for the explicit attributes
-            XmlSchemaObjectCollection attribs = restriction.getAttributes();
-            Iterator attribIterator = attribs.getIterator();
-            while (attribIterator.hasNext()) {
-                Object o = attribIterator.next();
-                if (o instanceof XmlSchemaAttribute) {
-                    processAttribute((XmlSchemaAttribute) o, metaInfHolder, parentSchema);
-
-                }
-            }
+            processAttributes(restriction.getAttributes(),metaInfHolder,parentSchema);
 
             //process any attribute
             //somehow the xml schema parser does not seem to pickup the any attribute!!
@@ -1840,7 +1863,7 @@ public class SchemaCompiler {
             XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) particle;
             QName groupQName = xmlSchemaGroupRef.getRefName();
             if (groupQName != null) {
-                if (!processedTypemap.containsKey(groupQName)) {
+                if (!processedGroupTypeMap.containsKey(groupQName)) {
                     // processe the schema here
                     XmlSchema resolvedParentSchema = getParentSchema(parentSchema,groupQName,COMPONENT_GROUP);
                     if (resolvedParentSchema == null){
@@ -1858,7 +1881,11 @@ public class SchemaCompiler {
             boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1;
 
             // add this as an array to the original class
-            metainfHolder.registerMapping(groupQName, groupQName, findClassName(groupQName, isArray));
+            String groupClassName = (String) processedGroupTypeMap.get(groupQName);
+            if (isArray){
+                groupClassName = groupClassName + "[]";
+            }
+            metainfHolder.registerMapping(groupQName, groupQName, groupClassName);
             if (isArray) {
                 metainfHolder.addtStatus(groupQName, SchemaConstants.ARRAY_TYPE);
             }
@@ -1980,7 +2007,7 @@ public class SchemaCompiler {
                 XmlSchemaGroupRef xmlSchemaGroupRef = (XmlSchemaGroupRef) item;
                 QName groupQName = xmlSchemaGroupRef.getRefName();
                 if (groupQName != null){
-                    if (!processedTypemap.containsKey(groupQName)){
+                    if (!processedGroupTypeMap.containsKey(groupQName)){
                         // processe the schema here
                         XmlSchema resolvedParentSchema = getParentSchema(parentSchema,groupQName,COMPONENT_GROUP);
                         if (resolvedParentSchema == null){
@@ -2194,9 +2221,13 @@ public class SchemaCompiler {
                 boolean isArray = xmlSchemaGroupRef.getMaxOccurs() > 1;
 
                 // add this as an array to the original class
+                String groupClassName = (String) processedGroupTypeMap.get(groupQName);
+                if (isArray){
+                    groupClassName = groupClassName + "[]";
+                }
                 metainfHolder.registerMapping(groupQName,
                         groupQName,
-                        findClassName(groupQName, isArray));
+                        groupClassName);
                 if (isArray) {
                     metainfHolder.addtStatus(groupQName, SchemaConstants.ARRAY_TYPE);
                 }
@@ -2241,7 +2272,8 @@ public class SchemaCompiler {
                     process(schemaGroupQName, xmlSchemaSequence.getItems(), beanWriterMetaInfoHolder, true, parentSchema);
                     beanWriterMetaInfoHolder.setParticleClass(true);
                     String javaClassName = writeComplexParticle(schemaGroupQName, beanWriterMetaInfoHolder);
-                    processedTypemap.put(schemaGroupQName, javaClassName);
+                    processedGroupTypeMap.put(schemaGroupQName, javaClassName);
+//                    processedTypemap.put(schemaGroupQName, javaClassName);
                 }
 
             } else if (xmlSchemaGroupBase instanceof XmlSchemaChoice){
@@ -2252,7 +2284,8 @@ public class SchemaCompiler {
                     process(schemaGroupQName, xmlSchemaChoice.getItems(), beanWriterMetaInfoHolder, false, parentSchema);
                     beanWriterMetaInfoHolder.setParticleClass(true);
                     String javaClassName = writeComplexParticle(schemaGroupQName, beanWriterMetaInfoHolder);
-                    processedTypemap.put(schemaGroupQName, javaClassName);
+                    processedGroupTypeMap.put(schemaGroupQName, javaClassName);
+//                    processedTypemap.put(schemaGroupQName, javaClassName);
                 }
             }
         }
@@ -2636,11 +2669,11 @@ public class SchemaCompiler {
         boolean isExists = false;
         switch (componetType) {
             case COMPONENT_TYPE : {
-                isExists = (schema.getTypeByName(componentQName) != null);
+                isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ELEMENT : {
-                isExists = (schema.getElementByName(componentQName) != null);
+                isExists = (schema.getElementByName(componentQName.getLocalPart()) != null);
                 break;
             }
             case COMPONENT_ATTRIBUTE : {

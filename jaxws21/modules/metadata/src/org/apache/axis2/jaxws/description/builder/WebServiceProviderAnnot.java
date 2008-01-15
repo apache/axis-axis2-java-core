@@ -61,6 +61,20 @@ public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider 
                                            portName,
                                            targetNamespace);
     }
+    
+    public static WebServiceProviderAnnot createFromAnnotation(Annotation annotation) {
+        WebServiceProviderAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.xml.ws.WebServiceProvider) {
+            javax.xml.ws.WebServiceProvider wsp = (javax.xml.ws.WebServiceProvider) annotation;
+            returnAnnot = new WebServiceProviderAnnot(wsp.wsdlLocation(),
+                                                      wsp.serviceName(),
+                                                      wsp.portName(),
+                                                      wsp.targetNamespace());
+                                                     
+        }
+        
+        return returnAnnot;
+    }
 
     /** @return Returns the portName. */
     public String portName() {

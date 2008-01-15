@@ -18,21 +18,13 @@
  */
 package org.apache.axis2.scripting;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfo;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -43,6 +35,15 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An Axis2 DeploymentEngine subclass for deploying script services 
@@ -116,10 +117,11 @@ public class ScriptDeploymentEngine extends DeploymentEngine {
         for (int i = 0; i < wsToUnDeploy.size(); i++) {
             try {
                 WSInfo wsInfo = (WSInfo)wsToUnDeploy.get(i);
+                String fileName = Utils.getShortFileName(wsInfo.getFileName());
 //                if (wsInfo.getType() == TYPE_SERVICE) {
                     if (isHotUpdate()) {
                         try {
-                            serviceName = getAxisServiceName(wsInfo.getFileName());
+                            serviceName = getAxisServiceName(fileName);
                             if (!undeployed.contains(serviceName)) {
                                 realAxisConfig.removeServiceGroup(serviceName);
                                 undeployed.add(serviceName);
@@ -129,11 +131,11 @@ public class ScriptDeploymentEngine extends DeploymentEngine {
                         } catch (AxisFault axisFault) {
                             // May be a faulty service
                             realAxisConfig.removeFaultyService(serviceName);
-                            log.debug("removeFaultyService: " + wsInfo.getFileName());
+                            log.debug("removeFaultyService: " + fileName);
                         }
                     } else {
                         realAxisConfig.removeFaultyService(serviceName);
-                        log.debug("not hotUpdate, removeFaultyService: " + wsInfo.getFileName());
+                        log.debug("not hotUpdate, removeFaultyService: " + fileName);
                     }
 //                }
             } catch (Exception e) {

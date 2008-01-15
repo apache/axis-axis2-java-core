@@ -38,7 +38,9 @@ public class MetadataExchangeModule implements Module {
 	private static final Log log = LogFactory.getLog(MetadataExchangeModule.class);
 
 	public void engageNotify(AxisDescription axisDescription) throws AxisFault {
-	 log.info("metadataExchange module has been engaged to Service." );	
+		if(log.isDebugEnabled()){
+			log.debug("metadataExchange module has been engaged to Service." );
+		}
 	}
 
 	public void init(ConfigurationContext configContext, AxisModule module)

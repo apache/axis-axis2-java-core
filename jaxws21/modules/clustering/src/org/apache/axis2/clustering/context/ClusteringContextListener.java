@@ -47,7 +47,7 @@ public class ClusteringContextListener implements ContextListener {
             try {
                 sender.sendToGroup(command);
             } catch (ClusteringFault e) {
-                log.error(e);
+                log.error("Cannot send context removed message to cluster", e);
             }
         }
     }

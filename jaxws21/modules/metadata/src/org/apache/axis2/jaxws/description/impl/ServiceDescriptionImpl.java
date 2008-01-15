@@ -56,8 +56,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,10 +86,6 @@ class ServiceDescriptionImpl
     private URL wsdlURL;
     private QName serviceQName;
 
-    // Only ONE of the following will be set in a ServiceDescription, depending on whether this Description
-    // was created from a service-requester or service-provider flow. 
-    private Class serviceClass;         // A service-requester generated service or generic service class
-
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper;
     private WSDLWrapper generatedWsdlWrapper;
@@ -112,7 +110,8 @@ class ServiceDescriptionImpl
 
 
     /**
-     * This is (currently) the client-side-only constructor Construct a service description hierachy
+     * Create a service-requester side (aka client-side) service description.
+     * Construct a service description hierachy
      * based on WSDL (may be null), the Service class, and a service QName.
      *
      * @param wsdlURL      The WSDL file (this may be null).
@@ -123,6 +122,23 @@ class ServiceDescriptionImpl
      *                     not be null.
      */
     ServiceDescriptionImpl(URL wsdlURL, QName serviceQName, Class serviceClass) {
+        this(wsdlURL, serviceQName, serviceClass, null, null);
+    }
+    
+    /**
+     * Create a service-requester side service description.  Same as constructor above with an 
+     * additonal composite paramater.  Note that the composite is "sparse" in that any values it
+     * contains overrides any values on the corresponding class annotation HOWEVER if the composite
+     * doesn't specify a value, it is gotten from the class annotation. 
+     * @param wsdlURL
+     * @param serviceQName
+     * @param serviceClass
+     * @param sparseComposite a composite with any annotation overrides such as from a client deployment
+     *     descriptor.  CAN NOT BE NULL, but it can be an object created with a default constructor
+     */
+    ServiceDescriptionImpl(URL wsdlURL, QName serviceQName, Class serviceClass, 
+                           DescriptionBuilderComposite sparseComposite,
+                           Object sparseCompositeKey) {
         if (serviceQName == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr0"));
         }
@@ -135,25 +151,108 @@ class ServiceDescriptionImpl
                     Messages.getMessage("serviceDescErr1", serviceClass.getName()));
         }
 
+        composite = new DescriptionBuilderComposite();
+        composite.setIsServiceProvider(false);
+        composite.setCorrespondingClass(serviceClass);
+        composite.setSparseComposite(sparseCompositeKey, sparseComposite);
+        URL sparseCompositeWsdlURL = getWsdlURL(serviceClass, sparseComposite);
+        // The classloader was originally gotten off this class, but it seems more logical to 
+        // get it off the application service class.
+//        composite.setClassLoader(this.getClass().getClassLoader());
+        composite.setClassLoader(serviceClass.getClassLoader());
+        
         // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
         //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
         //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
-        this.wsdlURL = wsdlURL;
+        
+        // If there's a WSDL URL specified in the sparse composite, that is a override, for example
+        // from a JSR-109 deployment descriptor, and that's the one to use.
+        if (sparseCompositeWsdlURL != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
+            }
+            this.wsdlURL = sparseCompositeWsdlURL;
+        } else {
+            this.wsdlURL = wsdlURL;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Wsdl Location value used: " + this.wsdlURL);
+        }
         // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
-        this.serviceClass = serviceClass;
 
         setupWsdlDefinition();
     }
+    
+    URL getWsdlURL(Class clazz, DescriptionBuilderComposite sparseComposite) {
+        // Use the WSDL file if it is specified in the composite
+        // TODO: (JLB) This logic is common with stuff Dustin put in ServiceDescriptionImpl to 
+        // do WSDL file reading in MDQ; refactor them into common helper class.
+        URL url = null;
+        if (sparseComposite != null) {
+            WebServiceClient wsc = (WebServiceClient) sparseComposite.getWebServiceClientAnnot();
+            if (wsc != null && wsc.wsdlLocation() != null) {
+                String wsdlLocation = wsc.wsdlLocation();
+                // Look for the WSDL file as follows:
+                // 1) As a resource on the classpath
+                // 2) As a fully specified URL
+                // 3) As a file on the filesystem.  This is analagous to what the generated
+                //    Service client does.  Is prepends "file:/" to whatever is specified in the
+                //    @WegServiceClient.wsdlLocation element.
+                URL wsdlUrl = null;
+                wsdlUrl = clazz.getClassLoader().getResource(wsdlLocation);
+                if (wsdlUrl == null) {
+                    wsdlUrl = createWsdlURL(wsdlLocation);
+                }
+                if (wsdlUrl == null) {
+                    // This check is necessary because Unix/Linux file paths begin
+                    // with a '/'. When adding the prefix 'jar:file:/' we may end
+                    // up with '//' after the 'file:' part. This causes the URL 
+                    // object to treat this like a remote resource
+                    if(wsdlLocation.indexOf("/") == 0) {
+                        wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+                    }
+                    wsdlUrl = createWsdlURL("file:/" + wsdlLocation);
+                }
+                
+                if (wsdlUrl == null) {
+                    // TODO: (JLB) NLS
+                    throw ExceptionFactory.makeWebServiceException("Unable to access wsdlLocation: "
+                                                                   + wsdlLocation);
+                } else {
+                    url = wsdlUrl;
+                }
+            }
+        }
+        return url;
+    }
+    private static URL createWsdlURL(String wsdlLocation) {
+        URL theUrl = null;
+        try {
+            theUrl = new URL(wsdlLocation);
+        } catch (Exception ex) {
+            // Just return a null to indicate we couldn't create a URL from the string
+        }
+        return theUrl;
+    }
+    
+
 
     /**
-     * This is (currently) the service-provider-side-only constructor. Create a service Description
-     * based on a service implementation class
+     * Create a service-provider side ServiceDesci.  Create a service Description
+     * based on a service implementation class.  Note this is for test-only code; it should not be 
+     * used in production code.  And it is being removed from the test code as well.
      *
+     * @deprecated
      * @param serviceImplClass
      */
     ServiceDescriptionImpl(Class serviceImplClass, AxisService axisService) {
+        composite = new DescriptionBuilderComposite();
+        composite.setIsDeprecatedServiceProviderConstruction(true);
+        composite.setIsServiceProvider(true);
+        // TODO: (JLB) does the composite corresponding class AND the classloader need to be set here?
         isServerSide = true;
+
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
         EndpointDescriptionImpl endpointDescription =
@@ -164,10 +263,11 @@ class ServiceDescriptionImpl
     }
 
     /**
-     * This is (currently) the service-provider-side-only constructor. Create a service Description
-     * based on a service implementation class
-     *
-     * @param serviceImplClass
+     * Create a service-provider side Service description hierachy.  The hierachy is created entirely
+     * from composite.  All relevant classes and interfaces referenced from the class represented by
+     * composite must be included in the map.
+     * @param dbcMap
+     * @param composite
      */
     ServiceDescriptionImpl(
             HashMap<String, DescriptionBuilderComposite> dbcMap,
@@ -218,6 +318,11 @@ class ServiceDescriptionImpl
      * port is one that is not defined (e.g. not via WSDL or annotations) and has been added via
      * Serivce.addPort.
      * <p/>
+     * For predefined ports, a composite of sparse metadata, such as from a deployment descriptor
+     * may be supplied.  This can be used to modify the endpoint interfaceannotations such as
+     * adding a handler chain.  The sparse composite is NOT supported for dynamic (i.e. ADD_PORT)
+     * or dispatch clients. 
+     * <p/>
      * Notes on how an EndpointDescription can be updated or created: 1) Service.createDispatch can
      * create a Dispatch client for either a declared or dynamic port 2) Note that creating a
      * Dispatch does not associate an SEI with an endpoint 3) Service.getPort will associate an SEI
@@ -234,20 +339,37 @@ class ServiceDescriptionImpl
      *                   non-existent dynamic port CREATE_DISPATCH is an attempt to create a
      *                   Dispatch-based client to either a declared port or a pre-existing dynamic
      *                   port.
+     * @param composite  May contain sparse metadata, for example from a deployment descriptor, that
+     *                   should be used in conjuction with the class annotations to update the
+     *                   description hierachy.  For example, it may contain a HandlerChain annotation
+     *                   based on information in a JSR-109 deploment descriptor.                    
      */
 
     EndpointDescription updateEndpointDescription(Class sei, QName portQName,
-                                                  DescriptionFactory.UpdateType updateType) {
+                                                  DescriptionFactory.UpdateType updateType,
+                                                  DescriptionBuilderComposite composite,
+                                                  Object compositeKey) {
 
         EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
         boolean isPortDeclared = isPortDeclared(portQName);
+        // If no QName was specified in the arguments, one may have been specified in the sparse
+        // composite metadata when the service was created.
+        if (DescriptionUtils.isEmpty(portQName)) {
+            QName preferredPortQN = getPreferredPort(compositeKey);
+            if (!DescriptionUtils.isEmpty(preferredPortQN)) {
+                portQName = preferredPortQN;
+            }
+        }
 
         switch (updateType) {
 
             case ADD_PORT:
+                if (composite != null) {
+                    // TODO: (JLB) NLS
+                    throw ExceptionFactory.makeWebServiceException("AddPort can not have a composite");
+                }
                 // Port must NOT be declared (e.g. can not already exist in WSDL)
                 // If an EndpointDesc doesn't exist; create it as long as it doesn't exist in the WSDL
-                // TODO: This test can be simplified once isPortDeclared(QName) understands annotations and WSDL as ways to declare a port.
                 if (DescriptionUtils.isEmpty(portQName)) {
                     throw ExceptionFactory
                             .makeWebServiceException(Messages.getMessage("addPortErr2"));
@@ -289,8 +411,7 @@ class ServiceDescriptionImpl
                     		Messages.getMessage("updateEPDescrErr2",(portQName != null ? portQName.toString() : "not specified")));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
-                    // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this);
+                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this, composite, compositeKey);
                     addEndpointDescription(endpointDescription);
                     /*
                      * We must reset the service runtime description after adding a new endpoint
@@ -301,19 +422,36 @@ class ServiceDescriptionImpl
                     resetServiceRuntimeDescription();
                 } else
                 if (getEndpointSEI(portQName) == null && !endpointDescription.isDynamicPort()) {
-                    // Existing endpointDesc from a declared port needs to be updated with an SEI
-                    // Note that an EndpointDescritption created from an addPort (i.e. a dynamic port) can not do this.
-                    endpointDescription.updateWithSEI(sei);
+                    // Existing endpointDesc from a declared port needs to be updated with an SEI.
+                    // This could happen if the client first did a CREATE_DISPATCH on a declared
+                    // port, which would cause it to be created, and then did a GET_PORT on the 
+                    // same port later, providing an SEI.
+                    // Notes 
+                    // 1) An EndpointDescritption created from an addPort (i.e. a dynamic port) can 
+                    //    not do this.
+                    // 2) A sparse composite may be specified.  We don't allow mixing JAX-WS unmanaged
+                    //    apis (CREATE_DISPATCH) with JSR-109 managed apis (GET_PORT with sparse
+                    //    composite metadata from a DD).  Since the sparse composite is stored by
+                    //    a key AND CREATE_DISPATCH and ADD_PORT will thrown an exception of a composite
+                    //    is specified, having a composite and key on the GET_PORTs shouldn't be
+                    //    a problem.
+                    endpointDescription.updateWithSEI(sei, composite, compositeKey);
                 } else if (getEndpointSEI(portQName) != sei) {
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("updateEPDescrErr3",portQName.toString(),
                     				sei.getName(),getEndpointSEI(portQName).getName()));
                 } else {
                     // All error check above passed, the EndpointDescription already exists and needs no updating
+                    // Just add the sparse composite if one was specified.
+                    endpointDescription.getDescriptionBuilderComposite().setSparseComposite(compositeKey, composite);
                 }
                 break;
 
             case CREATE_DISPATCH:
+                if (composite != null) {
+                    // TODO: (JLB) NLS
+                    throw ExceptionFactory.makeWebServiceException("CreateDispatch can not have a composite");
+                }
                 // Port may or may not exist in WSDL.
                 // If an endpointDesc doesn't exist and it is in the WSDL, it can be created
                 // Otherwise, it is an error.
@@ -422,7 +560,7 @@ class ServiceDescriptionImpl
         return null;
     }
 
-    DescriptionBuilderComposite getDescriptionBuilderComposite() {
+    public DescriptionBuilderComposite getDescriptionBuilderComposite() {
         return composite;
     }
 
@@ -450,16 +588,6 @@ class ServiceDescriptionImpl
         return returnEndpointDesc;
     }
 
-    /*
-    * @return True - if we are processing with the DBC List instead of reflection
-    */
-    boolean isDBCMap() {
-        if (dbcMap == null)
-            return false;
-        else
-            return true;
-    }
-
     // END of public accessor methods
     /*=======================================================================*/
     /*=======================================================================*/
@@ -471,7 +599,7 @@ class ServiceDescriptionImpl
         // Note that there may be no WSDL provided, for example when called from 
         // Service.create(QName serviceName).
 
-        if (isDBCMap()) {
+        if (composite.isServiceProvider()) {
 
             //  Currently, there is a bug which allows the wsdlDefinition to be placed
             //  on either the impl class composite or the sei composite, or both. We need to
@@ -492,6 +620,15 @@ class ServiceDescriptionImpl
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
                     }
+                } else {
+                	String wsdlLocation = null;
+                	wsdlLocation = composite.getWebServiceAnnot() != null ? composite.getWebServiceAnnot().wsdlLocation() :
+                		composite.getWebServiceProviderAnnot().wsdlLocation();
+                	if(wsdlLocation != null
+                			&&
+                			!"".equals(wsdlLocation)) {
+                		setWSDLDefinitionOnDBC(wsdlLocation);
+                	}
                 }
 
             } else if (composite.getWebServiceAnnot() != null) {
@@ -505,16 +642,57 @@ class ServiceDescriptionImpl
                         getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
 
                 try {
-                    if (seic.getWsdlDefinition() != null) {
-                        //set the sdimpl from the SEI composite
+                    if (seic == null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The SEI class " + composite.getWebServiceAnnot().endpointInterface() + " was not found.");
+                        }
+                    }
+                    if (seic != null && seic.getWsdlDefinition() != null) {
+                        // set the wsdl def from the SEI composite
+                        if (log.isDebugEnabled()) {
+                            log.debug("Get the wsdl definition from the SEI composite.");
+                        }
                         this.wsdlURL = seic.getWsdlURL();
                         this.wsdlWrapper =
                                 new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
                     } else if (composite.getWsdlDefinition() != null) {
-                        //set the sdimpl from the impl. class composite
+                        //set the wsdl def from the impl. class composite
+                        if (log.isDebugEnabled()) {
+                            log.debug("Get the wsdl definition from the impl class composite.");
+                        }
                         this.wsdlURL = composite.getWsdlURL();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
                                                              composite.getWsdlDefinition());
+                    } else {
+                    	String wsdlLocation = null;
+                    	// first check to see if the wsdlLocation is on the SEI
+                    	if(seic != null
+                    			&&
+                    			seic.getWebServiceAnnot() != null) {
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("Get the wsdl location from the SEI composite.");
+                    	    }
+                    	    wsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
+                    	}
+                    	
+                    	// now check the impl
+                    	if(wsdlLocation == null
+                    	        ||
+                    	        "".equals(wsdlLocation)) {
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("Get the wsdl location from the impl class composite.");
+                            }
+                    	    wsdlLocation = composite.getWebServiceAnnot().wsdlLocation();
+                    	}
+                    	
+                    	if(wsdlLocation != null
+                    	        &&
+                    	        !"".equals(wsdlLocation)) {
+                    	    if (log.isDebugEnabled()) {
+                    	        log.debug("wsdl location =" + wsdlLocation);
+                    	    }
+                    	    setWSDLDefinitionOnDBC(wsdlLocation);
+                    	}
                     }
                 } catch (WSDLException e) {
                     throw ExceptionFactory.makeWebServiceException(
@@ -547,6 +725,68 @@ class ServiceDescriptionImpl
                         Messages.getMessage("wsdlException", e.getMessage()), e);
             }
         }
+    }
+    
+    /**
+     * This method accepts a location of a WSDL document and attempts to
+     * load and set the WSDL definition on the DBC object.
+     * @param wsdlLocation
+     */
+    private void setWSDLDefinitionOnDBC(String wsdlLocation) {
+    	if(log.isDebugEnabled()) {
+			log.debug("Attempting to load WSDL file from location specified in annotation: " +
+					wsdlLocation);
+		}
+		if(composite.getClassLoader() == null) {
+			if(log.isDebugEnabled()) {
+				log.debug("A classloader could not be found for class: " + composite.
+						getClassName() + ". The WSDL file: " + wsdlLocation + " will not be " +
+								"processed, and the ServiceDescription will be built from " +
+								"annotations");
+			}
+		}
+		try {
+		    if(log.isDebugEnabled()) {
+		        log.debug("Attempting to read WSDL: " + wsdlLocation + " for web " +
+		        		"service endpoint: " + composite.getClassName());
+		    }
+		    URL url = getWSDLURL(wsdlLocation);
+			this.wsdlWrapper = new WSDL4JWrapper(url);
+			composite.setWsdlDefinition(wsdlWrapper.getDefinition());
+		}
+		catch(Exception e) {
+			if(log.isDebugEnabled()) {
+				log.debug("The WSDL file: " + wsdlLocation + " for class: " + composite.getClassName() + 
+						"could not be processed. The ServiceDescription will be built from " +
+								"annotations");
+			}
+		}
+    }
+    
+    /**
+     * This method will handle obtaining a URL for the given WSDL location.
+     */
+    private URL getWSDLURL(String wsdlLocation) {
+    	URL url = composite.getClassLoader().getResource(wsdlLocation);
+		if(url == null) {
+			if(log.isDebugEnabled()) {
+				log.debug("URL for wsdl file: " + wsdlLocation + " could not be " +
+						"determined by classloader... looking for file reference");
+			}
+			File file = new File(wsdlLocation);
+			if(file != null) {
+				try {
+					url = file.toURL();
+				}
+				catch(Exception e) {
+					if(log.isDebugEnabled()) {
+						log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation + 
+								" by using file reference");
+					}
+				}
+			}
+		}
+		return url;
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
@@ -636,7 +876,23 @@ class ServiceDescriptionImpl
         serviceQName = theName;
     }
 
-
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#isMTOMEnabled(java.lang.Object)
+     */
+    public boolean isMTOMEnabled(Object key) {
+        return getDescriptionBuilderComposite().isMTOMEnabled(key);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#getPreferredPort(java.lang.Object)
+     */
+    public QName getPreferredPort(Object key) {
+        return getDescriptionBuilderComposite().getPreferredPort(key);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#isServerSide()
+     */
     public boolean isServerSide() {
         return isServerSide;
     }
@@ -895,20 +1151,31 @@ class ServiceDescriptionImpl
                 if (interfaceString.equals(MDQConstants.PROVIDER_SOAP)) {
 
                     // Make sure BindingType is SOAP/HTTP with SOAPMessage
-                    // object, Default for Binding Type is SOAP/HTTP
-                    if (!DescriptionUtils.isEmpty(bindingType)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP11HTTP_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP12HTTP_BINDING)
-                            && !bindingType
-                            .equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))
-                    	
-                        throw ExceptionFactory.makeWebServiceException(
-                        		Messages.getMessage("validatePIsErr2",composite.getClassName()));
+					// object, Default for Binding Type is SOAP/HTTP
+					if (!DescriptionUtils.isEmpty(bindingType)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP11HTTP_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP12HTTP_BINDING)
+							&& !bindingType
+									.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP11JMS_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP11JMS_MTOM_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP12JMS_BINDING)
+							&& !bindingType
+									.equals(MDQConstants.SOAP12JMS_MTOM_BINDING))
 
+						throw ExceptionFactory.makeWebServiceException(Messages
+								.getMessage("validatePIsErr2", composite
+										.getClassName()));
+                
+                
+                
                 } else if (interfaceString
                         .equals(MDQConstants.PROVIDER_DATASOURCE)) {
 
@@ -1380,22 +1647,13 @@ class ServiceDescriptionImpl
                 String handlerFileName = handlerChainAnnotation.file();
 
                 if (log.isDebugEnabled()) {
-                    if (composite != null) {
-                        log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
-                                + handlerFileName + " className: " + composite.getClassName());
-                    }
-                    else {
-                        log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
-                                + handlerFileName + " className: " + serviceClass.getName());
-                    }
+                    log.debug("EndpointDescriptionImpl.getHandlerChain: fileName: "
+                              + handlerFileName + " className: " + composite.getClassName());
                 }
 
-                String className =
-                        (composite != null) ? composite.getClassName() : serviceClass.getName();
+                String className = composite.getClassName();
 
-                ClassLoader classLoader =
-                        (composite != null) ? composite.getClassLoader() : this.getClass()
-                                                                               .getClassLoader();
+                ClassLoader classLoader = composite.getClassLoader();
 
                 InputStream is =
                         DescriptionUtils.openHandlerConfigStream(handlerFileName,
@@ -1421,6 +1679,7 @@ class ServiceDescriptionImpl
      */
     public HandlerChain getAnnoHandlerChainAnnotation() {
         if (this.handlerChainAnnotation == null) {
+            Class serviceClass = composite.getCorrespondingClass();
                 if (serviceClass != null) {
                     handlerChainAnnotation =
                             (HandlerChain) getAnnotation(serviceClass, HandlerChain.class);
@@ -1549,6 +1808,15 @@ class ServiceDescriptionImpl
     
     private void resetServiceRuntimeDescription() {
         runtimeDescMap.clear();
+    }
+    
+    /**
+     * Return the name of the client-side service class if it exists.
+     */
+    protected String getServiceClassName() {
+        return composite.getClassName();
+        // TODO: (JLB) Remove commented out code from 1/7/08 merge
+//        return (this.serviceClass != null ? this.serviceClass.getName() : null);
     }
 
     /** Return a string representing this Description object and all the objects it contains. */

@@ -21,159 +21,140 @@ package org.apache.axis2.clustering.context;
 
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Replicates serializable properties
+ */
 public final class Replicator {
 
     private static final Log log = LogFactory.getLog(Replicator.class);
 
+    /**
+     * Replicates all serializable properties in the ConfigurationContext, ServiceGroupContext &
+     * ServiceContext
+     *
+     * @param msgContext The MessageContext associated with the ServiceContext,
+     *                   ServiceGroupContext and ConfigurationContext to be replicated
+     * @throws ClusteringFault If replication fails
+     */
     public static void replicate(MessageContext msgContext) throws ClusteringFault {
-        if (!doReplication(msgContext)) {
+        if (!canReplicate(msgContext)) {
             return;
         }
-        log.debug("Going to replicate state...");
-        try {
-            replicateState(msgContext);
-        } catch (Exception e) {
-            String message = "Could not replicate the state";
-            log.error(message, e);
-            throw new ClusteringFault(message, e);
-        }
-    }
+        log.debug("Going to replicate state stored in ConfigurationContext," +
+                  " ServiceGroupContext, ServiceContext associated with " + msgContext + "...");
+        ConfigurationContext configurationContext = msgContext.getConfigurationContext();
+        ContextManager contextManager = getContextManager(msgContext);
+        List contexts = new ArrayList();
 
-    public static void replicate(AbstractContext abstractContext) throws ClusteringFault {
-        if (!doReplication(abstractContext)) {
-            return;
+        // Do we need to replicate state stored in ConfigurationContext?
+        if (!configurationContext.getPropertyDifferences().isEmpty()) {
+            contexts.add(configurationContext);
         }
-        log.debug("Going to replicate state...");
-        try {
-            replicateState(abstractContext);
-        } catch (Exception e) {
-            String message = "Could not replicate the state";
-            log.error(message, e);
-            throw new ClusteringFault(message, e);
+
+        // Do we need to replicate state stored in ServiceGroupContext?
+        ServiceGroupContext sgContext = msgContext.getServiceGroupContext();
+        if (sgContext != null && !sgContext.getPropertyDifferences().isEmpty()) {
+            contexts.add(sgContext);
+        }
+
+        // Do we need to replicate state stored in ServiceContext?
+        ServiceContext serviceContext = msgContext.getServiceContext();
+        if (serviceContext != null && !serviceContext.getPropertyDifferences().isEmpty()) {
+            contexts.add(serviceContext);
+        }
+
+        // Do the actual replication here
+        if (!contexts.isEmpty()) {
+            AbstractContext[] contextArray =
+                    (AbstractContext[]) contexts.toArray(new AbstractContext[contexts.size()]);
+            contextManager.updateContexts(contextArray);
         }
     }
 
     /**
-     * Do replication only if context replication is enabled.
+     * Replicate all serializable properties stored in the given <code>abstractContext</code>.
+     *
+     * @param abstractContext The AbstractContext which holds the properties to be replicated
+     * @throws ClusteringFault If replication fails
+     */
+    public static void replicate(AbstractContext abstractContext) throws ClusteringFault {
+        if (!canReplicate(abstractContext)) {
+            return;
+        }
+        log.debug("Going to replicate state in " + abstractContext + "...");
+        ContextManager contextManager = getContextManager(abstractContext);
+        if (!abstractContext.getPropertyDifferences().isEmpty()) {
+            contextManager.updateContext(abstractContext);
+        }
+    }
+
+    /**
+     * Replicate all the properties given in <code>propertyNames</code>
+     * in the specified <code>abstractContext</code>
+     *
+     * @param abstractContext The context to be replicated
+     * @param propertyNames   The names of the properties to be replicated
+     * @throws ClusteringFault IF replication fails
+     */
+    public static void replicate(AbstractContext abstractContext,
+                                 String[] propertyNames) throws ClusteringFault {
+        if (!canReplicate(abstractContext)) {
+            return;
+        }
+        log.debug("Going to replicate selected properties in " + abstractContext + "...");
+        ContextManager contextManager = getContextManager(abstractContext);
+        contextManager.updateContext(abstractContext, propertyNames);
+    }
+
+    private static ClusterManager getClusterManager(AbstractContext abstractContext) {
+        return abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
+    }
+
+    private static ContextManager getContextManager(AbstractContext abstractContext) {
+        return getClusterManager(abstractContext).getContextManager();
+    }
+
+    /**
+     * Check whether the state store in the specified <code>abstractContext</code> can be replicated.
      * Also note that if there are no members, we need not do any replication
      *
-     * @param abstractContext
+     * @param abstractContext The context to be subjected to this test
      * @return true - State needs to be replicated
      *         false - otherwise
      */
-    private static boolean doReplication(AbstractContext abstractContext) {
+    private static boolean canReplicate(AbstractContext abstractContext) {
         ClusterManager clusterManager =
                 abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
-        return clusterManager != null &&
-               clusterManager.getContextManager() != null;
+        boolean canReplicate = false;
+        if (clusterManager != null && clusterManager.getContextManager() != null) {
+            canReplicate =
+                    clusterManager.getContextManager().isContextClusterable(abstractContext);
+        }
+        return canReplicate;
     }
 
-    private static void replicateState(AbstractContext abstractContext) throws ClusteringFault {
+    /**
+     * Check whether the state store in the specified <code>messageContext</code> can be replicated.
+     * Also note that if there are no members, we need not do any replication
+     *
+     * @param messageContext The MessageContext to be subjected to this test
+     * @return true - State needs to be replicated
+     *         false - otherwise
+     */
+    private static boolean canReplicate(MessageContext messageContext) {
         ClusterManager clusterManager =
-                abstractContext.getRootContext().getAxisConfiguration().getClusterManager();
-        if (clusterManager != null) {
-            ContextManager contextManager = clusterManager.getContextManager();
-            if (contextManager == null) {
-                String msg = "Cannot replicate contexts since " +
-                             "ContextManager is not specified in the axis2.xml file.";
-                throw new ClusteringFault(msg);
-            }
-            if (!abstractContext.getPropertyDifferences().isEmpty()) {
-                String msgUUID = contextManager.updateContext(abstractContext);
-                waitForACKs(contextManager, msgUUID, abstractContext.getRootContext());
-            }
-        } else {
-            String msg = "Cannot replicate contexts since " +
-                         "ClusterManager is not specified in the axis2.xml file.";
-            throw new ClusteringFault(msg);
-        }
-    }
-
-    private static void replicateState(MessageContext msgContext) throws ClusteringFault {
-        ConfigurationContext configurationContext = msgContext.getConfigurationContext();
-        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
-        ClusterManager clusterManager = axisConfiguration.getClusterManager();
-
-        if (clusterManager != null) {
-
-            ContextManager contextManager = clusterManager.getContextManager();
-            if (contextManager == null) {
-                String msg = "Cannot replicate contexts since " +
-                             "ContextManager is not specified in the axis2.xml file.";
-                throw new ClusteringFault(msg);
-            }
-
-            List contexts = new ArrayList();
-
-            // Do we need to replicate state stored in ConfigurationContext?
-            if (!configurationContext.getPropertyDifferences().isEmpty()) {
-                contexts.add(configurationContext);
-            }
-
-            // Do we need to replicate state stored in ServiceGroupContext?
-            ServiceGroupContext sgContext = msgContext.getServiceGroupContext();
-            if (sgContext != null && !sgContext.getPropertyDifferences().isEmpty()) {
-                contexts.add(sgContext);
-            }
-
-            // Do we need to replicate state stored in ServiceContext?
-            ServiceContext serviceContext = msgContext.getServiceContext();
-            if (serviceContext != null && !serviceContext.getPropertyDifferences().isEmpty()) {
-                contexts.add(serviceContext);
-            }
-
-            // Do the actual replication here
-            if (!contexts.isEmpty()) {
-                AbstractContext[] contextArray =
-                        (AbstractContext[]) contexts.toArray(new AbstractContext[contexts.size()]);
-                String msgUUID = contextManager.updateContexts(contextArray);
-                waitForACKs(contextManager, msgUUID, msgContext.getRootContext());
-            }
-
-        } else {
-            String msg = "Cannot replicate contexts since " +
-                         "ClusterManager is not specified in the axis2.xml file.";
-            throw new ClusteringFault(msg);
-        }
-    }
-
-    private static void waitForACKs(ContextManager contextManager,
-                                    String msgUUID,
-                                    ConfigurationContext configCtx) throws ClusteringFault {
-        long start = System.currentTimeMillis();
-
-        // Wait till all members have ACKed receipt & successful processing of
-        // the message with UUID 'msgUUID'
-        do {
-
-            // Wait sometime before checking whether message is ACKed
-            try {
-                Long tts =
-                        (Long) configCtx.getPropertyNonReplicable(ClusteringConstants.TIME_TO_SEND);
-                if (tts == null) {
-                    Thread.sleep(5);
-                } else if (tts.longValue() >= 0) {
-                    Thread.sleep(tts.longValue() + 5); // Time to recv ACK + time in queue & processing replication request
-                }
-            } catch (InterruptedException ignored) {
-            }
-            if (System.currentTimeMillis() - start > 45000) {
-                throw new ClusteringFault("ACKs not received from all members within 45 sec. " +
-                                          "Aborting wait.");
-            }
-        } while (!contextManager.isMessageAcknowledged(msgUUID));
+                messageContext.getRootContext().getAxisConfiguration().getClusterManager();
+        return clusterManager != null && clusterManager.getContextManager() != null;
     }
 }

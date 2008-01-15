@@ -18,50 +18,36 @@
  */
 package org.apache.axis2.jaxws.message.databinding;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.datasource.jaxb.JAXBDSContext;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
+import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
+import org.apache.axis2.jaxws.spi.Constants;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.ws.Holder;
+import javax.xml.bind.attachment.AttachmentMarshaller;
+import javax.xml.bind.attachment.AttachmentUnmarshaller;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.util.TreeSet;
 
 /*
- * A JAXBBlockContext controls access to the JAXB Context
+ * A JAXBBlockContext controls access to the JAXBContext
  * In addition the JAXBBlockContext contains additional contextural information needed
  * by the JAX-WS component
- * 
- * This class is immutable after construction.
  */
 
-public class JAXBBlockContext {
+public class JAXBBlockContext extends JAXBDSContext {
 
-    private static final Log log = LogFactory.getLog(JAXBBlockContext.class);
-
-    private TreeSet<String> contextPackages;  // List of packages needed by the context
-    private String contextPackagesKey;        // Unique key that represents the set of contextPackages (usually toString)
-    private JAXBContext jaxbContext = null;   // JAXBContext
-    private JAXBUtils.CONSTRUCTION_TYPE       // How the JAXBContext is constructed
-            constructionType = JAXBUtils.CONSTRUCTION_TYPE.UNKNOWN;
-
-    // There are two modes of marshalling and unmarshalling: "by java type" and "by schema element".
-    // The prefered mode is "by schema element" because it is safe and xml-centric.
-    // However there are some circumstances when "by schema element" is not available.
-    //    Examples: RPC Lit processing (the wire element is defined by a wsdl:part...not schema)
-    //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...and thus we must use "by type" for primitives/String)
-    // Please don't use "by java type" processing to get around errors.
-
-    private Class processType = null;
-    private boolean isxmlList =false;
-
+    Message message = null;
     /**
      * Full Constructor JAXBBlockContext (most performant)
      *
      * @param packages Set of packages needed by the JAXBContext.
      */
     public JAXBBlockContext(TreeSet<String> packages, String packagesKey) {
-        this.contextPackages = packages;
-        this.contextPackagesKey = packagesKey;
+        super(packages, packagesKey);
     }
 
     /**
@@ -80,9 +66,7 @@ public class JAXBBlockContext {
      * @deprecated
      */
     public JAXBBlockContext(String contextPackage) {
-        this.contextPackages = new TreeSet();
-        this.contextPackages.add(contextPackage);
-        this.contextPackagesKey = this.contextPackages.toString();
+        super(contextPackage);
     }
 
     /**
@@ -92,66 +76,41 @@ public class JAXBBlockContext {
      * @param jaxbContext
      */
     public JAXBBlockContext(JAXBContext jaxbContext) {
-        this.jaxbContext = jaxbContext;
+        super(jaxbContext);
     }
 
-    /** @return Class representing type of the element */
-    public TreeSet<String> getContextPackages() {
-        return contextPackages;
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+
+    @Override
+    protected AttachmentMarshaller createAttachmentMarshaller(XMLStreamWriter writer) {
+        return new JAXBAttachmentMarshaller(getMessage(), writer);
     }
     
-    public JAXBContext getJAXBContext() throws JAXBException {
-        return getJAXBContext(null);
+    @Override
+    protected AttachmentUnmarshaller createAttachmentUnmarshaller() {
+        return new JAXBAttachmentUnmarshaller(getMessage());
     }
 
-    /**
-     * @return get the JAXBContext
-     * @throws JAXBException
-     */
-    public JAXBContext getJAXBContext(ClassLoader cl) throws JAXBException {
-        if (jaxbContext == null) {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "A JAXBContext did not exist, creating a new one with the context packages.");
-            }
-            Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
-                    new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
-            jaxbContext =
-                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl);
-            constructionType = constructType.value;
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Using an existing JAXBContext");
-            }
+    public ClassLoader getClassLoader() {
+        if(message != null && message.getMessageContext() != null) {
+            return (ClassLoader) message.getMessageContext().
+                getProperty(Constants.CACHE_CLASSLOADER);
         }
-        return jaxbContext;
+        return super.getClassLoader();
     }
 
-    /** @return RPC Declared Type */
-    public Class getProcessType() {
-        return processType;
-    }
-
-    /**
-     * Set RPC Declared Type.  The use of use this property if the message is style=document is
-     * discouraged.
-     *
-     * @param type
-     */
-    public void setProcessType(Class type) {
-        processType = type;
-    }
-
-    public JAXBUtils.CONSTRUCTION_TYPE getConstructionType() {
-        return constructionType;
-    }
-
-    public boolean isxmlList() {
-        return isxmlList;
-    }
-
-    public void setIsxmlList(boolean isxmlList) {
-        this.isxmlList = isxmlList;
+    public MessageContext getMessageContext() {
+        if(message != null && message.getMessageContext() != null &&
+           message.getMessageContext().getAxisMessageContext() != null) {
+            super.setMessageContext(message.getMessageContext().getAxisMessageContext());
+        }
+        return super.getMessageContext();
     }
     
 }

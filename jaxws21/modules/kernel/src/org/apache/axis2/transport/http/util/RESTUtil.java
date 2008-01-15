@@ -141,14 +141,13 @@ public class RESTUtil {
         requestDispatcher.invoke(msgContext);
         AxisService axisService = msgContext.getAxisService();
         if (axisService != null) {
-            RequestURIOperationDispatcher requestURIOperationDispatcher =
-                    new RequestURIOperationDispatcher();
-            requestURIOperationDispatcher.invoke(msgContext);
-
+            HTTPLocationBasedDispatcher httpLocationBasedDispatcher =
+                    new HTTPLocationBasedDispatcher();
+            httpLocationBasedDispatcher.invoke(msgContext);
             if (msgContext.getAxisOperation() == null) {
-                HTTPLocationBasedDispatcher httpLocationBasedDispatcher =
-                        new HTTPLocationBasedDispatcher();
-                httpLocationBasedDispatcher.invoke(msgContext);
+                RequestURIOperationDispatcher requestURIOperationDispatcher =
+                        new RequestURIOperationDispatcher();
+                requestURIOperationDispatcher.invoke(msgContext);
             }
 
             AxisOperation axisOperation;

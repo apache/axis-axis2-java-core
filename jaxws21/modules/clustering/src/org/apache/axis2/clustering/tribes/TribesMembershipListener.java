@@ -23,20 +23,28 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
+/**                                                                          In
  * 
  */
 public class TribesMembershipListener implements MembershipListener {
 
     private static Log log = LogFactory.getLog(TribesMembershipListener.class);
+    private MembershipManager membershipManager;
+
+    public TribesMembershipListener(MembershipManager membershipManager) {
+        this.membershipManager = membershipManager;
+    }
 
     public void memberAdded(Member member) {
         log.info("New member " + TribesUtil.getHost(member) + " joined cluster.");
+        membershipManager.memberAdded(member);
        //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
     public void memberDisappeared(Member member) {
         log.info("Member " + TribesUtil.getHost(member) + " left cluster");
+        membershipManager.memberDisappeared(member);
+
 //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 }

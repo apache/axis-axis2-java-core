@@ -131,8 +131,10 @@ public class DescriptionFactoryImplTests extends TestCase {
             DescriptionFactoryImpl.clearServiceDescriptionCache(null);
             
         } finally {
-            // restore old factory
+            // restore old factory by updating the registry THEN clearing the cached factory
+            // so it is retrieved from the table again.
             MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, oldFactory);
+            resetClientConfigFactory();
         }                          
     }
     
@@ -147,7 +149,7 @@ public class DescriptionFactoryImplTests extends TestCase {
         SampleAnnotationProcessor saProcessor = new SampleAnnotationProcessor();
         saProcessor.setAnnotationInstanceClassName(sampleAnnotation.getClass().getName());
         dbc.addCustomAnnotationProcessor(saProcessor);
-        WebServiceAnnot webService = dbc.getWebServiceAnnot();
+        WebService webService = dbc.getWebServiceAnnot();
         assertNotNull(webService);
         String pn = webService.portName();
         String tns = webService.targetNamespace();
@@ -238,7 +240,7 @@ public class DescriptionFactoryImplTests extends TestCase {
             if (context == null) {
                 context = super.getClientConfigurationContext();
             }
-            System.out.println(context);
+            System.out.println("Test version of CachingClientContextFactory: " + context);
             return context;
         }
         

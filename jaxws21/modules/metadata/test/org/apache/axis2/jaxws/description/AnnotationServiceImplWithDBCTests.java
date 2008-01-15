@@ -27,11 +27,18 @@ import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 
 import javax.jws.WebParam;
+import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tests the creation of the Description classes based on a service implementation bean and various
@@ -187,6 +194,98 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         dbc.addMethodDescriptionComposite(mdc);
 
         return dbc;
+    }
+    
+    public void testLoadWSDLImpl() {
+        String wsdlLocation = getEchoMessageServiceWSDLLocation();
+
+        // Build up a DBC, including the WSDL Definition and the annotation information for 
+        // the impl class.
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(EchoMessageService.class);
+        HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+        assertNotNull(dbcMap);
+        DescriptionBuilderComposite dbc = dbcMap.get(EchoMessageService.class.getName());
+        assertNotNull(dbc);
+        dbc.setClassLoader(this.getClass().getClassLoader());
+
+        WebServiceAnnot webServiceAnnot = dbc.getWebServiceAnnot();
+        assertNotNull(webServiceAnnot);
+        webServiceAnnot.setWsdlLocation(wsdlLocation);
+        dbc.setWebServiceAnnot(webServiceAnnot);
+        dbcMap.put(EchoMessageService.class.getName(), dbc);
+        
+        List<ServiceDescription> serviceDescList =
+            DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap);
+        assertEquals(1, serviceDescList.size());
+        ServiceDescription sd = serviceDescList.get(0);
+        assertNotNull(sd);
+        
+        // make sure the WSDL definition was read in from the appropriate location
+        assertNotNull(((ServiceDescriptionWSDL) sd).getWSDLDefinition());
+    }
+    
+    public void testLoadWSDLSEI() {
+        String wsdlLocation = getEchoMessageServiceWSDLLocation();
+
+        // Build up a DBC, including the WSDL Definition and the annotation information for 
+        // the impl class.
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(EchoMessageServiceSEI.class);
+        HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+        assertNotNull(dbcMap);
+        DescriptionBuilderComposite dbc = dbcMap.get(EchoMessageServiceSEI.class.getName());
+        assertNotNull(dbc);
+        DescriptionBuilderComposite seiDBC = dbcMap.get(EchoMessageServiceInterface.class.getName());
+        assertNotNull(seiDBC);
+        dbc.setClassLoader(this.getClass().getClassLoader());
+
+        WebServiceAnnot webServiceAnnot = seiDBC.getWebServiceAnnot();
+        assertNotNull(webServiceAnnot);
+        webServiceAnnot.setWsdlLocation(wsdlLocation);
+        seiDBC.setWebServiceAnnot(webServiceAnnot);
+        dbcMap.put(EchoMessageServiceInterface.class.getName(), seiDBC);
+        
+        List<ServiceDescription> serviceDescList =
+            DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap);
+        assertEquals(1, serviceDescList.size());
+        ServiceDescription sd = serviceDescList.get(0);
+        assertNotNull(sd);
+        
+        // make sure the WSDL definition was read in from the appropriate location
+        assertNotNull(((ServiceDescriptionWSDL) sd).getWSDLDefinition());
+    }
+    
+    private String getEchoMessageServiceWSDLLocation() {
+    	String loc = null;
+    	String sep = java.io.File.separator;
+        loc = sep + "test-resources" + sep + "wsdl" + sep + "EchoMessageService.wsdl";
+        try {
+        	String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+            loc = baseDir + loc;
+        }
+        catch(IOException ioe) {
+        	ioe.printStackTrace();
+        }
+    	return loc;
+    }
+    
+    @WebService(serviceName = "EchoMessageService", portName = "EchoMessagePort", targetNamespace = "http://nonanonymous.complextype.test.org", wsdlLocation = "test-resources/wsdl/EchoMessageService.wsdl")
+    public class EchoMessageService {
+        public String echoMessage(String arg) {
+            return arg;
+        }
+    }
+    
+    @WebService(serviceName = "EchoMessageService", endpointInterface=
+    		"org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests$EchoMessageServiceInterface")
+    public class EchoMessageServiceSEI {
+        public String echoMessage(String arg) {
+            return arg;
+        }
+    }
+    
+    @WebService(portName = "EchoMessagePort", targetNamespace = "http://nonanonymous.complextype.test.org", wsdlLocation = "test-resources/wsdl/EchoMessageService.wsdl")
+    public interface EchoMessageServiceInterface {
+        public String echoMessage(String arg);
     }
 }
 

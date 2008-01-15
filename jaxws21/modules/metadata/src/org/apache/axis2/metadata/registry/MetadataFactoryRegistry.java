@@ -28,6 +28,8 @@ import java.util.Map;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
+import org.apache.axis2.jaxws.wsdl.WSDLReaderConfiguratorImpl;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +45,7 @@ public class MetadataFactoryRegistry {
                 table = new Hashtable<Class,Object>();
                 table.put(ResourceFinderFactory.class, new ResourceFinderFactory());
                 table.put(ClientConfigurationFactory.class, new ClientConfigurationFactory());
+                table.put(WSDLReaderConfigurator.class, new WSDLReaderConfiguratorImpl());
                 if(configurationFileLoc == null) {
                     if(log.isDebugEnabled()) {
                         log.debug("A configuration file location was not set. The " +
@@ -87,7 +90,7 @@ public class MetadataFactoryRegistry {
         private static void loadConfigFromFile() {
             String pairSeparator = "|";
             try {
-                ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader();
+                ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader(null);
                 URL url = null;
                 url = classLoader.getResource(configurationFileLoc);
                 if(url == null) {

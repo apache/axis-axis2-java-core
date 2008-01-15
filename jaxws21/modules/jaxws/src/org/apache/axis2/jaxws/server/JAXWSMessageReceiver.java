@@ -19,6 +19,9 @@
 
 package org.apache.axis2.jaxws.server;
 
+import javax.xml.ws.Binding;
+import javax.xml.ws.WebServiceException;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.OperationContext;
@@ -42,9 +45,6 @@ import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.ws.Binding;
-import javax.xml.ws.WebServiceException;
 
 /**
  * The JAXWSMessageReceiver is the entry point, from the server's perspective, to the JAX-WS code.
@@ -80,8 +80,8 @@ public class JAXWSMessageReceiver implements MessageReceiver {
 
         org.apache.axis2.description.Parameter svcClassParam =
                 service.getParameter(PARAM_SERVICE_CLASS);
-
         try {
+
             if (svcClassParam == null) {
                 throw new RuntimeException(
                         Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));

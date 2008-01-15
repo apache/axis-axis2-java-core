@@ -40,6 +40,8 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,7 +50,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy
@@ -70,7 +71,7 @@ public class ConfigurationContext extends AbstractContext {
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
      */
-    private final Map operationContextMap = new HashMap();
+    private final ConcurrentHashMap operationContextMap = new ConcurrentHashMap();
     private Hashtable serviceGroupContextMap = new Hashtable();
     private Hashtable applicationSessionServiceGroupContexts = new Hashtable();
     private AxisConfiguration axisConfiguration;
@@ -309,26 +310,34 @@ public class ConfigurationContext extends AbstractContext {
     public boolean registerOperationContext(String messageID, 
                                             OperationContext mepContext, 
                                             boolean override) {
-        boolean alreadyInMap;
+    	
+    	if(messageID == null){
+    		if(log.isDebugEnabled()){
+    			log.debug("messageID is null. Returning false");
+    		}
+    		return false;
+    	}
+    	
+        boolean alreadyInMap = false;
         mepContext.setKey(messageID);
-        synchronized (operationContextMap) {
-            alreadyInMap = operationContextMap.containsKey(messageID);
-            if (!alreadyInMap || override) {
-                this.operationContextMap.put(messageID, mepContext);
-            }
 
-            if (log.isDebugEnabled())
-            {
-                log.debug("registerOperationContext ("+override+"): "+
-                          mepContext+" with key: "+messageID);
-                HashMap msgContextMap = mepContext.getMessageContexts();
-                Iterator msgContextIterator = msgContextMap.values().iterator();
-                while (msgContextIterator.hasNext())
-                {
-                    MessageContext msgContext = (MessageContext)msgContextIterator.next();
-                    log.debug("msgContext: "+msgContext+" action: "+msgContext.getWSAAction());
-                }
-            }
+        if(override){
+        	operationContextMap.put(messageID, mepContext);
+        }else{
+        	Object previous = operationContextMap.putIfAbsent(messageID, mepContext);
+        	alreadyInMap = (previous!=null);
+        }
+        if (log.isDebugEnabled())
+        {
+        	log.debug("registerOperationContext ("+override+"): "+
+        			mepContext+" with key: "+messageID);
+        	HashMap msgContextMap = mepContext.getMessageContexts();
+        	Iterator msgContextIterator = msgContextMap.values().iterator();
+        	while (msgContextIterator.hasNext())
+        	{
+        		MessageContext msgContext = (MessageContext)msgContextIterator.next();
+        		log.debug("msgContext: "+msgContext+" action: "+msgContext.getWSAAction());
+        	}
         }
         return (!alreadyInMap || override);
     }
@@ -338,13 +347,20 @@ public class ConfigurationContext extends AbstractContext {
      * @param key
      */
     public void unregisterOperationContext(String key) {
-        synchronized (operationContextMap) {
-            OperationContext opCtx = (OperationContext) operationContextMap.get(key);
-            operationContextMap.remove(key);
-            contextRemoved(opCtx);
-        }
+    	if(key == null){
+    		if(log.isDebugEnabled()){
+    			log.debug("key is null.");
+    		}
+    	}else{
+    		OperationContext opCtx = (OperationContext) operationContextMap.remove(key);
+    		contextRemoved(opCtx);
+    	}
     }
 
+    public boolean isAnyOperationContextRegistered(){
+    	return !operationContextMap.isEmpty();
+    }
+    
     /**
      * Adds the given ServiceGroupContext into the SOAP session table
      * 
@@ -402,14 +418,7 @@ public class ConfigurationContext extends AbstractContext {
      * @param id
      */
     public OperationContext getOperationContext(String id) {
-        OperationContext opCtx;
-        synchronized (operationContextMap) {
-            if (operationContextMap == null) {
-                return null;
-            }
-            opCtx = (OperationContext) this.operationContextMap.get(id);
-        }
-
+        OperationContext opCtx = (OperationContext) this.operationContextMap.get(id);
         return opCtx;
     }
 
@@ -434,39 +443,36 @@ public class ConfigurationContext extends AbstractContext {
         // group name is not necessarily a prereq
         // but if the group name is non-null, then it has to match
 
-        synchronized (operationContextMap) {
-            Iterator it = operationContextMap.keySet().iterator();
+        Iterator it = operationContextMap.values().iterator();
 
-            while (it.hasNext()) {
-                Object key = it.next();
-                OperationContext value = (OperationContext) operationContextMap.get(key);
+        while (it.hasNext()) {
+        	OperationContext value = (OperationContext) it.next();
 
-                String valueOperationName;
-                String valueServiceName;
-                String valueServiceGroupName;
+        	String valueOperationName;
+        	String valueServiceName;
+        	String valueServiceGroupName;
 
-                if (value != null) {
-                    valueOperationName = value.getOperationName();
-                    valueServiceName = value.getServiceName();
-                    valueServiceGroupName = value.getServiceGroupName();
+        	if (value != null) {
+        		valueOperationName = value.getOperationName();
+        		valueServiceName = value.getServiceName();
+        		valueServiceGroupName = value.getServiceGroupName();
 
-                    if ((valueOperationName != null) && (valueOperationName.equals(operationName))) {
-                        if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
-                            if ((valueServiceGroupName != null) && (serviceGroupName != null)
-                                && (valueServiceGroupName.equals(serviceGroupName))) {
-                                // match
-                                return value;
-                            }
+        		if ((valueOperationName != null) && (valueOperationName.equals(operationName))) {
+        			if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
+        				if ((valueServiceGroupName != null) && (serviceGroupName != null)
+        						&& (valueServiceGroupName.equals(serviceGroupName))) {
+        					// match
+        					return value;
+        				}
 
-                            // or, both need to be null
-                            if ((valueServiceGroupName == null) && (serviceGroupName == null)) {
-                                // match
-                                return value;
-                            }
-                        }
-                    }
-                }
-            }
+        				// or, both need to be null
+        				if ((valueServiceGroupName == null) && (serviceGroupName == null)) {
+        					// match
+        					return value;
+        				}
+        			}
+        		}
+        	}
         }
 
         // if we got here, we did not find an operation context

@@ -54,6 +54,9 @@ public abstract class AxisDescription implements ParameterInclude,
 
     protected Map engagedModules;
 
+    /** List of ParameterObservers who want to be notified of changes */
+    protected List parameterObservers = null;
+
     private OMFactory omFactory = OMAbstractFactory.getOMFactory();
 
     // Holds the documentation details for each element
@@ -67,6 +70,18 @@ public abstract class AxisDescription implements ParameterInclude,
         children = new HashMap();
     }
 
+    public void addParameterObserver(ParameterObserver observer) {
+        if (parameterObservers == null)
+            parameterObservers = new ArrayList();
+        parameterObservers.add(observer);
+    }
+
+    public void removeParameterObserver(ParameterObserver observer) {
+        if (parameterObservers != null) {
+            parameterObservers.remove(observer);
+        }
+    }
+
     public void addParameter(Parameter param) throws AxisFault {
         if (param == null) {
             return;
@@ -78,6 +93,14 @@ public abstract class AxisDescription implements ParameterInclude,
         }
 
         parameterInclude.addParameter(param);
+
+        // Tell anyone who wants to know
+        if (parameterObservers != null) {
+            for (Iterator i = parameterObservers.iterator(); i.hasNext();) {
+                ParameterObserver observer = (ParameterObserver)i.next();
+                observer.parameterChanged(param.getName(), param.getValue());
+            }
+        }
     }
 
     public void addParameter(String name, Object value) throws AxisFault {

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import org.apache.axis2.wsdl.codegen.emitter.CTypeInfo;
+import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.namespace.QName;
@@ -37,8 +37,8 @@ public class CTypeMapper extends TypeMappingAdapter {
             Object o = qName2NameMap.get(qname);
             if (o != null) {
                 return (String)o;
-            } else if (CTypeInfo.XSD_ANYTYPE.equals(qname) ||
-                    CTypeInfo.XSD_ANY.equals(qname)) {
+            } else if (Constants.XSD_ANYTYPE.equals(qname) ||
+                    Constants.XSD_ANY.equals(qname)) {
                 return defaultStructName;
             } else {
                 throw new UnmatchedTypeException(
@@ -50,8 +50,6 @@ public class CTypeMapper extends TypeMappingAdapter {
         } else {
             return null;
         }
-
-
     }
 
     public String getDefaultMappingName() {

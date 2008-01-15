@@ -18,28 +18,13 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.lifecycle.factory;
 
-import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleException;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 
-public class EndpointLifecycleManagerFactory {
-
-    public EndpointLifecycleManagerFactory() {
-        super();
-    }
+public interface EndpointLifecycleManagerFactory {
 
     public EndpointLifecycleManager createEndpointLifecycleManager(Object endpointInstance)
-            throws EndpointLifecycleException {
-        if (endpointInstance == null) {
-            throw new EndpointLifecycleException(
-                    Messages.getMessage("EndpointLifecycleManagerImplErr1"));
-        }
-        return new EndpointLifecycleManagerImpl(endpointInstance);
-    }
+                                                                                           throws EndpointLifecycleException;
 
-    public EndpointLifecycleManager createEndpointLifecycleManager() {
-
-        return new EndpointLifecycleManagerImpl();
-    }
+    public EndpointLifecycleManager createEndpointLifecycleManager();
 }

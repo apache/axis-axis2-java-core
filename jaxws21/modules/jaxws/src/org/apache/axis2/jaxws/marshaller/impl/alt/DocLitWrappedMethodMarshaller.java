@@ -364,6 +364,11 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
                 object = new JAXBElement(wrapperQName, cls, object);
             }
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasResponseSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             // Put the object into the message
             JAXBBlockFactory factory =
@@ -453,6 +458,11 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Make sure object can be rendered as an element
             if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
                 object = new JAXBElement(wrapperQName, cls, object);
+            }
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasRequestSwaRefAttachments()) {
+                m.setDoingSWA(true);
             }
 
             // Put the object into the message

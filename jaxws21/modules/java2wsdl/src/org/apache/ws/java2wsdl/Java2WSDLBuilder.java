@@ -158,6 +158,9 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     }
 
     public String getTargetNamespacePrefix() {
+        if (targetNamespacePrefix == null) {
+            this.targetNamespacePrefix = TARGETNAMESPACE_PREFIX;
+        }
         return targetNamespacePrefix;
     }
 
@@ -235,7 +238,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
                                                             classLoader,
                                                             schemaGenerator, service);
         schemaGenerator.setAxisService(axisService);
-        axisService.setTargetNamespacePrefix(targetNamespacePrefix);
+        axisService.setTargetNamespacePrefix(getTargetNamespacePrefix());
         axisService.setSchemaTargetNamespace(getSchemaTargetNamespace());
         axisService.setSchematargetNamespacePrefix(getSchemaTargetNamespacePrefix());
         String uri = locationUri;

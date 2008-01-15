@@ -184,7 +184,7 @@ public class AxisBindingOperation extends AxisDescription {
         property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_LOCATION);
         if (property != null) {
             bindingOpElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.ATTRIBUTE_LOCATION, whttp, serviceName + "/" + property));
+                    WSDL2Constants.ATTRIBUTE_LOCATION, whttp, property));
         }
         property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
         if (property != null) {

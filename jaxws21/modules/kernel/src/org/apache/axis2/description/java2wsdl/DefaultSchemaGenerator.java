@@ -20,6 +20,7 @@ package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -34,7 +35,6 @@ import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
 import java.util.*;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
@@ -409,8 +409,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     /**
      * Generate schema construct for given type
-     *
-     * @param javaType
+     * @param javaType : Class to whcih need to generate Schema
+     * @return : Generated QName
      */
     private QName generateSchema(JClass javaType) throws Exception {
         String name = getQualifiedName(javaType);
@@ -441,7 +441,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             JClass sup = javaType.getSuperclass();
 
             if ((sup != null) && !("java.lang.Object".compareTo(sup.getQualifiedName()) == 0) &&
-                    !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
+                    !("org.apache.axis2".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)
+                    &&!("java.util".compareTo(sup.getContainingPackage().getQualifiedName()) == 0)) {
                 String superClassName = sup.getQualifiedName();
                 String superclassname = getSimpleName(sup);
                 String tgtNamespace;
@@ -502,8 +503,17 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             Set propertiesNames = new HashSet();
 
             JProperty[] tempProperties = javaType.getDeclaredProperties();
+            BeanExcludeInfo beanExcludeInfo = null;
+            if (service.getExcludeInfo() !=null) {
+                beanExcludeInfo = service.getExcludeInfo().getBeanExcludeInfoForClass(
+                        javaType.getQualifiedName());
+            }
             for (int i = 0; i < tempProperties.length; i++) {
-                propertiesSet.add(tempProperties[i]);
+                JProperty tempProperty = tempProperties[i];
+                String propertyName = getCorrectName(tempProperty.getSimpleName());
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
+                    propertiesSet.add(tempProperty);
+                }
             }
 
             JProperty[] properties = (JProperty[]) propertiesSet.toArray(new JProperty[0]);
@@ -528,14 +538,20 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             for (int i = 0; i < tempFields.length; i++) {
                 // create a element for the field only if it is public
                 // and there is no property with the same name
-
                 if (tempFields[i].isPublic()) {
-
-                    // skip field with same name as a property
-                    if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
-
-                        FieldMap.put(tempFields[i].getSimpleName(), tempFields[i]);
+                    if (tempFields[i].isStatic()){
+//                        We do not need to expose static fields
+                        continue;
                     }
+                    String propertyName = getCorrectName(tempFields[i].getSimpleName());
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
+                        // skip field with same name as a property
+                        if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
+
+                            FieldMap.put(tempFields[i].getSimpleName(), tempFields[i]);
+                        }
+                    }
+                    
                 }
 
             }
@@ -694,8 +710,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if ("javax.activation.DataHandler".equals(classType)) {
             return true;
         } else {
-            JClass superClass = clazz.getSuperclass();
-            return superClass != null && isDataHandler(superClass);
+            JClass supuerClass = clazz.getSuperclass();
+            if (supuerClass != null) {
+                return isDataHandler(supuerClass);
+            } else {
+                return false;
+            }
         }
     }
 

@@ -599,14 +599,8 @@
         <xs:schema xmlns:ax23="http://arrays.data.complex.tempuri.org/xsd" xmlns:ax21="http://data.complex.tempuri.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://data.complex.tempuri.org/xsd">
             <xs:import namespace="http://arrays.data.complex.tempuri.org/xsd"/>
             <xs:complexType name="BitMask">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="BIT_FIVE" nillable="true" type="ns2:BitMask"/>
-                    <xs:element minOccurs="0" name="BIT_FOUR" nillable="true" type="ns2:BitMask"/>
-                    <xs:element minOccurs="0" name="BIT_ONE" nillable="true" type="ns2:BitMask"/>
-                    <xs:element minOccurs="0" name="BIT_THREE" nillable="true" type="ns2:BitMask"/>
-                    <xs:element minOccurs="0" name="BIT_TWO" nillable="true" type="ns2:BitMask"/>
-                </xs:sequence>
-            </xs:complexType>
+                <xs:sequence/>
+            </xs:complexType> 
             <xs:complexType name="Employee">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="baseDetails" nillable="true" type="ns2:Person"/>

@@ -557,6 +557,12 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 }
                 MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
             }
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasResponseSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
+            
             return m;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -674,6 +680,12 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
 
                 MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
             }
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasRequestSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
+            
             return m;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

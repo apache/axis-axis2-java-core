@@ -106,4 +106,29 @@
         <xsd:sequence>
         </xsd:sequence>
     </xsd:complexType>
+
+    <xsd:complexType name="TestComplexType">
+        <xsd:sequence>
+            <xsd:element ref="test1:TestElement"/>
+            <xsd:sequence>
+                <xsd:element name="TestInnerElement" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="TestElement">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="param" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="TestComplexTypeElement" type="test1:TestComplexType"/>
+
 </xsd:schema>

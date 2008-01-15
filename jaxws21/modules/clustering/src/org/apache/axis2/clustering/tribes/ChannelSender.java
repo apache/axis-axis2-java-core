@@ -24,6 +24,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MessageSender;
 import org.apache.catalina.tribes.ByteMessage;
 import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,39 +38,58 @@ public class ChannelSender implements MessageSender {
 
     private Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
+    private boolean synchronizeAllMembers;
+    private MembershipManager membershipManager;
 
-    public long sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+    public ChannelSender(Channel channel,
+                         MembershipManager membershipManager,
+                         boolean synchronizeAllMembers) {
+        this.channel = channel;
+        this.membershipManager = membershipManager;
+        this.synchronizeAllMembers = synchronizeAllMembers;
+    }
+
+    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
         if (channel == null) {
-            return 0;
+            return;
         }
-        long timeToSend = 0;
+        Member[] members = membershipManager.getMembers();
 
         // Keep retrying, since at the point of trying to send the msg, a member may leave the group
         // causing a view change. All nodes in a view should get the msg
-        //TODO: Sometimes Tribes incorrectly detects that a member has left a group
-        while (true) {
-            if (channel.getMembers().length > 0) {
-                try {
-                    long start = System.currentTimeMillis();
-                    channel.send(channel.getMembers(), toByteMessage(msg), Channel.SEND_OPTIONS_USE_ACK);
-                    timeToSend = System.currentTimeMillis() - start;
-                    log.debug("Sent " + msg + " to group");
-                    break;
-                } catch (NotSerializableException e) {
-                    String message = "Could not send command message " + msg +
-                                     " to group since it is not serializable.";
-                    log.error(message, e);
-                    throw new ClusteringFault(message, e);
-                } catch (Exception e) {
-                    String message = "Error sending command message : " + msg +
-                                     ". Reason " + e.getMessage();
-                    log.warn(message, e);
+        if (members.length > 0) {
+            try {
+                if (synchronizeAllMembers) {
+                    channel.send(members, toByteMessage(msg),
+                                 Channel.SEND_OPTIONS_USE_ACK |
+                                 Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+                                 TribesClusterManager.MSG_ORDER_OPTION);
+                } else {
+                    channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_ASYNCHRONOUS);
                 }
-            } else {
-                break;
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent " + msg + " to group");
+                }
+            } catch (NotSerializableException e) {
+                String message = "Could not send command message " + msg +
+                                 " to group since it is not serializable.";
+                log.error(message, e);
+                throw new ClusteringFault(message, e);
+            } catch (ChannelException e) {
+                log.error("Could not send message to some members", e);
+                ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+                for (int i = 0; i < faultyMembers.length; i++) {
+                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
+                    Member member = faultyMember.getMember();
+                    log.error("Member " + TribesUtil.getHost(member) + " is faulty",
+                              faultyMember.getCause());
+                }
+            } catch (Exception e) {
+                String message = "Error sending command message : " + msg +
+                                 ". Reason " + e.getMessage();
+                log.warn(message, e);
             }
         }
-        return timeToSend;
     }
 
     private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {
@@ -89,39 +109,37 @@ public class ChannelSender implements MessageSender {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          toByteMessage(msg),
                          Channel.SEND_OPTIONS_USE_ACK);
-            log.debug("Sent " + msg + " to self");
+            if (log.isDebugEnabled()) {
+                log.debug("Sent " + msg + " to self");
+            }
         } catch (Exception e) {
             throw new ClusteringFault(e);
         }
     }
 
-    public long sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
-        long timeToSend = 0;
+    public void sendToMember(ClusteringCommand cmd, Member member) throws ClusteringFault {
         try {
             if (member.isReady()) {
-                long start = System.currentTimeMillis();
-                channel.send(new Member[]{member}, toByteMessage(cmd), Channel.SEND_OPTIONS_USE_ACK);
-                timeToSend = System.currentTimeMillis() - start;
-                log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
+                channel.send(new Member[]{member}, toByteMessage(cmd),
+                             Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent " + cmd + " to " + TribesUtil.getHost(member));
+                }
             }
         } catch (NotSerializableException e) {
-            String message = "Could not send command message to " + TribesUtil.getHost(member)  +
+            String message = "Could not send command message to " + TribesUtil.getHost(member) +
                              " since it is not serializable.";
             log.error(message, e);
             throw new ClusteringFault(message, e);
+        } catch (ChannelException e) {
+            log.error("Could not send message to " + TribesUtil.getHost(member));
+            ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
+            log.error("Member " + TribesUtil.getHost(member) + " is faulty",
+                      faultyMembers[0].getCause());
         } catch (Exception e) {
             String message = "Could not send message to " + TribesUtil.getHost(member) +
                              ". Reason " + e.getMessage();
             log.warn(message, e);
         }
-        return timeToSend;
-    }
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
     }
 }

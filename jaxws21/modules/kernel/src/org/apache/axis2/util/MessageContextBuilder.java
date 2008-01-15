@@ -27,10 +27,13 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultSubCode;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPProcessingException;
@@ -501,6 +504,28 @@ public class MessageContextBuilder {
             } else {
                 fault.getCode().getValue().setText(soapFaultCode);
             }
+        }
+        
+        if (axisFault != null && !context.isSOAP11()) {
+            if (axisFault.getFaultSubCodes() != null) {
+                
+                List faultSubCodes = axisFault.getFaultSubCodes();
+                
+                QName faultSubCodeQName;
+                
+                for (Iterator subCodeiter = faultSubCodes.iterator(); subCodeiter.hasNext(); ) {
+                    
+                    faultSubCodeQName = (QName) subCodeiter.next();
+                                        
+                    SOAPFactory sf = (SOAPFactory)envelope.getOMFactory();
+                    SOAPFaultSubCode soapFaultSubCode = sf.createSOAPFaultSubCode(fault.getCode());
+                    SOAPFaultValue saopFaultValue = sf.createSOAPFaultValue(fault.getCode());
+                    saopFaultValue.setText(faultSubCodeQName);
+                    soapFaultSubCode.setValue(saopFaultValue);
+                    fault.getCode().setSubCode(soapFaultSubCode);
+                }
+                
+            } 
         }
 
         SOAPFaultReason faultReason = (SOAPFaultReason)context.getProperty(

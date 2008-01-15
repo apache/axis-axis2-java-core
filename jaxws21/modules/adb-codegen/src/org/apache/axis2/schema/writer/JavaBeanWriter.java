@@ -44,6 +44,8 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
+
+
 /**
  * Java Bean writer for the schema compiler.
  */
@@ -58,6 +60,8 @@ public class JavaBeanWriter implements BeanWriter {
     private boolean templateLoaded = false;
 
     private Templates templateCache;
+
+    private List nameList;
 
     private Map packageNameToClassNamesMap;
 
@@ -208,13 +212,15 @@ public class JavaBeanWriter implements BeanWriter {
      * @return Returns String.
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaElement element, Map typeMap,
+    public String write(XmlSchemaElement element,
+                        Map typeMap,
+                        Map groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
             QName qName = element.getQName();
 
-            return process(qName, metainf, typeMap, true, false);
+            return process(qName, metainf, typeMap, groupTypeMap, true, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SchemaCompilationException(e);
@@ -233,13 +239,14 @@ public class JavaBeanWriter implements BeanWriter {
      */
     public String write(QName qName,
                         Map typeMap,
+                        Map groupTypeMap,
                         BeanWriterMetaInfoHolder metainf,
                         boolean isAbstract)
             throws SchemaCompilationException {
 
         try {
             // determine the package for this type.
-            return process(qName, metainf, typeMap, false,isAbstract);
+            return process(qName, metainf, typeMap, groupTypeMap, false,isAbstract);
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -281,10 +288,10 @@ public class JavaBeanWriter implements BeanWriter {
      * @param metainf
      * @return Returns String.
      * @throws SchemaCompilationException
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType,
-     *      java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
-    public String write(XmlSchemaSimpleType simpleType, Map typeMap,
+    public String write(XmlSchemaSimpleType simpleType,
+                        Map typeMap,
+                        Map groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
             QName qName = simpleType.getQName();
@@ -292,7 +299,7 @@ public class JavaBeanWriter implements BeanWriter {
                 qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
             }
             metainf.addtStatus(qName, SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
-            return process(qName, metainf, typeMap, true, false);
+            return process(qName, metainf, typeMap, groupTypeMap, true, false);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -312,7 +319,7 @@ public class JavaBeanWriter implements BeanWriter {
         } else {
             this.rootDir = rootDir;
         }
-
+        this.nameList = new ArrayList();
         this.packageNameToClassNamesMap = new HashMap();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
@@ -332,12 +339,20 @@ public class JavaBeanWriter implements BeanWriter {
         String packageName = getPackage(namespaceURI);
 
         String originalName = qName.getLocalPart();
+        String className = null;
 
-        if (!this.packageNameToClassNamesMap.containsKey(packageName)){
-            this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+        // when wrapping classes all the data binding and exception class should have
+        // a unique name since package name is not being applied.
+        // otherewise we can make unique with the package name
+        if (!wrapClasses){
+            className = makeUniqueJavaClassName(this.nameList, originalName);
+        } else {
+            if (!this.packageNameToClassNamesMap.containsKey(packageName)) {
+                this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+            }
+            className = makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
         }
-        String className =
-                makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
+
 
         String packagePrefix = null;
 
@@ -386,6 +401,7 @@ public class JavaBeanWriter implements BeanWriter {
     private String process(QName qName,
                            BeanWriterMetaInfoHolder metainf,
                            Map typeMap,
+                           Map groupTypeMap,
                            boolean isElement,
                            boolean isAbstract)
             throws Exception {
@@ -419,7 +435,7 @@ public class JavaBeanWriter implements BeanWriter {
             globalWrappedDocument.getDocumentElement().appendChild(
                     getBeanElement(globalWrappedDocument, className,
                             originalName, basePackageName, qName, isElement,isAbstract,
-                            metainf, propertyNames, typeMap));
+                            metainf, propertyNames, typeMap, groupTypeMap));
 
         } else {
             // create the model
@@ -427,7 +443,7 @@ public class JavaBeanWriter implements BeanWriter {
             // make the XML
             model.appendChild(getBeanElement(model, className, originalName,
                     basePackageName, qName, isElement,isAbstract, metainf, propertyNames,
-                    typeMap));
+                    typeMap, groupTypeMap));
 
             if (writeClasses) {
                 // create the file
@@ -485,7 +501,8 @@ public class JavaBeanWriter implements BeanWriter {
                                    boolean isAbstract,
                                    BeanWriterMetaInfoHolder metainf,
                                    ArrayList propertyNames,
-                                   Map typeMap)
+                                   Map typeMap,
+                                   Map groupTypeMap)
             throws SchemaCompilationException {
 
         Element rootElt = XSLTUtils.getElement(model, "bean");
@@ -493,8 +510,7 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
-        XSLTUtils.addAttribute(model, "isUseWrapperClasses", isUseWrapperClasses? "yes" : "false", rootElt);
-        XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
+       XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
                 .getNamespaceURI(), qName.getPrefix()), rootElt);
 
         if (!wrapClasses) {
@@ -515,6 +531,10 @@ public class JavaBeanWriter implements BeanWriter {
 
         if (metainf.isAnonymous()) {
             XSLTUtils.addAttribute(model, "anon", "yes", rootElt);
+        }
+
+        if (isUseWrapperClasses){
+            XSLTUtils.addAttribute(model, "usewrapperclasses", "yes", rootElt);
         }
 
         if (metainf.isExtension()) {
@@ -563,14 +583,14 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         // populate all the information
-        populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
+        populateInfo(metainf, model, rootElt, propertyNames, typeMap, groupTypeMap, false);
 
         if (metainf.isSimple() && metainf.isUnion()) {
             populateMemberInfo(metainf, model, rootElt, typeMap);
         }
 
         if (metainf.isSimple() && metainf.isList()) {
-            populateListInfo(metainf, model, rootElt, typeMap);
+            populateListInfo(metainf, model, rootElt, typeMap, groupTypeMap);
         }
         //////////////////////////////////////////////////////////
 //        System.out.println(DOM2Writer.nodeToString(rootElt));
@@ -582,7 +602,8 @@ public class JavaBeanWriter implements BeanWriter {
     protected void populateListInfo(BeanWriterMetaInfoHolder metainf,
                                     Document model,
                                     Element rootElement,
-                                    Map typeMap) {
+                                    Map typeMap,
+                                    Map groupTypeMap) {
 
         String javaName = makeUniqueJavaClassName(new ArrayList(), metainf.getItemTypeQName().getLocalPart());
         Element itemType = XSLTUtils.addChildElement(model, "itemtype", rootElement);
@@ -592,9 +613,10 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "javaname", javaName, itemType);
 
 
-        if (typeMap.containsKey(metainf.getItemTypeQName())) {
-                XSLTUtils.addAttribute(model, "ours", "true", itemType);
-            }
+        if (typeMap.containsKey(metainf.getItemTypeQName()) ||
+                groupTypeMap.containsKey(metainf.getItemTypeClassName())) {
+            XSLTUtils.addAttribute(model, "ours", "true", itemType);
+        }
         if (PrimitiveTypeFinder.isPrimitive(metainf.getItemTypeClassName())) {
             XSLTUtils.addAttribute(model, "primitive", "yes", itemType);
         }
@@ -639,8 +661,12 @@ public class JavaBeanWriter implements BeanWriter {
      * @param typeMap
      * @throws SchemaCompilationException
      */
-    private void populateInfo(BeanWriterMetaInfoHolder metainf, Document model,
-                              Element rootElt, ArrayList propertyNames, Map typeMap,
+    private void populateInfo(BeanWriterMetaInfoHolder metainf,
+                              Document model,
+                              Element rootElt,
+                              ArrayList propertyNames,
+                              Map typeMap,
+                              Map groupTypeMap,
                               boolean isInherited) throws SchemaCompilationException {
         // we should add parent class details only if it is
         // an extension or simple restriction
@@ -648,9 +674,9 @@ public class JavaBeanWriter implements BeanWriter {
         if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple())))
         {
             populateInfo(metainf.getParent(), model, rootElt, propertyNames,
-                    typeMap, true);
+                    typeMap, groupTypeMap, true);
         }
-        addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap,
+        addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap, groupTypeMap,
                 isInherited);
 
     }
@@ -664,8 +690,11 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     private void addPropertyEntries(BeanWriterMetaInfoHolder metainf,
-                                    Document model, Element rootElt, ArrayList propertyNames,
-                                    Map typeMap, boolean isInherited) throws SchemaCompilationException {
+                                    Document model, Element rootElt,
+                                    ArrayList propertyNames,
+                                    Map typeMap,
+                                    Map groupTypeMap,
+                                    boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
         QName[] qName;
         String javaClassNameForElement;
@@ -743,6 +772,7 @@ public class JavaBeanWriter implements BeanWriter {
 
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
 
+
             if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)) {
 
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
@@ -799,6 +829,8 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "innerchoice", "yes", property);
             }
 
+
+
             if ((parentMetaInf != null) && metainf.isRestriction() && missingQNames.contains(name)) {
                 // this element details should be there with the parent meta Inf
                 addAttributesToProperty(
@@ -807,6 +839,7 @@ public class JavaBeanWriter implements BeanWriter {
                         model,
                         property,
                         typeMap,
+                        groupTypeMap,
                         javaClassNameForElement);
 
             } else {
@@ -816,6 +849,7 @@ public class JavaBeanWriter implements BeanWriter {
                         model,
                         property,
                         typeMap,
+                        groupTypeMap,
                         javaClassNameForElement);
             }
 
@@ -827,13 +861,15 @@ public class JavaBeanWriter implements BeanWriter {
                                          Document model,
                                          Element property,
                                          Map typeMap,
+                                         Map groupTypeMap,
                                          String javaClassNameForElement) {
         // add an attribute that says the type is default
         if (metainf.getDefaultStatusForQName(name)) {
             XSLTUtils.addAttribute(model, "default", "yes", property);
         }
 
-        if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+        if (typeMap.containsKey(metainf.getSchemaQNameForQName(name)) ||
+                groupTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
             XSLTUtils.addAttribute(model, "ours", "yes", property);
         }
 

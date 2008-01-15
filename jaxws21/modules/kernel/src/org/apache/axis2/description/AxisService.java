@@ -20,11 +20,47 @@
 
 package org.apache.axis2.description;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.SocketException;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Import;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.http.HTTPAddress;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.xml.WSDLWriter;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.java2wsdl.*;
-import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -37,9 +73,15 @@ import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.engine.MessageReceiver;
@@ -50,8 +92,8 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
-import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.XMLPrettyPrinter;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,24 +105,12 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.JMethod;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.wsdl.*;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.extensions.http.HTTPAddress;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-import javax.wsdl.xml.WSDLWriter;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.SocketException;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.*;
 
 /**
  * Class AxisService
@@ -229,9 +259,6 @@ public class AxisService extends AxisDescription {
     private String endpointName;
     private String endpointURL;
 
-    // Flag representing whether WS-Addressing is required to use this service.
-    // Reflects the wsaw:UsingAddressing wsdl extension element
-    private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
 
     //To keep a ref to ObjectSupplier instance
@@ -239,6 +266,9 @@ public class AxisService extends AxisDescription {
 
     // package to namespace mapping
     private Map p2nMap;
+
+    // to keep the exclude property details
+    private ExcludeInfo excludeInfo;
 
     private TypeTable typeTable;
 
@@ -272,15 +302,18 @@ public class AxisService extends AxisDescription {
         this.endpointMap.put(key, axisEndpoint);
     }
 
+    /**
+     * @deprecated Use AddressingHelper.getAddressingRequirementParemeterValue
+     */
     public String getWSAddressingFlag() {
-        return wsaddressingFlag;
+        return AddressingHelper.getAddressingRequirementParemeterValue(this);
     }
 
+    /**
+     * @deprecated Use AddressingHelper.setAddressingRequirementParemeterValue
+     */
     public void setWSAddressingFlag(String ar) {
-        wsaddressingFlag = ar;
-        if (wsaddressingFlag == null) {
-            wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
-        }
+    	AddressingHelper.setAddressingRequirementParemeterValue(this, ar);
     }
 
     public boolean isSchemaLocationsAdjusted() {
@@ -726,7 +759,7 @@ public class AxisService extends AxisDescription {
         }
         if (log.isDebugEnabled()) {
             log.debug("mapActionToOperation: Mapping Action to Operation: action: " + action +
-                      "; operation: " + axisOperation);
+                      "; operation: " + axisOperation+ "named: "+axisOperation.getName());
         }
 
         // First check if this action has already been flagged as invalid because it is a duplicate.
@@ -1019,7 +1052,9 @@ public class AxisService extends AxisDescription {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 originalImprotString = wsdlImport.getLocationURI();
-                wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+                if (!originalImprotString.startsWith("http")){
+                    wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+                }
                 changeImportAndIncludeLocations(wsdlImport.getDefinition());
             }
         }
@@ -1361,22 +1396,41 @@ public class AxisService extends AxisDescription {
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
         if ((soapAction == null) || soapAction.length() == 0) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: "+soapAction +" is null or ''. Returning null.");
+        	}
             return null;
         }
         // If the action maps to an alais that is not unique, then it can't be used to map to 
         // an operation.
         if (invalidOperationsAliases.contains(soapAction)) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: "+soapAction +" is an invalid operation alias. Returning null.");
+        	}
             return null;
         }
 
-        AxisOperation operation = (AxisOperation) getChild(new QName(soapAction));
-
+        AxisOperation operation = null;
+        Iterator children = getChildren();
+        // I could not find any spec statement that explicitly forbids using a short name in the SOAPAction header or wsa:Action element,
+        // so I believe this to be valid.  There may be customers using the shortname as the SOAPAction in their client code that would
+        // also require this support.
+        while(children.hasNext() && (operation == null)){
+        	AxisOperation op = (AxisOperation)children.next();
+        	if(op.getName().getLocalPart().equals(soapAction)){
+        		operation = op;
+        	}
+        }
+        
         if (operation != null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("getOperationBySOAPAction: Operation ("+operation+","+operation.getName()+") for soapAction: "+soapAction+" found as child.");
+        	}
             return operation;
         }
 
         operation = (AxisOperation) operationsAliasesMap.get(soapAction);
-
+        
         return operation;
     }
 
@@ -1876,6 +1930,7 @@ public class AxisService extends AxisDescription {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
+        Utils.processBeanPropertyExclude(axisService);
         axisService.setElementFormDefault(false);
         try {
             axisService.addSchema(schemaGenerator.generateSchema());
@@ -2001,12 +2056,18 @@ public class AxisService extends AxisDescription {
         }
     }
 
+    public Map populateSchemaMappings(){
+        // when calling from other than codegen. i.e from deployment
+        // engine we don't have to override the absolute http locations.
+        return populateSchemaMappings(false);
+    }
+
     /**
      * runs the schema mappings if it has not been run previously
      * it is best that this logic be in the axis service since one can
      * call the axis service to populate the schema mappings
      */
-    public Map populateSchemaMappings() {
+    public Map populateSchemaMappings(boolean overrideAbsoluteAddress) {
 
         //populate the axis service with the necessary schema references
         ArrayList schema = this.schemaList;
@@ -2015,7 +2076,7 @@ public class AxisService extends AxisDescription {
             Hashtable nameTable = new Hashtable();
             Hashtable sourceURIToNewLocationMap = new Hashtable();
             //calculate unique names for the schemas
-            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap);
+            calculateSchemaNames(schema, nameTable, sourceURIToNewLocationMap, overrideAbsoluteAddress);
             //adjust the schema locations as per the calculated names
             changedSchemaLocations = adjustSchemaNames(schema, nameTable,sourceURIToNewLocationMap);
             //reverse the nametable so that there is a mapping from the
@@ -2032,7 +2093,10 @@ public class AxisService extends AxisDescription {
      *
      * @param schemas
      */
-    private void calculateSchemaNames(List schemas, Hashtable nameTable, Hashtable sourceURIToNewLocationMap) {
+    private void calculateSchemaNames(List schemas,
+                                      Hashtable nameTable,
+                                      Hashtable sourceURIToNewLocationMap,
+                                      boolean overrideAbsoluteAddress) {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
@@ -2047,9 +2111,10 @@ public class AxisService extends AxisDescription {
 
                     if (s != null && getScheamLocationWithDot(sourceURIToNewLocationMap, s) == null) {
                         //insert the name into the table
-                        insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap);
+                        insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap, overrideAbsoluteAddress);
                         //recursively call the same procedure
-                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}), nameTable, sourceURIToNewLocationMap);
+                        calculateSchemaNames(Arrays.asList(new XmlSchema[]{s}),
+                                nameTable, sourceURIToNewLocationMap, overrideAbsoluteAddress);
                     }
                 }
             }
@@ -2062,24 +2127,37 @@ public class AxisService extends AxisDescription {
      * @param nameTable
      * @param s
      */
-    private void insertIntoNameTable(Hashtable nameTable, XmlSchema s, Hashtable sourceURIToNewLocationMap) {
+    private void insertIntoNameTable(Hashtable nameTable,
+                                     XmlSchema s,
+                                     Hashtable sourceURIToNewLocationMap,
+                                     boolean overrideAbsoluteAddress) {
         String sourceURI = s.getSourceURI();
-        String newURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
-        if (newURI.endsWith(".xsd")) {
-            //remove the .xsd extention
-            newURI = newURI.substring(0, newURI.lastIndexOf("."));
+        // check whether the sourece uri is an absolute one and are
+        // we allowed to override it.
+        // if the absolute uri overriding is not allowed the use the
+        // original sourceURI as new one
+        if (sourceURI.startsWith("http") && !overrideAbsoluteAddress) {
+            nameTable.put(s, sourceURI);
+            sourceURIToNewLocationMap.put(sourceURI, sourceURI);
         } else {
-            newURI = "xsd" + count++;
+            String newURI = sourceURI.substring(sourceURI.lastIndexOf('/') + 1);
+            if (newURI.endsWith(".xsd")) {
+                //remove the .xsd extention
+                newURI = newURI.substring(0, newURI.lastIndexOf("."));
+            } else {
+                newURI = "xsd" + count++;
+            }
+
+            newURI = customSchemaNameSuffix != null ? newURI + customSchemaNameSuffix : newURI;
+            // make it unique
+            while (nameTable.containsValue(newURI)) {
+                newURI = newURI + count++;
+            }
+
+            nameTable.put(s, newURI);
+            sourceURIToNewLocationMap.put(sourceURI, newURI);
         }
 
-        newURI = customSchemaNameSuffix != null? newURI + customSchemaNameSuffix: newURI;
-        // make it unique
-        while(nameTable.containsValue(newURI)){
-            newURI = newURI + count++;
-        }
-
-        nameTable.put(s, newURI);
-        sourceURIToNewLocationMap.put(sourceURI,newURI);
     }
 
     /**
@@ -2559,5 +2637,13 @@ public class AxisService extends AxisDescription {
 
     public String toString() {
         return getName();
+    }
+
+    public ExcludeInfo getExcludeInfo() {
+        return excludeInfo;
+    }
+
+    public void setExcludeInfo(ExcludeInfo excludeInfo) {
+        this.excludeInfo = excludeInfo;
     }
 }

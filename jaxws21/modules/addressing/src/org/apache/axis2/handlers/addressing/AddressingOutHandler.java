@@ -38,6 +38,8 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.addressing.i18n.AddressingMessages;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -194,7 +196,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             String messageID = messageContextOptions.getMessageId();
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
-            	ArrayList attributes = (ArrayList)messageContext.getProperty(
+            	ArrayList attributes = (ArrayList)messageContext.getLocalProperty(
                         AddressingConstants.MESSAGEID_ATTRIBUTES);
                 createSOAPHeaderBlock(messageID, WSA_MESSAGE_ID, attributes);
             }
@@ -210,27 +212,31 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (action == null || action.length()==0) {
                 if (messageContext.getAxisOperation() != null) {
                     action = messageContext.getAxisOperation().getOutputAction();
+                    if(action!=null){
+                    	// Set this action back to obviate possible action mismatch problems
+                    	messageContext.setWSAAction(action);
+                    }
                     if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace(messageContext.getLogIDString() +
                                 " processWSAAction: action from AxisOperation: " + action);
                     }
                 }
-            }
-
-            // Use the correct fault action for the selected namespace
-            if(isFinalAddressingNamespace){
-            	if(Submission.WSA_FAULT_ACTION.equals(action)){
-            		action = Final.WSA_FAULT_ACTION;
-            		messageContextOptions.setAction(action);
-            	}
             }else{
-            	if(Final.WSA_FAULT_ACTION.equals(action)){
-            		action = Submission.WSA_FAULT_ACTION;
-            		messageContextOptions.setAction(action);
-            	}else if(Final.WSA_SOAP_FAULT_ACTION.equals(action)){
-                    action = Submission.WSA_FAULT_ACTION;
-                    messageContextOptions.setAction(action);
-            	}
+	            // Use the correct fault action for the selected namespace
+	            if(isFinalAddressingNamespace){
+	            	if(Submission.WSA_FAULT_ACTION.equals(action)){
+	            		action = Final.WSA_FAULT_ACTION;
+	            		messageContextOptions.setAction(action);
+	            	}
+	            }else{
+	            	if(Final.WSA_FAULT_ACTION.equals(action)){
+	            		action = Submission.WSA_FAULT_ACTION;
+	            		messageContextOptions.setAction(action);
+	            	}else if(Final.WSA_SOAP_FAULT_ACTION.equals(action)){
+	                    action = Submission.WSA_FAULT_ACTION;
+	                    messageContextOptions.setAction(action);
+	            	}
+	            }
             }
 
             // If we need to add a wsa:Action header
@@ -257,7 +263,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                 " processWSAAction: Adding action to header: " + action);
                     }
                     // Otherwise just add the header
-                    ArrayList attributes = (ArrayList)messageContext.getProperty(
+                    ArrayList attributes = (ArrayList)messageContext.getLocalProperty(
                             AddressingConstants.ACTION_ATTRIBUTES);
                     createSOAPHeaderBlock(action, WSA_ACTION, attributes);
                 }
@@ -362,7 +368,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                     createSOAPHeaderBlock(address, WSA_TO, epr.getAddressAttributes());
                 }
-                processToEPRReferenceInformation(epr.getAllReferenceParameters(), header);
+                processToEPRReferenceInformation(epr.getAllReferenceParameters());
             }
         }
 
@@ -432,22 +438,46 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          * @param parent               is the element to which the referenceparameters should be
          *                             attached
          */
-        private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent) {
-            if (referenceInformation != null && parent != null) {
+        private void processToEPRReferenceInformation(Map referenceInformation) {
+            if (referenceInformation != null) {
                 if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace("processToEPRReferenceInformation: " + referenceInformation);
                 }
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    OMElement newElement = ElementHelper.importOMElement(omElement, parent.getOMFactory());
+                    OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                                addressingNamespaceObject);
                     }
-                    parent.addChild(newElement);
+                    header.addChild(newElement);
                 }
+            }
+            // Now add reference parameters we found in the WSDL (if any)
+            AxisService service = messageContext.getAxisService();
+            if(service != null){
+            	AxisEndpoint endpoint = service.getEndpoint(service.getEndpointName());
+            	if(endpoint != null){
+            		ArrayList referenceparameters = (ArrayList) endpoint.getParameterValue(REFERENCE_PARAMETER_PARAMETER);
+            		if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            			log.trace("processToEPRReferenceInformation: Reference Parameters from WSDL:" + referenceparameters);
+            		}
+            		if(referenceparameters!=null){
+            			Iterator iterator = referenceparameters.iterator();
+            			while (iterator.hasNext()) {
+            				OMElement omElement = (OMElement)iterator.next();
+            				OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
+            				if (isFinalAddressingNamespace) {
+            					newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+            							Final.WSA_TYPE_ATTRIBUTE_VALUE,
+            							addressingNamespaceObject);
+            				}
+            				header.addChild(newElement);
+            			}
+            		}
+            	}
             }
         }
 

@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+
 import java.lang.annotation.Annotation;
 
 public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
@@ -26,7 +28,6 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
     private String name;
     private String targetNamespace;
     private String wsdlLocation;
-
 
     /** A WebServiceClientAnnot cannot be instantiated. */
     private WebServiceClientAnnot() {
@@ -56,6 +57,80 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
                                          wsdlLocation);
     }
 
+    /**
+     * Create an instance of this annotation using the values from the annotation instance
+     * passed in. 
+     * 
+     * @param annotation Use the values to create a new instance of annotation.  Note this could
+     * be an instance of the java annotation superclass as well.
+     * @return a new instance of this annotation or null if one could not be created with the
+     * annotation passed in.
+     */
+    public static WebServiceClientAnnot createFromAnnotation(Annotation annotation) {
+        WebServiceClientAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.xml.ws.WebServiceClient) {
+            javax.xml.ws.WebServiceClient wsc = (javax.xml.ws.WebServiceClient) annotation;
+            returnAnnot = new WebServiceClientAnnot(wsc.name(),
+                                                    wsc.targetNamespace(),
+                                                    wsc.wsdlLocation());
+        }
+        return returnAnnot;
+    }
+    
+    /**
+     * Create a new instance of this annotation using the values from the two annotations passed
+     * in as arguments.  If either is null, the new annotation is created with the non-null 
+     * annotation's values.  If both are null, then no annotation is created.  Non-empty values in 
+     * the sparse annotation (if any) will override the values in the base annotation. 
+     *  
+     * @param baseAnnotation Initial values to be used in creating the annotation.  May be null.
+     * @param sparseAnnotation Non-empty values (not null and not "") will override values in 
+     * the base annotation.
+     * @return A new annotation created from the arguments, or null if one could not be created.
+     */
+    public static WebServiceClientAnnot createFromAnnotation(Annotation baseAnnotation,
+                                                             Annotation sparseAnnotation) {
+        WebServiceClientAnnot returnAnnot = null;
+        javax.xml.ws.WebServiceClient baseWSCAnnotation = null;
+        javax.xml.ws.WebServiceClient sparseWSCAnnotation = null;
+        
+        if (baseAnnotation != null && baseAnnotation instanceof javax.xml.ws.WebServiceClient) {
+            baseWSCAnnotation = (javax.xml.ws.WebServiceClient) baseAnnotation;
+        }
+        
+        if (sparseAnnotation != null && sparseAnnotation instanceof javax.xml.ws.WebServiceClient) {
+            sparseWSCAnnotation = (javax.xml.ws.WebServiceClient) sparseAnnotation;
+        }
+        
+        if (baseWSCAnnotation != null && sparseWSCAnnotation != null) {
+            // Both specified, create based on the base annotation merged with the sparse
+            // annotation
+            returnAnnot = WebServiceClientAnnot.createFromAnnotation(baseWSCAnnotation);
+            if (!DescriptionBuilderUtils.isEmpty(sparseWSCAnnotation.name())) {
+                returnAnnot.setName(sparseWSCAnnotation.name());
+            }
+            if (!DescriptionBuilderUtils.isEmpty(sparseWSCAnnotation.targetNamespace())) {
+                returnAnnot.setTargetNamespace(sparseWSCAnnotation.targetNamespace());
+            }
+            if (!DescriptionBuilderUtils.isEmpty(sparseWSCAnnotation.wsdlLocation())) {
+                returnAnnot.setWsdlLocation(sparseWSCAnnotation.wsdlLocation());
+            }
+        } else if (baseWSCAnnotation != null && sparseWSCAnnotation == null) {
+            // There's no sparse information, so just create from the base annotation
+            returnAnnot = WebServiceClientAnnot.createFromAnnotation(baseWSCAnnotation);
+        } else if (baseWSCAnnotation == null && sparseWSCAnnotation != null) {
+            // There's only sparse information, so create a new annotation based on that
+            returnAnnot = WebServiceClientAnnot.createFromAnnotation(sparseWSCAnnotation);
+        } else if (baseWSCAnnotation == null && sparseWSCAnnotation == null) {
+            // No anntotation specifed, so just return null which was initialized above
+        } else {
+            // This should never happen; all the cases are covered above
+            // TODO: (JLB) RAS/NLS
+            throw ExceptionFactory.makeWebServiceException("Programming error! annot = " + baseAnnotation + "; sparseAnnot = " + sparseAnnotation);
+        }
+
+        return returnAnnot;
+    }
 
     /** @return Returns the name. */
     public String name() {
@@ -108,5 +183,4 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
         sb.append(newLine);
         return sb.toString();
 	}
-
 }

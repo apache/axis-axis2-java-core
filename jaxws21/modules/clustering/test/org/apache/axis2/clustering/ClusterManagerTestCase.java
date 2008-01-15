@@ -20,17 +20,16 @@
 package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.DefaultContextManagerListener;
-import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
 import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
+import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
+import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,7 +63,7 @@ public abstract class ClusterManagerTestCase extends TestCase {
 
         configurationContext1 = ConfigurationContextFactory.createDefaultConfigurationContext();
         configurationContext2 = ConfigurationContextFactory.createDefaultConfigurationContext();
-        
+
         clusterManager1 = getClusterManager(configurationContext1);
         clusterManager2 = getClusterManager(configurationContext2);
 
@@ -93,15 +92,17 @@ public abstract class ClusterManagerTestCase extends TestCase {
         axisConfiguration2.addServiceGroup(serviceGroup2);
 
         //Initiating ClusterManagers
+        System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, HttpUtils.getIpAddress());
         try {
             clusterManager1.init();
+            System.out.println("ClusterManager-1 successfully initialized");
+            System.out.println("*** PLEASE IGNORE THE java.net.ConnectException STACKTRACES. THIS IS EXPECTED ***");
             clusterManager2.init();
+            System.out.println("ClusterManager-2 successfully initialized");
         } catch (ClusteringFault e) {
-            String message = "Could not initialize ClusterManagers. Please check the network connection";
-            if (log.isErrorEnabled()) {
-                log.error(message);
-            }
-
+            String message =
+                    "Could not initialize ClusterManagers. Please check the network connection";
+            log.error(message, e);
             skipChannelTests = true;
         }
     }

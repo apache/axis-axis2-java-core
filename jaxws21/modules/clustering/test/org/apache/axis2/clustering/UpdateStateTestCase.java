@@ -38,15 +38,12 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
     String sgcID = null;
 
     String key1 = "key1";
-
-    String key2 = "key2";
-
-    String key3 = "key3";
-
     String val1 = "val1";
 
+    String key2 = "key2";
     String val2 = "val2";
 
+    String key3 = "key3";
     String val3 = "val3";
 
     public void setUp() throws Exception {

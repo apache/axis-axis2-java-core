@@ -32,6 +32,7 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
@@ -815,14 +816,14 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * This method needs to remain for a few Axis2 releases to support
      * legacy apps still using it.
-     * 
+     *
      * @param qname
      * @deprecated Use {@link #isEngaged(String)}
      */
     public boolean isEngaged(QName qname) {
         return isEngaged(qname.getLocalPart());
     }
-    
+
     public boolean isEngaged(String moduleId) {
         AxisModule module = getModule(moduleId);
         if (module == null) {
@@ -1105,5 +1106,104 @@ public class AxisConfiguration extends AxisDescription {
         if (configurator != null) {
             configurator.cleanup();
         }
+    }
+
+    /**
+     * This method can be used to insert a phase at the runtime for a given location
+     * And the relative location can be specified by beforePhase and afterPhase. Parameters
+     * Either or both of them can be null , if both the parameters are null then the phase
+     * will be added some where in the global phase. If one of them are null then the phase
+     * will be added
+     *  - If the beforePhase is null then the phase will be added after the afterPhase
+     *  - If the after phase is null then the phase will be added before the beforePhase
+     * Type of the flow will be specified by the parameter flow.
+     *   1 - Inflow
+     *   2 - out flow
+     *   3 - fault in flow
+     *   4 - fault out flow
+     *
+     * @param d the Deployable representing the Phase to deploy
+     * @param flow the type of the flow
+     * @throws org.apache.axis2.AxisFault : If something went wrong
+     */
+    public void insertPhase(Deployable d, int flow) throws AxisFault {
+
+        switch (flow) {
+            case PhaseMetadata.IN_FLOW : {
+                List phaseList = phasesinfo.getINPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
+                if (phaseList != null) {
+                    phasesinfo.setINPhases((ArrayList)phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.OUT_FLOW : {
+                List phaseList = phasesinfo.getOUTPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
+                if (phaseList != null) {
+                    phasesinfo.setOUTPhases((ArrayList)phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.FAULT_OUT_FLOW : {
+                List phaseList = phasesinfo.getOutFaultPhaseList();
+                phaseList = findAndInsertPhase(d, phaseList);
+                if (phaseList != null) {
+                    phasesinfo.setOUT_FaultPhases((ArrayList)phaseList);
+                }
+                break;
+            }
+            case PhaseMetadata.FAULT_IN_FLOW : {
+                List phaseList = phasesinfo.getIN_FaultPhases();
+                phaseList = findAndInsertPhase(d, phaseList);
+                if (phaseList != null) {
+                    phasesinfo.setIN_FaultPhases((ArrayList)phaseList);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * Insert a Phase
+     * @param d
+     * @param phaseList
+     * @return
+     * @throws AxisFault
+     */
+    private List findAndInsertPhase(Deployable d, List phaseList) throws AxisFault {
+        DeployableChain ec = new DeployableChain();
+        String last = null;
+        for (Iterator i = phaseList.iterator(); i.hasNext();) {
+            Phase phase = (Phase)i.next();
+            String name = phase.getName();
+            Deployable existing = new Deployable(name);
+            existing.setTarget(phase);
+            if (last != null) {
+                // Set up explicit chain relationship for preexisting phases, for now.
+                ec.addRelationship(last, name);
+            }
+            last = name;
+            try {
+                ec.deploy(existing);
+            } catch (Exception e) {
+                // This should never happen when building a simple list like the above
+                throw AxisFault.makeFault(e);
+            }
+        }
+        Phase phase = new Phase();
+        phase.setName(d.getName());
+        d.setTarget(phase);
+
+        try {
+            ec.deploy(d);
+            ec.rebuild();
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
+        
+        phaseList = ec.getChain();
+
+        return phaseList;
     }
 }

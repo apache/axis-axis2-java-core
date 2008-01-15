@@ -22,6 +22,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -67,7 +68,10 @@ public class EndpointDescriptionValidator extends Validator {
 
     private boolean validateWSDLBindingType() {
         boolean isBindingValid = false;
+        
+        //Get the binding type from the annotation
         String bindingType = endpointDesc.getBindingType();
+        
         //The wsdl binding type that we now receive has been previously mapped to the expected
         //SOAP and HTTP bindings. So, there is now limited validation to perform
         String wsdlBindingType = endpointDescWSDL.getWSDLBindingType();
@@ -82,7 +86,12 @@ public class EndpointDescriptionValidator extends Validator {
                 !SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(bindingType) &&
                 !SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType) &&
                 !SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(bindingType) &&
+                !MDQConstants.SOAP11JMS_BINDING.equals(bindingType) &&
+                !MDQConstants.SOAP11JMS_MTOM_BINDING.equals(bindingType) &&
+                !MDQConstants.SOAP12JMS_BINDING.equals(bindingType) &&
+                !MDQConstants.SOAP12JMS_MTOM_BINDING.equals(bindingType) &&
                 !HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+            
             addValidationFailure(this,
                                  "Invalid annotation binding value specified: " + bindingType);
             isBindingValid = false;

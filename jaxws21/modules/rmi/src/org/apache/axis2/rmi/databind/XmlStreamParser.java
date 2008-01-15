@@ -33,14 +33,14 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.*;
 
-
-
 public class XmlStreamParser {
 
     private Configurator configurator;
     private Map qNameToTypeMap;
     private SimpleTypeHandler simpleTypeHandler;
     private Class simpleTypeHandlerClass;
+    private boolean readerPriorAccess;
+    private boolean priorAccessDetermined = false;
 
     public XmlStreamParser(Map processedTypeMap,
                            Configurator configurator,
@@ -53,7 +53,7 @@ public class XmlStreamParser {
         } catch (MetaDataPopulateException e) {
             // TODO: what to do this exceptions is not going to happen
         } catch (SchemaGenerationException e) {
-            // TODO: what to do thsi exceptions is not going to happen
+            // TODO: what to do this exceptions is not going to happen
         }
     }
 
@@ -81,14 +81,15 @@ public class XmlStreamParser {
 
     }
 
-    public Object getOutputObject(XMLStreamReader reader,
+    public Object getOutputObject(XMLStreamReader reader_in,
                                   Operation operation)
             throws XMLStreamException, XmlParsingException {
         Object returnObject = null;
-        // first we have to point to the reader to the begining of the element
-        while (!reader.isStartElement() && !reader.isEndElement()) {
-            reader.next();
-        }
+        
+        determinePriorAccess(reader_in);
+        StatefulXMLStreamReader reader = getStatefulReader(reader_in);
+        
+        advanceToFirstElement(reader);
 
         // first check whether we have got the correct input element or not
         if (reader.getLocalName().equals(operation.getOutPutElement().getName()) &&
@@ -102,16 +103,16 @@ public class XmlStreamParser {
         return returnObject;
     }
 
-    public Object[] getInputParameters(XMLStreamReader reader,
+    public Object[] getInputParameters(XMLStreamReader reader_in,
                                        Operation operation)
             throws XMLStreamException,
             XmlParsingException {
 
+        determinePriorAccess(reader_in);
+        StatefulXMLStreamReader reader = getStatefulReader(reader_in);
+        
         List returnObjects = new ArrayList();
-        // first we have to point to the reader to the begining for the element
-        while (!reader.isStartElement() && !reader.isEndElement()) {
-            reader.next();
-        }
+        advanceToFirstElement(reader);
 
         // first check whether we have got the correct input element or not
         if (reader.getLocalName().equals(operation.getInputElement().getName()) &&
@@ -121,14 +122,16 @@ public class XmlStreamParser {
             Parameter parameter = null;
             List inputParameters = operation.getInputParameters();
             QName parameterQName = null;
-
+            int startDepth = reader.getDepth();
+            
             for (Iterator iter = inputParameters.iterator(); iter.hasNext();) {
                 parameter = (Parameter) iter.next();
                 parameterQName = new QName(parameter.getNamespace(), parameter.getName());
                 returnObjects.add(getObjectForParameter(reader, parameter));
                 // if the reader is at the end of this parameter
                 // then we move it to next element.
-                if (reader.isEndElement() && reader.getName().equals(parameterQName)){
+                if (reader.isEndElement() && reader.getName().equals(parameterQName)
+                        && (readerPriorAccess || reader.getDepth() == startDepth - 1)){
                     reader.next();
                 }
             }
@@ -150,12 +153,16 @@ public class XmlStreamParser {
      * @throws XmlParsingException
      */
 
-    public Object getObjectForParameter(XMLStreamReader reader,
+    public Object getObjectForParameter(XMLStreamReader reader_in,
                                         Parameter parameter)
             throws XMLStreamException,
             XmlParsingException {
 
         QName parameterQName = new QName(parameter.getNamespace(), parameter.getName());
+        
+        determinePriorAccess(reader_in);
+        StatefulXMLStreamReader reader = getStatefulReader(reader_in);
+        
         return getObjectForElement(reader,
                 parameterQName,
                 parameter.getType(),
@@ -181,12 +188,15 @@ public class XmlStreamParser {
      */
 
 
-    public Object getObjectForType(XMLStreamReader reader,
+    public Object getObjectForType(XMLStreamReader reader_in,
                                    Type type)
             throws XMLStreamException,
             XmlParsingException {
 
         try {
+            determinePriorAccess(reader_in);
+            StatefulXMLStreamReader reader = getStatefulReader(reader_in);
+            
             Object returnObject = null;
             if (type.getXmlType().isSimpleType()) {
                 // this is a simple known type for us
@@ -194,14 +204,15 @@ public class XmlStreamParser {
                 if (type.getJavaClass().equals(Object.class)) {
                     returnObject = new Object();
                 } else {
-                    // find the object for this string using converter util classs
+                    // find the object for this string using converter util classes
                     returnObject = getSimpleTypeObject(type, reader, reader.getText());
                 }
             } else {
-                // first we have to point to the reader to the begining for the element
+                // first we have to point to the reader to the beginning for the element
                 while (!reader.isStartElement() && !reader.isEndElement()) {
                     reader.next();
                 }
+                int startDepth = reader.getDepth();
                 // this is a complex type
                 returnObject = type.getJavaClass().newInstance();
                 // we have to get all the elementField and populate them
@@ -219,7 +230,8 @@ public class XmlStreamParser {
                     }
                     // if the reader is at the end of this elementField
                     // then we move it to next element.
-                    if (reader.isEndElement() && reader.getName().equals(elementFieldQName)){
+                    if (reader.isEndElement() && reader.getName().equals(elementFieldQName) 
+                            && (readerPriorAccess || reader.getDepth() == startDepth - 1)){
                         reader.next();
                     }
 
@@ -238,7 +250,7 @@ public class XmlStreamParser {
 
     }
 
-    private Object getSimpleTypeObject(Type type, XMLStreamReader reader, String value)
+    private Object getSimpleTypeObject(Type type, StatefulXMLStreamReader reader, String value)
             throws  XmlParsingException {
         Object returnObject;
         String methodName = null;
@@ -257,7 +269,7 @@ public class XmlStreamParser {
     }
 
     private String getMethodName(String className) {
-        // first handle some exceptional casses
+        // first handle some exceptional classes
         if (className.equals(Integer.class.getName())) {
             return "convertToInt";
         } else if (className.equals(Calendar.class.getName())) {
@@ -267,14 +279,14 @@ public class XmlStreamParser {
             className = className.substring(className.lastIndexOf(".") + 1);
         } else {
             // this is a primitive type class
-            // so capitalize the firt letter
+            // so capitalize the first letter
             className = className.substring(0, 1).toUpperCase() + className.substring(1);
         }
         return "convertTo" + className;
     }
 
     /**
-     * give the relavent object for elementField.
+     * give the relevant object for elementField.
      *
      * @param reader
      * @param elementField
@@ -283,7 +295,7 @@ public class XmlStreamParser {
      * @throws XmlParsingException
      */
 
-    private Object getObjectForElementField(XMLStreamReader reader,
+    private Object getObjectForElementField(StatefulXMLStreamReader reader,
                                             ElementField elementField)
             throws XMLStreamException,
             XmlParsingException {
@@ -301,8 +313,8 @@ public class XmlStreamParser {
 
     /**
      * element parser corresponds to parse the element (for an attribute or parameter) correctly.
-     * when calling to this method reader must point to the start element of the elemetnt. and when returning
-     * it should point to the corresponding end eleemnt of the element.
+     * when calling to this method reader must point to the start element of the element. and when returning
+     * it should point to the corresponding end element of the element.
      * if the element is an array it may point to the start element of the next element.
      *
      * @param reader
@@ -316,7 +328,7 @@ public class XmlStreamParser {
      * @throws XmlParsingException
      */
 
-    private Object getObjectForElement(XMLStreamReader reader,
+    private Object getObjectForElement(StatefulXMLStreamReader reader,
                                        QName elementQName,
                                        Type elementType,
                                        boolean isArray,
@@ -326,7 +338,7 @@ public class XmlStreamParser {
                                        Class javaClass)
             throws XMLStreamException,
             XmlParsingException {
-        // first we have to point to the reader to the begining for the element
+        // first we have to point to the reader to the beginning for the element
         while (!reader.isStartElement() && !reader.isEndElement()) {
             reader.next();
         }
@@ -430,10 +442,10 @@ public class XmlStreamParser {
                     }
                 }
 
-                // this is very important in handling primitivs
+                // this is very important in handling primitives
                 // they can not have null values so if array then we have to return the
                 // array object is null
-                // for other also it is covenient to assume like that.
+                // for other also it is convenient to assume like that.
                 if ((Constants.OTHER_TYPE & classType) == Constants.OTHER_TYPE){
                     // i.e this is not a collection type
                     List objectsList = (List) objectsCollection;
@@ -524,7 +536,7 @@ public class XmlStreamParser {
     }
 
     private Object getElementObjectFromReader(Type elementType,
-                                              XMLStreamReader reader)
+                                              StatefulXMLStreamReader reader)
             throws XmlParsingException, XMLStreamException {
         Object returnObject = null;
         if (RMIBean.class.isAssignableFrom(elementType.getJavaClass())) {
@@ -568,7 +580,7 @@ public class XmlStreamParser {
         }
     }
 
-    private Map getJavaMethodValueHashMap(Type actualElementType, XMLStreamReader reader)
+    private Map getJavaMethodValueHashMap(Type actualElementType, StatefulXMLStreamReader reader)
             throws XmlParsingException {
         AttributeField attributeField;
         String attributeVlaue;
@@ -590,7 +602,7 @@ public class XmlStreamParser {
     }
 
     /**
-     * returtns the collection object according to the type.
+     * returns the collection object according to the type.
      * @param classType
      * @param javaClass
      * @return
@@ -642,7 +654,7 @@ public class XmlStreamParser {
      * @param reader
      * @return qName for the type attribute
      */
-    private QName getTypeQName(XMLStreamReader reader) {
+    private QName getTypeQName(StatefulXMLStreamReader reader) {
         QName typeQName = null;
         String typeValue = reader.getAttributeValue(Constants.URI_2001_SCHEMA_XSI, "type");
         if ((typeValue != null) && !typeValue.equals("")) {
@@ -658,4 +670,53 @@ public class XmlStreamParser {
         return typeQName;
     }
 
+    /** 
+     * Determine if the reader has been advanced beyond its initial location, prior 
+     * to the methods within XmlStreamParser being called.
+     * 
+     * @param reader The XMLStreamReader on which the XmlStreamParser is acting.
+     * @return true if the reader has been advanced beyond its initial location, false otherwise
+     */
+    private boolean determinePriorAccess(XMLStreamReader reader) {
+        if (!priorAccessDetermined) {
+            if (reader.getLocation().getCharacterOffset() == 0)
+                readerPriorAccess = false;
+            else
+                readerPriorAccess = true;
+
+            priorAccessDetermined = true;
+        }
+        return readerPriorAccess;
+    }
+
+    /**
+     * Provide a mechanism (a stack) to track the current state of the XMLStream
+     * 
+     * @param reader_in the XMLStreamReader that the XmlStreamParser is acting on
+     * @return a StatefulXMLStreamReader to monitor the state of the XMLStreamReader
+     */
+    private StatefulXMLStreamReader getStatefulReader(XMLStreamReader reader_in) {
+        if (reader_in instanceof StatefulXMLStreamReader)            
+            return (StatefulXMLStreamReader) reader_in;
+        else
+            return new StatefulXMLStreamReader(reader_in, readerPriorAccess);
+    }
+    
+    /**
+     * Advance the reader to point to the beginning of the element
+     * @param reader the StatefulXMLStreamReader we are using to parse the XMLStream
+     */
+    
+    private void advanceToFirstElement(StatefulXMLStreamReader reader) throws XMLStreamException {
+    
+        if (readerPriorAccess) {
+            while (!reader.isStartElement() && !reader.isEndElement() && reader.hasNext()) {
+                reader.next();
+            }
+        } else {
+            while (reader.getDepth() == 0 && reader.hasNext()) {
+                reader.next();
+            }
+        }
+    }
 }

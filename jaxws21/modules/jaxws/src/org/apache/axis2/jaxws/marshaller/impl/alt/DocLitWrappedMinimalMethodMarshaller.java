@@ -134,6 +134,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
 
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasRequestSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {
@@ -328,6 +333,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pdeList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasResponseSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {

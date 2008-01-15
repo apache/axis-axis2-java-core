@@ -26,4 +26,7 @@ import java.util.Map;
 public interface TypeMap {
 
     public Map getTypeMap();
+
+    public Map getSoapEncodingTypesMap();
+    
 }

@@ -23,6 +23,8 @@ import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+
 /**
  * 
  */
@@ -330,7 +332,7 @@ class DescriptionBuilderUtils {
             //Use the thread context class loader to load the class.
             try {
                 returnClass = ClassLoaderUtils.forName(classToLoad, false,
-                                                       ClassLoaderUtils.getContextClassLoader());
+                                                       ClassLoaderUtils.getContextClassLoader(null));
             }
             catch (Throwable ex) {
                 //Use the default classloader to load the class.
@@ -347,6 +349,14 @@ class DescriptionBuilderUtils {
             }
         }
         return returnClass;
+    }
+
+    static boolean isEmpty(String string) {
+        return (string == null || "".equals(string));
+    }
+
+    static boolean isEmpty(QName qname) {
+        return qname == null || isEmpty(qname.getLocalPart());
     }
 
 }

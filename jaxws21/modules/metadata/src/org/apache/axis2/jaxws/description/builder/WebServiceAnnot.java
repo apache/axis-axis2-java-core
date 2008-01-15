@@ -69,6 +69,21 @@ public class WebServiceAnnot implements javax.jws.WebService {
                                    endpointInterface,
                                    portName);
     }
+    
+    public static WebServiceAnnot createFromAnnotation(Annotation annotation) {
+        WebServiceAnnot returnAnnot = null;
+        if (annotation != null && annotation instanceof javax.jws.WebService) {
+            javax.jws.WebService ws = (javax.jws.WebService) annotation;
+            return new WebServiceAnnot(ws.name(),
+                                       ws.targetNamespace(),
+                                       ws.serviceName(),
+                                       ws.wsdlLocation(),
+                                       ws.endpointInterface(),
+                                       ws.portName());
+                                      
+        }
+        return returnAnnot;
+    }
 
     public String name() {
         return this.name;

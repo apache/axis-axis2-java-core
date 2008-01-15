@@ -19,7 +19,7 @@
 
 package org.apache.axis2.jaxws.description;
 
-import junit.framework.TestCase;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.log4j.BasicConfigurator;
 
 import javax.jws.WebService;
@@ -31,6 +31,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
+
+import junit.framework.TestCase;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {
     static {
@@ -66,6 +68,34 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals("BasicProviderTestImplPort", testEndpointDesc.getAnnoWebServicePortName());
         assertEquals("http://description.jaxws.axis2.apache.org/",
                      testEndpointDesc.getAnnoWebServiceTargetNamespace());
+ 
+    }
+
+    public void testBasicProviderWithJMS() {
+        // Use the description factory directly; this will be done within the JAX-WS runtime
+        ServiceDescription serviceDesc =
+                DescriptionFactory.createServiceDescription(BasicProviderJMSTestImpl.class);
+        assertNotNull(serviceDesc);
+
+        EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
+        assertNotNull(endpointDesc);
+        assertEquals(1, endpointDesc.length);
+
+        // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava)endpointDesc[0];
+        assertNotNull(testEndpointDesc);
+        assertEquals(Service.Mode.MESSAGE, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals(MDQConstants.SOAP12JMS_BINDING,
+                     testEndpointDesc.getAnnoBindingTypeValue());
+        
+        // The WebServiceProvider annotation specified no values on it.
+        // TODO: When the Description package changes to provide default values when no annotation present, this may need to change.
+        assertEquals("", testEndpointDesc.getAnnoWebServiceWSDLLocation());
+        assertEquals("BasicProviderJMSTestImplService",
+                     testEndpointDesc.getAnnoWebServiceServiceName());
+        assertEquals("BasicProviderJMSTestImplPort", testEndpointDesc.getAnnoWebServicePortName());
+        assertEquals("http://description.jaxws.axis2.apache.org/",
+                     testEndpointDesc.getAnnoWebServiceTargetNamespace());
     }
 
     public void testWebServiceProvider() {
@@ -90,6 +120,30 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals("ProviderServicePort", testEndpointDesc.getAnnoWebServicePortName());
         assertEquals("http://namespace.test", testEndpointDesc.getAnnoWebServiceTargetNamespace());
     }
+    
+    public void testWebServiceProviderWithJMS() {
+        // Use the description factory directly; this will be done within the JAX-WS runtime
+        ServiceDescription serviceDesc =
+                DescriptionFactory.createServiceDescription(WebServiceProviderJMSTestImpl.class);
+        assertNotNull(serviceDesc);
+
+        EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
+        assertNotNull(endpointDesc);
+        assertEquals(1, endpointDesc.length);
+
+        // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava)endpointDesc[0];
+        assertNotNull(testEndpointDesc);
+        assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals(MDQConstants.SOAP12JMS_BINDING,
+                     testEndpointDesc.getAnnoBindingTypeValue());
+
+        assertEquals("http://wsdl.test", testEndpointDesc.getAnnoWebServiceWSDLLocation());
+        assertEquals("ProviderService", testEndpointDesc.getAnnoWebServiceServiceName());
+        assertEquals("ProviderServicePort", testEndpointDesc.getAnnoWebServicePortName());
+        assertEquals("http://namespace.test", testEndpointDesc.getAnnoWebServiceTargetNamespace());
+    }
+    
 
     public void testDefaultServiceModeProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
@@ -174,37 +228,70 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     }
 }
 
-// ===============================================
-// Basic Provider service implementation class
-// ===============================================
+//===============================================
+//Basic Provider service implementation class
+//===============================================
 
 @ServiceMode(value = Service.Mode.MESSAGE)
 @WebServiceProvider()
 @BindingType(value = "http://www.w3.org/2003/05/soap/bindings/HTTP/")
 class BasicProviderTestImpl implements Provider<SOAPMessage> {
-    public BasicProviderTestImpl() {
-    }
+ public BasicProviderTestImpl() {
+ }
 
-    public SOAPMessage invoke(SOAPMessage obj) {
-        return null;
-    }
+ public SOAPMessage invoke(SOAPMessage obj) {
+     return null;
+ }
 }
 
-// ===============================================
-// WebServiceProvider service implementation class
-// ===============================================
+//===============================================
+//Basic Provider service implementation class using SOAP/JMS
+//===============================================
+
+@ServiceMode(value = Service.Mode.MESSAGE)
+@WebServiceProvider()
+@BindingType(MDQConstants.SOAP12JMS_BINDING)
+class BasicProviderJMSTestImpl implements Provider<SOAPMessage> {
+ public BasicProviderJMSTestImpl() {
+ }
+
+ public SOAPMessage invoke(SOAPMessage obj) {
+     return null;
+ }
+}
+
+//===============================================
+//WebServiceProvider service implementation class
+//===============================================
 
 @ServiceMode(value = Service.Mode.PAYLOAD)
 @WebServiceProvider(serviceName = "ProviderService", portName = "ProviderServicePort",
-                    targetNamespace = "http://namespace.test", wsdlLocation = "http://wsdl.test")
+                 targetNamespace = "http://namespace.test", wsdlLocation = "http://wsdl.test")
 @BindingType(value = "http://www.w3.org/2003/05/soap/bindings/HTTP/")
 class WebServiceProviderTestImpl implements Provider<String> {
-    public WebServiceProviderTestImpl() {
-    }
+ public WebServiceProviderTestImpl() {
+ }
 
-    public String invoke(String obj) {
-        return null;
-    }
+ public String invoke(String obj) {
+     return null;
+ }
+}
+
+//===============================================
+//WebServiceProvider service implementation class
+//===============================================
+
+@ServiceMode(value = Service.Mode.PAYLOAD)
+@WebServiceProvider(serviceName = "ProviderService", portName = "ProviderServicePort",
+                 targetNamespace = "http://namespace.test", wsdlLocation = "http://wsdl.test")
+@BindingType(MDQConstants.SOAP12JMS_BINDING)
+class WebServiceProviderJMSTestImpl implements Provider<String> {
+ public WebServiceProviderJMSTestImpl() {
+ }
+
+ public String invoke(String obj) {
+     return null;
+ }
 }
 
 // ===============================================

@@ -45,20 +45,45 @@ import org.apache.axis2.jaxws.server.ServiceInstanceFactory;
 import org.apache.axis2.jaxws.server.ServiceInstanceFactoryImpl;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactoryImpl;
+import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
+import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.impl.EndpointLifecycleManagerFactoryImpl;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
-/** FactoryRegistry Registry containing Factories related to the JAX-WS Implementation */
+import javax.xml.ws.WebServiceContext;
+
+/** 
+ * FactoryRegistry Registry containing Factories related to the JAX-WS Implementation.
+ * The expected scenario is:
+ *   1) Most or all of the factories are registered during startup.
+ *   2) There are a large number of getFactory calls
+ *   3) There may be an infrequent call to setFactory.
+ *   
+ * Thus a "copy on put" approach is used.  This ensures that the "gets" are 
+ * fast (because they are unsynchronized).  The "puts" are slower because they
+ * create a new copy of the HashMap.
+ * See http://www.ibm.com/developerworks/java/library/j-hashmap.html
+ **/
 public class FactoryRegistry {
 
-    private final static Map<Class, Object> table;
-
+    private static volatile Map<Class, Object> table;
+    private static Object lockbox = new Object();
+    
     static {
-        table = new Hashtable<Class, Object>();
+        init();
+    }
+    
+    private static final void init() {
+        
+        // An unsynchronized Map is used to ensure that gets are fast.
+        table = new HashMap<Class, Object>();
+        
+        // Load Factories
         table.put(XMLStringBlockFactory.class, new XMLStringBlockFactoryImpl());
         table.put(EndpointDispatcherFactory.class, new EndpointDispatcherFactoryImpl());
         table.put(JAXBBlockFactory.class, new JAXBBlockFactoryImpl());
@@ -68,13 +93,22 @@ public class FactoryRegistry {
         table.put(MessageFactory.class, new MessageFactoryImpl());
         table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
         table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
-        table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+        table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactoryImpl());
         table.put(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
         table.put(JAXWSEndpointReferenceFactory.class, new JAXWSEndpointReferenceFactoryImpl());
         table.put(Axis2EndpointReferenceFactory.class, new Axis2EndpointReferenceFactoryImpl());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
+        
+        // register the implementation responsible for both WebServiceContext 
+        // injection and the updating of the WebServiceContext instances that
+        // have already been injected, we will register these by two different
+        // classes because it is possible that the implementation is in different
+        // classes
+        WebServiceContextInjectorImpl wsciImpl = new WebServiceContextInjectorImpl();
+        table.put(WebServiceContext.class, wsciImpl);
+        table.put(WebServiceContextInjector.class, wsciImpl);
     }
 
     /** FactoryRegistry is currently a static singleton */
@@ -82,21 +116,26 @@ public class FactoryRegistry {
     }
 
     /**
-     * getFactory
-     *
+     * Get the factory.  This may be called frequently.
      * @param intface of the Factory
      * @return Object that is the factory implementation for the intface
      */
     public static Object getFactory(Class intface) {
-        return table.get(intface);
+        Map m = table;
+        return m.get(intface);
     }
 
     /**
-     * setFactory
+     * Add the factory.  This should be called infrequently.
      * @param intface
      * @param factoryObject
      */
     public static void setFactory(Class intface, Object factoryObject) {
-        table.put(intface, factoryObject);
+        synchronized(lockbox) {
+            // Use copy and put approach to ensure that "get" speed is fast.
+            Map<Class, Object> newMap = new HashMap<Class, Object>(table);
+            newMap.put(intface, factoryObject);
+            table = newMap;
+        }
     }
 }

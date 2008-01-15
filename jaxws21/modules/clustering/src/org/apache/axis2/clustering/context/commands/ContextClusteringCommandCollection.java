@@ -45,6 +45,6 @@ public class ContextClusteringCommandCollection extends ContextClusteringCommand
     }
 
     public String toString() {
-        return "ContextClusteringCommandCollection(" + uniqueId + ")";
+        return "ContextClusteringCommandCollection";
     }
 }

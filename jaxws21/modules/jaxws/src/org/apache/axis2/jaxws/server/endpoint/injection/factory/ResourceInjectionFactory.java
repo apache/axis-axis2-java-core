@@ -22,9 +22,15 @@ import javax.xml.ws.WebServiceContext;
 
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.injection.ResourceInjectionException;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 
+/**
+ * This class is is responsible for creating instances that can 
+ * handle resource injection.
+ *
+ */
 public class ResourceInjectionFactory {
 
     /**
@@ -35,12 +41,25 @@ public class ResourceInjectionFactory {
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * This method retrieves the appropriate ResourceInjector instance
+     * based on the type that is supplied.
+     * 
+     */
     public static ResourceInjector createResourceInjector(Class resourceType)
-            throws ResourceInjectionException {
-        if (resourceType == WebServiceContext.class ||
-                resourceType.isAssignableFrom(WebServiceContext.class)) {
-            return new WebServiceContextInjectorImpl();
+        throws ResourceInjectionException {
+        Object obj = FactoryRegistry.getFactory(resourceType);
+        ResourceInjector injector = null;
+
+        // make sure we have a ResourceInjector instance
+        if (obj instanceof ResourceInjector) {
+            injector = (ResourceInjector) obj;
         }
-        throw new ResourceInjectionException(Messages.getMessage("ResourceInjectionFactoryErr1"));
+
+        if (injector == null) {
+            throw new ResourceInjectionException(Messages.getMessage("ResourceInjectionFactoryErr1"));
+        }
+
+        return injector;
     }
 }

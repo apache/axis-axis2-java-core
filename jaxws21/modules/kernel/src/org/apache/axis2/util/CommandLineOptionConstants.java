@@ -78,6 +78,8 @@ public interface CommandLineOptionConstants {
         String WSDL_LOCATION_URI_OPTION = "uri";
         String WSDL_VERSION_OPTION = "wv";
         String WSDL_VERSION_OPTION_LONG = "wsdl-version";
+        String HTTP_PROXY_HOST_OPTION_LONG = "http-proxy-host";
+        String HTTP_PROXY_PORT_OPTION_LONG = "http-proxy-port";
 
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";

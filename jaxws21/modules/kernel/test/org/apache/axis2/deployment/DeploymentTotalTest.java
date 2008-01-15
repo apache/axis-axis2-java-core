@@ -20,28 +20,57 @@
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.registry.Handler3;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Phase;
+import org.apache.axis2.engine.Handler;
 
 import javax.xml.stream.XMLStreamException;
+import java.util.ArrayList;
 
 public class DeploymentTotalTest extends TestCase {
-    AxisConfiguration er;
+    AxisConfiguration axisConfig;
 
-    public void testparseService1() throws AxisFault, XMLStreamException {
+    protected void setUp() throws Exception {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
-        er = ConfigurationContextFactory
+        axisConfig = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
+        axisConfig.engageModule("module1");
+         // OK, no exceptions.  Now make sure we read the correct file...
+    }
 
-        // OK, no exceptions.  Now make sure we read the correct file...
-        Parameter param = er.getParameter("FavoriteColor");
+    public void testparseService1() throws AxisFault, XMLStreamException {
+        Parameter param = axisConfig.getParameter("FavoriteColor");
         assertNotNull("No FavoriteColor parameter in axis2.xml!", param);
-
         assertEquals("purple", param.getValue());
+    }
+
+    public void testDynamicPhase() {
+        ArrayList inFlow = axisConfig.getInFlowPhases();
+        for (int i = 0; i < inFlow.size(); i++) {
+            Phase phase = (Phase) inFlow.get(i);
+            if (phase.getName().equals("NewPhase")) {
+                assertEquals("Wrong index for NewPhase!", 3, i);
+                assertEquals("Wrong # of handlers in NewPhase", 1, phase.getHandlerCount());
+                Handler h6 = (Handler)phase.getHandlers().get(0);
+                assertTrue("Wrong type for handler", h6 instanceof Handler3);
+            }
+        }
+
+        inFlow = axisConfig.getInFaultFlowPhases();
+        boolean found = false;
+        for (int i = 0; i < inFlow.size(); i++) {
+            Phase phase = (Phase) inFlow.get(i);
+            if (phase.getName().equals("NewPhase")) {
+                found = true;
+            }
+        }
+        assertTrue("NewPhase wasn't found in InFaultFlow", found);
     }
 
 }

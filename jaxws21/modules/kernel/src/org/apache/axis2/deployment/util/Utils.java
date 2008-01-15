@@ -26,6 +26,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.description.AxisModule;
@@ -68,14 +69,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -673,4 +667,50 @@ public class Utils {
         return file;
     }
 
+    /**
+     * This method is to process bean exclude parameter and the XML format of that would be
+     * <parameter name="beanPropertyRules">
+     *     <bean class="full qualified class name" excludeProperties="name,age"/>+
+     * </parameter>
+     * @param service , AxisService object
+     */
+    public static void processBeanPropertyExclude(AxisService  service){
+        Parameter excludeBeanProperty = service.getParameter("beanPropertyRules");
+        if (excludeBeanProperty != null) {
+            OMElement parameterElement = excludeBeanProperty.getParameterElement();
+            Iterator bneasItr =parameterElement.getChildrenWithName(new QName("bean"));
+            ExcludeInfo excludeInfo = new ExcludeInfo();
+            while (bneasItr.hasNext()) {
+                OMElement bean = (OMElement) bneasItr.next();
+                String clazz = bean.getAttributeValue(
+                        new QName(DeploymentConstants.TAG_CLASS_NAME));
+                String excludePropertees = bean.getAttributeValue(
+                        new QName(DeploymentConstants.TAG_EXCLUDE_PROPERTIES));
+                String includeProperties = bean.getAttributeValue(
+                        new QName(DeploymentConstants.TAG_INCLUDE_PROPERTIES));
+                excludeInfo.putBeanInfo(clazz, new BeanExcludeInfo(excludePropertees,includeProperties));
+            }
+            service.setExcludeInfo(excludeInfo);
+        }
+    }
+
+    /**
+     * This will split a bean exclude property values into ArrayList
+     * @param value : String to be splited
+     * @return : Arryalist of the splited string
+     */
+    private static List getArrayFromString(String value) {
+        String values [] = value.split(",");
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < values.length; i++) {
+            String s = values[i];
+            list.add(s);
+        }
+       return list;
+    }
+
+    public static String getShortFileName(String filename){
+        File file = new File(filename);
+        return file.getName();
+    }
 }

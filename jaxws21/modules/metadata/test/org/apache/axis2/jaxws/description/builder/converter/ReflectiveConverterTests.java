@@ -60,7 +60,7 @@ public class ReflectiveConverterTests extends TestCase {
 
     public static void testCreateImplDBC() {
         assertNotNull(implDBC);
-        WebServiceAnnot wsAnnot = implDBC.getWebServiceAnnot();
+        WebService wsAnnot = implDBC.getWebServiceAnnot();
         assertNotNull(wsAnnot);
         assertEquals("SimpleService", wsAnnot.serviceName());
     }
@@ -114,7 +114,7 @@ public class ReflectiveConverterTests extends TestCase {
 
     public static void testCreateSEIDBC() {
         assertNotNull(seiDBC);
-        WebServiceAnnot wsAnnot = seiDBC.getWebServiceAnnot();
+        WebService wsAnnot = seiDBC.getWebServiceAnnot();
         assertNotNull(wsAnnot);
         assertEquals("SimpleServicePort", wsAnnot.name());
     }

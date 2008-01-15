@@ -251,6 +251,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
 
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pvList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasResponseSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {
@@ -301,6 +306,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
 
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pvList, m, packages);
+            
+            // Enable SWA for nested SwaRef attachments
+            if (operationDesc.hasRequestSwaRefAttachments()) {
+                m.setDoingSWA(true);
+            }
 
             return m;
         } catch (Exception e) {

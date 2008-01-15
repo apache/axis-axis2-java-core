@@ -28,6 +28,7 @@ import org.apache.axis2.corba.receivers.CorbaUtil;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
@@ -564,6 +565,7 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
 
     public void unDeploy(String fileName) throws DeploymentException {
         try {
+            fileName = Utils.getShortFileName(fileName);
             axisConfig.removeServiceGroup(fileName);
             log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED, fileName));
         } catch (AxisFault axisFault) {

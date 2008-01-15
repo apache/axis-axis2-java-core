@@ -27,6 +27,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 
 public class XSD2Java {
 
@@ -76,6 +78,12 @@ public class XSD2Java {
             CompilerOptions compilerOptions = new CompilerOptions();
             compilerOptions.setOutputLocation(outputFolder);
             compilerOptions.setGenerateAll(true);
+
+//            Map namespace2PackageMap = new HashMap();
+//            namespace2PackageMap.put("http://www.w3.org/2001/XMLSchema/schema",
+//                    "org.apache.axis2.databinding.types.xsd");
+//            compilerOptions.setNs2PackageMap(namespace2PackageMap);
+//            compilerOptions.setMapperClassPackage("org.apache.axis2.databinding.types.xsd");
 
             //todo - this should come from the users preferences
              compilerOptions.setWrapClasses(false);

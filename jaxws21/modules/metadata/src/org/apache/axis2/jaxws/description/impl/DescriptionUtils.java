@@ -145,25 +145,6 @@ public class DescriptionUtils {
     }
 
     /**
-     * Return the name of the class without any package qualifier. This method should be DEPRECATED
-     * when DBC support is complete
-     *
-     * @param theClass
-     * @return the name of the class sans package qualification.
-     */
-    static String getSimpleJavaClassName(Class theClass) {
-        String returnName = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // We need the "simple name", so strip off any package information from the name
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            int startOfClassIndex = endOfPackageIndex + 1;
-            returnName = fqName.substring(startOfClassIndex);
-        }
-        return returnName;
-    }
-
-    /**
      * Return the name of the class without any package qualifier.
      *
      * @param theClass
@@ -181,26 +162,6 @@ public class DescriptionUtils {
             returnName = fqName.substring(startOfClassIndex);
         }
         return returnName;
-    }
-
-    /**
-     * Returns the package name from the class.  If no package, then returns null This method should
-     * be DEPRECATED when DBC support is complete
-     *
-     * @param theClass
-     * @return
-     */
-    static String getJavaPackageName(Class theClass) {
-        String returnPackage = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // Get the package name, if there is one
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            if (endOfPackageIndex >= 0) {
-                returnPackage = fqName.substring(0, endOfPackageIndex);
-            }
-        }
-        return returnPackage;
     }
 
     /**
@@ -417,6 +378,22 @@ public class DescriptionUtils {
                 }
                 return ((SOAP12Header) extObj).getNamespaceURI();
             }
+            else if (extObj instanceof MIMEMultipartRelated) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found a MIMEMultipartRelated element.  Unwrapping to get SOAP binding.");
+                }
+                MIMEMultipartRelated mime = (MIMEMultipartRelated) extObj;
+                List mimeParts = mime.getMIMEParts();
+                
+                Iterator itr = mimeParts.iterator();
+                while (itr.hasNext()) {
+                    MIMEPart mimePart = (MIMEPart) itr.next();
+                    List elements = mimePart.getExtensibilityElements();
+                    
+                    String ns = getNamespaceFromSOAPElement(elements);
+                    return ns;
+                }
+            }
         }
         return null;
     }
@@ -433,21 +410,17 @@ public class DescriptionUtils {
                 if (bindingOp.getName().equals(opDesc.getName().getLocalPart())) {
                     if (bindingOp.getBindingInput() != null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Processing binding input");
+                                log.debug("Processing binding opertion input");
                         }
-                        processBindingForMIME(bindingOp.getBindingInput()
-                                                       .getExtensibilityElements(),
-                                              opDesc,
-                                              bindingOp.getOperation());
+                        processBindingForMIME(bindingOp.getBindingInput().getExtensibilityElements(), 
+                            opDesc, bindingOp.getOperation(), true);
                     }
                     if (bindingOp.getBindingOutput() != null) {
                         if (log.isDebugEnabled()) {
                             log.debug("Processing binding output");
                         }
-                        processBindingForMIME(bindingOp.getBindingOutput()
-                                                       .getExtensibilityElements(),
-                                              opDesc,
-                                              bindingOp.getOperation());
+                        processBindingForMIME(bindingOp.getBindingOutput().getExtensibilityElements(), 
+                            opDesc, bindingOp.getOperation(), false);
                     }
                 }
             }
@@ -460,16 +433,24 @@ public class DescriptionUtils {
      * does it will build up the appropriate AttachmentDescription objects.
      */
     private static void processBindingForMIME(List extensibilityElements,
-                                              OperationDescriptionImpl opDesc, Operation operation) {
+                                              OperationDescriptionImpl opDesc, 
+                                              Operation operation,
+                                              boolean isRequest) {
         Iterator extensibilityIter = extensibilityElements.iterator();
         while (extensibilityIter.hasNext()) {
             Object obj = extensibilityIter.next();
             if (obj instanceof MIMEMultipartRelated) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found a mime:multipartRelated extensiblity element.");
+                    }
                 // Found mime information now process it and determine if we need to
                 // create an AttachmentDescription
                 MIMEMultipartRelated mime = (MIMEMultipartRelated) obj;
                 Iterator partIter = mime.getMIMEParts().iterator();
                 while (partIter.hasNext()) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found a mime:part child element.");
+                        }
                     MIMEPart mimePart = (MIMEPart) partIter.next();
                     Iterator mExtIter = mimePart.getExtensibilityElements().iterator();
                     // Process each mime part to determine if there is mime content
@@ -495,6 +476,19 @@ public class DescriptionUtils {
                                     log.debug("Already created AttachmentDescription for part: "
                                             + part + " of type: " + type);
                                 }
+                            }
+                        }
+                        else if (obj2 instanceof SOAPBody || obj2 instanceof SOAP12Body) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Found a body element with potential nested mime content");                                    
+                            }
+                            
+                            // Flag whether there's a potential nested attachment.
+                            if (isRequest) {
+                                opDesc.setHasRequestSwaRefAttachments(true);
+                            }
+                            else {
+                                opDesc.setHasResponseSwaRefAttachments(true);
                             }
                         }
                     }

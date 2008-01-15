@@ -22,24 +22,30 @@ import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 
  */
 public class GetStateResponseCommand extends ControlCommand {
 
+    private static final Log log = LogFactory.getLog(GetStateResponseCommand.class);
+
     private ContextClusteringCommand[] commands;
 
-    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-
+    public void execute(ConfigurationContext configContext) throws ClusteringFault {
+        log.info("Received state initialization message");
+        
         // Run this code only if this node is not already initialized
-        if (configurationContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
-            configurationContext.
-                    setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
+        if (configContext.
+                getPropertyNonReplicable(ClusteringConstants.RECD_STATE_INIT_MSG) == null) {
+            configContext.
+                setNonReplicableProperty(ClusteringConstants.RECD_STATE_INIT_MSG, "true");
+//            log.info("Received state initialization message");
             if (commands != null) {
                 for (int i = 0; i < commands.length; i++) {
-                    commands[i].execute(configurationContext);
+                    commands[i].execute(configContext);
                 }
             }
         }

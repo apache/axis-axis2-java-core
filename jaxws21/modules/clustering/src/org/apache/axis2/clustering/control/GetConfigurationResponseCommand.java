@@ -24,6 +24,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.FileNotFoundException;
 import java.util.Iterator;
@@ -33,6 +35,8 @@ import java.util.Iterator;
  */
 public class GetConfigurationResponseCommand extends ControlCommand {
 
+    private static final Log log = LogFactory.getLog(GetConfigurationResponseCommand.class);
+
     private String[] serviceGroups;
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
@@ -40,7 +44,10 @@ public class GetConfigurationResponseCommand extends ControlCommand {
 
         // Run this code only if this node is not already initialized
         if (configContext.
-                getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                getPropertyNonReplicable(ClusteringConstants.RECD_CONFIG_INIT_MSG) == null) {
+            log.info("Received configuration initialization message");
+            configContext.
+                setNonReplicableProperty(ClusteringConstants.RECD_CONFIG_INIT_MSG, "true");
             if (serviceGroups != null) {
 
                 // Load all the service groups that are sent by the neighbour
@@ -58,6 +65,8 @@ public class GetConfigurationResponseCommand extends ControlCommand {
                         }
                     }
                 }
+
+                //TODO: We support only AAR files for now
 
                 // Unload all service groups which were not sent by the neighbour,
                 // but have been currently loaded
@@ -79,9 +88,9 @@ public class GetConfigurationResponseCommand extends ControlCommand {
                              serviceIter.hasNext();) {
                             AxisService service = (AxisService) serviceIter.next();
                             if (service.isClientSide() ||
-                                service.getParameter(AxisModule.MODULE_SERVICE) != null) {
+                                service.getParameter(AxisModule.MODULE_SERVICE) != null) { // Do not unload service groups containing client side services or ones deployed from within modules
                                 mustUnloadServiceGroup = false;
-                                break; // Do not unload service groups containing client side services
+                                break;
                             }
                         }
                         if (mustUnloadServiceGroup) {

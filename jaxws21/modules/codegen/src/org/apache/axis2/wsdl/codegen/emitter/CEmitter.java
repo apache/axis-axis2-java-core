@@ -555,20 +555,13 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             addAttribute(doc, "primitive", "yes", paramElement);
         }
 
-        // the following methods are moved from addOurs functioin
-        Map typeMap = CTypeInfo.getTypeMap();
-        Iterator it = typeMap.keySet().iterator();
+        // the new trick to identify adb types
         boolean isOurs = true;
-        while (it.hasNext()) {
-            if (it.next().equals(typeMappingStr)) {
-                isOurs = false;
-                break;
-            }
-        }
 
-        if (isOurs && typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
+        if (typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
                 !typeMappingStr.equals(C_DEFAULT_TYPE)) {
             addAttribute(doc, "ours", "yes", paramElement);
+            isOurs = true;
         } else {
             isOurs = false;
         }
@@ -591,8 +584,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected void addCSpecifcAttributes(Document doc, AxisOperation operation, Element param,
                                          String messageType) {
         String typeMappingStr;
-        Map typeMap = CTypeInfo.getTypeMap();
-        Iterator typeMapIterator = typeMap.keySet().iterator();
         AxisMessage message;
 
         if (messageType.equals(WSDLConstants.MESSAGE_LABEL_IN_VALUE))
@@ -617,15 +608,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         }
 
         addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
-        boolean isOurs = true;
-        while (typeMapIterator.hasNext()) {
-            if (typeMapIterator.next().equals(typeMapping)) {
-                isOurs = false;
-                break;
-            }
-        }
 
-        if (isOurs && !paramType.equals("") && !paramType.equals("void") &&
+        if (!paramType.equals("") && !paramType.equals("void") &&
                 !paramType.equals("org.apache.axiom.om.OMElement") &&
                 !typeMappingStr.equals(C_DEFAULT_TYPE)) {
             addAttribute(doc, "ours", "yes", param);

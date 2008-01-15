@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws;
 
+import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -257,6 +258,7 @@ public class ExceptionFactory {
         while (t != null) {
             Throwable nextCause = null;
             if (t instanceof InvocationTargetException ||
+                    t instanceof OMException ||
                     t instanceof AxisFault) {
                 // Skip over this cause
                 nextCause = getCause(t);

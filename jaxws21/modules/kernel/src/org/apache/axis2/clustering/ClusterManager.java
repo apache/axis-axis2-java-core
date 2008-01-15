@@ -21,9 +21,8 @@ package org.apache.axis2.clustering;
 
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.Handler;
+import org.apache.axis2.description.ParameterInclude;
 
 /**
  * This is the main interface in the Axis2 clustering implementation.

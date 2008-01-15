@@ -70,7 +70,7 @@ public class DescriptionBuilderTests extends TestCase {
         descriptionBuilderComposite.setWebServiceAnnot(webServiceAnnotImpl2);
 
 
-        WebServiceAnnot webServiceAnnotImpl3 =
+        WebService webServiceAnnotImpl3 = 
                 descriptionBuilderComposite.getWebServiceAnnot();
 
         assertNotNull("WebService name not set", webServiceAnnotImpl3.name());
@@ -105,7 +105,7 @@ public class DescriptionBuilderTests extends TestCase {
         descriptionBuilderComposite.setWebServiceProviderAnnot(webServiceProviderAnnot);
 
 
-        WebServiceProviderAnnot webServiceProviderAnnot3 =
+        javax.xml.ws.WebServiceProvider webServiceProviderAnnot3 =
                 descriptionBuilderComposite.getWebServiceProviderAnnot();
 
         assertEquals("WebServiceProvider port name not set properly",

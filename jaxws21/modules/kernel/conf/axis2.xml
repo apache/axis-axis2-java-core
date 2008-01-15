@@ -144,6 +144,8 @@
     <messageBuilders>
         <messageBuilder contentType="application/xml"
                          class="org.apache.axis2.builder.ApplicationXMLBuilder"/>
+        <messageBuilder contentType="application/xml"
+                         class="org.apache.axis2.builder.ApplicationXMLBuilder"/>
         <messageBuilder contentType="application/x-www-form-urlencoded"
                          class="org.apache.axis2.builder.XFormURLEncodedBuilder"/>
         <messageBuilder contentType="multipart/form-data"
@@ -348,6 +350,8 @@
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
         <parameter name="param1">value1</parameter>
         <parameter name="domain">apache.axis2.domain</parameter>
+        <parameter name="synchronizeAll">true</parameter>
+        <parameter name="maxRetries">10</parameter>
     	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
