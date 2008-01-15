@@ -52,6 +52,7 @@ import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
+import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -140,8 +141,10 @@ public class TribesClusterManager implements ClusterManager {
         if (maxRetriesParam != null) {
             maxRetries = Integer.parseInt((String) maxRetriesParam.getValue());
         }
-        ((ReplicationTransmitter) channel.getChannelSender()).
-                getTransport().setMaxRetryAttempts(maxRetries);
+        ReplicationTransmitter replicationTransmitter =
+                (ReplicationTransmitter) channel.getChannelSender();
+        MultiPointSender multiPointSender = replicationTransmitter.getTransport();
+        multiPointSender.setMaxRetryAttempts(maxRetries);
 
         // Set the IP address that will be advertised by this node
         String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
@@ -197,6 +200,7 @@ public class TribesClusterManager implements ClusterManager {
 
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+        tcpFailureDetector.setPrevious(dfi);
         channel.addInterceptor(tcpFailureDetector);
 
         channel.addChannelListener(channelListener);
