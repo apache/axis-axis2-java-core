@@ -265,6 +265,7 @@ public class POJODeployer implements Deployer {
                 }
             }
             axisService.setElementFormDefault(false);
+            axisService.setFileName(serviceLocation);
             Utils.fillAxisService(axisService,
                                   configCtx.getAxisConfiguration(),
                                   new ArrayList(),
