@@ -65,7 +65,9 @@ public class ChannelSender implements MessageSender {
                                  Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
                                  TribesClusterManager.MSG_ORDER_OPTION);
                 } else {
-                    channel.send(members, toByteMessage(msg), Channel.SEND_OPTIONS_ASYNCHRONOUS);
+                    channel.send(members, toByteMessage(msg),
+                                 Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                 TribesClusterManager.MSG_ORDER_OPTION);
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("Sent " + msg + " to group");
