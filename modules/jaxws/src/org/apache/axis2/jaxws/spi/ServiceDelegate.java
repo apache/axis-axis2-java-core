@@ -238,7 +238,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, portName,
-                                                  DescriptionFactory.UpdateType.ADD_PORT);
+                                                  DescriptionFactory.UpdateType.ADD_PORT, this);
         // TODO: Need to set endpointAddress and set or check bindingId on the EndpointDesc
         endpointDesc.setEndpointAddress(endpointAddress);
         endpointDesc.setClientBindingID(bindingId);
@@ -260,8 +260,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         EndpointDescription endpointDesc =
-                DescriptionFactory.updateEndpoint(serviceDescription, null, qname,
-                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH);
+                DescriptionFactory.updateEndpoint(serviceDescription, 
+                								  null, 
+                								  qname,
+                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH,
+                                                  this);
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("createDispatchFail2", qname.toString()));
@@ -294,8 +297,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         EndpointDescription endpointDesc =
-                DescriptionFactory.updateEndpoint(serviceDescription, null, qname,
-                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH);
+                DescriptionFactory.updateEndpoint(serviceDescription, 
+                								  null, 
+                								  qname,
+                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH,
+                                                  this);
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("createDispatchFail2", qname.toString()));
@@ -422,7 +428,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getPorts()
     */
     public Iterator<QName> getPorts() {
-        return getServiceDescription().getPorts().iterator();
+        return getServiceDescription().getPorts(this).iterator();
     }
 
     /*
@@ -477,7 +483,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * 
      */
     public ServiceClient getServiceClient(QName portQName) throws WebServiceException {
-        return serviceDescription.getServiceClient(portQName);
+        return serviceDescription.getServiceClient(portQName, this);
     }
 
     //================================================

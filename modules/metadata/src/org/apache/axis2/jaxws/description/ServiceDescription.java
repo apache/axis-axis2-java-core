@@ -63,11 +63,15 @@ import java.util.List;
  */
 
 public interface ServiceDescription {
-    public abstract EndpointDescription[] getEndpointDescriptions();
+    
+	public abstract EndpointDescription[] getEndpointDescriptions();
 
     public abstract Collection<EndpointDescription> getEndpointDescriptions_AsCollection();
 
     public abstract EndpointDescription getEndpointDescription(QName portQName);
+
+    // Called the client-side to retrieve defined and dynamic ports
+    public abstract EndpointDescription getEndpointDescription(QName portQName, Object serviceDelegateKey);
 
     /**
      * Return the EndpointDescriptions corresponding to the SEI class.  Note that Dispatch endpoints
@@ -80,19 +84,23 @@ public interface ServiceDescription {
 
     public abstract ConfigurationContext getAxisConfigContext();
 
-    public abstract ServiceClient getServiceClient(QName portQName);
+    public abstract ServiceClient getServiceClient(QName portQName, Object serviceDelegateKey);
 
     public abstract QName getServiceQName();
 
     public abstract HandlerChainsType getHandlerChain();
+    
     /**
      * Returns a list of the ports for this serivce.  The ports returned are the - Ports declared
      * ports for this Service.  They can be delcared in the WSDL or via annotations. - Dynamic ports
      * added to the service
      *
+     * @param serviceDelegateKey This should always be non-null when called via ServiceDelegate and is
+     *                            used to help retrieve dynamic ports per client
+
      * @return
      */
-    public List<QName> getPorts();
+    public List<QName> getPorts(Object serviceDelegateKey);
 
     public ServiceRuntimeDescription getServiceRuntimeDesc(String name);
 

@@ -75,6 +75,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 
 /** @see ../ServiceDescription */
@@ -94,9 +95,15 @@ class ServiceDescriptionImpl
     private HandlerChain handlerChainAnnotation;
     private HandlerChainsType handlerChainsType;
 
-    private Map<QName, EndpointDescription> endpointDescriptions =
-            new HashMap<QName, EndpointDescription>();
+    // EndpointDescriptions from annotations and wsdl
+    private Map<QName, EndpointDescription> definedEndpointDescriptions =
+                new HashMap<QName, EndpointDescription>();
 
+    // Endpoints for dynamic ports
+    private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
+                new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
+
+    
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
     private HashMap<String, DescriptionBuilderComposite> dbcMap = null;
@@ -322,22 +329,33 @@ class ServiceDescriptionImpl
      *                   Dispatch-based client to either a declared port or a pre-existing dynamic
      *                   port.
      * @param composite  May contain sparse metadata, for example from a deployment descriptor, that
-     *                   should be used in conjuction with the class annotations to update the
-     *                   description hierachy.  For example, it may contain a HandlerChain annotation
-     *                   based on information in a JSR-109 deploment descriptor.                    
+     *                   should be used in conjunction with the class annotations to update the
+     *                   description hierarchy.  For example, it may contain a HandlerChain annotation
+     *                   based on information in a JSR-109 deployment descriptor.                    
      */
 
-    EndpointDescription updateEndpointDescription(Class sei, QName portQName,
+    EndpointDescription updateEndpointDescription(Class sei, 
+    											  QName portQName,
                                                   DescriptionFactory.UpdateType updateType,
                                                   DescriptionBuilderComposite composite,
-                                                  Object compositeKey) {
+                                                  Object serviceDelegateKey) {
 
-        EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
-        boolean isPortDeclared = isPortDeclared(portQName);
+	
+    	EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
+    	boolean isPortDeclared = isPortDeclared(portQName);
+
+    	// If a defined endpointDescription is not available, try and locate a dynamic endpoint.
+    	// Note that a dynamic port will only be found for the client that created it, per the
+    	// serviceDelegateKey
+
+    	if (endpointDescription == null && serviceDelegateKey != null) {
+    		endpointDescription = getDynamicEndpointDescriptionImpl(portQName, serviceDelegateKey);
+    	}
+
         // If no QName was specified in the arguments, one may have been specified in the sparse
         // composite metadata when the service was created.
         if (DescriptionUtils.isEmpty(portQName)) {
-            QName preferredPortQN = getPreferredPort(compositeKey);
+            QName preferredPortQN = getPreferredPort(serviceDelegateKey);
             if (!DescriptionUtils.isEmpty(preferredPortQN)) {
                 portQName = preferredPortQN;
             }
@@ -360,12 +378,20 @@ class ServiceDescriptionImpl
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("addPortDup", portQName.toString()));
                 } else if (endpointDescription == null) {
-                    // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
+                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  Note that EndpointInterface, Operations, Parameters, etc.
                     // are not created for dynamic ports.  It would be an error to later do a getPort against a dynamic port (per the JAX-WS spec)
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
-                    addEndpointDescription(endpointDescription);
+                    // If we can't add the dynamic port under a specific service delegate, that is an error
+
+                	if (serviceDelegateKey == null) {
+                        throw ExceptionFactory.makeWebServiceException("ServiceDelegate is null for AddPort");
+                    }
+                	
+                	endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
+               
+            		addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
+
                 } else {
-                    // All error check above passed, the EndpointDescription already exists and needs no updating
+                    // All error chJeck above passed, the EndpointDescription already exists and needs no updating
                 }
                 break;
 
@@ -393,7 +419,7 @@ class ServiceDescriptionImpl
                     		Messages.getMessage("updateEPDescrErr2",(portQName != null ? portQName.toString() : "not specified")));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this, composite, compositeKey);
+                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this, composite, serviceDelegateKey);
                     addEndpointDescription(endpointDescription);
                     /*
                      * We must reset the service runtime description after adding a new endpoint
@@ -417,7 +443,7 @@ class ServiceDescriptionImpl
                     //    a key AND CREATE_DISPATCH and ADD_PORT will thrown an exception of a composite
                     //    is specified, having a composite and key on the GET_PORTs shouldn't be
                     //    a problem.
-                    endpointDescription.updateWithSEI(sei, composite, compositeKey);
+                    endpointDescription.updateWithSEI(sei, composite, serviceDelegateKey);
                 } else if (getEndpointSEI(portQName) != sei) {
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("updateEPDescrErr3",portQName.toString(),
@@ -425,7 +451,7 @@ class ServiceDescriptionImpl
                 } else {
                     // All error check above passed, the EndpointDescription already exists and needs no updating
                     // Just add the sparse composite if one was specified.
-                    endpointDescription.getDescriptionBuilderComposite().setSparseComposite(compositeKey, composite);
+                    endpointDescription.getDescriptionBuilderComposite().setSparseComposite(serviceDelegateKey, composite);
                 }
                 break;
 
@@ -434,6 +460,7 @@ class ServiceDescriptionImpl
                     // TODO: (JLB) NLS
                     throw ExceptionFactory.makeWebServiceException("CreateDispatch can not have a composite");
                 }
+                
                 // Port may or may not exist in WSDL.
                 // If an endpointDesc doesn't exist and it is in the WSDL, it can be created
                 // Otherwise, it is an error.
@@ -441,7 +468,7 @@ class ServiceDescriptionImpl
                     throw ExceptionFactory
                             .makeWebServiceException(Messages.getMessage("createDispatchFail0"));
                 } else if (endpointDescription != null) {
-                    // The EndpoingDescription already exists; nothing needs to be done
+                    // The EndpointDescription already exists; nothing needs to be done
                 } else if (sei != null) {
                     // The Dispatch should not have an SEI associated with it on the update call.
                     // REVIEW: Is this a valid check?
@@ -449,13 +476,14 @@ class ServiceDescriptionImpl
                     		Messages.getMessage("createDispatchFail3",portQName.toString()));
                 } else if (getWSDLWrapper() != null && isPortDeclared) {
                     // EndpointDescription doesn't exist and this is a declared Port, so create one
-                    // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
-                    // are not created for Dipsatch-based ports, but might be updated later if a getPort is done against the same declared port.
+                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  Note that EndpointInterface, Operations, Parameters, etc.
+                    // are not created for Dispatch-based ports, but might be updated later if a getPort is done against the same declared port.
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
                     endpointDescription = new EndpointDescriptionImpl(sei, portQName, this);
                     addEndpointDescription(endpointDescription);
                 } else {
-                    // The port is not a declared port and it does not have an EndpointDescription, meaning an addPort has not been done for it
+                    // The port is not a declared port and it does not have an EndpointDescription, 
+                	// meaning an addPort has not been done for it
                     // This is an error.
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("createDispatchFail1", portQName.toString()));
@@ -505,30 +533,52 @@ class ServiceDescriptionImpl
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescriptions()
     */
     public EndpointDescription[] getEndpointDescriptions() {
-        return endpointDescriptions.values().toArray(new EndpointDescriptionImpl[0]);
+        return definedEndpointDescriptions.values().toArray(new EndpointDescriptionImpl[0]);
+    }
+
+    public Collection<EndpointDescriptionImpl> getDynamicEndpointDescriptions_AsCollection(Object serviceDelegateKey) {
+        Collection <EndpointDescriptionImpl> dynamicEndpoints = null;
+    	if (serviceDelegateKey != null ) {
+    		if (dynamicEndpointDescriptions.get(serviceDelegateKey) != null)
+    			dynamicEndpoints = dynamicEndpointDescriptions.get(serviceDelegateKey).values();
+        }
+    	return dynamicEndpoints;
     }
 
     public Collection<EndpointDescription> getEndpointDescriptions_AsCollection() {
-        return endpointDescriptions.values();
+    	return definedEndpointDescriptions.values();
     }
 
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescription(javax.xml.namespace.QName)
     */
     public EndpointDescription getEndpointDescription(QName portQName) {
+
+    	return getEndpointDescription(portQName, null);
+    }
+
+    public EndpointDescription getEndpointDescription(QName portQName, Object serviceDelegateKey) {
         EndpointDescription returnDesc = null;
         if (!DescriptionUtils.isEmpty(portQName)) {
-            returnDesc = endpointDescriptions.get(portQName);
+    		returnDesc = definedEndpointDescriptions.get(portQName);
+
+    		if (returnDesc == null && serviceDelegateKey != null) {
+		           returnDesc = getDynamicEndpointDescriptionImpl(portQName, serviceDelegateKey);
+    		}    		        	
         }
         return returnDesc;
     }
 
     EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName) {
+        return (EndpointDescriptionImpl)getEndpointDescription(portQName, null);
+    }
+    
+    EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName, Object serviceDelegateKey) {
         return (EndpointDescriptionImpl)getEndpointDescription(portQName);
     }
     
     EndpointDescriptionImpl getEndpointDescriptionImpl(Class seiClass) {
-        for (EndpointDescription endpointDescription : endpointDescriptions.values()) {
+        for (EndpointDescription endpointDescription : definedEndpointDescriptions.values()) {
             EndpointInterfaceDescription endpointInterfaceDesc =
                     endpointDescription.getEndpointInterfaceDescription();
             // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
@@ -553,7 +603,7 @@ class ServiceDescriptionImpl
         EndpointDescription[] returnEndpointDesc = null;
         ArrayList<EndpointDescriptionImpl> matchingEndpoints =
                 new ArrayList<EndpointDescriptionImpl>();
-        for (EndpointDescription endpointDescription : endpointDescriptions.values()) {
+        for (EndpointDescription endpointDescription : definedEndpointDescriptions.values()) {
             EndpointInterfaceDescription endpointInterfaceDesc =
                     endpointDescription.getEndpointInterfaceDescription();
             // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
@@ -574,7 +624,7 @@ class ServiceDescriptionImpl
     /*=======================================================================*/
     /*=======================================================================*/
     private void addEndpointDescription(EndpointDescriptionImpl endpoint) {
-        endpointDescriptions.put(endpoint.getPortQName(), endpoint);
+    	definedEndpointDescriptions.put(endpoint.getPortQName(), endpoint);
     }
 
     private void setupWsdlDefinition() {
@@ -847,10 +897,11 @@ class ServiceDescriptionImpl
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getServiceClient(javax.xml.namespace.QName)
     */
-    public ServiceClient getServiceClient(QName portQName) {
+    public ServiceClient getServiceClient(QName portQName, Object serviceDelegateKey) {
         ServiceClient returnServiceClient = null;
         if (!DescriptionUtils.isEmpty(portQName)) {
-            EndpointDescription endpointDesc = getEndpointDescription(portQName);
+            EndpointDescription endpointDesc = getEndpointDescription(portQName, serviceDelegateKey);
+            
             if (endpointDesc != null) {
                 returnServiceClient = endpointDesc.getServiceClient();
             }
@@ -1739,7 +1790,7 @@ class ServiceDescriptionImpl
         }
     }
 
-    public List<QName> getPorts() {
+    public List<QName> getPorts(Object serviceDelegateKey) {
         ArrayList<QName> portList = new ArrayList<QName>();
         // Note that we don't cache these results because the list of ports can be added
         // to via getPort(...) and addPort(...).
@@ -1768,6 +1819,20 @@ class ServiceDescriptionImpl
                 portList.add(endpointPortQName);
             }
         }
+        
+        //Retrieve all the dynamic ports for this client
+        if (serviceDelegateKey != null) {
+			Collection<EndpointDescriptionImpl> dynamicEndpointDescs = getDynamicEndpointDescriptions_AsCollection(serviceDelegateKey);
+			if (dynamicEndpointDescs != null) {
+				for (EndpointDescription dynamicEndpointDesc : dynamicEndpointDescs) {
+					QName endpointPortQName = dynamicEndpointDesc
+							.getPortQName();
+					if (!portList.contains(endpointPortQName)) {
+						portList.add(endpointPortQName);
+					}
+				}
+			}
+		}
         return portList;
     }
 
@@ -1826,6 +1891,30 @@ class ServiceDescriptionImpl
         return composite.getClassName();
     }
 
+    private EndpointDescriptionImpl getDynamicEndpointDescriptionImpl(QName portQName, Object key) {
+        Map<QName, EndpointDescriptionImpl> innerMap = null;
+        synchronized(dynamicEndpointDescriptions) {
+        	innerMap = dynamicEndpointDescriptions.get(key);
+            if (innerMap != null) {
+            	return innerMap.get(portQName);
+            }
+        }
+        return null;
+    }
+
+    private void addDynamicEndpointDescriptionImpl(EndpointDescriptionImpl endpointDescriptionImpl, 
+    												Object key) {
+        Map<QName, EndpointDescriptionImpl> innerMap = null;
+        synchronized(dynamicEndpointDescriptions) {
+            innerMap = dynamicEndpointDescriptions.get(key);
+            if (innerMap == null) {
+               innerMap = new HashMap<QName, EndpointDescriptionImpl>();
+               dynamicEndpointDescriptions.put(key, innerMap);
+            }
+            innerMap.put(endpointDescriptionImpl.getPortQName(), endpointDescriptionImpl);
+        }
+    }
+    
     /** Return a string representing this Description object and all the objects it contains. */
     public String toString() {
         final String newline = "\n";
@@ -1857,8 +1946,9 @@ class ServiceDescriptionImpl
             }
             // Ports
             string.append(newline);
-            List<QName> ports = getPorts();
-            string.append("Number of ports: " + ports.size());
+            List<QName> ports = getPorts(null);
+            string.append("Number of defined ports: " + ports.size());
+            //TODO: Show the map that contains the dynamic ports
             string.append(newline);
             string.append("Port QNames: ");
             for (QName port : ports) {
