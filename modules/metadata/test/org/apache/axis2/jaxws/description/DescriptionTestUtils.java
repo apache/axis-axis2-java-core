@@ -48,13 +48,13 @@ public class DescriptionTestUtils {
     
     static public String getWSDLLocation(String wsdlFileName) {
         String basedir = System.getProperty("basedir", ".");
-        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/" + wsdlFileName;
+        String urlString = basedir + "/test-resources/wsdl/" + wsdlFileName;
         return urlString;
     }
 
     static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
-        String urlString = getWSDLLocation(wsdlFileName);
+        String urlString = "file://localhost/" + getWSDLLocation(wsdlFileName);
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
         try {
             wsdlURL = new URL(urlString);

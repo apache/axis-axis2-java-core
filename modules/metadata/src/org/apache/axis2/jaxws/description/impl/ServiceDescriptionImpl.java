@@ -154,19 +154,15 @@ class ServiceDescriptionImpl
         composite = new DescriptionBuilderComposite();
         composite.setIsServiceProvider(false);
         composite.setCorrespondingClass(serviceClass);
-        composite.setSparseComposite(sparseCompositeKey, sparseComposite);
-        URL sparseCompositeWsdlURL = getWsdlURL(serviceClass, sparseComposite);
         // The classloader was originally gotten off this class, but it seems more logical to 
         // get it off the application service class.
 //        composite.setClassLoader(this.getClass().getClassLoader());
         composite.setClassLoader(serviceClass.getClassLoader());
-        
-        // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
-        //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
-        //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
+        composite.setSparseComposite(sparseCompositeKey, sparseComposite);
         
         // If there's a WSDL URL specified in the sparse composite, that is a override, for example
         // from a JSR-109 deployment descriptor, and that's the one to use.
+        URL sparseCompositeWsdlURL = getSparseCompositeWsdlURL(sparseComposite);
         if (sparseCompositeWsdlURL != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
@@ -178,42 +174,24 @@ class ServiceDescriptionImpl
         if (log.isDebugEnabled()) {
             log.debug("Wsdl Location value used: " + this.wsdlURL);
         }
+        // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
+        //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
+        //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
+        
         // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
 
         setupWsdlDefinition();
     }
     
-    URL getWsdlURL(Class clazz, DescriptionBuilderComposite sparseComposite) {
+    URL getSparseCompositeWsdlURL(DescriptionBuilderComposite sparseComposite) {
         // Use the WSDL file if it is specified in the composite
-        // TODO: (JLB) This logic is common with stuff Dustin put in ServiceDescriptionImpl to 
-        // do WSDL file reading in MDQ; refactor them into common helper class.
         URL url = null;
         if (sparseComposite != null) {
             WebServiceClient wsc = (WebServiceClient) sparseComposite.getWebServiceClientAnnot();
             if (wsc != null && wsc.wsdlLocation() != null) {
                 String wsdlLocation = wsc.wsdlLocation();
-                // Look for the WSDL file as follows:
-                // 1) As a resource on the classpath
-                // 2) As a fully specified URL
-                // 3) As a file on the filesystem.  This is analagous to what the generated
-                //    Service client does.  Is prepends "file:/" to whatever is specified in the
-                //    @WegServiceClient.wsdlLocation element.
-                URL wsdlUrl = null;
-                wsdlUrl = clazz.getClassLoader().getResource(wsdlLocation);
-                if (wsdlUrl == null) {
-                    wsdlUrl = createWsdlURL(wsdlLocation);
-                }
-                if (wsdlUrl == null) {
-                    // This check is necessary because Unix/Linux file paths begin
-                    // with a '/'. When adding the prefix 'jar:file:/' we may end
-                    // up with '//' after the 'file:' part. This causes the URL 
-                    // object to treat this like a remote resource
-                    if(wsdlLocation.indexOf("/") == 0) {
-                        wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
-                    }
-                    wsdlUrl = createWsdlURL("file:/" + wsdlLocation);
-                }
+                URL wsdlUrl = getWSDLURL(wsdlLocation);
                 
                 if (wsdlUrl == null) {
                     // TODO: (JLB) NLS
@@ -226,12 +204,17 @@ class ServiceDescriptionImpl
         }
         return url;
     }
+
     private static URL createWsdlURL(String wsdlLocation) {
         URL theUrl = null;
         try {
             theUrl = new URL(wsdlLocation);
         } catch (Exception ex) {
             // Just return a null to indicate we couldn't create a URL from the string
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation
+                        + " by using File reference");
+            }
         }
         return theUrl;
     }
@@ -250,7 +233,6 @@ class ServiceDescriptionImpl
         composite = new DescriptionBuilderComposite();
         composite.setIsDeprecatedServiceProviderConstruction(true);
         composite.setIsServiceProvider(true);
-        // TODO: (JLB) does the composite corresponding class AND the classloader need to be set here?
         isServerSide = true;
 
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
@@ -764,29 +746,56 @@ class ServiceDescriptionImpl
     }
     
     /**
-     * This method will handle obtaining a URL for the given WSDL location.
+     * This method will handle obtaining a URL for the given WSDL location.  The WSDL will be
+     * looked for in the following places in this order:
+     * 1) As a resource on the classpath
+     * 2) As a fully specified URL
+     * 3) As a file on the filesystem.  This is analagous to what the generated
+     *    Service client does.  Is prepends "file:/" to whatever is specified in the
+     *    @WebServiceClient.wsdlLocation element.
+     * 
+     * @param wsdlLocation The WSDL for which a URL is wanted
+     * @return A URL if the WSDL can be located, or null
      */
     private URL getWSDLURL(String wsdlLocation) {
-    	URL url = composite.getClassLoader().getResource(wsdlLocation);
-		if(url == null) {
-			if(log.isDebugEnabled()) {
-				log.debug("URL for wsdl file: " + wsdlLocation + " could not be " +
-						"determined by classloader... looking for file reference");
-			}
-			File file = new File(wsdlLocation);
-			if(file != null) {
-				try {
-					url = file.toURL();
-				}
-				catch(Exception e) {
-					if(log.isDebugEnabled()) {
-						log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation + 
-								" by using file reference");
-					}
-				}
-			}
-		}
-		return url;
+        // Look for the WSDL file as follows:
+        // 1) As a resource on the classpath
+
+        URL url = composite.getClassLoader().getResource(wsdlLocation);
+
+        // 2) As a fully specified URL
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("URL for wsdl file: " + wsdlLocation + " could not be "
+                        + "determined by classloader... looking for file reference");
+            }
+            url = createWsdlURL(wsdlLocation);
+        }
+        // 3) As a file on the filesystem.  This is analagous to what the generated
+        //    Service client does.  Is prepends "file:/" to whatever is specified in the
+        //    @WebServiceClient.wsdlLocation element.
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("URL for wsdl file: " + wsdlLocation + " could not be "
+                        + "found as local file reference... prepending file: protocol");
+            }
+            // This check is necessary because Unix/Linux file paths begin
+            // with a '/'. When adding the prefix 'jar:file:/' we may end
+            // up with '//' after the 'file:' part. This causes the URL 
+            // object to treat this like a remote resource
+            if(wsdlLocation.indexOf("/") == 0) {
+                wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+            }
+            url = createWsdlURL("file:/" + wsdlLocation);
+
+        }
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation
+                        + " by using prepended file: protocol");
+            }
+        }
+        return url;
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
@@ -1815,8 +1824,6 @@ class ServiceDescriptionImpl
      */
     protected String getServiceClassName() {
         return composite.getClassName();
-        // TODO: (JLB) Remove commented out code from 1/7/08 merge
-//        return (this.serviceClass != null ? this.serviceClass.getName() : null);
     }
 
     /** Return a string representing this Description object and all the objects it contains. */
