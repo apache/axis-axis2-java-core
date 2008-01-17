@@ -2036,24 +2036,19 @@ public class AxisService extends AxisDescription {
         String targetNameSpace = schema.getTargetNamespace();
         String prefix = schema.getNamespaceContext().getPrefix(targetNameSpace);
 
-        boolean found = false;
-        if (namespaceMap != null && namespaceMap.size() > 0) {
-            Iterator itr = namespaceMap.values().iterator();
-            Set keys = namespaceMap.keySet();
-            while (itr.hasNext()) {
-                String value = (String) itr.next();
-                if (value.equals(targetNameSpace) && keys.contains(prefix)) {
-                    found = true;
-                }
-            }
-        }
         if (namespaceMap == null) {
             namespaceMap = new NamespaceMap();
         }
-        if (!found) {
-            namespaceMap.put("ns" + nsCount, targetNameSpace);
-            nsCount++;
+
+        if (!namespaceMap.values().contains(targetNameSpace)){
+            // i.e this target namespace not exists in the namesapce map
+            // find a non exists prefix to add this target namesapce
+            while (namespaceMap.keySet().contains(prefix)){
+                prefix = "ns" + nsCount++;
+            }
+            namespaceMap.put(prefix,targetNameSpace);
         }
+
     }
 
     public Map populateSchemaMappings(){
