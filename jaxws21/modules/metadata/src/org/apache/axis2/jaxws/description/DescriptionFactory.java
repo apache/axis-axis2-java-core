@@ -142,7 +142,7 @@ public class DescriptionFactory {
             Object sparseCompositeKey) {
         return DescriptionFactoryImpl
                    .updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);
-}
+    }
 
     /**
      * Retrieve or create the EndpointDescription hierachy associated with an existing CLIENT side
@@ -173,6 +173,31 @@ public class DescriptionFactory {
                 .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType);
     }
 
+    /**
+     * Retrieve or create an EndpointDescription hierachy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  Additonal metdata may be specified in a sparse
+     * composite.  That metadata may come from a JSR-109 client deployment descriptor, for example,
+     * or from resource injection of an WebServiceRef or other Resource annotation.
+     * 
+     * @see #updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     *  
+     * @param serviceDescription
+     * @param sei
+     * @param portQName
+     * @param updateType
+     * @param composite
+     * @return
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+            Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType,
+            DescriptionBuilderComposite composite,
+            Object sparseCompositeKey) {
+        return DescriptionFactoryImpl
+        .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, composite, sparseCompositeKey);
+    }
+    
     /**
      * Create a full ServiceDescription hierachy on the SERVER side for EACH service implementation
      * entry in the DescriptionBuilderComposite (DBC) map.  Note that the associated SERVER side

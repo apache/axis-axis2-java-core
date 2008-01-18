@@ -76,19 +76,20 @@ public final class EndpointReferenceUtils {
      * Convert from a {@link javax.xml.ws.EndpointReference} to a an instance of
      * {@link EndpointReference}.
      * 
+     * @param axis2EPR
      * @param jaxwsEPR
      * @return
      * @throws AxisFault
      * @throws XMLStreamException
      */
-    public static EndpointReference convertToAxis2(javax.xml.ws.EndpointReference jaxwsEPR)
+    public static String convertToAxis2(EndpointReference axis2EPR, javax.xml.ws.EndpointReference jaxwsEPR)
     throws AxisFault, XMLStreamException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         jaxwsEPR.writeTo(new StreamResult(baos));
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
         
-        return EndpointReferenceHelper.fromOM(eprElement);
+        return EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
     }
 
     public static String getAddressingNamespace(Class clazz) {

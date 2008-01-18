@@ -23,8 +23,6 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.BindingImpl;
-import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
@@ -56,7 +54,6 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.http.HTTPBinding;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -278,17 +275,18 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                     .makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
         }
         
-        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
         try {
-            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace =
-        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
                                                   addressingNamespace,
@@ -321,18 +319,19 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory
                     .makeWebServiceException("The endpoint reference cannot be null.");
         }
-
-        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
         try {
-            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace =
-        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
                                                   addressingNamespace,
@@ -470,19 +469,19 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("getPortInvalidSEI", jaxwsEPR.toString(), "null"));
         }
-
-        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
         try {
-            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace =
-        	EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
-
         return getPort(axis2EPR, addressingNamespace, sei, features);
     }
 
@@ -637,10 +636,26 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
     
     public <T> T getPort(org.apache.axis2.addressing.EndpointReference axis2EPR, String addressingNamespace, Class<T> sei, WebServiceFeature... features) {
-        EndpointDescription endpointDesc =
+        DescriptionBuilderComposite sparseComposite = getPortMetadata();
+        resetPortMetadata();
+        EndpointDescription endpointDesc = null;
+        
+        if (sparseComposite != null) {
+            endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, sei, axis2EPR,
                                                   addressingNamespace,
-                                                  DescriptionFactory.UpdateType.GET_PORT);
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  sparseComposite, this);
+
+        }
+        else {
+            endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, sei, axis2EPR,
+                                                  addressingNamespace,
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  null, this);
+        }
+        
         if (endpointDesc == null) {
             // TODO: NLS
             throw ExceptionFactory.makeWebServiceException(
@@ -700,23 +715,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private boolean isServiceDefined(QName serviceName) {
         return getWSDLWrapper().getService(serviceName) != null;
-    }
-
-    private BindingImpl addBinding(EndpointDescription endpointDesc, String bindingId) {
-        // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
-        if (bindingId != null) {
-            //TODO: create all the bindings here
-            if (BindingUtils.isSOAPBinding(bindingId)) {            	
-                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            } 
-            
-            if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
-                //instantiate http binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);
-            }
-        } 
-        return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
     }
 
     private boolean isValidDispatchType(Class clazz) {

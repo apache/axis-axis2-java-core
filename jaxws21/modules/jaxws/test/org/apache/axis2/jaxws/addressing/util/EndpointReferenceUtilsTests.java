@@ -43,8 +43,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
- * This class uses the JAX-WS Dispatch API to test sending and receiving
- * messages using SOAP 1.2.
+ * This class tests the enpoint reference classes used in the JAX-WS 2.1 API.
  */
 public class EndpointReferenceUtilsTests extends XMLTestCase {
     private static final OMFactory OMF = OMAbstractFactory.getOMFactory();
@@ -95,9 +94,10 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         assertXMLEqual(EPR200508, jaxwsEPR.toString());
      
         org.apache.axis2.addressing.EndpointReference axis2Result =
-            EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2Result, jaxwsEPR);
         OMElement eprElement =
-            EndpointReferenceHelper.toOM(OMF, axis2Result, ELEMENT200508, Final.WSA_NAMESPACE);
+            EndpointReferenceHelper.toOM(OMF, axis2Result, ELEMENT200508, addressingNamespace);
         assertXMLEqual(EPR200508, eprElement.toString());
     }
     
@@ -110,9 +110,10 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         
         W3CEndpointReference jaxwsEPR = new W3CEndpointReference(source);
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-            EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         OMElement eprElement =
-            EndpointReferenceHelper.toOM(OMF, axis2EPR, ELEMENT200508, Final.WSA_NAMESPACE);
+            EndpointReferenceHelper.toOM(OMF, axis2EPR, ELEMENT200508, addressingNamespace);
         assertXMLEqual(EPR200508, eprElement.toString());
 
         W3CEndpointReference jaxwsResult =
@@ -133,9 +134,10 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         assertXMLEqual(EPR200408, jaxwsEPR.toString());
      
         org.apache.axis2.addressing.EndpointReference axis2Result =
-            EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2Result, jaxwsEPR);
         OMElement eprElement =
-            EndpointReferenceHelper.toOM(OMF, axis2Result, ELEMENT200408, Submission.WSA_NAMESPACE);
+            EndpointReferenceHelper.toOM(OMF, axis2Result, ELEMENT200408, addressingNamespace);
         assertXMLEqual(EPR200408, eprElement.toString());
     }
     
@@ -148,9 +150,10 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         
         SubmissionEndpointReference jaxwsEPR = new SubmissionEndpointReference(source);
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-            EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         OMElement eprElement =
-            EndpointReferenceHelper.toOM(OMF, axis2EPR, ELEMENT200408, Submission.WSA_NAMESPACE);
+            EndpointReferenceHelper.toOM(OMF, axis2EPR, ELEMENT200408, addressingNamespace);
         assertXMLEqual(EPR200408, eprElement.toString());
 
         SubmissionEndpointReference jaxwsResult =
@@ -184,7 +187,9 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         }
 
         try {
-            EndpointReferenceUtils.convertToAxis2(null);
+            org.apache.axis2.addressing.EndpointReference axis2EPR =
+                EndpointReferenceUtils.createAxis2EndpointReference("");
+            EndpointReferenceUtils.convertToAxis2(axis2EPR, null);
             fail("Expected a failure.");
         }
         catch (Exception e) {

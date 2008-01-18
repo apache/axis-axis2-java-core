@@ -106,17 +106,19 @@ public class Provider extends javax.xml.ws.spi.Provider {
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("getPortInvalidSEI", jaxwsEPR.toString(), "null"));
         }
-
-        org.apache.axis2.addressing.EndpointReference axis2EPR = null;
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
         try {
-            axis2EPR = EndpointReferenceUtils.convertToAxis2(jaxwsEPR);
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
         }
         
-        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(jaxwsEPR.getClass());
         org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
         
         try {

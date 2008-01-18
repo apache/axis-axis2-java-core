@@ -26,13 +26,13 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
+import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
