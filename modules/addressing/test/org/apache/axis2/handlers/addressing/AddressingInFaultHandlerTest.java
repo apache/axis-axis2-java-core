@@ -87,7 +87,7 @@ public class AddressingInFaultHandlerTest extends TestCase {
         MessageContext msgContext = new MessageContext();
         msgContext.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         msgContext.setEnvelope(envelope);
-        AddressingFinalInHandler afih = new AddressingFinalInHandler();
+        AddressingInHandler afih = new AddressingInHandler();
         afih.invoke(msgContext);
         AddressingInFaultHandler aifh = new AddressingInFaultHandler();
         aifh.invoke(msgContext);

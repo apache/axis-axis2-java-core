@@ -41,7 +41,7 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
 
     protected void setUp() throws Exception {
         super.setUp();
-        inHandler = new AddressingSubmissionInHandler();
+        inHandler = new AddressingInHandler();
         addressingNamespace = AddressingConstants.Submission.WSA_NAMESPACE;
         versionDirectory = "submission";
         fromAddress = "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";

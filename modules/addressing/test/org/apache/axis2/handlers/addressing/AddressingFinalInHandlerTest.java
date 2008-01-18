@@ -46,7 +46,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        inHandler = new AddressingFinalInHandler();
+        inHandler = new AddressingInHandler();
         addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
         versionDirectory = "final";
         fromAddress = "http://www.w3.org/2005/08/addressing/anonymous";

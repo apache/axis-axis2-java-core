@@ -40,7 +40,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -58,20 +57,6 @@ import java.util.Map;
 public class AddressingOutHandler extends AbstractHandler implements AddressingConstants {
 
     private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
-
-    /** This variable should only be updated inside the {@link #init(HandlerDescription)} method. */
-    private boolean includeOptionalHeaders = false;
-
-    /** Initialize the addressing out handler. */
-    public void init(HandlerDescription arg0) {
-        super.init(arg0);
-
-        //Determine whether to include optional addressing headers in the output message.
-        //The default is not to include any headers that can be safely omitted.
-        Parameter param = arg0.getParameter(INCLUDE_OPTIONAL_HEADERS);
-        String value = Utils.getParameterValue(param);
-        includeOptionalHeaders = JavaUtils.isTrueExplicitly(value);
-    }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
@@ -93,7 +78,9 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
 
         // Determine whether to include optional addressing headers in the output.
-        boolean includeOptionalHeaders = this.includeOptionalHeaders ||
+        Parameter param = msgContext.getParameter(INCLUDE_OPTIONAL_HEADERS);
+        String value = Utils.getParameterValue(param);
+        boolean includeOptionalHeaders = JavaUtils.isTrueExplicitly(value) ||
                                             msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS);
 
         // Determine if a MustUnderstand attribute will be added to all headers in the

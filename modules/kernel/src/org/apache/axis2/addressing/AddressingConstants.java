@@ -110,6 +110,12 @@ public interface AddressingConstants {
      * WSDL to an AxisEndpoint object.
      */
     static final String REFERENCE_PARAMETER_PARAMETER = "referenceParameters";
+
+    /**
+     * This parameter is used to decide whether the reference parameters in an inbound request
+     * message are to be processed or not.
+     */
+    static final String DISABLE_REF_PARAMETER_EXTRACT = "disableRefParamExtract";
     
     static final String WSAM_INVOCATION_PATTERN_PARAMETER_NAME = "wsamInvocationPattern";
     static final String WSAM_INVOCATION_PATTERN_SYNCHRONOUS = "synchronous";

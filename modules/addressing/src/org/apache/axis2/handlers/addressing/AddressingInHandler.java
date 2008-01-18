@@ -20,16 +20,20 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.*;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
@@ -40,50 +44,22 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-public abstract class AddressingInHandler extends AbstractHandler implements AddressingConstants {
+public class AddressingInHandler extends AbstractHandler implements AddressingConstants {
 
-    protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
-    protected String addressingVersion = null;
-
-    public static final String DISABLE_REF_PARAMETER_EXTRACT = "disableRefParamExtract";
+    private static final int TO_FLAG = 1, FROM_FLAG = 2, REPLYTO_FLAG = 3,
+            FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
 
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
-    private boolean disableRefparamExtract = false;
-
-    public void init(HandlerDescription handlerdesc) {
-        super.init(handlerdesc);
-        disableRefparamExtract = JavaUtils.isTrueExplicitly(
-                Utils.getParameterValue(handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT)));
-        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug("AddressingInHandler.init disableRefparamExtract=" + disableRefparamExtract);
-        }
-    }
-
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        // if another handler has already processed the addressing headers, do not do anything here.
-        if (JavaUtils.isTrueExplicitly(msgContext.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED),
-                                       false)) {
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(
-                        "Another handler has processed the addressing headers. Nothing to do here.");
-            }
-            return InvocationResponse.CONTINUE;
-        }
+        // check whether to process reference parameters.
+        Parameter param = msgContext.getParameter(DISABLE_REF_PARAMETER_EXTRACT);
+        String value = Utils.getParameterValue(param);
+        boolean disableRefparamExtract = JavaUtils.isTrueExplicitly(value);
 
-        // check whether someone has explicitly set which addressing handler should run.
-        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
-        if (namespace == null) {
-            namespace = addressingNamespace;
-        } else if (!namespace.equals(addressingNamespace)) {
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("This addressing handler does not match the specified namespace, " +
-                          namespace);
-            }
-
-            return InvocationResponse.CONTINUE;
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug("disableRefparamExtract=" + disableRefparamExtract);
         }
 
         SOAPHeader header = msgContext.getEnvelope().getHeader();
@@ -96,34 +72,56 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             return InvocationResponse.CONTINUE;
         }
 
-        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug("Starting " + addressingVersion + " IN handler ...");
+        // check whether someone has explicitly set which addressing namespace to expect.
+        Iterator iterator = null;
+        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        
+        if (namespace == null) {
+            namespace = Final.WSA_NAMESPACE;
+            iterator = header.getHeadersToProcess(rolePlayer, namespace);
+
+            if (!iterator.hasNext()) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug("No Headers present corresponding to " + namespace);
+                }
+
+                namespace = Submission.WSA_NAMESPACE;
+                iterator = header.getHeadersToProcess(rolePlayer, namespace);
+            }
+        }
+        else if (Final.WSA_NAMESPACE.equals(namespace) || Submission.WSA_NAMESPACE.equals(namespace)) {
+            iterator = header.getHeadersToProcess(rolePlayer, namespace);
+        }
+        else {
+            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug("No Headers present corresponding to any supported WS-Addresing namespace.");
+            }            
+
+            return InvocationResponse.CONTINUE;
         }
 
-        Iterator iterator = header.getHeadersToProcess(rolePlayer, namespace);
         if (iterator.hasNext()) {
             msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
 
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(addressingVersion +
+                log.debug(namespace +
                           " Headers present in the SOAP message. Starting to process ...");
             }
-            if (extractAddressingInformation(header, msgContext, iterator, namespace)) {
+            if (extractAddressingInformation(header, msgContext, iterator, namespace, disableRefparamExtract)) {
                 msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
             }
-        } else {
+        }
+        else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("No Headers present corresponding to " + addressingVersion);
+                log.debug("No Headers present corresponding to " + namespace);
             }
         }
 
         return InvocationResponse.CONTINUE;
     }
-
-    protected static final int TO_FLAG = 1, FROM_FLAG = 2, REPLYTO_FLAG = 3,
-            FAULTO_FLAG = 4, MESSAGEID_FLAG = 6, ACTION_FLAG = 0;
 
     /**
      * Pull addressing headers out from the SOAP message.
@@ -132,11 +130,12 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
      * @param messageContext the active MessageContext
      * @param headers an Iterator over the addressing headers targeted to me
      * @param namespace the addressing namespace
+     * @param disableRefparamExtract whether to disable processing of reference parameters or not.
      * @return true if addressing information was found
      * @throws AxisFault if an error occurs
      */
-    protected boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
-                                                   Iterator headers, String namespace)
+    boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
+                                                   Iterator headers, String namespace, boolean disableRefparamExtract)
             throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
 
@@ -207,7 +206,8 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             extractToEPRInformation(toBlock,
                                     messageContextOptions,
                                     header,
-                                    namespace);
+                                    namespace,
+                                    disableRefparamExtract);
         }
         if (messageIDBlock != null && !ignoreHeaders[MESSAGEID_FLAG]) {
             extractMessageIDInformation(messageIDBlock, messageContext);
@@ -238,54 +238,83 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         // check for the presence of madatory addressing headers
-        checkForMandatoryHeaders(checkedHeaderNames, messageContext);
+        checkForMandatoryHeaders(checkedHeaderNames, messageContext, namespace);
 
         // provide default values for headers that have not been found.
-        setDefaults(checkedHeaderNames, messageContext);
+        setDefaults(checkedHeaderNames, messageContext, namespace);
 
         return true;
     }
 
-    // Copied from SOAPHeaderImpl.java - some reconciliation probably a good idea....
-    protected boolean isInRole(SOAPHeaderBlock soapHeaderBlock,
-                               RolePlayer rolePlayer,
-                               boolean isSOAP11) {
-        String role = soapHeaderBlock.getRole();
-
-        // 1. If role is ultimatedest, go by what the rolePlayer says
-        if (role == null || role.equals("") ||
-            (!isSOAP11 &&
-             role.equals(SOAP12Constants.SOAP_ROLE_ULTIMATE_RECEIVER))) {
-            return (rolePlayer == null || rolePlayer.isUltimateDestination());
-        }
-
-        // 2. If role is next, always return true
-        if (role.equals(soapHeaderBlock.getVersion().getNextRoleURI())) return true;
-
-        // 3. If role is none, always return false
-        if (!isSOAP11 && role.equals(SOAP12Constants.SOAP_ROLE_NONE)) {
-            return false;
-        }
-
-        // 4. Return t/f depending on match
-        List roles = (rolePlayer == null) ? null : rolePlayer.getRoles();
-        if (roles != null) {
-            for (int i = 0; i < roles.size(); i++) {
-                String thisRole = (String) roles.get(i);
-                if (thisRole.equals(role)) return true;
+    private void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
+                                            MessageContext messageContext,
+                                            String namespace) throws AxisFault {
+        if (Final.WSA_NAMESPACE.equals(namespace)) {
+            //Unable to validate the wsa:MessageID header here as we do not yet know which MEP
+            //is in effect.
+            // @see AddressingValidationHandler#checkMessageIDHeader
+            
+            if (!alreadyFoundAddrHeader[ACTION_FLAG]) {
+                AddressingFaultsHelper
+                .triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
             }
         }
+        else {
+            if (!alreadyFoundAddrHeader[TO_FLAG]) {
+                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
+            }
 
-        return false;
+            if (!alreadyFoundAddrHeader[ACTION_FLAG]) {
+                AddressingFaultsHelper
+                        .triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
+            }
+
+            if (alreadyFoundAddrHeader[REPLYTO_FLAG] ||
+                    alreadyFoundAddrHeader[FAULTO_FLAG]) {
+
+                if (!alreadyFoundAddrHeader[MESSAGEID_FLAG]) {
+                    AddressingFaultsHelper
+                            .triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
+                }
+            }            
+        }
     }
 
-    protected abstract void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
-                                                     MessageContext messageContext)
-            throws AxisFault;
-
-    protected abstract void setDefaults(boolean[] alreadyFoundAddrHeader,
-                                        MessageContext messageContext) throws AxisFault;
-
+    private void setDefaults(boolean[] alreadyFoundAddrHeader, MessageContext messageContext, String namespace) {
+        if (Final.WSA_NAMESPACE.equals(namespace)) {
+            //According to the WS-Addressing spec, we should default the wsa:To header to the
+            //anonymous URI. Doing that, however, might prevent a different value from being
+            //used instead, such as the transport URL. Therefore, we only apply the default
+            //on the inbound response side of a synchronous request-response exchange.
+            if (!alreadyFoundAddrHeader[TO_FLAG] && !messageContext.isServerSide()) {
+                if (log.isTraceEnabled()) {
+                    log.trace(messageContext.getLogIDString() +
+                    " setDefaults: Setting WS-Addressing default value for the To property.");
+                }
+                messageContext.setTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
+            }
+            
+            if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
+                messageContext.setReplyTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
+                if (log.isTraceEnabled()) {
+                    log.trace(messageContext.getLogIDString() +
+                    " setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+                }
+            }
+        }
+        else {
+            //The none URI is not defined in the 2004/08 spec, but it is used here anyway
+            //as a flag to indicate the correct semantics to apply, i.e. in the 2004/08 spec
+            //the absence of a ReplyTo header indicates that a response is NOT required.
+            if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
+                messageContext.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
+                if (log.isTraceEnabled()) {
+                    log.trace(
+                            "setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+                }
+            }            
+        }
+    }
 
     private void checkDuplicateHeaders(String addressingHeaderName, int headerFlag,
                                        boolean[] checkedHeaderNames, boolean[] ignoreHeaders,
@@ -305,10 +334,6 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                       + " isDuplicate=" + ignoreHeaders[headerFlag]);
         }
     }
-
-    protected abstract void extractToEprReferenceParameters(EndpointReference toEPR,
-                                                            SOAPHeader header, String namespace);
-
 
     private void extractRelatesToInformation(SOAPHeaderBlock soapHeaderBlock,
                                              Options messageContextOptions) {
@@ -390,7 +415,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
     private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock,
                                          Options messageContextOptions, SOAPHeader header,
-                                         String namespace) {
+                                         String namespace, boolean disableRefparamExtract) {
 
         EndpointReference epr;
         //here the addressing epr overidde what ever already there in the message context
@@ -416,6 +441,37 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
 
         if (log.isTraceEnabled()) {
             log.trace("extractToEPRInformation: Extracted To EPR: " + epr);
+        }
+    }
+
+    private void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header,
+                                                   String namespace) {
+        if (Final.WSA_NAMESPACE.equals(namespace)) {
+            Iterator headerBlocks = header.getChildElements();
+            while (headerBlocks.hasNext()) {
+                OMElement headerElement = (OMElement)headerBlocks.next();
+                OMAttribute isRefParamAttr =
+                    headerElement.getAttribute(new QName(namespace, "IsReferenceParameter"));
+                if (log.isTraceEnabled()) {
+                    log.trace("extractToEprReferenceParameters: Checking header: " +
+                            headerElement.getQName());
+                }
+                if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
+                    toEPR.addReferenceParameter(headerElement);
+                    if (log.isTraceEnabled()) {
+                        log.trace("extractToEprReferenceParameters: Header: " +
+                                headerElement.getQName() +
+                        " has IsReferenceParameter attribute. Adding to toEPR.");
+                    }
+                }
+            }
+        }
+        else {
+            // there is no exact way to identify ref parameters for Submission version. So let's have a handler
+            // at the end of the flow, which puts all the handlers (which are of course mustUnderstand=false)
+            // as reference parameters
+
+            // TODO : Chinthaka
         }
     }
 
