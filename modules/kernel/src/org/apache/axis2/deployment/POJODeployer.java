@@ -142,6 +142,7 @@ public class POJODeployer implements Deployer {
                     zin.close();
                     fin.close();
                 } catch (Exception e) {
+                    log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_EXCEPTION,e.getMessage()),e);
                     throw new DeploymentException(e);
                 } finally {
                     if (zin != null) {
@@ -211,8 +212,10 @@ public class POJODeployer implements Deployer {
                 }
             }
         } catch (Exception e) {
+             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAUTY_SERVICE,e.getMessage()),e);
             storeFaultyService(deploymentFileData, e);
         } catch (Throwable t) {
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAUTY_SERVICE,t.getMessage()),t);
             storeFaultyService(deploymentFileData, t);
         } finally {
             if (threadClassLoader != null) {
@@ -274,8 +277,9 @@ public class POJODeployer implements Deployer {
             //setMessageReceivers(axisService);
             
         } catch (Exception e) {
-            // Seems like the jax-ws jars missin in the class path .
-            // lets tryu annogen
+            // Seems like the jax-ws jars missing in the class path .
+            // lets try with annogen
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.JAXWS_JARS_MISSING,e.getMessage()),e);
             axisService = createAxisServiceUsingAnnogen(className, classLoader, serviceLocation);
         }
         return axisService;
@@ -364,6 +368,7 @@ public class POJODeployer implements Deployer {
                                              fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
+                log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,axisFault.getMessage()),axisFault);
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
         } else if (fileName.endsWith(".jar")) {
@@ -375,6 +380,7 @@ public class POJODeployer implements Deployer {
                                              fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
+                log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,axisFault.getMessage()),axisFault);
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
         }
