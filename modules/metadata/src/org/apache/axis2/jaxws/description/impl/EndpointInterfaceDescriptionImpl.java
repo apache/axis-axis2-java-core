@@ -66,10 +66,6 @@ class EndpointInterfaceDescriptionImpl
     private ArrayList<OperationDescription> operationDescriptions =
             new ArrayList<OperationDescription>();
     private Map<QName, List<OperationDescription>> dispatchableOperations = new HashMap<QName, List<OperationDescription>>();
-    // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
-    // specify an @WebService.endpointInterface.
-    // TODO: (JLB) Remove commented out code
-//    private Class seiClass;
     private DescriptionBuilderComposite dbc;
 
     //Logging setup

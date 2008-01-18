@@ -201,9 +201,7 @@ class ServiceDescriptionImpl
                 URL wsdlUrl = getWSDLURL(wsdlLocation);
                 
                 if (wsdlUrl == null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("Unable to access wsdlLocation: "
-                                                                   + wsdlLocation);
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr4", wsdlLocation));
                 } else {
                     url = wsdlUrl;
                 }
@@ -365,8 +363,7 @@ class ServiceDescriptionImpl
 
             case ADD_PORT:
                 if (composite != null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("AddPort can not have a composite");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr5", portQName.toString()));
                 }
                 // Port must NOT be declared (e.g. can not already exist in WSDL)
                 // If an EndpointDesc doesn't exist; create it as long as it doesn't exist in the WSDL
@@ -457,8 +454,7 @@ class ServiceDescriptionImpl
 
             case CREATE_DISPATCH:
                 if (composite != null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("CreateDispatch can not have a composite");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr6"));
                 }
                 
                 // Port may or may not exist in WSDL.

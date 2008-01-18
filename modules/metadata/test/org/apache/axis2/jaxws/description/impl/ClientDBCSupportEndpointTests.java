@@ -22,6 +22,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
@@ -178,7 +179,8 @@ public class ClientDBCSupportEndpointTests extends TestCase {
         }
         catch (WebServiceException e) {
             // Expected path
-            assertTrue(e.toString().contains("CreateDispatch can not have a composite"));
+            String msg = Messages.getMessage("serviceDescErr6");
+            assertTrue(e.toString().contains(msg));
         }
     }
     

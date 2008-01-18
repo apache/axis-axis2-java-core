@@ -20,8 +20,10 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 import java.lang.annotation.Annotation;
+
 
 public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
 
@@ -125,10 +127,11 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient {
             // No anntotation specifed, so just return null which was initialized above
         } else {
             // This should never happen; all the cases are covered above
-            // TODO: (JLB) RAS/NLS
-            throw ExceptionFactory.makeWebServiceException("Programming error! annot = " + baseAnnotation + "; sparseAnnot = " + sparseAnnotation);
+            String msg = Messages.getMessage("DescriptionBuilderErr2",
+                                             (sparseAnnotation == null) ? null : sparseAnnotation.toString(),
+                                             (baseAnnotation == null) ? null : baseAnnotation.toString());
+            throw ExceptionFactory.makeWebServiceException(msg);
         }
-
         return returnAnnot;
     }
 
