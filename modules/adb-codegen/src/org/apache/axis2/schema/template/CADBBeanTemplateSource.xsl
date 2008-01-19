@@ -3017,7 +3017,7 @@
                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            text_value = axutil_uri_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
-                                                            (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT) +
+                                                            (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
                                                              axutil_strlen(text_value) + 
                                                              axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
