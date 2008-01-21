@@ -149,6 +149,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<inherited>true</inherited>
 				<configuration>
+                    <compilerArgument>-Xbootclasspath/p:${basedir}/../jaxws-api/target/classes${path.separator}${basedir}/../jws-api/target/classes</compilerArgument>
+                    <compilerVersion>1.5</compilerVersion>
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
@@ -852,7 +854,7 @@
 				<configuration>
 					<skip>false</skip>
 					<forkMode>once</forkMode>
-					<argLine>-Xms256m -Xmx512m -Djava.endorsed.dirs=${project.build.directory}/../../saaj-api/target/ </argLine>
+					<argLine>-Xms256m -Xmx512m -Djava.endorsed.dirs=${project.build.directory}/../../saaj-api/target/${path.separator}${basedir}/../jaxws-api/target/classes${basedir}/../jws-api/target/classes </argLine>
 					<!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>

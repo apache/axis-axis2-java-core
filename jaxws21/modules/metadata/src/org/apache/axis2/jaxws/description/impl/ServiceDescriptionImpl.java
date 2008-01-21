@@ -75,6 +75,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 
 /** @see ../ServiceDescription */
@@ -94,9 +95,15 @@ class ServiceDescriptionImpl
     private HandlerChain handlerChainAnnotation;
     private HandlerChainsType handlerChainsType;
 
-    private Map<QName, EndpointDescription> endpointDescriptions =
-            new HashMap<QName, EndpointDescription>();
+    // EndpointDescriptions from annotations and wsdl
+    private Map<QName, EndpointDescription> definedEndpointDescriptions =
+                new HashMap<QName, EndpointDescription>();
 
+    // Endpoints for dynamic ports
+    private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
+                new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
+
+    
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
     private HashMap<String, DescriptionBuilderComposite> dbcMap = null;
@@ -154,19 +161,15 @@ class ServiceDescriptionImpl
         composite = new DescriptionBuilderComposite();
         composite.setIsServiceProvider(false);
         composite.setCorrespondingClass(serviceClass);
-        composite.setSparseComposite(sparseCompositeKey, sparseComposite);
-        URL sparseCompositeWsdlURL = getWsdlURL(serviceClass, sparseComposite);
         // The classloader was originally gotten off this class, but it seems more logical to 
         // get it off the application service class.
 //        composite.setClassLoader(this.getClass().getClassLoader());
         composite.setClassLoader(serviceClass.getClassLoader());
-        
-        // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
-        //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
-        //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
+        composite.setSparseComposite(sparseCompositeKey, sparseComposite);
         
         // If there's a WSDL URL specified in the sparse composite, that is a override, for example
         // from a JSR-109 deployment descriptor, and that's the one to use.
+        URL sparseCompositeWsdlURL = getSparseCompositeWsdlURL(sparseComposite);
         if (sparseCompositeWsdlURL != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
@@ -178,47 +181,27 @@ class ServiceDescriptionImpl
         if (log.isDebugEnabled()) {
             log.debug("Wsdl Location value used: " + this.wsdlURL);
         }
+        // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
+        //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
+        //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
+        
         // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
 
         setupWsdlDefinition();
     }
     
-    URL getWsdlURL(Class clazz, DescriptionBuilderComposite sparseComposite) {
+    URL getSparseCompositeWsdlURL(DescriptionBuilderComposite sparseComposite) {
         // Use the WSDL file if it is specified in the composite
-        // TODO: (JLB) This logic is common with stuff Dustin put in ServiceDescriptionImpl to 
-        // do WSDL file reading in MDQ; refactor them into common helper class.
         URL url = null;
         if (sparseComposite != null) {
             WebServiceClient wsc = (WebServiceClient) sparseComposite.getWebServiceClientAnnot();
             if (wsc != null && wsc.wsdlLocation() != null) {
                 String wsdlLocation = wsc.wsdlLocation();
-                // Look for the WSDL file as follows:
-                // 1) As a resource on the classpath
-                // 2) As a fully specified URL
-                // 3) As a file on the filesystem.  This is analagous to what the generated
-                //    Service client does.  Is prepends "file:/" to whatever is specified in the
-                //    @WegServiceClient.wsdlLocation element.
-                URL wsdlUrl = null;
-                wsdlUrl = clazz.getClassLoader().getResource(wsdlLocation);
-                if (wsdlUrl == null) {
-                    wsdlUrl = createWsdlURL(wsdlLocation);
-                }
-                if (wsdlUrl == null) {
-                    // This check is necessary because Unix/Linux file paths begin
-                    // with a '/'. When adding the prefix 'jar:file:/' we may end
-                    // up with '//' after the 'file:' part. This causes the URL 
-                    // object to treat this like a remote resource
-                    if(wsdlLocation.indexOf("/") == 0) {
-                        wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
-                    }
-                    wsdlUrl = createWsdlURL("file:/" + wsdlLocation);
-                }
+                URL wsdlUrl = getWSDLURL(wsdlLocation);
                 
                 if (wsdlUrl == null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("Unable to access wsdlLocation: "
-                                                                   + wsdlLocation);
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr4", wsdlLocation));
                 } else {
                     url = wsdlUrl;
                 }
@@ -226,12 +209,17 @@ class ServiceDescriptionImpl
         }
         return url;
     }
+
     private static URL createWsdlURL(String wsdlLocation) {
         URL theUrl = null;
         try {
             theUrl = new URL(wsdlLocation);
         } catch (Exception ex) {
             // Just return a null to indicate we couldn't create a URL from the string
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation
+                        + " by using File reference");
+            }
         }
         return theUrl;
     }
@@ -250,7 +238,6 @@ class ServiceDescriptionImpl
         composite = new DescriptionBuilderComposite();
         composite.setIsDeprecatedServiceProviderConstruction(true);
         composite.setIsServiceProvider(true);
-        // TODO: (JLB) does the composite corresponding class AND the classloader need to be set here?
         isServerSide = true;
 
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
@@ -340,22 +327,33 @@ class ServiceDescriptionImpl
      *                   Dispatch-based client to either a declared port or a pre-existing dynamic
      *                   port.
      * @param composite  May contain sparse metadata, for example from a deployment descriptor, that
-     *                   should be used in conjuction with the class annotations to update the
-     *                   description hierachy.  For example, it may contain a HandlerChain annotation
-     *                   based on information in a JSR-109 deploment descriptor.                    
+     *                   should be used in conjunction with the class annotations to update the
+     *                   description hierarchy.  For example, it may contain a HandlerChain annotation
+     *                   based on information in a JSR-109 deployment descriptor.                    
      */
 
-    EndpointDescription updateEndpointDescription(Class sei, QName portQName,
+    EndpointDescription updateEndpointDescription(Class sei, 
+    											  QName portQName,
                                                   DescriptionFactory.UpdateType updateType,
                                                   DescriptionBuilderComposite composite,
-                                                  Object compositeKey) {
+                                                  Object serviceDelegateKey) {
 
-        EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
-        boolean isPortDeclared = isPortDeclared(portQName);
+	
+    	EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
+    	boolean isPortDeclared = isPortDeclared(portQName);
+
+    	// If a defined endpointDescription is not available, try and locate a dynamic endpoint.
+    	// Note that a dynamic port will only be found for the client that created it, per the
+    	// serviceDelegateKey
+
+    	if (endpointDescription == null && serviceDelegateKey != null) {
+    		endpointDescription = getDynamicEndpointDescriptionImpl(portQName, serviceDelegateKey);
+    	}
+
         // If no QName was specified in the arguments, one may have been specified in the sparse
         // composite metadata when the service was created.
         if (DescriptionUtils.isEmpty(portQName)) {
-            QName preferredPortQN = getPreferredPort(compositeKey);
+            QName preferredPortQN = getPreferredPort(serviceDelegateKey);
             if (!DescriptionUtils.isEmpty(preferredPortQN)) {
                 portQName = preferredPortQN;
             }
@@ -365,8 +363,7 @@ class ServiceDescriptionImpl
 
             case ADD_PORT:
                 if (composite != null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("AddPort can not have a composite");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr5", portQName.toString()));
                 }
                 // Port must NOT be declared (e.g. can not already exist in WSDL)
                 // If an EndpointDesc doesn't exist; create it as long as it doesn't exist in the WSDL
@@ -378,12 +375,20 @@ class ServiceDescriptionImpl
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("addPortDup", portQName.toString()));
                 } else if (endpointDescription == null) {
-                    // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
+                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  Note that EndpointInterface, Operations, Parameters, etc.
                     // are not created for dynamic ports.  It would be an error to later do a getPort against a dynamic port (per the JAX-WS spec)
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
-                    addEndpointDescription(endpointDescription);
+                    // If we can't add the dynamic port under a specific service delegate, that is an error
+
+                	if (serviceDelegateKey == null) {
+                        throw ExceptionFactory.makeWebServiceException("ServiceDelegate is null for AddPort");
+                    }
+                	
+                	endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
+               
+            		addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
+
                 } else {
-                    // All error check above passed, the EndpointDescription already exists and needs no updating
+                    // All error chJeck above passed, the EndpointDescription already exists and needs no updating
                 }
                 break;
 
@@ -411,7 +416,7 @@ class ServiceDescriptionImpl
                     		Messages.getMessage("updateEPDescrErr2",(portQName != null ? portQName.toString() : "not specified")));
                 } else if (endpointDescription == null) {
                     // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this, composite, compositeKey);
+                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, this, composite, serviceDelegateKey);
                     addEndpointDescription(endpointDescription);
                     /*
                      * We must reset the service runtime description after adding a new endpoint
@@ -435,7 +440,7 @@ class ServiceDescriptionImpl
                     //    a key AND CREATE_DISPATCH and ADD_PORT will thrown an exception of a composite
                     //    is specified, having a composite and key on the GET_PORTs shouldn't be
                     //    a problem.
-                    endpointDescription.updateWithSEI(sei, composite, compositeKey);
+                    endpointDescription.updateWithSEI(sei, composite, serviceDelegateKey);
                 } else if (getEndpointSEI(portQName) != sei) {
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("updateEPDescrErr3",portQName.toString(),
@@ -443,15 +448,15 @@ class ServiceDescriptionImpl
                 } else {
                     // All error check above passed, the EndpointDescription already exists and needs no updating
                     // Just add the sparse composite if one was specified.
-                    endpointDescription.getDescriptionBuilderComposite().setSparseComposite(compositeKey, composite);
+                    endpointDescription.getDescriptionBuilderComposite().setSparseComposite(serviceDelegateKey, composite);
                 }
                 break;
 
             case CREATE_DISPATCH:
                 if (composite != null) {
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("CreateDispatch can not have a composite");
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr6"));
                 }
+                
                 // Port may or may not exist in WSDL.
                 // If an endpointDesc doesn't exist and it is in the WSDL, it can be created
                 // Otherwise, it is an error.
@@ -459,7 +464,7 @@ class ServiceDescriptionImpl
                     throw ExceptionFactory
                             .makeWebServiceException(Messages.getMessage("createDispatchFail0"));
                 } else if (endpointDescription != null) {
-                    // The EndpoingDescription already exists; nothing needs to be done
+                    // The EndpointDescription already exists; nothing needs to be done
                 } else if (sei != null) {
                     // The Dispatch should not have an SEI associated with it on the update call.
                     // REVIEW: Is this a valid check?
@@ -467,13 +472,14 @@ class ServiceDescriptionImpl
                     		Messages.getMessage("createDispatchFail3",portQName.toString()));
                 } else if (getWSDLWrapper() != null && isPortDeclared) {
                     // EndpointDescription doesn't exist and this is a declared Port, so create one
-                    // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
-                    // are not created for Dipsatch-based ports, but might be updated later if a getPort is done against the same declared port.
+                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  Note that EndpointInterface, Operations, Parameters, etc.
+                    // are not created for Dispatch-based ports, but might be updated later if a getPort is done against the same declared port.
                     // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
                     endpointDescription = new EndpointDescriptionImpl(sei, portQName, this);
                     addEndpointDescription(endpointDescription);
                 } else {
-                    // The port is not a declared port and it does not have an EndpointDescription, meaning an addPort has not been done for it
+                    // The port is not a declared port and it does not have an EndpointDescription, 
+                	// meaning an addPort has not been done for it
                     // This is an error.
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("createDispatchFail1", portQName.toString()));
@@ -523,30 +529,52 @@ class ServiceDescriptionImpl
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescriptions()
     */
     public EndpointDescription[] getEndpointDescriptions() {
-        return endpointDescriptions.values().toArray(new EndpointDescriptionImpl[0]);
+        return definedEndpointDescriptions.values().toArray(new EndpointDescriptionImpl[0]);
+    }
+
+    public Collection<EndpointDescriptionImpl> getDynamicEndpointDescriptions_AsCollection(Object serviceDelegateKey) {
+        Collection <EndpointDescriptionImpl> dynamicEndpoints = null;
+    	if (serviceDelegateKey != null ) {
+    		if (dynamicEndpointDescriptions.get(serviceDelegateKey) != null)
+    			dynamicEndpoints = dynamicEndpointDescriptions.get(serviceDelegateKey).values();
+        }
+    	return dynamicEndpoints;
     }
 
     public Collection<EndpointDescription> getEndpointDescriptions_AsCollection() {
-        return endpointDescriptions.values();
+    	return definedEndpointDescriptions.values();
     }
 
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescription(javax.xml.namespace.QName)
     */
     public EndpointDescription getEndpointDescription(QName portQName) {
+
+    	return getEndpointDescription(portQName, null);
+    }
+
+    public EndpointDescription getEndpointDescription(QName portQName, Object serviceDelegateKey) {
         EndpointDescription returnDesc = null;
         if (!DescriptionUtils.isEmpty(portQName)) {
-            returnDesc = endpointDescriptions.get(portQName);
+    		returnDesc = definedEndpointDescriptions.get(portQName);
+
+    		if (returnDesc == null && serviceDelegateKey != null) {
+		           returnDesc = getDynamicEndpointDescriptionImpl(portQName, serviceDelegateKey);
+    		}    		        	
         }
         return returnDesc;
     }
 
     EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName) {
+        return (EndpointDescriptionImpl)getEndpointDescription(portQName, null);
+    }
+    
+    EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName, Object serviceDelegateKey) {
         return (EndpointDescriptionImpl)getEndpointDescription(portQName);
     }
     
     EndpointDescriptionImpl getEndpointDescriptionImpl(Class seiClass) {
-        for (EndpointDescription endpointDescription : endpointDescriptions.values()) {
+        for (EndpointDescription endpointDescription : definedEndpointDescriptions.values()) {
             EndpointInterfaceDescription endpointInterfaceDesc =
                     endpointDescription.getEndpointInterfaceDescription();
             // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
@@ -571,7 +599,7 @@ class ServiceDescriptionImpl
         EndpointDescription[] returnEndpointDesc = null;
         ArrayList<EndpointDescriptionImpl> matchingEndpoints =
                 new ArrayList<EndpointDescriptionImpl>();
-        for (EndpointDescription endpointDescription : endpointDescriptions.values()) {
+        for (EndpointDescription endpointDescription : definedEndpointDescriptions.values()) {
             EndpointInterfaceDescription endpointInterfaceDesc =
                     endpointDescription.getEndpointInterfaceDescription();
             // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
@@ -592,7 +620,7 @@ class ServiceDescriptionImpl
     /*=======================================================================*/
     /*=======================================================================*/
     private void addEndpointDescription(EndpointDescriptionImpl endpoint) {
-        endpointDescriptions.put(endpoint.getPortQName(), endpoint);
+    	definedEndpointDescriptions.put(endpoint.getPortQName(), endpoint);
     }
 
     private void setupWsdlDefinition() {
@@ -764,29 +792,56 @@ class ServiceDescriptionImpl
     }
     
     /**
-     * This method will handle obtaining a URL for the given WSDL location.
+     * This method will handle obtaining a URL for the given WSDL location.  The WSDL will be
+     * looked for in the following places in this order:
+     * 1) As a resource on the classpath
+     * 2) As a fully specified URL
+     * 3) As a file on the filesystem.  This is analagous to what the generated
+     *    Service client does.  Is prepends "file:/" to whatever is specified in the
+     *    @WebServiceClient.wsdlLocation element.
+     * 
+     * @param wsdlLocation The WSDL for which a URL is wanted
+     * @return A URL if the WSDL can be located, or null
      */
     private URL getWSDLURL(String wsdlLocation) {
-    	URL url = composite.getClassLoader().getResource(wsdlLocation);
-		if(url == null) {
-			if(log.isDebugEnabled()) {
-				log.debug("URL for wsdl file: " + wsdlLocation + " could not be " +
-						"determined by classloader... looking for file reference");
-			}
-			File file = new File(wsdlLocation);
-			if(file != null) {
-				try {
-					url = file.toURL();
-				}
-				catch(Exception e) {
-					if(log.isDebugEnabled()) {
-						log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation + 
-								" by using file reference");
-					}
-				}
-			}
-		}
-		return url;
+        // Look for the WSDL file as follows:
+        // 1) As a resource on the classpath
+
+        URL url = composite.getClassLoader().getResource(wsdlLocation);
+
+        // 2) As a fully specified URL
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("URL for wsdl file: " + wsdlLocation + " could not be "
+                        + "determined by classloader... looking for file reference");
+            }
+            url = createWsdlURL(wsdlLocation);
+        }
+        // 3) As a file on the filesystem.  This is analagous to what the generated
+        //    Service client does.  Is prepends "file:/" to whatever is specified in the
+        //    @WebServiceClient.wsdlLocation element.
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("URL for wsdl file: " + wsdlLocation + " could not be "
+                        + "found as local file reference... prepending file: protocol");
+            }
+            // This check is necessary because Unix/Linux file paths begin
+            // with a '/'. When adding the prefix 'jar:file:/' we may end
+            // up with '//' after the 'file:' part. This causes the URL 
+            // object to treat this like a remote resource
+            if(wsdlLocation.indexOf("/") == 0) {
+                wsdlLocation = wsdlLocation.substring(1, wsdlLocation.length());
+            }
+            url = createWsdlURL("file:/" + wsdlLocation);
+
+        }
+        if (url == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to obtain URL for WSDL file: " + wsdlLocation
+                        + " by using prepended file: protocol");
+            }
+        }
+        return url;
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
@@ -838,10 +893,11 @@ class ServiceDescriptionImpl
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescription#getServiceClient(javax.xml.namespace.QName)
     */
-    public ServiceClient getServiceClient(QName portQName) {
+    public ServiceClient getServiceClient(QName portQName, Object serviceDelegateKey) {
         ServiceClient returnServiceClient = null;
         if (!DescriptionUtils.isEmpty(portQName)) {
-            EndpointDescription endpointDesc = getEndpointDescription(portQName);
+            EndpointDescription endpointDesc = getEndpointDescription(portQName, serviceDelegateKey);
+            
             if (endpointDesc != null) {
                 returnServiceClient = endpointDesc.getServiceClient();
             }
@@ -1730,7 +1786,7 @@ class ServiceDescriptionImpl
         }
     }
 
-    public List<QName> getPorts() {
+    public List<QName> getPorts(Object serviceDelegateKey) {
         ArrayList<QName> portList = new ArrayList<QName>();
         // Note that we don't cache these results because the list of ports can be added
         // to via getPort(...) and addPort(...).
@@ -1759,6 +1815,20 @@ class ServiceDescriptionImpl
                 portList.add(endpointPortQName);
             }
         }
+        
+        //Retrieve all the dynamic ports for this client
+        if (serviceDelegateKey != null) {
+			Collection<EndpointDescriptionImpl> dynamicEndpointDescs = getDynamicEndpointDescriptions_AsCollection(serviceDelegateKey);
+			if (dynamicEndpointDescs != null) {
+				for (EndpointDescription dynamicEndpointDesc : dynamicEndpointDescs) {
+					QName endpointPortQName = dynamicEndpointDesc
+							.getPortQName();
+					if (!portList.contains(endpointPortQName)) {
+						portList.add(endpointPortQName);
+					}
+				}
+			}
+		}
         return portList;
     }
 
@@ -1815,10 +1885,32 @@ class ServiceDescriptionImpl
      */
     protected String getServiceClassName() {
         return composite.getClassName();
-        // TODO: (JLB) Remove commented out code from 1/7/08 merge
-//        return (this.serviceClass != null ? this.serviceClass.getName() : null);
     }
 
+    private EndpointDescriptionImpl getDynamicEndpointDescriptionImpl(QName portQName, Object key) {
+        Map<QName, EndpointDescriptionImpl> innerMap = null;
+        synchronized(dynamicEndpointDescriptions) {
+        	innerMap = dynamicEndpointDescriptions.get(key);
+            if (innerMap != null) {
+            	return innerMap.get(portQName);
+            }
+        }
+        return null;
+    }
+
+    private void addDynamicEndpointDescriptionImpl(EndpointDescriptionImpl endpointDescriptionImpl, 
+    												Object key) {
+        Map<QName, EndpointDescriptionImpl> innerMap = null;
+        synchronized(dynamicEndpointDescriptions) {
+            innerMap = dynamicEndpointDescriptions.get(key);
+            if (innerMap == null) {
+               innerMap = new HashMap<QName, EndpointDescriptionImpl>();
+               dynamicEndpointDescriptions.put(key, innerMap);
+            }
+            innerMap.put(endpointDescriptionImpl.getPortQName(), endpointDescriptionImpl);
+        }
+    }
+    
     /** Return a string representing this Description object and all the objects it contains. */
     public String toString() {
         final String newline = "\n";
@@ -1850,8 +1942,9 @@ class ServiceDescriptionImpl
             }
             // Ports
             string.append(newline);
-            List<QName> ports = getPorts();
-            string.append("Number of ports: " + ports.size());
+            List<QName> ports = getPorts(null);
+            string.append("Number of defined ports: " + ports.size());
+            //TODO: Show the map that contains the dynamic ports
             string.append(newline);
             string.append("Port QNames: ");
             for (QName port : ports) {

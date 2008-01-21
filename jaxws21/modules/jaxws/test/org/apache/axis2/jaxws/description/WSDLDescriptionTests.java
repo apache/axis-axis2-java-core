@@ -140,7 +140,7 @@ public class WSDLDescriptionTests extends TestCase {
         QName dispatchPortQN = new QName(VALID_NAMESPACE, "dispatchPort");
         service.addPort(dispatchPortQN, null, null);
         
-        EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(dispatchPortQN);
+        EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(dispatchPortQN, serviceDelegate);
         assertNotNull(endpointDesc);
        
         EndpointInterfaceDescription endpointInterfaceDesc = endpointDesc.getEndpointInterfaceDescription();
@@ -226,7 +226,7 @@ public class WSDLDescriptionTests extends TestCase {
         Class sei = endpointInterfaceDesc.getSEIClass();
         assertEquals(EchoPort.class, sei);
 
-        EndpointDescription endpointDescDispatch = serviceDescription.getEndpointDescription(dispatchPortQN);
+        EndpointDescription endpointDescDispatch = serviceDescription.getEndpointDescription(dispatchPortQN, serviceDelegate);
         assertNotNull(endpointDescDispatch);
        
         EndpointInterfaceDescription endpointInterfaceDescDispatch = endpointDescDispatch.getEndpointInterfaceDescription();

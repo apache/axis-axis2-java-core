@@ -29,18 +29,11 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-import javax.jws.HandlerChain;
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceProvider;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.PrivilegedAction;
@@ -50,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAnnotationComposite {
 
@@ -126,7 +120,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     // For a service requester, this will be the client-side class associated with this composite; 
     // It could be the Service class or the SEI class.  On the service provider this will be null
     // unless the deprecated service construction logic in DescriptionFactory was used.
-    // TODO: (JLB) Remove the comment about the deprecated service construction logi
     private Class theCorrespondingClass;
     
     // Service-requesters (aka clients) can specify a sprase composite that may contain annotation
@@ -327,8 +320,10 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
                                   + "; Composite Annot class: " + compositeAnnotClass 
                                   + "; Java Annot class: " + javaAnnotationClass, e);
                     }
-                    // TODO: (JLB) NLS
-                    throw ExceptionFactory.makeWebServiceException("Unable to create composite annotation", e);
+                    String msg = Messages.getMessage("DescriptionBuilderErr1", 
+                                                     compositeAnnotClass.toString(),
+                                                     e.toString());
+                    throw ExceptionFactory.makeWebServiceException(msg, e);
                 }
             }
         }

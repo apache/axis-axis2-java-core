@@ -69,6 +69,16 @@
                 <inherited>true</inherited>
                 <configuration>
                     <skip>false</skip>
+                    <systemProperties>
+                        <property>
+                            <name>maven.test.haltafterfailure</name>
+                            <value>false</value>
+                        </property>
+                        <property>
+                            <name>run.clustering.tests</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
                     <excludes>
                         <exclude>**/UpdateStateTest.java</exclude>
                         <exclude>**/ConfigurationManagerTest.java</exclude>

@@ -67,4 +67,8 @@ public class DeploymentErrorMsgs {
     public static final String XML_STREAM_EXCEPTION = "StreamException";
     public static final String ERROR_LOADING_MESSAGE_BUILDER = "errorloadingbuilder";
     public static final String ERROR_LOADING_MESSAGE_FORMATTER = "errorloadingformatter";
+    public static final String DEPLOYING_EXCEPTION = "deployingexception";
+    public static final String STORING_FAUTY_SERVICE = "stroringfaultyservice";
+    public static final String JAXWS_JARS_MISSING = "jaxwsjarsmissing";
+    public static final String FAULTY_SERVICE_REMOVAL = "faultyserviceremoval";
 }

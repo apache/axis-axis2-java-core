@@ -73,7 +73,7 @@ public class ContextReplicationTest extends TestCase {
     private AxisService service2;
     //---------------------------------------------------------------------------------
 
-    private static boolean canMulticast;
+    private static boolean canRunTests;
 
     private int getPort(int portStart, int retries) throws IOException {
         InetSocketAddress addr = null;
@@ -101,7 +101,11 @@ public class ContextReplicationTest extends TestCase {
         return port;
     }
 
-    private void checkMulticast() {
+    private void canRunTests() {
+        if(System.getProperty("run.clustering.tests", "false").equals("false")){
+            canRunTests = false;
+            return;
+        }
 
         // Which port should we listen to
         final int port;
@@ -109,7 +113,7 @@ public class ContextReplicationTest extends TestCase {
             port = getPort(4000, 1000);
         } catch (IOException e) {
             e.printStackTrace();
-            canMulticast = false;
+            canRunTests = false;
             return;
         }
 
@@ -131,10 +135,10 @@ public class ContextReplicationTest extends TestCase {
                                        pack.getLength());
                     s.leaveGroup(InetAddress.getByName(group));
                     s.close();
-                    canMulticast = true;
+                    canRunTests = true;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    canMulticast = false;
+                    canRunTests = false;
                 }
             }
         };
@@ -156,7 +160,7 @@ public class ContextReplicationTest extends TestCase {
                     s.close();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    canMulticast = false;
+                    canRunTests = false;
                 }
             }
         };
@@ -171,13 +175,13 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public static void main(String[] args) {
-        new ContextReplicationTest().checkMulticast();
+        new ContextReplicationTest().canRunTests();
     }
 
     protected void setUp() throws Exception {
-        checkMulticast();
-        if (!canMulticast) {
-            System.out.println("[WARNING] Aborting clustering test since multicasting cannot be carried out");
+        canRunTests();
+        if (!canRunTests) {
+            System.out.println("[WARNING] Aborting clustering tests");
             return;
         }
 
@@ -254,7 +258,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInConfigurationContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -279,7 +283,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromConfigurationContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -303,7 +307,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceGroupContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -327,7 +331,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceGroupContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -358,7 +362,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceGroupContext2() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -385,7 +389,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceGroupContext2() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -419,7 +423,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -448,7 +452,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testSetPropertyInServiceContext2() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -477,7 +481,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceContext() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -513,7 +517,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testRemovePropertyFromServiceContext2() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -549,7 +553,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion1() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -566,7 +570,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion2() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 
@@ -584,7 +588,7 @@ public class ContextReplicationTest extends TestCase {
     }
 
     public void testReplicationExclusion3() throws Exception {
-        if (!canMulticast) {
+        if (!canRunTests) {
             return;
         }
 

@@ -34,7 +34,7 @@ import org.apache.axis2.handlers.util.TestUtil;
 import javax.xml.namespace.QName;
 
 public class AddressingValidationHandlerTest extends TestCase implements AddressingConstants {
-    AddressingInHandler inHandler = new AddressingFinalInHandler();
+    AddressingInHandler inHandler = new AddressingInHandler();
     AddressingValidationHandler validationHandler = new AddressingValidationHandler();
     String addressingNamespace = AddressingConstants.Final.WSA_NAMESPACE;
     String versionDirectory = "final";

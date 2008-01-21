@@ -691,7 +691,6 @@
 
             <xsl:if test="property/@isarray">
                int i = 0;
-               int element_found = 0;
                axutil_array_list_t *arr_list = NULL;
             </xsl:if>
             <xsl:if test="(@ordered or @choice) and property/@isarray">
@@ -1177,8 +1176,61 @@
                                       <xsl:if test="not(@nillable)">
                                       else
                                       {
-                                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                            status = AXIS2_FAILURE;
+                                            /*
+                                             * axis2_qname_t *qname = NULL;
+                                             * axiom_attribute_t *the_attri = NULL;
+                                             * 
+                                             * qname = axutil_qname_create(env, "nil", "http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                                             * the_attri = axiom_element_get_attribute(current_element, env, qname);
+                                             */
+                                            /* currently thereis a bug in the axiom_element_get_attribute, so we have to go to this bad method */
+
+                                            axiom_attribute_t *the_attri = NULL;
+                                            axis2_char_t *attrib_text = NULL;
+                                            axutil_hash_t *attribute_hash = NULL;
+
+                                            attribute_hash = axiom_element_get_all_attributes(current_element, env);
+
+                                            attrib_text = NULL;
+                                            if(attribute_hash)
+                                            {
+                                                 axutil_hash_index_t *hi;
+                                                 void *val;
+                                                 const void *key;
+                                        
+                                                 for (hi = axutil_hash_first(attribute_hash, env); hi; hi = axutil_hash_next(env, hi)) 
+                                                 {
+                                                     axutil_hash_this(hi, &amp;key, NULL, &amp;val);
+                                                     
+                                                     if(strstr((axis2_char_t*)key, "nil|http://www.w3.org/2001/XMLSchema-instance"))
+                                                     {
+                                                         the_attri = (axiom_attribute_t*)val;
+                                                         break;
+                                                     }
+                                                 }
+                                            }
+
+                                            if(the_attri)
+                                            {
+                                                attrib_text = axiom_attribute_get_value(the_attri, env);
+                                            }
+                                            else
+                                            {
+                                                /* this is hoping that attribute is stored in "http://www.w3.org/2001/XMLSchema-instance", this happnes when name is in default namespace */
+                                                attrib_text = axiom_element_get_attribute_value_by_name(current_element, env, "nil");
+                                            }
+
+                                            if(attrib_text &amp;&amp; 0 == axutil_strcmp(attrib_text, "1"))
+                                            {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                            }
+                                            else
+                                            {
+                                                /* after all, we found this is a empty string */
+                                                status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   "");
+                                            }
                                       }
                                       </xsl:if>
                                     </xsl:when>
@@ -1526,9 +1578,9 @@
                                   </xsl:otherwise>
                                 </xsl:choose>
                                
-                               for (i = 0, sequence_broken = 0, tmp_node = current_node = <xsl:choose>
+                               for (i = 0, sequence_broken = 0, current_node = <xsl:choose>
                                              <xsl:when test="position()=1">first_node</xsl:when>
-                                             <xsl:otherwise>(is_early_node_valid?axiom_node_get_next_sibling(current_node, env):current_node)</xsl:otherwise></xsl:choose>; current_node != NULL; <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env)</xsl:if>) 
+                                             <xsl:otherwise>(is_early_node_valid?axiom_node_get_next_sibling(current_node, env):current_node)</xsl:otherwise></xsl:choose>; !sequence_broken &amp;&amp; current_node != NULL;) 
                                              <!-- We are not moving current_node to next sibling here if it an any type, because we already have done the move -->
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
@@ -1543,20 +1595,6 @@
                                   {
                                   </xsl:if>
                                       is_early_node_valid = AXIS2_TRUE;
-                                      <xsl:if test="not(@any)">
-                                      if (sequence_broken)
-                                      {
-                                        /* found element out of order */
-                                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "elements found out of order for array<xsl:value-of select="$propertyName"/> missing");
-                                        if(element_qname)
-                                        {
-                                           axutil_qname_free(element_qname, env);
-                                        }
-                                        return AXIS2_FAILURE;
-                                      }
-                                      </xsl:if>
-                                      tmp_node = current_node; /* always update the current node */
-                                      element_found = 1;
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
@@ -1583,8 +1621,61 @@
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
+                                              /*
+                                               * axis2_qname_t *qname = NULL;
+                                               * axiom_attribute_t *the_attri = NULL;
+                                               * 
+                                               * qname = axutil_qname_create(env, "nil", "http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                                               * the_attri = axiom_element_get_attribute(current_element, env, qname);
+                                               */
+                                           
+                                              /* currently thereis a bug in the axiom_element_get_attribute, so we have to go to this bad method */
+                                             
+                                              axiom_attribute_t *the_attri = NULL;
+                                              axis2_char_t *attrib_text = NULL;
+                                              axutil_hash_t *attribute_hash = NULL;
+                                             
+                                              attribute_hash = axiom_element_get_all_attributes(current_element, env);
+                                             
+                                              attrib_text = NULL;
+                                              if(attribute_hash)
+                                              {
+                                                   axutil_hash_index_t *hi;
+                                                   void *val;
+                                                   const void *key;
+                                             
+                                                   for (hi = axutil_hash_first(attribute_hash, env); hi; hi = axutil_hash_next(env, hi)) 
+                                                   {
+                                                       axutil_hash_this(hi, &amp;key, NULL, &amp;val);
+                                                       
+                                                       if(strstr((axis2_char_t*)key, "nil|http://www.w3.org/2001/XMLSchema-instance"))
+                                                       {
+                                                           the_attri = (axiom_attribute_t*)val;
+                                                           break;
+                                                       }
+                                                   }
+                                              }
+                                             
+                                              if(the_attri)
+                                              {
+                                                  attrib_text = axiom_attribute_get_value(the_attri, env);
+                                              }
+                                              else
+                                              {
+                                                  /* this is hoping that attribute is stored in "http://www.w3.org/2001/XMLSchema-instance", this happnes when name is in default namespace */
+                                                  attrib_text = axiom_element_get_attribute_value_by_name(current_element, env, "nil");
+                                              }
+                                             
+                                              if(attrib_text &amp;&amp; 0 == axutil_strcmp(attrib_text, "1"))
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                  status = AXIS2_FAILURE;
+                                              }
+                                              else
+                                              {
+                                                  /* after all, we found this is a empty string */
+                                                  axutil_array_list_add_at(arr_list, env, i, axutil_strdup(env, ""));
+                                              }
                                           }
                                           </xsl:if>
                                         </xsl:when>
@@ -1892,20 +1983,43 @@
                                          {
                                             axutil_qname_free(element_qname, env);
                                          }
+                                         if(arr_list)
+                                         {
+                                            axutil_array_list_free(arr_list, env);
+                                         }
                                          return AXIS2_FAILURE;
                                      }
 
                                      i ++;
+                                    <xsl:if test="not(@any)">current_node = axiom_node_get_next_sibling(current_node, env);</xsl:if>
+
                                  <xsl:if test="not(@any)">
                                   }
                                   else
                                   {
+                                      is_early_node_valid = AXIS2_FALSE;
                                       sequence_broken = 1;
                                   }
                                   </xsl:if>
                                }
 
-                               current_node = tmp_node;
+                               <xsl:if test="not(@any)">
+                                   if (i &lt; <xsl:value-of select="@minOccurs"/>)
+                                   {
+                                     /* found element out of order */
+                                     AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "<xsl:value-of select="$propertyName"/> (@minOccurs = '<xsl:value-of select="@minOccurs"/>') only have %d elements", i);
+                                     if(element_qname)
+                                     {
+                                        axutil_qname_free(element_qname, env);
+                                     }
+                                     if(arr_list)
+                                     {
+                                        axutil_array_list_free(arr_list, env);
+                                     }
+                                     return AXIS2_FAILURE;
+                                   }
+                               </xsl:if>
+
                                if(0 == axutil_array_list_size(arr_list,env))
                                {
                                     axutil_array_list_free(arr_list, env);
@@ -1947,7 +2061,6 @@
                                   </xsl:if>
                                        /* found the requried element */
                                        is_early_node_valid = AXIS2_TRUE;
-                                       element_found = 1;
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
@@ -1975,8 +2088,61 @@
                                           <xsl:if test="not(@nillable)">
                                           else
                                           {
-                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
-                                                status = AXIS2_FAILURE;
+                                             /*
+                                               * axis2_qname_t *qname = NULL;
+                                               * axiom_attribute_t *the_attri = NULL;
+                                               * 
+                                               * qname = axutil_qname_create(env, "nil", "http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                                               * the_attri = axiom_element_get_attribute(current_element, env, qname);
+                                               */
+                                           
+                                              /* currently thereis a bug in the axiom_element_get_attribute, so we have to go to this bad method */
+                                             
+                                              axiom_attribute_t *the_attri = NULL;
+                                              axis2_char_t *attrib_text = NULL;
+                                              axutil_hash_t *attribute_hash = NULL;
+                                             
+                                              attribute_hash = axiom_element_get_all_attributes(current_element, env);
+                                             
+                                              attrib_text = NULL;
+                                              if(attribute_hash)
+                                              {
+                                                   axutil_hash_index_t *hi;
+                                                   void *val;
+                                                   const void *key;
+                                             
+                                                   for (hi = axutil_hash_first(attribute_hash, env); hi; hi = axutil_hash_next(env, hi)) 
+                                                   {
+                                                       axutil_hash_this(hi, &amp;key, NULL, &amp;val);
+                                                       
+                                                       if(strstr((axis2_char_t*)key, "nil|http://www.w3.org/2001/XMLSchema-instance"))
+                                                       {
+                                                           the_attri = (axiom_attribute_t*)val;
+                                                           break;
+                                                       }
+                                                   }
+                                              }
+                                             
+                                              if(the_attri)
+                                              {
+                                                  attrib_text = axiom_attribute_get_value(the_attri, env);
+                                              }
+                                              else
+                                              {
+                                                  /* this is hoping that attribute is stored in "http://www.w3.org/2001/XMLSchema-instance", this happnes when name is in default namespace */
+                                                  attrib_text = axiom_element_get_attribute_value_by_name(current_element, env, "nil");
+                                              }
+                                             
+                                              if(attrib_text &amp;&amp; 0 == axutil_strcmp(attrib_text, "1"))
+                                              {
+                                                  AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                  status = AXIS2_FAILURE;
+                                              }
+                                              else
+                                              {
+                                                  /* after all, we found this is a empty string */
+                                                  axutil_array_list_add_at(arr_list, env, i, axutil_strdup(env, ""));
+                                              }
                                           }
                                           </xsl:if>
                                         </xsl:when>
@@ -3017,7 +3183,7 @@
                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                            text_value = axutil_uri_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            string_to_stream = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
-                                                            (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT) +
+                                                            (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
                                                              axutil_strlen(text_value) + 
                                                              axutil_strlen("<xsl:value-of select="$propertyName"/>")));
                            sprintf(string_to_stream, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",

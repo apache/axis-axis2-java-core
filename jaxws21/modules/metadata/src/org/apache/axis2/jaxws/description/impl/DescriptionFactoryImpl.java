@@ -292,18 +292,28 @@ public class DescriptionFactoryImpl {
     }
     
     /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     *      Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, QName portQName,
+            DescriptionFactory.UpdateType updateType, Object serviceDelegateKey ) {
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, serviceDelegateKey);
+    }
+    
+    /**
      * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType, DescriptionBuilderComposite)
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
             DescriptionFactory.UpdateType updateType, 
             DescriptionBuilderComposite composite,
-            Object compositeKey) {
+            Object serviceDelegateKey) {
         EndpointDescription endpointDesc = null;
         synchronized(serviceDescription) {
                 endpointDesc = 
                 ((ServiceDescriptionImpl)serviceDescription)
-                        .updateEndpointDescription(sei, portQName, updateType, composite, compositeKey);
+                        .updateEndpointDescription(sei, portQName, updateType, composite, serviceDelegateKey);
         }
         EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
         
@@ -330,6 +340,18 @@ public class DescriptionFactoryImpl {
             String addressingNamespace,
             DescriptionFactory.UpdateType updateType) {
         return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, null);
+    }
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     * Class, EndpointReference, String, DescriptionFactory.UpdateType, Object)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType,
+            Object sparseCompositeKey) {
+        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, sparseCompositeKey);
     }
 
     /**

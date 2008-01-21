@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * A DeployableChain is a container which manages dependencies between Deployables.  You
@@ -109,7 +111,7 @@ public class DeployableChain {
         if (mySuccessors != null && !mySuccessors.isEmpty()) {
             Set successors = (Set)activeConstraints.get(name);
             if (successors == null) {
-                successors = new HashSet();
+                successors = new LinkedHashSet();
                 activeConstraints.put(name, successors);
             }
             successors.addAll(mySuccessors);
@@ -200,7 +202,7 @@ public class DeployableChain {
     public void rebuild() throws Exception {
         chain.clear();
 
-        Set keys = new HashSet();
+        Set keys = new LinkedHashSet();
         keys.addAll(deployed.keySet());
 
         // First goes first.
@@ -222,7 +224,7 @@ public class DeployableChain {
 
         while (!keys.isEmpty()) {
             String name = (String)keys.iterator().next();
-            getMinIndex(name, keys, new HashSet());
+            getMinIndex(name, keys, new LinkedHashSet());
         }
 
         // Now we've got a chain of names.  Convert to actual things before we return.
@@ -241,7 +243,7 @@ public class DeployableChain {
     public void addRelationship(String before, String after) {
         Set successors = (Set)activeConstraints.get(before);
         if (successors == null) {
-            successors = new HashSet();
+            successors = new LinkedHashSet();
             activeConstraints.put(before, successors);
         }
         successors.add(after);

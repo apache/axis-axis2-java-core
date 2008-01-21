@@ -226,15 +226,7 @@ class EndpointDescriptionImpl
         composite.setCorrespondingClass(theClass);
         composite.setClassLoader(this.getClass().getClassLoader());
         composite.setIsServiceProvider(false);
-        // REVIEW: setting these should probably be done in the getters!  It needs to be done before we try to select a 
-        //         port to use if one wasn't specified because we'll try to get to the annotations to get the PortType
-        // TODO: (JLB) REmove commented out code
-//        if (this.implOrSEIClass != null) {
-//            webServiceAnnotation = (WebService)getAnnotation(implOrSEIClass,WebService.class);
-//            // TODO: (JLB) Seems like the provider annotation is only for the deprecated service construction and can be removed
-//            webServiceProviderAnnotation =
-//                    (WebServiceProvider)getAnnotation(implOrSEIClass,WebServiceProvider.class);
-//        }
+
         webServiceAnnotation = composite.getWebServiceAnnot();
         
         this.isDynamicPort = dynamicPort;
@@ -570,7 +562,6 @@ class EndpointDescriptionImpl
         // TODO: Add tests to verify this error checking
 
         if (composite.isDeprecatedServiceProviderConstruction()) {
-//        if (!getServiceDescriptionImpl().isDBCMap()) {
 
             webServiceAnnotation = composite.getWebServiceAnnot();
             webServiceProviderAnnotation = composite.getWebServiceProviderAnnot();
@@ -598,18 +589,14 @@ class EndpointDescriptionImpl
 
             if (composite.isDeprecatedServiceProviderConstruction()
                     || !composite.isServiceProvider()) {
-//            if (!getServiceDescriptionImpl().isDBCMap()) {
                 Class seiClass = null;
                 if (DescriptionUtils.isEmpty(seiClassName)) {
-                    // TODO: (JLB) This is the client code path; the @WebServce will not have an endpointInterface member
-                    // For now, just build the EndpointInterfaceDesc based on the class itself.
-                    // TODO: The EID ctor doesn't correctly handle anything but an SEI at this
-                    //       point; e.g. it doesn't publish the correct methods of just an impl.
+                    // This is the client code path; the @WebServce will not have an endpointInterface member
+                    // so just build the EndpointInterfaceDesc based on the class itself.
                     seiClass = composite.getCorrespondingClass();
                 } else {
-                    // TODO: (JLB) This is the deprecated server-side introspection code for an impl that references an SEI
+                    // This is the deprecated server-side introspection code for an impl that references an SEI
                     try {
-                        // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
                         seiClass = ClassLoaderUtils.forName(seiClassName, false,
                                                             ClassLoaderUtils.getContextClassLoader(this.axisService != null ? this.axisService.getClassLoader() : null));
                         // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
@@ -622,17 +609,14 @@ class EndpointDescriptionImpl
                 }
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(seiClass, this);
             } else {
-                //TODO: Determine if we need logic here to determine implied SEI or not. This logic
-                //		may be handled by EndpointInterfaceDescription
-
                 if (DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface())) {
 
-                    //TODO: Build the EndpointInterfaceDesc based on the class itself
+                    // Build the EndpointInterfaceDesc based on the class itself
                     endpointInterfaceDescription =
                             new EndpointInterfaceDescriptionImpl(composite, true, this);
 
                 } else {
-                    //Otherwise, build the EID based on the SEI composite
+                    // Otherwise, build the EID based on the SEI composite
                     endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(
                             getServiceDescriptionImpl().getDBCMap().get(seiClassName),
                             false,
@@ -930,10 +914,6 @@ class EndpointDescriptionImpl
         // WSDL to build up the hierachy since the port added to the Service by the client is not
         // one that will be present in the WSDL.
 
-        //First, check to see if we can build this with the DBC List
-        //TODO: When MDQ input is the only possible input, then we can remove the check for
-        //      the DBC list, until that time the code in here may appear somewhat redundant
-        // TODO: (JLB) Can this logic be combined?
         if (composite.isServiceProvider()) {
             if (!isDynamicPort && isWSDLFullySpecified())
                 buildEndpointDescriptionFromWSDL();
@@ -1319,7 +1299,7 @@ class EndpointDescriptionImpl
 
                 String className = composite.getClassName();
 
-                // TODO: (JLB) This is using the classloader for EndpointDescriptionImpl; is that OK?
+                // REVIEW: This is using the classloader for EndpointDescriptionImpl; is that OK?
                 ClassLoader classLoader = (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) ?
                         composite.getClassLoader() : this.getClass().getClassLoader();
 

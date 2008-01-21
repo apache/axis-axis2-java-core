@@ -90,14 +90,16 @@
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <compilerArgument>-Xbootclasspath/p:${basedir}/../jaxws-api/target/classes${path.separator}${basedir}/../jws-api/target/classes</compilerArgument>
+                    <compilerVersion>1.5</compilerVersion>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>

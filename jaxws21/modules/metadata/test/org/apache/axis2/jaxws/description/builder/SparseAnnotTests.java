@@ -73,6 +73,29 @@ public class SparseAnnotTests extends TestCase {
         WebServiceClient wsClient = svcDescComposite.getWebServiceClientAnnot();
         assertTrue(wsClient instanceof WebServiceClientAnnot);
     }
+    /**
+     * The WebServiceRef annotation isn't processed by the JAXWS runtime.  The container (i.e. the
+     * client container, web container, or ejb container) processes it since it is responsible for
+     * doing resource injection.  This means none of the other tests deal with WebServiceRef, so
+     * this simple test validates a few aspects of the composite annotation processing.
+     */
+    public void testWebServiceRef() {
+        org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot wsr = WebServiceRefAnnot.createWebServiceRefAnnotImpl();
+        assertTrue(wsr.name().equals(""));
+        assertTrue(wsr.wsdlLocation().equals(""));
+        assertTrue("".equals(wsr.getTypeString()));
+        assertTrue("".equals(wsr.getValueString()));
+        assertNull(wsr.type());
+        assertNull(wsr.value());
+        
+        wsr = WebServiceRefAnnot.createWebServiceRefAnnotImpl("name", "wsdlLocation", String.class, Object.class, "mappedName");
+        assertTrue(wsr.name().equals("name"));
+        assertTrue(wsr.wsdlLocation().equals("wsdlLocation"));
+        assertTrue("".equals(wsr.getTypeString()));
+        assertTrue("".equals(wsr.getValueString()));
+        assertTrue(wsr.type() == String.class);
+        assertTrue(wsr.value() == Object.class);
+    }
 
 }
 

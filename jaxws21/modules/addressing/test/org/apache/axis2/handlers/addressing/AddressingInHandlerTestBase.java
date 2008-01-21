@@ -35,7 +35,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.util.TestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,7 +75,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
         Iterator addressingHeaderBlocks = header.getHeadersToProcess(rolePlayer, addressingNamespace);
         inHandler.extractAddressingInformation(header, mc, addressingHeaderBlocks,
-                                               addressingNamespace);
+                                               addressingNamespace, false);
     }
 
     protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer) throws Exception{
