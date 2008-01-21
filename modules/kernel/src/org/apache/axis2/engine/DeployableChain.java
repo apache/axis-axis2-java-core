@@ -19,16 +19,14 @@
 
 package org.apache.axis2.engine;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A DeployableChain is a container which manages dependencies between Deployables.  You
@@ -43,10 +41,10 @@ public class DeployableChain {
     Deployable last;
 
     /** A Map of name -> List (of Strings).  Each List contains the key's successors */
-    Map activeConstraints = new HashMap();
+    Map activeConstraints = new LinkedHashMap();
 
     /** A Map of name -> Deployable for all deployed items */
-    private Map deployed = new HashMap();
+    private Map deployed = new LinkedHashMap();
 
     /**
      * Deploy a Deployable into this chain.  Note that this does NOT order yet.  The idea
