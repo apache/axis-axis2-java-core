@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtilsTests;
+import org.apache.axis2.jaxws.addressing.util.ReferenceParameterListTests;
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.ClientConfigTests;
@@ -138,6 +139,7 @@ public class JAXWSTest extends TestCase {
         
         // ------ Addressing Tests ------
         //suite.addTestSuite(EndpointReferenceUtilsTests.class);
+        suite.addTestSuite(ReferenceParameterListTests.class);
         
         // ------ Metadata Tests ------
         suite.addTestSuite(WSDLTests.class);
