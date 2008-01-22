@@ -33,6 +33,8 @@ import javax.jws.HandlerChain;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.GenericArrayType;
@@ -41,6 +43,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConverterUtils {
@@ -60,6 +63,40 @@ public class ConverterUtils {
             }
         });
      }
+    
+    /**
+     * Helper method to retrieve a list of all annotations that match the following
+     * conditions:
+     * 
+     * - Annotations that extend the parameterized type T
+     * - Annotations that themselves are annotated with type T
+     * 
+     * @param annotationClass
+     * @param element
+     * @return
+     */
+    public static <T extends Annotation> List<Annotation> getAnnotations(final Class<T> annotationClass, final AnnotatedElement element) {
+        List<Annotation> matches = new ArrayList<Annotation>();
+        Annotation[] annotations = null;
+        
+        // Get the complete list of annotations from the class that was provided.
+        annotations = (Annotation[]) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotations();
+            }
+        });
+        
+        for (Annotation a: annotations) {        
+            // If the annotation matches the parameter type we're looking
+            // for, add it to the list.
+            if (a.annotationType().isAnnotationPresent(annotationClass) || 
+                annotationClass.isAssignableFrom(a.annotationType())) {
+                matches.add(a);
+            }
+        }
+        
+        return matches;
+    }
 
     /**
      * This is a helper method to create a <code>HandlerChainAnnot</code> since the

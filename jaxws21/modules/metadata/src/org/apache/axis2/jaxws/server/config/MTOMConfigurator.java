@@ -21,20 +21,25 @@ package org.apache.axis2.jaxws.server.config;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.MTOMFeature;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  */
 public class MTOMConfigurator implements ServerConfigurator {
 
+    private static Log log = LogFactory.getLog(MTOMConfigurator.class);
+    
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
@@ -43,19 +48,32 @@ public class MTOMConfigurator implements ServerConfigurator {
     	AxisService service = endpointDescription.getAxisService();
     	
     	//Disable MTOM
-    	Parameter enableMTOM = new Parameter("enableMTOM", Boolean.FALSE);
-
-//      TODO NLS enable.
+    	Parameter enableMTOM = new Parameter(Constants.Configuration.ENABLE_MTOM, Boolean.FALSE);
+    	Parameter threshold = new Parameter(Constants.Configuration.MTOM_THRESHOLD, 0);
+        
+    	//TODO NLS enable.
         if (mtomAnnoation == null)
             throw ExceptionFactory.makeWebServiceException("The MTOM annotation was unspecified.");
     	
         //Enable MTOM.
     	if (mtomAnnoation.enabled()) {
-        	enableMTOM.setValue(Boolean.TRUE);
+            if (log.isDebugEnabled()) {
+                log.debug("Enabling MTOM via annotation.");
+            }
+    	    enableMTOM.setValue(Boolean.TRUE);
     	}
+        
+        //Set the threshold value.
+        if (mtomAnnoation.threshold() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting MTOM threshold to [" + mtomAnnoation.threshold() + "].");
+            }
+            threshold.setValue(mtomAnnoation.threshold());
+        }
     	
     	try {
-    		service.addParameter(enableMTOM);
+    	    service.addParameter(enableMTOM);
+            service.addParameter(threshold);
     	}
     	catch (Exception e) {
             //TODO NLS enable.

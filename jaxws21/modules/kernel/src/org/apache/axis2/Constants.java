@@ -265,6 +265,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         //Attachment configurations
         public static final String ENABLE_MTOM = "enableMTOM";
+        public static final String MTOM_THRESHOLD = "mtomThreshold";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
