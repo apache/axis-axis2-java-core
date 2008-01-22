@@ -102,6 +102,7 @@ public class CodeGenerationUtility {
                 //here we have to set a proper system ID. otherwise when processing the
                 // included schaemas for this schema we have a problem
                 // it creates the system ID using this target namespace value
+                
                 inputSource.setSystemId(baseURI + "xsd" + i + ".xsd");
                 inputSource.setPublicId(schema.getTargetNamespace());
                 schemaToInputSourceMap.put(schema,inputSource);
@@ -118,8 +119,15 @@ public class CodeGenerationUtility {
                     for (Iterator iter = schemaToInputSourceMap.keySet().iterator();iter.hasNext();) {
                         key = (XmlSchema) iter.next();
                         if (key.getTargetNamespace().equals(publicId)) {
-                            returnInputSource = (InputSource) schemaToInputSourceMap.get(key);
-                            // we have the requried schema
+
+                            // when returning the input stream we have to always return a new
+                            // input stream.
+                            // sinc jaxbri internally consumes the input stream it gives an
+                            // exception.
+                            returnInputSource = new InputSource(new StringReader(getSchemaAsString(key)));
+                            InputSource existingInputSource = (InputSource) schemaToInputSourceMap.get(key);
+                            returnInputSource.setSystemId(existingInputSource.getSystemId());
+                            returnInputSource.setSystemId(existingInputSource.getPublicId());
                             break;
                         }
                     }
