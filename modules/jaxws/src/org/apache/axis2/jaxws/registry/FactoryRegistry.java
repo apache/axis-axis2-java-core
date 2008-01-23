@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.registry;
 
+import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
+import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
@@ -94,6 +96,7 @@ public class FactoryRegistry {
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
+        table.put(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());
         
         // register the implementation responsible for both WebServiceContext 
         // injection and the updating of the WebServiceContext instances that

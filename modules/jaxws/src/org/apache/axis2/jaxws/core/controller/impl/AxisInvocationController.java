@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.core.controller;
+package org.apache.axis2.jaxws.core.controller.impl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -72,7 +73,7 @@ import java.util.concurrent.Future;
  * For more information on how to invoke this class, please see the InvocationController interface
  * comments.
  */
-public class AxisInvocationController extends InvocationController {
+public class AxisInvocationController extends InvocationControllerImpl {
 
     private static Log log = LogFactory.getLog(AxisInvocationController.class);
 
