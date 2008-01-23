@@ -47,6 +47,9 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 
 public class OutInAxisOperation extends TwoChannelAxisOperation {
+
+	private static final Log log = LogFactory.getLog(OutInAxisOperation.class);
+
     public OutInAxisOperation() {
         super();
         //setup a temporary name
@@ -189,10 +192,12 @@ class OutInAxisOperationClient extends OperationClient {
         if (!mc.getOptions().isUseSeparateListener()) {
             Boolean useAsyncOption =
                     (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: useAsyncOption " + useAsyncOption);
             if (useAsyncOption != null) {
                 useAsync = useAsyncOption.booleanValue();
             }
         }
+
         EndpointReference replyTo = mc.getReplyTo();
         if (replyTo !=null && replyTo.hasNoneAddress()) {
             throw new AxisFault( replyTo.getAddress() + "" +
@@ -244,20 +249,24 @@ class OutInAxisOperationClient extends OperationClient {
                 }
                 callbackReceiver = new CallbackReceiver();
                 axisOp.setMessageReceiver(callbackReceiver);
+				if (log.isDebugEnabled()) log.debug("OutInAxisOperation: callbackReceiver " + callbackReceiver + " : " + axisOp);
             }
         }
 
         SyncCallBack internalCallback = null;
         if (callback != null) {
             callbackReceiver.addCallback(mc.getMessageID(), callback);
+			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating callback");
         } else if (axisCallback != null) {
-            callbackReceiver.addCallback(mc.getMessageID(), axisCallback);            
+            callbackReceiver.addCallback(mc.getMessageID(), axisCallback);  
+			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating axis callback");			
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Creating internal callback");
             }
             internalCallback = new SyncCallBack();
             callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
+			if (log.isDebugEnabled()) log.debug("OutInAxisOperationClient: Creating internal callback");
         }
 
         /**

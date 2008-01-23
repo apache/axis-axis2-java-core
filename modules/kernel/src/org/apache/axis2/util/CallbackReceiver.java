@@ -30,6 +30,8 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
@@ -39,6 +41,9 @@ import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
  * the related messages and makes a call to the appropriate callback.
  */
 public class CallbackReceiver implements MessageReceiver {
+
+	private static final Log log = LogFactory.getLog(CallbackReceiver.class);
+	
     public static String SERVICE_NAME = "ClientService";
     private ConcurrentHashMap callbackStore;
 
@@ -48,14 +53,18 @@ public class CallbackReceiver implements MessageReceiver {
 
     public void addCallback(String MsgID, Callback callback) {
         callbackStore.put(MsgID, callback);
+		if (log.isDebugEnabled()) log.debug("CallbackReceiver: add callback " + MsgID + ", " + callback + " ," + this);
     }
 
     public void addCallback(String msgID, AxisCallback callback) {
         callbackStore.put(msgID, callback);
+		if (log.isDebugEnabled()) log.debug("CallbackReceiver: add callback " + msgID + ", " + callback + " ," + this);
     }
 
     public Object lookupCallback(String msgID) {
-        return callbackStore.remove(msgID);
+		Object o = callbackStore.remove(msgID);
+		if (log.isDebugEnabled()) log.debug("CallbackReceiver: lookup callback " + msgID + ", " + o + " ," + this);
+        return o;
     }
 
     public void receive(MessageContext msgContext) throws AxisFault {
@@ -66,7 +75,7 @@ public class CallbackReceiver implements MessageReceiver {
         String messageID = relatesTO.getValue();
 
         Object callbackObj = callbackStore.remove(messageID);
-
+		if (log.isDebugEnabled()) log.debug("CallbackReceiver: receive found callback " + callbackObj + ", " + messageID + ", " + this + ", " + msgContext.getAxisOperation());
 
         if (callbackObj == null) {
             throw new AxisFault("The Callback for MessageID " + messageID + " was not found");
