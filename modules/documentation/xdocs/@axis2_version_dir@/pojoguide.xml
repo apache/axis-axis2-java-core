@@ -619,7 +619,7 @@ public class TestService {
         Add one additional like to the axis2.xml to deploy jar files on the pojo directory
     </p>
     <pre>
-        Ex: <deployer extension=".jar" directory="pojo" class="org.apache.axis2.deployment.POJODeployer"/>
+        Ex: &lt;deployer extension=".jar" directory="pojo" class="org.apache.axis2.deployment.POJODeployer"/&gt;
     </pre>
 <p>Create and pojo directory if its not alreay there under the Axis2 repository and put the JSR 181 Annotated
 jar insie that and start Axis2. You will see the service up and running !!</p>
