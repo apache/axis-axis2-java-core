@@ -76,7 +76,7 @@
                         </property>
                         <property>
                             <name>run.clustering.tests</name>
-                            <value>true</value>
+                            <value>${run.clustering.tests}</value>
                         </property>
                     </systemProperties>
                     <excludes>
