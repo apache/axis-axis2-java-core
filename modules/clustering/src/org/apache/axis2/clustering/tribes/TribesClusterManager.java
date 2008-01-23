@@ -276,6 +276,7 @@ public class TribesClusterManager implements ClusterManager {
                             membershipManager.getLongestLivingMember() : // First try to get from the longest member alive
                             membershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getHost(member);
+            log.info("Trying to send to : [" + member.getName() + "][" + memberHost + "]");
             try {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses = rpcChannel.send(new Member[]{member},

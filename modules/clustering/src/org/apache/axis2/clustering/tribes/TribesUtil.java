@@ -49,7 +49,10 @@ public class TribesUtil {
         if (hostBytes != null) {
             for (int i = 0; i < hostBytes.length; i++) {
                 int hostByte = hostBytes[i] >= 0 ? (int) hostBytes[i] : (int) hostBytes[i] + 256;
-                host.append(hostByte).append(".");
+                host.append(hostByte);
+                if(i < hostBytes.length-1) {
+                    host.append(".");
+                }
             }
         }
         return host.append(":").append(member.getPort()).toString();
