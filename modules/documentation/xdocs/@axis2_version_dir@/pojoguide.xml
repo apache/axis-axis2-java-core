@@ -69,6 +69,11 @@ application context: SpringInit</a></li>
 RPCServiceClient</a></li>
 </ul>
 </li>
+<li><a href="#jsr181pojows">JSR 181 Annotation support with POJO Web services</a>
+<ul>
+<li><a href="#jsr181definingservice">Sample JSR 181 POJO Web Service</a></li>
+</ul>
+</li>
 <li><a href="#summary">Summary</a></li>
 <li><a href="#furtherstudy">For Further Study</a></li>
 </ul>
@@ -590,6 +595,35 @@ asses
 </pre>
 <p>Which are exactly the values you set in the
 applicationContext.xml file!</p>
+
+<a name="jsr181pojows" id="jsr181pojows"></a>
+<h2>SR 181 Annotation support with POJO Web services</h2>
+<p>Got the JSR 181 annotated POJOs? Great. This section will show you how to package
+them in to a jar format for easy pojo deployment with the help of Axis2 POJO deployer.
+First create the JSR 181 Annotated class.</p>
+<a name="jsr181definingservice" id="jsr181definingservice"></a>
+<h3>Sample JSR 181 POJO Web Service</h3>
+<p>For example lets assume that our JSR 181 Annotated class is.
+</p>
+<pre>
+@WebService(name="JSR181TestService" targetNamespace="http://www.test.org/jsr181/Example")
+@SOAPBinding(style=SOAPBinding.Style.RPC)
+public class TestService {
+    @WebMethod(operationName = "echoMethod")
+    public String echoString(@WebParam(name="stringIn")String s){
+        return s;
+    }
+}
+</pre>
+    <p>Compile this with the help of the Axis2 libs in to a jar file.
+        Add one additional like to the axis2.xml to deploy jar files on the pojo directory
+    </p>
+    <pre>
+        Ex: <deployer extension=".jar" directory="pojo" class="org.apache.axis2.deployment.POJODeployer"/>
+    </pre>
+<p>Create and pojo directory if its not alreay there under the Axis2 repository and put the JSR 181 Annotated
+jar insie that and start Axis2. You will see the service up and running !!</p>
+
 <a name="summary" id="summary"></a>
 <h2>Summary</h2>
 <p>Apache Axis2 is an excellent way to expose your POJOs as Web
