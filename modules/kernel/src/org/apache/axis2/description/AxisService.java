@@ -2043,7 +2043,7 @@ public class AxisService extends AxisDescription {
         if (!namespaceMap.values().contains(targetNameSpace)){
             // i.e this target namespace not exists in the namesapce map
             // find a non exists prefix to add this target namesapce
-            while (namespaceMap.keySet().contains(prefix)){
+            while ((prefix == null) || namespaceMap.keySet().contains(prefix)){
                 prefix = "ns" + nsCount++;
             }
             namespaceMap.put(prefix,targetNameSpace);
