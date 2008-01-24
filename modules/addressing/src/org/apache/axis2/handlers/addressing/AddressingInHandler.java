@@ -35,6 +35,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
@@ -54,6 +55,8 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
     private boolean disableRefparamExtract = false;
+    private AxisConfiguration configuration = null;
+    private RolePlayer rolePlayer = null;
     
     public void init(HandlerDescription handlerdesc){
     	super.init(handlerdesc);
@@ -68,15 +71,18 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
-        RolePlayer rolePlayer = (RolePlayer) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
-
         // if there are not headers put a flag to disable addressing temporary
         if (header == null) {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             return InvocationResponse.CONTINUE;
         }
 
+        if(configuration == null){
+        	AxisConfiguration conf = msgContext.getConfigurationContext().getAxisConfiguration();
+        	rolePlayer = (RolePlayer)conf.getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
+        	configuration = conf;
+        }
+        
         // check whether someone has explicitly set which addressing namespace to expect.
         Iterator iterator = null;
         String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
