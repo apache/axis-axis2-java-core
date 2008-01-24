@@ -33,6 +33,7 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -52,16 +53,20 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
-    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        // check whether to process reference parameters.
-        Parameter param = msgContext.getParameter(DISABLE_REF_PARAMETER_EXTRACT);
+    private boolean disableRefparamExtract = false;
+    
+    public void init(HandlerDescription handlerdesc){
+    	super.init(handlerdesc);
+    	// check whether to process reference parameters.
+        Parameter param = handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT);
         String value = Utils.getParameterValue(param);
-        boolean disableRefparamExtract = JavaUtils.isTrueExplicitly(value);
-
+        disableRefparamExtract = JavaUtils.isTrueExplicitly(value);
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug("disableRefparamExtract=" + disableRefparamExtract);
         }
-
+    }
+    
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         RolePlayer rolePlayer = (RolePlayer) msgContext.getConfigurationContext()
                 .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
