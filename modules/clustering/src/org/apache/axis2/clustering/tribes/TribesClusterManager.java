@@ -48,11 +48,11 @@ import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
-import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
+import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
-import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -224,7 +224,7 @@ public class TribesClusterManager implements ClusterManager {
 
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
-        RpcChannel rpcChannel =
+        rpcChannel =
                 new RpcChannel(domain, channel,
                                new InitializationRequestHandler(controlCmdProcessor));
 
@@ -276,7 +276,7 @@ public class TribesClusterManager implements ClusterManager {
                             membershipManager.getLongestLivingMember() : // First try to get from the longest member alive
                             membershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getHost(member);
-            log.info("Trying to send to : [" + member.getName() + "][" + memberHost + "]");
+            log.info("Trying to send intialization request to " + memberHost);
             try {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses = rpcChannel.send(new Member[]{member},

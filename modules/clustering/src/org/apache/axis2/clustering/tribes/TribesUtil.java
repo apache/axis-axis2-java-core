@@ -50,7 +50,7 @@ public class TribesUtil {
             for (int i = 0; i < hostBytes.length; i++) {
                 int hostByte = hostBytes[i] >= 0 ? (int) hostBytes[i] : (int) hostBytes[i] + 256;
                 host.append(hostByte);
-                if(i < hostBytes.length-1) {
+                if (i < hostBytes.length - 1) {
                     host.append(".");
                 }
             }
