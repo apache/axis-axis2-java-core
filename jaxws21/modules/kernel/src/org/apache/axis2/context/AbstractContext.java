@@ -231,6 +231,9 @@ public abstract class AbstractContext {
      * @param key
      */
     public synchronized void removeProperty(String key) {
+        if(properties == null){
+            return;
+        }
         Object value = properties.get(key);
         if (value != null) {
             if (properties != null) {

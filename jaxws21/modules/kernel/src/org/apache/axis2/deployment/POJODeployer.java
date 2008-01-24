@@ -212,10 +212,10 @@ public class POJODeployer implements Deployer {
                 }
             }
         } catch (Exception e) {
-             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAUTY_SERVICE,e.getMessage()),e);
+             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,e.getMessage()),e);
             storeFaultyService(deploymentFileData, e);
         } catch (Throwable t) {
-            log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAUTY_SERVICE,t.getMessage()),t);
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,t.getMessage()),t);
             storeFaultyService(deploymentFileData, t);
         } finally {
             if (threadClassLoader != null) {

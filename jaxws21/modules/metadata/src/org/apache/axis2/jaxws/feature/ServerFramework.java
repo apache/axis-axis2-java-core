@@ -41,7 +41,6 @@ public class ServerFramework {
     }
     
     public void addConfigurator(String id, ServerConfigurator configurator) {
-    	System.out.println("[" + id + "], " + configurator.toString());
         configuratorMap.put(id, configurator);
     }
     
@@ -55,8 +54,6 @@ public class ServerFramework {
         String id = null;
         if (wsfAnnotation != null)
         	id = wsfAnnotation.id();
-        
-        System.out.println("[" + id + "]");
         
         return configuratorMap.containsKey(id);
     }

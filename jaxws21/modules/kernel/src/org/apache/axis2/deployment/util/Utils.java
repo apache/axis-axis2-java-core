@@ -411,7 +411,11 @@ public class Utils {
         JAnnotation methodAnnon = method.getAnnotation(AnnotationConstants.WEB_METHOD);
         if (methodAnnon != null) {
             if (methodAnnon.getValue(AnnotationConstants.OPERATION_NAME) !=null) {
-                return methodAnnon.getValue(AnnotationConstants.OPERATION_NAME).asString();
+                String methodName = methodAnnon.getValue(AnnotationConstants.OPERATION_NAME).asString();
+                if(methodName.equals("")){
+                    methodName = method.getSimpleName();
+                }
+                return methodName;
             }
         }
         return method.getSimpleName();

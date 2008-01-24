@@ -23,6 +23,8 @@ import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
+import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
@@ -100,6 +102,7 @@ public class FactoryRegistry {
         table.put(Axis2EndpointReferenceFactory.class, new Axis2EndpointReferenceFactoryImpl());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
+        table.put(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());
         
         // register the implementation responsible for both WebServiceContext 
         // injection and the updating of the WebServiceContext instances that

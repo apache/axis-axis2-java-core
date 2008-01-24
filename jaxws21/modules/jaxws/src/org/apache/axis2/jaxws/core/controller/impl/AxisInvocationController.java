@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.core.controller;
+package org.apache.axis2.jaxws.core.controller.impl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -72,7 +73,7 @@ import java.util.concurrent.Future;
  * For more information on how to invoke this class, please see the InvocationController interface
  * comments.
  */
-public class AxisInvocationController extends InvocationController {
+public class AxisInvocationController extends InvocationControllerImpl {
 
     private static Log log = LogFactory.getLog(AxisInvocationController.class);
 
@@ -379,22 +380,19 @@ public class AxisInvocationController extends InvocationController {
     protected void prepareResponse(MessageContext responseMsgCtx) {
 
     }
-    
+
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
         org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
         setupProperties(requestMsgCtx);//, axisRequest.getOptions());
 
+        Options options = opClient.getOptions();
         if (opClient != null) {
-            Options options = opClient.getOptions();
-            
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            if (options.getTo() == null) {
-                String targetUrl = (String)requestMsgCtx.getProperty(
-                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-                EndpointReference toEPR = new EndpointReference(targetUrl);
-                options.setTo(toEPR);
-            }
+            String targetUrl = (String)requestMsgCtx.getProperty(
+                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            EndpointReference toEPR = new EndpointReference(targetUrl);
+            options.setTo(toEPR);
 
             // Get the SOAP Action (if needed)
             String soapAction = ClientUtils.findSOAPAction(requestMsgCtx);

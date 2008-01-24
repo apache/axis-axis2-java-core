@@ -807,7 +807,11 @@ class ServiceDescriptionImpl
         // Look for the WSDL file as follows:
         // 1) As a resource on the classpath
 
-        URL url = composite.getClassLoader().getResource(wsdlLocation);
+        ClassLoader loader = composite.getClassLoader();
+        URL url = null;
+        if (loader != null) {
+            url = loader.getResource(wsdlLocation);
+        }
 
         // 2) As a fully specified URL
         if (url == null) {

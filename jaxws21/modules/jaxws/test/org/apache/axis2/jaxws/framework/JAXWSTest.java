@@ -178,7 +178,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BasicAuthSecurityTests.class);
 
         suite.addTestSuite(AddressBookTests.class);
-        suite.addTestSuite(MtomSampleTests.class);
+        //suite.addTestSuite(MtomSampleTests.class);
         
         // This test fails only on Solaris
         //suite.addTestSuite(MtomSampleByteArrayTests.class);

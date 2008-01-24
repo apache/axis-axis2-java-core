@@ -55,12 +55,6 @@ public class Constants {
     // JAXBUtils class will use the same ClassLoader to retrieve a JAXBContext as the
     // one that was used to create the request
     public static final String CACHE_CLASSLOADER = "CACHE_CLASSLOADER";
-
-    // Value = Colletion
-    // Usage: A list of WebServiceFeatureConfigurators that are called to configure the client or
-    //   server as appropriate.
-    public static final String WEB_SERVICE_FEATURE_CONFIGURATOR_LIST_ID =
-        "org.apache.axis2.jaxws.spi.WebServiceFeatureConfigurators";
     
     /** Intentionally Private */
     private Constants() {
