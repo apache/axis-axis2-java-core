@@ -18,12 +18,7 @@
  */
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
-
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -95,22 +90,21 @@ import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Vector;
+
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
@@ -1818,7 +1812,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         List partsList = null;
         ExtensibilityElement extElement;
         for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
+            
+            
             extElement = (ExtensibilityElement) iter.next();
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Extensibility Element type is:" + extElement.getElementType());
+                log.debug("Extensibility Element class is:" + extElement.getClass().getCanonicalName());
+            }
             // SOAP 1.1 body element found!
             if (extElement instanceof SOAPBody) {
                 SOAPBody soapBody = (SOAPBody) extElement;
@@ -1851,7 +1852,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
                 }
-            }
+            } 
         }
         if (partsList == null) {
             log.debug("SOAP body parts have not been set. All the parts in the message were added to the message.");

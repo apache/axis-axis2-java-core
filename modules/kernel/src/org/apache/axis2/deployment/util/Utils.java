@@ -182,7 +182,7 @@ public class Utils {
             f = File.createTempFile("axis2", suffix, tmpDir);
         }
         if (log.isDebugEnabled()) {
-            log.info("Created temporary file : " + f.getAbsolutePath());
+            log.debug("Created temporary file : " + f.getAbsolutePath());
         }
         f.deleteOnExit();
         FileOutputStream out = new FileOutputStream(f);

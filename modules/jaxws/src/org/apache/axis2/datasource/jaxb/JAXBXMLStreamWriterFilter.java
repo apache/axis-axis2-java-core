@@ -70,8 +70,10 @@ class JAXBXMLStreamWriterFilter implements XMLStreamWriter {
             if (numDefaultNS > 1) {
                 // Sometimes JAXB writes out the default namespace twice
                 // This seems to be related to writing out xmlns...see below
-                log.info("    WHY IS THE DEFAULT NAMESPACE WRITTEN TWICE?");
-                log.info(JavaUtils.stackToString());
+                if (log.isDebugEnabled()) {
+                    log.debug("    WHY IS THE DEFAULT NAMESPACE WRITTEN TWICE?");
+                    log.debug(JavaUtils.stackToString());
+                }
                 return;
             }
         }
@@ -172,8 +174,10 @@ class JAXBXMLStreamWriterFilter implements XMLStreamWriter {
             }
             if ("xmlns".equals(prefix)) {
                 // Sometimes JAXB writes out the XMLNS attribute...need to find out why
-                log.info("    INVALID XMLNS attribute is removed prefix=");
-                log.info(JavaUtils.stackToString());
+                if (log.isDebugEnabled()) {
+                    log.debug("    INVALID XMLNS attribute is removed prefix=");
+                    log.debug(JavaUtils.stackToString());
+                }
 
                 return;
             }

@@ -203,7 +203,7 @@ public class CallbackFuture extends Callback {
                 
             } else {
                 if (log.isDebugEnabled()) {
-                    log.info(
+                    log.debug(
                             "Executor task was not sumbitted as Async Future task was cancelled by clients");
                 }
             }

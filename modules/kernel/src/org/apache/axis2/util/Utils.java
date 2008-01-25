@@ -218,7 +218,9 @@ public class Utils {
                 }
             }
         } else {
-            log.info("Unable to parse request URL [" + path + "][" + servicePath + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to parse request URL [" + path + "][" + servicePath + "]");
+            }
         }
 
         return values;
