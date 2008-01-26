@@ -1818,7 +1818,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             
             if (log.isDebugEnabled()) {
                 log.debug("Extensibility Element type is:" + extElement.getElementType());
-                log.debug("Extensibility Element class is:" + extElement.getClass().getCanonicalName());
+                log.debug("Extensibility Element class is:" + extElement.getClass().getName());
             }
             // SOAP 1.1 body element found!
             if (extElement instanceof SOAPBody) {
