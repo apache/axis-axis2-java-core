@@ -18,45 +18,10 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.http.HTTPBinding;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap12.SOAP12Address;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.RespectBindingFeature;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.MTOM;
-import javax.xml.ws.soap.MTOMFeature;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -90,6 +55,38 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jws.HandlerChain;
+import javax.jws.WebService;
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPBinding;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.RespectBindingFeature;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
+import javax.xml.ws.soap.SOAPBinding;
+
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 /** @see ../EndpointDescription */
 /*

@@ -4,6 +4,7 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.core.controller.impl.AxisInvocationController;
+import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.namespace.QName;
@@ -43,6 +44,9 @@ public class InvocationControllerTest extends TestCase {
         Dispatch d = svc.createDispatch(portQname, Source.class, Service.Mode.PAYLOAD);
         
         BaseDispatch bd = (BaseDispatch) d;
+        
+        // Set it back to the default so we don't break other tests.
+        FactoryRegistry.setFactory(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());
         
         assertTrue("An InvocationController instance was not created", bd.ic != null);
         assertTrue("The default InvocationController type was incorrect.", 
