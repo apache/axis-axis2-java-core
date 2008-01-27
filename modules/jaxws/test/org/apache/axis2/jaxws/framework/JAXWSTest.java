@@ -23,6 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtilsTests;
+import org.apache.axis2.jaxws.addressing.util.ReferenceParameterListTests;
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.ClientConfigTests;
@@ -135,6 +137,10 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
         
+        // ------ Addressing Tests ------
+        //suite.addTestSuite(EndpointReferenceUtilsTests.class);
+        suite.addTestSuite(ReferenceParameterListTests.class);
+        
         // ------ Metadata Tests ------
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
@@ -172,7 +178,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BasicAuthSecurityTests.class);
 
         suite.addTestSuite(AddressBookTests.class);
-        suite.addTestSuite(MtomSampleTests.class);
+        //suite.addTestSuite(MtomSampleTests.class);
         
         // This test fails only on Solaris
         //suite.addTestSuite(MtomSampleByteArrayTests.class);

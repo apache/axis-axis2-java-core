@@ -25,6 +25,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
@@ -49,6 +51,7 @@ import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
@@ -399,6 +402,21 @@ public class EndpointController {
             ServiceDescription sd =
                     DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
             EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
+            
+            // TODO: This is only temporary until the deprecated method is no longer used
+            QName service = ed.getServiceQName();
+            QName endpoint = ed.getPortQName();
+            axisSvc = ed.getAxisService();
+            
+            try {
+                Axis2EndpointReferenceFactoryImpl axis2EPRFactory =
+                	(Axis2EndpointReferenceFactoryImpl) FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
+                axis2EPRFactory.addAddress(service, endpoint, axisSvc.getEPRs()[0]);
+            }
+            catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+            
             return ed;
         }
     }

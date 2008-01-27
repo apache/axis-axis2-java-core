@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -28,9 +29,6 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
-import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
@@ -40,16 +38,26 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Source;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(JAXBDispatch.class);
     private JAXBContext jaxbContext;
 
-    public JAXBDispatch(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
-        super(svcDelegate, epDesc);
+    public JAXBDispatch(ServiceDelegate svcDelegate,
+                        EndpointDescription epDesc,
+                        WebServiceFeature... features) {
+        this(svcDelegate, epDesc, null, null, features);
+    }
+
+    public JAXBDispatch(ServiceDelegate svcDelegate,
+            EndpointDescription epDesc,
+            EndpointReference epr,
+            String addressingNamespace,
+            WebServiceFeature... features) {
+        super(svcDelegate, epDesc, epr, addressingNamespace, features);
     }
 
     public JAXBContext getJAXBContext() {

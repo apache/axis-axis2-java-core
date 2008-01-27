@@ -38,6 +38,7 @@ public interface MessageContext extends Map<String, Object> {
     public static final String WSDL_INTERFACE = "javax.xml.ws.wsdl.interface";
     public static final String WSDL_OPERATION = "javax.xml.ws.wsdl.operation";
     public static final String HTTP_RESPONSE_CODE = "javax.xml.ws.http.response.code";
+    public static final String REFERENCE_PARAMETERS = "javax.xml.ws.reference.parameters";
     public static final String HTTP_REQUEST_HEADERS = "javax.xml.ws.http.request.headers";
     public static final String HTTP_RESPONSE_HEADERS = "javax.xml.ws.http.response.headers";
     public static final String HTTP_REQUEST_METHOD = "javax.xml.ws.http.request.method";

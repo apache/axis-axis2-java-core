@@ -18,7 +18,9 @@
  */
 package org.apache.axis2.jaxws.context.utils;
 
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.jaxws.addressing.util.ReferenceParameterList;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -29,6 +31,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +42,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
+import java.util.List;
 
 
 public class ContextUtils {
@@ -73,7 +76,7 @@ public class ContextUtils {
                     }
                     catch (URISyntaxException ex) {
                         log.warn(Messages.getMessage("addPropertiesErr",
-                        		wsdlLocation.toString(),sd.getServiceQName().toString()), ex);
+                        		wsdlLocation.toString(),description.getServiceQName().toString()), ex);
                     }
                     soapMessageContext
                             .put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
@@ -82,15 +85,30 @@ public class ContextUtils {
                 }
     
                 soapMessageContext
-                        .put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
+                        .put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, description.getServiceQName());
                 soapMessageContext
                         .setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, Scope.APPLICATION);
                 if (log.isDebugEnabled()) {
-                    log.debug("WSDL_SERVICE :" + sd.getServiceQName());
+                    log.debug("WSDL_SERVICE :" + description.getServiceQName());
                 }
             }
         }
 
+        //Lazily provide a list of available reference parameters.
+        org.apache.axis2.context.MessageContext msgContext =
+            jaxwsMessageContext.getAxisMessageContext();
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
+        List<Element> list = new ReferenceParameterList(header);
+        
+        soapMessageContext
+        .put(javax.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, list);
+        soapMessageContext
+        .setScope(javax.xml.ws.handler.MessageContext.REFERENCE_PARAMETERS, Scope.APPLICATION);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Added reference parameter list.");
+        }
+        
         // If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
         soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT,

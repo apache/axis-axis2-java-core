@@ -136,11 +136,27 @@ public interface EndpointDescription {
     public abstract QName getServiceQName();
 
     public abstract Service.Mode getServiceMode();
-
+    
+    /**
+     * Signals whether or not MTOM has been turned on for the endpoint 
+     * based on the annotation configuration.
+     * 
+     * @return a boolean value 
+     */
+    public boolean isMTOMEnabled();
+    
+    /**
+     * If MTOM is enabled, returns the threshold value.
+     * 
+     * @return -1 if MTOM is not enabled, a positive integer value if 
+     * one was configured.
+     */
+    public int getMTOMThreshold();
+    
+    
     /**
      * Return the DescriptionBuilderComposite, if any, used to build this service description.
      * @return
      */
     public DescriptionBuilderComposite getDescriptionBuilderComposite();
-
 }

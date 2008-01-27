@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
-import javax.xml.ws.handler.HandlerResolver;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
@@ -40,9 +41,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.SOAPBinding;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -84,9 +86,21 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
     private Method method = null;
 
-    public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
-        super(delegate, epDesc);
+    public JAXWSProxyHandler(ServiceDelegate delegate,
+                             Class seiClazz,
+                             EndpointDescription epDesc,
+                             WebServiceFeature... features) {
+        this(delegate, seiClazz, epDesc, null, null, features);
+    }
 
+    public JAXWSProxyHandler(ServiceDelegate delegate,
+            Class seiClazz,
+            EndpointDescription epDesc,
+            EndpointReference epr,
+            String addressingNamespace,
+            WebServiceFeature... features) {
+        super(delegate, epDesc, epr, addressingNamespace, features);
+        
         this.seiClazz = seiClazz;
         this.serviceDesc = delegate.getServiceDescription();
     }
@@ -161,7 +175,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         request.setOperationDescription(operationDesc);
 
         // Enable MTOM on the Message if the property was set on the SOAPBinding.
-        Binding bnd = getBinding();
+        Binding bnd = (Binding) getBinding();
         if (bnd != null && bnd instanceof SOAPBinding) {
             if (((SOAPBinding)bnd).isMTOMEnabled()) {
                 Message requestMsg = request.getMessage();
@@ -185,10 +199,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
         requestIC.setRequestMessageContext(request);
         requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
-
-        // TODO: Change this to some form of factory so that we can change the IC to
-        // a more simple one for marshaller/unmarshaller testing.
-        InvocationController controller = new AxisInvocationController();
         
         // Migrate the properties from the client request context bag to
         // the request MessageContext.
@@ -196,6 +206,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
                 getRequestContext(), request);
 
+        // Perform the WebServiceFeature configuration requested by the user.
+        bnd.configure(request, this);
+
+        // TODO: Change this to some form of factory so that we can change the IC to
+        // a more simple one for marshaller/unmarshaller testing.
+        InvocationController controller = new AxisInvocationController();
+        
         // Check if the call is OneWay, Async or Sync
         if (operationDesc.isOneWay()) {
             if (log.isDebugEnabled()) {
@@ -287,7 +304,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
         return null;
     }
-
+    
     private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc) {
         ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
         listener.setHandler(this);
@@ -327,9 +344,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
         MessageContext request = new MessageContext();
         request.setMessage(message);
-
-        // TODO: What happens here might be affected by the property migration plugpoint.  
-        request.setProperties(getRequestContext());
 
         if (log.isDebugEnabled()) {
             log.debug("Request MessageContext created successfully.");

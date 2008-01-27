@@ -75,7 +75,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
         Iterator addressingHeaderBlocks = header.getHeadersToProcess(rolePlayer, addressingNamespace);
         inHandler.extractAddressingInformation(header, mc, addressingHeaderBlocks,
-                                               addressingNamespace, false);
+                                               addressingNamespace);
     }
 
     protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer) throws Exception{

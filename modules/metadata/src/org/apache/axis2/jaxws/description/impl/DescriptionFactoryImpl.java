@@ -22,6 +22,9 @@ package org.apache.axis2.jaxws.description.impl;
  * 
  */
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -326,6 +329,64 @@ public class DescriptionFactoryImpl {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
         return endpointDesc;
+    }
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     * Class, EndpointReference, String, DescriptionFactory.UpdateType)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType) {
+        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, null);
+    }
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     * Class, EndpointReference, String, DescriptionFactory.UpdateType, Object)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType,
+            Object sparseCompositeKey) {
+        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, sparseCompositeKey);
+    }
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     * Class, EndpointReference, String, DescriptionFactory.UpdateType, DescriptionBuilderComposite, Object)
+     */
+    public static EndpointDescription updateEndpoint(
+            ServiceDescription serviceDescription, Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType,
+            DescriptionBuilderComposite composite,
+            Object sparseCompositeKey) {
+        QName portQName = null;
+        
+        try {
+            ServiceName serviceName = EndpointReferenceHelper.getServiceNameMetadata(epr, addressingNamespace);
+            QName serviceQName = serviceDescription.getServiceQName();
+            
+            //The javadoc says that a WebServiceException should be thrown if the service name
+            //in the EPR metadata does not match the service name in the WSDL of the JAX-WS
+            //service instance.
+            if (!serviceQName.equals(serviceName.getName()))
+                throw ExceptionFactory.makeWebServiceException("The service name of the endpoint reference does not match the service name of the service client.");
+            
+            //TODO The javadoc seems to suggest, inconsistently, that the port name can be
+            //resolved by looking in the following places: 1) the EPR metadata, 2) the SEI, and
+            //3) the WSDL. At the moment only 1) is implemented. May need to revisit the others.
+            portQName = new QName(serviceQName.getNamespaceURI(), serviceName.getEndpointName());
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("An error occured updating the endpoint", e);
+        }
+        
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);
     }
 
     public static ClientConfigurationFactory getClientConfigurationFactory() {

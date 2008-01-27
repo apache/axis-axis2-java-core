@@ -70,8 +70,22 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        SOAPHeader header = msgContext.getEnvelope().getHeader();
+        //Determine if we want to ignore addressing headers. This parameter cannot be
+        //retrieved from the HandlerDescription because it's value can vary on a per
+        //service basis.
+        Parameter disableParam = msgContext.getParameter(DISABLE_ADDRESSING_HANDLERS);
+        String value = Utils.getParameterValue(disableParam);
+        if (JavaUtils.isTrueExplicitly(value)) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(
+                        "The handler has been disabled. No further processing will take place.");
+            }
+            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            return InvocationResponse.CONTINUE;         
+        }
+
         // if there are not headers put a flag to disable addressing temporary
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
         if (header == null) {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             return InvocationResponse.CONTINUE;
@@ -120,7 +134,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 log.debug(namespace +
                           " Headers present in the SOAP message. Starting to process ...");
             }
-            if (extractAddressingInformation(header, msgContext, iterator, namespace, disableRefparamExtract)) {
+            if (extractAddressingInformation(header, msgContext, iterator, namespace)) {
                 msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
             }
         }
@@ -141,12 +155,11 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
      * @param messageContext the active MessageContext
      * @param headers an Iterator over the addressing headers targeted to me
      * @param namespace the addressing namespace
-     * @param disableRefparamExtract whether to disable processing of reference parameters or not.
      * @return true if addressing information was found
      * @throws AxisFault if an error occurs
      */
     boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
-                                                   Iterator headers, String namespace, boolean disableRefparamExtract)
+                                                   Iterator headers, String namespace)
             throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
 
@@ -217,8 +230,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             extractToEPRInformation(toBlock,
                                     messageContextOptions,
                                     header,
-                                    namespace,
-                                    disableRefparamExtract);
+                                    namespace);
         }
         if (messageIDBlock != null && !ignoreHeaders[MESSAGEID_FLAG]) {
             extractMessageIDInformation(messageIDBlock, messageContext);
@@ -426,7 +438,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
     private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock,
                                          Options messageContextOptions, SOAPHeader header,
-                                         String namespace, boolean disableRefparamExtract) {
+                                         String namespace) {
 
         EndpointReference epr;
         //here the addressing epr overidde what ever already there in the message context

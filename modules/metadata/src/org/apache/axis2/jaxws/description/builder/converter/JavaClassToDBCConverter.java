@@ -18,12 +18,14 @@
  */
 package org.apache.axis2.jaxws.description.builder.converter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
@@ -33,6 +35,7 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
 import org.apache.axis2.jaxws.description.builder.BindingTypeAnnot;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -54,7 +57,15 @@ public class JavaClassToDBCConverter {
     private String seiClassName;
 
     private List<Class> classes;
-
+    
+    private static final Map<Class, Object> annotationProcessors;
+    
+    static {
+        annotationProcessors = new HashMap<Class, Object>();
+        
+        
+    }
+    
     public JavaClassToDBCConverter(Class serviceClass) {
         this.serviceClass = serviceClass;
         classes = new ArrayList<Class>();
@@ -185,6 +196,7 @@ public class JavaClassToDBCConverter {
         attachWebServiceProviderAnnotation(composite);
         attachWebServiceRefsAnnotation(composite);
         attachWebServiceRefAnnotation(composite);
+        attachWebServiceFeatureAnnotations(composite);
     }
 
     /**
@@ -347,6 +359,24 @@ public class JavaClassToDBCConverter {
     private void attachWebServiceRefAnnotation(DescriptionBuilderComposite composite) {
         ConverterUtils.attachWebServiceRefAnnotation(composite, serviceClass);
 
+    }
+    
+    /**
+     * Finds the list of WebServiceFeatureAnnotation instances, and set them on the composite.
+     * 
+     * @param composite
+     */
+    private void attachWebServiceFeatureAnnotations(DescriptionBuilderComposite composite) {
+        List<Annotation> features = ConverterUtils.getAnnotations(
+            WebServiceFeatureAnnotation.class, serviceClass); 
+        
+        if (features.size() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("There were [" + features.size() + "] WebServiceFeature annotations found.");
+            }
+            
+            composite.setWebServiceFeatures(features);
+        }
     }
 
     private void establishClassHierarchy(Class rootClass) {

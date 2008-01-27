@@ -28,6 +28,8 @@ import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,91 +56,34 @@ public class EndpointReferenceHelper {
 
     /**
      * Populates an endpoint reference based on the <code>OMElement</code> and
-     * WS-Addressing namespace that is passed in. If the string passed in is not
-     * recognized as a valid WS-Addressing namespace then this method behaves as
-     * if http://www.w3.org/2005/08/addressing has been passed in.
+     * WS-Addressing namespace that is passed in.
      *
      * @param epr                 an endpoint reference instance to hold the info.
      * @param eprOMElement        an element of endpoint reference type
      * @param addressingNamespace the namespace of the WS-Addressing spec to comply with.
-     * @throws AxisFault if unable to locate an address element
+     * @throws AxisFault if unable to locate an address element, or if the specified namespace
+     * is different to the actual namespace.
      * @see #fromOM(OMElement)
      */
     public static void fromOM(EndpointReference epr, OMElement eprOMElement,
                               String addressingNamespace) throws AxisFault {
-        boolean isFinalAddressingNamespace = false;
-        Map map = null;
-
-        //First pass, identify the addressing namespace.
-        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-            OMElement address = eprOMElement.getFirstChildWithName(
-                    (QName) submissionQNames.get(AddressingConstants.EPR_ADDRESS));
-
-            if (address != null) {
-                map = submissionQNames;
-                isFinalAddressingNamespace = false;
-
-                if (log.isDebugEnabled()) {
-                    log.debug("fromOM: Found address element for namespace, " +
-                            AddressingConstants.Submission.WSA_NAMESPACE);
-                }
-            } else {
-                throw new AxisFault(
-                        "Unable to locate an address element for the endpoint reference type.");
-            }
-        } else {
-            OMElement address = eprOMElement.getFirstChildWithName(
-                    (QName) finalQNames.get(AddressingConstants.EPR_ADDRESS));
-
-            if (address != null) {
-                map = finalQNames;
-                isFinalAddressingNamespace = true;
-
-                if (log.isDebugEnabled()) {
-                    log.debug("fromOM: Found address element for namespace, " +
-                            AddressingConstants.Final.WSA_NAMESPACE);
-                }
-            } else {
-                throw new AxisFault(
-                        "Unable to locate an address element for the endpoint reference type.");
-            }
-        }
-
-        //Second pass, identify the properties.
-        fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
+        String namespace = fromOM(epr, eprOMElement);
+        
+        if (!namespace.equals(addressingNamespace))
+            throw new AxisFault("The endpoint reference does not match the specified namespace.");
     }
 
     /**
-     * Populates an endpoint reference based on the <code>String</code> that is
-     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
-     * is in effect then any reference properties will be saved as reference parameters.
-     * Regardless of the addressing namespace in effect, any elements present in the
-     * <code>String</code> that are not recognised are saved as extensibility elements.
-     *
-     * @param eprString string from the element of endpoint reference type
-     * @throws AxisFault if unable to locate an address element
-     */
-    public static EndpointReference fromOM(String eprString) throws AxisFault {
-        try {
-            return fromOM(new StAXOMBuilder(
-                    new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
-
-    /**
-     * Populates an endpoint reference based on the <code>OMElement</code> that is
-     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
-     * is in effect then any reference properties will be saved as reference parameters.
-     * Regardless of the addressing namespace in effect, any elements present in the
-     * <code>OMElement</code> that are not recognised are saved as extensibility elements.
-     *
+     * Populates an endpoint reference based on the <code>OMElement</code>. Returns the
+     * WS-Addressing namespace that the endpoint reference is in compliance with.
+     * 
+     * @param epr          an endpoint reference instance to hold the info.
      * @param eprOMElement an element of endpoint reference type
-     * @throws AxisFault if unable to locate an address element
+     * @return a string representing the namespace of the endpoint reference.
+     * @throws AxisFault if unable to locate an address element.
      */
-    public static EndpointReference fromOM(OMElement eprOMElement) throws AxisFault {
-        EndpointReference epr = new EndpointReference("");
+    public static String fromOM(EndpointReference epr, OMElement eprOMElement)
+    throws AxisFault {
         boolean isFinalAddressingNamespace = false;
         Map map = null;
 
@@ -174,6 +119,62 @@ public class EndpointReferenceHelper {
 
         //Second pass, identify the properties.
         fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
+
+        return ((QName) map.get(AddressingConstants.EPR_ADDRESS)).getNamespaceURI();
+    }
+
+    /**
+     * Populates an endpoint reference based on the <code>String</code> that is
+     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
+     * is in effect then any reference properties will be saved as reference parameters.
+     * Regardless of the addressing namespace in effect, any elements present in the
+     * <code>String</code> that are not recognised are saved as extensibility elements.
+     *
+     * @param eprString string from the element of endpoint reference type
+     * @throws AxisFault if unable to locate an address element
+     * @deprecated use {@link #fromString(String)} instead.
+     */
+    public static EndpointReference fromOM(String eprString) throws AxisFault {
+        try {
+            return fromOM(new StAXOMBuilder(
+                    new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
+
+    /**
+     * Populates an endpoint reference based on the <code>String</code> that is
+     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
+     * is in effect then any reference properties will be saved as reference parameters.
+     * Regardless of the addressing namespace in effect, any elements present in the
+     * <code>String</code> that are not recognised are saved as extensibility elements.
+     *
+     * @param eprString string from the element of endpoint reference type
+     * @throws AxisFault if unable to locate an address element
+     */
+    public static EndpointReference fromString(String eprString) throws AxisFault {
+        try {
+            return fromOM(new StAXOMBuilder(
+                    new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
+        } catch (XMLStreamException e) {
+            throw AxisFault.makeFault(e);
+        }
+    }
+
+    /**
+     * Populates an endpoint reference based on the <code>OMElement</code> that is
+     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
+     * is in effect then any reference properties will be saved as reference parameters.
+     * Regardless of the addressing namespace in effect, any elements present in the
+     * <code>OMElement</code> that are not recognised are saved as extensibility elements.
+     *
+     * @param eprOMElement an element of endpoint reference type
+     * @throws AxisFault if unable to locate an address element
+     */
+    public static EndpointReference fromOM(OMElement eprOMElement) throws AxisFault {
+        EndpointReference epr = new EndpointReference("");
+        fromOM(epr, eprOMElement);
 
         return epr;
     }
@@ -231,8 +232,8 @@ public class EndpointReferenceHelper {
             if (addressAttributes != null) {
                 Iterator attrIter = addressAttributes.iterator();
                 while (attrIter.hasNext()) {
-                    OMAttribute omAttributes = (OMAttribute) attrIter.next();
-                    addressE.addAttribute(omAttributes);
+                    OMAttribute omAttribute = (OMAttribute) attrIter.next();
+                    AttributeHelper.importOMAttribute(omAttribute, addressE);
                 }
             }
 
@@ -250,8 +251,8 @@ public class EndpointReferenceHelper {
                 if (metadataAttributes != null) {
                     Iterator attrIter = metadataAttributes.iterator();
                     while (attrIter.hasNext()) {
-                        OMAttribute omAttributes = (OMAttribute) attrIter.next();
-                        metadataE.addAttribute(omAttributes);
+                        OMAttribute omAttribute = (OMAttribute) attrIter.next();
+                        AttributeHelper.importOMAttribute(omAttribute, metadataE);
                     }
                 }
             }
@@ -355,7 +356,117 @@ public class EndpointReferenceHelper {
             log.debug("fromOM: Endpoint reference, " + epr);
         }
     }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static ServiceName getServiceNameMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
+        ServiceName serviceName = new ServiceName();
+        List elements = null;
+        
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace))
+            elements = epr.getExtensibleElements();
+        else
+            elements = epr.getMetaData();
+        
+        if (elements != null) {
+            //Retrieve the service name and endpoint name.
+            for (int i = 0, size = elements.size(); i < size; i++) {
+                OMElement omElement = (OMElement) elements.get(i);
+                if (ServiceName.isServiceNameElement(omElement)) {
+                    try {
+                        serviceName.fromOM(omElement);
+                        break;
+                    }
+                    catch (Exception e) {
+                        //TODO NLS enable.
+                        throw new AxisFault("Metadata conversion error.", e);
+                    }
+                }
+            }
+        }
+        
+        return serviceName;
+    }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static WSDLLocation getWSDLLocationMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
+        WSDLLocation wsdlLocation = new WSDLLocation();
+        List attributes = null;
 
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace))
+            attributes = epr.getAttributes();
+        else
+            attributes = epr.getMetadataAttributes();
+        
+        if (attributes != null) {
+            //Retrieve the wsdl location.
+            for (int i = 0, size = attributes.size(); i < size; i++) {
+                OMAttribute omAttribute = (OMAttribute) attributes.get(i);
+                if (WSDLLocation.isWSDLLocationAttribute(omAttribute)) {
+                    try {
+                        wsdlLocation.fromOM(omAttribute);
+                        break;
+                    }
+                    catch (Exception e) {
+                        //TODO NLS enable.
+                        throw new AxisFault("Metadata conversion error.", e);
+                    }
+                }
+            }
+        }
+        
+        return wsdlLocation;
+    }
+
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @param serviceName
+     * @throws AxisFault
+     */
+    public static void setServiceNameMetadata(EndpointReference epr, String addressingNamespace, ServiceName serviceName) throws AxisFault {
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+            OMElement omElement = serviceName.toOM(ServiceName.subQName);
+            epr.addExtensibleElement(omElement);
+        }
+        else {
+            OMElement omElement = serviceName.toOM(ServiceName.finalQName);
+            epr.addMetaData(omElement);
+        }
+    }
+    
+    /**
+     * 
+     * @param epr
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static void setWSDLLocationMetadata(EndpointReference epr, String addressingNamespace, WSDLLocation wsdlLocation) throws AxisFault {
+        OMAttribute attribute = wsdlLocation.toOM();
+
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+            epr.addAttribute(attribute);
+        }
+        else {
+            ArrayList list = new ArrayList();
+            list.add(attribute);
+            epr.setMetadataAttributes(list);
+        }
+    }
+    
     static {
         finalQNames.put(AddressingConstants.EPR_ADDRESS, new QName(
                 AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.EPR_ADDRESS));

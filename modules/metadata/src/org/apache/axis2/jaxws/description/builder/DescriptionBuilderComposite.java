@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -82,7 +83,9 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private List<WebServiceRefAnnot> webServiceRefAnnotList;
     private BindingTypeAnnot bindingTypeAnnot;
     private WebServiceContextAnnot webServiceContextAnnot;
-
+    
+    private List<Annotation> features;
+    
     // Class information
     private String className;
     private String[] classModifiers; //public, abstract, final, strictfp...
@@ -91,7 +94,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private boolean isInterface = false;
     private QName preferredPort;        // Port to use if no port QName given.  May be null
     private boolean isMTOMEnabled = false;
-
+    
     private List<MethodDescriptionComposite> methodDescriptions;
     private List<FieldDescriptionComposite> fieldDescriptions;
     
@@ -369,7 +372,15 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public WebServiceContextAnnot getWebServiceContextAnnot() {
         return (WebServiceContextAnnot) webServiceContextAnnot;
     }
-
+    
+    public List<Annotation> getWebServiceFeatures() {
+        return features;
+    }
+    
+    public void setWebServiceFeatures(List<Annotation> list) {
+        features = list;
+    }
+    
     /** @return Returns the wsdlDefinition */
     public Definition getWsdlDefinition() {
         if (wsdlDefinition != null) {

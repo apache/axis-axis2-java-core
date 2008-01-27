@@ -23,6 +23,8 @@ import java.util.List;
 
 public interface Binding {
 
+    public abstract String getBindingID();
+    
     public abstract List<Handler> getHandlerChain();
 
     public abstract void setHandlerChain(List<Handler> list);

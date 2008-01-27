@@ -21,8 +21,10 @@ package javax.xml.ws.spi;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
-import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
@@ -36,15 +38,29 @@ public abstract class ServiceDelegate {
 
     public abstract <T> T getPort(Class<T> class1);
 
+    public abstract <T> T getPort(QName portName, Class<T> serviceEndpointInterface, WebServiceFeature... features);
+    
+    public abstract <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features);
+    
+    public abstract <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features);
+    
     public abstract void addPort(QName qname, String bindingId, String s);
 
-    public abstract <T>Dispatch<T> createDispatch(QName qname, Class<T> class1, javax.xml.ws.Service.Mode mode);
+    public abstract <T>Dispatch<T> createDispatch(QName qname, Class<T> class1, Service.Mode mode);
 
-    public abstract Dispatch<java.lang.Object> createDispatch(QName qname, JAXBContext jaxbcontext, javax.xml.ws.Service.Mode mode);
+    public abstract Dispatch<Object> createDispatch(QName qname, JAXBContext jaxbcontext, javax.xml.ws.Service.Mode mode);
 
+    public abstract <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode, WebServiceFeature... features);
+    
+    public abstract <T> Dispatch<T> createDispatch(EndpointReference endpointReference, Class<T> type, Service.Mode mode, WebServiceFeature... features);
+    
+    public abstract Dispatch<Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode, WebServiceFeature... features);
+    
+    public abstract Dispatch<Object> createDispatch(EndpointReference endpointReference, JAXBContext context, Service.Mode mode, WebServiceFeature... features);
+    
     public abstract QName getServiceName();
 
-    public abstract Iterator<javax.xml.namespace.QName> getPorts();
+    public abstract Iterator<QName> getPorts();
 
     public abstract URL getWSDLDocumentLocation();
 

@@ -18,12 +18,21 @@
  */
 package org.apache.axis2.jaxws.context;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+
+import org.w3c.dom.Element;
+
+import java.net.URI;
 import java.security.Principal;
 
 public class WebServiceContextImpl implements WebServiceContext {
@@ -91,4 +100,37 @@ public class WebServiceContextImpl implements WebServiceContext {
         this.soapMessageContext = soapMessageContext;
     }
 
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        EndpointReference jaxwsEPR = null;
+        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
+        
+        if (soapMessageContext != null) {
+            QName service = (QName) soapMessageContext.get(MessageContext.WSDL_SERVICE);
+            QName endpoint = (QName) soapMessageContext.get(MessageContext.WSDL_PORT);
+            URI wsdlURI = (URI) soapMessageContext.get(MessageContext.WSDL_DESCRIPTION);
+            String wsdlLocation = (wsdlURI != null) ? wsdlURI.toString() : null;
+            
+            org.apache.axis2.addressing.EndpointReference axis2EPR =
+                EndpointReferenceUtils.createAxis2EndpointReference(null, service, endpoint, wsdlLocation, addressingNamespace);
+            
+            try {
+                EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
+                jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
+            }
+            catch (Exception e) {
+                //TODO NLS enable.
+                throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+            }
+        }
+        else {
+            //TODO NLS enable.
+            throw new IllegalStateException("Message context not available.");        	
+        }
+        
+        return clazz.cast(jaxwsEPR);
+    }
+
+    public EndpointReference getEndpointReference(Element... referenceParameters) {
+        return getEndpointReference(W3CEndpointReference.class, referenceParameters);
+    }
 }

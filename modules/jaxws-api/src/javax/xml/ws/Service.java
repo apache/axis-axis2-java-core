@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.spi.Provider;
 import javax.xml.ws.spi.ServiceDelegate;
-import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
@@ -44,6 +43,18 @@ public class Service {
         return (T) _delegate.getPort(serviceEndpointInterface);
     }
 
+    public <T> T getPort(QName portName, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        return (T) _delegate.getPort(portName, serviceEndpointInterface, features);
+    }
+    
+    public <T> T getPort(Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        return (T) _delegate.getPort(serviceEndpointInterface, features);
+    }
+    
+    public <T> T getPort(EndpointReference endpointReference, Class<T> serviceEndpointInterface, WebServiceFeature... features) {
+        return (T) _delegate.getPort(endpointReference, serviceEndpointInterface, features);
+    }
+    
     public void addPort(QName portName, String bindingId, String endpointAddress) {
         _delegate.addPort(portName, bindingId, endpointAddress);
     }
@@ -52,15 +63,31 @@ public class Service {
         return _delegate.createDispatch(portName, type, mode);
     }
 
-    public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
+    public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
         return _delegate.createDispatch(portName, context, mode);
     }
 
+    public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Service.Mode mode, WebServiceFeature... features) {
+        return _delegate.createDispatch(portName, type, mode, features);
+    }
+    
+    public <T> Dispatch<T> createDispatch(EndpointReference endpointReference, Class<T> type, Service.Mode mode, WebServiceFeature... features) {
+        return _delegate.createDispatch(endpointReference, type, mode, features);
+    }
+    
+    public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Service.Mode mode, WebServiceFeature... features) {
+        return _delegate.createDispatch(portName, context, mode, features);
+    }
+    
+    public Dispatch<Object> createDispatch(EndpointReference endpointReference, JAXBContext context, Service.Mode mode, WebServiceFeature... features) {
+        return _delegate.createDispatch(endpointReference, context, mode, features);
+    }
+    
     public QName getServiceName() {
         return _delegate.getServiceName();
     }
 
-    public Iterator<javax.xml.namespace.QName> getPorts() {
+    public Iterator<QName> getPorts() {
         return _delegate.getPorts();
     }
 

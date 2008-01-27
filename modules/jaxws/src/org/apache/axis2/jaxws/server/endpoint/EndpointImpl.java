@@ -22,20 +22,26 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.WorkerFactory;
+import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -203,5 +209,37 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        EndpointReference jaxwsEPR = null;
+        String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
+        String address = endpointDesc.getEndpointAddress();
+        QName serviceName = endpointDesc.getServiceQName();
+        QName portName = endpointDesc.getPortQName();
+        URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+        
+        if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
+            throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
+        
+        try {
+        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
+            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+        }
+
+        return clazz.cast(jaxwsEPR);
+    }
+
+    @Override
+    public EndpointReference getEndpointReference(Element... referenceParameters) {
+        return getEndpointReference(W3CEndpointReference.class, referenceParameters);
     }
 }

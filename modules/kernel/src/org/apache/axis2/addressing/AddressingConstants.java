@@ -16,8 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-
 package org.apache.axis2.addressing;
 
 import javax.xml.namespace.QName;
@@ -46,6 +44,7 @@ public interface AddressingConstants {
     static final String PARAM_SERVICE_GROUP_CONTEXT_ID =
             "ServiceGroupContextIdFromAddressing";
     static final String IS_ADDR_INFO_ALREADY_PROCESSED = "IsAddressingProcessed";
+    static final String DISABLE_ADDRESSING_HANDLERS = "disableAddressingHandlers";
     static final String ADDR_VALIDATE_ACTION = "addressing.validateAction";
 
     // ====================== WSDL Binding Constants ========================
@@ -135,9 +134,9 @@ public interface AddressingConstants {
         static final String WSA_NAMESPACE =
                 "http://www.w3.org/2005/08/addressing";
         static final String WSAW_NAMESPACE =
-                "http://www.w3.org/2006/05/addressing/wsdl";
+            "http://www.w3.org/2006/05/addressing/wsdl";
         static final String WSAM_NAMESPACE = 
-        		"http://www.w3.org/2007/05/addressing/metadata";
+        	"http://www.w3.org/2007/05/addressing/metadata";
         /**
          * @deprecated use {@link #WSA_DEFAULT_RELATIONSHIP_TYPE} instead.
          */
@@ -156,6 +155,7 @@ public interface AddressingConstants {
         static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
         static final String WSA_POLICIES = "Policies";
         static final String WSA_METADATA = "Metadata";
+        static final String WSA_DEFAULT_METADATA_PREFIX = "wsam";
 
         static final String WSA_INTERFACE_NAME = "InterfaceName";
 
@@ -215,6 +215,8 @@ public interface AddressingConstants {
         static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
         static final String WSA_FAULT_ACTION =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/fault";
+        static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "PortName";
+        static final String WSA_INTERFACE_NAME = "PortType";
 
         // fault information
         static final String FAULT_INVALID_HEADER = "InvalidMessageInformationHeader";

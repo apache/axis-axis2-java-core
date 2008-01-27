@@ -19,6 +19,10 @@
 
 package org.apache.axis2.jaxws.registry;
 
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
+import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
@@ -94,6 +98,8 @@ public class FactoryRegistry {
         table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactoryImpl());
         table.put(HandlerLifecycleManagerFactory.class, new HandlerLifecycleManagerFactory());
         table.put(ClassFinderFactory.class, new ClassFinderFactory());
+        table.put(JAXWSEndpointReferenceFactory.class, new JAXWSEndpointReferenceFactoryImpl());
+        table.put(Axis2EndpointReferenceFactory.class, new Axis2EndpointReferenceFactoryImpl());
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
         table.put(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());

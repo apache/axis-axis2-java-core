@@ -21,6 +21,10 @@ package javax.xml.ws;
 import java.util.Map;
 
 public interface BindingProvider {
+    
+    public abstract EndpointReference getEndpointReference();
+    
+    public abstract <T extends EndpointReference> T getEndpointReference(Class<T> clazz);
 
     public abstract Map<java.lang.String, java.lang.Object>      getRequestContext();
 

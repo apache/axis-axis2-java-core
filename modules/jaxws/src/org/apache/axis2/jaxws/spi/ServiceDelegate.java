@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.axis2.jaxws.spi;
 
+
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.BindingImpl;
-import org.apache.axis2.jaxws.binding.BindingUtils;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
 import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
@@ -48,11 +48,12 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.http.HTTPBinding;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -213,12 +214,13 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                         "serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
             }
         }
+        
+        //TODO: Is this the best place for this code?
+        ConfigurationContext context = serviceDescription.getAxisConfigContext();
 
         // Register the necessary ApplicationContextMigrators
-        ApplicationContextMigratorUtil
-                .addApplicationContextMigrator(serviceDescription.getAxisConfigContext(),
-                                               Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
-                                               new PropertyMigrator());
+        ApplicationContextMigratorUtil.addApplicationContextMigrator(context,
+                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, new PropertyMigrator());
     }
 
     //================================================
@@ -248,13 +250,123 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * (non-Javadoc)
     * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, java.lang.Class, javax.xml.ws.Service.Mode)
     */
-    public <T> Dispatch<T> createDispatch(QName qname, Class<T> clazz, Mode mode)
+    public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode)
             throws WebServiceException {
-        if (qname == null) {
+        return createDispatch(portName, type, mode, (WebServiceFeature[]) null);
+    }
+
+    /*
+    * (non-Javadoc)
+    * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, javax.xml.bind.JAXBContext, javax.xml.ws.Service.Mode)
+    */
+    public Dispatch<java.lang.Object> createDispatch(QName portName, JAXBContext context, Mode mode) {
+        return createDispatch(portName, context, mode, (WebServiceFeature[]) null);
+    }
+
+    @Override
+    public <T> Dispatch<T> createDispatch(EndpointReference jaxwsEPR, Class<T> type, Mode mode, WebServiceFeature... features) {
+        if (jaxwsEPR == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory
+                    .makeWebServiceException("The endpoint reference cannot be null.");
+        }
+        if (!isValidDispatchType(type)) {
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
+        }
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
+        try {
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+        }
+        
+        EndpointDescription endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
+                                                  addressingNamespace,
+                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH,
+                                                  this);
+        if (endpointDesc == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
+        }
+
+        XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, axis2EPR, addressingNamespace, features);
+
+        if (mode != null) {
+            dispatch.setMode(mode);
+        } else {
+            dispatch.setMode(Service.Mode.PAYLOAD);
+        }
+
+        if (serviceClient == null)
+            serviceClient = getServiceClient(endpointDesc.getPortQName());
+
+        dispatch.setServiceClient(serviceClient);
+        dispatch.setType(type);
+        return dispatch;
+    }
+
+    @Override
+    public Dispatch<Object> createDispatch(EndpointReference jaxwsEPR, JAXBContext context, Mode mode, WebServiceFeature... features) {
+        if (jaxwsEPR == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory
+                    .makeWebServiceException("The endpoint reference cannot be null.");
+        }
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
+        try {
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+        }
+        
+        EndpointDescription endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, null, axis2EPR,
+                                                  addressingNamespace,
+                                                  DescriptionFactory.UpdateType.CREATE_DISPATCH,
+                                                  this);
+        if (endpointDesc == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
+        }
+
+        JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, axis2EPR, addressingNamespace, features);
+
+        if (mode != null) {
+            dispatch.setMode(mode);
+        } else {
+            dispatch.setMode(Service.Mode.PAYLOAD);
+        }
+
+        if (serviceClient == null)
+            serviceClient = getServiceClient(endpointDesc.getPortQName());
+
+        dispatch.setJAXBContext(context);
+        dispatch.setServiceClient(serviceClient);
+
+        return dispatch;
+    }
+
+    @Override
+    public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode, WebServiceFeature... features) {
+        if (portName == null) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("createDispatchFail0"));
         }
-        if (!isValidDispatchType(clazz)) {
+        if (!isValidDispatchType(type)) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
         }
@@ -262,16 +374,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, 
                 								  null, 
-                								  qname,
+                                                  portName,
                                                   DescriptionFactory.UpdateType.CREATE_DISPATCH,
                                                   this);
+
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("createDispatchFail2", qname.toString()));
+                    Messages.getMessage("createDispatchFail2", portName.toString()));
         }
 
-        XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc);
-        
+        XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, features);
+
         if (mode != null) {
             dispatch.setMode(mode);
         } else {
@@ -279,19 +392,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         if (serviceClient == null)
-            serviceClient = getServiceClient(qname);
+            serviceClient = getServiceClient(portName);
 
         dispatch.setServiceClient(serviceClient);
-        dispatch.setType(clazz);
+        dispatch.setType(type);
         return dispatch;
     }
 
-    /*
-    * (non-Javadoc)
-    * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, javax.xml.bind.JAXBContext, javax.xml.ws.Service.Mode)
-    */
-    public Dispatch<java.lang.Object> createDispatch(QName qname, JAXBContext context, Mode mode) {
-        if (qname == null) {
+    @Override
+    public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Mode mode, WebServiceFeature... features) {
+        if (portName == null) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("createDispatchFail0"));
         }
@@ -299,16 +409,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, 
                 								  null, 
-                								  qname,
+                                                  portName,
                                                   DescriptionFactory.UpdateType.CREATE_DISPATCH,
                                                   this);
+
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(
-                    Messages.getMessage("createDispatchFail2", qname.toString()));
+                    Messages.getMessage("createDispatchFail2", portName.toString()));
         }
 
-        JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc);
-        dispatch.setBinding(addBinding(endpointDesc, endpointDesc.getClientBindingID()));
+        JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, features);
 
         if (mode != null) {
             dispatch.setMode(mode);
@@ -317,7 +427,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
 
         if (serviceClient == null)
-            serviceClient = getServiceClient(qname);
+            serviceClient = getServiceClient(portName);
 
         dispatch.setJAXBContext(context);
         dispatch.setServiceClient(serviceClient);
@@ -330,7 +440,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getPort(java.lang.Class)
      */
     public <T> T getPort(Class<T> sei) throws WebServiceException {
-        return getPort(null, sei);
+        return getPort((QName) null, sei, (WebServiceFeature[]) null);
     }
 
     /*
@@ -338,6 +448,55 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getPort(javax.xml.namespace.QName, java.lang.Class)
     */
     public <T> T getPort(QName portName, Class<T> sei) throws WebServiceException {
+        return getPort(portName, sei, (WebServiceFeature[]) null);
+    }
+
+    @Override
+    public <T> T getPort(Class<T> sei, WebServiceFeature... features) {
+        return getPort((QName) null, sei, features);
+    }
+
+    @Override
+    public <T> T getPort(EndpointReference jaxwsEPR, Class<T> sei, WebServiceFeature... features) {
+        /* TODO Check to see if WSDL Location is provided.
+         * if not check WebService annotation's WSDLLocation
+         * if both are not provided then throw exception.
+         * (JLB): I'm not sure lack of WSDL should cause an exception
+         */
+
+
+        if (!isValidWSDLLocation()) {
+            //TODO: Should I throw Exception if no WSDL
+            //throw ExceptionFactory.makeWebServiceException("WSLD Not found");
+        }
+        
+        if (jaxwsEPR == null) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("The endpoint reference cannot be null.");
+        }
+        
+        if (sei == null) {
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("getPortInvalidSEI", jaxwsEPR.toString(), "null"));
+        }
+        
+        org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReferenceUtils.createAxis2EndpointReference("");
+        String addressingNamespace = null;
+        
+        try {
+            addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
+        }
+        catch (Exception e) {
+            //TODO NLS enable.
+            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+        }
+        
+        return getPort(axis2EPR, addressingNamespace, sei, features);
+    }
+
+    @Override
+    public <T> T getPort(QName portName, Class<T> sei, WebServiceFeature... features) {
         /* TODO Check to see if WSDL Location is provided.
          * if not check WebService annotation's WSDLLocation
          * if both are not provided then throw exception.
@@ -395,7 +554,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             }
         }
         
-        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc);
+        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc, features);
         Object proxyClass = Proxy.newProxyInstance(classLoader, interfaces, proxyHandler);
         return sei.cast(proxyClass);
     }
@@ -485,6 +644,59 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     public ServiceClient getServiceClient(QName portQName) throws WebServiceException {
         return serviceDescription.getServiceClient(portQName, this);
     }
+    
+    public <T> T getPort(org.apache.axis2.addressing.EndpointReference axis2EPR, String addressingNamespace, Class<T> sei, WebServiceFeature... features) {
+        DescriptionBuilderComposite sparseComposite = getPortMetadata();
+        resetPortMetadata();
+        EndpointDescription endpointDesc = null;
+        
+        if (sparseComposite != null) {
+            endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, sei, axis2EPR,
+                                                  addressingNamespace,
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  sparseComposite, this);
+
+        }
+        else {
+            endpointDesc =
+                DescriptionFactory.updateEndpoint(serviceDescription, sei, axis2EPR,
+                                                  addressingNamespace,
+                                                  DescriptionFactory.UpdateType.GET_PORT,
+                                                  null, this);
+        }
+        
+        if (endpointDesc == null) {
+            // TODO: NLS
+            throw ExceptionFactory.makeWebServiceException(
+                    "Unable to getPort for epr " + axis2EPR);
+        }
+
+        String[] interfacesNames = 
+            new String [] {sei.getName(), org.apache.axis2.jaxws.spi.BindingProvider.class.getName()};
+        
+        // As required by java.lang.reflect.Proxy, ensure that the interfaces
+        // for the proxy are loadable by the same class loader. 
+        Class[] interfaces = null;
+        // First, let's try loading the interfaces with the SEI classLoader
+        ClassLoader classLoader = getClassLoader(sei);
+        try {
+            interfaces = loadClasses(classLoader, interfacesNames);
+        } catch (ClassNotFoundException e1) {
+            // Let's try with context classLoader now
+            classLoader = getContextClassLoader();
+            try {
+                interfaces = loadClasses(classLoader, interfacesNames);
+            } catch (ClassNotFoundException e2) {
+                // TODO: NLS
+                throw ExceptionFactory.makeWebServiceException("Unable to load proxy classes", e2);
+            }
+        }
+
+        JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, interfaces[0], endpointDesc, axis2EPR, addressingNamespace, features);
+        Object proxyClass = Proxy.newProxyInstance(classLoader, interfaces, proxyHandler);
+        return sei.cast(proxyClass);        
+    }
 
     //================================================
     // Impl methods
@@ -513,23 +725,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private boolean isServiceDefined(QName serviceName) {
         return getWSDLWrapper().getService(serviceName) != null;
-    }
-
-    private BindingImpl addBinding(EndpointDescription endpointDesc, String bindingId) {
-        // TODO: before creating binding do I have to do something with Handlers ... how is Binding related to Handler, this mistry sucks!!!
-        if (bindingId != null) {
-            //TODO: create all the bindings here
-            if (BindingUtils.isSOAPBinding(bindingId)) {            	
-                //instantiate soap11 binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
-            } 
-            
-            if (bindingId.equals(HTTPBinding.HTTP_BINDING)) {
-                //instantiate http binding implementation here and call setBinding in BindingProvider
-                return new org.apache.axis2.jaxws.binding.HTTPBinding(endpointDesc);
-            }
-        } 
-        return new org.apache.axis2.jaxws.binding.SOAPBinding(endpointDesc);
     }
 
     private boolean isValidDispatchType(Class clazz) {
