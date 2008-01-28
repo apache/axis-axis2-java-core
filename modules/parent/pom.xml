@@ -90,6 +90,7 @@
 
         <!-- Version #'s of all out dependencies -->
         <activemq.version>5.0.0</activemq.version>
+        <activemq.version-jdk14>4.1.1</activemq.version-jdk14>
         <annogen.version>0.1.0</annogen.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
@@ -122,15 +123,14 @@
         <junit.version-jdk1.4>3.8.2</junit.version-jdk1.4>
         <junit.version>4.4</junit.version>
         <log4j.version>1.2.15</log4j.version>
-        <maven.antrun.version>1.1</maven.antrun.version> <!-- ??? -->
-        <maven.archiver.version>2.2</maven.archiver.version> <!-- ??? -->
-        <maven.artifact.version>2.0.4</maven.artifact.version> <!-- ??? -->
-        <maven.assembly.version>2.2-beta-1</maven.assembly.version> <!-- ??? -->
-        <maven.plugin.testing.version>1.0-beta-1</maven.plugin.testing.version> <!-- ??? -->
-        <maven.version>2.0.7</maven.version> <!-- ??? -->
-        <maven.war.version>2.0.2</maven.war.version> <!-- ??? -->
+        <maven.antrun.version>1.1</maven.antrun.version>
+        <maven.archiver.version>2.3</maven.archiver.version>
+        <maven.artifact.version>2.0.8</maven.artifact.version>
+        <maven.assembly.version>2.2-beta-1</maven.assembly.version>
+        <maven.version>2.0.7</maven.version>
+        <maven.war.version>2.0.2</maven.war.version>
         <neethi.version>SNAPSHOT</neethi.version>
-        <plexus.utils.version>1.1</plexus.utils.version> <!-- ??? -->
+        <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
         <spring.version>2.5.1</spring.version>
@@ -138,7 +138,6 @@
         <stax.impl.artifactid>wstx-asl</stax.impl.artifactid>
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
         <stax.impl.version>3.2.4</stax.impl.version>
-        <stax_utils.version>20060915</stax_utils.version> <!-- ??? -->
         <tomcat.version>6.0.14</tomcat.version>
         <woden.version>1.0-incubating-SNAPSHOT</woden.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
