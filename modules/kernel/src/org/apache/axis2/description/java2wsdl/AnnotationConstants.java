@@ -25,6 +25,7 @@ public interface AnnotationConstants {
     String WEB_RESULT = "javax.jws.WebResult";
     String TARGETNAMESPACE = "targetNamespace";
     String NAME = "name";
+    String SERVICE_NAME = "serviceName";
     String EXCLUDE = "exclude";
     String ACTION = "action";
     String WSDL_LOCATION = "wsdlLocation";

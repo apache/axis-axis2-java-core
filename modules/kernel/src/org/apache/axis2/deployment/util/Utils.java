@@ -717,4 +717,29 @@ public class Utils {
         File file = new File(filename);
         return file.getName();
     }
+
+
+    /**
+     * The util method to prepare the JSR 181 annotated service name from given annotation or for defaults
+     * JSR 181 specifies that the in javax.jws.WebService the parameter serviceName contains the wsdl:service name
+     * to mapp. If its not available then the default will be Simple name of the class + "Service"
+     * @return String version of the ServiceName according to the JSR 181 spec
+     */
+    public static String getAnnotatedServiceName(Class serviceClass, JAnnotation serviceAnnotation){
+        String serviceName = "";
+        if(serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME) != null) {
+            serviceName = (serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME)).asString();
+        }
+        if(serviceName.equals("")){
+            serviceName=serviceClass.getName();
+            int firstChar = serviceName.lastIndexOf ('.') + 1;
+            if ( firstChar > 0 ) {
+                serviceName = serviceName.substring ( firstChar );
+            }
+            serviceName+="Service";
+        }
+        return serviceName;
+    }
+    
+
 }

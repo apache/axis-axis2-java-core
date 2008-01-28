@@ -177,18 +177,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         targetNamespace = tns;
                         schemaTargetNameSpace = tns;
                     }
-                    if(annotation.getValue(AnnotationConstants.NAME) != null) {
-                        String serviceName = (annotation.getValue(AnnotationConstants.NAME)).asString();
-                        if(serviceName.equals("")){
-                            serviceName=serviceClass.getName();
-                            int firstChar = serviceName.lastIndexOf ('.') + 1;
-                            if ( firstChar > 0 ) {
-                                serviceName = serviceName.substring ( firstChar );
-                            }
-                        }
-                        service.setName(serviceName);
-                    }
-
+                        service.setName(Utils.getAnnotatedServiceName(serviceClass,annotation));
                 }
                 methods = processMethods(jclass.getDeclaredMethods());
 
