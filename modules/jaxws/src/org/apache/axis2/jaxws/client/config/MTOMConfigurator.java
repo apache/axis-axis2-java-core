@@ -31,14 +31,18 @@ import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  */
 public class MTOMConfigurator implements ClientConfigurator {
 
+    private static Log log = LogFactory.getLog(MTOMConfigurator.class);
+    
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.util.WebServiceFeatureConfigurator#performConfiguration(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
      */
     public void configure(MessageContext messageContext, BindingProvider provider) {
@@ -49,7 +53,7 @@ public class MTOMConfigurator implements ClientConfigurator {
         //Disable MTOM.
         requestMsg.setMTOMEnabled(false);
                 
-//      TODO NLS enable.
+        //TODO NLS enable.
         if (mtomFeature == null)
             throw ExceptionFactory.makeWebServiceException("The MTOM features was unspecified.");
 
@@ -58,42 +62,52 @@ public class MTOMConfigurator implements ClientConfigurator {
             int threshold = mtomFeature.getThreshold();
             List<String> attachmentIDs = requestMsg.getAttachmentIDs();
             
+            // If a threshold wasn't configured, enable MTOM for all cases.
+            if (threshold <= 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Enabling MTOM with no threshold.");
+                }
+                requestMsg.setMTOMEnabled(true);
+            }
+            
             if (attachmentIDs != null) {
             	long size = 0L;
             	
-        		for (String attachmentID : attachmentIDs) {
-        			DataHandler dh = requestMsg.getDataHandler(attachmentID);
+            	for (String attachmentID : attachmentIDs) {
+            	    DataHandler dh = requestMsg.getDataHandler(attachmentID);
         			
-        			if (dh != null) {
-        				DataSource ds = dh.getDataSource();
-                    	InputStream is = null;
+            	    if (dh != null) {
+            	        DataSource ds = dh.getDataSource();
+            	        InputStream is = null;
                     	
-        				try {
-        					is = ds.getInputStream();
-        					size += is.available();
-        				}
-                    	catch (Exception e) {
-//                    		TODO NLS enable.
-                    		throw ExceptionFactory.makeWebServiceException("Unable to determine the size of the attachment(s).", e);
+            	        try {
+            	            is = ds.getInputStream();
+            	            size += is.available();
+            	        }
+            	        catch (Exception e) {
+            	            // TODO NLS enable.
+            	            throw ExceptionFactory.makeWebServiceException("Unable to determine the size of the attachment(s).", e);
                     	}
                     	finally {
-                    		try {
-                    			if (is != null)
-                    				is.close();
-                    		}
-                    		catch (Exception e) {
-                    			//Nothing to do.
-                    		}
+                    	    try {
+                    	        if (is != null)
+                    	            is.close();
+                    	    }
+                    	    catch (Exception e) {
+                    	        //Nothing to do.
+                    	    }
                     	}
-        			}
-        		}
+            	    }
+            	}
             	
             	if (size > threshold)
-                    requestMsg.setMTOMEnabled(true);
+            	    requestMsg.setMTOMEnabled(true);
             }
         }
         else {
-        	
+            if (log.isDebugEnabled()) {
+                log.debug("The MTOMFeature was found, but not enabled.");
+            }
         }
     }
 }
