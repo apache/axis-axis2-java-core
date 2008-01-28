@@ -42,6 +42,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -59,6 +60,18 @@ import java.util.Map;
 public class AddressingOutHandler extends AbstractHandler implements AddressingConstants {
 
     private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
+
+    private boolean includeOptionalHeaders = false;
+
+    public void init(HandlerDescription arg0) {
+        super.init(arg0);
+
+        //Determine whether to include optional addressing headers in the output message.
+        //The default is not to include any headers that can be safely omitted.
+        Parameter param = arg0.getParameter(INCLUDE_OPTIONAL_HEADERS);
+        String value = Utils.getParameterValue(param);
+        includeOptionalHeaders = JavaUtils.isTrueExplicitly(value);
+    }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
@@ -80,10 +93,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
 
         // Determine whether to include optional addressing headers in the output.
-        Parameter param = msgContext.getParameter(INCLUDE_OPTIONAL_HEADERS);
-        String value = Utils.getParameterValue(param);
-        boolean includeOptionalHeaders = JavaUtils.isTrueExplicitly(value) ||
+        boolean includeOptionalHeaders = this.includeOptionalHeaders ||
                                             msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS);
+
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
+        }
 
         // Determine if a MustUnderstand attribute will be added to all headers in the
         // addressing namespace.
@@ -320,7 +335,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                         		if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
                                         Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
                                                 .equals(relationshipType)) {
-                        			relationshipType = null;
+                        			relationshipType = null; //Omit the attribute.
                         		}
                         	}
                         	
@@ -372,10 +387,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 String address = epr.getAddress();
                 if (address != null && address.length()!=0) {
                     if (!includeOptionalHeaders && isFinalAddressingNamespace &&
-                            (Final.WSA_ANONYMOUS_URL.equals(address) ||
-                                    //Don't use epr.hasAnonymousAddress() here as it may
-                                    Submission.WSA_ANONYMOUS_URL.equals(address)))
-                    { //recognize none WS-Addressing anonymous values.
+                            hasWSASpecifiedAnonymousAddress(epr))
+                    {
                         return; //Omit the header.
                     }
                     createSOAPHeaderBlock(address, WSA_TO, epr.getAddressAttributes());
@@ -421,13 +434,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 } else {
                     epr = new EndpointReference(anonymous);
                 }
-            } else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
+            }
+            else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
                 return; //Omit the header.
-            } else if (Final.WSA_ANONYMOUS_URL.equals(epr.getAddress()) ||
-                    //Don't use epr.hasAnonymousAddress() here as it may
-                    Submission.WSA_ANONYMOUS_URL.equals(epr.getAddress()))
-            { //recognize none WS-Addressing anonymous values.
-
+            }
+            else if (hasWSASpecifiedAnonymousAddress(epr))
+            {
                 if (!includeOptionalHeaders && isFinalAddressingNamespace &&
                         AddressingConstants.WSA_REPLY_TO.equals(headerName)) {
                     return; //Omit the header.
@@ -572,6 +584,22 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                 }
             }
+        }
+
+        /**
+         * We can't use {@link EndpointReference#hasAnonymousAddress} in this handler as it may
+         * return <code>true</code> for none WS-Addressing specified anonymous values. This is
+         * important because WS-Addressing anonymous values have additional semantics that is
+         * not usually supported by other anonymous values. These WS-Addressing specific
+         * semantics are captured in this handler at the points where this method is called.
+         * 
+         * @param epr the <code>EndpointReference</code> to test.
+         * @return <code>true</code> if the <code>EndpointReference</code> has an anonymous address,
+         * <code>false</code> otherwise.
+         */
+        private boolean hasWSASpecifiedAnonymousAddress(EndpointReference epr) {
+            String address = epr.getAddress();
+            return Final.WSA_ANONYMOUS_URL.equals(address) || Submission.WSA_ANONYMOUS_URL.equals(address);
         }
         
         private void addRoleToHeader(OMElement header){

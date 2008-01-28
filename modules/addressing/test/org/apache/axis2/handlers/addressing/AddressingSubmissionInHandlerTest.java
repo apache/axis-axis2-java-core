@@ -49,8 +49,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
     }
 
     public void testExtractAddressingInformationFromHeaders() throws Exception{
-    	extractAddressingInformationFromHeaders(null);
-    	// Cannot check refparams in 2004/08 case as they can't be extracted until later
+    	Options options = extractAddressingInformationFromHeaders(null);
+
+        assertNotNull(options);
+        assertNotNull(options.getTo());
     }
     
     public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception{

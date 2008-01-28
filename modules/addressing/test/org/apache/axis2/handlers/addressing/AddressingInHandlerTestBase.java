@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -70,12 +69,9 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                                                                 MessageContext mc)
             throws Exception {
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testMessagePath);
-        SOAPHeader header = ((SOAPEnvelope)omBuilder.getDocumentElement()).getHeader();
-        RolePlayer rolePlayer = (RolePlayer)mc.getConfigurationContext()
-                .getAxisConfiguration().getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
-        Iterator addressingHeaderBlocks = header.getHeadersToProcess(rolePlayer, addressingNamespace);
-        inHandler.extractAddressingInformation(header, mc, addressingHeaderBlocks,
-                                               addressingNamespace);
+        SOAPEnvelope envelope = (SOAPEnvelope) omBuilder.getDocumentElement();
+        mc.setEnvelope(envelope);
+        inHandler.invoke(mc);
     }
 
     protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer) throws Exception{

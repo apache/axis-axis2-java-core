@@ -50,7 +50,7 @@ public class AddressingConfigurator implements ServerConfigurator {
     		(SubmissionAddressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(SubmissionAddressingFeature.ID);
     	AxisService service = endpointDescription.getAxisService();
     	Parameter namespace = new Parameter(AddressingConstants.WS_ADDRESSING_VERSION, null);
-    	Parameter disable = new Parameter(AddressingConstants.DISABLE_ADDRESSING_HANDLERS, Boolean.FALSE);
+    	Parameter disable = new Parameter(AddressingConstants.DISABLE_ADDRESSING_FOR_IN_MESSAGES, Boolean.FALSE);
     	String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
     	
     	if (addressing != null && submissionAddressing != null) {

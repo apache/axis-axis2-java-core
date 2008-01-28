@@ -70,17 +70,18 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        //Determine if we want to ignore addressing headers. This parameter cannot be
-        //retrieved from the HandlerDescription because it's value can vary on a per
-        //service basis.
-        Parameter disableParam = msgContext.getParameter(DISABLE_ADDRESSING_HANDLERS);
+        //Determine if we want to ignore addressing headers. This parameter must
+        //be retrieved from the message context because it's value can vary on a
+        //per service basis.
+        Parameter disableParam = msgContext.getParameter(DISABLE_ADDRESSING_FOR_IN_MESSAGES);
         String value = Utils.getParameterValue(disableParam);
         if (JavaUtils.isTrueExplicitly(value)) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(
-                        "The handler has been disabled. No further processing will take place.");
+                        "The AddressingInHandler has been disabled. No further processing will take place.");
             }
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
             return InvocationResponse.CONTINUE;         
         }
 
@@ -88,6 +89,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         if (header == null) {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
             return InvocationResponse.CONTINUE;
         }
 
@@ -119,27 +121,40 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         }
         else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
+            
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("No Headers present corresponding to any supported WS-Addresing namespace.");
+                log.debug("The specified namespace is not supported by this handler, " + namespace);
             }            
 
             return InvocationResponse.CONTINUE;
         }
 
         if (iterator.hasNext()) {
-            msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
-            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(namespace +
-                          " Headers present in the SOAP message. Starting to process ...");
+                          " headers present in the SOAP message. Starting to process ...");
             }
-            if (extractAddressingInformation(header, msgContext, iterator, namespace)) {
+            
+            if (extractAddressingInformation(msgContext, iterator, namespace)) {
+                // check for reference parameters
+                if (!disableRefparamExtract) {
+                    extractToEprReferenceParameters(msgContext.getTo(), header, namespace);
+                }
+                
+                msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
+                msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
                 msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
+            }
+            else {
+                msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+                msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);                
             }
         }
         else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
+
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("No Headers present corresponding to " + namespace);
             }
@@ -151,15 +166,14 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     /**
      * Pull addressing headers out from the SOAP message.
      *
-     * @param header the header of the SOAP message
      * @param messageContext the active MessageContext
      * @param headers an Iterator over the addressing headers targeted to me
      * @param namespace the addressing namespace
      * @return true if addressing information was found
      * @throws AxisFault if an error occurs
      */
-    boolean extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
-                                                   Iterator headers, String namespace)
+    private boolean extractAddressingInformation(MessageContext messageContext, Iterator headers,
+                                         String namespace)
             throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
 
@@ -229,7 +243,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         if (toBlock != null && !ignoreHeaders[TO_FLAG]) {
             extractToEPRInformation(toBlock,
                                     messageContextOptions,
-                                    header,
                                     namespace);
         }
         if (messageIDBlock != null && !ignoreHeaders[MESSAGEID_FLAG]) {
@@ -437,8 +450,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
 
     private void extractToEPRInformation(SOAPHeaderBlock soapHeaderBlock,
-                                         Options messageContextOptions, SOAPHeader header,
-                                         String namespace) {
+                                         Options messageContextOptions, String namespace) {
 
         EndpointReference epr;
         //here the addressing epr overidde what ever already there in the message context
@@ -456,10 +468,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             epr.setAddressAttributes(attributes);
         }
 
-        // check for reference parameters
-        if (!disableRefparamExtract) {
-            extractToEprReferenceParameters(epr, header, namespace);
-        }
         soapHeaderBlock.setProcessed();
 
         if (log.isTraceEnabled()) {
