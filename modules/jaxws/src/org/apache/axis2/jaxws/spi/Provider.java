@@ -159,7 +159,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
                 EndpointReferenceUtils.createAxis2EndpointReference("");
             String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
             
-            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
+            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(eprInfoset, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.

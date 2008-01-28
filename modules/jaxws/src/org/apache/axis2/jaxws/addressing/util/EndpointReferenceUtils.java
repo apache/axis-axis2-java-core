@@ -71,6 +71,21 @@ public final class EndpointReferenceUtils {
         
         return jaxwsEPRFactory.createEndpointReference(eprInfoset, addressingNamespace);
     }
+
+    /**
+     * Convert from a {@link Source} to a
+     * subclass of {@link javax.xml.ws.EndpointReference}.
+     * 
+     * @param <T>
+     * @param source
+     * @param addressingNamespace
+     * @return
+     * @throws AxisFault
+     */
+    public static javax.xml.ws.EndpointReference convertFromAxis2(Source source, String addressingNamespace)
+    throws AxisFault, Exception {
+        return jaxwsEPRFactory.createEndpointReference(source, addressingNamespace);
+    }
     
     /**
      * Convert from a {@link javax.xml.ws.EndpointReference} to a an instance of
