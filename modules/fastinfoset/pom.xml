@@ -109,12 +109,12 @@
 				<dependency>
 					<groupId>com.sun.xml.fastinfoset</groupId>
 					<artifactId>FastInfoset</artifactId>
-					<version>1.1.8</version>
+					<version>${fi.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>junit</groupId>
 					<artifactId>junit</artifactId>
-					<version>3.8.2</version>
+					<version>${junit.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>

@@ -141,7 +141,7 @@
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-javamail_1.4_spec</artifactId>
-			<version>${geronimo.spec.activation.version}</version>
+			<version>${geronimo.spec.javamail.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>annogen</groupId>
