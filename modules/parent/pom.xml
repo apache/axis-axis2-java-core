@@ -127,7 +127,7 @@
         <maven.archiver.version>2.3</maven.archiver.version>
         <maven.artifact.version>2.0.8</maven.artifact.version>
         <maven.assembly.version>2.2-beta-1</maven.assembly.version>
-        <maven.plugin.testing.version>1.0-beta-1</maven.plugin.testing.version>
+        <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
         <maven.war.version>2.0.2</maven.war.version>
         <neethi.version>SNAPSHOT</neethi.version>
