@@ -24,6 +24,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -92,10 +94,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // Lets have a parameter to control that. The default behavior is you won't replace addressing
         // headers if there are any (this was the case so far).
         boolean replaceHeaders = msgContext.isPropertyTrue(REPLACE_ADDRESSING_HEADERS);
+        
+        // Allow the user to specify the role these WS-Addressing headers should be targetted at.
+        String role = (String) msgContext.getProperty(SOAP_ROLE_FOR_ADDRESSING_HEADERS);
 
         WSAHeaderWriter writer = new WSAHeaderWriter(msgContext, isSubmissionNamespace,
                                                      addMustUnderstandAttribute, replaceHeaders,
-                                                     includeOptionalHeaders);
+                                                     includeOptionalHeaders, role);
         writer.writeHeaders();
 
         return InvocationResponse.CONTINUE;
@@ -110,6 +115,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         private Options messageContextOptions;
         private OMNamespace addressingNamespaceObject;
         private String addressingNamespace;
+        private String addressingRole;
 
         private boolean isFinalAddressingNamespace;
         private boolean addMustUnderstandAttribute;
@@ -119,10 +125,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         private ArrayList existingWSAHeaders = null;
         
         public WSAHeaderWriter(MessageContext mc, boolean isSubmissionNamespace, boolean addMU,
-                               boolean replace, boolean includeOptional) {
+                               boolean replace, boolean includeOptional, String role) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("WSAHeaderWriter: isFinal=" + isSubmissionNamespace + " addMU=" + addMU +
-                        " replace=" + replace + " includeOptional=" + includeOptional);
+                        " replace=" + replace + " includeOptional=" + includeOptional+" role="+role);
             }
 
             messageContext = mc;
@@ -143,9 +149,14 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             	if(addressingHeaders!=null && !addressingHeaders.isEmpty()){
             		existingWSAHeaders = new ArrayList(addressingHeaders.size());
             		for(Iterator iter=addressingHeaders.iterator();iter.hasNext();){
-            			OMElement oe = (OMElement)iter.next();
-            			existingWSAHeaders.add(oe.getLocalName());
+            			SOAPHeaderBlock oe = (SOAPHeaderBlock)iter.next();
+            			if(addressingRole == null || addressingRole.length() ==0 || addressingRole.equals(oe.getRole())){
+            				existingWSAHeaders.add(oe.getLocalName());
+            			}
             		}
+            	}
+            	if(addressingHeaders != null && addressingHeaders.size() ==0){
+            		addressingHeaders = null;
             	}
             }
             
@@ -153,6 +164,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             addMustUnderstandAttribute = addMU;
             replaceHeaders = replace;
             includeOptionalHeaders = includeOptional;
+            addressingRole = role;
         }
 
         public void writeHeaders() throws AxisFault {
@@ -387,6 +399,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                 .importOMAttribute((OMAttribute)attrIterator.next(), soapHeaderBlock);
                     }
                 }
+                addRoleToHeader(soapHeaderBlock);
                 return soapHeaderBlock;
             }
             return null;
@@ -428,6 +441,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                                                      new QName(addressingNamespace,
                                                                                headerName, prefix),
                                                                      addressingNamespace);
+            addRoleToHeader(soapHeaderBlock);
             header.addChild(soapHeaderBlock);
         }
 
@@ -452,6 +466,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                                addressingNamespaceObject);
                     }
+                    addRoleToHeader(newElement);
                     header.addChild(newElement);
                 }
             }
@@ -474,6 +489,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             							Final.WSA_TYPE_ATTRIBUTE_VALUE,
             							addressingNamespaceObject);
             				}
+            				addRoleToHeader(newElement);
             				header.addChild(newElement);
             			}
             		}
@@ -557,7 +573,23 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 }
             }
         }
+        
+        private void addRoleToHeader(OMElement header){
+        	if(addressingRole == null || addressingRole.length()==0){
+        		return;
+        	}
+        	if(header instanceof SOAPHeaderBlock){
+        		((SOAPHeaderBlock)header).setRole(addressingRole);
+        	}else{
+        		if(messageContext.isSOAP11()){
+        			OMAttribute roleAttr = factory.createOMAttribute(SOAP11Constants.ATTR_ACTOR, envelope.getNamespace(), addressingRole);
+        			header.addAttribute(roleAttr);
+        		}else{
+        			OMAttribute roleAttr = factory.createOMAttribute(SOAP12Constants.SOAP_ROLE, envelope.getNamespace(), addressingRole);
+        			header.addAttribute(roleAttr);
+        		}
+        	}
+        }
     }
-
 }
 

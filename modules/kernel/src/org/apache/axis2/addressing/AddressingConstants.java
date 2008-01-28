@@ -77,6 +77,8 @@ public interface AddressingConstants {
     static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS =
             "addMustUnderstandToAddressingHeaders";
 
+    static final String SOAP_ROLE_FOR_ADDRESSING_HEADERS = "wsaddressingRole";
+    
     /**
      * A property pointing to an ArrayList of OMAttribute objects representing any attributes
      * of the wsa:Action header.

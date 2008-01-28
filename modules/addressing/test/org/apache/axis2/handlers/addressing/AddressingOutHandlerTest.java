@@ -194,6 +194,96 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                                               .getDocumentElement()));
     }
 
+    public void testSOAPRoleSupport() throws Exception {
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
+
+        msgCtxt.setProperty(AddressingConstants.SOAP_ROLE_FOR_ADDRESSING_HEADERS,
+                            "urn:test:role");
+
+        EndpointReference epr = new EndpointReference("http://www.from.org/service/");
+        epr.addReferenceParameter(new QName("Reference2"),
+                                  "Value 200");
+        msgCtxt.setFrom(epr);
+
+        epr = new EndpointReference("http://www.to.org/service/");
+        epr.addReferenceParameter(
+                new QName("http://reference.org", "Reference4", "myRef"),
+                "Value 400");
+        epr.addReferenceParameter(
+                new QName("http://reference.org", "Reference3", "myRef"),
+                "Value 300");
+
+        msgCtxt.setTo(epr);
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
+
+        epr = new EndpointReference("http://www.replyTo.org/service/");
+        msgCtxt.setReplyTo(epr);
+
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+
+        org.apache.axis2.addressing.RelatesTo relatesTo = new org.apache.axis2.addressing.RelatesTo(
+                "http://www.relatesTo.org/service/", "TestRelation");
+        msgCtxt.addRelatesTo(relatesTo);
+
+        msgCtxt.setEnvelope(
+                OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(
+                xmlComparator.compare(msgCtxt.getEnvelope(),
+                                      testUtil.getOMBuilder("soap11roleTest.xml")
+                                              .getDocumentElement()));
+    }
+    
+    public void testSOAP12RoleSupport() throws Exception {
+        ConfigurationContext cfgCtx =
+                ConfigurationContextFactory.createDefaultConfigurationContext();
+        msgCtxt = cfgCtx.createMessageContext();
+
+        msgCtxt.setProperty(AddressingConstants.SOAP_ROLE_FOR_ADDRESSING_HEADERS,
+                            "urn:test:role");
+
+        EndpointReference epr = new EndpointReference("http://www.from.org/service/");
+        epr.addReferenceParameter(new QName("Reference2"),
+                                  "Value 200");
+        msgCtxt.setFrom(epr);
+
+        epr = new EndpointReference("http://www.to.org/service/");
+        epr.addReferenceParameter(
+                new QName("http://reference.org", "Reference4", "myRef"),
+                "Value 400");
+        epr.addReferenceParameter(
+                new QName("http://reference.org", "Reference3", "myRef"),
+                "Value 300");
+
+        msgCtxt.setTo(epr);
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
+
+        epr = new EndpointReference("http://www.replyTo.org/service/");
+        msgCtxt.setReplyTo(epr);
+
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+
+        org.apache.axis2.addressing.RelatesTo relatesTo = new org.apache.axis2.addressing.RelatesTo(
+                "http://www.relatesTo.org/service/", "TestRelation");
+        msgCtxt.addRelatesTo(relatesTo);
+
+        msgCtxt.setEnvelope(
+                OMAbstractFactory.getSOAP12Factory().getDefaultEnvelope());
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(
+                xmlComparator.compare(msgCtxt.getEnvelope(),
+                                      testUtil.getOMBuilder("soap12roleTest.xml")
+                                              .getDocumentElement()));
+    }
+    
     public void testDuplicateHeaders() throws Exception {
 
         // this will check whether we can add to epr, if there is one already.
