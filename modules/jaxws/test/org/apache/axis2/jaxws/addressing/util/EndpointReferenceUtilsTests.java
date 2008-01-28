@@ -33,6 +33,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
@@ -87,13 +88,13 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         StAXOMBuilder builder = new StAXOMBuilder(parser);
         OMElement omElement = builder.getDocumentElement();
         
-        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        EndpointReference axis2EPR =
             EndpointReferenceHelper.fromOM(omElement);
         W3CEndpointReference jaxwsEPR =
             (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, Final.WSA_NAMESPACE);
         assertXMLEqual(EPR200508, jaxwsEPR.toString());
      
-        org.apache.axis2.addressing.EndpointReference axis2Result =
+        EndpointReference axis2Result =
             EndpointReferenceUtils.createAxis2EndpointReference("");
         String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2Result, jaxwsEPR);
         OMElement eprElement =
@@ -109,7 +110,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         Source source = new DOMSource(jaxwsDoc);
         
         W3CEndpointReference jaxwsEPR = new W3CEndpointReference(source);
-        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        EndpointReference axis2EPR =
             EndpointReferenceUtils.createAxis2EndpointReference("");
         String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         OMElement eprElement =
@@ -127,13 +128,13 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         StAXOMBuilder builder = new StAXOMBuilder(parser);
         OMElement omElement = builder.getDocumentElement();
         
-        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        EndpointReference axis2EPR =
             EndpointReferenceHelper.fromOM(omElement);
         SubmissionEndpointReference jaxwsEPR =
             (SubmissionEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, Submission.WSA_NAMESPACE);
         assertXMLEqual(EPR200408, jaxwsEPR.toString());
      
-        org.apache.axis2.addressing.EndpointReference axis2Result =
+        EndpointReference axis2Result =
             EndpointReferenceUtils.createAxis2EndpointReference("");
         String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2Result, jaxwsEPR);
         OMElement eprElement =
@@ -149,7 +150,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         Source source = new DOMSource(jaxwsDoc);
         
         SubmissionEndpointReference jaxwsEPR = new SubmissionEndpointReference(source);
-        org.apache.axis2.addressing.EndpointReference axis2EPR =
+        EndpointReference axis2EPR =
             EndpointReferenceUtils.createAxis2EndpointReference("");
         String addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         OMElement eprElement =
@@ -163,7 +164,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
     
     public void testFailures() throws Exception {
         try {
-            EndpointReferenceUtils.convertFromAxis2(null, Final.WSA_NAMESPACE);
+            EndpointReferenceUtils.convertFromAxis2((EndpointReference) null, Final.WSA_NAMESPACE);
             fail("Expected a failure.");
         }
         catch (Exception e) {
@@ -171,7 +172,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         }
 
         try {
-            EndpointReferenceUtils.convertFromAxis2(null, Submission.WSA_NAMESPACE);
+            EndpointReferenceUtils.convertFromAxis2((EndpointReference) null, Submission.WSA_NAMESPACE);
             fail("Expected a failure.");
         }
         catch (Exception e) {
@@ -179,7 +180,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         }
 
         try {
-            EndpointReferenceUtils.convertFromAxis2(null, null);
+            EndpointReferenceUtils.convertFromAxis2((EndpointReference) null, null);
             fail("Expected a failure.");
         }
         catch (Exception e) {
@@ -187,7 +188,7 @@ public class EndpointReferenceUtilsTests extends XMLTestCase {
         }
 
         try {
-            org.apache.axis2.addressing.EndpointReference axis2EPR =
+            EndpointReference axis2EPR =
                 EndpointReferenceUtils.createAxis2EndpointReference("");
             EndpointReferenceUtils.convertToAxis2(axis2EPR, null);
             fail("Expected a failure.");
