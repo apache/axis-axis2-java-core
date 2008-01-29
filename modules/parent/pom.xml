@@ -88,7 +88,7 @@
       	<ping.mar.version>SNAPSHOT</ping.mar.version>
       	<scripting.mar.version>SNAPSHOT</scripting.mar.version>
 
-        <!-- Version #'s of all out dependencies -->
+        <!-- Version #'s of all our dependencies -->
         <activemq.version>5.0.0</activemq.version>
         <activemq.version-jdk14>4.1.1</activemq.version-jdk14>
         <annogen.version>0.1.0</annogen.version>
@@ -985,7 +985,7 @@
                 <dependency>
                     <groupId>junit</groupId>
                     <artifactId>junit</artifactId>
-                    <version>3.8.2</version>
+                    <version>${junit.version-jdk1.4}</version>
                 </dependency>
             </dependencies>
         </profile>
