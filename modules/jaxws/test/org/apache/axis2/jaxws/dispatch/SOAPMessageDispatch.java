@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.TestLogger;
 
 public class SOAPMessageDispatch extends TestCase {
-	private String url = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
+	private String url = "http://localhost:6060/axis2/services/ProxyDocLitWrappedService";
 	private QName serviceName = new QName(
 			"http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService");
 	private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped",

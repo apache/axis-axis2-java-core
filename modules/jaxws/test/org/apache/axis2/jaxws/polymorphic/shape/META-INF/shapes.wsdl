@@ -99,7 +99,7 @@
 		<wsdl:port name="PolymorphicShapePort"
 			binding="tns:PolymorphicShapeBinding">
 			<soap:address
-				location="http://localhost:8080/axis2/services/PolymorphicShapeService" />
+				location="http://localhost:6060/axis2/services/PolymorphicShapeService" />
 		</wsdl:port>
 	</wsdl:service>
 	

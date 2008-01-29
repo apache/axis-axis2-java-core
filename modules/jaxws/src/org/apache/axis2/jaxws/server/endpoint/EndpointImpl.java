@@ -179,7 +179,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         WorkerFactory wf = new HTTPWorkerFactory();
 
         try {
-            server = new SimpleHttpServer(ctx, wf, 8080);  //TODO: Add a configurable port
+            server = new SimpleHttpServer(ctx, wf, 6060);  //TODO: Add a configurable port
             server.init();            
             server.start();
         } catch (IOException e) {

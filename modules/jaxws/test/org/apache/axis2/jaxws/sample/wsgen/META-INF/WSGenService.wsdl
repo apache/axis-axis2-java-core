@@ -49,7 +49,7 @@
   </binding>
   <service name="WSGenService">
     <port name="WSGenPort" binding="tns:WSGenPortBinding">
-      <soap:address location="http://localhost:8080/axis2/services/WSGenService"/>
+      <soap:address location="http://localhost:6060/axis2/services/WSGenService"/>
     </port>
   </service>
 </definitions>

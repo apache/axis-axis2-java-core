@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.TestLogger;
 
 public class DispatchXMessageString extends TestCase {
 
-    public String HOSTPORT = "http://localhost:8080";
+    public String HOSTPORT = "http://localhost:6060";
         
     private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageStringProvider";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProvider");

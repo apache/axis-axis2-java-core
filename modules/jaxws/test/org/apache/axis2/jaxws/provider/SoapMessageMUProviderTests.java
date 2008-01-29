@@ -34,7 +34,7 @@ public class SoapMessageMUProviderTests extends TestCase {
     public static final QName portName =
             new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     public static final String endpointUrl =
-            "http://localhost:8080/axis2/services/SoapMessageMUProviderService";
+            "http://localhost:6060/axis2/services/SoapMessageMUProviderService";
 
     public static final String bindingID = SOAPBinding.SOAP11HTTP_BINDING;
     public static final Service.Mode mode = Service.Mode.MESSAGE;

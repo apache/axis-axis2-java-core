@@ -79,7 +79,7 @@
 
    <service name="EchoMessageService">
       <port binding="tns:EchoMessageBinding" name="EchoMessagePort">
-         <soap:address location="http://localhost:8080/axis2/services/EchoMessageService"/>
+         <soap:address location="http://localhost:6060/axis2/services/EchoMessageService"/>
       </port>
 
    </service>

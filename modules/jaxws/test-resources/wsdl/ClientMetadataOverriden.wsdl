@@ -53,7 +53,7 @@
 
   <service name="svcLocalPart">       
     <port binding="tns:EchoMessageBinding" name="portLocalPartOverriden">          
-      <soap:address location="http://localhost:8080/EchoMessageService/EchoMessageService"/>       
+      <soap:address location="http://localhost:6060/EchoMessageService/EchoMessageService"/>       
     </port>     
   </service>  
 </definitions>

@@ -53,13 +53,13 @@
 
   <service name="svcLocalPart">       
     <port binding="tns:EchoMessageBinding" name="portLocalPartMulti1">          
-      <soap:address location="http://localhost:8080/EchoMessageService/EchoMessageService/portLocalPartMulti1"/>       
+      <soap:address location="http://localhost:6060/EchoMessageService/EchoMessageService/portLocalPartMulti1"/>       
     </port>     
     <port binding="tns:EchoMessageBinding" name="portLocalPartMulti2">          
-      <soap:address location="http://localhost:8080/EchoMessageService/EchoMessageService/portLocalPartMulti2"/>       
+      <soap:address location="http://localhost:6060/EchoMessageService/EchoMessageService/portLocalPartMulti2"/>       
     </port>     
     <port binding="tns:EchoMessageBinding" name="portLocalPartMulti3">          
-      <soap:address location="http://localhost:8080/EchoMessageService/EchoMessageService/portLocalPartMulti3"/>       
+      <soap:address location="http://localhost:6060/EchoMessageService/EchoMessageService/portLocalPartMulti3"/>       
     </port>     
   </service>  
 </definitions>

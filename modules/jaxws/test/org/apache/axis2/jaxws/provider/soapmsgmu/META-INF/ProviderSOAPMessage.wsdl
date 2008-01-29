@@ -62,7 +62,7 @@
 
   <service name="SoapMessageMUProviderService">
     <port name="SimpleProviderServiceSOAP11port0" binding="tns:EchoServiceSoap">
-      <soap:address location="http://localhost:8080/axis2/services/SoapMessageMUProviderService" />
+      <soap:address location="http://localhost:6060/axis2/services/SoapMessageMUProviderService" />
     </port>
   </service>
 

@@ -45,7 +45,7 @@ import org.test.polymorphicfaults.DerivedFault2;
 
 public class FaultsServiceTests extends TestCase {
     
-    String axisEndpoint = "http://localhost:8080/axis2/services/FaultsService";
+    String axisEndpoint = "http://localhost:6060/axis2/services/FaultsService";
     
     /**
      * Utility method to get the proxy

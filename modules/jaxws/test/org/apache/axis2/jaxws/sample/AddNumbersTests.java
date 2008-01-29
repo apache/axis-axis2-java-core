@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.TestLogger;
 
 public class AddNumbersTests extends TestCase {
 	
-    String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersService";
+    String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersService";
 	
     public void testAddNumbers() throws Exception {
         TestLogger.logger.debug("----------------------------------");

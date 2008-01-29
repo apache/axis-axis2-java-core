@@ -36,7 +36,7 @@ import junit.framework.TestCase;
 
 public class DispatchXMessageDataSource extends TestCase {
 
-    public String HOSTPORT = "http://localhost:8080";
+    public String HOSTPORT = "http://localhost:6060";
         
     private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageDataSourceProvider";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProvider");

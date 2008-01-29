@@ -47,7 +47,7 @@ public class SOAP12Dispatch extends TestCase {
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Service");
     private static final QName QNAME_PORT = new QName(
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Port");
-    private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/SOAP12ProviderService";    
+    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SOAP12ProviderService";    
     
     private static final String sampleRequest = 
         "<test:echoString xmlns:test=\"http://org/apache/axis2/jaxws/test/SOAP12\">" +

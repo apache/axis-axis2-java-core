@@ -49,7 +49,7 @@ import org.apache.axis2.jaxws.TestLogger;
  */
 public class SoapMessageProviderTests extends ProviderTestCase {
 
-    private String endpointUrl = "http://localhost:8080/axis2/services/SoapMessageProviderService";
+    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageProviderService";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SoapMessageProviderService");
     
     private String reqMsgStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +

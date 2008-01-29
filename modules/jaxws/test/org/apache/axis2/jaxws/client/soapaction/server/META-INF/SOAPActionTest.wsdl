@@ -145,7 +145,7 @@
 
    <service name="BookStoreService">
       <port binding="tns:BookStoreBinding" name="BookStorePort">
-         <soap:address location="http://localhost:8080/axis2/services/BookStoreService"/>
+         <soap:address location="http://localhost:6060/axis2/services/BookStoreService"/>
       </port>
    </service>
 </definitions>

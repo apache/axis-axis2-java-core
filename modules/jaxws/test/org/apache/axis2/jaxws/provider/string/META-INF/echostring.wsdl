@@ -62,7 +62,7 @@
   </wsdl:binding>
   <wsdl:service name="StringProviderService">
     <wsdl:port binding="tns:StringProviderBinding" name="StringProviderPort">
-      <soap:address location="http://localhost:8080/axis2/services/EchoService"/>
+      <soap:address location="http://localhost:6060/axis2/services/EchoService"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

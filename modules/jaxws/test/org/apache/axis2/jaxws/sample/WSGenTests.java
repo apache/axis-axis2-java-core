@@ -27,7 +27,7 @@ import org.apache.axis2.jaxws.TestLogger;
 
 public class WSGenTests extends TestCase {
     
-    String axisEndpoint = "http://localhost:8080/axis2/services/WSGenService";
+    String axisEndpoint = "http://localhost:6060/axis2/services/WSGenService";
     
     public void testWSGen() {
         try{

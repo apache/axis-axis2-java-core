@@ -43,7 +43,7 @@ public class MtomSampleByteArrayTests extends TestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "SendImageService");
     private static final QName QNAME_PORT    = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "sendImageSoap");
-    private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/SendImageService";
+    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SendImageService";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+File.separator+"test-resources"+File.separator+"image";
 
     /*

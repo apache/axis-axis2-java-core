@@ -64,7 +64,7 @@
 	
 	<wsdl:service name="BareDocLitMinService">
 		<wsdl:port binding="tns:DocLitBareMin" name="BareDocLitMinPort">
-			<soap:address location="http://localhost:8080/axis2/services/BareDocLitMinService" />
+			<soap:address location="http://localhost:6060/axis2/services/BareDocLitMinService" />
 		</wsdl:port>
 	</wsdl:service>
 	

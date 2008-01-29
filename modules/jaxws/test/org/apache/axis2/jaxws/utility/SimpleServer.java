@@ -32,7 +32,7 @@ public class SimpleServer {
 
     private static SimpleHTTPServer server;
     private String repositoryDir;
-    private int port = 8080;
+    private int port = 6060;
     
     public void init() {
         repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository");

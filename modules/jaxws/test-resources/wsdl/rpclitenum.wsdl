@@ -77,7 +77,7 @@
 
   <wsdl:service name="Service">
     <wsdl:port name="Port" binding="tns:Binding">
-      <wsdlsoap:address location="http://localhost:8080/axis2/services/RPCLitEnumService"/>
+      <wsdlsoap:address location="http://localhost:6060/axis2/services/RPCLitEnumService"/>
     </wsdl:port>
   </wsdl:service>
 

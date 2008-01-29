@@ -38,7 +38,7 @@ public class DispatchXMessageSource extends TestCase {
 
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-    public String HOSTPORT = "http://localhost:8080";
+    public String HOSTPORT = "http://localhost:6060";
         
     private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageSourceProvider";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageSourceProvider");

@@ -39,7 +39,7 @@ import org.apache.ws.axis2.tests.EchoPort;
  */
 public class GetDescFromBindingProviderTests extends TestCase {
     
-    private static final String wsdlSOAPAddress = "http://localhost:8080/axis2/services/EchoService";
+    private static final String wsdlSOAPAddress = "http://localhost:6060/axis2/services/EchoService";
     
     public void testForProxy() {
         String namespaceURI = "http://ws.apache.org/axis2/tests";
@@ -122,7 +122,7 @@ public class GetDescFromBindingProviderTests extends TestCase {
         assertNull(endpointAddress);
         
         QName validPortQName2 = new QName(namespaceURI, "EchoPortAdded2");
-        final String port2EndpointAddress = "http://testAddress:8080/my/test/address"; 
+        final String port2EndpointAddress = "http://testAddress:6060/my/test/address"; 
         service.addPort(validPortQName2, null, port2EndpointAddress);
         dispatch = service.createDispatch(validPortQName2, String.class, null);
         assertNotNull(dispatch);

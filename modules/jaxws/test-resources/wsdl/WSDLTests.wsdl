@@ -81,7 +81,7 @@ style="document"/>
    
   <service name="EchoService">
     <port name="EchoPort" binding="tns:EchoBinding">
-      <soap:address location="http://localhost:8080/axis2/services/EchoService"/>
+      <soap:address location="http://localhost:6060/axis2/services/EchoService"/>
     </port>
   </service>
 

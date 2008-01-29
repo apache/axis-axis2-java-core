@@ -62,7 +62,7 @@
   </wsdl:binding>
   <wsdl:service name="ResourceInjectionService">
     <wsdl:port binding="tns:ResourceInjectionBinding" name="ResourceInjectionPort">
-      <soap:address location="http://localhost:8080/axis2/services/ResourceInjectionService"/>
+      <soap:address location="http://localhost:6060/axis2/services/ResourceInjectionService"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

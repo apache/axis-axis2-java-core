@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 public class Constants {
 
     // server hostName and WC port
-    private static final String SERVER = "localhost:8080";
+    private static final String SERVER = "localhost:6060";
     
     //public static final String WSDL_NAMESPACE = "http://common.wsfvt.async.jaxws";
     public static final String WSDL_NAMESPACE = "http://org/test/parallelasync";

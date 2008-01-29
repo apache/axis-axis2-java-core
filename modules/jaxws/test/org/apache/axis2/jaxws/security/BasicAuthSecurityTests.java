@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.TestLogger;
 
 public class BasicAuthSecurityTests extends TestCase {
 
-    private String endpointUrl = "http://localhost:8080/axis2/services/BasicAuthSecurityService";
+    private String endpointUrl = "http://localhost:6060/axis2/services/BasicAuthSecurityService";
     private String xmlString = "<invokeOp>test input</invokeOp>";
     private QName SERVICE_QNAME = new QName("http://ws.apache.org/axis2", "BasicAuthSecurityService");
     private QName PORT_QNAME = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");

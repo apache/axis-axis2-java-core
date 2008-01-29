@@ -50,7 +50,7 @@ import org.test.parallelasync.WakeUpResponse;
 public class ParallelAsyncTests extends TestCase {
 
     private static final String DOCLITWR_ASYNC_ENDPOINT =
-        "http://localhost:8080/axis2/services/AsyncService";
+        "http://localhost:6060/axis2/services/AsyncService";
 
     // used for logging
     private String myClassName = "ParallelAsyncTests";

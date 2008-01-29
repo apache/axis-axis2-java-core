@@ -48,7 +48,7 @@ public class JAXBSourceDispatch extends TestCase {
      * Invoke a sync Dispatch<JAXBSource> in PAYLOAD mode
      */
 	
-	private String url = "http://localhost:8080/axis2/services/SourceProviderService";
+	private String url = "http://localhost:6060/axis2/services/SourceProviderService";
 	private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
 	private QName portName =new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
 	

@@ -64,7 +64,7 @@ import org.test.addnumbershandler.AddNumbersHandlerResponse;
  */
 public class AddNumbersHandlerTests extends TestCase {
 	
-    String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersHandlerService";
+    String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService";
     File requestFile = null;
     
     public void setUp() throws Exception {
