@@ -2903,6 +2903,7 @@
             </xsl:if>
          
          axiom_node_t *current_node = NULL;
+         int tag_closed = 0;
 
          <!--now distinguise the properties specific to simple types -->
          <xsl:choose>
@@ -3317,6 +3318,7 @@
             <xsl:if test="@type">
               string_to_stream = "&gt;"; <!-- The ending tag of the parent -->
               axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
+              tag_closed = 1;
             </xsl:if>
 
              <!-- end bracket for if(!parent_tag_closed)-->
@@ -3325,7 +3327,7 @@
             </xsl:if>
 
             <xsl:if test="@simple">
-               if(!parent_tag_closed)
+               if(!parent_tag_closed &amp;&amp; !tag_closed)
                {
                   text_value = "&gt;"; <!-- The ending tag of the parent -->
                   axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
