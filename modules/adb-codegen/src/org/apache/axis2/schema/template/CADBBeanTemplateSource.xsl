@@ -2921,16 +2921,12 @@
 
            <!-- non simple types -->
            <xsl:otherwise>
-             <xsl:for-each select="property">
-              <xsl:if test="position()=1"> <!-- check for at least one element exists -->
                 axiom_namespace_t *ns1 = NULL;
 
                 axis2_char_t *qname_uri = NULL;
                 axis2_char_t *qname_prefix = NULL;
                 axis2_char_t *p_prefix = NULL;
                 axis2_bool_t ns_already_defined;
-              </xsl:if>
-             </xsl:for-each>
             <xsl:for-each select="property/@isarray">
              <xsl:if test="position()=1">
                long i = 0;
@@ -2974,8 +2970,6 @@
             AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, NULL);
             
             <xsl:if test="not(@type)"> <!-- So this is the root of the serialization call tree -->
-              <xsl:for-each select="property">
-                <xsl:if test="position()=1">
                     namespaces = axutil_hash_make(env);
                     next_ns_index = &amp;next_ns_index_value;
                     <xsl:choose>
@@ -2996,8 +2990,6 @@
                     axiom_element_set_namespace(parent_element, env, ns1, parent);
 
 
-               </xsl:if>
-              </xsl:for-each>
             </xsl:if>
             </xsl:otherwise> <!--otherwise for @simple -->
             </xsl:choose>
