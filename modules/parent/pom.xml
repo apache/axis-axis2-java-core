@@ -915,6 +915,12 @@
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>apache-activemq</artifactId>
                 <version>${activemq.version}</version>
+                <exclusions>
+                    <exclusion>
+                      <groupId>org.apache.activemq</groupId>
+                      <artifactId>activeio-core</artifactId>
+                    </exclusion>
+                </exclusions>                
             </dependency>
 			<dependency>
 				<groupId>jalopy</groupId>

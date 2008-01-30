@@ -289,12 +289,6 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>apache-activemq</artifactId>
-            <!--<exclusions>
-                <exclusion>
-                    <groupId>commons-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
