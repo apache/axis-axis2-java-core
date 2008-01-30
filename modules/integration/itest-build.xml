@@ -43,7 +43,6 @@
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.runtime.classpath" />
 			<classpath location="${compiled.classes.dir}" />
-			<sysproperty key="javax.xml.transform.TransformerFactory" value="org.apache.xalan.xsltc.trax.TransformerFactoryImpl"/>
 			<arg line="-ap -o target/wsdl/complexdatatype -s -u -uw -uri test-resources/ComplexDataTypes/ComplexDataTypes.wsdl" />
 		</java>
 		<javac fork="true" destdir="target/classes" debug="on">
