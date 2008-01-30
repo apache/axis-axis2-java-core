@@ -661,16 +661,19 @@ public class ConfigurationContext extends AbstractContext {
             return;
         }
         long currentTime = new Date().getTime();
-        for (Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
-             sgCtxtMapKeyIter.hasNext();) {
-            String sgCtxtId = (String) sgCtxtMapKeyIter.next();
-            ServiceGroupContext serviceGroupContext =
-                    (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
-            if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                getServiceGroupContextTimoutInterval()) {
-                sgCtxtMapKeyIter.remove();
-                cleanupServiceContexts(serviceGroupContext);
-                contextRemoved(serviceGroupContext);
+        
+        synchronized (serviceGroupContextMap) { 
+            for (Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
+                 sgCtxtMapKeyIter.hasNext();) {
+                String sgCtxtId = (String) sgCtxtMapKeyIter.next();
+                ServiceGroupContext serviceGroupContext =
+                        (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
+                if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
+                    getServiceGroupContextTimoutInterval()) {
+                    sgCtxtMapKeyIter.remove();
+                    cleanupServiceContexts(serviceGroupContext);
+                    contextRemoved(serviceGroupContext);
+                }
             }
         }
     }
