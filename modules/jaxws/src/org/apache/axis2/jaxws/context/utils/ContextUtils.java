@@ -262,7 +262,7 @@ public class ContextUtils {
             }
         }
 
-        String op = jaxwsMessageContext.getOperationName().getLocalPart();    	
+        QName op = jaxwsMessageContext.getOperationName();    	
         
         if (op != null && soapMessageContext != null) {
             soapMessageContext
