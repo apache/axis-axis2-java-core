@@ -111,7 +111,7 @@
         <xsl:if test="$isAsync='1'">
         <xsl:for-each select="method">
         /**
-         * Auto generated function declaration
+         * Auto generated function for asynchronous invocations
          * for "<xsl:value-of select="@qname"/>" operation.
          * @param stub The stub
          * @param env environment ( mandatory)
