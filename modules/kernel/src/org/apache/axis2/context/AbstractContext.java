@@ -109,14 +109,13 @@ public abstract class AbstractContext {
      */
     public Object getProperty(String key) {
         Object obj = properties == null ? null : properties.get(key);
-        if ((obj == null) && (parent != null)) {
-            obj = parent.getProperty(key);
-        } else {
-
-            // Assume that a property is which is read may be updated.
+        if (obj!=null) {
+            // Assume that a property which is read may be updated.
             // i.e. The object pointed to by 'value' may be modified after it is read
             addPropertyDifference(key, obj, false);
-        }
+        } else if (parent!=null) {
+            obj = parent.getProperty(key);
+        } 
         return obj;
     }
 

@@ -1395,12 +1395,15 @@ public class AxisService extends AxisDescription {
      *         SOAP Action otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
+        
+        // Check for illegal soapActions
         if ((soapAction == null) || soapAction.length() == 0) {
         	if(log.isDebugEnabled()){
         		log.debug("getOperationBySOAPAction: "+soapAction +" is null or ''. Returning null.");
         	}
             return null;
         }
+        
         // If the action maps to an alais that is not unique, then it can't be used to map to 
         // an operation.
         if (invalidOperationsAliases.contains(soapAction)) {
@@ -1410,7 +1413,18 @@ public class AxisService extends AxisDescription {
             return null;
         }
 
-        AxisOperation operation = null;
+        // Get the operation from the action->operation map
+        AxisOperation operation = (AxisOperation) operationsAliasesMap.get(soapAction);
+        
+        if (operation != null) {
+            if(log.isDebugEnabled()){
+                log.debug("getOperationBySOAPAction: Operation ("+operation+","+operation.getName()+") for soapAction: "+soapAction+" found in action map.");
+            }
+            return operation;
+        }
+        
+        // The final fallback is to check the operations for a matching name.
+        
         Iterator children = getChildren();
         // I could not find any spec statement that explicitly forbids using a short name in the SOAPAction header or wsa:Action element,
         // so I believe this to be valid.  There may be customers using the shortname as the SOAPAction in their client code that would
@@ -1426,10 +1440,7 @@ public class AxisService extends AxisDescription {
         	if(log.isDebugEnabled()){
         		log.debug("getOperationBySOAPAction: Operation ("+operation+","+operation.getName()+") for soapAction: "+soapAction+" found as child.");
         	}
-            return operation;
         }
-
-        operation = (AxisOperation) operationsAliasesMap.get(soapAction);
         
         return operation;
     }
