@@ -33,8 +33,11 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
+import org.apache.axis2.jaxws.handler.HandlerInvoker;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -53,9 +56,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.handler.Handler;
+
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.List;
 
 /**
  * The EndpointController is the server side equivalent to the InvocationController on the client
@@ -222,11 +228,13 @@ public class EndpointController {
             
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
-            boolean success =
-                    HandlerInvokerUtils.invokeInboundHandlers(request.getMEPContext(),
-                                                              eic.getHandlers(),
-                                                              HandlerChainProcessor.MEP.REQUEST,
-                                                              isOneWay(request.getAxisMessageContext()));
+            HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
+                                                                               HandlerChainProcessor.MEP.REQUEST,
+                                                                               isOneWay(request.getAxisMessageContext()));
+            HandlerInvokerFactory hiFactory = (HandlerInvokerFactory) 
+                FactoryRegistry.getFactory(HandlerInvokerFactory.class);
+            HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(request);
+            boolean success = handlerInvoker.invokeInboundHandlers(hiContext);
 
             if (success) {
                 if (log.isDebugEnabled()) {
@@ -266,10 +274,14 @@ public class EndpointController {
                if (!isOneWay(eic.getRequestMessageContext().getAxisMessageContext())) {
                     response.setMEPContext(request.getMEPContext());
                     
-                    HandlerInvokerUtils.invokeOutboundHandlers(response.getMEPContext(),
-                                                               eic.getHandlers(),
-                                                               HandlerChainProcessor.MEP.RESPONSE,
-                                                               false);
+                    HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
+                                                                                       HandlerChainProcessor.MEP.RESPONSE,
+                                                                                       false);
+                    HandlerInvokerFactory hiFactory = (HandlerInvokerFactory) 
+                        FactoryRegistry.getFactory(HandlerInvokerFactory.class);
+                    HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(response);
+                    handlerInvoker.invokeOutboundHandlers(hiContext);
+                    
                }
            } 
         } catch (Exception e) {
@@ -502,5 +514,19 @@ public class EndpointController {
             }
         }
         return false;
+    }
+    
+    /**
+     * Builds the HandlerInvocationContext that will be used when invoking 
+     * inbound/outbound handler chains.
+     */
+    HandlerInvocationContext buildHandlerInvocationContext(MessageContext request, List<Handler> handlers, 
+                                                          HandlerChainProcessor.MEP mep, boolean isOneWay) {
+        HandlerInvocationContext hiContext = new HandlerInvocationContext();
+        hiContext.setMessageContext(request);
+        hiContext.setMEP(mep);
+        hiContext.setHandlers(handlers);
+        hiContext.setOneWay(isOneWay);
+        return hiContext;
     }
 }

@@ -30,7 +30,9 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /*
  * There are myriad scenarios to test here:
@@ -850,6 +852,17 @@ public class HandlerChainProcessorTests extends TestCase {
 
         assertNotNull(e);
         assertEquals("S2f:S1f:L1f:S2c:S1c:L1c:L2c:", result);
+    }
+    
+    /**
+     * This will verify that there is a default HandlerInvokerFactory registered
+     * with the FactoryRegistry and that the factory returns a non-null HandlerInvoker.
+     */
+    public void testRegisterHandlerFactory() {
+        HandlerInvokerFactory factory = (HandlerInvokerFactory) 
+            FactoryRegistry.getFactory(HandlerInvokerFactory.class);
+        assertNotNull(factory);
+        assertNotNull(factory.createHandlerInvoker(new MessageContext()));
     }
 
 
