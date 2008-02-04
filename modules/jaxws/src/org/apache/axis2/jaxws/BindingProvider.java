@@ -29,7 +29,6 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -251,7 +250,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         return clazz.cast(jaxwsEPR);
     }
 
-    public org.apache.axis2.addressing.EndpointReference getAxis2EndpointReference(String addressingNamespace) throws AxisFault {
+    public org.apache.axis2.addressing.EndpointReference getAxis2EndpointReference(String addressingNamespace) {
         org.apache.axis2.addressing.EndpointReference epr = this.epr;
         
         if (epr == null || !addressingNamespace.equals(this.addressingNamespace)) {
