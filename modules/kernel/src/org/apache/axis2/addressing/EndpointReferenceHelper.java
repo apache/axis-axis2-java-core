@@ -75,11 +75,12 @@ public class EndpointReferenceHelper {
 
     /**
      * Populates an endpoint reference based on the <code>OMElement</code>. Returns the
-     * WS-Addressing namespace that the endpoint reference is in compliance with.
+     * WS-Addressing namespace of the endpoint reference.
      * 
-     * @param epr          an endpoint reference instance to hold the info.
+     * @param epr          an endpoint reference instance to hold the info. If the endpoint
+     * reference is null then just the WS-Addressing namespace is returned.
      * @param eprOMElement an element of endpoint reference type
-     * @return a string representing the namespace of the endpoint reference.
+     * @return a string representing the WS-Addressing namespace of the endpoint reference.
      * @throws AxisFault if unable to locate an address element.
      */
     public static String fromOM(EndpointReference epr, OMElement eprOMElement)
@@ -118,7 +119,8 @@ public class EndpointReferenceHelper {
         }
 
         //Second pass, identify the properties.
-        fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
+        if (epr != null)
+            fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
 
         return ((QName) map.get(AddressingConstants.EPR_ADDRESS)).getNamespaceURI();
     }

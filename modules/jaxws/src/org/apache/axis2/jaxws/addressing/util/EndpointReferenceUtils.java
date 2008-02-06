@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -30,7 +29,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.InterfaceName;
@@ -59,10 +57,10 @@ public final class EndpointReferenceUtils {
      * @param axis2EPR
      * @param addressingNamespace
      * @return
-     * @throws AxisFault
+     * @throws Exception
      */
     public static javax.xml.ws.EndpointReference convertFromAxis2(EndpointReference axis2EPR, String addressingNamespace)
-    throws AxisFault, Exception {
+    throws Exception {
         QName qname = new QName(addressingNamespace, "EndpointReference", "wsa");
         OMElement omElement =
             EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
@@ -80,10 +78,10 @@ public final class EndpointReferenceUtils {
      * @param source
      * @param addressingNamespace
      * @return
-     * @throws AxisFault
+     * @throws Exception
      */
-    public static javax.xml.ws.EndpointReference convertFromAxis2(Source source, String addressingNamespace)
-    throws AxisFault, Exception {
+    public static javax.xml.ws.EndpointReference convertFromSource(Source source, String addressingNamespace)
+    throws Exception {
         return jaxwsEPRFactory.createEndpointReference(source, addressingNamespace);
     }
     
@@ -94,11 +92,10 @@ public final class EndpointReferenceUtils {
      * @param axis2EPR
      * @param jaxwsEPR
      * @return
-     * @throws AxisFault
-     * @throws XMLStreamException
+     * @throws Exception
      */
     public static String convertToAxis2(EndpointReference axis2EPR, javax.xml.ws.EndpointReference jaxwsEPR)
-    throws AxisFault, XMLStreamException {
+    throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         jaxwsEPR.writeTo(new StreamResult(baos));
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

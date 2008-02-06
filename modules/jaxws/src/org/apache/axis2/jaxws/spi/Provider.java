@@ -155,11 +155,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
             
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
-            org.apache.axis2.addressing.EndpointReference axis2EPR =
-                EndpointReferenceUtils.createAxis2EndpointReference("");
-            String addressingNamespace = EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
+            String addressingNamespace = EndpointReferenceHelper.fromOM(null, eprElement);
             
-            jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(eprInfoset, addressingNamespace);
+            jaxwsEPR = EndpointReferenceUtils.convertFromSource(eprInfoset, addressingNamespace);
         }
         catch (Exception e) {
             //TODO NLS enable.

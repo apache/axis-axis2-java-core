@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
@@ -30,7 +29,7 @@ public interface BindingProvider extends javax.xml.ws.BindingProvider {
 
     public ServiceDelegate getServiceDelegate();
     
-    public EndpointReference getAxis2EndpointReference(String addressingNamespace) throws AxisFault;
+    public EndpointReference getAxis2EndpointReference(String addressingNamespace);
     
     public String getAddressingNamespace();
 }

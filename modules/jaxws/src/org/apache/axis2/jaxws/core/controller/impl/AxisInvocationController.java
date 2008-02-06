@@ -24,7 +24,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
@@ -37,9 +36,7 @@ import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -61,8 +58,6 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
@@ -385,13 +380,21 @@ public class AxisInvocationController extends InvocationControllerImpl {
         org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
         setupProperties(requestMsgCtx);//, axisRequest.getOptions());
 
-        Options options = opClient.getOptions();
         if (opClient != null) {
+            Options options = opClient.getOptions();
+            EndpointReference toEPR = null;
+            
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            String targetUrl = (String)requestMsgCtx.getProperty(
-                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            EndpointReference toEPR = new EndpointReference(targetUrl);
+            if (axisRequest.getTo() == null) {
+                String targetUrl = (String)requestMsgCtx.getProperty(
+                        BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+                toEPR = new EndpointReference(targetUrl);
+            }
+            else {
+                toEPR = axisRequest.getTo();
+            }
+            
             options.setTo(toEPR);
 
             // Get the SOAP Action (if needed)
