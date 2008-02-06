@@ -108,9 +108,9 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             EndpointInvocationContext eic = InvocationContextFactory.createEndpointInvocationContext(binding);
             eic.setRequestMessageContext(requestMsgCtx);
 
-            //TODO:Once we the JAX-WS MessageContext one of the next things that
-            //needs to be done here is setting up all of the javax.xml.ws.* 
-            //properties for the MessageContext.
+            // WARNING: This should be left disabled for now.  This locks the server side
+            // into a single threaded invocation.
+            eic.getRequestMessageContext().setProperty(ServerConstants.SERVER_DISABLE_THREAD_SWITCH, true);
 
             if (isMepInOnly(mep)) {
                 if (log.isDebugEnabled()) {
