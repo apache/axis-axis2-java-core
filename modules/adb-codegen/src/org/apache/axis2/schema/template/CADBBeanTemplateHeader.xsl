@@ -165,7 +165,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -178,7 +178,7 @@
             <xsl:variable name="constValue">
                 <xsl:choose>
                    <xsl:when test="@isarray"></xsl:when>
-                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'">const </xsl:when>
                 </xsl:choose>
             </xsl:variable>
         
@@ -239,14 +239,14 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
             <xsl:variable name="paramComment"><xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text></xsl:variable>
             <xsl:variable name="constValue">
                 <xsl:choose>
-                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'">const </xsl:when>
                 </xsl:choose>
             </xsl:variable>
 
@@ -339,7 +339,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -351,7 +351,7 @@
             </xsl:variable>
             <xsl:variable name="constValue">
                 <xsl:choose>
-                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'">const </xsl:when>
                 </xsl:choose>
             </xsl:variable>
 
@@ -441,14 +441,14 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
             <xsl:variable name="paramComment"><xsl:text>Array of </xsl:text><xsl:value-of select="$PropertyTypeArrayParam"/><xsl:text>s.</xsl:text></xsl:variable>
             <xsl:variable name="constValue">
                 <xsl:choose>
-                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'">const </xsl:when>
+                   <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'">const </xsl:when>
                 </xsl:choose>
             </xsl:variable>
          
@@ -549,7 +549,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
@@ -619,7 +619,7 @@
                  <xsl:choose>
                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
-                   <xsl:when test="@type='unsigned short' or @type='unsigned long' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='long'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
+                   <xsl:when test="@type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'"><xsl:value-of select="@type"/><xsl:text>*</xsl:text></xsl:when>
                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>

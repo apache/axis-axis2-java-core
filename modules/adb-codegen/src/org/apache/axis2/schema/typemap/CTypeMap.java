@@ -51,7 +51,7 @@ public class CTypeMap implements TypeMap{
         CTypeMap.addTypemapping(SchemaConstants.XSD_INT, "int");
         CTypeMap.addTypemapping(SchemaConstants.XSD_INTEGER,
                                  "int");
-        CTypeMap.addTypemapping(SchemaConstants.XSD_LONG, "long");
+        CTypeMap.addTypemapping(SchemaConstants.XSD_LONG, "int64_t");
         CTypeMap.addTypemapping(SchemaConstants.XSD_SHORT, "short");
         CTypeMap.addTypemapping(SchemaConstants.XSD_BYTE, "axis2_byte_t");
         CTypeMap.addTypemapping(SchemaConstants.XSD_ANY, "axiom_node_t*");
@@ -99,7 +99,7 @@ public class CTypeMap implements TypeMap{
 
         // a xsd:unsignedLong
         CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDLONG,
-                                 "unsigned long");
+                                 "uint64_t");
 
         // a xsd:unsignedInt
         CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDINT,
@@ -256,7 +256,7 @@ public class CTypeMap implements TypeMap{
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NEGATIVEINTEGER,
                 "int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_LONG,
-                "long");
+                "int64_t");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_INT,
                 "int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_SHORT,
@@ -266,7 +266,7 @@ public class CTypeMap implements TypeMap{
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_NONNEGATIVEINTEGER,
                 "unsigned int");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_UNSIGNEDLONG,
-                "unsigned long");
+                "uint64_t");
         addSoapEncodingTypeMapping(SchemaConstants.SOAP_ENCODING_UNSIGNEDINT,
                 "unsigned int");
     }
