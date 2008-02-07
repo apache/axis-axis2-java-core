@@ -756,7 +756,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    public String getWebLocationString() {
+    public static String getWebLocationString() {
         return webLocationString;
     }
 

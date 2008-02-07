@@ -649,6 +649,26 @@ public class Utils {
         excludeList.add("shutDown");
     }
 
+    public static ClassLoader createClassLoader(ArrayList urls, ClassLoader serviceClassLoader,
+                                                boolean extractJars, File tmpDir) {
+        URL url = (URL) urls.get(0);
+        if (extractJars) {
+            try {
+                URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
+                urls.remove(0);
+                urls.addAll(0, Arrays.asList(urls1));
+                URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+                return new DeploymentClassLoader(urls2, null, serviceClassLoader);
+            } catch (Exception e){
+                log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
+                log.debug(e.getMessage(), e);
+            }
+        }
+        List embedded_jars = Utils.findLibJars(url);
+        URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+        return new DeploymentClassLoader(urls2, embedded_jars, serviceClassLoader);
+    }
+    
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
         if (extractJars) {

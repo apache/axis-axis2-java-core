@@ -31,6 +31,7 @@ import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.classloader.MultiParentClassLoader;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,9 +66,8 @@ public class POJODeployer implements Deployer {
     }//Will process the file and add that to axisConfig
 
     public void deploy(DeploymentFileData deploymentFileData) {
-        ClassLoader threadClassLoader = null;
+        ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            threadClassLoader = Thread.currentThread().getContextClassLoader();
             String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
             if ("class".equals(extension)) {
                 File file = deploymentFileData.getFile();
@@ -155,8 +155,15 @@ public class POJODeployer implements Deployer {
                 ArrayList axisServiceList = new ArrayList();
                 for (int i = 0; i < classList.size(); i++) {
                     String className = (String) classList.get(i);
+                    ArrayList urls = new ArrayList();
+                    urls.add(deploymentFileData.getFile().toURL());
+                    urls.add(configCtx.getAxisConfiguration().getRepository());
+                    String webLocation = DeploymentEngine.getWebLocationString();
+                    if (webLocation != null) {
+                        urls.add(new File(webLocation).toURL());
+                    }
                     ClassLoader classLoader = Utils.createClassLoader(
-                            new URL[]{deploymentFileData.getFile().toURL()},
+                            urls,
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
                             true,
                             (File) configCtx.getAxisConfiguration().
@@ -279,7 +286,7 @@ public class POJODeployer implements Deployer {
         } catch (Exception e) {
             // Seems like the jax-ws jars missing in the class path .
             // lets try with annogen
-            log.debug(Messages.getMessage(DeploymentErrorMsgs.JAXWS_JARS_MISSING,e.getMessage()),e);
+            log.info(Messages.getMessage(DeploymentErrorMsgs.JAXWS_JARS_MISSING,e.getMessage()),e);
             axisService = createAxisServiceUsingAnnogen(className, classLoader, serviceLocation);
         }
         return axisService;
