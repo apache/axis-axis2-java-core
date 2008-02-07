@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
@@ -58,6 +59,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -73,6 +75,7 @@ import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
+import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.util.PhasesInfo;
@@ -952,10 +955,10 @@ public class AxisService extends AxisDescription {
         return eprs;
     }
 
-    private void printDefinitionObject(Definition definition, OutputStream out)
+    private void printDefinitionObject(Definition definition, OutputStream out, String requestIP)
             throws AxisFault, WSDLException {
         if (isModifyUserWSDLPortAddress()) {
-            setPortAddress(definition);
+            setPortAddress(definition, requestIP);
         }
         if (!wsdlImportLocationAdjusted){
            changeImportAndIncludeLocations(definition);
@@ -976,7 +979,7 @@ public class AxisService extends AxisDescription {
 
         if (definition != null) {
             try {
-                printDefinitionObject(getWSDLDefinition(definition, wsdlName), out);
+                printDefinitionObject(getWSDLDefinition(definition, wsdlName), out, null);
             } catch (WSDLException e) {
                 throw AxisFault.makeFault(e);
             }
@@ -1090,6 +1093,90 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * Produces a XSD for this AxisService and prints it to the specified OutputStream.
+     * 
+     * @param out destination stream.
+     * @param xsd schema name
+     * @return -1 implies not found, 0 implies redirect to root, 1 implies found/printed a schema
+     * @throws IOException
+     */
+    public int printXSD(OutputStream out, String xsd) throws IOException {
+
+        // If we find a SchemaSupplier, use that
+        SchemaSupplier supplier = (SchemaSupplier)getParameterValue("SchemaSupplier");
+        if (supplier != null) {
+                XmlSchema schema = supplier.getSchema(this, xsd);
+                if (schema != null) {
+                    schema.write(new OutputStreamWriter(out, "UTF8"));
+                    out.flush();
+                    out.close();
+                    return 1;
+                }
+        }
+
+        //call the populator
+        populateSchemaMappings();
+        Map schemaMappingtable =
+                getSchemaMappingTable();
+        ArrayList schemas = getSchema();
+
+        //a name is present - try to pump the requested schema
+        if (!"".equals(xsd)) {
+            XmlSchema schema =
+                    (XmlSchema) schemaMappingtable.get(xsd);
+            if (schema == null) {
+                int dotIndex = xsd.indexOf('.');
+                if (dotIndex > 0) {
+                    String schemaKey = xsd.substring(0,dotIndex);
+                    schema = (XmlSchema) schemaMappingtable.get(schemaKey);
+                }
+            }
+            if (schema != null) {
+                //schema is there - pump it outs
+                schema.write(new OutputStreamWriter(out, "UTF8"));
+                out.flush();
+                out.close();
+            } else {
+                InputStream in = getClassLoader()
+                        .getResourceAsStream(DeploymentConstants.META_INF + "/" + xsd);
+                if (in != null) {
+                    out.write(IOUtils.getStreamAsByteArray(in));
+                    out.flush();
+                    out.close();
+                } else {
+                    // Can't find the schema
+                    return -1;
+                }
+            }
+        } else if (schemas.size() > 1) {
+            //multiple schemas are present and the user specified
+            //no name - in this case we cannot possibly pump a schema
+            //so redirect to the service root
+            return 0;
+        } else {
+            //user specified no name and there is only one schema
+            //so pump that out
+            ArrayList list = getSchema();
+            if (list.size() > 0) {
+                XmlSchema schema = getSchema(0);
+                if (schema != null) {
+                    schema.write(new OutputStreamWriter(out, "UTF8"));
+                    out.flush();
+                    out.close();
+                }
+            } else {
+                String xsdNotFound = "<error>" +
+                        "<description>Unable to access schema for this service</description>" +
+                        "</error>";
+                out.write(xsdNotFound.getBytes());
+                out.flush();
+                out.close();
+            }
+        }
+        return 1;
+    }
+
+    /**
      * Produces a WSDL for this AxisService and prints it to the specified OutputStream.
      *
      * @param out destination stream.  The WSDL will be sent here.
@@ -1110,7 +1197,7 @@ public class AxisService extends AxisDescription {
             try {
                 Definition definition = supplier.getWSDL(this);
                 if (definition != null) {
-                    printDefinitionObject(getWSDLDefinition(definition, null), out);
+                    printDefinitionObject(getWSDLDefinition(definition, null), out, requestIP);
                 }
             } catch (Exception e) {
                 printWSDLError(out, e);
@@ -1150,13 +1237,18 @@ public class AxisService extends AxisDescription {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
                         SOAPAddress soapAddress = (SOAPAddress) extensibilityEle;
-                        String exsistingAddress = soapAddress.getLocationURI();
-                        if (requestIP == null) {
+                        String existingAddress = soapAddress.getLocationURI();
+                        if (existingAddress == null || existingAddress.equals("REPLACE_WITH_ACTUAL_URL")) {
                             ((SOAPAddress) extensibilityEle).setLocationURI(
-                                    getLocationURI(getEPRs(), exsistingAddress));
+                                    getEPRs()[0]);
                         } else {
-                            ((SOAPAddress) extensibilityEle).setLocationURI(
-                                    getLocationURI(calculateEPRs(requestIP), exsistingAddress));
+                            if (requestIP == null) {
+                                ((SOAPAddress) extensibilityEle).setLocationURI(
+                                        getLocationURI(getEPRs(), existingAddress));
+                            } else {
+                                ((SOAPAddress) extensibilityEle).setLocationURI(
+                                        getLocationURI(calculateEPRs(requestIP), existingAddress));
+                            }
                         }
                     } else if (extensibilityEle instanceof SOAP12Address){
                         SOAP12Address soapAddress = (SOAP12Address) extensibilityEle;

@@ -22,7 +22,11 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.JAXWSRIWSDLGenerator;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
+import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -35,6 +39,8 @@ import java.util.List;
  * information including annotations, and (in the future) deployment descriptors.
  */
 public class DescriptionFactory {
+    private static final Log log = LogFactory.getLog(DescriptionFactory.class);
+
     /**
      * The type of update being done for a particular Port.  This is used by the JAX-WS service
      * delegate on the CLIENT side. This is used as a parameter to the updateEndpoint factory
@@ -311,6 +317,13 @@ public class DescriptionFactory {
         ServiceDescription serviceDescription = createServiceDescription(serviceImplClass);
         EndpointDescription[] edArray = serviceDescription.getEndpointDescriptions();
         AxisService axisService = edArray[0].getAxisService();
+        try {
+            JAXWSRIWSDLGenerator value = new JAXWSRIWSDLGenerator(axisService);
+            axisService.addParameter("WSDLSupplier", value);
+            axisService.addParameter("SchemaSupplier", value);
+        } catch (Exception ex) {
+            log.info("Unable to set the WSDLSupplier", ex);
+        }
         return axisService;
     }
 

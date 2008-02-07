@@ -284,71 +284,14 @@ public class ListingAgent extends AbstractAgent {
                     return;
                 } else if (xsd >= 0) {
                     res.setContentType("text/xml");
-                    AxisService axisService = (AxisService) serviceObj;
-                    //call the populator
-                    axisService.populateSchemaMappings();
-                    Map schemaMappingtable =
-                            axisService.getSchemaMappingTable();
-                    ArrayList schemas = axisService.getSchema();
-
-                    //a name is present - try to pump the requested schema
-                    String xsds = req.getParameter("xsd");
-                    if (!"".equals(xsds)) {
-                        XmlSchema schema =
-                                (XmlSchema) schemaMappingtable.get(xsds);
-                        if (schema == null) {
-                            int dotIndex = xsds.indexOf('.');
-                            if (dotIndex > 0) {
-                                String schemaKey = xsds.substring(0,dotIndex);
-                                schema = (XmlSchema) schemaMappingtable.get(schemaKey);
-                            }
-                        }
-                        if (schema != null) {
-                            //schema is there - pump it outs
-                            OutputStream out = res.getOutputStream();
-                            schema.write(new OutputStreamWriter(out, "UTF8"));
-                            out.flush();
-                            out.close();
-                        } else {
-                            InputStream in = axisService.getClassLoader()
-                                    .getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
-                            if (in != null) {
-                                OutputStream out = res.getOutputStream();
-                                out.write(IOUtils.getStreamAsByteArray(in));
-                                out.flush();
-                                out.close();
-                            } else {
-                                res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                            }
-                        }
-
+                    int ret = ((AxisService) serviceObj).printXSD(res.getOutputStream(), req.getParameter("xsd"));
+                    if (ret == 0) {
                         //multiple schemas are present and the user specified
                         //no name - in this case we cannot possibly pump a schema
                         //so redirect to the service root
-                    } else if (schemas.size() > 1) {
                         res.sendRedirect("");
-                        //user specified no name and there is only one schema
-                        //so pump that out
-                    } else {
-                        ArrayList list = axisService.getSchema();
-                        if (list.size() > 0) {
-                            XmlSchema schema = axisService.getSchema(0);
-                            if (schema != null) {
-                                OutputStream out = res.getOutputStream();
-                                schema.write(new OutputStreamWriter(out, "UTF8"));
-                                out.flush();
-                                out.close();
-                            }
-                        } else {
-                            res.setContentType("text/xml");
-                            String xsdNotFound = "<error>" +
-                                    "<description>Unable to access schema for this service</description>" +
-                                    "</error>";
-                            OutputStream out = res.getOutputStream();
-                            out.write(xsdNotFound.getBytes());
-                            out.flush();
-                            out.close();
-                        }
+                    } else if (ret == -1) {
+                        res.sendError(HttpServletResponse.SC_NOT_FOUND);
                     }
                     return;
                 } else if (policy >= 0) {

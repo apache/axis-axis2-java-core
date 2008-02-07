@@ -77,6 +77,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId> 
+			<artifactId>jaxws-rt</artifactId>
+            <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId> 
+			<artifactId>jaxws-tools</artifactId>
+            <scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -154,16 +164,6 @@
 					</execution>
 					
 				</executions>
-				<dependencies>
-					<!--<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-antlr</artifactId>
-					</dependency>
-					<dependency>
-						<groupId>antlr</groupId>
-						<artifactId>antlrall</artifactId>
-					</dependency>-->
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

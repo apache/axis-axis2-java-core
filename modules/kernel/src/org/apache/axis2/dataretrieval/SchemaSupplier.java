@@ -1,9 +1,3 @@
-package org.apache.axis2.dataretrieval;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisService;
-
-import javax.wsdl.Definition;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -23,12 +17,18 @@ import javax.wsdl.Definition;
  * under the License.
  */
 
+package org.apache.axis2.dataretrieval;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.ws.commons.schema.XmlSchema;
+
 /**
- * Return a WSDL as an OMElement.  This is used by any AxisService that wishes
+ * Return a XMLSchema as an OMElement.  This is used by any AxisService that wishes
  * to override the standard AxisService2WSDL (see the org.apache.axis2.description
- * package) method of getting WSDL.  If one of these is present in the AxisService
- * Parameters under the name "WSDLSupplier", it will be queried.
+ * package) method of getting XSD.  If one of these is present in the AxisService
+ * Parameters under the name "SchemaSupplier", it will be queried.
  */
-public interface WSDLSupplier {
-    Definition getWSDL(AxisService service) throws AxisFault;
+public interface SchemaSupplier {
+    XmlSchema getSchema(AxisService service, String xsd) throws AxisFault;
 }
