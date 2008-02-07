@@ -23,6 +23,7 @@ public interface AnnotationConstants {
     String WEB_METHOD = "javax.jws.WebMethod";
     String WEB_PARAM = "javax.jws.WebParam";
     String WEB_RESULT = "javax.jws.WebResult";
+    String WEB_SERVICE_PROVIDER = "javax.xml.ws.WebServiceProvider";
     String TARGETNAMESPACE = "targetNamespace";
     String NAME = "name";
     String SERVICE_NAME = "serviceName";

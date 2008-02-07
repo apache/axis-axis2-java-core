@@ -3,6 +3,7 @@ package org.apache.axis2.jaxws.description.builder;
 import com.sun.tools.ws.spi.WSToolsObjectFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.description.AxisService;
@@ -292,6 +293,10 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     }
 
     public Definition getWSDL(AxisService service) throws AxisFault {
+        Parameter wsdlParameter = service.getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+        if (wsdlParameter != null) {
+            return (Definition) wsdlParameter.getValue();
+        }
         initialize();
         return wsdlDefMap.values().iterator().next();
     }
@@ -305,6 +310,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     }
 
     public XmlSchema getSchema(AxisService service, String xsd) throws AxisFault {
+        initialize();
         XmlSchema schema = docMap.get(xsd);
         if (schema == null) {
             docMap.values().iterator().next();

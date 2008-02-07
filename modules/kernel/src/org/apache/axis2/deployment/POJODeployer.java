@@ -190,6 +190,9 @@ public class POJODeployer implements Deployer {
                              */
                             JAnnotation annotation =
                                     jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
+                            if(annotation == null) {
+                                annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE_PROVIDER);
+                            }
                             if (annotation != null) {
                                 AxisService axisService;
                                 axisService =
