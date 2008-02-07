@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -811,6 +812,14 @@ class ServiceDescriptionImpl
         URL url = null;
         if (loader != null) {
             url = loader.getResource(wsdlLocation);
+        }
+        
+        // Try the context class loader
+        if(url == null){
+            ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader(null);
+            if(classLoader != loader){
+                url = classLoader.getResource(wsdlLocation);
+            }
         }
 
         // 2) As a fully specified URL
