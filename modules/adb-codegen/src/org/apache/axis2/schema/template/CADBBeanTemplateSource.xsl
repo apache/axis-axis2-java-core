@@ -328,9 +328,13 @@
                   </xsl:when>
 
                   <!-- add int64_t s -->
-                  <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                  <xsl:when test="$nativePropertyType='int64_t'">
                      <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                    env, atoll(node_value));
+                                                    env, strtol(node_value, (char**)NULL, 0));
+                  </xsl:when>
+                  <xsl:when test="$nativePropertyType='uint64_t'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, strtoul(node_value, (char**)NULL, 0));
                   </xsl:when>
 
                   <!-- add float s -->
@@ -507,9 +511,13 @@
                   </xsl:when>
 
                   <!-- add int64_t s -->
-                  <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                  <xsl:when test="$nativePropertyType='int64_t'">
                      <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                    env, atoll(token_value));
+                                                    env, strtol(token_value, (char**)NULL, 0));
+                  </xsl:when>
+                  <xsl:when test="$nativePropertyType='uint64_t'">
+                     <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                    env, strtoul(token_value, (char**)NULL, 0));
                   </xsl:when>
 
                   <!-- add float s -->
@@ -913,9 +921,13 @@
                         </xsl:when>
 
                         <!-- add int64_t s -->
-                        <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                        <xsl:when test="$nativePropertyType='int64_t'">
                            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                          env, atoll(attrib_text));
+                                                          env, strtol(attrib_text, (char**)NULL, 0));
+                        </xsl:when>
+                        <xsl:when test="$nativePropertyType='uint64_t'">
+                           <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                          env, strtoul(attrib_text, (char**)NULL, 0));
                         </xsl:when>
 
                         <!-- add float s -->
@@ -1406,12 +1418,27 @@
                                       </xsl:if>
 
                                     </xsl:when>
-                                    <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                                    <xsl:when test="$nativePropertyType='int64_t'">
                                       text_value = axiom_element_get_text(current_element, env, current_node);
                                       if(text_value != NULL)
                                       {
                                             status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
-                                                                   atoll(text_value));
+                                                                   strtol(text_value, (char**)NULL, 0));
+                                      }
+                                      <xsl:if test="not(@nillable)">
+                                      else
+                                      {
+                                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                          status = AXIS2_FAILURE;
+                                      }
+                                      </xsl:if>
+                                    </xsl:when>
+                                    <xsl:when test="$nativePropertyType='uint64_t'">
+                                      text_value = axiom_element_get_text(current_element, env, current_node);
+                                      if(text_value != NULL)
+                                      {
+                                            status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                   strtoul(text_value, (char**)NULL, 0));
                                       }
                                       <xsl:if test="not(@nillable)">
                                       else
@@ -1854,13 +1881,30 @@
                                           }
                                           </xsl:if>
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                                        <xsl:when test="$nativePropertyType='int64_t'">
                                           text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                               /* we keeps int64_t in arrays from their pointers */
                                               element = AXIS2_MALLOC(env-> allocator, sizeof(int64_t));
-                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoll(text_value);
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = strtol(text_value, (char**)NULL, 0);
+                                              axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
+                                        </xsl:when>
+                                        <xsl:when test="$nativePropertyType='uint64_t'">
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
+                                          if(text_value != NULL)
+                                          {
+                                              /* we keeps int64_t in arrays from their pointers */
+                                              element = AXIS2_MALLOC(env-> allocator, sizeof(uint64_t));
+                                              (*(<xsl:value-of select="$nativePropertyType"/>*)element) = strtoul(text_value, (char**)NULL, 0);
                                               axutil_array_list_add_at(arr_list, env, i, element);
                                           }
                                           <xsl:if test="not(@nillable)">
@@ -2321,13 +2365,30 @@
                                           }
                                           </xsl:if>
                                         </xsl:when>
-                                        <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                                        <xsl:when test="$nativePropertyType='int64_t'">
                                           /* we keeps int64_t in arrays from their pointers */
                                           text_value = axiom_element_get_text(current_element, env, current_node);
                                           if(text_value != NULL)
                                           {
                                                element = AXIS2_MALLOC(env-> allocator, sizeof(int64_t));
-                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = atoll(text_value);
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = strtol(text_value, (char**)NULL,0);
+                                               axutil_array_list_add_at(arr_list, env, i, element);
+                                          }
+                                          <xsl:if test="not(@nillable)">
+                                          else
+                                          {
+                                                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$propertyName"/>");
+                                                status = AXIS2_FAILURE;
+                                          }
+                                          </xsl:if>
+                                        </xsl:when>
+                                        <xsl:when test="$nativePropertyType='uint64_t'">
+                                          /* we keeps int64_t in arrays from their pointers */
+                                          text_value = axiom_element_get_text(current_element, env, current_node);
+                                          if(text_value != NULL)
+                                          {
+                                               element = AXIS2_MALLOC(env-> allocator, sizeof(uint64_t));
+                                               (*(<xsl:value-of select="$nativePropertyType"/>*)element) = strtoul(text_value, (char**)NULL, 0);
                                                axutil_array_list_add_at(arr_list, env, i, element);
                                           }
                                           <xsl:if test="not(@nillable)">
