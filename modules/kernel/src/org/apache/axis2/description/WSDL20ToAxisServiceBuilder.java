@@ -307,7 +307,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     SOAPBindingExtensions soapBindingExtensions;
                     try {
                         soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
-                                .getComponentExtensionsForNamespace(
+                                .getComponentExtensionContext(
                                         new URI(WSDL2Constants.URI_WSDL2_SOAP));
                     } catch (URISyntaxException e) {
                         throw new AxisFault("Soap Binding Extention not found");
@@ -393,7 +393,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         SOAPEndpointExtensions soapEndpointExtensions;
         try {
             soapEndpointExtensions = (SOAPEndpointExtensions) endpoint
-                    .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
+                    .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
         } catch (URISyntaxException e) {
             throw new AxisFault("HTTP Binding Extention not found");
         }
@@ -519,7 +519,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         SOAPBindingExtensions soapBindingExtensions;
         try {
             soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
-                    .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
+                    .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
         } catch (URISyntaxException e) {
             throw new AxisFault("Soap Binding Extention not found");
         }
@@ -573,7 +573,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             try {
                 soapBindingFaultExtensions = (SOAPBindingFaultExtensions) bindingFault
-                        .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
+                        .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
             } catch (URISyntaxException e) {
                 throw new AxisFault("Soap Binding Extention not found");
             }
@@ -616,7 +616,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             SOAPBindingOperationExtensions soapBindingOperationExtensions;
             try {
                 soapBindingOperationExtensions = ((SOAPBindingOperationExtensions)
-                        bindingOperation.getComponentExtensionsForNamespace(
+                        bindingOperation.getComponentExtensionContext(
                                 new URI(WSDL2Constants.URI_WSDL2_SOAP)));
             } catch (URISyntaxException e) {
                 throw new AxisFault("Soap Binding Extention not found");
@@ -675,7 +675,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 try {
                     soapBindingMessageReferenceExtensions =
                             (SOAPBindingMessageReferenceExtensions) bindingMessageReference
-                                    .getComponentExtensionsForNamespace(
+                                    .getComponentExtensionContext(
                                             new URI(WSDL2Constants.URI_WSDL2_SOAP));
                 } catch (URISyntaxException e) {
                     throw new AxisFault("Soap Binding Extention not found");
@@ -713,7 +713,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 try {
                     soapBindingFaultReferenceExtensions =
                             (SOAPBindingFaultReferenceExtensions) bindingFaultReference
-                                    .getComponentExtensionsForNamespace(
+                                    .getComponentExtensionContext(
                                             new URI(WSDL2Constants.URI_WSDL2_SOAP));
                 } catch (URISyntaxException e) {
                     throw new AxisFault("Soap Binding Extention not found");
@@ -748,7 +748,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         HTTPBindingExtensionsImpl httpBindingExtensions;
         try {
             httpBindingExtensions = (HTTPBindingExtensionsImpl) binding
-                    .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+                    .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_HTTP));
         } catch (URISyntaxException e) {
             throw new AxisFault("HTTP Binding Extention not found");
         }
@@ -778,7 +778,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             try {
                 httpBindingFaultExtensions = (HTTPBindingFaultExtensions) bindingFault
-                        .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+                        .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_HTTP));
             } catch (URISyntaxException e) {
                 throw new AxisFault("HTTP Binding Extention not found");
             }
@@ -814,7 +814,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             HTTPBindingOperationExtensions httpBindingOperationExtensions;
             try {
                 httpBindingOperationExtensions = ((HTTPBindingOperationExtensions)
-                        bindingOperation.getComponentExtensionsForNamespace(
+                        bindingOperation.getComponentExtensionContext(
                                 new URI(WSDL2Constants.URI_WSDL2_HTTP)));
             } catch (URISyntaxException e) {
                 throw new AxisFault("HTTP Binding Extention not found");
@@ -887,7 +887,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 try {
                     httpBindingMessageReferenceExtensions =
                             (HTTPBindingMessageReferenceExtensions) bindingMessageReference
-                                    .getComponentExtensionsForNamespace(
+                                    .getComponentExtensionContext(
                                             new URI(WSDL2Constants.URI_WSDL2_HTTP));
                 } catch (URISyntaxException e) {
                     throw new AxisFault("HTTP Binding Extention not found");
@@ -989,7 +989,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         InterfaceOperationExtensionsImpl interfaceOperationExtensions;
         try {
             interfaceOperationExtensions = (InterfaceOperationExtensionsImpl) operation
-                    .getComponentExtensionsForNamespace(
+                    .getComponentExtensionContext(
                             new URI(WSDL2Constants.URI_WSDL2_EXTENSIONS));
         } catch (URISyntaxException e) {
             throw new AxisFault("WSDL2 extensions not defined for this operation");
@@ -997,14 +997,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         if (interfaceOperationExtensions != null) {
             Parameter parameter = new Parameter(WSDL2Constants.ATTR_WSDLX_SAFE, Boolean.valueOf(
-                    interfaceOperationExtensions.isSafety()));
+                    interfaceOperationExtensions.isSafe()));
             axisOperation.addParameter(parameter);
         }
 
         RPCInterfaceOperationExtensions rpcInterfaceOperationExtensions;
         try {
             rpcInterfaceOperationExtensions = (RPCInterfaceOperationExtensions) operation
-                    .getComponentExtensionsForNamespace(
+                    .getComponentExtensionContext(
                             new URI(WSDL2Constants.URI_WSDL2_RPC));
         } catch (URISyntaxException e) {
             throw new AxisFault("WSDL2 extensions not defined for this operation");
