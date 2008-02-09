@@ -3950,10 +3950,10 @@
                         <xsl:when test="$nativePropertyType='uint64_t'">
                            <xsl:choose>
                              <xsl:when test="@isarray">
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%lu", (int)*((<xsl:value-of select="$nativePropertyType"/>*)element));
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%lu", (uint64_t)*((<xsl:value-of select="$nativePropertyType"/>*)element));
                              </xsl:when>
                              <xsl:otherwise>
-                               sprintf (text_value_<xsl:value-of select="$position"/>, "%lu", (int)<xsl:value-of select="$propertyInstanceName"/>);
+                               sprintf (text_value_<xsl:value-of select="$position"/>, "%lu", (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
                              </xsl:otherwise>
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
