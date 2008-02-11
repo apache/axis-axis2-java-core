@@ -65,6 +65,8 @@ public interface OperationDescription {
      */
     public static final String HEADER_PARAMETER_QNAMES = "org.apache.axis2.jaxws.description.OperationDescription.headerParameterQNames";
     
+    public static final String AXIS_OPERATION_PARAMETER = "org.apache.axis2.jaxws.description.OperationDescription.axisOperationParameter";
+    
     public EndpointInterfaceDescription getEndpointInterfaceDescription();
 
     public FaultDescription[] getFaultDescriptions();

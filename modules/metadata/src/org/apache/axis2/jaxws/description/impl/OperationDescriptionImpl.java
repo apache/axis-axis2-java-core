@@ -210,6 +210,15 @@ class OperationDescriptionImpl
                 axisOperation = createClientAxisOperation();
             }
         }
+        if(this.axisOperation != null) {
+            try {
+                this.axisOperation.addParameter(new Parameter(OperationDescription.AXIS_OPERATION_PARAMETER,
+                                                         this));  
+            }
+            catch(AxisFault af) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("operationDescriptionErr1"));
+            }
+        }
         buildAttachmentInformation();
     }
 
@@ -217,6 +226,15 @@ class OperationDescriptionImpl
         parentEndpointInterfaceDescription = parent;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         axisOperation = operation;
+        if(this.axisOperation != null) {
+            try {
+                this.axisOperation.addParameter(new Parameter(OperationDescription.AXIS_OPERATION_PARAMETER,
+                                                         this));  
+            }
+            catch(AxisFault af) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("operationDescriptionErr1"));
+            }
+        }
         this.operationQName = axisOperation.getName();
         buildAttachmentInformation();
     }
@@ -247,6 +265,17 @@ class OperationDescriptionImpl
         } else {
             this.axisOperation = createAxisOperation();
         }
+        
+        if(this.axisOperation != null) {
+            try {
+                this.axisOperation.addParameter(new Parameter(OperationDescription.AXIS_OPERATION_PARAMETER,
+                                                         this));  
+            }
+            catch(AxisFault af) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("operationDescriptionErr1"));
+            }
+        }
+        
         // Register understood headers on axisOperation
         registerMustUnderstandHeaders();
     }
