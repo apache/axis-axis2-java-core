@@ -1054,7 +1054,7 @@ public class AxisService extends AxisDescription {
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 wsdlImport = (Import) valuesIter.next();
                 originalImprotString = wsdlImport.getLocationURI();
-                if (!originalImprotString.startsWith("http")){
+                if (originalImprotString.indexOf("://") == -1){
                     wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
                 }
                 changeImportAndIncludeLocations(wsdlImport.getDefinition());
@@ -1086,7 +1086,7 @@ public class AxisService extends AxisDescription {
             attribute = nodeMap.item(i);
             if (attribute.getNodeName().equals("schemaLocation")) {
                 attributeValue = attribute.getNodeValue();
-                if (!attributeValue.startsWith("http")) {
+                if (attributeValue.indexOf("://") == -1) {
                     attribute.setNodeValue(this.name + "?xsd=" + attributeValue);
                 }
             }
@@ -2326,7 +2326,7 @@ public class AxisService extends AxisDescription {
         if (s != null) {
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
             
-            if (!schemaLocation.startsWith("http")) {
+            if (schemaLocation.indexOf("://") == -1) {
                 String newscheamlocation = customSchemaNamePrefix == null ?
                         //use the default mode
                         (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
