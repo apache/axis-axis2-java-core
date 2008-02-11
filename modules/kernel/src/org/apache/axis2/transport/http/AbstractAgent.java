@@ -116,10 +116,13 @@ public class AbstractAgent {
                               HttpServletRequest httpServletRequest,
                               HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
-        httpServletResponse.setContentType("text/html"); 
-        httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
-                .include(httpServletRequest, httpServletResponse);
-
+        httpServletResponse.setContentType("text/html");
+        try {
+            httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
+                    .include(httpServletRequest, httpServletResponse);
+        } catch (Throwable t) {
+            log.info("Old Servlet API :" + t);
+        }
     }
 
     private void preloadMethods() {
@@ -155,7 +158,11 @@ public class AbstractAgent {
 
     protected void populateSessionInformation(HttpServletRequest req) {
         HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+        try {
+            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+            req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+        } catch (Throwable t){
+            log.info("Old Servlet API :" + t);    
+        }
     }
 }
