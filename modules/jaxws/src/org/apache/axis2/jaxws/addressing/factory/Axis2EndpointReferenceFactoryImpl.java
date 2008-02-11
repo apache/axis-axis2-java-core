@@ -29,34 +29,25 @@ import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.addressing.util.EndpointMap;
+import org.apache.axis2.jaxws.addressing.util.EndpointMapManager;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
 public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReferenceFactory {
-    private final EndpointMap map = new EndpointMap();
-    
     public Axis2EndpointReferenceFactoryImpl() {
     	super();
     }
     
-    public void addAddress(QName serviceName, QName endpoint, String address) {
-        EndpointKey key = new EndpointKey(serviceName, endpoint);
-        
-        if (address == null)
-            throw new IllegalStateException("The specified address is not a valid value: " + address);
-        
-        map.put(key, address);
-    }
-    
     public EndpointReference createEndpointReference(String address) {
         if (address == null)
-            throw new IllegalStateException("The specified address is not a valid value: " + address);
+            throw new IllegalStateException("The endpoint address URI is null.");
 
         return new EndpointReference(address);
     }
     
     public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
+        EndpointMap map = EndpointMapManager.getEndpointMap();
         String address = map.get(key);
         
         return createEndpointReference(address);

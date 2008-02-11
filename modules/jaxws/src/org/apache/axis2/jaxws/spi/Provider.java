@@ -20,9 +20,6 @@ package org.apache.axis2.jaxws.spi;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
@@ -30,7 +27,6 @@ import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.spi.ServiceDelegate;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
@@ -38,11 +34,8 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
-import org.apache.axis2.util.XMLUtils;
 import org.w3c.dom.Element;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -149,15 +142,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
         EndpointReference jaxwsEPR = null;
 
         try {
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            xformer.transform(eprInfoset, new StreamResult(baos));
-            
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            OMElement eprElement = (OMElement) XMLUtils.toOM(bais);
-            String addressingNamespace = EndpointReferenceHelper.fromOM(null, eprElement);
-            
-            jaxwsEPR = EndpointReferenceUtils.convertFromSource(eprInfoset, addressingNamespace);
+            jaxwsEPR = EndpointReferenceUtils.convertFromSource(eprInfoset);
         }
         catch (Exception e) {
             //TODO NLS enable.

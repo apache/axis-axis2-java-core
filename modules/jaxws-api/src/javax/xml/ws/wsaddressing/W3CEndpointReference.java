@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -32,8 +31,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
@@ -64,6 +63,7 @@ import javax.xml.ws.WebServiceException;
  * 
  * 
  */
+@XmlRootElement(name = "EndpointReference")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EndpointReferenceType", propOrder = {
     "address",
@@ -72,12 +72,8 @@ import javax.xml.ws.WebServiceException;
     "any"
 })
 public final class W3CEndpointReference extends EndpointReference {
-    @XmlTransient
     protected static volatile JAXBContext jaxbContext;
-    @XmlTransient
     protected static final String NS = "http://www.w3.org/2005/08/addressing";
-    @XmlTransient
-    protected static final QName NAME = new QName(NS, "EndpointReference", "wsa");
     
     @XmlElement(name = "Address", required = true)
     protected AttributedURIType address;
@@ -99,9 +95,7 @@ public final class W3CEndpointReference extends EndpointReference {
         try {
             JAXBContext jaxbContext = getJAXBContext();
             Unmarshaller um = jaxbContext.createUnmarshaller();
-            JAXBElement<W3CEndpointReference> element =
-                um.unmarshal(eprInfoset, W3CEndpointReference.class);
-            W3CEndpointReference w3cEPR = element.getValue();
+            W3CEndpointReference w3cEPR = (W3CEndpointReference) um.unmarshal(eprInfoset);
             
             address = w3cEPR.address;
             referenceParameters = w3cEPR.referenceParameters;
@@ -126,9 +120,7 @@ public final class W3CEndpointReference extends EndpointReference {
             JAXBContext jaxbContext = getJAXBContext();
             Marshaller m = jaxbContext.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            JAXBElement<W3CEndpointReference> element =
-                new JAXBElement<W3CEndpointReference>(NAME, W3CEndpointReference.class, this);
-            m.marshal(element, result);
+            m.marshal(this, result);
         }
         catch (Exception e) {
             //TODO NLS enable

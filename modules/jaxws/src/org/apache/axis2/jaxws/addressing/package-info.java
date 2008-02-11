@@ -16,5 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://schemas.xmlsoap.org/ws/2004/08/addressing",
+                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+                                     location = "http://schemas.xmlsoap.org/ws/2004/08/addressing")
 package org.apache.axis2.jaxws.addressing;

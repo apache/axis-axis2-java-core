@@ -49,8 +49,7 @@ public class AddressingConfigurator implements ClientConfigurator {
             (AddressingFeature) bnd.getWebServiceFeature(AddressingFeature.ID);
         SubmissionAddressingFeature submissionAddressingFeature =
             (SubmissionAddressingFeature) bnd.getWebServiceFeature(SubmissionAddressingFeature.ID);
-        String specifiedAddressingNamespace = provider.getAddressingNamespace();
-        String enabledAddressingNamespace =
+        String addressingNamespace =
             (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disableAddressing =
             (Boolean) messageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
@@ -62,34 +61,21 @@ public class AddressingConfigurator implements ClientConfigurator {
             boolean submissionAddressingEnabled = submissionAddressingFeature.isEnabled();
             
             if (w3cAddressingEnabled && submissionAddressingEnabled) {
-                //If WS-Addressing has already been enabled then stop,
-                //as this configurator has probably already run once.
-                if (!disableAddressing)
-                    return;
-                
-                //If an EPR hasn't been specified then default to 2005/08 addressing,
-                //else use the namespace of the EPR.
-                if (specifiedAddressingNamespace == null)
-                    specifiedAddressingNamespace = Final.WSA_NAMESPACE;
-                
+                //Use the addressing namespace of the specified EPR,
+                //else default to 2005/08
+                addressingNamespace = provider.getAddressingNamespace();
+                if (addressingNamespace == null)
+                    addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else if (w3cAddressingEnabled) {
                 //Enable only 2005/08 addressing
-                if (Submission.WSA_NAMESPACE.equals(specifiedAddressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("Illegal configuration.");
-                else
-                    specifiedAddressingNamespace = Final.WSA_NAMESPACE;
-                
+                addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else if (submissionAddressingEnabled) {
                 //Enable only 2004/08 addressing
-                if (Final.WSA_NAMESPACE.equals(specifiedAddressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("Illegal configuration.");
-                else
-                    specifiedAddressingNamespace = Submission.WSA_NAMESPACE;
-                
+                addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else {
@@ -103,18 +89,16 @@ public class AddressingConfigurator implements ClientConfigurator {
 
             if (w3cAddressingEnabled) {
                 //Enable 2005/08 addressing
-                if (Submission.WSA_NAMESPACE.equals(specifiedAddressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("Illegal configuration.");
-                else
-                    specifiedAddressingNamespace = Final.WSA_NAMESPACE;
-                
+                addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else {
                 //Disable 2005/08 addressing
-                if (enabledAddressingNamespace == null ||
-                        Final.WSA_NAMESPACE.equals(enabledAddressingNamespace))
+                if (addressingNamespace == null ||
+                        Final.WSA_NAMESPACE.equals(addressingNamespace))
                     disableAddressing = Boolean.TRUE;
+                else
+                    disableAddressing = Boolean.FALSE;
             }                
         }
         else if (submissionAddressingFeature != null) {
@@ -123,18 +107,16 @@ public class AddressingConfigurator implements ClientConfigurator {
             
             if (submissionAddressingEnabled) {
                 //Enable 2004/08 addressing
-                if (Final.WSA_NAMESPACE.equals(specifiedAddressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("Illegal configuration.");
-                else
-                    specifiedAddressingNamespace = Submission.WSA_NAMESPACE;
-                
+                addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else {
                 //Disable 2004/08 addressing
-                if (enabledAddressingNamespace == null ||
-                        Submission.WSA_NAMESPACE.equals(enabledAddressingNamespace))
+                if (addressingNamespace == null ||
+                        Submission.WSA_NAMESPACE.equals(addressingNamespace))
                     disableAddressing = Boolean.TRUE;
+                else
+                    disableAddressing = Boolean.FALSE;
             }                
         }
         else {
@@ -144,7 +126,7 @@ public class AddressingConfigurator implements ClientConfigurator {
         
         if (!disableAddressing) {
             try {
-                EndpointReference epr = provider.getAxis2EndpointReference(specifiedAddressingNamespace);
+                EndpointReference epr = provider.getAxis2EndpointReference(addressingNamespace);
                 org.apache.axis2.context.MessageContext axis2MessageContext = messageContext.getAxisMessageContext();
                 axis2MessageContext.setTo(epr);
                 
@@ -159,7 +141,7 @@ public class AddressingConfigurator implements ClientConfigurator {
             }
         }
 
-        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, specifiedAddressingNamespace);                        
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
     }
 }

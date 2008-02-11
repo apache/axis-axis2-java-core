@@ -25,8 +25,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.addressing.util.EndpointKey;
+import org.apache.axis2.jaxws.addressing.util.EndpointMap;
+import org.apache.axis2.jaxws.addressing.util.EndpointMapManager;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
@@ -35,7 +36,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
 import org.apache.axis2.jaxws.handler.HandlerInvoker;
-import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -45,9 +45,6 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
-import org.apache.axis2.jaxws.server.endpoint.Utils;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
@@ -401,6 +398,10 @@ public class EndpointController {
             Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
 
             EndpointDescription ed = (EndpointDescription)param.getValue();
+            param = axisSvc.getParameter(EndpointMap.class.getCanonicalName());
+            EndpointMap map = (EndpointMap) param.getValue();
+            EndpointMapManager.setEndpointMap(map);
+            
             return ed;
         } else {
             // TODO: This is using a deprecated factory method to create the ServiceDescription.
@@ -416,14 +417,24 @@ public class EndpointController {
             EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
             
             // TODO: This is only temporary until the deprecated method is no longer used
-            QName service = ed.getServiceQName();
-            QName endpoint = ed.getPortQName();
-            axisSvc = ed.getAxisService();
-            
             try {
-                Axis2EndpointReferenceFactoryImpl axis2EPRFactory =
-                	(Axis2EndpointReferenceFactoryImpl) FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
-                axis2EPRFactory.addAddress(service, endpoint, axisSvc.getEPRs()[0]);
+                QName service = ed.getServiceQName();
+                QName endpoint = ed.getPortQName();
+                EndpointKey key = new EndpointKey(service, endpoint);
+                axisSvc = ed.getAxisService();                
+                Parameter param = axisSvc.getParameter(EndpointMap.class.getCanonicalName());
+                EndpointMap map = null;
+                
+                if (param == null) {
+                    map = EndpointMapManager.getEndpointMap();
+                    axisSvc.addParameter(EndpointMap.class.getCanonicalName(), map);
+                }
+                else {
+                    map = (EndpointMap) param.getValue();
+                    EndpointMapManager.setEndpointMap(map);
+                }
+                
+                map.put(key, axisSvc.getEPRs()[0]);
             }
             catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException(e);
@@ -431,12 +442,6 @@ public class EndpointController {
             
             return ed;
         }
-    }
-
-    private EndpointLifecycleManager createEndpointlifecycleManager() {
-        EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry
-                .getFactory(EndpointLifecycleManagerFactory.class);
-        return elmf.createEndpointLifecycleManager();
     }
 
     /**

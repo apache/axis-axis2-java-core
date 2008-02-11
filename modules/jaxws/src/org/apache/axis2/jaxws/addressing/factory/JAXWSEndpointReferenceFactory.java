@@ -18,11 +18,12 @@
  */
 package org.apache.axis2.jaxws.addressing.factory;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 
 public interface JAXWSEndpointReferenceFactory {
-    public EndpointReference createEndpointReference(Source eprInfoset, String addressingNamespace);
+    public EndpointReference createEndpointReference(Source eprInfoset) throws JAXBException;
     
     public String getAddressingNamespace(Class clazz);
 }

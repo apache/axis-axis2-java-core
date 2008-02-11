@@ -67,7 +67,7 @@ public final class EndpointReferenceUtils {
         Element eprElement = XMLUtils.toDOM(omElement);
         Source eprInfoset = new DOMSource(eprElement);
         
-        return jaxwsEPRFactory.createEndpointReference(eprInfoset, addressingNamespace);
+        return jaxwsEPRFactory.createEndpointReference(eprInfoset);
     }
 
     /**
@@ -75,14 +75,14 @@ public final class EndpointReferenceUtils {
      * subclass of {@link javax.xml.ws.EndpointReference}.
      * 
      * @param <T>
-     * @param source
+     * @param eprInfoset
      * @param addressingNamespace
      * @return
      * @throws Exception
      */
-    public static javax.xml.ws.EndpointReference convertFromSource(Source source, String addressingNamespace)
+    public static javax.xml.ws.EndpointReference convertFromSource(Source eprInfoset)
     throws Exception {
-        return jaxwsEPRFactory.createEndpointReference(source, addressingNamespace);
+        return jaxwsEPRFactory.createEndpointReference(eprInfoset);
     }
     
     /**

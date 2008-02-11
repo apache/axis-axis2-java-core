@@ -21,8 +21,8 @@ package org.apache.axis2.jaxws.addressing.util;
 import javax.xml.namespace.QName;
 
 public class EndpointKey {
-    private QName service;
-    private QName endpoint;
+    private final QName service;
+    private final QName endpoint;
     
     public EndpointKey(QName service, QName endpoint) {
         if (service == null)

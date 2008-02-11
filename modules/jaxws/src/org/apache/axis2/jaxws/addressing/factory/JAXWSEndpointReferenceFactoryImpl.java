@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.addressing.factory;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -28,29 +31,16 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 
 public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReferenceFactory {
+    private static volatile JAXBContext jaxbContext;
+
     public JAXWSEndpointReferenceFactoryImpl() {
         super();
     }
     
-    private W3CEndpointReference createW3CEndpointReference(Source eprInfoset) {
-        return new W3CEndpointReference(eprInfoset);
-    }
-    
-    private SubmissionEndpointReference createSubmissionEndpointReference(Source eprInfost) {
-        return new SubmissionEndpointReference(eprInfost);
-    }
-    
-    public EndpointReference createEndpointReference(Source eprInfoset, String addressingNamespace) {
-        EndpointReference endpointReference = null;
+    public EndpointReference createEndpointReference(Source eprInfoset) throws JAXBException {
+        Unmarshaller um = getJAXBContext().createUnmarshaller();
         
-        if (Final.WSA_NAMESPACE.equals(addressingNamespace))
-            endpointReference = createW3CEndpointReference(eprInfoset);
-        else if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
-            endpointReference = createSubmissionEndpointReference(eprInfoset);
-        else //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unknown addressing namespace: " + addressingNamespace);
-        
-        return endpointReference;
+        return (EndpointReference) um.unmarshal(eprInfoset);
     }
     
     public String getAddressingNamespace(Class clazz) {
@@ -61,8 +51,22 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
         else if (SubmissionEndpointReference.class.isAssignableFrom(clazz))
             addressingNamespace = Submission.WSA_NAMESPACE;
         else //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unknown class type: " + clazz.getCanonicalName());
+            throw ExceptionFactory.makeWebServiceException("Unknown class type: " + clazz);
         
         return addressingNamespace;
+    }
+    
+    private JAXBContext getJAXBContext() throws JAXBException {
+        //This is an implementation of double-checked locking.
+        //It works because jaxbContext is volatile.
+        if (jaxbContext == null) {
+            synchronized (JAXWSEndpointReferenceFactoryImpl.class) {
+                if (jaxbContext == null)
+                    jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class,
+                                                          SubmissionEndpointReference.class);
+            }
+        }
+        
+        return jaxbContext;
     }
 }

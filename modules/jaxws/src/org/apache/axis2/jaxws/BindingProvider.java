@@ -253,14 +253,27 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     public org.apache.axis2.addressing.EndpointReference getAxis2EndpointReference(String addressingNamespace) {
         org.apache.axis2.addressing.EndpointReference epr = this.epr;
         
-        if (epr == null || !addressingNamespace.equals(this.addressingNamespace)) {
-            String address = endpointDesc.getEndpointAddress();
+        //TODO NLS enable.
+        if (addressingNamespace == null)
+            throw ExceptionFactory.makeWebServiceException("The addressing namespace cannot be null.");
+        
+        if (epr == null) {
+            String address =
+                (String) requestContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            if (address == null)
+                address = endpointDesc.getEndpointAddress();
             QName service = endpointDesc.getServiceQName();
             QName port = endpointDesc.getPortQName();
-            URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+            URL wsdlURL =
+                ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
             String wsdlLocation = (wsdlURL != null) ? wsdlURL.toString() : null;
 
             epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlLocation, addressingNamespace);
+        }
+        else if (!addressingNamespace.equals(this.addressingNamespace)) {
+            //TODO NLS enable
+            throw ExceptionFactory.makeWebServiceException("BindingProvider has been cofigured for namespace " +
+                    this.addressingNamespace + ", but a request has been made for namespace " + addressingNamespace);
         }
         
         return epr;

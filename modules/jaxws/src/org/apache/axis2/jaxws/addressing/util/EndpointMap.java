@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 
-public class EndpointMap extends HashMap<EndpointKey, String> {
+public class EndpointMap extends ConcurrentHashMap<EndpointKey, String> {
     
     
     /**
