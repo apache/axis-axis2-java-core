@@ -39,7 +39,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.wsdl.Definition;
@@ -1087,7 +1086,9 @@ public class AxisService extends AxisDescription {
             attribute = nodeMap.item(i);
             if (attribute.getNodeName().equals("schemaLocation")) {
                 attributeValue = attribute.getNodeValue();
-                attribute.setNodeValue(this.name + "?xsd=" + attributeValue);
+                if (!attributeValue.startsWith("http")) {
+                    attribute.setNodeValue(this.name + "?xsd=" + attributeValue);
+                }
             }
         }
     }
@@ -2323,15 +2324,17 @@ public class AxisService extends AxisDescription {
                                       Hashtable importedScheams,
                                       Hashtable sourceURIToNewLocationMap) {
         if (s != null) {
-
-            String newscheamlocation = customSchemaNamePrefix == null ?
-                    //use the default mode
-                    (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
-                    //custom prefix is present - add the custom prefix
-                    (customSchemaNamePrefix + getScheamLocationWithDot(sourceURIToNewLocationMap, s));
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
-            xmlSchemaExternal.setSchemaLocation(newscheamlocation);
-            importedScheams.put(schemaLocation, newscheamlocation);
+            
+            if (!schemaLocation.startsWith("http")) {
+                String newscheamlocation = customSchemaNamePrefix == null ?
+                        //use the default mode
+                        (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
+                            //custom prefix is present - add the custom prefix
+                            (customSchemaNamePrefix + getScheamLocationWithDot(sourceURIToNewLocationMap, s));
+                xmlSchemaExternal.setSchemaLocation(newscheamlocation);
+                importedScheams.put(schemaLocation, newscheamlocation);
+            }
         }
     }
 
