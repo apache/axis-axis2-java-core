@@ -108,12 +108,9 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private WsdlGenerator wsdlGenerator;
     private ClassLoader classLoader;
     
-    // represents a stream to the XML handler chain configuration
+    // JAXB object used to represent handler chain configuration info
     // either this or the HandlerChainAnnot may be present, but 
     // not both, they may both be null
-    private InputStream handlerChainSource;
-    
-    // JAXB object used to represent handler chain configuration info
     private HandlerChainsType handlerChainsType = null;
     
     // Does this composite represent a service requester or service provider.
@@ -640,14 +637,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public void setClassLoader(ClassLoader classLoader) {
 
         this.classLoader = classLoader;
-    }
-    
-    public void setHandlerChainSource(InputStream handlerChainSource) {
-    	this.handlerChainSource = handlerChainSource;
-    }
-    
-    public InputStream getHandlerChainSource() {
-    	return handlerChainSource;
     }
     
     public HandlerChainsType getHandlerChainsType() {

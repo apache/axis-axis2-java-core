@@ -46,6 +46,7 @@ import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 public class DescriptionFactoryImplTests extends TestCase {
@@ -183,14 +184,15 @@ public class DescriptionFactoryImplTests extends TestCase {
         }
     }
     
-    public void testHandlerChainSource() {
+    public void testHandlerChainType() {
     	JavaClassToDBCConverter converter = new JavaClassToDBCConverter(AnnotatedService.class);
         HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
         DescriptionBuilderComposite dbc = dbcMap.get(AnnotatedService.class.getName());
         assertNotNull(dbc);
         InputStream is = getXMLFileStream();
         assertNotNull(is);
-        dbc.setHandlerChainSource(is);
+        HandlerChainsType hct = DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
+        dbc.setHandlerChainsType(hct);
         List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
         assertNotNull(sdList);
         assertTrue(sdList.size() > 0);

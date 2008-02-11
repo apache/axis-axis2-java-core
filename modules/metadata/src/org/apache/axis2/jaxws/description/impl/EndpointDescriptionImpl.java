@@ -288,12 +288,10 @@ class EndpointDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr3"));
         }
         
-        if(composite.getHandlerChainAnnot() != null && composite.getHandlerChainSource() != null) {
+        if(composite.getHandlerChainAnnot() != null && composite.getHandlerChainsType() != null) {
         	throw ExceptionFactory.makeWebServiceException(
             Messages.getMessage("handlerSourceFail", composite.getClassName()));
         }
-        
-        handlerChainSource = composite.getHandlerChainSource();
         
         handlerChainsType = composite.getHandlerChainsType();
 
@@ -1340,7 +1338,6 @@ class EndpointDescriptionImpl
     public HandlerChain getAnnoHandlerChainAnnotation() {
         if (this.handlerChainAnnotation == null) {
             if (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) {
-//            if (getServiceDescriptionImpl().isDBCMap()) {
                 /*
                  * Per JSR-181 The @HandlerChain annotation MAY be present on
                  * the endpoint interface and service implementation bean. The
