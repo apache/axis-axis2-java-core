@@ -58,6 +58,8 @@ import javax.xml.ws.handler.Handler;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -178,6 +180,9 @@ public class EndpointController {
     }
     
     protected boolean handleRequest(EndpointInvocationContext eic) {
+        
+        requestReceived(eic);
+        
         MessageContext request = eic.getRequestMessageContext();
         
         Class serviceEndpoint = getServiceImplementation(request);
@@ -250,6 +255,7 @@ public class EndpointController {
                 // since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
                 responseMsgContext.setMessage(request.getMessage());
                 eic.setResponseMessageContext(responseMsgContext);
+                responseReady(eic);
                 return false;
             }
         } catch (Exception e) {
@@ -285,6 +291,7 @@ public class EndpointController {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
             throw ExceptionFactory.makeWebServiceException(e);  
         } finally {
+            responseReady(eic);
             restoreRequestMessage(request);
         }
         
@@ -399,8 +406,10 @@ public class EndpointController {
 
             EndpointDescription ed = (EndpointDescription)param.getValue();
             param = axisSvc.getParameter(EndpointMap.class.getCanonicalName());
-            EndpointMap map = (EndpointMap) param.getValue();
-            EndpointMapManager.setEndpointMap(map);
+            if(param != null) {
+                EndpointMap map = (EndpointMap) param.getValue();
+                EndpointMapManager.setEndpointMap(map);
+            }
             
             return ed;
         } else {
@@ -525,7 +534,7 @@ public class EndpointController {
      * Builds the HandlerInvocationContext that will be used when invoking 
      * inbound/outbound handler chains.
      */
-    HandlerInvocationContext buildHandlerInvocationContext(MessageContext request, List<Handler> handlers, 
+    static HandlerInvocationContext buildHandlerInvocationContext(MessageContext request, List<Handler> handlers, 
                                                           HandlerChainProcessor.MEP mep, boolean isOneWay) {
         HandlerInvocationContext hiContext = new HandlerInvocationContext();
         hiContext.setMessageContext(request);
@@ -533,5 +542,54 @@ public class EndpointController {
         hiContext.setHandlers(handlers);
         hiContext.setOneWay(isOneWay);
         return hiContext;
+    }
+    
+    /**
+     * This method will retrieve all the InvocationListenerFactory instances and
+     * call the 'createInvocationListener' instance on each. If a non-null listener
+     * is returned, the 'requestReceived' method will be called on the instance,
+     * and it will be added to the EndpointInvocationContext.
+     */
+    protected void requestReceived(EndpointInvocationContext eic)  {
+        Collection<InvocationListenerFactory> factoryList = eic.getInvocationListenerFactories();
+        if(factoryList != null) {
+            InvocationListenerBean bean = new InvocationListenerBean(eic, InvocationListenerBean.State.REQUEST);
+            Iterator<InvocationListenerFactory> factoryIter = factoryList.iterator();
+            while(factoryIter.hasNext()) {
+                InvocationListenerFactory factory  = factoryIter.next();
+                InvocationListener listener = factory.createInvocationListener(eic.getRequestMessageContext());
+                if(listener != null) {
+                    try {
+                        listener.notify(bean); 
+                    }
+                    catch(Exception e) {
+                        throw ExceptionFactory.makeWebServiceException(e);
+                    }
+                    finally {
+                        // add this instance so it can be called on the response also
+                        eic.addInvocationListener(listener);
+                    }
+                }
+            }
+        }
+    }
+    
+    /** 
+     * This will call the InvocationListener instances that were called during
+     * the request processing for this message.
+     */
+    protected void responseReady(EndpointInvocationContext eic)  {
+        List<InvocationListener> listenerList = eic.getInvocationListeners();
+        if(listenerList != null) {
+            InvocationListenerBean bean = new InvocationListenerBean(eic, InvocationListenerBean.State.RESPONSE);
+            for(InvocationListener listener : listenerList) {
+                try {
+                    listener.notify(bean); 
+                }
+                catch(Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.registry.InvocationListenerRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
@@ -106,6 +107,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             
             Binding binding = (Binding)axisRequestMsgCtx.getProperty(PARAM_BINDING);
             EndpointInvocationContext eic = InvocationContextFactory.createEndpointInvocationContext(binding);
+            addInvocationListenerFactories(eic);
             eic.setRequestMessageContext(requestMsgCtx);
 
             // WARNING: This should be left disabled for now.  This locks the server side
@@ -213,6 +215,15 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                 mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) ||
                 mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY);
         return inOnly;
+    }
+    
+    /**
+     * Retrieves the registered InvocationListenerFactory instances and sets them
+     * on the current EndpointInvocationContext.
+     * @param eic
+     */
+    void addInvocationListenerFactories(EndpointInvocationContext eic) {
+        eic.setInvocationListenerFactories(InvocationListenerRegistry.getFactories());
     }
 
 }

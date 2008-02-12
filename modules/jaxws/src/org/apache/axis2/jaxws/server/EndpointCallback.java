@@ -19,10 +19,18 @@
 
 package org.apache.axis2.jaxws.server;
 
+import java.util.List;
+
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
+import org.apache.axis2.jaxws.handler.HandlerInvoker;
+import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -38,11 +46,13 @@ public class EndpointCallback {
                 responseMsgCtx.getAxisMessageContext();
 
         try {
+            invokeOutboundHandlerFlow(eic);
+            responseReady(eic);
             MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
                                                     axisResponseMsgCtx);
 
             OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
-            opCtx.addMessageContext(axisResponseMsgCtx);
+            opCtx.addMessageContext(axisResponseMsgCtx);            
             
             // This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
@@ -79,11 +89,14 @@ public class EndpointCallback {
                 responseMsgCtx.getAxisMessageContext();
         
         try {
+            responseReady(eic);
             MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
                 axisResponseMsgCtx);
 
             OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
             opCtx.addMessageContext(axisResponseMsgCtx);
+            
+            responseReady(eic);
             
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                 eic.getRequestMessageContext().getAxisMessageContext());
@@ -97,6 +110,49 @@ public class EndpointCallback {
             // TODO Auto-generated catch block
             t.printStackTrace();
         }
+    }
+    
+    /** 
+     * This will call the InvocationListener instances that were called during
+     * the request processing for this message.
+     */
+    protected void responseReady(EndpointInvocationContext eic)  {
+        List<InvocationListener> listenerList = eic.getInvocationListeners();
+        if(listenerList != null) {
+            InvocationListenerBean bean = new InvocationListenerBean(eic, InvocationListenerBean.State.RESPONSE);
+            for(InvocationListener listener : listenerList) {
+                try {
+                    listener.notify(bean); 
+                }
+                catch(Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
+        }
+    }
+    
+    /**
+     * This method will drive the invocation of the outbound JAX-WS
+     * application handler flow.
+     */
+    protected void invokeOutboundHandlerFlow(EndpointInvocationContext eic) {
+        MessageContext request = eic.getRequestMessageContext();
+        MessageContext response = eic.getResponseMessageContext();
+        if (response != null) {
+            // Invoke the outbound response handlers.
+            // We can be sure we need to invoke any handlers because this
+            // cannot be a one-way flow
+            response.setMEPContext(request.getMEPContext());
+            HandlerInvocationContext hiContext = EndpointController.buildHandlerInvocationContext(
+                                                                               request, 
+                                                                               eic.getHandlers(), 
+                                                                               HandlerChainProcessor.MEP.RESPONSE,
+                                                                               false);
+            HandlerInvokerFactory hiFactory = (HandlerInvokerFactory) 
+                FactoryRegistry.getFactory(HandlerInvokerFactory.class);
+            HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(response);
+            handlerInvoker.invokeOutboundHandlers(hiContext);
+        } 
     }
     
 }

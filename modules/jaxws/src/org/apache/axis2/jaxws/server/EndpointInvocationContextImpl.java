@@ -18,6 +18,10 @@
  */
 package org.apache.axis2.jaxws.server;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 
@@ -27,6 +31,8 @@ public class EndpointInvocationContextImpl extends InvocationContextImpl
     private EndpointCallback callback;
     private EndpointDispatcher dispatcher;
     private Boolean oneWay;
+    private Collection<InvocationListenerFactory> ilFactories;
+    private List<InvocationListener> ilInstances = new LinkedList<InvocationListener>();
     
     /*
      * (non-Javadoc)
@@ -81,6 +87,39 @@ public class EndpointInvocationContextImpl extends InvocationContextImpl
      */
     public void setIsOneWay(boolean value) {
         oneWay = value;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#setInvocationListenerFactories
+     * (Collection<InvocationListenerFactory>)
+     */
+    public void setInvocationListenerFactories(Collection<InvocationListenerFactory> ilFactories) {
+        this.ilFactories = ilFactories;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#getInvocationListenerFactories()
+     */
+    public Collection<InvocationListenerFactory> getInvocationListenerFactories() {
+        return ilFactories;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#addInvocationListener(InvocationListener)
+     */
+    public void addInvocationListener(InvocationListener listener) {
+        ilInstances.add(listener);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#getInvocationListeners()
+     */
+    public List<InvocationListener> getInvocationListeners() {
+        return ilInstances;
     }
 
 }

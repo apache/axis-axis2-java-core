@@ -90,6 +90,7 @@ import org.apache.axis2.jaxws.sample.StringListTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.axis2.jaxws.server.JAXWSServerTests;
 import org.apache.axis2.jaxws.spi.BindingProviderTests;
 import org.apache.axis2.jaxws.spi.handler.HandlerResolverTests;
 import org.apache.axis2.jaxws.wsdl.schemareader.SchemaReaderTests;
@@ -118,6 +119,7 @@ public class JAXWSTest extends TestCase {
      */
     public static Test suite() {
         TestSuite suite = new TestSuite();
+        
         
         // Add each of the test suites
         suite = DispatchTestSuite.addTestSuites(suite);
@@ -221,6 +223,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(RPCLitStringArrayTests.class);
         // ------ Endpoint Tests ------
         suite.addTestSuite(BasicEndpointTests.class);
+        
+        suite.addTestSuite(JAXWSServerTests.class);
 
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

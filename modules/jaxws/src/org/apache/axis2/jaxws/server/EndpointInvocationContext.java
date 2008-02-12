@@ -19,6 +19,9 @@
 
 package org.apache.axis2.jaxws.server;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 
@@ -71,5 +74,27 @@ public interface EndpointInvocationContext extends InvocationContext {
      * @param value
      */
     public void setIsOneWay(boolean value);
+    
+    /**
+     * Sets the InvocationListenerFactory instances registered with JAX-WS.
+     * @return
+     */
+    public void setInvocationListenerFactories(Collection<InvocationListenerFactory> factories);
+    
+    /**
+     * Returns the InvocationListenerFactory instances registered with JAX-WS.
+     * @return
+     */
+    public Collection<InvocationListenerFactory> getInvocationListenerFactories();
+    
+    /**
+     * Adds an InvocationListener to the contex.
+     */
+    public void addInvocationListener(InvocationListener listener);
+    
+    /**
+     * Gets the InvocationListener instances from the context.
+     */
+    public List<InvocationListener> getInvocationListeners();
 
 }

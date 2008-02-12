@@ -19,9 +19,12 @@
 
 package org.apache.axis2.jaxws.server.dispatcher;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.InvocationListener;
+import org.apache.axis2.jaxws.server.InvocationListenerBean;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.FailureLogger;
 import org.apache.axis2.transport.TransportUtils;
@@ -30,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.concurrent.Callable;
 /**
  * JavaDispatcher is an abstract class that can be extended to implement an EndpointDispatcher to a
@@ -149,6 +153,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                     if (log.isDebugEnabled()) {
                         log.debug("Invocation pattern was one way, work complete.");
                     }
+                    responseReady(eic);
                     return null;
                 }
                 
@@ -202,6 +207,25 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
             }
 
             return null;
+        }
+    }
+    
+    /** 
+     * This will call the InvocationListener instances that were called during
+     * the request processing for this message.
+     */
+    protected void responseReady(EndpointInvocationContext eic)  {
+        List<InvocationListener> listenerList = eic.getInvocationListeners();
+        if(listenerList != null) {
+            InvocationListenerBean bean = new InvocationListenerBean(eic, InvocationListenerBean.State.RESPONSE);
+            for(InvocationListener listener : listenerList) {
+                try {
+                    listener.notify(bean); 
+                }
+                catch(Exception e) {
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
         }
     }
 
