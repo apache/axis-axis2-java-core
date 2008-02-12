@@ -86,7 +86,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient ServletConfig servletConfig;
 
     protected transient ListingAgent agent;
-    private String contextRoot = null;
+    protected transient String contextRoot = null;
 
     protected boolean disableREST = false;
     private static final String LIST_SERVICES_SUFIX = "/services/listServices";
