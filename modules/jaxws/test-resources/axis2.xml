@@ -62,7 +62,10 @@
 
     <!--POJO deployer , this will alow users to drop .class file and make that into a service-->
     <deployer extension=".class" directory="pojo" class="org.apache.axis2.deployment.POJODeployer"/>
-
+    
+    <!--JAXWS deployer, this will allow users to drop .war files and have them deployed as a service -->
+    <deployer extension=".war" directory="wars" class="org.apache.axis2.jaxws.framework.JAXWSDeployer"/>
+    
     <!-- Following parameter will set the host name for the epr-->
     <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
 

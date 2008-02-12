@@ -29,7 +29,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType")
+@WebService(serviceName="AddNumbersHandlerService",endpointInterface="org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType")
 @HandlerChain(file = "AddNumbersHandlers.xml", name = "")
 public class AddNumbersHandlerPortTypeImpl implements AddNumbersHandlerPortType {
 

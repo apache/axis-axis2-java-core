@@ -413,6 +413,10 @@ public class EndpointController {
             
             return ed;
         } else {
+        	//We were unable to find the service
+        	//TODO: Uncomment this when all tests are passing with JAXWSDeployer
+            //throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
+
             // TODO: This is using a deprecated factory method to create the ServiceDescription.
             // The correct way to fix this is to create the ServiceDescriptions (and the AxisService
             // and associated descritpion hierahcy) at startup.  However, that is currently not done
@@ -421,6 +425,7 @@ public class EndpointController {
             // deprecated factory method.  HOWEVER doing so currently causes testcase failures in 
             // JAXWS and or Metadata
 //            ServiceDescription sd = DescriptionFactory.createServiceDescription(implClass);
+            
             ServiceDescription sd =
                     DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
             EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
@@ -450,6 +455,7 @@ public class EndpointController {
             }
             
             return ed;
+        
         }
     }
 

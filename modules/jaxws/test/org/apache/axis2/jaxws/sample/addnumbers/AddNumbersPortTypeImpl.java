@@ -28,7 +28,7 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType")
+@WebService(serviceName="AddNumbersService",endpointInterface="org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType")
 public class AddNumbersPortTypeImpl implements AddNumbersPortType {
 
     @Resource

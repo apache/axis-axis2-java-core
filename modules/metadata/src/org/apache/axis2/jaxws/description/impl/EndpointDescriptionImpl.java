@@ -1044,7 +1044,8 @@ class EndpointDescriptionImpl
             portName = "NoPortNameSpecified";
 
         }
-        return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
+  
+        return getServiceDescription().getServiceQName().getLocalPart();
     }
 
     public boolean isWSDLFullySpecified() {
