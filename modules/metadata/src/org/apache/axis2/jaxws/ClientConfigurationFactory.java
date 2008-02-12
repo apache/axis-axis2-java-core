@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
@@ -34,10 +35,30 @@ import org.apache.commons.logging.LogFactory;
 public class ClientConfigurationFactory {
     
     private static final Log log = LogFactory.getLog(ClientConfigurationFactory.class);
+    private ConfigurationContext configContext = null;
 
     /** Returns a ClientConfigurationFactory object. */
     public static ClientConfigurationFactory newInstance() {
         return (ClientConfigurationFactory)MetadataFactoryRegistry.getFactory(ClientConfigurationFactory.class);       
+    }
+
+    /**
+     * Create a ConfigurationContext from the specified configurator 
+     * 
+     * @param configurator
+     */
+    public ClientConfigurationFactory(AxisConfigurator configurator) {
+        try {
+            configContext = ConfigurationContextFactory.createConfigurationContext(configurator);
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr", e.getMessage()));
+        }
+    }
+
+    /**
+     * Default constructor
+     */
+    public ClientConfigurationFactory() {
     }
 
     /**
@@ -46,20 +67,35 @@ public class ClientConfigurationFactory {
      * @return a ConfigurationContext object that is suitable for the client environment
      */
     public synchronized ConfigurationContext getClientConfigurationContext() {
-        ConfigurationContext configContext = null;
+        // If the user has specified on use it.
+        if (configContext != null) {
+            return configContext;
+        }
+        
+        // Get the system properties for axis2.xml and the repository.
         String repoPath = System.getProperty(Constants.AXIS2_REPO_PATH);
         String axisConfigPath = System.getProperty(Constants.AXIS2_CONFIG_PATH);
-        if(log.isDebugEnabled()){
-        	log.debug("Axis2 repository path : "+repoPath);
-        	log.debug("Axis2 Config path : "+axisConfigPath);
+        if (log.isDebugEnabled()) {
+            log.debug("Axis2 repository path : " + repoPath);
+            log.debug("Axis2 Config path : " + axisConfigPath);
         }
+        
+        // If they are not specified, create a default one from the axis2_default.xml inside the kernel jar.
+        if (repoPath == null && axisConfigPath == null) {
+            try {
+                configContext = ConfigurationContextFactory.createDefaultConfigurationContext();
+            } catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr", e.getMessage()));
+            }
+        }
+        
+        // Try the file system with the specified system properties.
         try {
-            configContext = ConfigurationContextFactory
+            return ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(repoPath, axisConfigPath);
         } catch (AxisFault e) {
         	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr",e.getMessage()));
         }
-        return configContext;
     }
 
     /**
