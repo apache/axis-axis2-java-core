@@ -261,7 +261,7 @@ public class AddressingFinalServiceTest extends UtilServerBasedTestCase implemen
     }
 
     public void testUsingAddressingRequired() throws Exception {
-        echoService.setWSAddressingFlag("required");
+        AddressingHelper.setAddressingRequirementParemeterValue(echoService, "required");
 
         OMElement method = createEchoOMElement("this message should cause a fault.");
         ServiceClient sender = null;
