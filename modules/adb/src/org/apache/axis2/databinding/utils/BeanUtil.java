@@ -106,7 +106,6 @@ public class BeanUtil {
                 elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
                                             "elementName");
             }
-
             AxisService axisService = null;
             if (MessageContext.getCurrentMessageContext() != null) {
                 axisService = MessageContext.getCurrentMessageContext().getAxisService();
@@ -246,7 +245,17 @@ public class BeanUtil {
                 } else {
                     addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                     Object value = propDesc.getReadMethod().invoke(beanObject,
-                                                                   null);
+                            null);
+                    if ("java.lang.Object".equals(ptype.getName())){
+                        if ((value instanceof Integer ) ||
+                                (value instanceof Short) ||
+                                (value instanceof Long) ||
+                                (value instanceof Float)) {
+                            object.add(value.toString());
+                            continue;
+                        }
+                    }
+
                     object.add(value);
                 }
             }
