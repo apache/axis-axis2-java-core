@@ -3950,10 +3950,10 @@
                         <xsl:when test="$nativePropertyType='uint64_t'">
                            <xsl:choose>
                              <xsl:when test="@isarray">
-                               sprintf (text_value_<xsl:value-of select="$position"/>, AXIS2_PRINTF_FORMAT_UINT64, (uint64_t)*((<xsl:value-of select="$nativePropertyType"/>*)element));
+                               sprintf (text_value_<xsl:value-of select="$position"/>, AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER, (uint64_t)*((<xsl:value-of select="$nativePropertyType"/>*)element));
                              </xsl:when>
                              <xsl:otherwise>
-                               sprintf (text_value_<xsl:value-of select="$position"/>, AXIS2_PRINTF_FORMAT_UINT64, (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
+                               sprintf (text_value_<xsl:value-of select="$position"/>, AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER, (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
                              </xsl:otherwise>
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
