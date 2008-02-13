@@ -87,11 +87,11 @@
             <artifactId>jettison</artifactId>
         </dependency>
         <dependency>
-            <groupId>jibx</groupId>
+            <groupId>org.jibx</groupId>
             <artifactId>jibx-bind</artifactId>
         </dependency>
         <dependency>
-            <groupId>jibx</groupId>
+            <groupId>org.jibx</groupId>
             <artifactId>jibx-run</artifactId>
         </dependency>
         <dependency>

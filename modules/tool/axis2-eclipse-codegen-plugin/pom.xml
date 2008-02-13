@@ -231,12 +231,12 @@
                         <version>${commons.codec.version}</version>
                 </dependency>
                 <dependency>
-                        <groupId>jibx</groupId>
+                        <groupId>org.jibx</groupId>
                         <artifactId>jibx-bind</artifactId>
                         <version>${jibx.version}</version>
                 </dependency>
                 <dependency>
-                        <groupId>jibx</groupId>
+                        <groupId>org.jibx</groupId>
                         <artifactId>jibx-run</artifactId>
                         <version>${jibx.version}</version>
                 </dependency>

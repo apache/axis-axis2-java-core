@@ -31,15 +31,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-kernel</artifactId>
+			<version>${version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-codegen</artifactId>
 			<version>${version}</version>
 		</dependency>
 		<dependency>
-			<groupId>jibx</groupId>
+			<groupId>org.jibx</groupId>
 			<artifactId>jibx-bind</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>jibx</groupId>
+			<groupId>org.jibx</groupId>
 			<artifactId>jibx-run</artifactId>
 		</dependency>
 		<dependency>
