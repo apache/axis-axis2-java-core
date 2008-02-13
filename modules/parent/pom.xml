@@ -921,6 +921,14 @@
                       <groupId>org.apache.activemq</groupId>
                       <artifactId>activeio-core</artifactId>
                     </exclusion>
+                    <exclusion>
+                      <groupId>activesoap</groupId>
+                      <artifactId>jaxp-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                      <groupId>axis</groupId>
+                      <artifactId>axis</artifactId>
+                    </exclusion>
                 </exclusions>                
             </dependency>
 			<dependency>
