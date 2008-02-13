@@ -65,7 +65,7 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
     }
 
     static public String getKey(Class implClass) {
-        return "Resource Injection:" + implClass.getCanonicalName();
+        return implClass.getCanonicalName();
     }
 
     /**

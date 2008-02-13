@@ -1310,7 +1310,8 @@ class EndpointDescriptionImpl
 
                 // REVIEW: This is using the classloader for EndpointDescriptionImpl; is that OK?
                 ClassLoader classLoader = (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) ?
-                        composite.getClassLoader() : this.getClass().getClassLoader();
+                        composite.getClassLoader() : 
+                            this.getClass().getClassLoader();
 
                 InputStream is = DescriptionUtils.openHandlerConfigStream(
                         handlerFileName,
@@ -1330,7 +1331,7 @@ class EndpointDescriptionImpl
             		log.debug("Loading handlers from provided source");
             	}
             	handlerChainsType = DescriptionUtils.loadHandlerChains(handlerChainSource,
-                                                          this.getClass().getClassLoader());
+                                                                   this.getClass().getClassLoader());
             }
         }
         return handlerChainsType;

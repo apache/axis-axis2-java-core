@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
+
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -33,8 +36,6 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
@@ -54,6 +55,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,12 +68,12 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /** @see ../ServiceDescription */
@@ -107,10 +109,13 @@ class ServiceDescriptionImpl
     private DescriptionBuilderComposite composite = null;
     private boolean isServerSide = false;
 
-//  RUNTIME INFORMATION
+    // RUNTIME INFORMATION
     Map<String, ServiceRuntimeDescription> runtimeDescMap =
-            Collections.synchronizedMap(new HashMap<String, ServiceRuntimeDescription>());
+            new ConcurrentHashMap<String, ServiceRuntimeDescription>();
+            //Collections.synchronizedMap(new HashMap<String, ServiceRuntimeDescription>());
 
+    
+    
 
     /**
      * Create a service-requester side (aka client-side) service description.
@@ -160,7 +165,7 @@ class ServiceDescriptionImpl
         // The classloader was originally gotten off this class, but it seems more logical to 
         // get it off the application service class.
 //        composite.setClassLoader(this.getClass().getClassLoader());
-        composite.setClassLoader(serviceClass.getClassLoader());
+        composite.setClassLoader(getClassLoader(serviceClass));
         composite.setSparseComposite(sparseCompositeKey, sparseComposite);
         
         // If there's a WSDL URL specified in the sparse composite, that is a override, for example
@@ -1729,7 +1734,8 @@ class ServiceDescriptionImpl
                 }
                 else {
                     handlerChainsType =
-                        DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
+                        DescriptionUtils.loadHandlerChains(is, 
+                              getClassLoader(this.getClass()));
                 }
             }
         }
@@ -1875,12 +1881,10 @@ class ServiceDescriptionImpl
     }
 
     public ServiceRuntimeDescription getServiceRuntimeDesc(String name) {
-        // TODO Add toString support
         return runtimeDescMap.get(name);
     }
 
     public void setServiceRuntimeDesc(ServiceRuntimeDescription srd) {
-        // TODO Add toString support
         runtimeDescMap.put(srd.getKey(), srd);
     }
     
@@ -2020,6 +2024,26 @@ class ServiceDescriptionImpl
         } catch (PrivilegedActionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e.getMessage(), e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
+    }
+    
+    private static ClassLoader getClassLoader(final Class cls) {
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return cls.getClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
             }
             throw ExceptionFactory.makeWebServiceException(e.getException());
         }
