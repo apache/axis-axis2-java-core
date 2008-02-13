@@ -475,17 +475,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>apache-incubating</id>
-            <url>http://people.apache.org/repo/m2-incubating-repository</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>eclipse-repo</id>
             <name>eclipse maven repository</name>
             <url>http://repo1.maven.org/eclipse</url>
@@ -496,12 +485,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>jibx</id>
-            <name>Jibx Repository</name>
-            <url>http://jibx.sourceforge.net/maven</url>
-            <layout>legacy</layout>
         </repository>
         <repository>
             <id>java.net</id>
