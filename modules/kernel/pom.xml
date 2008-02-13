@@ -70,6 +70,10 @@
 			<groupId>org.apache.neethi</groupId>
 			<artifactId>neethi</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>${stax.impl.groupid}</groupId>
+            <artifactId>${stax.impl.artifactid}</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.woden</groupId>
 			<artifactId>woden-api</artifactId>
