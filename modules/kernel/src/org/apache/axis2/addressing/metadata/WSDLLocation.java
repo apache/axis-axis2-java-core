@@ -55,14 +55,14 @@ public class WSDLLocation {
     
     /**
      * Convenience method to convert an object of this type to an <code>OMAttribute</code>
+     * @param factory <code>OMFactory</code> to use when generating <code>OMElement</code>s
      * 
      * @return an <code>OMAttribute</code> that can be added to an <code>EndpointReference</code>
      */
-    public OMAttribute toOM() {
+    public OMAttribute toOM(OMFactory factory) {
         String value = new StringBuffer(targetNamespace).append(" ").append(wsdlURL).toString();
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace wsdliNs = fac.createOMNamespace(WSDLI.getNamespaceURI(), WSDLI.getPrefix());
-        OMAttribute omAttribute = fac.createOMAttribute(WSDLI.getLocalPart(), wsdliNs, value);
+        OMNamespace wsdliNs = factory.createOMNamespace(WSDLI.getNamespaceURI(), WSDLI.getPrefix());
+        OMAttribute omAttribute = factory.createOMAttribute(WSDLI.getLocalPart(), wsdliNs, value);
         
         return omAttribute;
     }

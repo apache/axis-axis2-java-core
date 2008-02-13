@@ -87,9 +87,10 @@ public class InterfaceName {
      * </p>
      * 
      * @param qname the <code>QName</code> that carries the namespace of the metadata element.
+     * @param fac TODO
      * @return an OMElement that can be added to the metadata of an EndpointReference.
      */
-    public OMElement toOM(QName qname) throws AxisFault {
+    public OMElement toOM(QName qname, OMFactory fac) throws AxisFault {
         String prefix = qname.getPrefix();
         if (prefix == null) {
             throw new AxisFault("The prefix cannot be null.");
@@ -105,7 +106,6 @@ public class InterfaceName {
             throw new AxisFault("The namespace canot be null.");
         }
             
-        OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace metadataNs = fac.createOMNamespace(namespace, prefix);
         OMElement element = fac.createOMElement(localName, metadataNs);
         element.setText(name);

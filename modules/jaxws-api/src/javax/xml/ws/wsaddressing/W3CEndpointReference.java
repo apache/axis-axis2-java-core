@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -72,8 +71,8 @@ import javax.xml.ws.WebServiceException;
     "any"
 })
 public final class W3CEndpointReference extends EndpointReference {
-    protected static volatile JAXBContext jaxbContext;
     protected static final String NS = "http://www.w3.org/2005/08/addressing";
+    protected static JAXBContext jaxbContext;
     
     @XmlElement(name = "Address", required = true)
     protected AttributedURIType address;
@@ -85,6 +84,16 @@ public final class W3CEndpointReference extends EndpointReference {
     protected List<Object> any;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    
+    static {
+        try { 
+            jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class);
+        }
+        catch (Exception e) {
+            //TODO NLS enable
+            throw new WebServiceException("JAXBContext creation failed.", e);
+        }
+    }
 
     protected W3CEndpointReference() {
     }
@@ -93,7 +102,6 @@ public final class W3CEndpointReference extends EndpointReference {
         super();
         
         try {
-            JAXBContext jaxbContext = getJAXBContext();
             Unmarshaller um = jaxbContext.createUnmarshaller();
             W3CEndpointReference w3cEPR = (W3CEndpointReference) um.unmarshal(eprInfoset);
             
@@ -117,7 +125,6 @@ public final class W3CEndpointReference extends EndpointReference {
         }
         
         try {
-            JAXBContext jaxbContext = getJAXBContext();
             Marshaller m = jaxbContext.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             m.marshal(this, result);
@@ -126,19 +133,6 @@ public final class W3CEndpointReference extends EndpointReference {
             //TODO NLS enable
             throw new WebServiceException("writeTo failure.", e);
         }
-    }
-
-    private JAXBContext getJAXBContext() throws JAXBException {
-        //This is an implementation of double-checked locking.
-        //It works because jaxbContext is volatile.
-        if (jaxbContext == null) {
-            synchronized (W3CEndpointReference.class) {
-                if (jaxbContext == null)
-                    jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class);
-            }
-        }
-        
-        return jaxbContext;
     }
 
     /**

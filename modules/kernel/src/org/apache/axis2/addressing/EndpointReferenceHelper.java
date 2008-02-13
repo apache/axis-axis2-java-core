@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.addressing;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -439,12 +440,13 @@ public class EndpointReferenceHelper {
      * @throws AxisFault
      */
     public static void setServiceNameMetadata(EndpointReference epr, String addressingNamespace, ServiceName serviceName) throws AxisFault {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
         if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
-            OMElement omElement = serviceName.toOM(ServiceName.subQName);
+            OMElement omElement = serviceName.toOM(factory, ServiceName.subQName);
             epr.addExtensibleElement(omElement);
         }
         else {
-            OMElement omElement = serviceName.toOM(ServiceName.finalQName);
+            OMElement omElement = serviceName.toOM(factory, ServiceName.finalQName);
             epr.addMetaData(omElement);
         }
     }
@@ -457,7 +459,8 @@ public class EndpointReferenceHelper {
      * @throws AxisFault
      */
     public static void setWSDLLocationMetadata(EndpointReference epr, String addressingNamespace, WSDLLocation wsdlLocation) throws AxisFault {
-        OMAttribute attribute = wsdlLocation.toOM();
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMAttribute attribute = wsdlLocation.toOM(factory);
 
         if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
             epr.addAttribute(attribute);

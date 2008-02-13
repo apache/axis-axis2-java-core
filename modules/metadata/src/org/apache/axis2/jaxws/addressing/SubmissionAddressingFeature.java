@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.addressing;
 import javax.xml.ws.WebServiceFeature;
 
 public final class SubmissionAddressingFeature extends WebServiceFeature {
-    public static final String ID = "org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature";
+    public static final String ID = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
     
     protected boolean required;
     

@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.axis2.addressing.AddressingConstants.Final;
@@ -31,14 +32,23 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 
 public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReferenceFactory {
-    private static volatile JAXBContext jaxbContext;
+    private JAXBContext jaxbContext;
 
     public JAXWSEndpointReferenceFactoryImpl() {
         super();
+
+        try { 
+            jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class,
+                                                  SubmissionEndpointReference.class);
+        }
+        catch (Exception e) {
+            //TODO NLS enable
+            throw new WebServiceException("JAXBContext creation failed.", e);
+        }
     }
     
     public EndpointReference createEndpointReference(Source eprInfoset) throws JAXBException {
-        Unmarshaller um = getJAXBContext().createUnmarshaller();
+        Unmarshaller um = jaxbContext.createUnmarshaller();
         
         return (EndpointReference) um.unmarshal(eprInfoset);
     }
@@ -54,19 +64,5 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
             throw ExceptionFactory.makeWebServiceException("Unknown class type: " + clazz);
         
         return addressingNamespace;
-    }
-    
-    private JAXBContext getJAXBContext() throws JAXBException {
-        //This is an implementation of double-checked locking.
-        //It works because jaxbContext is volatile.
-        if (jaxbContext == null) {
-            synchronized (JAXWSEndpointReferenceFactoryImpl.class) {
-                if (jaxbContext == null)
-                    jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class,
-                                                          SubmissionEndpointReference.class);
-            }
-        }
-        
-        return jaxbContext;
     }
 }

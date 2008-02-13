@@ -140,7 +140,8 @@ public final class EndpointReferenceUtils {
     throws Exception {
     	if (portType != null) {
     		InterfaceName interfaceName = new InterfaceName(portType);
-    		OMElement omElement = interfaceName.toOM(interfaceType);
+            OMFactory factory = OMAbstractFactory.getOMFactory();
+    		OMElement omElement = interfaceName.toOM(interfaceType, factory);
     		axis2EPR.addExtensibleElement(omElement);
     	}
     }

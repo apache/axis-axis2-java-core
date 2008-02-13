@@ -116,11 +116,12 @@ public class ServiceName {
      * the difference being whether the EndpointReference is meant to represent a 2004/08
      * (Submission) or 2005/08 (Final) EndpointReference, respectively.
      * </p>
-     * 
+     * @param factory <code>OMFactory</code> to use when generating <code>OMElement</code>s
      * @param qname the <code>QName</code> that carries the namespace of the metadata element.
+     * 
      * @return an OMElement that can be added to the metadata of an EndpointReference.
      */
-    public OMElement toOM(QName qname) throws AxisFault {
+    public OMElement toOM(OMFactory factory, QName qname) throws AxisFault {
         String localName = qname.getLocalPart();
         if (!AddressingConstants.EPR_SERVICE_NAME.equals(localName)) {
             throw new AxisFault("The local name must be 'ServiceName'.");
@@ -136,9 +137,8 @@ public class ServiceName {
             throw new AxisFault("The namespace canot be null.");
         }
             
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace metadataNs = fac.createOMNamespace(namespace, prefix);
-        OMElement element = fac.createOMElement(localName, metadataNs);
+        OMNamespace metadataNs = factory.createOMNamespace(namespace, prefix);
+        OMElement element = factory.createOMElement(localName, metadataNs);
         element.setText(name);
         
         if (endpointName != null) {

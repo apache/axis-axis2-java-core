@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -79,8 +78,8 @@ import javax.xml.ws.WebServiceException;
     "any"
 })
 public class SubmissionEndpointReference extends EndpointReference {
-    protected static volatile JAXBContext jaxbContext;
     protected static final String NS = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+    protected static JAXBContext jaxbContext;
 
     @XmlElement(name = "Address", required = true)
     protected AttributedURI address;
@@ -96,6 +95,16 @@ public class SubmissionEndpointReference extends EndpointReference {
     protected List<Object> any;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    
+    static {
+        try { 
+            jaxbContext = JAXBContext.newInstance(SubmissionEndpointReference.class);
+        }
+        catch (Exception e) {
+            //TODO NLS enable
+            throw new WebServiceException("JAXBContext creation failed.", e);
+        }
+    }
 
     protected SubmissionEndpointReference() {
     }
@@ -104,7 +113,6 @@ public class SubmissionEndpointReference extends EndpointReference {
         super();
         
         try {
-            JAXBContext jaxbContext = getJAXBContext();
             Unmarshaller um = jaxbContext.createUnmarshaller();
             SubmissionEndpointReference subEPR =
                 (SubmissionEndpointReference) um.unmarshal(eprInfoset);
@@ -131,7 +139,6 @@ public class SubmissionEndpointReference extends EndpointReference {
         }
         
         try {
-            JAXBContext jaxbContext = getJAXBContext();
             Marshaller m = jaxbContext.createMarshaller();
             m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             m.marshal(this, result);
@@ -140,19 +147,6 @@ public class SubmissionEndpointReference extends EndpointReference {
             //TODO NLS enable
             throw new WebServiceException("writeTo failure.", e);
         }
-    }
-    
-    private JAXBContext getJAXBContext() throws JAXBException {
-        //This is an implementation of double-checked locking.
-        //It works because jaxbContext is volatile.
-        if (jaxbContext == null) {
-            synchronized (SubmissionEndpointReference.class) {
-                if (jaxbContext == null)
-                    jaxbContext = JAXBContext.newInstance(SubmissionEndpointReference.class);
-            }
-        }
-        
-        return jaxbContext;
     }
     
     /**

@@ -81,7 +81,8 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
             }
             return;
         }
-        String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
+        String addressingFlag =
+            AddressingHelper.getAddressingRequirementParemeterValue(msgContext.getAxisService());
         if (log.isTraceEnabled()) {
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
         }
