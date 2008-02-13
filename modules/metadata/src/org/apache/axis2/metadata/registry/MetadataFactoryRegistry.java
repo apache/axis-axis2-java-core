@@ -18,21 +18,24 @@
  */
 package org.apache.axis2.metadata.registry;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Map;
-
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
-import org.apache.axis2.jaxws.util.ClassLoaderUtils;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
 import org.apache.axis2.jaxws.wsdl.WSDLReaderConfiguratorImpl;
 import org.apache.axis2.metadata.factory.ResourceFinderFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class MetadataFactoryRegistry {
     
@@ -90,7 +93,7 @@ public class MetadataFactoryRegistry {
         private static void loadConfigFromFile() {
             String pairSeparator = "|";
             try {
-                ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader(null);
+                ClassLoader classLoader = getContextClassLoader(null);
                 URL url = null;
                 url = classLoader.getResource(configurationFileLoc);
                 if(url == null) {
@@ -174,4 +177,24 @@ public class MetadataFactoryRegistry {
             configurationFileLoc = configFileLoc;
             loadConfigFromFile();
         }
+
+    private static ClassLoader getContextClassLoader(final ClassLoader classLoader) {
+        ClassLoader cl;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e.getMessage(), e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
+    }
 }

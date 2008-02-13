@@ -50,7 +50,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.config.AddressingConfigurator;
 import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
-import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
@@ -76,11 +75,12 @@ import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -602,8 +602,8 @@ class EndpointDescriptionImpl
                     // TODO: (JLB) This is the deprecated server-side introspection code for an impl that references an SEI
                     try {
                         // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
-                        seiClass = ClassLoaderUtils.forName(seiClassName, false,
-                                                            ClassLoaderUtils.getContextClassLoader(this.axisService != null ? this.axisService.getClassLoader() : null));
+                        seiClass = forName(seiClassName, false,
+                                                            getContextClassLoader(this.axisService != null ? this.axisService.getClassLoader() : null));
                         // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
                         // does not extend Exception, so lets catch everything that extends Throwable
                         // rather than just Exception.
@@ -1888,6 +1888,52 @@ class EndpointDescriptionImpl
                 return cls.getAnnotation(annotation);
             }
         });
+    }
+
+    /**
+     * Return the class for this name
+     *
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize,
+                                final ClassLoader classloader) throws ClassNotFoundException {
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e.getMessage(), e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        }
+
+        return cl;
+    }
+
+    private static ClassLoader getContextClassLoader(final ClassLoader classLoader) {
+        ClassLoader cl;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e.getMessage(), e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
     }
 }
 

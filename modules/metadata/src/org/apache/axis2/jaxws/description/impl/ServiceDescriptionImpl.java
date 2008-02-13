@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
-
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -36,13 +33,14 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
-import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,14 +51,9 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +62,8 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -816,7 +811,7 @@ class ServiceDescriptionImpl
         
         // Try the context class loader
         if(url == null){
-            ClassLoader classLoader = ClassLoaderUtils.getContextClassLoader(null);
+            ClassLoader classLoader = getContextClassLoader(null);
             if(classLoader != loader){
                 url = classLoader.getResource(wsdlLocation);
             }
@@ -2010,5 +2005,25 @@ class ServiceDescriptionImpl
                 return cls.getAnnotation(annotation);
             }
         });
+    }
+
+    private static ClassLoader getContextClassLoader(final ClassLoader classLoader) {
+        ClassLoader cl;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e.getMessage(), e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+
+        return cl;
     }
 }
