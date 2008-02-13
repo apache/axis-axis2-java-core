@@ -196,7 +196,7 @@ public class Loader {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    static public ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {
+    static private ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {
         return (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
