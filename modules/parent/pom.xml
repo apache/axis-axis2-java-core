@@ -109,6 +109,7 @@
         <geronimo.spec.activation.version>1.0.1</geronimo.spec.activation.version>
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.2</geronimo.spec.javamail.version>
+        <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
         <geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
         <groovy.all.version>1.0</groovy.all.version>
         <httpcore.version>4.0-alpha6</httpcore.version>
@@ -689,6 +690,11 @@
 
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+                <version>${geronimo.spec.stax.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-activation_1.1_spec</artifactId>
                 <version>${geronimo.spec.activation.version}</version>
             </dependency>
@@ -1048,6 +1054,10 @@
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
             <artifactId>${stax.impl.artifactid}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-stax-api_1.0_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
