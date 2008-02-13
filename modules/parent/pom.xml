@@ -625,6 +625,12 @@
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
                 <version>${jettison.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>jibx</groupId>
@@ -655,7 +661,6 @@
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-dom</artifactId>
                 <version>${axiom.version}</version>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.schema</groupId>
@@ -795,6 +800,12 @@
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
                 <version>${xmlbeans.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.jaxme</groupId>
@@ -934,6 +945,10 @@
                 <artifactId>apache-activemq</artifactId>
                 <version>${activemq.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
                     <exclusion>
                       <groupId>org.apache.activemq</groupId>
                       <artifactId>activeio-core</artifactId>
