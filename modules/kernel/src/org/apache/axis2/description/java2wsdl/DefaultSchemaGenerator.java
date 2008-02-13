@@ -691,7 +691,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     partName,
                     isArrayType);
         }
-
+        addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
         return schemaTypeName;
     }
 
@@ -791,7 +791,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return null;
     }
 
-    private XmlSchema getXmlSchema(String targetNamespace) {
+    protected XmlSchema getXmlSchema(String targetNamespace) {
         XmlSchema xmlSchema;
 
         if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
@@ -845,6 +845,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected void addImport(XmlSchema xmlSchema, QName schemaTypeName) {
         NamespacePrefixList map = xmlSchema.getNamespaceContext();
+        if (map == null ||
+                ((map instanceof NamespaceMap) && ((NamespaceMap) map).values() == null) ||
+                schemaTypeName == null){
+            return;
+        }
         if (map instanceof NamespaceMap && !((NamespaceMap) map).values().
                 contains(schemaTypeName.getNamespaceURI())) {
             XmlSchemaImport importElement = new XmlSchemaImport();

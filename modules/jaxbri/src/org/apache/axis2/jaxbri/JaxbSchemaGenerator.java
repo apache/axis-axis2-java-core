@@ -185,6 +185,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
         if (schemaTypeName == null) {
             list.add(type);
         }
+        addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
     }
 
     protected List<DOMResult> generateJaxbSchemas(JAXBContext context) throws IOException {

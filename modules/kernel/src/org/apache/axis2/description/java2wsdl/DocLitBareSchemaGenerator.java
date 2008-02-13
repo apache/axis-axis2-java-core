@@ -289,7 +289,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                         isArrayType);
             }
         }
-
+        addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
         return schemaTypeName;
     }
 
@@ -510,7 +510,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         return complexType;
     }
 
-    private XmlSchema getXmlSchema(String targetNamespace) {
+    protected XmlSchema getXmlSchema(String targetNamespace) {
         XmlSchema xmlSchema;
 
         if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
