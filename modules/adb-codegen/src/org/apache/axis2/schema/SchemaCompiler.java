@@ -2667,6 +2667,9 @@ public class SchemaCompiler {
                                      QName componentQName,
                                      int componetType) {
         boolean isExists = false;
+        if (!schema.getTargetNamespace().equals(componentQName.getNamespaceURI())){
+             return false;
+        }
         switch (componetType) {
             case COMPONENT_TYPE : {
                 isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
