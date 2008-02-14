@@ -75,7 +75,7 @@ public class JMSEchoRawXMLOneWayTest extends TestCase {
 
     private static final String INITIAL_CONTEXT_FACTORY =
             "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
-    private static final String PROVIDER_URL = "tcp://localhost:61616";
+    private static final String PROVIDER_URL = "tcp://localhost:61654";
     private static final String CONNECTION_FACTORY_NAME = "QueueConnectionFactory";
     private static final String DESTINATION_NAME = "TestQueue";
     // USERNAME and PASSWORD are required only if broker has been
