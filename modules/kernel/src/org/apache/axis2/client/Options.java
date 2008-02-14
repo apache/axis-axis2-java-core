@@ -434,7 +434,16 @@ public class Options implements Externalizable, SafeSerializable {
      * @param list
      */
     public void setRelationships(RelatesTo[] list) {
-        relationships = list == null ? null : Arrays.asList(list);
+        if(list == null){
+        relationships = null;
+    }
+        else{
+            ArrayList arraylist = new ArrayList(list.length);
+            for(int i = 0 ; i < list.length ; i++){
+                   arraylist.add(list[i]);
+            }
+            relationships = arraylist;
+        }
     }
 
     /**
