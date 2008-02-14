@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.server.JAXWSMessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.io.FileUtils;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceProvider;
@@ -45,8 +46,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Collection;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -64,12 +68,65 @@ public class JAXWSDeployer implements Deployer {
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
         this.configCtx = configCtx;
+        deployServicesInWARClassPath();
     }//Will process the file and add that to axisConfig
+
+    private void deployServicesInWARClassPath() {
+        String dir = DeploymentEngine.getWebLocationString();
+        if (dir != null) {
+            File file = new File(dir + "/WEB-INF/classes/");
+            if (!file.isDirectory())
+                return;
+            ArrayList classList = getClassesInWebInfDirectory(file);
+            ClassLoader threadClassLoader = null;
+            try {
+                threadClassLoader = Thread.currentThread().getContextClassLoader();
+                ArrayList urls = new ArrayList();
+                urls.add(configCtx.getAxisConfiguration().getRepository());
+                String webLocation = DeploymentEngine.getWebLocationString();
+                if (webLocation != null) {
+                    urls.add(new File(webLocation).toURL());
+                }
+                ClassLoader classLoader = Utils.createClassLoader(
+                        urls,
+                        configCtx.getAxisConfiguration().getSystemClassLoader(),
+                        true,
+                        (File) configCtx.getAxisConfiguration().
+                                getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                Thread.currentThread().setContextClassLoader(classLoader);
+                deployClasses("JAXWS-Builtin", file.toURL(), Thread.currentThread().getContextClassLoader(), classList);
+            } catch (Exception e) {
+                log.info(Messages.getMessage("deployingexception", e.getMessage()), e);
+            } finally {
+                if (threadClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(threadClassLoader);
+                }
+            }
+        }
+    }
+
+    private ArrayList getClassesInWebInfDirectory(File file) {
+        String filePath = file.getAbsolutePath();
+        Collection files = FileUtils.listFiles(file, new String[]{"class"}, true);
+        ArrayList classList = new ArrayList();
+        for (Iterator iterator = files.iterator(); iterator.hasNext();) {
+            File f = (File) iterator.next();
+            String fPath = f.getAbsolutePath();
+            String fqcn = fPath.substring(filePath.length() + 1);
+            fqcn = fqcn.substring(0, fqcn.length() - ".class".length());
+            fqcn = fqcn.replace('/', '.');
+            fqcn = fqcn.replace('\\', '.');
+            classList.add(fqcn);
+        }
+        return classList;
+    }
 
     public void deploy(DeploymentFileData deploymentFileData) {
         ClassLoader threadClassLoader = null;
         try {
             threadClassLoader = Thread.currentThread().getContextClassLoader();
+            String groupName = deploymentFileData.getName();
+            URL location = deploymentFileData.getFile().toURL();
             if (isJar(deploymentFileData.getFile())) {
                 log.info("Deploying artifact : " + deploymentFileData.getName());
                 ArrayList urls = new ArrayList();
@@ -88,38 +145,11 @@ public class JAXWSDeployer implements Deployer {
                 Thread.currentThread().setContextClassLoader(classLoader);
 
                 ArrayList classList = getListOfClasses(deploymentFileData);
-                ArrayList axisServiceList = new ArrayList();
-                for (int i = 0; i < classList.size(); i++) {
-                    String className = (String) classList.get(i);
-                    className = className.replaceAll(".class", "");
-                    className = className.replaceAll("/", ".");
-
-                    Class pojoClass = Loader.loadClass(classLoader, className);
-                    WebService wsAnnotation = (WebService) pojoClass.getAnnotation(WebService.class);
-                    WebServiceProvider wspAnnotation = null;
-                    if (wsAnnotation == null) {
-                        wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
-                    }
-                    if (wsAnnotation != null || wspAnnotation != null) {
-                        AxisService axisService;
-                        axisService =
-                                createAxisService(classLoader,
-                                        className,
-                                        deploymentFileData.getFile().toURL());
-                        axisServiceList.add(axisService);
-                    }
-                }
-                if (axisServiceList.size() > 0) {
-                    AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                    serviceGroup.setServiceGroupName(deploymentFileData.getName());
-                    for (int i = 0; i < axisServiceList.size(); i++) {
-                        AxisService axisService = (AxisService) axisServiceList.get(i);
-                        serviceGroup.addService(axisService);
-                    }
-                    configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
-                } else {
+                int count = deployClasses(groupName, location, classLoader, classList); 
+                
+                if(count == 0) {
                     String msg = "Error:\n No annotated classes found in the jar: " +
-                            deploymentFileData.getFile().getName() +
+                            location.toString() +
                             ". Service deployment failed.";
                     log.error(msg);
                     configCtx.getAxisConfiguration().getFaultyServices().
@@ -136,6 +166,39 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
+    private int deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
+        ArrayList axisServiceList = new ArrayList();
+        for (int i = 0; i < classList.size(); i++) {
+            String className = (String) classList.get(i);
+            Class pojoClass = Loader.loadClass(classLoader, className);
+            WebService wsAnnotation = (WebService) pojoClass.getAnnotation(WebService.class);
+            WebServiceProvider wspAnnotation = null;
+            if (wsAnnotation == null) {
+                wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
+            }
+            if (wsAnnotation != null || wspAnnotation != null) {
+                AxisService axisService;
+                axisService =
+                        createAxisService(classLoader,
+                                className,
+                                location);
+                axisServiceList.add(axisService);
+            }
+        }
+        int count = axisServiceList.size();
+        if (count > 0) {
+            AxisServiceGroup serviceGroup = new AxisServiceGroup();
+            serviceGroup.setServiceGroupName(groupName);
+            for (int i = 0; i < axisServiceList.size(); i++) {
+                AxisService axisService = (AxisService) axisServiceList.get(i);
+                serviceGroup.addService(axisService);
+            }
+            configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
+        }
+        return count;
+    }
+
     private ArrayList getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
         ArrayList classList;
         FileInputStream fin = null;
@@ -148,6 +211,8 @@ public class JAXWSDeployer implements Deployer {
             while ((entry = zin.getNextEntry()) != null) {
                 String name = entry.getName();
                 if (name.endsWith(".class")) {
+                    name = name.replaceAll(".class", "");
+                    name = name.replaceAll("/", ".");
                     classList.add(name);
                 }
             }
