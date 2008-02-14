@@ -307,7 +307,10 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     public Definition getWSDL(AxisService service) throws AxisFault {
         Parameter wsdlParameter = service.getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
         if (wsdlParameter != null) {
-            return (Definition) wsdlParameter.getValue();
+            Object value = wsdlParameter.getValue();
+            if (value != null) {
+                return (Definition) value;
+            }
         }
         initialize();
         return wsdlDefMap.values().iterator().next();
