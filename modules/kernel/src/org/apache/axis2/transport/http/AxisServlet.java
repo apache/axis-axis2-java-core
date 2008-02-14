@@ -516,6 +516,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
             return configContext;
         } catch (Exception e) {
+            log.info(e);
             throw new ServletException(e);
         }
     }
