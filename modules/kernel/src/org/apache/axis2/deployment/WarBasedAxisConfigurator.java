@@ -96,6 +96,15 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             this.config = servletConfig;
             InputStream axis2Stream = null;
             try {
+                // when the module is an unpacked war file,
+                // we can set the web location path in the deployment engine.
+                // This will let us
+                String webpath = config.getServletContext().getRealPath("");
+                if (webpath != null && !"".equals(webpath)) {
+                    log.debug("setting web location string: " + webpath);
+                    File weblocation = new File(webpath);
+                    setWebLocationString(weblocation.getAbsolutePath());
+                } // if webpath not null
 
                 if (axis2Stream == null) {
                     String axis2xmlpath = config.getInitParameter(PARAM_AXIS2_XML_PATH);
@@ -156,18 +165,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             } catch (AxisFault axisFault) {
                 log.error(axisFault.getMessage(), axisFault);
             }
-
-            // when the module is an unpacked war file,
-            // we can set the web location path in the deployment engine.
-            // This will let us
-            String webpath = config.getServletContext().getRealPath("");
-            if (webpath != null && !"".equals(webpath)) {
-                log.debug("setting web location string: " + webpath);
-                File weblocation = new File(webpath);
-                setWebLocationString(weblocation.getAbsolutePath());
-            } // if webpath not null
-
-
         } catch (DeploymentException e) {
             log.error(e.getMessage(), e);
             throw e;
