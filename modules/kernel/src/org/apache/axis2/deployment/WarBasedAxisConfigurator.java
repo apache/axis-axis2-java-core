@@ -324,11 +324,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
     }
 
     public void setConfigContext(ConfigurationContext configContext) {
-        super.setConfigContext(configContext);
-
-        // setting ServletContext into configctx
-        configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
-                                  config.getServletContext());
         // setting ServletContext into configctx
         configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
                                   config.getServletContext());
@@ -340,5 +335,6 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         } catch (AxisFault axisFault) {
             log.error(axisFault.getMessage(), axisFault);
         }
+        super.setConfigContext(configContext);
     }
 }
