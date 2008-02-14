@@ -2944,7 +2944,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         boolean isAvailable = false;
         switch (componentType){
             case COMPONENT_BINDING : {
-                isAvailable = (definition.getBinding(qname) != null);
+                isAvailable = (definition.getBinding(qname) != null) &&
+                        (definition.getBinding(qname).getPortType() != null);
                 break;
             }
             case COMPONENT_PORT_TYPE : {
