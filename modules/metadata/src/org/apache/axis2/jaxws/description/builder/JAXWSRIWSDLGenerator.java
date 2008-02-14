@@ -455,7 +455,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             path.append(s);
             path.append(File.pathSeparatorChar);
         }
-        log.info(path);
+        log.debug(path);
         return path.toString();
     }
 
