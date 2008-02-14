@@ -336,7 +336,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                     for (int i = 0; i < schemas.length; i++) {
                         String uri = schemas[i].getSourceURI();
                         if (uri != null && uri.endsWith(xsd)) {
-                            return schema;
+                            return schemas[i];
                         }
                     }
                 }
