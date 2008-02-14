@@ -1700,14 +1700,33 @@ class ServiceDescriptionImpl
     // ANNOTATION: HandlerChain
     // ===========================================
 
+    public HandlerChainsType getHandlerChain() {
+        return getHandlerChain(null);
+    }
+    
     /**
-     * Returns a schema derived java class containing the the handler configuration filel
-     *  
+     * Returns a schema derived java class containing the the handler configuration information.  
+     * That information, returned in the HandlerChainsType object, is looked for in the following 
+     * places in this order:
+     * - Set on the sparseComposite for the given key
+     * - Set on the composite
+     * - Read in from the file specified on HandlerChain annotation
+     * 
      * @return HandlerChainsType This is the top-level element for the Handler configuration file
      * 
      */
-    public HandlerChainsType getHandlerChain() {
-
+    public HandlerChainsType getHandlerChain(Object sparseCompositeKey) {
+        // If there is a HandlerChainsType in the sparse composite for this ServiceDelegate
+        // (i.e. this sparseCompositeKey), then return that.
+        if (sparseCompositeKey != null) {
+            DescriptionBuilderComposite sparseComposite = composite.getSparseComposite(sparseCompositeKey);
+            if (sparseComposite != null && sparseComposite.getHandlerChainsType() != null) {
+                return sparseComposite.getHandlerChainsType();
+            }
+        }
+        
+        // If there is no HandlerChainsType in the composite, then read in the file specified
+        // on the HandlerChain annotation if it is present.
         if (handlerChainsType == null) {
 
             getAnnoHandlerChainAnnotation();

@@ -88,6 +88,25 @@ public interface ServiceDescription {
 
     public abstract QName getServiceQName();
 
+    /**
+     * Return the handler chain configuration information as a HandlerChainsType object.  If the
+     * key is non-null then it is used to look for handler chain configuration information in the
+     * sparse metadata.  The order in which the configuration information is resolved is:
+     * 1) Look in sparse composite if the key is not null
+     * 2) Look in the composite
+     * 3) Look for a HandlerChain annotation and read in the file it specifies  
+     * 
+     * @param serviceDelegateKey May be null.  If non-null, used to look for service-delegate
+     *     specific sparse composite information.
+     * @return A HandlerChainsType object or null
+     */
+    public abstract HandlerChainsType getHandlerChain(Object serviceDelegateKey);
+    
+    /**
+     * Return the handler chain configuration information as a HandlerChainsType object.
+     * This is the same as calling getHandlerChain(null).
+     * @see #getHandlerChain(Object)
+     */
     public abstract HandlerChainsType getHandlerChain();
     
     /**

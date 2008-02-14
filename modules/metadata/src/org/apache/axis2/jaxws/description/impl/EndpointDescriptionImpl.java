@@ -593,13 +593,13 @@ class EndpointDescriptionImpl
 //            if (!getServiceDescriptionImpl().isDBCMap()) {
                 Class seiClass = null;
                 if (DescriptionUtils.isEmpty(seiClassName)) {
-                    // TODO: (JLB) This is the client code path; the @WebServce will not have an endpointInterface member
+                    // This is the client code path; the @WebServce will not have an endpointInterface member
                     // For now, just build the EndpointInterfaceDesc based on the class itself.
                     // TODO: The EID ctor doesn't correctly handle anything but an SEI at this
                     //       point; e.g. it doesn't publish the correct methods of just an impl.
                     seiClass = composite.getCorrespondingClass();
                 } else {
-                    // TODO: (JLB) This is the deprecated server-side introspection code for an impl that references an SEI
+                    //  This is the deprecated server-side introspection code for an impl that references an SEI
                     try {
                         // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
                         seiClass = forName(seiClassName, false,

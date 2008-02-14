@@ -64,13 +64,16 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
       * they could manipulate it.
       */
 
-    // we'll need to refer to this object to get the port, and thus handlers
-    //private EndpointDescription endpointDesc;
     private ServiceDescription serviceDesc;
+    private Object serviceDelegateKey;
+    
+    public HandlerResolverImpl(ServiceDescription sd) {
+        this(sd, null);
+    }
 
-    public HandlerResolverImpl(ServiceDescription sd) { //EndpointDescription ed) {
-        //this.endpointDesc = ed;
+    public HandlerResolverImpl(ServiceDescription sd, Object serviceDelegateKey) { 
         this.serviceDesc = sd;
+        this.serviceDelegateKey = serviceDelegateKey;
     }
 
     public List<Handler> getHandlerChain(PortInfo portinfo) {
@@ -136,7 +139,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
          * with the PortInfo object before we add it to the chain.
          */
         
-        handlerChainsType = serviceDesc.getHandlerChain();  
+        handlerChainsType = serviceDesc.getHandlerChain(serviceDelegateKey);  
         // if there's a handlerChain on the serviceDesc, it means the WSDL defined an import for a HandlerChain.
         // the spec indicates that if a handlerchain also appears on the SEI on the client.
         EndpointDescription ed = null;
@@ -149,6 +152,14 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
             if (handlerChainsType == null) {
                 handlerChainsType = handlerCT_fromEndpointDesc;
             } 
+        } else {
+            // There is no EndpointDescription that matches the portInfo specified so 
+            // return the empty list of handlers since there are no ports that match
+            if (log.isDebugEnabled()) {
+                log.debug("The PortInfo object did not match any ports; returning an empty list of handlers." 
+                        + "  PortInfo QName: " + portinfo.getPortName());
+            }
+            return handlers;
         }
 
         Iterator it = handlerChainsType == null ? null : handlerChainsType.getHandlerChain().iterator();

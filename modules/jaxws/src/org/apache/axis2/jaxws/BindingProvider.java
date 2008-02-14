@@ -98,24 +98,23 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         // TODO should we allow the ServiceDelegate to figure out the default handlerresolver?  Probably yes, since a client app may look for one there.
         HandlerResolver handlerResolver = null;
         if(serviceDelegate.getHandlerResolver() != null){
-            
-            // See if the metadata from creating the service indicates that MTOM should be enabled
-            if (binding instanceof SOAPBinding) {
-                boolean enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
-                if (enableMTOMFromMetadata) {
-                    ((SOAPBinding) binding).setMTOMEnabled(true);
-                }
-            }
-            
             if(log.isDebugEnabled()){
                 log.debug("Reading default Handler Resolver ");
             }
-            handlerResolver= serviceDelegate.getHandlerResolver();
+            handlerResolver = serviceDelegate.getHandlerResolver();
         }
         else{
-            handlerResolver = new HandlerResolverImpl(endpointDesc.getServiceDescription());
+            handlerResolver = new HandlerResolverImpl(endpointDesc.getServiceDescription(), serviceDelegate);
             if(log.isDebugEnabled()){
                 log.debug("Creating new Handler Resolver using HandlerResolverImpl");
+            }
+        }
+
+        // See if the metadata from creating the service indicates that MTOM should be enabled
+        if (binding instanceof SOAPBinding) {
+            boolean enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
+            if (enableMTOMFromMetadata) {
+                ((SOAPBinding) binding).setMTOMEnabled(true);
             }
         }
         binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
