@@ -64,12 +64,13 @@
 
         private static int counter = 0;
 
-        private synchronized int getUniqueSuffix(){
-            // reset the counter if it is greater than 10000
-            if (counter > 10000){
+        private static synchronized String getUniqueSuffix(){
+            // reset the counter if it is greater than 99999
+            if (counter > 99999){
                 counter = 0;
             }
-            return counter++;
+            counter = counter + 1; 
+            return Long.toString(System.currentTimeMillis()) + "_" + counter;
         }
 
     
