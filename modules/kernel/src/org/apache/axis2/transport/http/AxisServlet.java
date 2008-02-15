@@ -33,7 +33,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.description.AxisBindingMessage;
@@ -49,7 +48,6 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -89,8 +87,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient String contextRoot = null;
 
     protected boolean disableREST = false;
-    private static final String LIST_SERVICES_SUFIX = "/services/listServices";
-    private static final String LIST_FAUKT_SERVICES_SUFIX = "/services/ListFaultyServices";
+    private static final String LIST_SERVICES_SUFFIX = "/services/listServices";
+    private static final String LIST_FAULTY_SERVICES_SUFFIX = "/services/ListFaultyServices";
     private boolean closeReader = true;
 
     private static final int BUFFER_SIZE = 1024 * 8;
@@ -243,8 +241,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } else if (requestURI.endsWith(".xsd") ||
                 requestURI.endsWith(".wsdl")) {
             agent.processExplicitSchemaAndWSDL(request, response);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
-                requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
+        } else if (requestURI.endsWith(LIST_SERVICES_SUFFIX) ||
+                requestURI.endsWith(LIST_FAULTY_SERVICES_SUFFIX)) {
             // handling list services request
             try {
                 agent.handle(request, response);
