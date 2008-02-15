@@ -61,15 +61,10 @@ public class JAXBUtils {
     private static Map<ClassLoader, Map<String, JAXBContextValue>> jaxbMap =
             new ConcurrentHashMap<ClassLoader, Map<String, JAXBContextValue>>();
 
-    private static Map<JAXBContext, Unmarshaller> umap =
-            new ConcurrentHashMap<JAXBContext, Unmarshaller>();
-
-    private static Map<JAXBContext, Marshaller> mmap =
-            new ConcurrentHashMap<JAXBContext, Marshaller>();
-
-    private static Map<JAXBContext, JAXBIntrospector> imap =
-            new ConcurrentHashMap<JAXBContext, JAXBIntrospector>();
-
+    private static Pool<JAXBContext, Marshaller>       mpool = new Pool<JAXBContext, Marshaller>();
+    private static Pool<JAXBContext, Unmarshaller>     upool = new Pool<JAXBContext, Unmarshaller>();
+    private static Pool<JAXBContext, JAXBIntrospector> ipool = new Pool<JAXBContext, JAXBIntrospector>();
+    
     // From Lizet Ernand:
     // If you really care about the performance, 
     // and/or your application is going to read a lot of small documents, 
@@ -82,9 +77,8 @@ public class JAXBUtils {
     private static boolean ENABLE_MARSHALL_POOLING = false;
     private static boolean ENABLE_UNMARSHALL_POOLING = true;
     private static boolean ENABLE_INTROSPECTION_POOLING = false;
-
-    // The maps are freed up when a LOAD FACTOR is hit
-    private static int MAX_LOAD_FACTOR = 32;
+    
+    private static int MAX_LOAD_FACTOR = 32;  // Maximum number of JAXBContext to store
 
     // Construction Type
     public enum CONSTRUCTION_TYPE {
@@ -384,18 +378,18 @@ public class JAXBUtils {
             }
             return context.createUnmarshaller();
         }
-        Unmarshaller u = umap.remove(context);
-        if (u == null) {
+        Unmarshaller unm = upool.get(context);
+        if (unm == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [not in pool]");
             }
-            u = context.createUnmarshaller();
+            unm = context.createUnmarshaller();
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller obtained [from  pool]");
             }
         }
-        return u;
+        return unm;
     }
 
     /**
@@ -410,9 +404,7 @@ public class JAXBUtils {
             log.debug("Unmarshaller placed back into pool");
         }
         if (ENABLE_UNMARSHALL_POOLING) {
-            adjustPoolSize(umap);
-            unmarshaller.setAttachmentUnmarshaller(null);
-            umap.put(context, unmarshaller);
+            upool.put(context, unmarshaller);
         }
     }
 
@@ -431,7 +423,7 @@ public class JAXBUtils {
             }
             m = context.createMarshaller();
         } else {
-            m = mmap.remove(context);
+            m = mpool.get(context);
             if (m == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Marshaller created [not in pool]");
@@ -459,9 +451,8 @@ public class JAXBUtils {
             log.debug("Marshaller placed back into pool");
         }
         if (ENABLE_MARSHALL_POOLING) {
-            adjustPoolSize(mmap);
             marshaller.setAttachmentMarshaller(null);
-            mmap.put(context, marshaller);
+            mpool.put(context, marshaller);
         }
     }
 
@@ -480,7 +471,7 @@ public class JAXBUtils {
             }
             i = context.createJAXBIntrospector();
         } else {
-            i = imap.remove(context);
+            i = ipool.get(context);
             if (i == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBIntrospector created [not in pool]");
@@ -507,8 +498,7 @@ public class JAXBUtils {
             log.debug("JAXBIntrospector placed back into pool");
         }
         if (ENABLE_INTROSPECTION_POOLING) {
-            adjustPoolSize(imap);
-            imap.put(context, introspector);
+            ipool.put(context, introspector);
         }
     }
 
@@ -911,12 +901,19 @@ public class JAXBUtils {
         return jaxbContext;
     }
 
-    /**
-     * Adjust the number of objects in the hash map if the limit is exceeded
-     *
-     * @param map
-     */
-    private static synchronized void adjustPoolSize(Map map) {
+    /** Holds the JAXBContext and the manner by which it was constructed */
+    static class JAXBContextValue {
+
+        public JAXBContext jaxbContext;
+        public CONSTRUCTION_TYPE constructionType;
+
+        public JAXBContextValue(JAXBContext jaxbContext, CONSTRUCTION_TYPE constructionType) {
+            this.jaxbContext = jaxbContext;
+            this.constructionType = constructionType;
+        }
+    }
+    
+    static private void adjustPoolSize(Map map) {
         if (map.size() > MAX_LOAD_FACTOR) {
             // Remove every other Entry in the map.
             Iterator it = map.entrySet().iterator();
@@ -931,15 +928,88 @@ public class JAXBUtils {
         }
     }
 
-    /** Holds the JAXBContext and the manner by which it was constructed */
-    static class JAXBContextValue {
+    /**
+     * Pool a list of items for a specific key
+     *
+     * @param <K> Key
+     * @param <V> Pooled object
+     */
+    private static class Pool<K,V> {
+        private Map<K,List<V>> map = new ConcurrentHashMap<K, List<V>>();
 
-        public JAXBContext jaxbContext;
-        public CONSTRUCTION_TYPE constructionType;
+        // The maps are freed up when a LOAD FACTOR is hit
+        private static int MAX_LIST_FACTOR = 10;
+        
+        /**
+         * @param key
+         * @return removed item from pool or null.
+         */
+        public V get(K key) {
+            List<V> values = getValues(key);
+            synchronized (values) {
+                if(values.size()>0) {
+                    return values.remove(values.size()-1);
+                }
+            }
+            return null;
+        }
 
-        public JAXBContextValue(JAXBContext jaxbContext, CONSTRUCTION_TYPE constructionType) {
-            this.jaxbContext = jaxbContext;
-            this.constructionType = constructionType;
+        /**
+         * Add item back to pool
+         * @param key
+         * @param value
+         */
+        public void put(K key, V value) {
+            adjustSize();
+            List<V> values = getValues(key);
+            synchronized (values) {
+                if (values.size() < MAX_LIST_FACTOR) {
+                    values.add(value);
+                }
+            }
+        }
+
+        /**
+         * Get or create a list of the values for the key
+         * @param key
+         * @return list of values.
+         */
+        private List<V> getValues(K key) {
+            List<V> values = map.get(key);
+            if(values !=null) {
+                return values;
+            }
+            synchronized (this) {
+                values = map.get(key);
+                if(values==null) {
+                    values = new ArrayList<V>();
+                    map.put(key, values);
+                }
+                return values;
+            }
+        }
+        
+        /**
+         * AdjustSize
+         * When the number of keys exceeds the maximum load, half
+         * of the entries are deleted.
+         * 
+         * The assumption is that the JAXBContexts, UnMarshallers, Marshallers, etc. require
+         * a large footprint.
+         */
+        private void adjustSize() {
+            if (map.size() > MAX_LOAD_FACTOR) {
+                // Remove every other Entry in the map.
+                Iterator it = map.entrySet().iterator();
+                boolean removeIt = false;
+                while (it.hasNext()) {
+                    it.next();
+                    if (removeIt) {
+                        it.remove();
+                    }
+                    removeIt = !removeIt;
+                }
+            }
         }
     }
 
