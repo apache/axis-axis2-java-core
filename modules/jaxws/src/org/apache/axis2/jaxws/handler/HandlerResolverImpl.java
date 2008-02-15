@@ -148,7 +148,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         }
         
         if (ed != null) {
-            HandlerChainsType handlerCT_fromEndpointDesc = ed.getHandlerChain();
+            HandlerChainsType handlerCT_fromEndpointDesc = ed.getHandlerChain(serviceDelegateKey);
             if (handlerChainsType == null) {
                 handlerChainsType = handlerCT_fromEndpointDesc;
             } 

@@ -52,7 +52,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
      *  Test creating a service without a sparse composite.  This verifies pre-existing default
      *  behavior.
      */
-    public void testServiceNoComposite() {
+    public void testServiceAndPortNoComposite() {
         QName serviceQName = new QName(namespaceURI, svcLocalPart);
         QName portQName = new QName(namespaceURI, portLocalPart);
 
@@ -88,7 +88,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         ServiceDelegate.setServiceMetadata(sparseComposite);
         Service service = Service.create(serviceQName);
         ClientMetadataHandlerChainTestSEI port = service.getPort(portQName, ClientMetadataHandlerChainTestSEI.class);
-        
+
         // Verify the HandlerResolver on the service knows about the handlers in the sparse composite
         HandlerResolver resolver = service.getHandlerResolver();
         assertNotNull(resolver);
@@ -102,6 +102,82 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         List<Handler> portHandlers = binding.getHandlerChain();
         assertEquals(2, portHandlers.size());
         assertTrue(containSameHandlers(portHandlers, list));
+        
+        // Verify that a subsequent port are different and that they also gets the correct handlers
+        ClientMetadataHandlerChainTestSEI port2 = service.getPort(portQName, ClientMetadataHandlerChainTestSEI.class);
+        BindingProvider bindingProvider2 = (BindingProvider) port2;
+        Binding binding2 = (Binding) bindingProvider2.getBinding();
+        List<Handler> portHandlers2 = binding2.getHandlerChain();
+        assertNotSame(port, port2);
+        assertEquals(2, portHandlers2.size());
+        assertTrue(containSameHandlers(portHandlers2, list));
+    }
+    
+    public void testPortWithComposite() {
+        QName serviceQName = new QName(namespaceURI, svcLocalPart);
+        QName portQName = new QName(namespaceURI, portLocalPart);
+
+        Service service = Service.create(serviceQName);
+        
+        // Create a composite with a JAXB Handler Config 
+        DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+        HandlerChainsType handlerChainsType = getHandlerChainsType();
+        sparseComposite.setHandlerChainsType(handlerChainsType);
+        ServiceDelegate.setPortMetadata(sparseComposite);
+        ClientMetadataHandlerChainTestSEI port = service.getPort(portQName, ClientMetadataHandlerChainTestSEI.class);
+
+        // Verify the HandlerResolver on the service knows about the handlers in the sparse composite
+        HandlerResolver resolver = service.getHandlerResolver();
+        assertNotNull(resolver);
+        PortInfo pi = new DummyPortInfo();
+        List<Handler> list = resolver.getHandlerChain(pi);
+        assertEquals(2, list.size());
+        
+        // Verify that the port created with the sparse metadata has those handlers
+        BindingProvider bindingProvider = (BindingProvider) port;
+        Binding binding = (Binding) bindingProvider.getBinding();
+        List<Handler> portHandlers = binding.getHandlerChain();
+        assertEquals(2, portHandlers.size());
+        assertTrue(containSameHandlers(portHandlers, list));
+        
+        // Verify that a creating another instance of the same port also gets those handlers
+        ClientMetadataHandlerChainTestSEI port2 = service.getPort(portQName, ClientMetadataHandlerChainTestSEI.class);
+        BindingProvider bindingProvider2 = (BindingProvider) port2;
+        Binding binding2 = (Binding) bindingProvider2.getBinding();
+        List<Handler> portHandlers2 = binding2.getHandlerChain();
+        assertNotSame(port, port2);
+        assertEquals(2, portHandlers2.size());
+        assertTrue(containSameHandlers(portHandlers2, list));
+        
+        // Verify that createing a different port doesn't get the handlers
+        QName portQName3 = new QName(namespaceURI, portLocalPart + "3");
+        ClientMetadataHandlerChainTestSEI port3 = service.getPort(portQName3, ClientMetadataHandlerChainTestSEI.class);
+        BindingProvider bindingProvider3 = (BindingProvider) port3;
+        Binding binding3 = (Binding) bindingProvider3.getBinding();
+        List<Handler> portHandlers3 = binding3.getHandlerChain();
+        assertEquals(0, portHandlers3.size());
+        
+        // Verify setting the metadata on a port (with a different name) will get handlers.
+        QName portQName4 = new QName(namespaceURI, portLocalPart + "4");
+        ServiceDelegate.setPortMetadata(sparseComposite);
+        ClientMetadataHandlerChainTestSEI port4 = service.getPort(portQName4, ClientMetadataHandlerChainTestSEI.class);
+        BindingProvider bindingProvider4 = (BindingProvider) port4;
+        Binding binding4 = (Binding) bindingProvider4.getBinding();
+        List<Handler> portHandlers4 = binding4.getHandlerChain();
+        assertEquals(2, portHandlers4.size());
+        
+        // Verify the service handler resolver knows about boths sets of handlers
+        // attached to the two different port QNames and none are attached for the third port
+        List<Handler> listForPort = resolver.getHandlerChain(pi);
+        assertEquals(2, listForPort.size());
+
+        PortInfo pi4 = new DummyPortInfo(portQName4);
+        List<Handler> listForPort4 = resolver.getHandlerChain(pi4);
+        assertEquals(2, listForPort4.size());
+        
+        PortInfo pi3 = new DummyPortInfo(portQName3);
+        List<Handler> listForPort3 = resolver.getHandlerChain(pi3);
+        assertEquals(0, listForPort3.size());
     }
     
     // TODO: (JLB) Change this test to check the handlers on the ports via the bindingImpl
@@ -202,17 +278,29 @@ public class ClientMetadataHandlerChainTest extends TestCase {
     }
 
     public class DummyPortInfo implements PortInfo {
+        private QName portQN;
+        private QName serviceQN;
+        
+        public DummyPortInfo() {
+            this.portQN = new QName("http://www.apache.org/test/namespace", "DummyPort");
+            this.serviceQN = new QName("http://www.apache.org/test/namespace", "DummyService");
+        }
+        
+        public DummyPortInfo(QName portQN) {
+            this();
+            this.portQN = portQN;
+        }
 
         public String getBindingID() {
             return SOAPBinding.SOAP11HTTP_BINDING;
         }
 
         public QName getPortName() {
-            return new QName("http://www.apache.org/test/namespace", "DummyPort");
+            return portQN;
         }
-
+        
         public QName getServiceName() {
-            return new QName("http://www.apache.org/test/namespace", "DummyService");
+            return serviceQN;
         }
     }
 

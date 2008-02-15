@@ -1700,20 +1700,15 @@ class ServiceDescriptionImpl
     // ANNOTATION: HandlerChain
     // ===========================================
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#getHandlerChain()
+     */
     public HandlerChainsType getHandlerChain() {
         return getHandlerChain(null);
     }
     
-    /**
-     * Returns a schema derived java class containing the the handler configuration information.  
-     * That information, returned in the HandlerChainsType object, is looked for in the following 
-     * places in this order:
-     * - Set on the sparseComposite for the given key
-     * - Set on the composite
-     * - Read in from the file specified on HandlerChain annotation
-     * 
-     * @return HandlerChainsType This is the top-level element for the Handler configuration file
-     * 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#getHandlerChain(java.lang.Object)
      */
     public HandlerChainsType getHandlerChain(Object sparseCompositeKey) {
         // If there is a HandlerChainsType in the sparse composite for this ServiceDelegate

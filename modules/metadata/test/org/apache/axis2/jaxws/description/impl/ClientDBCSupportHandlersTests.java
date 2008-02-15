@@ -18,10 +18,13 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
 
@@ -38,9 +41,11 @@ import junit.framework.TestCase;
 public class ClientDBCSupportHandlersTests extends TestCase {
     private String namespaceURI = "http://org.apache.axis2.jaxws.description.impl.ClientDBCSupportHandlersTests";
     private String svcLocalPart = "svcLocalPart";
+    private String svcLocalPart2 = "svcLocalPart2";
+    private String portLocalPart = "portLocalPart";
 
     /**
-     * Create a ServiceDescription specifying a HandlerChain in a sparse composite
+     * Create a ServiceDescription specifying a HandlerChains Type in a sparse composite
      */
     public void testHandlersOnService() {
         QName serviceQName = new QName(namespaceURI, svcLocalPart);
@@ -51,7 +56,7 @@ public class ClientDBCSupportHandlersTests extends TestCase {
         composite.setHandlerChainsType(handlerChainsType);
         Object compositeKey = "CompositeKey";
         ServiceDescription svcDesc = 
-            new ServiceDescriptionImpl(null, serviceQName, 
+            DescriptionFactory.createServiceDescription(null, serviceQName, 
                                        ClientDBCSupportHandlersService.class, 
                                        composite, compositeKey);
         assertNotNull(svcDesc);
@@ -60,6 +65,47 @@ public class ClientDBCSupportHandlersTests extends TestCase {
         assertNotNull(svcDesc.getHandlerChain("CompositeKey"));
         assertNull(svcDesc.getHandlerChain("WrongKey"));
         
+    }
+    
+    /**
+     * Create an EndpointDescritoin specifying a HandlerChainsType in a sparse composite.
+     */
+    public void testHandlersOnEndpoint() {
+        // Note that Unit tests in the Maven environment run within a single instance of the JVM
+        // which means that the ServiceDescription crated by previous tests still exists.  So
+        // we have to use a different service QName to be sure to always get a new ServiceDescription
+        // or we could pick up a sparse composite with key "CompositeKey" set on a ServiceDescription
+        // by another test, causing the assertNull(svcDesc.getHandlerChain("CompositeKey")) below
+        // to fail
+        QName serviceQName = new QName(namespaceURI, svcLocalPart2);
+        QName portQName = new QName(namespaceURI, portLocalPart);
+
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+
+        HandlerChainsType handlerChainsType = getHandlerChainsType();
+        composite.setHandlerChainsType(handlerChainsType);
+        Object compositeKey = "CompositeKey";
+
+        ServiceDescription svcDesc = 
+            DescriptionFactory.createServiceDescription(null, serviceQName,
+                                       ClientDBCSupportHandlersService.class, 
+                                       null, null);
+        assertNotNull(svcDesc);
+        
+        EndpointDescription epDesc = 
+            DescriptionFactory.updateEndpoint(svcDesc, ClientDBCSupportHandlersSEI.class, portQName, 
+                                              DescriptionFactory.UpdateType.GET_PORT,
+                                              composite, compositeKey);
+        assertNotNull(epDesc);
+        
+        // There should be no handler info on the Service, but there should be on the Endpoint 
+        assertNull(svcDesc.getHandlerChain());
+        assertNull(svcDesc.getHandlerChain("CompositeKey"));
+        assertNull(svcDesc.getHandlerChain("WrongKey"));
+        
+        assertNull(epDesc.getHandlerChain());
+        assertNotNull(epDesc.getHandlerChain("CompositeKey"));
+        assertNull(epDesc.getHandlerChain("WrongKey"));
     }
 
     private HandlerChainsType getHandlerChainsType() {
@@ -91,5 +137,10 @@ class ClientDBCSupportHandlersService extends javax.xml.ws.Service {
     protected ClientDBCSupportHandlersService(URL wsdlDocumentLocation, QName serviceName) {
         super(wsdlDocumentLocation, serviceName);
     }
-
 }
+
+@WebService
+interface ClientDBCSupportHandlersSEI {
+    public String echo(String toEcho);
+}
+
