@@ -128,6 +128,7 @@
                 <module>modules/jaxws</module>
                 <module>modules/clustering</module>
                 <module>modules/corba</module>
+                <module>modules/osgi</module>
             </modules>
             <build>
                 <plugins>
