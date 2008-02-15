@@ -384,6 +384,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         private void processToEPR() {
             EndpointReference epr = messageContextOptions.getTo();
             if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, false)) {
+                processToEPRReferenceInformation(epr.getAllReferenceParameters());
                 String address = epr.getAddress();
                 if (address != null && address.length()!=0) {
                     if (!includeOptionalHeaders && isFinalAddressingNamespace &&
@@ -393,7 +394,6 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                     createSOAPHeaderBlock(address, WSA_TO, epr.getAddressAttributes());
                 }
-                processToEPRReferenceInformation(epr.getAllReferenceParameters());
             }
         }
 
