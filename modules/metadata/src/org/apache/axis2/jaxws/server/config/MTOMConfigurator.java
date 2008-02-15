@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -80,4 +81,12 @@ public class MTOMConfigurator implements ServerConfigurator {
             throw ExceptionFactory.makeWebServiceException("Unable to enable MTOM.", e);    		
     	}
     }    
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ServerConfigurator#supports(java.lang.String)
+     */
+    public boolean supports(String bindingId) {
+        return ServerConfiguratorRegistry.isSOAPBinding(bindingId);
+    }
 }

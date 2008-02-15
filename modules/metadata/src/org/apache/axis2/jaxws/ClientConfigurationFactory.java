@@ -81,13 +81,13 @@ public class ClientConfigurationFactory {
         }
         
         // If they are not specified, create a default one from the axis2_default.xml inside the kernel jar.
-        if (repoPath == null && axisConfigPath == null) {
-            try {
-                configContext = ConfigurationContextFactory.createDefaultConfigurationContext();
-            } catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr", e.getMessage()));
-            }
-        }
+//        if (repoPath == null && axisConfigPath == null) {
+//            try {
+//                configContext = ConfigurationContextFactory.createDefaultConfigurationContext();
+//            } catch (Exception e) {
+//                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientConfigCtxtErr", e.getMessage()));
+//            }
+//        }
         
         // Try the file system with the specified system properties.
         try {

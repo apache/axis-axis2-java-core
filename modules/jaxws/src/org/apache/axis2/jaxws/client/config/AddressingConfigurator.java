@@ -28,6 +28,7 @@ import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
+import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
@@ -143,5 +144,13 @@ public class AddressingConfigurator implements ClientConfigurator {
 
         messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, addressingNamespace);                        
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, disableAddressing);
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ClientConfigurator#supports(org.apache.axis2.jaxws.spi.Binding)
+     */
+    public boolean supports(Binding binding) {
+        return binding instanceof SOAPBinding;
     }
 }

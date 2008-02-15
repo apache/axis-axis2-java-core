@@ -47,4 +47,12 @@ public class RespectBindingConfigurator implements ClientConfigurator {
             //TODO Implementation required.
         }
     }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ClientConfigurator#supports(org.apache.axis2.jaxws.spi.Binding)
+     */
+    public boolean supports(Binding binding) {
+        return true;
+    }
 }

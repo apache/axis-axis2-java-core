@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 
 /**
  *
@@ -135,5 +136,13 @@ public class AddressingConfigurator implements ServerConfigurator {
             //TODO NLS enable.
             throw ExceptionFactory.makeWebServiceException("Unable to engage the addressing module.", e);    		
     	}
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ServerConfigurator#supports(java.lang.String)
+     */
+    public boolean supports(String bindingId) {
+        return ServerConfiguratorRegistry.isSOAPBinding(bindingId);
     }
 }

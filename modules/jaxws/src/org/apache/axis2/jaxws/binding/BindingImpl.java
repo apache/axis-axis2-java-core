@@ -22,16 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.axis2.jaxws.client.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.feature.ClientFramework;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+import org.apache.axis2.jaxws.registry.ClientConfiguratorRegistry;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
@@ -40,19 +39,16 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
  * should extend this class instead.
  */
 public abstract class BindingImpl implements Binding {
-    private static final ClientConfigurator RESPECT_BINDING_CONFIGURATOR =
-        new RespectBindingConfigurator();
-
     // an unsorted list of handlers
-    private List<Handler> handlers = null;
-
-    protected String bindingId = null;
+    private List<Handler> handlers;
 
     private EndpointDescription endpointDesc;
-
-    protected Set<String> roles = null;
     
-    protected ClientFramework framework = null;
+    private ClientFramework framework = new ClientFramework();
+
+    protected String bindingId;
+
+    protected Set<String> roles;
 
     protected static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 
@@ -67,8 +63,14 @@ public abstract class BindingImpl implements Binding {
             this.bindingId = endpointDesc.getBindingType();
         }
         
-        framework = new ClientFramework();
-        framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
+        Set<String> ids = ClientConfiguratorRegistry.getIds();
+        
+        for (String id : ids) {
+            ClientConfigurator configurator = ClientConfiguratorRegistry.getConfigurator(id);
+            
+            if (configurator.supports(this))
+                framework.addConfigurator(id, configurator);
+        }
     }
 
     public List<Handler> getHandlerChain() {

@@ -40,4 +40,12 @@ public class RespectBindingConfigurator implements ServerConfigurator {
     		(RespectBinding) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(RespectBindingFeature.ID);
     	AxisService service = endpointDescription.getAxisService();
     }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ServerConfigurator#supports(java.lang.String)
+     */
+    public boolean supports(String bindingId) {
+        return true;
+    }
 }

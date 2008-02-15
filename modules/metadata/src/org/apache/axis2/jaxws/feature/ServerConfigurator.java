@@ -30,4 +30,13 @@ public interface ServerConfigurator {
      * @param endpointDescription
      */
     public void configure(EndpointDescription endpointDescription);
+    
+    /**
+     * Indicates whether the configurator supports the specified binding.
+     * 
+     * @param bindingId the binding id to test
+     * @return <code>true</code> if the configurator supports the binding id, <code>false</code>
+     * otherwise.
+     */
+    public boolean supports(String bindingId);
 }

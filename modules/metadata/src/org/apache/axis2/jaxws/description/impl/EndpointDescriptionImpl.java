@@ -31,7 +31,6 @@ import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
@@ -47,9 +46,7 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.feature.ServerFramework;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.server.config.AddressingConfigurator;
-import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
-import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
+import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
 import org.apache.commons.logging.Log;
@@ -67,13 +64,10 @@ import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
-import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.PortInfo;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -86,6 +80,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 /** @see ../EndpointDescription */
@@ -97,13 +92,6 @@ import java.util.TreeSet;
  */
 class EndpointDescriptionImpl
         implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
-    private static final ServerConfigurator RESPECT_BINDING_CONFIGURATOR =
-        new RespectBindingConfigurator();
-    private static final ServerConfigurator ADDRESSING_CONFIGURATOR =
-        new AddressingConfigurator();
-    private static final ServerConfigurator MTOM_CONFIGURATOR =
-        new MTOMConfigurator();
-
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
 
@@ -1431,15 +1419,15 @@ class EndpointDescriptionImpl
     //configuration can be overridden. Should only be called on the
     //server side.
     private void configureWebServiceFeatures() {
-    	framework.addConfigurator(RespectBindingFeature.ID, RESPECT_BINDING_CONFIGURATOR);
-    	
-    	String binding = getBindingType();
-    	
-    	if (isSOAPBinding(binding)) {
-    		framework.addConfigurator(AddressingFeature.ID, ADDRESSING_CONFIGURATOR);
-    		framework.addConfigurator(SubmissionAddressingFeature.ID, ADDRESSING_CONFIGURATOR);
-    		framework.addConfigurator(MTOMFeature.ID, MTOM_CONFIGURATOR);
-    	}
+        String bindingType = getBindingType();
+        Set<String> ids = ServerConfiguratorRegistry.getIds();
+        
+        for (String id : ids) {
+            ServerConfigurator configurator = ServerConfiguratorRegistry.getConfigurator(id);
+            
+            if (configurator.supports(bindingType))
+                framework.addConfigurator(id, configurator);
+        }
     	
         // The feature instances are stored on the composite from either the 
         // Java class or from something else building the list and setting it there.
@@ -1585,16 +1573,6 @@ class EndpointDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(
                     Messages.getMessage("addPortErr0", getPortQName().toString()));
         }
-    }
-    
-    public static boolean isSOAPBinding(String url) {
-        if (url != null && (url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
-                url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                url.equals(SOAPBinding.SOAP12HTTP_BINDING)|| 
-                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
-            return true;
-        }
-        return false;
     }
 
     private boolean validateClientBindingID(String bindingId) {

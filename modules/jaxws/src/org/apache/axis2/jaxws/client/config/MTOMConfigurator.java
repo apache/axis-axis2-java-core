@@ -26,6 +26,7 @@ import javax.activation.DataSource;
 import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.message.Message;
@@ -109,5 +110,13 @@ public class MTOMConfigurator implements ClientConfigurator {
                 log.debug("The MTOMFeature was found, but not enabled.");
             }
         }
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.feature.ClientConfigurator#supports(org.apache.axis2.jaxws.spi.Binding)
+     */
+    public boolean supports(Binding binding) {
+        return binding instanceof SOAPBinding;
     }
 }
