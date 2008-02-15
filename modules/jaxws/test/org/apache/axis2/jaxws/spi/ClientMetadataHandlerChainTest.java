@@ -113,6 +113,10 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         assertTrue(containSameHandlers(portHandlers2, list));
     }
     
+    /**
+     * Set a sparse composite on a specific Port.  Verify that instances of that Port have the
+     * correct handlers associated and other Ports do not.
+     */
     public void testPortWithComposite() {
         QName serviceQName = new QName(namespaceURI, svcLocalPart);
         QName portQName = new QName(namespaceURI, portLocalPart);
@@ -157,7 +161,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         List<Handler> portHandlers3 = binding3.getHandlerChain();
         assertEquals(0, portHandlers3.size());
         
-        // Verify setting the metadata on a port (with a different name) will get handlers.
+        // Verify setting the metadata on a different port (a different QName) will get handlers.
         QName portQName4 = new QName(namespaceURI, portLocalPart + "4");
         ServiceDelegate.setPortMetadata(sparseComposite);
         ClientMetadataHandlerChainTestSEI port4 = service.getPort(portQName4, ClientMetadataHandlerChainTestSEI.class);
@@ -180,50 +184,133 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         assertEquals(0, listForPort3.size());
     }
     
-    // TODO: (JLB) Change this test to check the handlers on the ports via the bindingImpl
-    public void _testMultipleServiceDelgates() {
-        QName serviceQName = new QName(namespaceURI, svcLocalPart);
-        PortInfo pi = new DummyPortInfo();
+    /**
+     * Verify that handlers specified in a sparse compoiste on the service are only associated with 
+     * that specific service delegate (i.e. Service instance), even if the QNames are the same 
+     * across two instances of a Service.
+     */
+    public void testMultipleServiceDelgatesServiceComposite() {
+        try {
+            // Need to cache the ServiceDescriptions so that they are shared
+            // across the two instances of the same Service.
+            ClientMetadataTest.installCachingFactory();
+            
+            QName serviceQName = new QName(namespaceURI, svcLocalPart);
+            PortInfo pi = new DummyPortInfo();
 
-        // Create a composite with a JAXB Handler Config 
-        DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
-        HandlerChainsType handlerChainsType = getHandlerChainsType();
-        sparseComposite.setHandlerChainsType(handlerChainsType);
+            // Create a Service specifying a sparse composite and verify the
+            // ports under that service get the correct handlers associated.
+            DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+            HandlerChainsType handlerChainsType = getHandlerChainsType();
+            sparseComposite.setHandlerChainsType(handlerChainsType);
+            ServiceDelegate.setServiceMetadata(sparseComposite);
+            Service service1 = Service.create(serviceQName);
 
-        ServiceDelegate.setServiceMetadata(sparseComposite);
-        Service service = Service.create(serviceQName);
-        
-        // No ports created yet, so there should be no relevant handler chains
-        HandlerResolver resolver0 = service.getHandlerResolver();
-        List<Handler> list0 = resolver0.getHandlerChain(pi);
-        assertEquals(0, list0.size());
-        
-        QName portQName1 = new QName(namespaceURI, portLocalPart);
-        ClientMetadataHandlerChainTestSEI port1 = service.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
-        HandlerResolver resolver1 = service.getHandlerResolver();
-        assertNotNull(resolver1);
-        List<Handler> list1 = resolver1.getHandlerChain(pi);
-        assertEquals(2, list1.size());
+            // Create a second instance of the same Service, but without
+            // metadata. Ports created under that service should not get handler's associated.
+            Service service2 = Service.create(serviceQName);
 
-        QName portQName2 = new QName(namespaceURI, "NoHandlerPort");
-        ClientMetadataHandlerChainTestSEI port2 = service.getPort(portQName2, ClientMetadataHandlerChainTestSEI.class);
-        HandlerResolver resolver2 = service.getHandlerResolver();
-        assertNotNull(resolver2);
-        // Use the same PortInfo from above
-        // TODO: (JLB) this is returning the resolver on the service, which has the correct port from above.
-        // the real test is that the handlers don't get attached to this port, which means writing some handlers
-        // or maybe checking the handler chain on the binding impl!
-        List<Handler> list2 = resolver2.getHandlerChain(pi);
-        assertEquals(0, list2.size());
-        
-        QName portQName3 = new QName(namespaceURI, portLocalPart);
-        ClientMetadataHandlerChainTestSEI port3 = service.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
-        HandlerResolver resolver3 = service.getHandlerResolver();
-        assertNotNull(resolver3);
-        List<Handler> list3 = resolver3.getHandlerChain(pi);
-        assertEquals(2, list3.size());
-        
+            // No ports created yet, so there should be no relevant handler
+            // chains.
+            HandlerResolver resolver1 = service1.getHandlerResolver();
+            List<Handler> list1 = resolver1.getHandlerChain(pi);
+            assertEquals(0, list1.size());
+
+            // Create the port, it should get handlers.
+            QName portQName1 = new QName(namespaceURI, portLocalPart);
+            ClientMetadataHandlerChainTestSEI port1 =
+                    service1.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
+            BindingProvider bindingProvider1 = (BindingProvider) port1;
+            Binding binding1 = (Binding) bindingProvider1.getBinding();
+            List<Handler> portHandlers1 = binding1.getHandlerChain();
+            assertEquals(2, portHandlers1.size());
+            
+            // Refresh the handler list from the resolver after the port is created
+            list1 = resolver1.getHandlerChain(pi);
+            assertTrue(containSameHandlers(portHandlers1, list1));
+
+            // Make sure the 2nd Service instance doesn't have handlers
+            // associated with it
+            HandlerResolver resolver2 = service2.getHandlerResolver();
+            List<Handler> list2 = resolver2.getHandlerChain(pi);
+            assertEquals(0, list2.size());
+
+            // Make sure the same port created under the 2nd service also
+            // doesn't have handlers
+            ClientMetadataHandlerChainTestSEI port2 =
+                    service2.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
+            BindingProvider bindingProvider2 = (BindingProvider) port2;
+            Binding binding2 = (Binding) bindingProvider2.getBinding();
+            List<Handler> portHandlers2 = binding2.getHandlerChain();
+            assertEquals(0, portHandlers2.size());
+        }
+        finally {
+            ClientMetadataTest.restoreOriginalFactory();
+        }
     }
+
+    /**
+     * Verify that handlers specified in a sparse compoiste on the port are only associated with 
+     * that port on that specific service delegate (i.e. Service instance), even if the QNames are the same 
+     * across two instances of a Service.
+     */
+    public void testMultipleServiceDelgatesPortComposite() {
+        try {
+            // Need to cache the ServiceDescriptions so that they are shared
+            // across the two instances of the same Service.
+            ClientMetadataTest.installCachingFactory();
+            
+            QName serviceQName = new QName(namespaceURI, svcLocalPart);
+            PortInfo pi = new DummyPortInfo();
+
+            // Create two instances of the same Service
+            Service service1 = Service.create(serviceQName);
+            Service service2 = Service.create(serviceQName);
+
+            // No ports created yet, so there should be no relevant handler
+            // chains.
+            HandlerResolver resolver1 = service1.getHandlerResolver();
+            List<Handler> list1 = resolver1.getHandlerChain(pi);
+            assertEquals(0, list1.size());
+
+            // Create a Port specifying a sparse composite and verify the
+            // port gets the correct handlers associated.
+            DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+            HandlerChainsType handlerChainsType = getHandlerChainsType();
+            sparseComposite.setHandlerChainsType(handlerChainsType);
+            ServiceDelegate.setPortMetadata(sparseComposite);
+            QName portQName1 = new QName(namespaceURI, portLocalPart);
+            ClientMetadataHandlerChainTestSEI port1 =
+                    service1.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
+            BindingProvider bindingProvider1 = (BindingProvider) port1;
+            Binding binding1 = (Binding) bindingProvider1.getBinding();
+            List<Handler> portHandlers1 = binding1.getHandlerChain();
+            assertEquals(2, portHandlers1.size());
+            
+            // Refresh the handler list from the resolver after the port is created
+            list1 = resolver1.getHandlerChain(pi);
+            assertTrue(containSameHandlers(portHandlers1, list1));
+
+            // Make sure the 2nd Service instance doesn't have handlers
+            // associated with it
+            HandlerResolver resolver2 = service2.getHandlerResolver();
+            List<Handler> list2 = resolver2.getHandlerChain(pi);
+            assertEquals(0, list2.size());
+
+            // Make sure the same port created under the 2nd service also
+            // doesn't have handlers
+            ClientMetadataHandlerChainTestSEI port2 =
+                    service2.getPort(portQName1, ClientMetadataHandlerChainTestSEI.class);
+            BindingProvider bindingProvider2 = (BindingProvider) port2;
+            Binding binding2 = (Binding) bindingProvider2.getBinding();
+            List<Handler> portHandlers2 = binding2.getHandlerChain();
+            assertEquals(0, portHandlers2.size());
+        }
+        finally {
+            ClientMetadataTest.restoreOriginalFactory();
+        }
+    }
+
     
     /**
      * Answer if two List<Handler> arguments contain the same handler Class files.
