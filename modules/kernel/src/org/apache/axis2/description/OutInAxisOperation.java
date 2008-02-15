@@ -23,7 +23,9 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
@@ -199,15 +201,22 @@ class OutInAxisOperationClient extends OperationClient {
         }
 
         EndpointReference replyTo = mc.getReplyTo();
-        if (replyTo !=null && replyTo.hasNoneAddress()) {
-            throw new AxisFault( replyTo.getAddress() + "" +
-                    " can not be used with OutInAxisOperationClient , user either "
-                    + "fireAndForget or sendRobust)");
-        }
-        String customReeplyTo = (String)options.getProperty(Options.CUSTOM_REPLYTO_ADDRESS);
-        if ( ! (Options.CUSTOM_REPLYTO_ADDRESS_TRUE.equals(customReeplyTo))) {
-            if (replyTo!=null && !replyTo.hasAnonymousAddress()){
-                useAsync = true;
+        if (replyTo != null) {
+            if (replyTo.hasNoneAddress()) {
+                throw new AxisFault( replyTo.getAddress() + "" +
+                        " can not be used with OutInAxisOperationClient , user either "
+                        + "fireAndForget or sendRobust)");
+            }
+            else if (replyTo.hasAnonymousAddress() &&
+                     replyTo.getAllReferenceParameters() != null) {
+                mc.setProperty(AddressingConstants.INCLUDE_OPTIONAL_HEADERS, Boolean.TRUE);
+            }
+            
+            String customReplyTo = (String)options.getProperty(Options.CUSTOM_REPLYTO_ADDRESS);
+            if ( ! (Options.CUSTOM_REPLYTO_ADDRESS_TRUE.equals(customReplyTo))) {
+                if (!replyTo.hasAnonymousAddress()){
+                    useAsync = true;
+                }
             }
         }
 

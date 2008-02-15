@@ -21,6 +21,7 @@ package org.apache.axis2.description;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -247,22 +248,27 @@ class OutOnlyAxisOperationClient extends OperationClient {
         ConfigurationContext cc = sc.getConfigurationContext();
         prepareMessageContext(cc, mc);
 
-        //As this is an out-only MEP we add a sensible default for
-        //the replyTo.
+        //As this is an out-only MEP we explicitly add a more sensible default for
+        //the replyTo, if required. We also need to ensure that if the replyTo EPR
+        //has an anonymous address and reference parameters that it gets flowed
+        //across the wire.
         EndpointReference epr = mc.getReplyTo();
-        if (epr == null)
+        if (epr == null) {
             mc.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
+        }
+        else if (epr.hasAnonymousAddress() && epr.getAllReferenceParameters() != null) {
+            mc.setProperty(AddressingConstants.INCLUDE_OPTIONAL_HEADERS, Boolean.TRUE);
+        }
         
         // create the operation context for myself
         OperationContext oc = sc.createOperationContext(axisOp);
         oc.addMessageContext(mc);
         
         // ship it out
-        AxisEngine engine = new AxisEngine(cc);
         if (!block) {
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
         }
-        engine.send(mc);
+        AxisEngine.send(mc);
         // all done
         completed = true;
     }
