@@ -149,6 +149,9 @@ public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
      * @param wURL   The URL where the WSDL is obtained
      */
     private void prepare(Definition def, URL wURL) {
+        if (isDebugEnabled) {
+            log.debug(myClassName + ".prepare()");
+        }
         
         wsdlDefinition = def;
         wsdlURL = wURL;

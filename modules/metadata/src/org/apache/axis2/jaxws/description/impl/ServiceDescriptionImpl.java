@@ -147,6 +147,9 @@ class ServiceDescriptionImpl
     ServiceDescriptionImpl(URL wsdlURL, QName serviceQName, Class serviceClass, 
                            DescriptionBuilderComposite sparseComposite,
                            Object sparseCompositeKey) {
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDescriptionImpl(URL,QName,Class,DescriptionBuilderComposite,Object)");
+        }
         if (serviceQName == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr0"));
         }
@@ -228,7 +231,7 @@ class ServiceDescriptionImpl
 
 
     /**
-     * Create a service-provider side ServiceDesci.  Create a service Description
+     * * Create a service-provider side ServiceDesciption.  Create a service Description
      * based on a service implementation class.  Note this is for test-only code; it should not be 
      * used in production code.  And it is being removed from the test code as well.
      *
@@ -236,6 +239,9 @@ class ServiceDescriptionImpl
      * @param serviceImplClass
      */
     ServiceDescriptionImpl(Class serviceImplClass, AxisService axisService) {
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDescriptionImpl(Class,AxisService)");
+        }
         composite = new DescriptionBuilderComposite();
         composite.setIsDeprecatedServiceProviderConstruction(true);
         composite.setIsServiceProvider(true);
@@ -250,6 +256,12 @@ class ServiceDescriptionImpl
         // TODO: The ServiceQName instance variable should be set based on annotation or default
     }
 
+    ServiceDescriptionImpl(
+                           HashMap<String, DescriptionBuilderComposite> dbcMap,
+                           DescriptionBuilderComposite composite) {
+        this(dbcMap, composite, null);
+    }
+    
     /**
      * Create a service-provider side Service description hierachy.  The hierachy is created entirely
      * from composite.  All relevant classes and interfaces referenced from the class represented by
@@ -259,8 +271,14 @@ class ServiceDescriptionImpl
      */
     ServiceDescriptionImpl(
             HashMap<String, DescriptionBuilderComposite> dbcMap,
-            DescriptionBuilderComposite composite) {
+            DescriptionBuilderComposite composite, 
+            ConfigurationContext configContext) {
         this.composite = composite;
+        
+        this.configContext = configContext;
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDescriptionImpl(HashMap<String,DescriptionBuilderComposite>,ConfigurationContext)");
+        }
 
         String serviceImplName = this.composite.getClassName();
 
@@ -628,6 +646,10 @@ class ServiceDescriptionImpl
         // Note that there may be no WSDL provided, for example when called from 
         // Service.create(QName serviceName).
 
+        if (log.isDebugEnabled()) {
+            log.debug("setupWsdlDefinition()");
+        }
+        
         if (composite.isServiceProvider()) {
 
             //  Currently, there is a bug which allows the wsdlDefinition to be placed
@@ -643,8 +665,16 @@ class ServiceDescriptionImpl
                     this.wsdlURL = composite.getWsdlURL();
 
                     try {
+                        if (log.isDebugEnabled() ) {
+                            if (configContext != null) {
+                                log.debug("new WSDL4JWrapper-ConfigContext not null1"); 
+                            } else {
+                                log.debug("new WSDL4JWrapper-ConfigContext null1"); 
+                            }
+                        }
                         this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,
-                                                             composite.getWsdlDefinition());
+                                                             composite.getWsdlDefinition(), 
+                                                             configContext);
                     } catch (WSDLException e) {
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
@@ -681,17 +711,37 @@ class ServiceDescriptionImpl
                         if (log.isDebugEnabled()) {
                             log.debug("Get the wsdl definition from the SEI composite.");
                         }
+                        
                         this.wsdlURL = seic.getWsdlURL();
+                        if (log.isDebugEnabled() ) {
+                            if (configContext != null) {
+                                log.debug("new WSDL4JWrapper-ConfigContext not null2"); 
+                            } else {
+                                log.debug("new WSDL4JWrapper-ConfigContext null2"); 
+                            }
+                        }
                         this.wsdlWrapper =
-                                new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
+                                new WSDL4JWrapper(seic.getWsdlURL(), 
+                                                  seic.getWsdlDefinition(), 
+                                                  configContext);
+                            
                     } else if (composite.getWsdlDefinition() != null) {
                         //set the wsdl def from the impl. class composite
                         if (log.isDebugEnabled()) {
                             log.debug("Get the wsdl definition from the impl class composite.");
                         }
+                        if (log.isDebugEnabled() ) {
+                            if (configContext != null) {
+                                log.debug("new WSDL4JWrapper-ConfigContext not null3"); 
+                            } else {
+                                log.debug("new WSDL4JWrapper-ConfigContext null3"); 
+                            }
+                        }
                         this.wsdlURL = composite.getWsdlURL();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
-                                                             composite.getWsdlDefinition());
+                                                             composite.getWsdlDefinition(), 
+                                                             configContext);
+                                                            
                     } else {
                     	String wsdlLocation = null;
                     	// first check to see if the wsdlLocation is on the SEI
@@ -732,7 +782,15 @@ class ServiceDescriptionImpl
             //Deprecate this code block when MDQ is fully integrated
         } else if (wsdlURL != null) {
             try {
-                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL);
+                if (log.isDebugEnabled() ) {
+                    if (configContext != null) {
+                        log.debug("new WSDL4JWrapper-ConfigContext not null4"); 
+                    } else {
+                        log.debug("new WSDL4JWrapper-ConfigContext null4"); 
+                    }
+                }
+                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,configContext);
+             
             }
             catch (FileNotFoundException e) {
                 throw ExceptionFactory.makeWebServiceException(
@@ -779,6 +837,13 @@ class ServiceDescriptionImpl
 		        log.debug("Attempting to read WSDL: " + wsdlLocation + " for web " +
 		        		"service endpoint: " + composite.getClassName());
 		    }
+                    if (log.isDebugEnabled() ) {
+                        if (configContext != null) {
+                            log.debug("new WSDL4JWrapper-ConfigContext not null5");
+                        } else {
+                            log.debug("new WSDL4JWrapper-ConfigContext null5");
+                        }
+                    }
 		    URL url = getWSDLURL(wsdlLocation);
 			this.wsdlWrapper = new WSDL4JWrapper(url);
 			composite.setWsdlDefinition(wsdlWrapper.getDefinition());

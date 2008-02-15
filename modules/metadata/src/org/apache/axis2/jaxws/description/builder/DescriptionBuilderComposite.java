@@ -31,9 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
-import java.io.InputStream;
+import org.apache.axis2.context.ConfigurationContext;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -58,7 +56,11 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
       */
 
     public DescriptionBuilderComposite() {
+        this((ConfigurationContext)null);
+    }
 
+    public DescriptionBuilderComposite(ConfigurationContext configContext) {
+        myConfigContext = configContext;
         methodDescriptions = new ArrayList<MethodDescriptionComposite>();
         fieldDescriptions = new ArrayList<FieldDescriptionComposite>();
         webServiceRefAnnotList = new ArrayList<WebServiceRefAnnot>();
@@ -72,6 +74,8 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private URL wsdlURL = null;
     private WSDL4JWrapper wsdlWrapper = null;
 
+    private ConfigurationContext myConfigContext;
+    
     // Class-level annotations
     private WebServiceAnnot webServiceAnnot;
     private WebServiceProviderAnnot webServiceProviderAnnot;
@@ -736,6 +740,20 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         }
 
         sb.append(newLine);
+        sb.append("is Service Provider: " + isServiceProvider() );
+
+        sb.append(newLine);
+        sb.append("wsdlURL: " + getWsdlURL() );
+
+        sb.append(newLine);
+        sb.append("has wsdlDefinition?: ");
+        if (wsdlDefinition !=null) {
+            sb.append("true");
+        } else {
+            sb.append("false");
+        }
+
+        sb.append(newLine);
         sb.append("Interfaces: ");
         Iterator<String> intIter = interfacesList.iterator();
         while (intIter.hasNext()) {
@@ -838,7 +856,12 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 
         Definition wsdlDef = null;
         try {
-            wsdlWrapper = new WSDL4JWrapper(_wsdlURL);
+            if (log.isDebugEnabled() ) {
+                log.debug("new WSDL4JWrapper(" + _wsdlURL.toString() + ",ConfigurationContext" ); 
+            }
+            
+            wsdlWrapper = new WSDL4JWrapper(_wsdlURL, myConfigContext);
+            
             if (wsdlWrapper != null) {
                 wsdlDef = wsdlWrapper.getDefinition();
             }

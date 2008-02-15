@@ -219,7 +219,7 @@ public class DescriptionFactoryImpl {
         if (serviceImplClass != null) {
             JavaClassToDBCConverter converter = new JavaClassToDBCConverter(serviceImplClass);
             HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
-            List<ServiceDescription> serviceDescList = createServiceDescriptionFromDBCMap(dbcMap);
+            List<ServiceDescription> serviceDescList = createServiceDescriptionFromDBCMap(dbcMap, null);
             if (serviceDescList != null && serviceDescList.size() > 0) {
                 serviceDesc = serviceDescList.get(0);
                 if (log.isDebugEnabled()) {
@@ -239,17 +239,19 @@ public class DescriptionFactoryImpl {
 
     /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap) */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
-            HashMap<String, DescriptionBuilderComposite> dbcMap) {
+            HashMap<String, DescriptionBuilderComposite> dbcMap, ConfigurationContext configContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("createServiceDescriptionFromDBCMap(Hashmap<String,DescriptionBuilderComposite>,ConfigurationContext " );
+        }
 
         List<ServiceDescription> serviceDescriptionList = new ArrayList<ServiceDescription>();
-
         for (Iterator<DescriptionBuilderComposite> nameIter = dbcMap.values()
                 .iterator(); nameIter.hasNext();) {
             DescriptionBuilderComposite serviceImplComposite = nameIter.next();
             if (isImpl(serviceImplComposite)) {
                 // process this impl class
-                ServiceDescription serviceDescription = new ServiceDescriptionImpl(
-                        dbcMap, serviceImplComposite);
+                ServiceDescriptionImpl serviceDescription = new ServiceDescriptionImpl(
+                        dbcMap, serviceImplComposite, configContext);
                 ServiceDescriptionValidator validator =
                         new ServiceDescriptionValidator(serviceDescription);
                 if (validator.validate()) {

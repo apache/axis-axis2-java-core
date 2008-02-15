@@ -114,6 +114,9 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
      * @param wURL   The URL where the WSDL is obtained
      */
     private void prepare(Definition def, URL wURL) {
+        if (isDebugEnabled) {
+            log.debug(myClassName + ".prepare()");
+        }
         wsdlDefinition = def;
         wsdlURL = wURL;
 
@@ -990,9 +993,9 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
     public String toString() {
         if (wsdlDefinition != null) {
-            return wsdlDefinition.toString();
+            return this.getClass().getName() + "\n" + wsdlDefinition.toString();
         }
-        return "";
+        return this.getClass().getName();
     }
 
     //-------------------------------------------------------------------------

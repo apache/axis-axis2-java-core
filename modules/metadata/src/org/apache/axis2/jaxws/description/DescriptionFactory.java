@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -285,7 +286,36 @@ public class DescriptionFactory {
      */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
             HashMap<String, DescriptionBuilderComposite> dbcMap) {
-        return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+        return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
+    }
+
+    /**
+     * Create a full ServiceDescription hierarchy on the SERVER side for EACH service implementation
+     * entry in the DescriptionBuilderComposite (DBC) map.  Note that the associated SERVER side
+     * Axis description objects are also created.  To create a single ServiceDescription hierarchy
+     * for a single service implementation class, use the factory method that takes a single class
+     * and returns a single ServiceDescription.
+     * <p/>
+     * A service implementation DBC entry is one that: (1) Is a class and not an interface (2)
+     * Carries a WebService or WebServiceProvider annotation.
+     * <p/>
+     * A DBC represents the information found in the service implementation class.  There will be
+     * other DBC entries in the map for classes and interfaces associated with the service
+     * implementation, such as super classes, super interfaces, fault classes, and such.
+     * <p/>
+     * Note that map may contain > 1 service implementation DBC.  A full ServiceDescriptionhierarchy
+     * will be created for each service implementation DBC entry.
+     * <p/>
+     * Note that each ServiceDescription will have exactly one EndpointDescription corresponding to
+     * each service implementation.
+     *
+     * @param dbcMap A HashMap keyed on class name with a value for the DBC for that classname
+     * @param configContext ConfigurationContext used to get WSDL Definition configuration parameters.
+     * @return A List of ServiceDescriptions with the associated SERVER side hierarchy created.
+     */
+    public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
+             HashMap<String, DescriptionBuilderComposite> dbcMap,ConfigurationContext configContext) {
+         return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, configContext);
     }
 
     /**

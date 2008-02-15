@@ -157,7 +157,7 @@ public class DescriptionFactoryImplTests extends TestCase {
         assertNotNull(pn);
         assertNotNull(tns);
         QName portQName = new QName(tns, pn);
-        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
         assertNotNull(sdList);
         assertEquals(sdList.size(), 1);
         ServiceDescription sd = sdList.get(0);
@@ -193,7 +193,7 @@ public class DescriptionFactoryImplTests extends TestCase {
         assertNotNull(is);
         HandlerChainsType hct = DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
         dbc.setHandlerChainsType(hct);
-        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
         assertNotNull(sdList);
         assertTrue(sdList.size() > 0);
         ServiceDescription sd = sdList.get(0);

@@ -19,6 +19,10 @@
 
 package org.apache.axis2.jaxws.util;
 
+import org.apache.axis2.Constants;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -70,12 +74,25 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
     private URL wsdlURL;
     private String wsdlExplicitURL;
+    private ConfigurationContext configContext;
 
+   /**
+    * Constructor
+    *
+    * @param URL   The URL for the WSDL
+    */
     public WSDL4JWrapper(URL wsdlURL) throws FileNotFoundException, UnknownHostException,
             ConnectException, IOException, WSDLException {
+        this(wsdlURL, (ConfigurationContext)null);
+    }
+
+    public WSDL4JWrapper(URL wsdlURL, ConfigurationContext configContext) throws FileNotFoundException, UnknownHostException,
+            ConnectException, IOException, WSDLException {
         super();
+        this.configContext = configContext;
+	// debugMemoryParms(configContext);
         if(log.isDebugEnabled()) {
-            log.debug("Looking for wsdl file on client: " + (wsdlURL != null ? 
+            log.debug("WSDL4JWrapper(URL,ConfigurationContext) - Looking for wsdl file on client: " + (wsdlURL != null ? 
                     wsdlURL.getPath():null));
         }
         ClassLoader classLoader = (ClassLoader) AccessController.doPrivileged(
@@ -331,19 +348,51 @@ public class WSDL4JWrapper implements WSDLWrapper {
         return reader;
     }
 
+   /**
+    * Constructor
+    *
+    * @param URL   The URL for the WSDL
+    * @param Definition   Definition for the WSDL
+    */
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException {
+        this(wsdlURL, wsdlDefinition, null);
+    }
+
+   
+    /**
+    * Constructor
+    *
+    * @param URL   The URL for the WSDL
+    * @param Definition   Definition for the WSDL
+    * @param ConfigurationContext  to get parameters for WSDL building 
+    */
+    public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, ConfigurationContext configContext) throws WSDLException {
         super();
+        if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(URL,Definition,ConfigContext) entry"); }
+
+	this.configContext = configContext;
         this.wsdlURL = wsdlURL;
         if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
-            this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL);
+	    if (configContext != null) {
+                this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL, configContext.getAxisConfiguration() );
+            } else {
+                this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL);
+            }
         } else {
             this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
         }
     }
 
 
+   /**
+    * Constructor
+    *
+    * @param Definition   Definition for the WSDL
+    */
     public WSDL4JWrapper(Definition wsdlDefinition) throws WSDLException {
         super();
+        if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(Definition) entry"); }
+
         if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
             this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition);
         } else {
@@ -369,7 +418,11 @@ public class WSDL4JWrapper implements WSDLWrapper {
         if (wsdlDefinition == null) {
             Definition def = loadDefinition();
             if (def != null) {
-                wsdlDefinition = new WSDLDefinitionWrapper(def);
+	        if (configContext != null) {
+                    wsdlDefinition = new WSDLDefinitionWrapper(def, configContext.getAxisConfiguration() );
+                } else {
+                    wsdlDefinition = new WSDLDefinitionWrapper(def, (AxisConfiguration)null);
+                }
             }
         }
         return wsdlDefinition;
@@ -684,6 +737,39 @@ public class WSDL4JWrapper implements WSDLWrapper {
     		throw e.getException();
     	}
     	return is;
+    }
+
+    private void debugMemoryParms(ConfigurationContext configContext) {
+        if (configContext != null) {
+            AxisConfiguration axisCfg = configContext.getAxisConfiguration();
+
+            boolean reduceWSDLMemoryCache = false;
+            int reduceWSDLMemoryType = 9;
+            // determine what the setting for the memory optimization is
+            if (axisCfg != null) {
+                Parameter param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
+
+                reduceWSDLMemoryCache =
+                    param != null && ((String) param.getValue()).equalsIgnoreCase("true");
+
+
+                param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_TYPE);
+
+                if (param != null) {
+                    String value = (String) param.getValue();
+
+                    if (value != null) {
+                        Integer i = new Integer(value);
+                        reduceWSDLMemoryType = i.intValue();
+                    }
+                }
+                log.debug("reduceWSDLMemoryCache:"+ reduceWSDLMemoryCache + ", reduceWSDLMemoryType:" + reduceWSDLMemoryType );
+            } else {
+                log.debug("AxisConfiguration is null");
+            }
+        } else {
+            log.debug("ConfigContext is null");
+        }
     }
 
 }

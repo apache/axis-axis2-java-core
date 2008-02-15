@@ -79,7 +79,9 @@ public class JAXBUtils {
     // as long as you don't use one instance from two threads at the same time. 
     // ENABLE_ADV_POOLING is false...which means they are obtained from the JAXBContext instead of
     // from the pool.
-    private static boolean ENABLE_ADV_POOLING = false;
+    private static boolean ENABLE_MARSHALL_POOLING = false;
+    private static boolean ENABLE_UNMARSHALL_POOLING = true;
+    private static boolean ENABLE_INTROSPECTION_POOLING = false;
 
     // The maps are freed up when a LOAD FACTOR is hit
     private static int MAX_LOAD_FACTOR = 32;
@@ -376,7 +378,7 @@ public class JAXBUtils {
      * @throws JAXBException
      */
     public static Unmarshaller getJAXBUnmarshaller(JAXBContext context) throws JAXBException {
-        if (!ENABLE_ADV_POOLING) {
+        if (!ENABLE_UNMARSHALL_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [no pooling]");
             }
@@ -407,8 +409,9 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("Unmarshaller placed back into pool");
         }
-        if (ENABLE_ADV_POOLING) {
+        if (ENABLE_UNMARSHALL_POOLING) {
             adjustPoolSize(umap);
+            unmarshaller.setAttachmentUnmarshaller(null);
             umap.put(context, unmarshaller);
         }
     }
@@ -422,7 +425,7 @@ public class JAXBUtils {
      */
     public static Marshaller getJAXBMarshaller(JAXBContext context) throws JAXBException {
         Marshaller m = null;
-        if (!ENABLE_ADV_POOLING) {
+        if (!ENABLE_MARSHALL_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("Marshaller created [no pooling]");
             }
@@ -455,8 +458,9 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("Marshaller placed back into pool");
         }
-        if (ENABLE_ADV_POOLING) {
+        if (ENABLE_MARSHALL_POOLING) {
             adjustPoolSize(mmap);
+            marshaller.setAttachmentMarshaller(null);
             mmap.put(context, marshaller);
         }
     }
@@ -470,7 +474,7 @@ public class JAXBUtils {
      */
     public static JAXBIntrospector getJAXBIntrospector(JAXBContext context) throws JAXBException {
         JAXBIntrospector i = null;
-        if (!ENABLE_ADV_POOLING) {
+        if (!ENABLE_INTROSPECTION_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("JAXBIntrospector created [no pooling]");
             }
@@ -502,7 +506,7 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("JAXBIntrospector placed back into pool");
         }
-        if (ENABLE_ADV_POOLING) {
+        if (ENABLE_INTROSPECTION_POOLING) {
             adjustPoolSize(imap);
             imap.put(context, introspector);
         }

@@ -107,9 +107,19 @@ public class WSDLDefinitionWrapper implements Definition {
      * @param def    The WSDL Definition
      */
     public WSDLDefinitionWrapper(Definition def) {
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition) entry");
+        }
         prepare(def, null);
     }
 
+    public WSDLDefinitionWrapper(Definition def,AxisConfiguration axisConfig ) {
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,AxisConfiguration) entry ");
+        }
+        setupMemoryParms(axisConfig);
+        prepare(def, null);
+    }
 
     /**
      * Constructor
@@ -118,6 +128,9 @@ public class WSDLDefinitionWrapper implements Definition {
      * @param wURL   The URL for the wsdl
      */
     public WSDLDefinitionWrapper(Definition def, URL wURL) {
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,URL) entry");
+        }
         prepare(def, wURL);
     }
 
@@ -132,6 +145,9 @@ public class WSDLDefinitionWrapper implements Definition {
      */
     public WSDLDefinitionWrapper(Definition def, URL wURL, boolean limitInMemory) {
         reduceWSDLMemoryCache = limitInMemory;
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,URL,boolean) entry");
+        }
         prepare(def, wURL);
     }
 
@@ -147,6 +163,9 @@ public class WSDLDefinitionWrapper implements Definition {
     public WSDLDefinitionWrapper(Definition def, URL wURL, int limitType) {
         reduceWSDLMemoryCache = true;
         reduceWSDLMemoryType = limitType;
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,URL,int) entry");
+        }
         prepare(def, wURL);
     }
 
@@ -159,28 +178,45 @@ public class WSDLDefinitionWrapper implements Definition {
      * @param axisCfg  The AxisConfiguration object, to be used to get configuration settings  
      */
     public WSDLDefinitionWrapper(Definition def, URL wURL, AxisConfiguration axisCfg) {
-
-        // determine what the setting for the memory optimization is
-        Parameter param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
-                
-        reduceWSDLMemoryCache = 
-                param != null && ((String) param.getValue()).equalsIgnoreCase("true");
-
-
-        param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_TYPE);
-                
-        if (param != null) {
-            String value = (String) param.getValue();
-
-            if (value != null) {
-                Integer i = new Integer(value);
-                reduceWSDLMemoryType = i.intValue(); 
-            }
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,URL,AxisConfiguration) entry");
         }
 
+        // determine what the setting for the memory optimization is
+        setupMemoryParms(axisCfg);
         prepare(def, wURL);
     }
 
+
+
+    private void setupMemoryParms( AxisConfiguration axisCfg) {
+        if (log.isDebugEnabled() ) {
+            log.debug("setupMemoryParms(AxisConfiguration) entry");
+        }
+
+        // determine what the setting for the memory optimization is
+        if (axisCfg != null) {
+            Parameter param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
+                
+            reduceWSDLMemoryCache = 
+                param != null && ((String) param.getValue()).equalsIgnoreCase("true");
+
+
+            param = axisCfg.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_TYPE);
+                
+            if (param != null) {
+                String value = (String) param.getValue();
+
+                if (value != null) {
+                    Integer i = new Integer(value);
+                    reduceWSDLMemoryType = i.intValue(); 
+                }
+            }
+            if (log.isDebugEnabled() ) {
+                log.debug("reduceWSDLMemoryCache:"+ reduceWSDLMemoryCache + ", reduceWSDLMemoryType:" + reduceWSDLMemoryType );
+            }
+        }
+    }
 
 
     /**
