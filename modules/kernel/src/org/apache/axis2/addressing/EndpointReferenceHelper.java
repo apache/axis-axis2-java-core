@@ -138,12 +138,7 @@ public class EndpointReferenceHelper {
      * @deprecated use {@link #fromString(String)} instead.
      */
     public static EndpointReference fromOM(String eprString) throws AxisFault {
-        try {
-            return fromOM(new StAXOMBuilder(
-                    new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
-        } catch (XMLStreamException e) {
-            throw AxisFault.makeFault(e);
-        }
+        return fromString(eprString);
     }
 
     /**
