@@ -1947,11 +1947,16 @@
                                           {
                                                if (!axutil_strcasecmp (text_value , "true"))
                                                {
-                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
+                                                  element = AXIS2_MALLOC(env->allocator,sizeof(axis2_bool_t));
+                                                  (*(<xsl:value-of select="$nativePropertyType"/>*)element) = AXIS2_TRUE;
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)element);
                                                }
                                                else
                                                {
-                                                  axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                                  element = AXIS2_MALLOC(env->allocator,sizeof(axis2_bool_t));
+                                                  (*(<xsl:value-of select="$nativePropertyType"/>*)element) = AXIS2_FALSE;
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)element);
+
                                                }
                                           }
                                           <xsl:if test="not(@nillable)">
@@ -2426,11 +2431,15 @@
                                           {
                                               if (!axutil_strcasecmp (text_value , "true"))
                                               {
-                                                 axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_TRUE);
+                                                  element = AXIS2_MALLOC(env->allocator,sizeof(axis2_bool_t));
+                                                  (*(<xsl:value-of select="$nativePropertyType"/>*)element) = AXIS2_TRUE;
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)element);
                                               }
                                               else
                                               {
-                                                 axutil_array_list_add_at(arr_list, env, i, (void*)AXIS2_FALSE);
+                                                  element = AXIS2_MALLOC(env->allocator,sizeof(axis2_bool_t));
+                                                  (*(<xsl:value-of select="$nativePropertyType"/>*)element) = AXIS2_FALSE;
+                                                  axutil_array_list_add_at(arr_list, env, i, (void*)element);
                                               }
                                           }
                                           <xsl:if test="not(@nillable)">
