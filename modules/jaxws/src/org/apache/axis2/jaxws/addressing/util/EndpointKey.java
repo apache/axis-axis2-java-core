@@ -20,6 +20,11 @@ package org.apache.axis2.jaxws.addressing.util;
 
 import javax.xml.namespace.QName;
 
+/**
+ * This class is used to identify a particular web service endpoint based on
+ * the combination of WSDL service name and port name.
+ *
+ */
 public class EndpointKey {
     private final QName service;
     private final QName endpoint;

@@ -20,9 +20,9 @@
 package org.apache.axis2.jaxws.registry;
 
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.addressing.factory.impl.Axis2EndpointReferenceFactoryImpl;
+import org.apache.axis2.jaxws.addressing.factory.impl.JAXWSEndpointReferenceFactoryImpl;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;

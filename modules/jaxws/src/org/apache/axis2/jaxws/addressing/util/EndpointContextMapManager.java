@@ -18,28 +18,33 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
-public class EndpointMapManager {
-    private static ThreadLocal<EndpointMap> variable = new ThreadLocal<EndpointMap>();
+/**
+ * This class is used to manage the association between an {@link EndpointContextMap}
+ * and a thread.
+ */
+public class EndpointContextMapManager {
+    private static ThreadLocal<EndpointContextMap> variable =
+        new InheritableThreadLocal<EndpointContextMap>();
     
-    public static EndpointMap setEndpointMap(EndpointMap newMap) {
-        EndpointMap oldMap = variable.get();
+    public static EndpointContextMap setEndpointContextMap(EndpointContextMap newMap) {
+        EndpointContextMap oldMap = variable.get();
         variable.set(newMap);
         
         return oldMap;
     }
     
-    public static EndpointMap getEndpointMap() {
-        EndpointMap currentMap = variable.get();
+    public static EndpointContextMap getEndpointContextMap() {
+        EndpointContextMap currentMap = variable.get();
         
         if (currentMap == null) {
             currentMap = getDefaultEndpointMap();
-            setEndpointMap(currentMap);
+            setEndpointContextMap(currentMap);
         }
         
         return currentMap;
     }
     
-    private static EndpointMap getDefaultEndpointMap() {
-        return new EndpointMap();
+    private static EndpointContextMap getDefaultEndpointMap() {
+        return new EndpointContextMap();
     }
 }

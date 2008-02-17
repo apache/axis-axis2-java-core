@@ -22,8 +22,25 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 
+/**
+ * This class represents factories that can be used to generate instances of the
+ * {@link EndpointReference}.
+ */
 public interface JAXWSEndpointReferenceFactory {
+    /**
+     * Create an instance of a supported subclass of <code>EndpointReference</code>.
+     * 
+     * @param eprInfoset the endpoint reference
+     * @return an instance of <code>EndpointReference</code>.
+     * @throws JAXBException
+     */
     public EndpointReference createEndpointReference(Source eprInfoset) throws JAXBException;
     
+    /**
+     * Map the specified class to a supported WS-Addressing namespace.
+     * 
+     * @param clazz the class.
+     * @return the WS-Addressing namespace that is associated with the class.
+     */
     public String getAddressingNamespace(Class clazz);
 }

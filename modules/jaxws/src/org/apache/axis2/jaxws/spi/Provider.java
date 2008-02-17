@@ -74,8 +74,11 @@ public class Provider extends javax.xml.ws.spi.Provider {
         W3CEndpointReference w3cEPR = null;
         
         try {
-        	EndpointReferenceUtils.addMetadata(axis2EPR, metadata.toArray(ZERO_LENGTH_ARRAY));
-        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
+            if (metadata != null)
+                EndpointReferenceUtils.addMetadata(axis2EPR, metadata.toArray(ZERO_LENGTH_ARRAY));
+        	
+            if (referenceParameters != null)
+                EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
         	
             w3cEPR =
                 (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);

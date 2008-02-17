@@ -28,6 +28,11 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.w3c.dom.Element;
 
+/**
+ * This class can be used to create instances of {@link SubmissionEndpointReference}.
+ *
+ * @see javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder
+ */
 public final class SubmissionEndpointReferenceBuilder {
 	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];
 
@@ -38,19 +43,45 @@ public final class SubmissionEndpointReferenceBuilder {
     private List<Element> referenceParameters;
     private QName portType;
     
+    /**
+     * Constructor
+     *
+     */
     public SubmissionEndpointReferenceBuilder() {
     }
     
+    /**
+     * Add the address URI to use.
+     * 
+     * @param address the address URI
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder address(String address) {
         this.address = address;
         return this;
     }
     
+    /**
+     * Add the WSDL service name of the endpoint that the endpoint reference will target.
+     * 
+     * @param serviceName the WSDL service name
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder serviceName(QName serviceName) {
         this.serviceName = serviceName;
         return this;
     }
     
+    /**
+     * Add the WSDL port name of the endpoint that the endpoint reference will target.
+     * The WSDL port name can only be set after the WSDL service name has been set.
+     * 
+     * @param endpointName the WSDL port name
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder endpointName(QName endpointName) {
         //TODO NLS enable
         if (this.serviceName == null) {
@@ -61,11 +92,27 @@ public final class SubmissionEndpointReferenceBuilder {
         return this;
     }
     
+    /**
+     * Add the URI from where the WSDL for the endpoint that the endpoint reference will
+     * target can be retrieved.
+     * 
+     * @param wsdlDocumentLocation the location URI of the WSDL
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder wsdlDocumentLocation(String wsdlDocumentLocation) {
         this.wsdlDocumentLocation = wsdlDocumentLocation;
         return this;
     }
     
+    /**
+     * Add reference properties. These will appear in the endpoint reference as reference
+     * parameters.
+     * 
+     * @param referenceProperty the reference property
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder referenceProperty(Element referenceProperty) {
         //TODO NLS enable
         if (referenceProperty == null) {
@@ -80,6 +127,13 @@ public final class SubmissionEndpointReferenceBuilder {
         return this;
     }
     
+    /**
+     * Add reference parameters.
+     * 
+     * @param referenceParameter the reference parameter
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder referenceParameter(Element referenceParameter) {
         //TODO NLS enable
         if (referenceParameter == null) {
@@ -94,11 +148,24 @@ public final class SubmissionEndpointReferenceBuilder {
         return this;
     }
     
+    /**
+     * Add the name of the WSDL port type.
+     * 
+     * @param portType the WSDL port type name
+     * @return an instance of <code>SubmissionEndpointReferenceBuilder</code> that has
+     * been updated as specified.
+     */
     public SubmissionEndpointReferenceBuilder portType(QName portType) {
         this.portType = portType;
         return this;
     }
     
+    /**
+     * Construct an instance of <code>EndpointReference</code> based on the values
+     * specified.
+     * 
+     * @return an instance of <code>SubmissionEndpointReference</code>
+     */
     public SubmissionEndpointReference build() {
     	SubmissionEndpointReference submissionEPR = null;
     	
@@ -108,8 +175,11 @@ public final class SubmissionEndpointReferenceBuilder {
         	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, endpointName, wsdlDocumentLocation, addressingNamespace);
     	
         try {
-        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
-        	EndpointReferenceUtils.addInterface(axis2EPR, portType, InterfaceName.subQName);
+            if (referenceParameters != null)
+                EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
+        	
+            if (portType != null)
+                EndpointReferenceUtils.addInterface(axis2EPR, portType, InterfaceName.subQName);
         	
             submissionEPR =
                 (SubmissionEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);

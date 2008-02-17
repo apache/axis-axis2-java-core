@@ -26,8 +26,8 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
-import org.apache.axis2.jaxws.addressing.util.EndpointMap;
-import org.apache.axis2.jaxws.addressing.util.EndpointMapManager;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
@@ -405,10 +405,10 @@ public class EndpointController {
             Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
 
             EndpointDescription ed = (EndpointDescription)param.getValue();
-            param = axisSvc.getParameter(EndpointMap.class.getCanonicalName());
+            param = axisSvc.getParameter(EndpointContextMap.class.getCanonicalName());
             if(param != null) {
-                EndpointMap map = (EndpointMap) param.getValue();
-                EndpointMapManager.setEndpointMap(map);
+                EndpointContextMap map = (EndpointContextMap) param.getValue();
+                EndpointContextMapManager.setEndpointContextMap(map);
             }
             
             return ed;
@@ -436,16 +436,16 @@ public class EndpointController {
                 QName endpoint = ed.getPortQName();
                 EndpointKey key = new EndpointKey(service, endpoint);
                 axisSvc = ed.getAxisService();                
-                Parameter param = axisSvc.getParameter(EndpointMap.class.getCanonicalName());
-                EndpointMap map = null;
+                Parameter param = axisSvc.getParameter(EndpointContextMap.class.getCanonicalName());
+                EndpointContextMap map = null;
                 
                 if (param == null) {
-                    map = EndpointMapManager.getEndpointMap();
-                    axisSvc.addParameter(EndpointMap.class.getCanonicalName(), map);
+                    map = EndpointContextMapManager.getEndpointContextMap();
+                    axisSvc.addParameter(EndpointContextMap.class.getCanonicalName(), map);
                 }
                 else {
-                    map = (EndpointMap) param.getValue();
-                    EndpointMapManager.setEndpointMap(map);
+                    map = (EndpointContextMap) param.getValue();
+                    EndpointContextMapManager.setEndpointContextMap(map);
                 }
                 
                 map.put(key, axisSvc.getEPRs()[0]);

@@ -41,10 +41,6 @@ import org.w3c.dom.Element;
 public final class EndpointReferenceUtils {
     
     private static OMFactory omFactory = OMAbstractFactory.getOMFactory();
-    private static JAXWSEndpointReferenceFactory jaxwsEPRFactory =
-        (JAXWSEndpointReferenceFactory) FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
-    private static Axis2EndpointReferenceFactory axis2EPRFactory =
-    	(Axis2EndpointReferenceFactory) FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
 
     private EndpointReferenceUtils() {
     }
@@ -66,8 +62,10 @@ public final class EndpointReferenceUtils {
             EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
         Element eprElement = XMLUtils.toDOM(omElement);
         Source eprInfoset = new DOMSource(eprElement);
+        JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
+            FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
         
-        return jaxwsEPRFactory.createEndpointReference(eprInfoset);
+        return factory.createEndpointReference(eprInfoset);
     }
 
     /**
@@ -82,7 +80,10 @@ public final class EndpointReferenceUtils {
      */
     public static javax.xml.ws.EndpointReference convertFromSource(Source eprInfoset)
     throws Exception {
-        return jaxwsEPRFactory.createEndpointReference(eprInfoset);
+        JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
+            FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
+        
+        return factory.createEndpointReference(eprInfoset);
     }
     
     /**
@@ -105,15 +106,24 @@ public final class EndpointReferenceUtils {
     }
 
     public static String getAddressingNamespace(Class clazz) {
-        return jaxwsEPRFactory.getAddressingNamespace(clazz);
+        JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
+            FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
+        
+        return factory.getAddressingNamespace(clazz);
     }
     
     public static EndpointReference createAxis2EndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
-    	return axis2EPRFactory.createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
+        Axis2EndpointReferenceFactory factory = (Axis2EndpointReferenceFactory)
+            FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
+        
+        return factory.createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
     }
     
     public static EndpointReference createAxis2EndpointReference(String address) {
-    	return axis2EPRFactory.createEndpointReference(address);
+        Axis2EndpointReferenceFactory factory = (Axis2EndpointReferenceFactory)
+            FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
+        
+    	return factory.createEndpointReference(address);
     }
     
     public static void addReferenceParameters(EndpointReference axis2EPR, Element...referenceParameters)
@@ -140,8 +150,7 @@ public final class EndpointReferenceUtils {
     throws Exception {
     	if (portType != null) {
     		InterfaceName interfaceName = new InterfaceName(portType);
-            OMFactory factory = OMAbstractFactory.getOMFactory();
-    		OMElement omElement = interfaceName.toOM(interfaceType, factory);
+    		OMElement omElement = interfaceName.toOM(interfaceType, omFactory);
     		axis2EPR.addExtensibleElement(omElement);
     	}
     }

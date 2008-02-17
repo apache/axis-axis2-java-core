@@ -25,7 +25,6 @@ import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class ServerFramework {
@@ -48,8 +47,7 @@ public class ServerFramework {
         if (annotation == null)
             return false;
         
-        WebServiceFeatureAnnotation wsfAnnotation =
-        	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
+        WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
         
         String id = null;
         if (wsfAnnotation != null)
@@ -63,8 +61,7 @@ public class ServerFramework {
         if (!isValid(annotation))
             throw ExceptionFactory.makeWebServiceException("Invalid or unsupported WebServiceFeature annotation, " + annotation);
         
-        WebServiceFeatureAnnotation wsfAnnotation =
-        	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
+        WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
 
         annotationMap.put(wsfAnnotation.id(), annotation);
     }
@@ -79,11 +76,13 @@ public class ServerFramework {
     
     public void configure(EndpointDescription endpointDescription) {
         for (Annotation annotation : getAllAnnotations()) {
-            WebServiceFeatureAnnotation wsfAnnotation =
-            	annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
-            
+            WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
             ServerConfigurator configurator = configuratorMap.get(wsfAnnotation.id());
             configurator.configure(endpointDescription);
         }
+    }
+    
+    private WebServiceFeatureAnnotation getWebServiceFeatureAnnotation(Annotation annotation) {
+        return annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
     }
 }

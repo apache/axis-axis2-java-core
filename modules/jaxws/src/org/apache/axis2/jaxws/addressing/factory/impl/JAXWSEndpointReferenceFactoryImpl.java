@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.addressing.factory;
+package org.apache.axis2.jaxws.addressing.factory.impl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -30,10 +30,21 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 
+/**
+ * This class is used to generate instances of the following subclasses of
+ * {@link EndpointReference}.
+ *
+ * @see javax.xml.ws.wsaddressing.W3CEndpointReference
+ * @see org.apache.axis2.jaxws.addressing.SubmissionEndpointReference
+ */
 public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReferenceFactory {
     private JAXBContext jaxbContext;
 
+    /**
+     * Constructor
+     */
     public JAXWSEndpointReferenceFactoryImpl() {
         super();
 
@@ -47,12 +58,19 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
         }
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory#createEndpointReference(javax.xml.transform.Source)
+     */
     public EndpointReference createEndpointReference(Source eprInfoset) throws JAXBException {
         Unmarshaller um = jaxbContext.createUnmarshaller();
-        
         return (EndpointReference) um.unmarshal(eprInfoset);
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory#getAddressingNamespace(java.lang.Class)
+     */
     public String getAddressingNamespace(Class clazz) {
         String addressingNamespace = null;
         

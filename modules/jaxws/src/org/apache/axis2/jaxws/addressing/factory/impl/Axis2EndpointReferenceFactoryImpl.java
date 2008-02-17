@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.addressing.factory;
+package org.apache.axis2.jaxws.addressing.factory.impl;
 
 import java.net.URL;
 
@@ -27,32 +27,49 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
-import org.apache.axis2.jaxws.addressing.util.EndpointMap;
-import org.apache.axis2.jaxws.addressing.util.EndpointMapManager;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
+/**
+ * This class produces instances of {@link EndpointReference}.
+ *
+ */
 public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReferenceFactory {
     public Axis2EndpointReferenceFactoryImpl() {
     	super();
     }
     
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory#createEndpointReference(java.lang.String)
+     */
     public EndpointReference createEndpointReference(String address) {
         if (address == null)
             throw new IllegalStateException("The endpoint address URI is null.");
 
         return new EndpointReference(address);
     }
-    
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory#createEndpointReference(javax.xml.namespace.QName, javax.xml.namespace.QName)
+     */
     public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
-        EndpointMap map = EndpointMapManager.getEndpointMap();
-        String address = map.get(key);
+        EndpointContextMap map = EndpointContextMapManager.getEndpointContextMap();
+        String address = (String) map.get(key);
         
         return createEndpointReference(address);
     }
-    
+
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory#createEndpointReference(java.lang.String, javax.xml.namespace.QName, javax.xml.namespace.QName, java.lang.String, java.lang.String)
+     */
     public EndpointReference createEndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
         EndpointReference axis2EPR = null;
         
@@ -71,10 +88,13 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
             throw new IllegalStateException("Cannot create an endpoint reference because the address, service name, and/or port name are null.");
         }
         
+        //TODO If no service name and port name are specified, but the wsdl location is
+        //specified, and the WSDL only contains one service and one port then maybe we
+        //should simply use those.        
         try {
-            //TODO If no service name and port name are specified, but the wsdl location is
-            //specified, and the WSDL only contains one service and one port then maybe we
-            //should simply use those.
+            //This code is locate here instead of in the createEndpointReference(QName, QName)
+            //method so that if the address is also specified the EPR metadata will still be
+            //filled in correctly.
             if (serviceName != null && portName != null) {
                 ServiceName service = new ServiceName(serviceName, portName.getLocalPart());
                 EndpointReferenceHelper.setServiceNameMetadata(axis2EPR, addressingNamespace, service);
@@ -103,7 +123,7 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
                 			}
                 		}
                 		
-                		//TODO NLS
+                		//TODO NLS enable
                 		if (!found)
                 			throw new IllegalStateException("The specified port name does not exist in the specified WSDL service.");
                 	}
