@@ -218,13 +218,15 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
-        URL wsdlURL = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+        URL wsdlURL =
+            ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+        String wsdlLocation = (wsdlURL != null) ? wsdlURL.toString() : null;
         
         if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
             throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlURL.toString(), addressingNamespace);
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlLocation, addressingNamespace);
         
         try {
         	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
