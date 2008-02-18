@@ -24,7 +24,7 @@ import org.apache.axis2.jaxws.spi.BindingProvider;
 
 import javax.xml.ws.WebServiceFeature;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ClientFramework {
@@ -35,8 +35,8 @@ public class ClientFramework {
     
     public ClientFramework() {
     	super();
-        configuratorMap = new IdentityHashMap<String, ClientConfigurator>();
-        featureMap = new IdentityHashMap<String, WebServiceFeature>();
+        configuratorMap = new HashMap<String, ClientConfigurator>();
+        featureMap = new HashMap<String, WebServiceFeature>();
     }
     
     public void addConfigurator(String id, ClientConfigurator configurator) {
