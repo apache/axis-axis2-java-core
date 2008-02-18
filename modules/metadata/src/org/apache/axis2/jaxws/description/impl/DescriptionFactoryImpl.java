@@ -372,16 +372,15 @@ public class DescriptionFactoryImpl {
             ServiceName serviceName = EndpointReferenceHelper.getServiceNameMetadata(epr, addressingNamespace);
             QName serviceQName = serviceDescription.getServiceQName();
             
-            //The javadoc says that a WebServiceException should be thrown if the service name
-            //in the EPR metadata does not match the service name in the WSDL of the JAX-WS
-            //service instance.
-            if (!serviceQName.equals(serviceName.getName()))
+            //We need to throw an exception if the service name in the EPR metadata does not
+            //match the service name associated with the JAX-WS service instance.
+            if (serviceName.getName() != null && !serviceQName.equals(serviceName.getName()))
                 throw ExceptionFactory.makeWebServiceException("The service name of the endpoint reference does not match the service name of the service client.");
             
-            //TODO The javadoc seems to suggest, inconsistently, that the port name can be
-            //resolved by looking in the following places: 1) the EPR metadata, 2) the SEI, and
-            //3) the WSDL. At the moment only 1) is implemented. May need to revisit the others.
-            portQName = new QName(serviceQName.getNamespaceURI(), serviceName.getEndpointName());
+            //If a port name is available from the EPR metadata then use that, otherwise
+            //leave it to the runtime to find a suitable port, based on WSDL/annotations.
+            if (serviceName.getEndpointName() != null)
+                portQName = new QName(serviceQName.getNamespaceURI(), serviceName.getEndpointName());
         }
         catch (Exception e) {
             //TODO NLS enable.
