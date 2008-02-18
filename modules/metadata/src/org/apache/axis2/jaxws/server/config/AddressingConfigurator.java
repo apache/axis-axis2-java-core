@@ -66,10 +66,8 @@ public class AddressingConfigurator implements ServerConfigurator {
                 boolean w3cAddressingRequired = addressing.required();
                 boolean submissionAddressingRequired = submissionAddressing.required();
 
-                if (w3cAddressingRequired && submissionAddressingRequired)
+                if (w3cAddressingRequired || submissionAddressingRequired)
                 	addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
-                else if (w3cAddressingRequired || submissionAddressingRequired)
-                	throw ExceptionFactory.makeWebServiceException("Illegal configuration.");
             }
             else if (w3cAddressingEnabled) {
             	namespace.setValue(AddressingConstants.Final.WSA_NAMESPACE);
