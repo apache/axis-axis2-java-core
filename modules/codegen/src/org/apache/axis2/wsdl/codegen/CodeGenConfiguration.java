@@ -216,6 +216,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private boolean skipMessageReceiver = false;
     private boolean skipWriteWSDLs = false;
     private boolean skipBuildXML = false;
+    private boolean setoutputSourceLocation = false;
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
 
     // Default packClasses is true, which means the classes generated
@@ -241,7 +242,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setServerSideInterface(boolean serverSideInterface) {
         this.serverSideInterface = serverSideInterface;
     }
-
+    public boolean isSetoutputSourceLocation(){
+      return  setoutputSourceLocation;
+    }
 
     public String getPortName() {
         return portName;
@@ -541,6 +544,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     private boolean isAllPorts;
     private boolean isOverride;
+    
 
     public boolean isAllPorts() {
         return isAllPorts;
@@ -572,4 +576,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void addXmlFileName(String fileName){
        this.outputXmlFileNamesList.add(fileName);
     }
+    public void setoutputSourceLocation(boolean setoutputsourcelocation)
+    {
+        setoutputSourceLocation = true;
+        
+    }
+    
 }

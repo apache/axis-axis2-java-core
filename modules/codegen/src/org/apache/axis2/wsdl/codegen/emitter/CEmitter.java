@@ -27,6 +27,8 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.writer.CBuildScriptWriter;
 import org.apache.axis2.wsdl.codegen.writer.CServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.CSkelHeaderWriter;
 import org.apache.axis2.wsdl.codegen.writer.CSkelSourceWriter;
@@ -38,6 +40,7 @@ import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.neethi.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 
 import javax.xml.namespace.QName;
 import java.io.File;
@@ -79,6 +82,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         }
     }
 
+
+
     /**
      * Emit the skeltons
      *
@@ -91,13 +96,30 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
             // write a Service Skeleton for this particular service.
             writeCServiceSkeleton();
+            //create the build script
+            emitBuildScript();
 
             writeServiceXml();
+            
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
+    /**
+     * Emit the build script
+     *
+     * @throws CodeGenerationException
+     */
+    public void emitBuildScript() throws CodeGenerationException {
+        try {
+        	writeBuildScript();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Writes the Stub.
@@ -115,7 +137,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                                       codeGenConfiguration.getOutputLanguage());
 
         writeFile(interfaceImplModel, writerHStub);
-
+                    
 
         CStubSourceWriter writerCStub =
                 new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
@@ -124,8 +146,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         writeFile(interfaceImplModel, writerCStub);
     }
-
-
     /**
      * Writes the Skel.
      *
@@ -166,10 +186,26 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     }
 
     /**
-     * Write the service XML
+     * Write the Build Script
      *
      * @throws Exception
      */
+
+    protected void writeBuildScript() throws Exception {
+        if (this.codeGenConfiguration.isGenerateDeployementDescriptor()) {
+
+            // Write the service xml in a folder with the
+            Document buildXMLModel = createDOMDocumentForBuildScript(this.codeGenConfiguration);
+            FileWriter buildXmlWriter =
+                    new CBuildScriptWriter(
+                            getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                                               codeGenConfiguration.getSourceLocation()),
+                            this.codeGenConfiguration.getOutputLanguage());
+
+            writeFile(buildXMLModel, buildXmlWriter);
+        }
+    }
+
     protected void writeServiceXml() throws Exception {
         if (this.codeGenConfiguration.isGenerateDeployementDescriptor()) {
 
@@ -184,7 +220,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             writeFile(serviceXMLModel, serviceXmlWriter);
         }
     }
-
     /** Creates the DOM tree for implementations. */
     protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
 
@@ -324,6 +359,38 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     }
 
+    protected Document createDOMDocumentForBuildScript(CodeGenConfiguration codegen) {
+    	 Document doc = getEmptyDocument();
+         Element rootElement = doc.createElement("interface");
+
+         String serviceCName = makeCClassName(axisService.getName());
+        // String skelName = C_SKEL_PREFIX + serviceCName + C_SKEL_SUFFIX;
+         addAttribute(doc,"servicename",serviceCName,rootElement);
+        //if user specify a location for the source
+         if(codegen.isSetoutputSourceLocation()){
+             String outputLocation = codegen.getOutputLocation().getPath();
+             String  targetsourceLocation = codegen.getSourceLocation();
+             addAttribute(doc,"option","1",rootElement);
+             addAttribute(doc,"outputlocation",outputLocation,rootElement);
+             addAttribute(doc,"targetsourcelocation",targetsourceLocation,rootElement);
+         }
+        else
+         {
+            addAttribute(doc,"option","0",rootElement);
+         }
+        fillSyncAttributes(doc, rootElement);
+         loadOperations(doc, rootElement, null);
+         // add SOAP version
+         addSoapVersion(doc, rootElement);
+         
+         //attach a list of faults
+         rootElement.appendChild(getUniqueListofFaults(doc));
+
+         doc.appendChild(rootElement);
+         return doc;
+
+    }
+    
     /**
      * @param word
      * @return Returns character removed string.

@@ -38,8 +38,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         CommandLineOption commandLineOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                                                          WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG,
                                                          optionMap);
-
+        
         if (commandLineOption != null) {
+        //set isoutputSourceLocation true when user specify an output source location
+            config.setoutputSourceLocation(true);
             outputLocation = commandLineOption.getOptionValue();
         }
         File outputLocationFile = new File(outputLocation);
