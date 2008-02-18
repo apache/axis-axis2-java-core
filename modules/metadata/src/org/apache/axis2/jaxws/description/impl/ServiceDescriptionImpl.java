@@ -1171,8 +1171,6 @@ class ServiceDescriptionImpl
                     if (composite.getSoapBindingAnnot() != null
                             || composite.getWebFaultAnnot() != null
                             || composite.getWebServiceClientAnnot() != null
-                            || composite.getWebServiceContextAnnot() != null
-                            || !composite.getAllWebServiceRefAnnots().isEmpty()
                             ) {
                         throw ExceptionFactory.makeWebServiceException(
                         		Messages.getMessage("validateIntegrityErr9",composite.getClassName()));
