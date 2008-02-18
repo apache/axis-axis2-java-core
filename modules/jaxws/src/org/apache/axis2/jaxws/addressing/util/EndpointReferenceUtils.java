@@ -62,10 +62,8 @@ public final class EndpointReferenceUtils {
             EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
         Element eprElement = XMLUtils.toDOM(omElement);
         Source eprInfoset = new DOMSource(eprElement);
-        JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
-            FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
         
-        return factory.createEndpointReference(eprInfoset);
+        return convertFromSource(eprInfoset);
     }
 
     /**
