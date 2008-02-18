@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.spi;
 
 import javax.xml.ws.WebServiceFeature;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.core.MessageContext;
 
 /**
@@ -31,4 +32,12 @@ public interface Binding extends javax.xml.ws.Binding {
     public WebServiceFeature getFeature(String id);
     
     public void configure(MessageContext messageContext, BindingProvider provider);
+    
+    public void setAxis2EndpointReference(EndpointReference epr);
+    
+    public void setAddressingNamespace(String addressingNamespace);
+    
+    public EndpointReference getAxis2EndpointReference();
+    
+    public String getAddressingNamespace();
 }

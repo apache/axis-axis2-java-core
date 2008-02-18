@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.Handler;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
@@ -113,5 +114,25 @@ public abstract class BindingImpl implements Binding {
                 framework.addFeature(feature);
             }
         }
+    }
+    
+    public void setAddressingNamespace(String addressingNamespace) {
+        //TODO NLS enable
+        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+    }
+
+    public void setAxis2EndpointReference(EndpointReference epr) {
+        //TODO NLS enable
+        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+    }
+
+    public String getAddressingNamespace() {
+        //TODO NLS enable
+        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+    }
+
+    public EndpointReference getAxis2EndpointReference() {
+        //TODO NLS enable
+        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
     }
 }

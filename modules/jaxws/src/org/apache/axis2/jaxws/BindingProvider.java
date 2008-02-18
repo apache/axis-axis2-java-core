@@ -54,10 +54,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     protected EndpointDescription endpointDesc;
 
     protected ServiceDelegate serviceDelegate;
-    
-    protected org.apache.axis2.addressing.EndpointReference epr;
-    
-    protected String addressingNamespace;
 
     private org.apache.axis2.jaxws.spi.Binding binding;
 
@@ -68,16 +64,16 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                            WebServiceFeature... features) {
         this.endpointDesc = epDesc;
         this.serviceDelegate = svcDelegate;
-        this.epr = epr;
-        this.addressingNamespace = addressingNamespace;
         
-        initialize(features);
+        initialize(epr, addressingNamespace, features);
     }
 
     /*
      * Initialize any objects needed by the BindingProvider
      */
-    private void initialize(WebServiceFeature... features) {
+    private void initialize(org.apache.axis2.addressing.EndpointReference epr,
+                            String addressingNamespace,
+                            WebServiceFeature... features) {
         requestContext = new ValidatingClientContext();
         responseContext = new ValidatingClientContext();
         
@@ -121,7 +117,15 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         }
         binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         
-        binding.setFeatures(features);
+        //Set JAX-WS 2.1 related properties.
+        try {
+            binding.setAxis2EndpointReference(epr);
+            binding.setAddressingNamespace(addressingNamespace);
+            binding.setFeatures(features);
+        }
+        catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 
     public ServiceDelegate getServiceDelegate() {
@@ -227,20 +231,44 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         }
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see javax.xml.ws.BindingProvider#getEndpointReference()
+     */
     public EndpointReference getEndpointReference() {
         return getEndpointReference(W3CEndpointReference.class);
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see javax.xml.ws.BindingProvider#getEndpointReference(java.lang.Class)
+     */
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
         EndpointReference jaxwsEPR = null;
         String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
         
-        if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
-            throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
-        
         try {
-            org.apache.axis2.addressing.EndpointReference epr =
-                getAxis2EndpointReference(addressingNamespace);
+            org.apache.axis2.addressing.EndpointReference epr = binding.getAxis2EndpointReference();
+            
+            if (epr == null) {
+                String address =
+                    (String) requestContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+                if (address == null)
+                    address = endpointDesc.getEndpointAddress();
+                QName service = endpointDesc.getServiceQName();
+                QName port = endpointDesc.getPortQName();
+                URL wsdlURL =
+                    ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
+                String wsdlLocation = (wsdlURL != null) ? wsdlURL.toString() : null;
+
+                epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlLocation, addressingNamespace);
+            }
+            else if (!addressingNamespace.equals(binding.getAddressingNamespace())) {
+                //TODO NLS enable
+                throw ExceptionFactory.makeWebServiceException("BindingProvider has been cofigured for namespace " +
+                        binding.getAddressingNamespace() + ", but a request has been made for namespace " + addressingNamespace);
+            }
+
             jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(epr, addressingNamespace);
         }
         catch (Exception e) {
@@ -250,47 +278,11 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         
         return clazz.cast(jaxwsEPR);
     }
-
-    public org.apache.axis2.addressing.EndpointReference getAxis2EndpointReference(String addressingNamespace) {
-        org.apache.axis2.addressing.EndpointReference epr = this.epr;
-        
-        //TODO NLS enable.
-        if (addressingNamespace == null)
-            throw ExceptionFactory.makeWebServiceException("The addressing namespace cannot be null.");
-        
-        if (epr == null) {
-            String address =
-                (String) requestContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            if (address == null)
-                address = endpointDesc.getEndpointAddress();
-            QName service = endpointDesc.getServiceQName();
-            QName port = endpointDesc.getPortQName();
-            URL wsdlURL =
-                ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
-            String wsdlLocation = (wsdlURL != null) ? wsdlURL.toString() : null;
-
-            epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlLocation, addressingNamespace);
-        }
-        else if (!addressingNamespace.equals(this.addressingNamespace)) {
-            //TODO NLS enable
-            throw ExceptionFactory.makeWebServiceException("BindingProvider has been cofigured for namespace " +
-                    this.addressingNamespace + ", but a request has been made for namespace " + addressingNamespace);
-        }
-        
-        return epr;
-    }
-    
-    public String getAddressingNamespace() {
-        return addressingNamespace;
-    }
     
     /*
     * An inner class used to validate properties as they are set by the client.
     */
     class ValidatingClientContext extends Hashtable<String, Object> {
-        /**
-         * 
-         */
         private static final long serialVersionUID = 3485112205801917858L;
 
         @Override

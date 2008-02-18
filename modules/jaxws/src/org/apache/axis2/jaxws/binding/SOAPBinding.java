@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.binding;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -44,6 +45,10 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
     private boolean mtomEnabled = false;
 
     private static Log log = LogFactory.getLog(SOAPBinding.class);
+    
+    private EndpointReference epr;
+    
+    private String addressingNamespace;
 
     public SOAPBinding(EndpointDescription endpointDesc) {
         super(endpointDesc);
@@ -216,4 +221,23 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
         return returnSet;
     }
 
+    @Override
+    public String getAddressingNamespace() {
+        return addressingNamespace;
+    }
+
+    @Override
+    public EndpointReference getAxis2EndpointReference() {
+        return epr;
+    }
+
+    @Override
+    public void setAddressingNamespace(String addressingNamespace) {
+        this.addressingNamespace = addressingNamespace;
+    }
+
+    @Override
+    public void setAxis2EndpointReference(EndpointReference epr) {
+        this.epr = epr;
+    }
 }

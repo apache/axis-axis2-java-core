@@ -62,11 +62,10 @@ public class AddressingConfigurator implements ClientConfigurator {
             boolean submissionAddressingEnabled = submissionAddressingFeature.isEnabled();
             
             if (w3cAddressingEnabled && submissionAddressingEnabled) {
-                //Use the addressing namespace of the specified EPR,
-                //else default to 2005/08
-                addressingNamespace = provider.getAddressingNamespace();
-                if (addressingNamespace == null)
-                    addressingNamespace = Final.WSA_NAMESPACE;
+                //Use the addressing namespace of the EPR specified
+                //via the JAX-WS 2.1 API. If no EPR was specified
+                //then the 2005/08 namespace will be used.
+                addressingNamespace = bnd.getAddressingNamespace();
                 disableAddressing = Boolean.FALSE;
             }
             else if (w3cAddressingEnabled) {
@@ -119,9 +118,12 @@ public class AddressingConfigurator implements ClientConfigurator {
         
         if (!disableAddressing) {
             try {
-                EndpointReference epr = provider.getAxis2EndpointReference(addressingNamespace);
-                org.apache.axis2.context.MessageContext axis2MessageContext = messageContext.getAxisMessageContext();
-                axis2MessageContext.setTo(epr);
+                EndpointReference epr = bnd.getAxis2EndpointReference();
+                if (epr != null) {
+                    org.apache.axis2.context.MessageContext axis2MessageContext =
+                        messageContext.getAxisMessageContext();
+                    axis2MessageContext.setTo(epr);
+                }
                 
                 ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
                 AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();
