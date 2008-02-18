@@ -26,9 +26,9 @@ import org.apache.axis2.jaxws.core.MessageContext;
  * 
  */
 public interface Binding extends javax.xml.ws.Binding {
-    public void setWebServiceFeatures(WebServiceFeature... features);
+    public void setFeatures(WebServiceFeature... features);
     
-    public WebServiceFeature getWebServiceFeature(String id);
+    public WebServiceFeature getFeature(String id);
     
     public void configure(MessageContext messageContext, BindingProvider provider);
 }

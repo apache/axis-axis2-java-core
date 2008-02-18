@@ -103,11 +103,11 @@ public abstract class BindingImpl implements Binding {
         framework.configure(messageContext, provider);
     }
 
-    public WebServiceFeature getWebServiceFeature(String id) {
+    public WebServiceFeature getFeature(String id) {
         return framework.getFeature(id);
     }
 
-    public void setWebServiceFeatures(WebServiceFeature... features) {
+    public void setFeatures(WebServiceFeature... features) {
         if (features != null) {
             for (WebServiceFeature feature : features) {
                 framework.addFeature(feature);

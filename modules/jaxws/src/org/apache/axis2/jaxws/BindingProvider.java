@@ -45,6 +45,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
+    private static final Log log = LogFactory.getLog(BindingProvider.class);
+
     protected Map<String, Object> requestContext;
 
     protected Map<String, Object> responseContext;
@@ -57,8 +59,8 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     
     protected String addressingNamespace;
 
-    private org.apache.axis2.jaxws.spi.Binding binding = null;
-    private static final Log log = LogFactory.getLog(BindingProvider.class);
+    private org.apache.axis2.jaxws.spi.Binding binding;
+
     public BindingProvider(ServiceDelegate svcDelegate,
                            EndpointDescription epDesc,
                            org.apache.axis2.addressing.EndpointReference epr,
@@ -119,7 +121,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         }
         binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         
-        binding.setWebServiceFeatures(features);
+        binding.setFeatures(features);
     }
 
     public ServiceDelegate getServiceDelegate() {

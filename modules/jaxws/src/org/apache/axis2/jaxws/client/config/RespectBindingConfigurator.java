@@ -38,7 +38,7 @@ public class RespectBindingConfigurator implements ClientConfigurator {
     public void configure(MessageContext messageContext, BindingProvider provider) {
         Binding bnd = (Binding) provider.getBinding();
         RespectBindingFeature respectBindingFeature =
-            (RespectBindingFeature) bnd.getWebServiceFeature(RespectBindingFeature.ID);
+            (RespectBindingFeature) bnd.getFeature(RespectBindingFeature.ID);
         
         if (respectBindingFeature == null)
             throw ExceptionFactory.makeWebServiceException("The respect binding features was unspecified.");

@@ -47,9 +47,9 @@ public class AddressingConfigurator implements ClientConfigurator {
     public void configure(MessageContext messageContext, BindingProvider provider) {
         Binding bnd = (Binding) provider.getBinding();
         AddressingFeature addressingFeature =
-            (AddressingFeature) bnd.getWebServiceFeature(AddressingFeature.ID);
+            (AddressingFeature) bnd.getFeature(AddressingFeature.ID);
         SubmissionAddressingFeature submissionAddressingFeature =
-            (SubmissionAddressingFeature) bnd.getWebServiceFeature(SubmissionAddressingFeature.ID);
+            (SubmissionAddressingFeature) bnd.getFeature(SubmissionAddressingFeature.ID);
         String addressingNamespace =
             (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         Boolean disableAddressing =
@@ -95,11 +95,7 @@ public class AddressingConfigurator implements ClientConfigurator {
             }
             else {
                 //Disable 2005/08 addressing
-                if (addressingNamespace == null ||
-                        Final.WSA_NAMESPACE.equals(addressingNamespace))
-                    disableAddressing = Boolean.TRUE;
-                else
-                    disableAddressing = Boolean.FALSE;
+                disableAddressing = Boolean.TRUE;
             }                
         }
         else if (submissionAddressingFeature != null) {
@@ -113,11 +109,7 @@ public class AddressingConfigurator implements ClientConfigurator {
             }
             else {
                 //Disable 2004/08 addressing
-                if (addressingNamespace == null ||
-                        Submission.WSA_NAMESPACE.equals(addressingNamespace))
-                    disableAddressing = Boolean.TRUE;
-                else
-                    disableAddressing = Boolean.FALSE;
+                disableAddressing = Boolean.TRUE;
             }                
         }
         else {

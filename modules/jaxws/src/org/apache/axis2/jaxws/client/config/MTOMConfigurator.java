@@ -48,7 +48,7 @@ public class MTOMConfigurator implements ClientConfigurator {
      */
     public void configure(MessageContext messageContext, BindingProvider provider) {
         Binding bnd = (Binding) provider.getBinding();
-        MTOMFeature mtomFeature = (MTOMFeature) bnd.getWebServiceFeature(MTOMFeature.ID);
+        MTOMFeature mtomFeature = (MTOMFeature) bnd.getFeature(MTOMFeature.ID);
         Message requestMsg = messageContext.getMessage();
         
         //Disable MTOM.
