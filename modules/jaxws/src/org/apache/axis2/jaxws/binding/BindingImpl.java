@@ -117,13 +117,13 @@ public abstract class BindingImpl implements Binding {
     }
     
     public void setAddressingNamespace(String addressingNamespace) {
-        //TODO NLS enable
-        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        if (addressingNamespace != null)
+            throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
     }
 
     public void setAxis2EndpointReference(EndpointReference epr) {
-        //TODO NLS enable
-        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        if (epr != null)
+            throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
     }
 
     public String getAddressingNamespace() {
