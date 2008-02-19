@@ -138,19 +138,59 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
          * TODO: do a better job checking that the return value matches up
          * with the PortInfo object before we add it to the chain.
          */
+
+        // The HandlerChain annotation can be specified on:
+        // - a service implementation (per JSR-181) which is on the service-provider side
+        // - an SEI (per JSR-181), which can be on both the service-provider and 
+        //   service-requester sides
+        // - a generated Service (per JSR-224), which is on the service-requester side
+        //
+        // The order of precedence here is a bit counter intuitive if the HandlerChain annotation
+        // is present on more than one class.  
+        // - For the service-provider, JSR-181 [p. 25, Section 4.6.1]
+        //   states that the service implementation's HandlerChain takes is used if it is present
+        //   on both the implementation and the SEI.
+        // - Following that same pattern, we conclude that a generated service HandlerChain should
+        //   take precedence if the annotation is on both the Service and the SEI.
+        //
+        // The reasoning for this is (probably) that the SEI can be used by multiple endpoints 
+        // and / or multiple Service requesters, so the endpoint implementation and the Service
+        // should have the final say in what handlers are run, rather than the SEI.
+        //
+        // Adding Deployment Descriptors complicates this further.  A DD should have the absolute 
+        // final say (such as a JSR-109 client DD).  Given that, on a service-requester if the
+        // Service has a HandlerChain and the SEI has a HandlerChain and the DD specifies a 
+        // HandlerChain for a port, then the DD should win.  Since DDs are implented as information
+        // in a sparse composite, then that means the sparse composite wins.
         
+        // Get the HandlerChains specified on the Endpoint (service-provider) or on the Service
+        // (service-requester).
         handlerChainsType = serviceDesc.getHandlerChain(serviceDelegateKey);  
-        // if there's a handlerChain on the serviceDesc, it means the WSDL defined an import for a HandlerChain.
-        // the spec indicates that if a handlerchain also appears on the SEI on the client.
+
+        // HandlerChains apply to specific Port Compoments (service-provider) or Ports (
+        // (service-requesters) so find the appropriate one.
         EndpointDescription ed = null;
         if(portinfo !=null){
              ed = serviceDesc.getEndpointDescription(portinfo.getPortName());
         }
         
+        // Get the HandlerChain information, if any, off the SEI (service-provider or 
+        // service-requster) and check for any DD overrides.
         if (ed != null) {
-            HandlerChainsType handlerCT_fromEndpointDesc = ed.getHandlerChain(serviceDelegateKey);
-            if (handlerChainsType == null) {
-                handlerChainsType = handlerCT_fromEndpointDesc;
+            // If there was no handler chains information specifed on the endpoint (service-
+            // provider) or the Service (service-requester)
+            // -- OR -- 
+            // If the handler chains associated with a particular instance of a service delegate
+            // DOES NOT match the handler chains across all service delegates, then there was
+            // sparse composite information specified for this service delegate.  Sparse composite
+            // information is how Deployment Descriptor information is specified, and that 
+            // overrides the annotations as described in the long-winded comment above.
+            // -- THEN --
+            // Use this handler chains information
+            HandlerChainsType hct_includingComposite = ed.getHandlerChain(serviceDelegateKey);
+            HandlerChainsType hct_noComposite = ed.getHandlerChain();
+            if (handlerChainsType == null || (hct_includingComposite != hct_noComposite)) {
+                handlerChainsType = hct_includingComposite;
             } 
         } else {
             // There is no EndpointDescription that matches the portInfo specified so 

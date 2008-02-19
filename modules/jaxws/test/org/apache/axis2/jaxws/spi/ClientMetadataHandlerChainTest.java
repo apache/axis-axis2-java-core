@@ -27,6 +27,7 @@ import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
@@ -34,6 +35,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,9 +48,9 @@ import junit.framework.TestCase;
  */
 public class ClientMetadataHandlerChainTest extends TestCase {
     
-    private String namespaceURI = "http://www.apache.org/test/namespace";
-    private String svcLocalPart = "DummyService";
-    private String portLocalPart = "DummyPort";
+    static String namespaceURI = "http://www.apache.org/test/namespace";
+    static String svcLocalPart = "DummyService";
+    static private String portLocalPart = "DummyPort";
     private static int uniqueService = 0;
     
     /**
@@ -322,12 +324,12 @@ public class ClientMetadataHandlerChainTest extends TestCase {
 
         Service service = Service.create(serviceQN);
         
-        ClientMetadatahandlerChainTestSEIWithHC port = service.getPort(ClientMetadatahandlerChainTestSEIWithHC.class);
+        ClientMetadataHandlerChainTestSEIWithHC port = service.getPort(ClientMetadataHandlerChainTestSEIWithHC.class);
         BindingProvider bindingProvider = (BindingProvider) port;
         Binding binding = (Binding) bindingProvider.getBinding();
         List<Handler> portHandlers = binding.getHandlerChain();
         assertEquals(1, portHandlers.size());
-        assertTrue(containsSeiHandlers(portHandlers));
+        assertTrue(containsHandlerChainAnnotationHandlers(portHandlers));
     }
     
     /**
@@ -344,7 +346,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         HandlerChainsType handlerChainsType = getHandlerChainsType();
         sparseComposite.setHandlerChainsType(handlerChainsType);
         ServiceDelegate.setPortMetadata(sparseComposite);
-        ClientMetadatahandlerChainTestSEIWithHC port = service.getPort(ClientMetadatahandlerChainTestSEIWithHC.class);
+        ClientMetadataHandlerChainTestSEIWithHC port = service.getPort(ClientMetadataHandlerChainTestSEIWithHC.class);
         BindingProvider bindingProvider = (BindingProvider) port;
         Binding binding = (Binding) bindingProvider.getBinding();
         List<Handler> portHandlers = binding.getHandlerChain();
@@ -366,7 +368,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         ServiceDelegate.setServiceMetadata(sparseComposite);
         Service service = Service.create(serviceQN);
 
-        ClientMetadatahandlerChainTestSEIWithHC port = service.getPort(ClientMetadatahandlerChainTestSEIWithHC.class);
+        ClientMetadataHandlerChainTestSEIWithHC port = service.getPort(ClientMetadataHandlerChainTestSEIWithHC.class);
         BindingProvider bindingProvider = (BindingProvider) port;
         Binding binding = (Binding) bindingProvider.getBinding();
         List<Handler> portHandlers = binding.getHandlerChain();
@@ -398,17 +400,53 @@ public class ClientMetadataHandlerChainTest extends TestCase {
         Binding binding = (Binding) bindingProvider.getBinding();
         List<Handler> portHandlers = binding.getHandlerChain();
 
-        // If there is a HandlerChainsType on both the Service and the Port, then currently the
-        // handlers on the service are applied and the ones from the port are ignored.  It may be
-        // that behavior should be changed so the HandlerChainsType on the Port takes precedence.
-        // In the current User Stories in JSR-109 DDs, there should not be deployment information
-        // for both a service and port, since the DD information is specified as a single 
-        // <service-ref>, which can only be one or the other, not both.
+        // If there is a HandlerChainsType composite specified on both the Service and the Port,
+        // then the composite specified on the Port should be the one used to associate the 
+        // handlers for that Port.
+        assertEquals(1, portHandlers.size());
+        assertTrue(containsHandlerChainAnnotationHandlers(portHandlers));
+    }
+    
+    /**
+     * Verfiy that a HandlerChain annotation on the Service is associated with the Port 
+     */
+    public void testGeneratedServiceWithHC() {
+        ClientMetadataHandlerChainTestServiceWithHC service = new ClientMetadataHandlerChainTestServiceWithHC();
+        ClientMetadataHandlerChainTestSEI port = service.getPort(ClientMetadataHandlerChainTestSEI.class);
+
+        BindingProvider bindingProvider = (BindingProvider) port;
+        Binding binding = (Binding) bindingProvider.getBinding();
+        List<Handler> portHandlers = binding.getHandlerChain();
+        assertEquals(1, portHandlers.size());
+        assertTrue(containsHandlerChainAnnotationHandlers(portHandlers));
+
+    }
+    
+    /**
+     * Verfiy that given a HandlerChain annotation on the Service and a Port and a sparse composite
+     * on the Port associates the handlers from the sparse composite on the Port.
+     */
+    public void testGeneratedServiceWithHCPortOverride() {
+        ClientMetadataHandlerChainTestServiceWithHC service = new ClientMetadataHandlerChainTestServiceWithHC();
+
+        // Set a HandlerChainsType on the sparse composite for the Port creation; it should override the 
+        // HandlerChain annotation on the Service.
+        DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+        HandlerChainsType handlerChainsType = getHandlerChainsType();
+        sparseComposite.setHandlerChainsType(handlerChainsType);
+        ServiceDelegate.setPortMetadata(sparseComposite);
+        ClientMetadataHandlerChainTestSEI port = service.getPort(ClientMetadataHandlerChainTestSEI.class);
+
+        BindingProvider bindingProvider = (BindingProvider) port;
+        Binding binding = (Binding) bindingProvider.getBinding();
+        List<Handler> portHandlers = binding.getHandlerChain();
         assertEquals(2, portHandlers.size());
         assertTrue(containsSparseCompositeHandlers(portHandlers));
     }
-    
-    
+
+    // =============================================================================================
+    // Helper methods and classes
+    // =============================================================================================
     private boolean containsSparseCompositeHandlers(List<Handler> handlerList) {
         List<Class> inputHandlerClasses = handlerClasses(handlerList);
 
@@ -436,7 +474,7 @@ public class ClientMetadataHandlerChainTest extends TestCase {
      * @return true if the list matches what was defined on the SEI via the
      *   HandlerChain annotation; false otherwise.
      */
-    private boolean containsSeiHandlers(List<Handler> portHandlers) {
+    private boolean containsHandlerChainAnnotationHandlers(List<Handler> portHandlers) {
         List<Class> portHandlerClasses = handlerClasses(portHandlers);
         List<Class> seiHandlerClasses = new ArrayList<Class>();
         seiHandlerClasses.add(ClientMetadataHandlerChainHandler.class);
@@ -544,6 +582,18 @@ interface ClientMetadataHandlerChainTestSEI {
 
 @WebService
 @HandlerChain(file="ClientMetadataHandlerChainTest.xml")
-interface ClientMetadatahandlerChainTestSEIWithHC {
+interface ClientMetadataHandlerChainTestSEIWithHC {
     public String echo(String toEcho);
+}
+
+@WebServiceClient
+@HandlerChain(file="ClientMetadataHandlerChainTest.xml")
+class ClientMetadataHandlerChainTestServiceWithHC extends javax.xml.ws.Service {
+        public ClientMetadataHandlerChainTestServiceWithHC() {
+            super(null,
+                  new QName(ClientMetadataHandlerChainTest.namespaceURI, ClientMetadataHandlerChainTest.svcLocalPart));
+        }
+        public ClientMetadataHandlerChainTestServiceWithHC(URL wsdlLocation, QName serviceName) {
+            super(wsdlLocation, serviceName);
+        }
 }
