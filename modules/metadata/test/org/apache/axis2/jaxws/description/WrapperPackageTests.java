@@ -38,6 +38,12 @@ public class WrapperPackageTests extends TestCase {
 
     public void testSEIPackageWrapper() {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEIPackageWrapper.class);
+        
+        // See if the name is correct..currently we cannot do this directly, so I am using
+        // the debug dump.
+        String dump = eiDesc.toString();
+        assertTrue(dump.contains("Name: SEIPackageWrapper"));
+        
         OperationDescription opDesc = eiDesc.getOperation("method1");
         String requestWrapperClass = opDesc.getRequestWrapperClassName();
 

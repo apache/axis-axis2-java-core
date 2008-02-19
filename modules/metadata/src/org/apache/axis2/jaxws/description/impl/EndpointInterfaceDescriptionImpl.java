@@ -949,7 +949,9 @@ class EndpointInterfaceDescriptionImpl
                     && !DescriptionUtils.isEmpty(getAnnoWebService().name())) {
                 webService_Name = getAnnoWebService().name();
             } else {
-                webService_Name = "";
+                // Per the JSR 181 Specification, the default
+                // is the simple name of the class.
+                webService_Name = DescriptionUtils.getSimpleJavaClassName(dbc.getClassName());
             }
         }
         return webService_Name;
