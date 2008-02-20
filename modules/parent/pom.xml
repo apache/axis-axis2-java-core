@@ -150,7 +150,8 @@
         <xmlbeans.version>2.3.0</xmlbeans.version>
         <xmlschema.version>SNAPSHOT</xmlschema.version>
         <xmlunit.version>1.1</xmlunit.version>
-        
+        <smack.version>3.0.4</smack.version>
+        <commons.lang.version>2.3</commons.lang.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
     </properties>
@@ -962,6 +963,8 @@
                 <artifactId>xercesImpl</artifactId>
                 <version>${xerces.version}</version>
            </dependency>
+
+
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>
@@ -1017,6 +1020,16 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+           <dependency>
+                <groupId>org.igniterealtime</groupId>
+                <artifactId>smack</artifactId>
+                <version>${smack.version}</version>
+           </dependency>
+           <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.lang.version}</version>
+           </dependency>                              
         </dependencies>
     </dependencyManagement>
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
