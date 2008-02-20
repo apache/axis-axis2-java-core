@@ -19,12 +19,11 @@
 
 package org.apache.axis2.extensions.osgi;
 
+import org.apache.axis2.extensions.osgi.util.BundleListener;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
-
-import javax.servlet.Servlet;
 
 public class Activator implements BundleActivator {
 
@@ -32,19 +31,16 @@ public class Activator implements BundleActivator {
 
     public void start(BundleContext context) throws Exception {
         this.context = context;
-        doServletRegistration();
-    }
 
-
-    private void doServletRegistration() {
         ServiceReference sr = context.getServiceReference(HttpService.class.getName());
         if (sr != null) {
             HttpService httpServ = (HttpService) context.getService(sr);
 
             try {
-                Servlet servlet = new OSGiAxis2Servlet();
+                OSGiAxis2Servlet servlet = new OSGiAxis2Servlet();
                 httpServ.registerServlet("/axis2",
                         servlet, null, null);
+                context.addBundleListener(new BundleListener(servlet));
             } catch (Exception e) {
                 System.err.println("Exception registering Axis Servlet:"
                         + e);
@@ -54,4 +50,5 @@ public class Activator implements BundleActivator {
 
     public void stop(BundleContext context) throws Exception {
     }
+
 }

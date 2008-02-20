@@ -19,6 +19,7 @@
 
 package org.apache.axis2.extensions.osgi;
 
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.AxisServlet;
 
 import javax.servlet.ServletConfig;
@@ -56,5 +57,9 @@ public class OSGiAxis2Servlet extends AxisServlet {
         this.contextRoot = contextPath;
 
         configContext.setContextRoot(contextRoot);
+    }
+    
+    public AxisConfiguration getConfiguration() {
+        return this.axisConfiguration;
     }
 }

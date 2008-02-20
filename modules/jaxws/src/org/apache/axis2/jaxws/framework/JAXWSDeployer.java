@@ -177,13 +177,16 @@ public class JAXWSDeployer implements Deployer {
             if (wsAnnotation == null) {
                 wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
             }
-            if (wsAnnotation != null || wspAnnotation != null) {
+            if ((wsAnnotation != null || wspAnnotation != null) && !pojoClass.isInterface()) {
+                log.info("Deploying JAXWS class : " + className);
                 AxisService axisService;
                 axisService =
                         createAxisService(classLoader,
                                 className,
                                 location);
-                axisServiceList.add(axisService);
+                if(axisService != null) {
+                    axisServiceList.add(axisService);
+                }
             }
         }
         int count = axisServiceList.size();
@@ -248,7 +251,13 @@ public class JAXWSDeployer implements Deployer {
             IllegalAccessException,
             AxisFault {
         Class pojoClass = Loader.loadClass(classLoader, className);
-        AxisService axisService = DescriptionFactory.createAxisService(pojoClass);
+        AxisService axisService;
+        try {
+            axisService = DescriptionFactory.createAxisService(pojoClass);
+        } catch (Throwable t) {
+            log.info("Exception creating Axis Service : " + t.getCause(), t);
+            return null;
+        }
         if (axisService != null) {
             Iterator operations = axisService.getOperations();
             while (operations.hasNext()) {
@@ -260,7 +269,6 @@ public class JAXWSDeployer implements Deployer {
         }
         axisService.setElementFormDefault(false);
         axisService.setFileName(serviceLocation);
-        log.info("Deploying JAXWS Service : " + className);
         return axisService;
     }
 
