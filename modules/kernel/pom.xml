@@ -140,6 +140,7 @@
                                 <exclude>**/HttpCoreNIOListener*.java</exclude>
                                 <exclude>**/SSLServerIOEventDispatch.java</exclude>
                                 <exclude>**/SSLClientIOEventDispatch.java</exclude>
+                                <exclude>**/XMPP*.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
