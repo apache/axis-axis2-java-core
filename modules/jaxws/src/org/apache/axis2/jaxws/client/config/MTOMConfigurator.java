@@ -70,8 +70,7 @@ public class MTOMConfigurator implements ClientConfigurator {
                 }
                 requestMsg.setMTOMEnabled(true);
             }
-            
-            if (attachmentIDs != null) {
+            else if (attachmentIDs != null) {
             	long size = 0L;
             	
             	for (String attachmentID : attachmentIDs) {

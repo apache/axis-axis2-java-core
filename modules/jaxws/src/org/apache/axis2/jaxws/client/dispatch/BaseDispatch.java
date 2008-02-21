@@ -78,6 +78,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
         InvocationControllerFactory icf = (InvocationControllerFactory) FactoryRegistry.getFactory(InvocationControllerFactory.class);
         ic = icf.getInvocationController();
+        
+        if (ic == null) {
+            // TODO NLS enable.
+            throw new WebServiceException("An InvocationController instance was not found.");
+        }
     }
 
     /**

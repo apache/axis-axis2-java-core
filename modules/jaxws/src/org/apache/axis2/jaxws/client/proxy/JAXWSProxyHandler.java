@@ -26,13 +26,14 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
-import org.apache.axis2.jaxws.core.controller.impl.AxisInvocationController;
+import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -42,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -79,13 +81,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
         InvocationHandler {
     private static Log log = LogFactory.getLog(JAXWSProxyHandler.class);
 
+    private Class seiClazz = null;
+    private Method method = null;
+    
     //Reference to ServiceDelegate instance that was used to create the Proxy
     protected ServiceDescription serviceDesc = null;
 
-    private Class seiClazz = null;
-
-    private Method method = null;
-
+    protected InvocationController controller;
+    
     public JAXWSProxyHandler(ServiceDelegate delegate,
                              Class seiClazz,
                              EndpointDescription epDesc,
@@ -209,9 +212,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // Perform the WebServiceFeature configuration requested by the user.
         bnd.configure(request, this);
 
-        // TODO: Change this to some form of factory so that we can change the IC to
-        // a more simple one for marshaller/unmarshaller testing.
-        InvocationController controller = new AxisInvocationController();
+        // We'll need an InvocationController instance to send the request.
+        InvocationControllerFactory icf = (InvocationControllerFactory) FactoryRegistry.getFactory(InvocationControllerFactory.class);
+        controller = icf.getInvocationController();
+        
+        if (controller == null) {
+            // TODO NLS enable.
+            throw new WebServiceException("An InvocationController was not found.");
+        }
         
         // Check if the call is OneWay, Async or Sync
         if (operationDesc.isOneWay()) {

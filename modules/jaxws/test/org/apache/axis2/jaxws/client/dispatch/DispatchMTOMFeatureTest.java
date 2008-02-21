@@ -18,12 +18,10 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
+import org.apache.axis2.jaxws.client.InterceptableClientTestCase;
 import org.apache.axis2.jaxws.client.TestClientInvocationController;
-import org.apache.axis2.jaxws.client.TestClientInvocationControllerFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -32,39 +30,11 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.TestCase;
-
 /**
  * This suite of tests is for the MTOMFeature configuration that can
  * be used on Dispatch clients.
  */
-public class DispatchMTOMFeatureTest extends TestCase {
-
-    private InvocationControllerFactory oldFactory;
-    private TestClientInvocationControllerFactory newFactory;
-    private TestClientInvocationController testController;
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        
-        InvocationControllerFactory icf = (InvocationControllerFactory) FactoryRegistry.getFactory(InvocationControllerFactory.class);
-        oldFactory = icf;
-        
-        testController = new TestClientInvocationController();
-        
-        newFactory = new TestClientInvocationControllerFactory();
-        newFactory.setInvocationController(testController);
-        
-        FactoryRegistry.setFactory(InvocationControllerFactory.class, newFactory);
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-
-        FactoryRegistry.setFactory(InvocationControllerFactory.class, oldFactory);
-    }
+public class DispatchMTOMFeatureTest extends InterceptableClientTestCase {
 
     /*
      * Make sure MTOM is not enabled by default.
@@ -72,14 +42,19 @@ public class DispatchMTOMFeatureTest extends TestCase {
     public void testNoMTOMFeature() {
         Service svc = Service.create(new QName("http://test", "TestService"));
         svc.addPort(new QName("http://test", "TestPort"), SOAPBinding.SOAP11HTTP_BINDING, "http://localhost");
-        
         Dispatch<Source> d = svc.createDispatch(new QName("http://test", "TestPort"), Source.class, Service.Mode.PAYLOAD);
+        
+        SOAPBinding sb = (SOAPBinding) d.getBinding();
+        assertTrue("SOAPBinding should not be null.", sb != null);
+        assertTrue("MTOM should not be enabled on the binding by default.", !sb.isMTOMEnabled());
         
         d.invoke(null);
         
+        TestClientInvocationController testController = getInvocationController();
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
         
+        assertTrue("Request should not be null.", request != null);
         assertFalse("MTOM should not be enabled by default.", request.getMessage().isMTOMEnabled());
     }
     
@@ -87,17 +62,17 @@ public class DispatchMTOMFeatureTest extends TestCase {
      * Test the default configuration of the MTOMFeature.
      */
     public void testDefaultMTOMFeature() {
-        Service svc = Service.create(new QName("http://test", "TestService"));
-        svc.addPort(new QName("http://test", "TestPort"), SOAPBinding.SOAP11HTTP_BINDING, "http://localhost");
-        
         // Use the default feature config
         MTOMFeature feature = new MTOMFeature();
         
+        Service svc = Service.create(new QName("http://test", "TestService"));
+        svc.addPort(new QName("http://test", "TestPort"), SOAPBinding.SOAP11HTTP_BINDING, "http://localhost");
         Dispatch<Source> d = svc.createDispatch(new QName("http://test", "TestPort"), 
             Source.class, Service.Mode.PAYLOAD, feature);
         
         d.invoke(null);
         
+        TestClientInvocationController testController = getInvocationController();
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
         
@@ -119,6 +94,8 @@ public class DispatchMTOMFeatureTest extends TestCase {
         
         d.invoke(null);
         
+        TestClientInvocationController testController = getInvocationController();
+        
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
         
@@ -126,9 +103,11 @@ public class DispatchMTOMFeatureTest extends TestCase {
     }
     
     /*
-     * Test the configuration of the threshold for MTOM.
+     * Test the configuration of the threshold for MTOM when no attachment is 
+     * specified.  In this case, although enabled per the MTOMFeature, MTOM should
+     * not be enabled on the Message, since the attachment size is too small.
      */
-    public void testMTOMFeatureThreshold() {
+    public void testMTOMFeatureThresholdWithNoAttachment() {
         Service svc = Service.create(new QName("http://test", "TestService"));
         svc.addPort(new QName("http://test", "TestPort"), SOAPBinding.SOAP11HTTP_BINDING, "http://localhost");
         
@@ -141,10 +120,21 @@ public class DispatchMTOMFeatureTest extends TestCase {
         
         d.invoke(null);
         
+        TestClientInvocationController testController = getInvocationController();
+        
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
         
         assertFalse("MTOM should not be enabled.  The threshold was not exceeded.", request.getMessage().isMTOMEnabled());
+    }
+    
+    /*
+     * Test the configuration of the threshold for MTOM when an attachment is specified.
+     * In this case, MTOM should be enabled on the Message if the attachment specified is
+     * larger than the threshold.
+     */
+    public void testMTOMFeatureThresholdWithAttachment() {
+        
     }
     
     /*
@@ -161,6 +151,8 @@ public class DispatchMTOMFeatureTest extends TestCase {
             Source.class, Service.Mode.PAYLOAD, feature);
         
         d.invoke(null);
+        
+        TestClientInvocationController testController = getInvocationController();
         
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
@@ -182,6 +174,8 @@ public class DispatchMTOMFeatureTest extends TestCase {
             Source.class, Service.Mode.PAYLOAD, feature);
         
         d.invoke(null);
+        
+        TestClientInvocationController testController = getInvocationController();
         
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
