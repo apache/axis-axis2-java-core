@@ -180,7 +180,13 @@ public class JAXWSDeployer implements Deployer {
             if (wsAnnotation == null) {
                 wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
             }
-            if ((wsAnnotation != null || wspAnnotation != null) && !pojoClass.isInterface()) {
+
+            //If this contains a WebService annotation, make sure that we are not
+            //processing the pure SEI. We should only create the AxisService based on the 
+            //implementation class. Also skip any interfaces.
+            if (((wsAnnotation != null && !isEmpty(wsAnnotation.endpointInterface())) 
+                    || wspAnnotation != null) 
+                    && !pojoClass.isInterface()) {
                 log.info("Deploying JAXWS class : " + className);
                 AxisService axisService;
                 axisService =
@@ -317,6 +323,10 @@ public class JAXWSDeployer implements Deployer {
         } catch (IOException ioe) {
         }
         return false;
+    }
+
+    private boolean isEmpty(String string) {
+        return (string == null || "".equals(string));
     }
 }
 
