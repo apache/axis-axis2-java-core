@@ -34,10 +34,14 @@ public class BundleClassLoader extends ClassLoader {
     }
 
     protected Class findClass(String name) throws ClassNotFoundException {
-        return bundle.loadClass(name);
+        try {
+            return bundle.loadClass(name);
+        } catch (Exception e) {
+            return super.loadClass(name);
+        }
     }
 
-    protected URL findResource(String name) {
+    public URL findResource(String name) {
         URL resource = bundle.getResource(name);
         if (resource != null) {
             return resource;
@@ -45,7 +49,7 @@ public class BundleClassLoader extends ClassLoader {
         return super.findResource(name);
     }
 
-    protected Enumeration findResources(String name) throws IOException {
+    public Enumeration findResources(String name) throws IOException {
         Enumeration enumeration = bundle.getResources(name);
         if (enumeration != null) {
             return enumeration;

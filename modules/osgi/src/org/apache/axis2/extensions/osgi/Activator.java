@@ -19,36 +19,78 @@
 
 package org.apache.axis2.extensions.osgi;
 
-import org.apache.axis2.extensions.osgi.util.BundleListener;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
+import org.osgi.service.log.LogService;
 
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator, BundleListener {
 
     BundleContext context;
+    OSGiAxis2Servlet servlet = new OSGiAxis2Servlet();
+    ServiceRegistry registry = null;
+    HttpService httpServ = null;
+    LogService log = null;
 
     public void start(BundleContext context) throws Exception {
         this.context = context;
+        context.addBundleListener(this);
 
         ServiceReference sr = context.getServiceReference(HttpService.class.getName());
         if (sr != null) {
             HttpService httpServ = (HttpService) context.getService(sr);
-
             try {
-                OSGiAxis2Servlet servlet = new OSGiAxis2Servlet();
                 httpServ.registerServlet("/axis2",
                         servlet, null, null);
-                context.addBundleListener(new BundleListener(servlet));
             } catch (Exception e) {
                 System.err.println("Exception registering Axis Servlet:"
                         + e);
             }
         }
+
+        ServiceReference sr2 = context.getServiceReference(LogService.class.getName());
+        if (sr2 != null) {
+            log = (LogService) context.getService(sr);
+            if (log == null) {
+                System.err.println("Unable to find Log Service");
+            }
+        }
+
+        registry = new ServiceRegistry(servlet, log);
+        
+// TODO: We should poke at all the bundles already in the system
+//        Bundle bundles[] = context.getBundles();
+//        for (int i = 0; i < bundles.length; i++) {
+//            if ((bundles[i].getState() &
+//                    (Bundle.STARTING | Bundle.ACTIVE)) != 0) {
+//                if(context.getBundle() != event.getBundle()){
+//                    registry.register(bundles[i]);
+//                }
+//            }
+//        }
+    }
+
+    public void bundleChanged(BundleEvent event) {
+        switch (event.getType()) {
+            case BundleEvent.STARTED:
+                if(context.getBundle() != event.getBundle()){
+                    registry.register(event.getBundle());
+                }
+                break;
+
+            case BundleEvent.STOPPED:
+                if(context.getBundle() != event.getBundle()){
+                    registry.unregister(event.getBundle());
+                }
+                break;
+        }
     }
 
     public void stop(BundleContext context) throws Exception {
+        this.context.removeBundleListener(this);
+        registry.close();
     }
-
 }

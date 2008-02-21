@@ -58,7 +58,7 @@ public class OSGiAxis2Servlet extends AxisServlet {
 
         configContext.setContextRoot(contextRoot);
     }
-    
+
     public AxisConfiguration getConfiguration() {
         return this.axisConfiguration;
     }

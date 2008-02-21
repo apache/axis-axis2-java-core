@@ -148,9 +148,9 @@ public class JAXWSDeployer implements Deployer {
                 Thread.currentThread().setContextClassLoader(classLoader);
 
                 ArrayList classList = getListOfClasses(deploymentFileData);
-                int count = deployClasses(groupName, location, classLoader, classList); 
+                AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList); 
                 
-                if(count == 0) {
+                if(serviceGroup == null) {
                     String msg = "Error:\n No annotated classes found in the jar: " +
                             location.toString() +
                             ". Service deployment failed.";
@@ -169,7 +169,7 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
-    protected int deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
+    protected AxisServiceGroup deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
         ArrayList axisServiceList = new ArrayList();
         for (int i = 0; i < classList.size(); i++) {
@@ -193,16 +193,17 @@ public class JAXWSDeployer implements Deployer {
             }
         }
         int count = axisServiceList.size();
-        if (count > 0) {
-            AxisServiceGroup serviceGroup = new AxisServiceGroup();
-            serviceGroup.setServiceGroupName(groupName);
-            for (int i = 0; i < axisServiceList.size(); i++) {
-                AxisService axisService = (AxisService) axisServiceList.get(i);
-                serviceGroup.addService(axisService);
-            }
-            axisConfig.addServiceGroup(serviceGroup);
+        if (count <= 0) {
+            return null;
         }
-        return count;
+        AxisServiceGroup serviceGroup = new AxisServiceGroup();
+        serviceGroup.setServiceGroupName(groupName);
+        for (int i = 0; i < axisServiceList.size(); i++) {
+            AxisService axisService = (AxisService) axisServiceList.get(i);
+            serviceGroup.addService(axisService);
+        }
+        axisConfig.addServiceGroup(serviceGroup);
+        return serviceGroup;
     }
 
     protected ArrayList getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
