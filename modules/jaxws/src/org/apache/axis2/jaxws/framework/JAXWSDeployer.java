@@ -22,21 +22,22 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.server.JAXWSMessageReceiver;
 import org.apache.axis2.util.Loader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.io.FileUtils;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceProvider;
@@ -46,14 +47,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.lang.annotation.Annotation;
 
 /*
  * JAXWSDeployer is a custom deployer modeled after the POJODeployer. Its purpose
@@ -63,15 +64,17 @@ public class JAXWSDeployer implements Deployer {
 
     private static Log log = LogFactory.getLog(JAXWSDeployer.class);
 
-    private ConfigurationContext configCtx;
+    protected ConfigurationContext configCtx = null;
+    protected AxisConfiguration axisConfig = null;
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
         this.configCtx = configCtx;
+        this.axisConfig = configCtx.getAxisConfiguration();
         deployServicesInWARClassPath();
     }//Will process the file and add that to axisConfig
 
-    private void deployServicesInWARClassPath() {
+    protected void deployServicesInWARClassPath() {
         String dir = DeploymentEngine.getWebLocationString();
         if (dir != null) {
             File file = new File(dir + "/WEB-INF/classes/");
@@ -82,16 +85,16 @@ public class JAXWSDeployer implements Deployer {
             try {
                 threadClassLoader = Thread.currentThread().getContextClassLoader();
                 ArrayList urls = new ArrayList();
-                urls.add(configCtx.getAxisConfiguration().getRepository());
+                urls.add(axisConfig.getRepository());
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
                     urls.add(new File(webLocation).toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
                         urls,
-                        configCtx.getAxisConfiguration().getSystemClassLoader(),
+                        axisConfig.getSystemClassLoader(),
                         true,
-                        (File) configCtx.getAxisConfiguration().
+                        (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                 Thread.currentThread().setContextClassLoader(classLoader);
                 deployClasses("JAXWS-Builtin", file.toURL(), Thread.currentThread().getContextClassLoader(), classList);
@@ -105,7 +108,7 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
-    private ArrayList getClassesInWebInfDirectory(File file) {
+    protected ArrayList getClassesInWebInfDirectory(File file) {
         String filePath = file.getAbsolutePath();
         Collection files = FileUtils.listFiles(file, new String[]{"class"}, true);
         ArrayList classList = new ArrayList();
@@ -131,16 +134,16 @@ public class JAXWSDeployer implements Deployer {
                 log.info("Deploying artifact : " + deploymentFileData.getName());
                 ArrayList urls = new ArrayList();
                 urls.add(deploymentFileData.getFile().toURL());
-                urls.add(configCtx.getAxisConfiguration().getRepository());
+                urls.add(axisConfig.getRepository());
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
                     urls.add(new File(webLocation).toURL());
                 }
                 ClassLoader classLoader = Utils.createClassLoader(
                         urls,
-                        configCtx.getAxisConfiguration().getSystemClassLoader(),
+                        axisConfig.getSystemClassLoader(),
                         true,
-                        (File) configCtx.getAxisConfiguration().
+                        (File) axisConfig.
                                 getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
                 Thread.currentThread().setContextClassLoader(classLoader);
 
@@ -152,7 +155,7 @@ public class JAXWSDeployer implements Deployer {
                             location.toString() +
                             ". Service deployment failed.";
                     log.error(msg);
-                    configCtx.getAxisConfiguration().getFaultyServices().
+                    axisConfig.getFaultyServices().
                             put(deploymentFileData.getFile().getAbsolutePath(), msg);
                 }
             }
@@ -166,7 +169,7 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
-    private int deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
+    protected int deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
         ArrayList axisServiceList = new ArrayList();
         for (int i = 0; i < classList.size(); i++) {
@@ -197,12 +200,12 @@ public class JAXWSDeployer implements Deployer {
                 AxisService axisService = (AxisService) axisServiceList.get(i);
                 serviceGroup.addService(axisService);
             }
-            configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
+            axisConfig.addServiceGroup(serviceGroup);
         }
         return count;
     }
 
-    private ArrayList getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
+    protected ArrayList getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
         ArrayList classList;
         FileInputStream fin = null;
         ZipInputStream zin = null;
@@ -235,16 +238,16 @@ public class JAXWSDeployer implements Deployer {
         return classList;
     }
 
-    private void storeFaultyService(DeploymentFileData deploymentFileData, Throwable t) {
+    protected void storeFaultyService(DeploymentFileData deploymentFileData, Throwable t) {
         StringWriter errorWriter = new StringWriter();
         PrintWriter ptintWriter = new PrintWriter(errorWriter);
         t.printStackTrace(ptintWriter);
         String error = "Error:\n" + errorWriter.toString();
-        configCtx.getAxisConfiguration().getFaultyServices().
+        axisConfig.getFaultyServices().
                 put(deploymentFileData.getFile().getAbsolutePath(), error);
     }
 
-    private AxisService createAxisService(ClassLoader classLoader,
+    protected AxisService createAxisService(ClassLoader classLoader,
                                           String className,
                                           URL serviceLocation) throws ClassNotFoundException,
             InstantiationException,
@@ -283,15 +286,17 @@ public class JAXWSDeployer implements Deployer {
         if (isJar(new File(fileName))) {
             try {
                 AxisServiceGroup serviceGroup =
-                        configCtx.getAxisConfiguration().removeServiceGroup(fileName);
-                configCtx.removeServiceGroupContext(serviceGroup);
+                        axisConfig.removeServiceGroup(fileName);
+                if(configCtx != null) {
+                    configCtx.removeServiceGroupContext(serviceGroup);
+                }
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
                         fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL, 
                         axisFault.getMessage()), axisFault);
-                configCtx.getAxisConfiguration().removeFaultyService(fileName);
+                axisConfig.removeFaultyService(fileName);
             }
         }
     }
