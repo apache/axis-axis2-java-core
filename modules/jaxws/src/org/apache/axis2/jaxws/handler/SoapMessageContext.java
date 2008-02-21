@@ -52,6 +52,10 @@ import java.util.Set;
 public class SoapMessageContext extends BaseMessageContext implements
         javax.xml.ws.handler.soap.SOAPMessageContext {
     private static final Log log = LogFactory.getLog(SoapMessageContext.class);
+    
+    // cache the message object after transformation --- see getMessage and setMessage methods
+    SOAPMessage cachedSoapMessage = null;
+    
     public SoapMessageContext(MessageContext messageCtx) {
         super(messageCtx);
     }
@@ -123,8 +127,11 @@ public class SoapMessageContext extends BaseMessageContext implements
     }
 
     public SOAPMessage getMessage() {
-        Message msg = messageCtx.getMEPContext().getMessageObject();
-        return msg.getAsSOAPMessage();
+    	if (cachedSoapMessage == null) {
+    		Message msg = messageCtx.getMEPContext().getMessageObject();
+    		cachedSoapMessage = msg.getAsSOAPMessage();
+    	}
+        return cachedSoapMessage;
     }
 
     public Set<String> getRoles() {
@@ -159,6 +166,7 @@ public class SoapMessageContext extends BaseMessageContext implements
             Message msg =
                     ((MessageFactory) FactoryRegistry.getFactory(MessageFactory.class)).createFrom(soapmessage);
             messageCtx.getMEPContext().setMessage(msg);
+            cachedSoapMessage = soapmessage;
         } catch (XMLStreamException e) {
             // TODO log it, and throw something?
         }
