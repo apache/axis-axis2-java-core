@@ -19,14 +19,18 @@
 package org.apache.axis2.jaxws.rpclit.stringarray;
 
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 
-@WebService
-@SOAPBinding(style=SOAPBinding.Style.RPC)
+import org.test.rpclit.stringarray.StringArray;
+
+@WebService(serviceName="RPCLitStringArrayService",
+			endpointInterface="org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo")
 public class EchoImpl {
 
-    
-    public String[] echoStringArray(String[] arg0){
+    public String echoString(String arg0) {
+    	return arg0;
+    }
+
+    public StringArray echoStringArray(StringArray arg0){
         if(arg0 == null){
             System.out.println("received null parameter");
         }else{
@@ -35,5 +39,6 @@ public class EchoImpl {
         
         return arg0;
     }
+
 
 }

@@ -26,7 +26,7 @@ import javax.xml.ws.http.HTTPBinding;
 /**
  * Sample XML/HTTP String Provider 
  */
-@WebServiceProvider()
+@WebServiceProvider(serviceName="XPayloadStringProvider")
 @BindingType(HTTPBinding.HTTP_BINDING)
 public class XPayloadStringProvider implements Provider<String> {
 

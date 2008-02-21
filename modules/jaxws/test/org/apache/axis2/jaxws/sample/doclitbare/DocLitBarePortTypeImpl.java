@@ -32,7 +32,8 @@ import org.apache.axis2.jaxws.sample.doclitbare.sei.FaultBeanWithWrapper;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.SimpleFault;
 import org.test.sample.doclitbare.Composite;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType")
+@WebService(serviceName="BareDocLitService",
+			endpointInterface="org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType")
 public class DocLitBarePortTypeImpl implements DocLitBarePortType {
 
 	/* (non-Javadoc)

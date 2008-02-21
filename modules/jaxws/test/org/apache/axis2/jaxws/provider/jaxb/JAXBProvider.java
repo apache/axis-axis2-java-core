@@ -26,8 +26,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.http.HTTPBinding;
 
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -38,7 +40,8 @@ import org.apache.axis2.jaxws.TestLogger;
  * A JAXWS Source Provider implementation
  *
  */
-@WebServiceProvider()
+@WebServiceProvider(serviceName="JAXBProviderService")
+@BindingType(HTTPBinding.HTTP_BINDING)
 public class JAXBProvider implements Provider<Source> {
     
     /**

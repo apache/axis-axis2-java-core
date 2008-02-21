@@ -22,8 +22,9 @@ import javax.jws.WebService;
 
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 
-@WebService(targetNamespace="http://anytype.test.org",
-        endpointInterface="org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType")
+@WebService(serviceName="AnyTypeMessageService",
+		targetNamespace="http://anytype.test.org",
+		endpointInterface="org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType")
 public class AnyTypeMessagePortTypeImpl implements AnyTypeMessagePortType {
 
 	/* (non-Javadoc)

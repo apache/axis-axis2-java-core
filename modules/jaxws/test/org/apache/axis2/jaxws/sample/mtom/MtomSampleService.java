@@ -35,7 +35,8 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
+@WebService(serviceName="MtomSampleService",
+			endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 @BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 public class MtomSampleService implements MtomSample {
 

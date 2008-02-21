@@ -48,7 +48,8 @@ import org.test.parallelasync.SleepResponse;
         endpointInterface = "org.test.parallelasync.AsyncPort",
         wsdlLocation="WEB-INF/wsdl/async_doclitwr.wsdl")
         */
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort")
+@WebService(serviceName="AsyncService",
+			endpointInterface="org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort")
 public class DocLitWrappedPortImpl implements AsyncPort {
 
     private static final boolean DEBUG = false;

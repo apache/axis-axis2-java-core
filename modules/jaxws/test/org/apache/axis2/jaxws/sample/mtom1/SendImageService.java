@@ -36,8 +36,7 @@ import javax.xml.ws.soap.SOAPBinding;
 @WebService(
 		targetNamespace = "urn://mtom1.sample.jaxws.axis2.apache.org",
 		serviceName = "SendImageService",
-		portName = "sendImageSoap",		
-		wsdlLocation = "META-INF/samplemtomjpeg.wsdl",
+		portName = "sendImagePort",		
 		endpointInterface = "org.apache.axis2.jaxws.sample.mtom1.SendImageInterface")
 @BindingType (SOAPBinding.SOAP11HTTP_MTOM_BINDING)	
 public class SendImageService implements SendImageInterface {

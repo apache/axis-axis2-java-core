@@ -25,7 +25,8 @@ import java.util.Iterator;
 
 import javax.jws.WebService;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.addressbook.AddressBook")
+@WebService(serviceName="AddressBookService",
+			endpointInterface="org.apache.axis2.jaxws.sample.addressbook.AddressBook")
 public class AddressBookImpl implements AddressBook {
 
     private static ArrayList<AddressBookEntry> data;

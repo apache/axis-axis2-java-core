@@ -22,11 +22,17 @@
  */
 package org.apache.axis2.jaxws.sample.faults;
 
+import java.util.concurrent.Future;
+
 import javax.jws.WebService;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
 
 import org.test.faults.FaultyWebServiceFault;
+import org.test.faults.FaultyWebServiceResponse;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType")
+@WebService(serviceName="FaultyWebServiceService",
+			endpointInterface="org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType")
 public class FaultyWebServicePortTypeImpl {
 
 	/* (non-Javadoc)
@@ -40,6 +46,18 @@ public class FaultyWebServicePortTypeImpl {
 		
 		throw new FaultyWebServiceFault_Exception("custom exception", bean);
 	}
+	
+    public Future<?> faultyWebServiceAsync(
+            int arg0,
+            AsyncHandler<FaultyWebServiceResponse> asyncHandler) {
+        	return null;
+        }
+
+
+    public Response<FaultyWebServiceResponse> faultyWebServiceAsync(int arg0) {
+    	return null;
+    }
+
 
 
 }

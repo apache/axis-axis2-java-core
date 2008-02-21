@@ -33,7 +33,8 @@ import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap")
+@WebService(serviceName="DocLitWrapService",
+			endpointInterface="org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap")
 public class DocLitWrapImpl implements DocLitWrap {
 
 	public FinancialOperation finOp(FinancialOperation op) {

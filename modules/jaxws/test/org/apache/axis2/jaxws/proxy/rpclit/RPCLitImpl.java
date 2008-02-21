@@ -38,8 +38,9 @@ import org.test.proxy.rpclit.Enum;
  * 
  *
  */
-@WebService(targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclit",
-        endpointInterface="org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit")
+@WebService(serviceName="RPCLitService",
+		targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclit",
+		endpointInterface="org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit")
 public class RPCLitImpl implements RPCLit {
 
     public static DatatypeFactory df ;

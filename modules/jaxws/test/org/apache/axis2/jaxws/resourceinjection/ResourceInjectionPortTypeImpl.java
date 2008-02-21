@@ -28,7 +28,8 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.TestLogger;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType")
+@WebService(serviceName="ResourceInjectionService",
+			endpointInterface="org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType")
 public class ResourceInjectionPortTypeImpl implements ResourceInjectionPortType {
 
 	@Resource

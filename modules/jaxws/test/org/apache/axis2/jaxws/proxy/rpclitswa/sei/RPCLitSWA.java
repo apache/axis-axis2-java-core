@@ -17,7 +17,9 @@ import javax.xml.ws.Holder;
  * Generated source version: 2.0
  * 
  */
-@WebService(name = "RPCLitSWA", targetNamespace = "http://org/apache/axis2/jaxws/proxy/rpclitswa", wsdlLocation = "RPCLitSWA.wsdl")
+@WebService(name = "RPCLitSWA", 
+		targetNamespace = "http://org/apache/axis2/jaxws/proxy/rpclitswa", 
+		wsdlLocation = "META-INF/RPCLitSWA.wsdl")
 @SOAPBinding(style = Style.RPC)
 public interface RPCLitSWA {
 

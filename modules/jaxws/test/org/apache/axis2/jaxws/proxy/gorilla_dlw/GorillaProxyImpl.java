@@ -31,7 +31,9 @@ import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
  * Tests more complicated Document/Literal Wrapped scenarios
  *
  */
-@WebService(targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw",
+@WebService(
+		targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw",
+		serviceName="GorillaService",
         endpointInterface="org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface")
 public class GorillaProxyImpl implements GorillaInterface {
 

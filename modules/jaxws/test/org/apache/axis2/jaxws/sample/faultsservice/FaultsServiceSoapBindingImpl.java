@@ -46,10 +46,11 @@ import org.test.polymorphicfaults.DerivedFault2;
  * This class provides server side implementation for the 
  * FaultsServicePortType.
  */
+
 @WebService (targetNamespace="http://org/test/polymorphicfaults",
-             wsdlLocation="WEB-INF/wsdl/FaultsService.wsdl",
              serviceName="FaultsService",
              portName="FaultsPort",
+           //wsdlLocation="WEB-INF/wsdl/FaultsService.wsdl",
              endpointInterface="org.apache.axis2.jaxws.sample.faultsservice.FaultsServicePortType")
 
 public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {

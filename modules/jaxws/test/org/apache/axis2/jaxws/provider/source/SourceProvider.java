@@ -36,8 +36,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.http.HTTPBinding;
 
-@WebServiceProvider()
+@WebServiceProvider(serviceName="SourceProviderService")
+@BindingType(HTTPBinding.HTTP_BINDING)
 public class SourceProvider implements Provider<Source> {
     
     // Same logic as StringProvider

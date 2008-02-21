@@ -29,7 +29,7 @@ import javax.xml.ws.http.HTTPBinding;
 /**
  * Sample XML/HTTP DataSource Provider 
  */
-@WebServiceProvider()
+@WebServiceProvider(serviceName="XMessageDataSourceProvider")
 @BindingType(HTTPBinding.HTTP_BINDING)
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class XMessageDataSourceProvider implements Provider<DataSource> {

@@ -25,6 +25,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.WebServiceException;
 
 
 /**
@@ -51,6 +52,6 @@ public interface SendImageInterface {
     @ResponseWrapper(localName = "sendImageResponse", targetNamespace = "urn://mtom1.sample.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.sample.mtom1.SendImageResponse")
     public ImageDepot invoke(
         @WebParam(name = "input", targetNamespace = "urn://mtom1.sample.jaxws.axis2.apache.org")
-        ImageDepot input);
+        ImageDepot input) throws WebServiceException;
 
 }

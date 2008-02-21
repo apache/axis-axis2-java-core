@@ -27,9 +27,15 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 
-@ServiceMode(Mode.MESSAGE)
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
+
+@WebServiceProvider(targetNamespace="http://jaxws.axis2.apache.org/proxy/soap12",
+					serviceName="SOAP12EchoService",
+					wsdlLocation="META-INF/SOAP12Echo.wsdl",
+					portName="EchoPort")
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
-@WebServiceProvider(targetNamespace="http://jaxws.axis2.apache.org/proxy/soap12", wsdlLocation="META-INF/SOAP12Echo.wsdl")
+@ServiceMode(Mode.MESSAGE)
 public class SOAP12EchoImpl implements Provider<String> {
     
     private static final String SOAP11_NS_URI = "http://schemas.xmlsoap.org/soap/envelope/";

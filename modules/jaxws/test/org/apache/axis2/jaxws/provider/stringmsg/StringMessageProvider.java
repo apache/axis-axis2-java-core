@@ -18,15 +18,15 @@
  */
 package org.apache.axis2.jaxws.provider.stringmsg;
 
+import javax.xml.ws.BindingType;
+import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.http.HTTPBinding;
+
 import org.apache.axis2.jaxws.TestLogger;
 
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
-
-@WebServiceProvider()
-@ServiceMode(value=Service.Mode.MESSAGE)
+@WebServiceProvider(serviceName="StringMessageProviderService")
+@BindingType(HTTPBinding.HTTP_BINDING)
 public class StringMessageProvider implements Provider<String> {
     private static String responseGood = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>request processed</message></provider></soapenv:Body></soapenv:Envelope>";
     private static String responseBad  = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>ERROR:null request received</message><provider></soapenv:Body></soapenv:Envelope>";

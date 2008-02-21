@@ -27,8 +27,9 @@ import javax.jws.WebService;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
 import org.apache.axis2.jaxws.TestLogger;
 
-@WebService(targetNamespace="http://testApp.jaxws",
-            endpointInterface="org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType")
+@WebService(serviceName="EchoMessageService",
+	 	targetNamespace="http://testApp.jaxws",
+        endpointInterface="org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType")
 
 public class EchoMessageImpl implements EchoMessagePortType {
 

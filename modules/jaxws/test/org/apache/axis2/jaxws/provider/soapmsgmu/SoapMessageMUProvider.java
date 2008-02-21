@@ -34,9 +34,13 @@ import org.apache.axis2.jaxws.provider.AttachmentUtil;
  * must have the headers defined in wsdl.
  */
 
-@WebServiceProvider()
-@ServiceMode(value = Service.Mode.MESSAGE)
+@WebServiceProvider(
+		serviceName="SoapMessageMUProviderService",
+		targetNamespace="http://soapmsgmu.provider.jaxws.axis2.apache.org",
+		wsdlLocation="META-INF/ProviderSOAPMessage.wsdl",
+		portName="SimpleProviderServiceSOAP11port0")
 @BindingType(SOAPBinding.SOAP11HTTP_BINDING)
+@ServiceMode(value = Service.Mode.MESSAGE)
 public class SoapMessageMUProvider implements Provider<SOAPMessage> {
     /**
      * This service receives soap message and return it back to client as is

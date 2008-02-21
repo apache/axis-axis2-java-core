@@ -28,8 +28,9 @@ import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
 
-@WebService(endpointInterface = "org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter",
-        targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin")
+@WebService(serviceName="GreeterService",
+			endpointInterface = "org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter",
+			targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin")
 public class GreeterImpl implements Greeter {
 
     public String greetMe(String me) {

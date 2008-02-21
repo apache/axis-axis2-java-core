@@ -380,6 +380,7 @@
 						<phase>test-compile</phase>
 						<configuration>
 							<tasks>
+								<mkdir dir="./target/test-classes/servicejars"/>
 								<copy toDir="target/test-classes/services/EchoService/">
 									<fileset dir="target/test-classes">
 										<include name="server/**"/>
@@ -388,10 +389,16 @@
 										<exclude name="**/*.java"/>
 									</fileset>
 								</copy>
+<!--
+								<zip destfile="target/test-classes/servicejars/EchoService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/EchoService"
+								/>
+								<delete dir="target/test-classes/servicejars/EchoService"/>								
+-->								
 								<!-- ================================================================ -->
 								<!--- Provider endpoint Service Samples -->
 								<!-- ================================================================ -->
-								<copy toDir="target/test-classes/services/WSGenService/">
+								<copy toDir="target/test-classes/servicejars/WSGenService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/wsgen/WSGenInterface.class"/>
 										<include name="org/apache/axis2/jaxws/sample/wsgen/WSGenImpl.class"/>
@@ -401,7 +408,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/BasicAuthSecurityService/">
+
+								<zip destfile="target/test-classes/servicejars/WSGenService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/WSGenService"
+								/>
+								<delete dir="target/test-classes/servicejars/WSGenService"/>								
+								
+								<copy toDir="target/test-classes/servicejars/BasicAuthSecurityService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/security/server/**"/>
 									</fileset>
@@ -412,7 +425,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/StringProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/BasicAuthSecurityService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/BasicAuthSecurityService"
+								/>
+								<delete dir="target/test-classes/servicejars/BasicAuthSecurityService"/>
+														
+								<copy toDir="target/test-classes/servicejars/StringProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/string/**"/>
 									</fileset>
@@ -423,7 +442,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/StringMessageProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/StringProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/StringProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/StringProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/StringMessageProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/stringmsg/**"/>
 									</fileset>
@@ -434,7 +459,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/SourceProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/StringMessageProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/StringMessageProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/StringMessageProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/SourceProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/source/**"/>
 									</fileset>
@@ -445,7 +476,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/SourceMessageProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/SourceProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SourceProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/SourceProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/SourceMessageProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/sourcemsg/**"/>
 									</fileset>
@@ -456,7 +493,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/SoapMessageProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/SourceMessageProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SourceMessageProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/SourceMessageProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/SoapMessageProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/soapmsg/**"/>
 									</fileset>
@@ -467,7 +510,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-                                <copy toDir="target/test-classes/services/SoapMessageMUProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/SoapMessageProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SoapMessageProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/SoapMessageProviderService"/>
+													
+                                <copy toDir="target/test-classes/servicejars/SoapMessageMUProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
                                     </fileset>
@@ -478,7 +527,13 @@
                                         <include name="org/apache/axis2/jaxws/server/**"/>
                                     </fileset>
                                 </copy>
-								<copy toDir="target/test-classes/services/JAXBProviderService/">
+
+								<zip destfile="target/test-classes/servicejars/SoapMessageMUProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SoapMessageMUProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/SoapMessageMUProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/JAXBProviderService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
 									</fileset>
@@ -492,7 +547,13 @@
 										<include name="org/test/mtom/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/SendImageService/">
+
+								<zip destfile="target/test-classes/servicejars/JAXBProviderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/JAXBProviderService"
+								/>
+								<delete dir="target/test-classes/servicejars/JAXBProviderService"/>
+														
+								<copy toDir="target/test-classes/servicejars/SendImageService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
 									</fileset>
@@ -506,7 +567,13 @@
 										<include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/SOAP12Service/">
+
+								<zip destfile="target/test-classes/servicejars/SendImageService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SendImageService"
+								/>
+								<delete dir="target/test-classes/servicejars/SendImageService"/>
+														
+								<copy toDir="target/test-classes/servicejars/SOAP12Service/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/dispatch/server/**"/>
 									</fileset>
@@ -514,10 +581,16 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
+
+								<zip destfile="target/test-classes/servicejars/SOAP12Service.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SOAP12Service"
+								/>
+								<delete dir="target/test-classes/servicejars/SOAP12Service"/>														
+								
 								<!-- ================================================================ -->
 								<!--- Proxy endpoint Service Samples -->
 								<!-- ================================================================ -->
-								<copy toDir="target/test-classes/services/ProxyDocLitWrapped/">
+								<copy toDir="target/test-classes/servicejars/ProxyDocLitWrapped/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/doclitwrapped/**"/>
 									</fileset>
@@ -528,7 +601,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/ProxyDocLitnonWrapped/">
+
+								<zip destfile="target/test-classes/servicejars/ProxyDocLitWrapped.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/ProxyDocLitWrapped"
+								/>
+								<delete dir="target/test-classes/servicejars/ProxyDocLitWrapped"/>														
+								
+								<copy toDir="target/test-classes/servicejars/ProxyDocLitnonWrapped/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/doclitnonwrapped/**"/>
 									</fileset>
@@ -539,7 +618,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/RPCLit/">
+
+								<zip destfile="target/test-classes/servicejars/ProxyDocLitnonWrapped.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/ProxyDocLitnonWrapped"
+								/>
+								<delete dir="target/test-classes/servicejars/ProxyDocLitnonWrapped"/>														
+								
+								<copy toDir="target/test-classes/servicejars/RPCLit/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/rpclit/**"/>
 									</fileset>
@@ -550,7 +635,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-							    <copy toDir="target/test-classes/services/RPCLitSWA/">
+
+								<zip destfile="target/test-classes/servicejars/RPCLit.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/RPCLit"
+								/>
+								<delete dir="target/test-classes/servicejars/RPCLit"/>														
+								
+							    <copy toDir="target/test-classes/servicejars/RPCLitSWA/">
 			                        <fileset dir="target/test-classes">
 				                        <include name="org/apache/axis2/jaxws/proxy/rpclitswa/**"/>
 			                        </fileset>
@@ -561,7 +652,13 @@
 		                                <include name="org/apache/axis2/jaxws/server/**"/>
 			                       </fileset>
 		                       </copy>
-								<copy toDir="target/test-classes/services/SOAP12EchoService/">
+
+								<zip destfile="target/test-classes/servicejars/RPCLitSWA.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/RPCLitSWA"
+								/>
+								<delete dir="target/test-classes/servicejars/RPCLitSWA"/>														
+								
+								<copy toDir="target/test-classes/servicejars/SOAP12EchoService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
 									</fileset>
@@ -569,6 +666,12 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
+
+								<zip destfile="target/test-classes/servicejars/SOAP12EchoService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/SOAP12EchoService"
+								/>
+								<delete dir="target/test-classes/servicejars/SOAP12EchoService"/>														
+								
 								<copy toDir="target/test-classes/services/BookStoreService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/client/soapaction/**"/>
@@ -577,7 +680,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/gorilla_dlw/">
+<!--								
+								<zip destfile="target/test-classes/servicejars/BookStoreService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/BookStoreService"
+								/>
+								<delete dir="target/test-classes/servicejars/BookStoreService"/>								
+-->								
+								<copy toDir="target/test-classes/servicejars/gorilla_dlw/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/gorilla_dlw/**"/>
 									</fileset>
@@ -588,10 +697,16 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
+								
+								<zip destfile="target/test-classes/servicejars/gorilla_dlw.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/gorilla_dlw"
+								/>
+								<delete dir="target/test-classes/servicejars/gorilla_dlw"/>								
+								
 								<!-- ================================================================ -->
 								<!--- XML HTTP Tests -->
 								<!-- ================================================================ -->
-								<copy toDir="target/test-classes/services/XPayloadStringProvider/">
+								<copy toDir="target/test-classes/servicejars/XPayloadStringProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class"/>
 									</fileset>
@@ -599,7 +714,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/XMessageStringProvider/">
+
+								<zip destfile="target/test-classes/servicejars/XPayloadStringProvider.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/XPayloadStringProvider"
+								/>
+								<delete dir="target/test-classes/servicejars/XPayloadStringProvider"/>
+
+								<copy toDir="target/test-classes/servicejars/XMessageStringProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class"/>
 									</fileset>
@@ -607,7 +728,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/XPayloadSourceProvider/">
+
+								<zip destfile="target/test-classes/servicejars/XMessageStringProvider.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/XMessageStringProvider"
+								/>
+								<delete dir="target/test-classes/servicejars/XMessageStringProvider"/>
+
+								<copy toDir="target/test-classes/servicejars/XPayloadSourceProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class"/>
 									</fileset>
@@ -615,7 +742,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/XMessageSourceProvider/">
+
+								<zip destfile="target/test-classes/servicejars/XPayloadSourceProvider.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/XPayloadSourceProvider"
+								/>
+								<delete dir="target/test-classes/servicejars/XPayloadSourceProvider"/>
+
+								<copy toDir="target/test-classes/servicejars/XMessageSourceProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class"/>
 									</fileset>
@@ -623,7 +756,13 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/XMessageDataSourceProvider/">
+
+								<zip destfile="target/test-classes/servicejars/XMessageSourceProvider.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/XMessageSourceProvider"
+								/>
+								<delete dir="target/test-classes/servicejars/XMessageSourceProvider"/>
+
+								<copy toDir="target/test-classes/servicejars/XMessageDataSourceProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class"/>
 									</fileset>
@@ -631,10 +770,16 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
+
+								<zip destfile="target/test-classes/servicejars/XMessageDataSourceProvider.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/XMessageDataSourceProvider"
+								/>
+								<delete dir="target/test-classes/servicejars/XMessageDataSourceProvider"/>
+	
 								<!-- ================================================================ -->
 								<!--- Java Bean Endpoint Samples -->
 								<!-- ================================================================ -->
-								<copy toDir="target/test-classes/services/AddressBookService/">
+								<copy toDir="target/test-classes/servicejars/AddressBookService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/addressbook/**"/>
 									</fileset>
@@ -642,7 +787,11 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/MtomSampleService/">
+								<zip destfile="target/test-classes/servicejars/AddressBookService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/AddressBookService"
+								/>
+								<delete dir="target/test-classes/servicejars/AddressBookService"/>
+								<copy toDir="target/test-classes/servicejars/MtomSampleService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/mtom/**"/>
 									</fileset>
@@ -650,7 +799,11 @@
 										<include name="META-INF/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/DocLitNonWrapService/">
+								<zip destfile="target/test-classes/servicejars/MtomSampleService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/MtomSampleService"
+								/>
+								<delete dir="target/test-classes/servicejars/MtomSampleService"/>								
+								<copy toDir="target/test-classes/servicejars/DocLitNonWrapService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/nonwrap/**"/>
 									</fileset>
@@ -661,7 +814,11 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/DocLitWrapService/">
+								<zip destfile="target/test-classes/servicejars/DocLitNonWrapService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/DocLitNonWrapService"
+								/>
+								<delete dir="target/test-classes/servicejars/DocLitNonWrapService"/>								
+								<copy toDir="target/test-classes/servicejars/DocLitWrapService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/wrap/**"/>
 									</fileset>
@@ -672,7 +829,11 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/AddNumbersService/">
+								<zip destfile="target/test-classes/servicejars/DocLitWrapService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/DocLitWrapService"
+								/>
+								<delete dir="target/test-classes/servicejars/DocLitWrapService"/>
+								<copy toDir="target/test-classes/servicejars/AddNumbersService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/addnumbers/**"/>
 									</fileset>
@@ -683,7 +844,11 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/AddNumbersHandlerService/">
+								<zip destfile="target/test-classes/servicejars/AddNumbersService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/AddNumbersService"
+								/>
+								<delete dir="target/test-classes/servicejars/AddNumbersService"/>
+								<copy toDir="target/test-classes/servicejars/AddNumbersHandlerService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/sample/addnumbershandler/**"/>
 									</fileset>
@@ -694,7 +859,11 @@
 									   <include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/GreeterService/">
+								<zip destfile="target/test-classes/servicejars/AddNumbersHandlerService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/AddNumbersHandlerService"
+								/>
+								<delete dir="target/test-classes/servicejars/AddNumbersHandlerService"/>
+								<copy toDir="target/test-classes/servicejars/GreeterService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/dlwmin/**"/>
 									</fileset>
@@ -705,7 +874,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/AsyncService/">
+
+								<zip destfile="target/test-classes/servicejars/GreeterService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/GreeterService"
+								/>
+								<delete dir="target/test-classes/servicejars/GreeterService"/>								
+
+								<copy toDir="target/test-classes/servicejars/AsyncService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/parallelasync/**"/>
 									</fileset>
@@ -716,7 +891,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/FaultyWebServiceService/">
+
+								<zip destfile="target/test-classes/servicejars/AsyncService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/AsyncService"
+								/>
+								<delete dir="target/test-classes/servicejars/AsyncService"/>								
+
+								<copy toDir="target/test-classes/servicejars/FaultyWebServiceService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/faults/**"/>
 									</fileset>
@@ -727,7 +908,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/FaultsService/">
+
+								<zip destfile="target/test-classes/servicejars/FaultyWebServiceService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/FaultyWebServiceService"
+								/>
+								<delete dir="target/test-classes/servicejars/FaultyWebServiceService"/>								
+
+								<copy toDir="target/test-classes/servicejars/FaultsService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/faultsservice/**"/>
 									</fileset>
@@ -738,7 +925,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/BareDocLitService/">
+
+								<zip destfile="target/test-classes/servicejars/FaultsService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/FaultsService"
+								/>
+								<delete dir="target/test-classes/servicejars/FaultsService"/>								
+
+								<copy toDir="target/test-classes/servicejars/BareDocLitService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/doclitbare/**"/>
 									</fileset>
@@ -749,7 +942,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/EchoMessageService/">
+
+								<zip destfile="target/test-classes/servicejars/BareDocLitService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/BareDocLitService"
+								/>
+								<delete dir="target/test-classes/servicejars/BareDocLitService"/>								
+
+								<copy toDir="target/test-classes/servicejars/EchoMessageService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/nonanonymous/complextype/**"/>
 									</fileset>
@@ -760,7 +959,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/ResourceInjectionService/">
+
+								<zip destfile="target/test-classes/servicejars/EchoMessageService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/EchoMessageService"
+								/>
+								<delete dir="target/test-classes/servicejars/EchoMessageService"/>								
+
+								<copy toDir="target/test-classes/servicejars/ResourceInjectionService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/resourceinjection/**"/>
 									</fileset>
@@ -771,7 +976,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/AnyTypeMessageService/">
+
+								<zip destfile="target/test-classes/servicejars/ResourceInjectionService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/ResourceInjectionService"
+								/>
+								<delete dir="target/test-classes/servicejars/ResourceInjectionService"/>								
+
+								<copy toDir="target/test-classes/servicejars/AnyTypeMessageService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/anytype/**"/>
 									</fileset>
@@ -782,7 +993,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/PolymorphicShapeService/">
+
+								<zip destfile="target/test-classes/servicejars/AnyTypeMessageService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/AnyTypeMessageService"
+								/>
+								<delete dir="target/test-classes/servicejars/AnyTypeMessageService"/>								
+
+								<copy toDir="target/test-classes/servicejars/PolymorphicShapeService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/polymorphic/shape/**"/>
 									</fileset>
@@ -793,7 +1010,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/RPCLitEnumService/">
+
+								<zip destfile="target/test-classes/servicejars/PolymorphicShapeService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/PolymorphicShapeService"
+								/>
+								<delete dir="target/test-classes/servicejars/PolymorphicShapeService"/>								
+
+								<copy toDir="target/test-classes/servicejars/RPCLitEnumService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/rpclit/enumtype/**"/>
 									</fileset>
@@ -804,7 +1027,13 @@
 										<include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>
-								<copy toDir="target/test-classes/services/RPCLitStringArrayService/">
+
+								<zip destfile="target/test-classes/servicejars/RPCLitEnumService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/RPCLitEnumService"
+								/>
+								<delete dir="target/test-classes/servicejars/RPCLitEnumService"/>								
+
+								<copy toDir="target/test-classes/servicejars/RPCLitStringArrayService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/rpclit/stringarray/**"/>
 									   <include name="org/test/rpclit/stringarray/**"/>
@@ -816,6 +1045,12 @@
 									   <include name="org/apache/axis2/jaxws/server/**"/>
 									</fileset>
 								</copy>	
+
+								<zip destfile="target/test-classes/servicejars/RPCLitStringArrayService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/RPCLitStringArrayService"
+								/>
+								<delete dir="target/test-classes/servicejars/RPCLitStringArrayService"/>								
+
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>

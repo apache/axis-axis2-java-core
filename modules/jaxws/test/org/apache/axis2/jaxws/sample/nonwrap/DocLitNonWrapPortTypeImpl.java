@@ -37,7 +37,8 @@ import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
 import org.test.sample.nonwrap.TwoWayHolder;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType")
+@WebService(serviceName="DocLitNonWrapService",
+			endpointInterface="org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType")
 public class DocLitNonWrapPortTypeImpl implements DocLitNonWrapPortType {
 
 	/**

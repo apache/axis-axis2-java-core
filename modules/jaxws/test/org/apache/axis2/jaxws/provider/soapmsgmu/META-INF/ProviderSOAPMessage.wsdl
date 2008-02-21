@@ -5,16 +5,16 @@
 <definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
     xmlns:s="http://www.w3.org/2001/XMLSchema" 
-    xmlns:tns="http://ws.apache.org/axis2"
+    xmlns:tns="http://soapmsgmu.provider.jaxws.axis2.apache.org"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
     xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
-    targetNamespace="http://ws.apache.org/axis2" 
+    targetNamespace="http://soapmsgmu.provider.jaxws.axis2.apache.org" 
     xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
      	<xsd:schema
-			targetNamespace="http://ws.apache.org/axis2"
-			xmlns:tns="http://ws.apache.org/axis2"
+			targetNamespace="http://soapmsgmu.provider.jaxws.axis2.apache.org"
+			xmlns:tns="http://soapmsgmu.provider.jaxws.axis2.apache.org"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 			<xsd:complexType name="StringArray">
 				<xsd:sequence>

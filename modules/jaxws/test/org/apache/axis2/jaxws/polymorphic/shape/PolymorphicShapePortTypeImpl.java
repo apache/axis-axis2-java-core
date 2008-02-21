@@ -27,7 +27,9 @@ import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType", wsdlLocation="test/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl")
+@WebService(serviceName="PolymorphicShapeService",
+		endpointInterface="org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType", 
+		wsdlLocation="test/org/apache/axis2/jaxws/polymorphic/shape/META-INF/shapes.wsdl")
 public class PolymorphicShapePortTypeImpl implements PolymorphicShapePortType {
 
 	public Shape draw(Shape request) {

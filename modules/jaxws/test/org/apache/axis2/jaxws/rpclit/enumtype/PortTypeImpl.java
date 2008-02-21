@@ -25,7 +25,8 @@ import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.apache.axis2.jaxws.TestLogger;
 import org.test.rpclit.schema.ElementString;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.rpclit.enumtype.PortTypeImpl")
+@WebService(serviceName="RPCLitEnumService",
+		endpointInterface="org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType")
 public class PortTypeImpl implements PortType {
 
     /* (non-Javadoc)

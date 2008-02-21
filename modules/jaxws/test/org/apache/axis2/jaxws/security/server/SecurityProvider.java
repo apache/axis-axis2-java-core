@@ -18,12 +18,15 @@
  */
 package org.apache.axis2.jaxws.security.server;
 
-import org.apache.axis2.jaxws.TestLogger;
-
+import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.http.HTTPBinding;
 
-@WebServiceProvider()
+import org.apache.axis2.jaxws.TestLogger;
+
+@WebServiceProvider(serviceName="BasicAuthSecurityService",portName="SimpleProviderServiceSOAP11port0")
+@BindingType(HTTPBinding.HTTP_BINDING)
 public class SecurityProvider implements Provider<String> {
 
     private static String responseGood = "<provider><message>request processed</message></provider>";
