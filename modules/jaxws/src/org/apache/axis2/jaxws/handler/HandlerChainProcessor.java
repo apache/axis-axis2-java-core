@@ -26,6 +26,8 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.handler.factory.HandlerPostInvokerFactory;
+import org.apache.axis2.jaxws.handler.factory.HandlerPreInvokerFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
@@ -49,6 +51,8 @@ import java.util.List;
 public class HandlerChainProcessor {
 
     private static final Log log = LogFactory.getLog(HandlerChainProcessor.class);
+    private HandlerPreInvoker handlerPreInvoker = null;
+    private HandlerPostInvoker handlerPostInvoker = null;
     
     public enum Direction {
         IN, OUT
@@ -329,7 +333,9 @@ public class HandlerChainProcessor {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking handleMessage on: " + handler.getClass().getName()); 
             }
+            getPreInvoker().preInvoke(currentMC);
             boolean success = handler.handleMessage(currentMC);
+            getPostInvoker().postInvoke(currentMC);
             if (success) {
                 if (log.isDebugEnabled()) {
                     log.debug("handleMessage() returned true");
@@ -581,5 +587,22 @@ public class HandlerChainProcessor {
                 currentMC = logicalMC; //MessageContextFactory.createLogicalMessageContext(mepCtx.getMessageContext());
         }
     }
+    
+    private HandlerPreInvoker getPreInvoker() {
+    	if (handlerPreInvoker == null) {
+    		HandlerPreInvokerFactory preInvokerFactory = (HandlerPreInvokerFactory)FactoryRegistry.getFactory(HandlerPreInvokerFactory.class);
+    		handlerPreInvoker = (HandlerPreInvoker)preInvokerFactory.createHandlerPreInvoker();
+    	}
+    	return handlerPreInvoker;
+    }
+    
+    private HandlerPostInvoker getPostInvoker() {
+    	if (handlerPostInvoker == null) {
+    		HandlerPostInvokerFactory postInvokerFactory = (HandlerPostInvokerFactory)FactoryRegistry.getFactory(HandlerPostInvokerFactory.class);
+    		handlerPostInvoker = (HandlerPostInvoker)postInvokerFactory.createHandlerPostInvoker();
+    	}
+    	return handlerPostInvoker;
+    }
+    
 
 }

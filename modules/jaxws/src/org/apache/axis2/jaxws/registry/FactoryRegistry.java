@@ -26,7 +26,11 @@ import org.apache.axis2.jaxws.addressing.factory.impl.JAXWSEndpointReferenceFact
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.core.controller.impl.InvocationControllerFactoryImpl;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
+import org.apache.axis2.jaxws.handler.factory.HandlerPostInvokerFactory;
+import org.apache.axis2.jaxws.handler.factory.HandlerPreInvokerFactory;
 import org.apache.axis2.jaxws.handler.factory.impl.HandlerInvokerFactoryImpl;
+import org.apache.axis2.jaxws.handler.factory.impl.HandlerPostInvokerFactoryImpl;
+import org.apache.axis2.jaxws.handler.factory.impl.HandlerPreInvokerFactoryImpl;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
@@ -112,6 +116,8 @@ public class FactoryRegistry {
         table.put(ExecutorFactory.class, new JAXWSExecutorFactory());
         table.put(ServiceInstanceFactory.class, new ServiceInstanceFactoryImpl());
         table.put(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());
+        table.put(HandlerPreInvokerFactory.class, new HandlerPreInvokerFactoryImpl());
+        table.put(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
         
         // register the implementation responsible for both WebServiceContext 
         // injection and the updating of the WebServiceContext instances that

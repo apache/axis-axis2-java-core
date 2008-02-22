@@ -44,6 +44,7 @@ import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.endpoint.BasicEndpointTests;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
+import org.apache.axis2.jaxws.handler.HandlerPrePostInvokerTests;
 import org.apache.axis2.jaxws.handler.context.CompositeMessageContextTests;
 import org.apache.axis2.jaxws.handler.context.LogicalMessageContextTests;
 import org.apache.axis2.jaxws.handler.context.SOAPMessageContextTests;
@@ -155,6 +156,7 @@ public class JAXWSTest extends TestCase {
         // ------ Handler Tests ------
         suite.addTestSuite(LogicalMessageContextTests.class);
         suite.addTestSuite(SOAPMessageContextTests.class);
+        suite.addTestSuite(HandlerPrePostInvokerTests.class);
         suite.addTestSuite(CompositeMessageContextTests.class);
         suite.addTestSuite(HandlerChainProcessorTests.class);
         suite.addTestSuite(HandlerResolverTests.class);
