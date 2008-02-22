@@ -59,11 +59,11 @@ public class ServiceRegistry extends JAXWSDeployer {
         try {
             AxisServiceGroup serviceGroup = deployClasses(bundle.getSymbolicName(), null, loader, classes);
             if (serviceGroup != null) {
-                System.out.println("Deployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                System.out.println("[Axis2/OSGi] Deployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator = serviceGroup.getServices(); iterator.hasNext();) {
                     AxisService service = (AxisService) iterator.next();
-                    System.out.println("     Service - " + service.getName());
+                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
                 }
                 services.put(bundle, serviceGroup);
             }
@@ -77,11 +77,11 @@ public class ServiceRegistry extends JAXWSDeployer {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) iterator.next();
             try {
                 axisConfig.removeServiceGroup(serviceGroup.getServiceGroupName());
-                System.out.println("Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                System.out.println("[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator2 = serviceGroup.getServices(); iterator2.hasNext();) {
                     AxisService service = (AxisService) iterator2.next();
-                    System.out.println("     Service - " + service.getName());
+                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
                 log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
@@ -94,11 +94,11 @@ public class ServiceRegistry extends JAXWSDeployer {
         if (serviceGroup != null) {
             try {
                 axisConfig.removeServiceGroup(serviceGroup.getServiceGroupName());
-                System.out.println("Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                System.out.println("[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator2 = serviceGroup.getServices(); iterator2.hasNext();) {
                     AxisService service = (AxisService) iterator2.next();
-                    System.out.println("     Service - " + service.getName());
+                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
                 log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
