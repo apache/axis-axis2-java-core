@@ -42,6 +42,8 @@ public class URIResolverImpl implements URIResolver {
     private final String FILE_PROTOCOL = "file";
 
     private final String JAR_PROTOCOL = "jar";
+    
+    private final String BUNDLE_RESOURCE_PROTOCOL = "bundleresource";
 
     private ClassLoader classLoader;
     
@@ -151,7 +153,7 @@ public class URIResolverImpl implements URIResolver {
                     // the baseURI, then use the loadStrategy to gain an input
                     // stream
                     // because the URI will still be relative to the module
-                    else {
+                    if(is == null) {
                         is = classLoader
                                 .getResourceAsStream(pathURI.toString());
                     }
@@ -253,8 +255,10 @@ public class URIResolverImpl implements URIResolver {
         URL url = null;
         try {
             // Allow for http or https
-            if (baseURL.getProtocol() != null && (baseURL.getProtocol().equals(
-                    HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
+            if (baseURL.getProtocol() != null && 
+                    (baseURL.getProtocol().equals(HTTP_PROTOCOL) || 
+                     baseURL.getProtocol().equals(HTTPS_PROTOCOL) || 
+                     baseURL.getProtocol().equals(BUNDLE_RESOURCE_PROTOCOL))) {
             	if(log.isDebugEnabled()){
             		log.debug("Constructing path with http/https protocol");
             	}
