@@ -382,6 +382,13 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         features = list;
     }
     
+    public void addWebServiceFeature(Annotation a) {
+        if (features == null)
+            features = new ArrayList<Annotation>();
+        
+        features.add(a);
+    }
+    
     /** @return Returns the wsdlDefinition */
     public Definition getWsdlDefinition() {
         if (wsdlDefinition != null) {
