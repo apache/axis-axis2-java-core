@@ -675,7 +675,7 @@ public class AxisConfiguration extends AxisDescription {
      * @return The AxisModule having name=moduleName & version=moduleVersion
      */
     public AxisModule getModule(String moduleName, String moduleVersion) {
-        if (moduleVersion == null && moduleVersion.trim().length() == 0) {
+        if (moduleVersion == null || moduleVersion.trim().length() == 0) {
             moduleVersion = getDefaultModuleVersion(moduleName);
         }
         return (AxisModule) allModules.get(Utils.getModuleName(moduleName, moduleVersion));
