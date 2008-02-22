@@ -388,7 +388,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 String address = epr.getAddress();
                 if (address != null && address.length()!=0) {
                     if (!includeOptionalHeaders && isFinalAddressingNamespace &&
-                            hasWSASpecifiedAnonymousAddress(epr))
+                            epr.isWSAddressingAnonymous())
                     {
                         return; //Omit the header.
                     }
@@ -438,7 +438,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
                 return; //Omit the header.
             }
-            else if (hasWSASpecifiedAnonymousAddress(epr))
+            else if (epr.isWSAddressingAnonymous())
             {
                 if (!includeOptionalHeaders && isFinalAddressingNamespace &&
                         AddressingConstants.WSA_REPLY_TO.equals(headerName)) {
@@ -584,22 +584,6 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                 }
             }
-        }
-
-        /**
-         * We can't use {@link EndpointReference#hasAnonymousAddress} in this handler as it may
-         * return <code>true</code> for none WS-Addressing specified anonymous values. This is
-         * important because WS-Addressing anonymous values have additional semantics that is
-         * not usually supported by other anonymous values. These WS-Addressing specific
-         * semantics are captured in this handler at the points where this method is called.
-         * 
-         * @param epr the <code>EndpointReference</code> to test.
-         * @return <code>true</code> if the <code>EndpointReference</code> has an anonymous address,
-         * <code>false</code> otherwise.
-         */
-        private boolean hasWSASpecifiedAnonymousAddress(EndpointReference epr) {
-            String address = epr.getAddress();
-            return Final.WSA_ANONYMOUS_URL.equals(address) || Submission.WSA_ANONYMOUS_URL.equals(address);
         }
         
         private void addRoleToHeader(OMElement header){

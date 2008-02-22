@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,7 +73,13 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * An ID which can be used to correlate operations on an instance of
      * this object in the log files
      */
-    private String logCorrelationIDString = null;
+    private String logCorrelationIDString;
+    
+    /**
+     * The list of URIs that should be considered equivalent to 
+     * the WS-Addressing anonymous URI
+     */
+    private static List anonymousEquivalentURIs = new ArrayList();
 
 
     /**
@@ -98,6 +105,20 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * Required for Externalizable objects
      */
     public EndpointReference() {}
+    
+    /**
+     * Adds a parameter to the list of anonymous equivalent URIs. 
+     * @param anonymousEquivalentURI any URI that has an address that
+     * begins with this value will be considered to be anonymous
+     */
+    public static void addAnonymousEquivalentURI(String anonymousEquivalentURI){
+        if (log.isTraceEnabled())
+        	log.trace("addAnonymousEquivalentURI: " + anonymousEquivalentURI);
+        
+        synchronized (anonymousEquivalentURIs) {
+            anonymousEquivalentURIs.add(anonymousEquivalentURI);
+        }
+    }
  
 
     /**
@@ -171,26 +192,52 @@ public class EndpointReference implements Externalizable, SafeSerializable {
     public void setMetadataAttributes(ArrayList al) {
         metaDataAttributes = al;
     }
-
+    
+    /** 
+     * This method identifies whether the address is a WS-Addressing spec defined
+     * anonymous URI.
+     * 
+     * @return true if the address is a WS-Addressing spec defined anonymous URI.
+     * 
+     * @see #hasAnonymousAddress()
+     */ 
+    public boolean isWSAddressingAnonymous() {
+        return (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
+                AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address));
+    }
+    
     /**
-     * hasAnonymousAddress
+     * This method is used to identify when response messages should be sent using
+     * the back channel of a two-way transport.
      *
-     * @return true if address is 'Anonymous URI'
+     * @return true if the address is a WS-Addressing spec defined anonymous URI,
+     * or starts with a string that is specified to be equivalent to an anonymous
+     * URI.
+     * 
+     * @see #addAnonymousEquivalentURI(String)
      */
     public boolean hasAnonymousAddress() {
-        boolean result = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
-                AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address) ||
+        boolean result = isWSAddressingAnonymous();
+        
+        if(!result && address != null) {
+        	//If the address is not WS-A anonymous it might still be considered anonymous
+        	synchronized(anonymousEquivalentURIs){
+        		if(!anonymousEquivalentURIs.isEmpty()){
+            		Iterator it = anonymousEquivalentURIs.iterator();
+            		while(it.hasNext()){
+            			result = address.startsWith((String)it.next());
+            			if(result){
+            				break;
+            			}
+            		}	
+        		}
+        	} //end sync      	
+        }
 
-                //The following is added to give WS-RM anonymous a semantics to indicate
-                //that any response messages should be sent synchronously, using the
-                //transports back channel, as opposed to asynchronously. No other
-                //semantics normally associated with WS-Addressing anonymous values should
-                //be assumed, by it's presence here.
-                (address != null && address.startsWith(
-                        "http://docs.oasis-open.org/ws-rx/wsmc/200702/anonymous?id=")));
         if (log.isTraceEnabled()) {
             log.trace("hasAnonymousAddress: " + address + " is Anonymous: " + result);
         }
+        
         return result;
     }
 
