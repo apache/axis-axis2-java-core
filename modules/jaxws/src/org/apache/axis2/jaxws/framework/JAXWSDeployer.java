@@ -278,6 +278,7 @@ public class JAXWSDeployer implements Deployer {
         }
         axisService.setElementFormDefault(false);
         axisService.setFileName(serviceLocation);
+        axisService.setClassLoader(classLoader);
         return axisService;
     }
 
