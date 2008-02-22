@@ -181,11 +181,10 @@ public class JAXWSDeployer implements Deployer {
                 wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
             }
 
-            //If this contains a WebService annotation, make sure that we are not
-            //processing the pure SEI. We should only create the AxisService based on the 
-            //implementation class. Also skip any interfaces.
-            if (((wsAnnotation != null && !isEmpty(wsAnnotation.endpointInterface())) 
-                    || wspAnnotation != null) 
+            // Create an Axis Service only if the class is not an interface and it has either 
+            // @WebService annotation or @WebServiceProvider annotation.
+            if ((wsAnnotation != null
+                    || wspAnnotation != null)
                     && !pojoClass.isInterface()) {
                 log.info("Deploying JAXWS class : " + className);
                 AxisService axisService;

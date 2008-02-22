@@ -55,6 +55,8 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycl
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.impl.EndpointLifecycleManagerFactoryImpl;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,9 +79,14 @@ public class FactoryRegistry {
 
     private static volatile Map<Class, Object> table;
     private static Object lockbox = new Object();
+    private static final Log log = LogFactory.getLog(FactoryRegistry.class);
     
     static {
-        init();
+        try {
+            init();
+        } catch (Throwable t){
+            log.error(t.getMessage(), t);
+        }
     }
     
     private static final void init() {
