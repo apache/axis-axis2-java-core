@@ -234,10 +234,6 @@
             <xsl:if test="$soapVersion!='1.1'">
             axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
             </xsl:if>
-            op_qname = axutil_qname_create(env,
-                                        "<xsl:value-of select="@localpart"/>" ,
-                                        "<xsl:value-of select="@namespace"/>",
-                                        NULL);
             ret_node =  axis2_svc_client_send_receive_with_op_qname( svc_client, env, op_qname, payload);
  
             if (!is_soap_act_set)
