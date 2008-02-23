@@ -20,8 +20,13 @@
 package org.apache.axis2.extensions.osgi;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.ModuleBuilder;
+import org.apache.axis2.deployment.ModuleDeployer;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
 import org.apache.axis2.extensions.osgi.util.BundleClassLoader;
 import org.apache.axis2.jaxws.framework.JAXWSDeployer;
 import org.osgi.framework.Bundle;
@@ -46,8 +51,13 @@ public class ServiceRegistry extends JAXWSDeployer {
     public void register(Bundle bundle) {
         axisConfig = servlet.getConfiguration();
         ClassLoader loader = new BundleClassLoader(bundle, this.getClass().getClassLoader());
-        ArrayList classes = new ArrayList();
 
+        addModules(bundle, loader);
+        addServices(bundle, loader);
+    }
+
+    private void addServices(Bundle bundle, ClassLoader loader) {
+        ArrayList classes = new ArrayList();
         Enumeration enumeration = bundle.findEntries("/", "*.class", true);
         while (enumeration.hasMoreElements()) {
             URL url = (URL) enumeration.nextElement();
@@ -68,7 +78,58 @@ public class ServiceRegistry extends JAXWSDeployer {
                 services.put(bundle, serviceGroup);
             }
         } catch (Exception e) {
-            log.log(LogService.LOG_INFO, "Exception deploying classes", e);
+            if(log != null) {
+                log.log(LogService.LOG_INFO, "Exception deploying classes", e);
+            }
+        }
+    }
+
+    private void addModules(Bundle bundle, ClassLoader loader) {
+        try {
+            final String MODULE_DEPLOYER = "moduleDeployer";
+            ModuleDeployer deployer = (ModuleDeployer) axisConfig.getParameterValue(MODULE_DEPLOYER);
+            if (deployer == null) {
+                deployer = new ModuleDeployer(axisConfig);
+                axisConfig.addParameter(MODULE_DEPLOYER, deployer);
+            }
+
+            Enumeration enumeration = bundle.findEntries("/", "module.xml", true);
+            while (enumeration != null && enumeration.hasMoreElements()) {
+                URL url = (URL) enumeration.nextElement();
+                String urlString = url.toString();
+//                String shortFileName = urlString.substring(urlString.lastIndexOf('/'));
+                AxisModule axismodule = new AxisModule();
+
+                axismodule.setModuleClassLoader(loader);
+                ModuleBuilder builder = new ModuleBuilder(url.openStream(), axismodule, axisConfig);
+//                axismodule.setName(org.apache.axis2.util.Utils.getModuleName(shortFileName));
+//                axismodule.setVersion(org.apache.axis2.util.Utils.getModuleVersion(shortFileName));
+                builder.populateModule();
+
+                Flow inflow = axismodule.getInFlow();
+                if (inflow != null) {
+                    Utils.addFlowHandlers(inflow, loader);
+                }
+
+                Flow outFlow = axismodule.getOutFlow();
+                if (outFlow != null) {
+                    Utils.addFlowHandlers(outFlow, loader);
+                }
+
+                Flow faultInFlow = axismodule.getFaultInFlow();
+                if (faultInFlow != null) {
+                    Utils.addFlowHandlers(faultInFlow, loader);
+                }
+
+                Flow faultOutFlow = axismodule.getFaultOutFlow();
+                if (faultOutFlow != null) {
+                    Utils.addFlowHandlers(faultOutFlow, loader);
+                }
+            }
+        } catch (Exception e) {
+            if(log != null) {
+                log.log(LogService.LOG_INFO, "Exception deploying modules", e);
+            }
         }
     }
 
@@ -84,7 +145,9 @@ public class ServiceRegistry extends JAXWSDeployer {
                     System.out.println("[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
-                log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                if(log != null) {
+                    log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                }
             }
         }
     }
@@ -101,7 +164,9 @@ public class ServiceRegistry extends JAXWSDeployer {
                     System.out.println("[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
-                log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                if(log != null) {
+                    log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                }
             }
         }
     }
