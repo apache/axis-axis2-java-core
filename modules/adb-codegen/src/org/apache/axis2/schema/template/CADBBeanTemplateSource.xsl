@@ -4192,7 +4192,8 @@
                 </xsl:if>
               </xsl:for-each>
             </xsl:if>
-
+            AXIS2_FREE(env->allocator,start_input_str);
+            AXIS2_FREE(env->allocator,end_input_str);
             return parent;
         }
 
