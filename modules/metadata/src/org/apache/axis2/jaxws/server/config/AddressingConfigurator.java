@@ -35,6 +35,8 @@ import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 
 /**
  * This class will enable/disable WS-Addressing for a JAX-WS 2.1 web service
@@ -58,7 +60,7 @@ public class AddressingConfigurator implements ServerConfigurator {
     		(SubmissionAddressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(SubmissionAddressingFeature.ID);
     	AxisService service = endpointDescription.getAxisService();
     	Parameter namespace = new Parameter(AddressingConstants.WS_ADDRESSING_VERSION, null);
-    	Parameter disabled = new Parameter(AddressingConstants.DISABLE_ADDRESSING_FOR_IN_MESSAGES, Boolean.FALSE);
+    	Parameter disabled = new Parameter(AddressingConstants.DISABLE_ADDRESSING_FOR_IN_MESSAGES, "false");
     	String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
     	
     	if (addressing != null && submissionAddressing != null) {
@@ -88,7 +90,7 @@ public class AddressingConfigurator implements ServerConfigurator {
             		addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
             }
             else {
-            	disabled.setValue(Boolean.TRUE);
+            	disabled.setValue("true");
             }
     	}
     	else if (addressing != null) {
@@ -129,7 +131,8 @@ public class AddressingConfigurator implements ServerConfigurator {
     		service.addParameter(disabled);
     		AddressingHelper.setAddressingRequirementParemeterValue(service, addressingRequired);
             
-    		if (!(Boolean)disabled.getValue()) {
+            String value = Utils.getParameterValue(disabled);
+    		if (JavaUtils.isFalseExplicitly(value)) {
     			ServiceDescription sd = endpointDescription.getServiceDescription();
     			AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();
     			if (!axisConfig.isEngaged(Constants.MODULE_ADDRESSING))
