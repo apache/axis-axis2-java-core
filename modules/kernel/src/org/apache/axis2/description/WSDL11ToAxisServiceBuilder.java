@@ -29,6 +29,7 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -2321,10 +2322,22 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 String soapActionURI = soapOperation.getSoapActionURI();
-                if (soapActionURI != null) {
+                
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                    log.debug("WSDL Binding Operation: " + axisBindingOperation.getName() +
+                            ", SOAPAction: " + soapActionURI);
+                
+                if (soapActionURI != null && !soapActionURI.equals("")) {
                     axisBindingOperation
                             .setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapActionURI);
                     axisBindingOperation.getAxisOperation().setSoapAction(soapActionURI);
+                    if (isServerSide) {
+                        axisBindingOperation.getAxisOperation().setSoapAction(soapActionURI);                        
+                    }
+                    else {
+                        axisBindingOperation.getAxisOperation().setOutputAction(soapActionURI);
+                    }
+
                     axisService.mapActionToOperation(soapActionURI,
                                                      axisBindingOperation.getAxisOperation());
                 }
@@ -2339,11 +2352,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 String soapAction = soapOperation.getSoapActionURI();
-                if ((soapAction != null) && (!soapAction.equals(""))) {
+                
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                    log.debug("WSDL Binding Operation: " + axisBindingOperation.getName() +
+                            ", SOAPAction: " + soapAction);
+                
+                if (soapAction != null && !soapAction.equals("")) {
                     axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
                     if (isServerSide) {
                         axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
-                    } else {
+                    }
+                    else {
                         axisBindingOperation.getAxisOperation().setOutputAction(soapAction);
                     }
 
