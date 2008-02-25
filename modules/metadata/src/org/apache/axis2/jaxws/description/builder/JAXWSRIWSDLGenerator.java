@@ -9,6 +9,10 @@ import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
+import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.util.CatalogURIResolver;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -74,7 +78,18 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
      * disk and create a Definition. After we are done with the file we will
      * remove it from disk.
      */
-    public void generateWsdl(String className, String bindingType) throws
+    public void generateWsdl(String className, String bindingType) throws WebServiceException {
+    	generateWsdl(className, bindingType, null);
+    }
+    
+    /**
+     * This method will drive the call to WsGen to generate a WSDL file for
+     * applications deployed without WSDL. We will then read this file in from
+     * disk and create a Definition. After we are done with the file we will
+     * remove it from disk.  This method accepts a CatalogManager as a parameter
+     * for the eventual use in by an XMLSchemaCollection.
+     */
+    public void generateWsdl(String className, String bindingType, JAXWSCatalogManager catalogManager) throws
             WebServiceException {
 
         AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
@@ -130,7 +145,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 throw new Exception("A WSDL Definition could not be generated for " +
                         "the implementation class: " + className);
             }
-            docMap = readInSchema(localOutputDirectory);
+            docMap = readInSchema(localOutputDirectory, catalogManager);
         }
         catch (Throwable t) {
             String msg =
@@ -256,12 +271,14 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
      * This method will read in all of the schema files that were generated
      * for a given application.
      */
-    private HashMap<String, XmlSchema> readInSchema(String localOutputDirectory) throws Exception {
+    private HashMap<String, XmlSchema> readInSchema(String localOutputDirectory, 
+    		                                        JAXWSCatalogManager catalogManager) throws Exception {
         try {
 
             XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+            if (catalogManager != null)
+                schemaCollection.setSchemaResolver(new CatalogURIResolver(catalogManager));
             schemaCollection.setBaseUri(new File(localOutputDirectory).getAbsolutePath());
-
 
             HashMap<String, XmlSchema> docMap = new HashMap<String, XmlSchema>();
             List<File> schemaFiles = getSchemaFiles(localOutputDirectory);
@@ -312,14 +329,14 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 return (Definition) value;
             }
         }
-        initialize();
+        initialize(service);
         return wsdlDefMap.values().iterator().next();
     }
 
-    private synchronized void initialize() {
+    private synchronized void initialize(AxisService service) {
         String className = (String) axisService.getParameter(Constants.SERVICE_CLASS).getValue();
         if (!init) {
-            generateWsdl(className, SOAPBinding.SOAP11HTTP_BINDING);
+            generateWsdl(className, SOAPBinding.SOAP11HTTP_BINDING, getCatalogManager(service));
             init = true;
         }
     }
@@ -346,7 +363,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 return (XmlSchema) list.get(0);
             }
         }
-        initialize();
+        initialize(service);
         XmlSchema schema = docMap.get(xsd);
         if (schema == null) {
             docMap.values().iterator().next();
@@ -398,6 +415,20 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         return false;
     }
 
+    /**
+     * Get the CatalogManager associated with an AxisService
+     * @return the CatalogManager in use for this AxisService
+     */
+    public static JAXWSCatalogManager getCatalogManager(AxisService service) {
+    	Parameter param = service.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+
+    	if (param != null) {
+            EndpointDescription ed = (EndpointDescription)param.getValue();
+            return ed.getServiceDescription().getCatalogManager();
+    	} else
+    	    return new OASISCatalogManager();
+    }
+    
     /**
      * Get the default classpath from various thingies in the message context
      *

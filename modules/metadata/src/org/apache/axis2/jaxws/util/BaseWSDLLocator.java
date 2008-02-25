@@ -54,6 +54,16 @@ public abstract class BaseWSDLLocator {
     abstract protected InputStream getInputStream(String importPath) throws IOException;
 
     /**
+     * Allows for a level of indirection, such as a catalog, when importing URIs.
+     * 
+     * @param importURI a URI specifying the document to import
+     * @param parent a URI specifying the location of the parent document doing
+     * the importing
+     * @return the resolved import location, or null if no indirection is performed
+     */
+    abstract protected String getRedirectedURI(String importURI, String parent);
+    
+    /**
       * Returns an InputSource "pointed at" the base document.
       */
     public InputSource getBaseInputSource() {
@@ -76,10 +86,13 @@ public abstract class BaseWSDLLocator {
             log.debug("getImportInputSource, parentLocation= " + parentLocation + 
                     " relativeLocation= " + relativeLocation);
         }
-        InputSource inputSource = null;
         InputStream is = null;
         URL absoluteURL = null;
 
+        String redirectedURI = getRedirectedURI(relativeLocation, parentLocation);
+        if  (redirectedURI != null)
+        	relativeLocation = redirectedURI;
+        
         try {
             if (isAbsoluteImport(relativeLocation)) {
                 try{

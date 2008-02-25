@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.spi;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.description.DescriptionTestUtils2;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -59,6 +60,8 @@ public class ClientMetadataTest extends TestCase {
     static final String originalWsdl_portLocalPart = "portLocalPart";
     static final String overridenWsdl_portLocalPart = "portLocalPartOverriden";
     static final String otherWsdl_portLocalPart = "portLocalPartOther";
+    
+    static final String uniqueCatalog = "test-resources/unique-catalog.xml";
 
     /**
      * Test Service.create(QName) with no composite specified 
@@ -355,6 +358,34 @@ public class ClientMetadataTest extends TestCase {
     }
     
     /**
+     * Service.create(QName) with a composite that specifies a CatalogManager override 
+     */
+    public void test1ArgServiceOverrideCatalogManager() {
+        QName serviceQName = new QName(namespaceURI, svcLocalPart);
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+        OASISCatalogManager catalogManager = new OASISCatalogManager();
+        catalogManager.setCatalogFiles(getCatalogLocation(uniqueCatalog));
+        composite.setCatalogManager(catalogManager);
+        // Use the proprietary SPI to create a service with additional metadata specified
+        ServiceDelegate.setServiceMetadata(composite);
+        Service service = Service.create(serviceQName);
+        
+        assertNotNull(service);
+        // Verify that the composite has been reset so that it would not affect the next Service
+        assertNull(ServiceDelegate.getServiceMetadata());
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
+        assertNotNull(serviceDelegate);
+        ServiceDescription serviceDesc = serviceDelegate.getServiceDescription();
+        assertNotNull(serviceDesc);
+        DescriptionBuilderComposite dbcInServiceDesc = DescriptionTestUtils2.getServiceDescriptionComposite(serviceDesc);
+        assertSame(composite, dbcInServiceDesc.getSparseComposite(serviceDelegate));
+        assertEquals(Service.class, dbcInServiceDesc.getCorrespondingClass());
+        // Verify that the CatalogManager for the Service uses the unique catalog file.
+        String serviceCatalogFile = (String) dbcInServiceDesc.getSparseComposite(serviceDelegate).getCatalogManager().getCatalogFiles().get(0);
+        assertEquals(serviceCatalogFile, getCatalogLocation(uniqueCatalog));
+    }
+    
+    /**
      * Service.create(URL, QName) with a composite that specifies a wsdlLocation override 
      */
     public void test2ArgServiceOverrideWsdlLocation() {
@@ -392,6 +423,36 @@ public class ClientMetadataTest extends TestCase {
     }
     
     /**
+     * Service.create(URL, QName) with a composite that specifies a CatalogManager override 
+     */
+    public void test2ArgServiceOverrideCatalogManager() {
+        QName serviceQName = new QName(namespaceURI, svcLocalPart);
+        URL wsdlUrl = getWsdlURL(otherWsdl);
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+        OASISCatalogManager catalogManager = new OASISCatalogManager();
+        catalogManager.setCatalogFiles(getCatalogLocation(uniqueCatalog));
+        composite.setCatalogManager(catalogManager);
+        // Use the proprietary SPI to create a service with additional metadata specified
+        ServiceDelegate.setServiceMetadata(composite);
+        Service service = Service.create(wsdlUrl, serviceQName);
+        
+        assertNotNull(service);
+        // Verify that the composite has been reset so that it would not affect the next Service
+        assertNull(ServiceDelegate.getServiceMetadata());
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
+        assertNotNull(serviceDelegate);
+        ServiceDescription serviceDesc = serviceDelegate.getServiceDescription();
+        assertNotNull(serviceDesc);
+        DescriptionBuilderComposite dbcInServiceDesc = DescriptionTestUtils2.getServiceDescriptionComposite(serviceDesc);
+        assertSame(composite, dbcInServiceDesc.getSparseComposite(serviceDelegate));
+        assertEquals(Service.class, dbcInServiceDesc.getCorrespondingClass());
+
+        // Verify that the CatalogManager for the Service uses the unique catalog file.
+        String serviceCatalogFile = (String) dbcInServiceDesc.getSparseComposite(serviceDelegate).getCatalogManager().getCatalogFiles().get(0);
+        assertEquals(serviceCatalogFile, getCatalogLocation(uniqueCatalog));
+    }
+
+    /**
      * Generated service constructor() with a composite that specifies a wsdlLocation override
      */
     public void testNoArgGeneratedServiceOverrideWsdlLocation() {
@@ -428,6 +489,34 @@ public class ClientMetadataTest extends TestCase {
         
         // WSDL override specified in the composite
         assertTrue("Wrong WSDL used", validatePort(service, overridenWsdl_portLocalPart));
+    }
+    
+    /**
+     * Generated service constructor() with a composite that specifies a CatalogManager override
+     */
+    public void testNoArgGeneratedServiceOverrideCatalogManager() {
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+        OASISCatalogManager catalogManager = new OASISCatalogManager();
+        catalogManager.setCatalogFiles(getCatalogLocation(uniqueCatalog));
+        composite.setCatalogManager(catalogManager);
+        ServiceDelegate.setServiceMetadata(composite);
+
+        Service service = new ClientMetadataGeneratedService();
+
+        assertNotNull(service);
+        assertNull(ServiceDelegate.getServiceMetadata());
+        
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
+        assertNotNull(serviceDelegate);
+        ServiceDescription serviceDesc = serviceDelegate.getServiceDescription();
+        assertNotNull(serviceDesc);
+        DescriptionBuilderComposite dbcInServiceDesc = DescriptionTestUtils2.getServiceDescriptionComposite(serviceDesc);
+        assertSame(composite, dbcInServiceDesc.getSparseComposite(serviceDelegate));
+        assertEquals(ClientMetadataGeneratedService.class, dbcInServiceDesc.getCorrespondingClass());
+
+        // Verify that the CatalogManager for the Service uses the unique catalog file.
+        String serviceCatalogFile = (String) dbcInServiceDesc.getSparseComposite(serviceDelegate).getCatalogManager().getCatalogFiles().get(0);
+        assertEquals(serviceCatalogFile, getCatalogLocation(uniqueCatalog));
     }
     
     /**
@@ -515,6 +604,36 @@ public class ClientMetadataTest extends TestCase {
         assertTrue("Wrong WSDL used", validatePort(service, overridenWsdl_portLocalPart));
     }
     
+    /**
+     * Generated service constructor(URL, QName) with a composite that specifies a 
+     * Catalog Manager override.  
+     */
+    public void test2ArgGeneratedServiceOverrideCatalogManager() {
+        DescriptionBuilderComposite composite = new DescriptionBuilderComposite();
+        OASISCatalogManager catalogManager = new OASISCatalogManager();
+        catalogManager.setCatalogFiles(getCatalogLocation(uniqueCatalog));
+        composite.setCatalogManager(catalogManager);
+        ServiceDelegate.setServiceMetadata(composite);
+
+        Service service = new ClientMetadataGeneratedService(getWsdlURL(otherWsdl),
+                                                             new QName(namespaceURI, svcLocalPart));
+
+        assertNotNull(service);
+        assertNull(ServiceDelegate.getServiceMetadata());
+        
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
+        assertNotNull(serviceDelegate);
+        ServiceDescription serviceDesc = serviceDelegate.getServiceDescription();
+        assertNotNull(serviceDesc);
+        DescriptionBuilderComposite dbcInServiceDesc = DescriptionTestUtils2.getServiceDescriptionComposite(serviceDesc);
+        assertSame(composite, dbcInServiceDesc.getSparseComposite(serviceDelegate));
+        assertEquals(ClientMetadataGeneratedService.class, dbcInServiceDesc.getCorrespondingClass());
+
+        // Verify that the CatalogManager for the Service uses the unique catalog file.
+        String serviceCatalogFile = (String) dbcInServiceDesc.getSparseComposite(serviceDelegate).getCatalogManager().getCatalogFiles().get(0);
+        assertEquals(serviceCatalogFile, getCatalogLocation(uniqueCatalog));
+    }
+
     /**
      * Generated service constructor(URL, QName) with a composite that specifies a wsdlLocation override
      * where the override is a fully specifed URL to a file.
@@ -845,6 +964,18 @@ public class ClientMetadataTest extends TestCase {
         String baseDir = System.getProperty("basedir",".");
         wsdlLocation = baseDir + "/test-resources/wsdl/" + wsdlFileName;
         return wsdlLocation;
+    }
+    
+    /**
+     * Prepends the base directory and the path where the test Catalog lives to a filename.
+     * @param catalogFileName
+     * @return
+     */
+    static String getCatalogLocation(String catalogFileName) {
+        String wsdlLocation = null;
+        String baseDir = System.getProperty("basedir",".");
+        wsdlLocation = baseDir + "/test-resources/catalog/" + catalogFileName;
+        return catalogFileName;
     }
     
     /**

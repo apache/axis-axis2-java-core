@@ -1,0 +1,23 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+   <system
+       systemId="http://java.sun.com/xml/ns/j2ee/application_1_4.xsd"
+       uri="catalog/schema/application_1_4.xsd" />
+   <system
+       systemId="http://soapinterop.org/xsd2"
+       uri="importAux.xsd" />
+   <system
+       systemId="http://example.com/test/doesnotexist.wsdl"
+       uri="dir1/abstract.wsdl" />
+   <system
+       systemId="doesnotexist.xsd"
+       uri="dir2/imported1.xsd" />
+   <system
+       systemId="http://example.com/neverExisted.xsd"
+       uri="dir3/imported2.xsd" />
+   <public
+       publicId="-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 1.1//EN"
+       uri="catalog/dtd/ejb-jar.dtd" />
+   <public
+       publicId="-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN"
+       uri="catalog/dtd/ejb-jar_2_0.dtd" />
+</catalog>

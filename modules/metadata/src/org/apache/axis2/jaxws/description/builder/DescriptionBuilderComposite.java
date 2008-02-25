@@ -24,6 +24,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
@@ -130,6 +131,9 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     // information corresponding to information in a deployment descriptor or an injected 
     // resource.
     private WeakHashMap<Object, DescriptionBuilderComposite> sparseCompositeMap = new WeakHashMap<Object, DescriptionBuilderComposite>();
+    
+    // Allow a unique XML CatalogManager per service description.
+    private JAXWSCatalogManager catalogManager = null;
     
     public void setSparseComposite(Object key, DescriptionBuilderComposite sparseComposite) {
         if (key != null && sparseComposite != null) {
@@ -696,6 +700,22 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         return theCorrespondingClass;
     }
 
+    /**
+     * Set the Catalog Manager associated with this composite.  
+     * @param theCatalogManger
+     */
+    public void setCatalogManager(JAXWSCatalogManager theCatalogManager) {
+    	this.catalogManager = theCatalogManager;
+    }
+    
+    /**
+     * Returns the catalog manager associated with this composite, if any.
+     * @return
+     */
+    public JAXWSCatalogManager getCatalogManager() {
+    	return catalogManager;
+    }
+    
     /**
      * @deprecated
      */

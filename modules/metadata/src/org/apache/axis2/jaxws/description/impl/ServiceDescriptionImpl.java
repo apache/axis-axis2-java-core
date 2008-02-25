@@ -27,6 +27,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
+import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -109,6 +111,9 @@ class ServiceDescriptionImpl
     private DescriptionBuilderComposite composite = null;
     private boolean isServerSide = false;
 
+    // Allow a unique XML CatalogManager per service description.
+    private JAXWSCatalogManager catalogManager = null;
+    
     // RUNTIME INFORMATION
     Map<String, ServiceRuntimeDescription> runtimeDescMap =
             new ConcurrentHashMap<String, ServiceRuntimeDescription>();
@@ -150,6 +155,12 @@ class ServiceDescriptionImpl
         if (log.isDebugEnabled()) {
             log.debug("ServiceDescriptionImpl(URL,QName,Class,DescriptionBuilderComposite,Object)");
         }
+    	
+    	if (sparseComposite != null)
+    	    catalogManager = sparseComposite.getCatalogManager();
+    	else
+    		catalogManager = new OASISCatalogManager();
+    	
         if (serviceQName == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr0"));
         }
@@ -231,7 +242,7 @@ class ServiceDescriptionImpl
 
 
     /**
-     * * Create a service-provider side ServiceDesciption.  Create a service Description
+     * Create a service-provider side ServiceDesciption.  Create a service Description
      * based on a service implementation class.  Note this is for test-only code; it should not be 
      * used in production code.  And it is being removed from the test code as well.
      *
@@ -674,7 +685,8 @@ class ServiceDescriptionImpl
                         }
                         this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,
                                                              composite.getWsdlDefinition(), 
-                                                             configContext);
+                                                             configContext,
+                                                             this.catalogManager);
                     } catch (WSDLException e) {
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
@@ -723,7 +735,8 @@ class ServiceDescriptionImpl
                         this.wsdlWrapper =
                                 new WSDL4JWrapper(seic.getWsdlURL(), 
                                                   seic.getWsdlDefinition(), 
-                                                  configContext);
+                                                  configContext,
+                                                  this.catalogManager);
                             
                     } else if (composite.getWsdlDefinition() != null) {
                         //set the wsdl def from the impl. class composite
@@ -740,7 +753,8 @@ class ServiceDescriptionImpl
                         this.wsdlURL = composite.getWsdlURL();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
                                                              composite.getWsdlDefinition(), 
-                                                             configContext);
+                                                             configContext,
+                                                             this.catalogManager);
                                                             
                     } else {
                     	String wsdlLocation = null;
@@ -789,7 +803,8 @@ class ServiceDescriptionImpl
                         log.debug("new WSDL4JWrapper-ConfigContext null4"); 
                     }
                 }
-                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,configContext);
+                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,configContext,
+                		                             this.catalogManager);
              
             }
             catch (FileNotFoundException e) {
@@ -845,7 +860,7 @@ class ServiceDescriptionImpl
                         }
                     }
 		    URL url = getWSDLURL(wsdlLocation);
-			this.wsdlWrapper = new WSDL4JWrapper(url);
+			this.wsdlWrapper = new WSDL4JWrapper(url, this.catalogManager);
 			composite.setWsdlDefinition(wsdlWrapper.getDefinition());
 		}
 		catch(Exception e) {
@@ -1008,6 +1023,10 @@ class ServiceDescriptionImpl
 
     void setServiceQName(QName theName) {
         serviceQName = theName;
+    }
+    
+    public JAXWSCatalogManager getCatalogManager() {
+    	return catalogManager;
     }
 
     /* (non-Javadoc)

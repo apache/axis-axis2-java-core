@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import javax.xml.namespace.QName;
 import java.util.Collection;
 import java.util.List;
@@ -141,4 +142,6 @@ public interface ServiceDescription {
     public boolean isMTOMEnabled(Object key);
     
     public QName getPreferredPort(Object key);
+    
+    public JAXWSCatalogManager getCatalogManager();
 }

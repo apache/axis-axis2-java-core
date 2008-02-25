@@ -989,7 +989,7 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * find the defintion object for given name
+     * find the definition object for given name
      * @param parentDefinition
      * @param name
      * @return wsdl definition

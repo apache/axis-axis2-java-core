@@ -127,7 +127,7 @@ public interface EndpointDescription {
      * This is the same as calling getHandlerChain(null).
      * @see #getHandlerChain(Object)
      */
-public abstract HandlerChainsType getHandlerChain();
+    public abstract HandlerChainsType getHandlerChain();
 
     /**
      * Set the binding type FOR A CLIENT.  The BindingType annotation is not valid on the client per
