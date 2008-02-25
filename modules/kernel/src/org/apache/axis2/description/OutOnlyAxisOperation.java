@@ -256,7 +256,7 @@ class OutOnlyAxisOperationClient extends OperationClient {
         if (epr == null) {
             mc.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
         }
-        else if (epr.hasAnonymousAddress() && epr.getAllReferenceParameters() != null) {
+        else if (epr.isWSAddressingAnonymous() && epr.getAllReferenceParameters() != null) {
             mc.setProperty(AddressingConstants.INCLUDE_OPTIONAL_HEADERS, Boolean.TRUE);
         }
         

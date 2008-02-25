@@ -207,7 +207,7 @@ class OutInAxisOperationClient extends OperationClient {
                         " can not be used with OutInAxisOperationClient , user either "
                         + "fireAndForget or sendRobust)");
             }
-            else if (replyTo.hasAnonymousAddress() &&
+            else if (replyTo.isWSAddressingAnonymous() &&
                      replyTo.getAllReferenceParameters() != null) {
                 mc.setProperty(AddressingConstants.INCLUDE_OPTIONAL_HEADERS, Boolean.TRUE);
             }
