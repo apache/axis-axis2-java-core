@@ -194,6 +194,8 @@ class OperationDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap =
             Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
+    // Cache the actual Class of the type being returned. 
+    private Class resultActualTypeClazz;
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -1555,6 +1557,13 @@ class OperationDescriptionImpl
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultActualType()
      */
     public Class getResultActualType() {
+        if(resultActualTypeClazz != null) {
+            resultActualTypeClazz = findResultActualType();    
+        }
+        return resultActualTypeClazz;
+    }
+    
+    public Class findResultActualType() {
         // TODO: Fix this!  it isn't doing the right thing for DBC as noted below with FIXME comments
         //       This is used to marshall the rsp on the service (dbc) and demarshall on the client (reflection)
         //       But we shouldn't get an async OpDesc on the service since getDispatchableOperation(QN) removes them.
