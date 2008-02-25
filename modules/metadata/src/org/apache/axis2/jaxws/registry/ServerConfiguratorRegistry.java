@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.registry;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.soap.AddressingFeature;
@@ -36,7 +36,7 @@ import org.apache.axis2.jaxws.feature.ServerConfigurator;
 
 public class ServerConfiguratorRegistry {
     private static Map<String, ServerConfigurator> map =
-        new HashMap<String, ServerConfigurator>();
+        new ConcurrentHashMap<String, ServerConfigurator>();
     
     static {
         map.put(AddressingFeature.ID, new AddressingConfigurator());
