@@ -36,13 +36,18 @@ import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 /**
- *
+ * This class will enable/disable WS-Addressing in a JAX-WS 2.1 client,
+ * based on the configuration passed to it via an <code>AddressingFeature</code>
+ * and/or a <code>SubmissionAddressingFeature</code>.
+ *  
+ *  @see javax.xml.ws.soap.AddressingFeature
+ *  @see org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature
  */
 public class AddressingConfigurator implements ClientConfigurator {
 
     /*
      *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
+     * @see org.apache.axis2.jaxws.feature.ClientConfigurator#configure(org.apache.axis2.jaxws.core.MessageContext, org.apache.axis2.jaxws.spi.BindingProvider)
      */
     public void configure(MessageContext messageContext, BindingProvider provider) {
         Binding bnd = (Binding) provider.getBinding();
@@ -50,8 +55,7 @@ public class AddressingConfigurator implements ClientConfigurator {
             (AddressingFeature) bnd.getFeature(AddressingFeature.ID);
         SubmissionAddressingFeature submissionAddressingFeature =
             (SubmissionAddressingFeature) bnd.getFeature(SubmissionAddressingFeature.ID);
-        String addressingNamespace =
-            (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        String addressingNamespace = bnd.getAddressingNamespace();
         Boolean disableAddressing =
             (Boolean) messageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         
@@ -65,16 +69,24 @@ public class AddressingConfigurator implements ClientConfigurator {
                 //Use the addressing namespace of the EPR specified
                 //via the JAX-WS 2.1 API. If no EPR was specified
                 //then the 2005/08 namespace will be used.
-                addressingNamespace = bnd.getAddressingNamespace();
+                if (addressingNamespace == null)
+                    addressingNamespace = Final.WSA_NAMESPACE;
+                
                 disableAddressing = Boolean.FALSE;
             }
             else if (w3cAddressingEnabled) {
                 //Enable only 2005/08 addressing
+                if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
+                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
+                
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else if (submissionAddressingEnabled) {
                 //Enable only 2004/08 addressing
+                if (Final.WSA_NAMESPACE.equals(addressingNamespace))
+                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
+                
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -89,6 +101,9 @@ public class AddressingConfigurator implements ClientConfigurator {
 
             if (w3cAddressingEnabled) {
                 //Enable 2005/08 addressing
+                if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
+                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
+                
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -103,6 +118,9 @@ public class AddressingConfigurator implements ClientConfigurator {
             
             if (submissionAddressingEnabled) {
                 //Enable 2004/08 addressing
+                if (Final.WSA_NAMESPACE.equals(addressingNamespace))
+                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
+                
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -119,11 +137,9 @@ public class AddressingConfigurator implements ClientConfigurator {
         if (!disableAddressing) {
             try {
                 EndpointReference epr = bnd.getAxis2EndpointReference();
-                if (epr != null) {
-                    org.apache.axis2.context.MessageContext axis2MessageContext =
-                        messageContext.getAxisMessageContext();
-                    axis2MessageContext.setTo(epr);
-                }
+                org.apache.axis2.context.MessageContext axis2MessageContext =
+                    messageContext.getAxisMessageContext();
+                axis2MessageContext.setTo(epr);
                 
                 ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
                 AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();

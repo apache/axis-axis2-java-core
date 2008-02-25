@@ -37,13 +37,19 @@ import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 
 /**
- *
+ * This class will enable/disable WS-Addressing for a JAX-WS 2.1 web service
+ * endpoint, based on the configuration passed to it via an <code>Addressing</code>
+ * annotation and/or a <code>SubmissionAddressing</code> annotation from the
+ * endpoint implementation bean.
+ * 
+ * @see javax.xml.ws.soap.Addressing
+ * @see org.apache.axis2.jaxws.addressing.SubmissionAddressing
  */
 public class AddressingConfigurator implements ServerConfigurator {
 
     /*
      *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
+     * @see org.apache.axis2.jaxws.feature.ServerConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
     	Addressing addressing =
