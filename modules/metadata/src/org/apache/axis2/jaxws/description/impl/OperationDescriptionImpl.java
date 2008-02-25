@@ -1557,7 +1557,7 @@ class OperationDescriptionImpl
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultActualType()
      */
     public Class getResultActualType() {
-        if(resultActualTypeClazz != null) {
+        if(resultActualTypeClazz == null) {
             resultActualTypeClazz = findResultActualType();    
         }
         return resultActualTypeClazz;
