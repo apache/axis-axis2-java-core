@@ -581,5 +581,15 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         setoutputSourceLocation = true;
         
     }
-    
+
+    private String excludeProperties;
+
+    public String getExcludeProperties() {
+        return excludeProperties;
+    }
+
+    public void setExcludeProperties(String excludeProperties) {
+        this.excludeProperties = excludeProperties;
+    }
+
 }
