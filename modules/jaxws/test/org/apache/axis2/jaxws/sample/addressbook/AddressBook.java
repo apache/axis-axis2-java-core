@@ -26,8 +26,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 @WebService(name = "AddressBook", 
-            targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook", 
-            wsdlLocation = "\\work\\apps\\eclipse\\workspace\\axis2\\modules\\jaxws\\test\\org\\apache\\axis2\\jaxws\\sample\\addressbook\\META-INF\\AddressBookService.wsdl")
+            targetNamespace = "http://org/apache/axis2/jaxws/sample/addressbook")
 public interface AddressBook {
 
 
