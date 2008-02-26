@@ -60,6 +60,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class MessageContextSelfManagedDataTest extends TestCase {
     protected static final Log log = LogFactory.getLog(MessageContextSelfManagedDataTest.class);
@@ -913,8 +914,8 @@ public class MessageContextSelfManagedDataTest extends TestCase {
                 Phase p1 = (Phase) o1;
                 Phase p2 = (Phase) o2;
 
-                ArrayList list1 = p1.getHandlers();
-                ArrayList list2 = p2.getHandlers();
+                List list1 = p1.getHandlers();
+                List list2 = p2.getHandlers();
 
                 if ((list1 == null) && (list2 == null)) {
                     return true;

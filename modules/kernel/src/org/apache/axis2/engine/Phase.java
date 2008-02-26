@@ -20,6 +20,7 @@
 
 package org.apache.axis2.engine;
 
+import edu.emory.mathcs.backport.java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -30,8 +31,8 @@ import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A Phase is an ordered collection of Handlers.
@@ -48,7 +49,7 @@ public class Phase implements Handler {
     /**
      * Field handlers
      */
-    private ArrayList handlers;
+    private List handlers;
 
     /**
      * A handler has been marked as present in both the first phase and the last phase
@@ -83,7 +84,7 @@ public class Phase implements Handler {
      * @param phaseName the name for this Phase
      */
     public Phase(String phaseName) {
-        handlers = new ArrayList();
+        handlers = new CopyOnWriteArrayList();
         this.phaseName = phaseName;
     }
 
@@ -113,7 +114,7 @@ public class Phase implements Handler {
      * @param handlerDesc the HandlerDescription to add
      * @throws PhaseException if there is a problem
      */
-    public synchronized void addHandler(HandlerDescription handlerDesc) throws PhaseException {
+    public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
         Iterator handlers_itr = getHandlers().iterator();
 
         while (handlers_itr.hasNext()) {
@@ -131,7 +132,7 @@ public class Phase implements Handler {
         }
 
         if (handlerDesc.getRules().isPhaseFirst() && handlerDesc.getRules().isPhaseLast()) {
-            if (handlers.size() > 0) {
+            if (!handlers.isEmpty()) {
                 throw new PhaseException(this.getPhaseName()
                         + " already contains Handlers, and "
                         + handlerDesc.getName()
@@ -356,7 +357,7 @@ public class Phase implements Handler {
      *
      * @return Returns an ArrayList of Handlers
      */
-    public ArrayList getHandlers() {
+    public List getHandlers() {
         return handlers;
     }
 

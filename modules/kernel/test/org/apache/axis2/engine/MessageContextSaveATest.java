@@ -61,6 +61,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -494,8 +495,8 @@ public class MessageContextSaveATest extends TestCase {
                 String name1 = p1.getName();
                 String name2 = p2.getName();
 
-                ArrayList list1 = p1.getHandlers();
-                ArrayList list2 = p2.getHandlers();
+                List list1 = p1.getHandlers();
+                List list2 = p2.getHandlers();
 
                 if ((list1 == null) && (list2 == null)) {
                     log.debug("MessageContextSaveATest: comparePhases:  Phase1[" + name1 +

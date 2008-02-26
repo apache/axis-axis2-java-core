@@ -264,7 +264,9 @@ public class ServiceClient {
      * Returns the AxisConfiguration associated with the client.    
      */
     public AxisConfiguration getAxisConfiguration() {
-        return axisConfig;
+        synchronized(this.axisConfig) {
+            return axisConfig;
+        }
     }
     
     /**
@@ -336,7 +338,7 @@ public class ServiceClient {
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(String moduleName) throws AxisFault {
-        synchronized (this) {
+        synchronized (this.axisConfig) {
             AxisModule module = axisConfig.getModule(moduleName);
             if (module != null) {
                 axisService.engageModule(module);
@@ -362,12 +364,14 @@ public class ServiceClient {
      * @param moduleName name of Module to disengage
      */
     public void disengageModule(String moduleName) {
-        AxisModule module = axisConfig.getModule(moduleName);
-        if (module != null) {
-            try {
-                axisService.disengageModule(module);
-            } catch (AxisFault axisFault) {
-                log.error(axisFault.getMessage(), axisFault);
+        synchronized (this.axisConfig) {
+            AxisModule module = axisConfig.getModule(moduleName);
+            if (module != null) {
+                try {
+                    axisService.disengageModule(module);
+                } catch (AxisFault axisFault) {
+                    log.error(axisFault.getMessage(), axisFault);
+                }
             }
         }
     }
@@ -536,10 +540,8 @@ public class ServiceClient {
         if(options.isCallTransportCleanup()){
             response.getEnvelope().build();
             cleanupTransport();
-            return response.getEnvelope().getBody().getFirstElement();
-        } else {
-            return response.getEnvelope().getBody().getFirstElement();
         }
+        return response.getEnvelope().getBody().getFirstElement();
     }
 
     /**
@@ -822,12 +824,13 @@ public class ServiceClient {
             throw new IllegalArgumentException("AxisService is null");
         }
 
-        axisConfig.removeService(this.axisService.getName());
-        this.axisService = axisService;
-
-        axisService.setClientSide(true);
-        axisConfig.addService(axisService);
-
+        synchronized(this.axisConfig) {
+            axisConfig.removeService(this.axisService.getName());
+            this.axisService = axisService;
+    
+            axisService.setClientSide(true);
+            axisConfig.addService(axisService);
+        }
         AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext serviceGroupContext =
                 configContext.createServiceGroupContext(axisServiceGroup);

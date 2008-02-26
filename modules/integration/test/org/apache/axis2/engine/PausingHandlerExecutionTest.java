@@ -349,7 +349,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
                     Phase phase = (Phase)handler;
                     System.out.println("Phase name [" + phase.getName() + "]");
 
-                    ArrayList list2 = phase.getHandlers();
+                    List list2 = phase.getHandlers();
                     Iterator it2 = list2.iterator();
                     checkHandler(it2);
                 }

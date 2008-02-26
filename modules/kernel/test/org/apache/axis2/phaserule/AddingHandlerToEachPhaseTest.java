@@ -27,6 +27,7 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
     AxisConfiguration axisConfig;
@@ -60,9 +61,9 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
         for (int i = 0; i < inPhase.size(); i++) {
             found = false;
             Phase phase = (Phase) inPhase.get(i);
-            ArrayList hnadles = phase.getHandlers();
-            for (int j = 0; j < hnadles.size(); j++) {
-                Handler handler = (Handler) hnadles.get(j);
+            List handlers = phase.getHandlers();
+            for (int j = 0; j < handlers.size(); j++) {
+                Handler handler = (Handler) handlers.get(j);
                 if (h1.equals(handler)) {
                     found = true;
                 }
@@ -99,8 +100,8 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
         ph.addHandler(hm);
         for (int i = 0; i < inPhase.size(); i++) {
             Phase phase = (Phase) inPhase.get(i);
-            ArrayList hnadles = phase.getHandlers();
-            Handler handler = (Handler) hnadles.get(0);
+            List handlers = phase.getHandlers();
+            Handler handler = (Handler) handlers.get(0);
             if (!h1.equals(handler)) {
                 fail("Some thing has gone wrong hnadler does not exit as phase " +
                         "first handler the phase :"
@@ -133,8 +134,8 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
         ph.addHandler(hm);
         for (int i = 0; i < inPhase.size(); i++) {
             Phase phase = (Phase) inPhase.get(i);
-            ArrayList hnadles = phase.getHandlers();
-            Handler handler = (Handler) hnadles.get(0);
+            List handlers = phase.getHandlers();
+            Handler handler = (Handler) handlers.get(0);
             assertNull(handler.getHandlerDesc().getRules().getAfter());
         }
     }

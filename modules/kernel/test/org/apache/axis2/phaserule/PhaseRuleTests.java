@@ -32,6 +32,7 @@ import org.apache.axis2.context.ConfigurationContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -79,7 +80,7 @@ public class PhaseRuleTests extends TestCase {
         hm1.setRules(rule1);
         ph.addHandler(hm1);
 
-        ArrayList handlers = p1.getHandlers();
+        List handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
         if (handler != h2) {
             fail("Computed Hnadler order is wrong ");
@@ -128,7 +129,7 @@ public class PhaseRuleTests extends TestCase {
         hm.setRules(rule);
         ph.addHandler(hm);
 
-        ArrayList handlers = p1.getHandlers();
+        List handlers = p1.getHandlers();
         Handler handler = (Handler) handlers.get(0);
         if (handler != h2) {
             fail("Computed Handler order is wrong ");
@@ -200,7 +201,7 @@ public class PhaseRuleTests extends TestCase {
         hm4.setRules(rule4);
         ph.addHandler(hm4);
 
-        ArrayList handlers = p1.getHandlers();
+        List handlers = p1.getHandlers();
         boolean foundH1 = false;
         boolean foundH4 = false;
 

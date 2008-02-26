@@ -16,6 +16,7 @@
 
 package org.apache.axis2.description;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -36,7 +37,6 @@ import javax.xml.stream.XMLStreamException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
     private PolicyInclude policyInclude = null;
 
-    private HashMap children;
+    private Map children;
 
     protected Map engagedModules;
 
@@ -67,7 +67,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();
-        children = new HashMap();
+        children = new ConcurrentHashMap();
     }
 
     public void addParameterObserver(ParameterObserver observer) {
@@ -486,7 +486,7 @@ public abstract class AxisDescription implements ParameterInclude,
      * @throws AxisFault if there's a problem engaging
      */
     public void engageModule(AxisModule axisModule, AxisDescription source) throws AxisFault {
-        if (engagedModules == null) engagedModules = new HashMap();
+        if (engagedModules == null) engagedModules = new ConcurrentHashMap();
         String moduleName = axisModule.getName();
         for (Iterator iterator = engagedModules.values().iterator(); iterator.hasNext();) {
             AxisModule tempAxisModule = ((AxisModule) iterator.next());

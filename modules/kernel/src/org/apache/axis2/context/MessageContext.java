@@ -74,6 +74,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.List;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy
@@ -1827,7 +1828,7 @@ public class MessageContext extends AbstractContext
      * @param map  users should pass null as this is just a holder for the recursion
      * @return a list of unigue object instances
      */
-    private ArrayList flattenHandlerList(ArrayList list, LinkedHashMap map) {
+    private ArrayList flattenHandlerList(List list, LinkedHashMap map) {
 
         if (map == null) {
             map = new LinkedHashMap();
@@ -3768,7 +3769,7 @@ public class MessageContext extends AbstractContext
      */
     private void setupPhaseList(Phase phase, MetaDataEntry mdPhase) {
         // get the list from the phase object
-        ArrayList handlers = phase.getHandlers();
+        List handlers = phase.getHandlers();
 
         if (handlers.isEmpty()) {
             // done, make sure there is no list in the given meta data
