@@ -67,9 +67,9 @@ import javax.xml.ws.WebServiceException;
  * 
  * 
  */
-@XmlRootElement(name = "EndpointReference")
+@XmlRootElement(name = "EndpointReference", namespace = SubmissionEndpointReference.NS)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EndpointReferenceType", propOrder = {
+@XmlType(name = "EndpointReferenceType", namespace = SubmissionEndpointReference.NS, propOrder = {
     "address",
     "referenceProperties",
     "referenceParameters",
@@ -81,15 +81,15 @@ public class SubmissionEndpointReference extends EndpointReference {
     protected static final String NS = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
     protected static JAXBContext jaxbContext;
 
-    @XmlElement(name = "Address", required = true)
+    @XmlElement(name = "Address", namespace = NS, required = true)
     protected AttributedURI address;
-    @XmlElement(name = "ReferenceProperties")
+    @XmlElement(name = "ReferenceProperties", namespace = NS)
     protected ReferencePropertiesType referenceProperties;
-    @XmlElement(name = "ReferenceParameters")
+    @XmlElement(name = "ReferenceParameters", namespace = NS)
     protected ReferenceParametersType referenceParameters;
-    @XmlElement(name = "PortType")
+    @XmlElement(name = "PortType", namespace = NS)
     protected AttributedQName portType;
-    @XmlElement(name = "ServiceName")
+    @XmlElement(name = "ServiceName", namespace = NS)
     protected ServiceNameType serviceName;
     @XmlAnyElement(lax = true)
     protected List<Object> any;
