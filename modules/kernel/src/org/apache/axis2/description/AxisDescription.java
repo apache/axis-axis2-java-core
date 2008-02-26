@@ -221,7 +221,12 @@ public abstract class AxisDescription implements ParameterInclude,
 
     // NOTE - These are NOT typesafe!
     public void addChild(AxisDescription child) {
-        children.put(child.getKey(), child);
+        if (child.getKey() == null) {
+        // FIXME: Several classes that extend AxisDescription pass null in their getKey method.    
+//            throw new IllegalArgumentException("Please specify a key in the child");
+        } else {
+            children.put(child.getKey(), child);
+        }
     }
 
     public void addChild(Object key, AxisDescription child) {
