@@ -68,6 +68,7 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         interfacesList = new ArrayList<String>();
         genericAnnotationInstances = new ArrayList<CustomAnnotationInstance>();
         genericAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
+        properties = new HashMap<String, Object>();
     }
 
     //Note: a WSDL is not necessary
@@ -93,6 +94,22 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     
     // Class information
     private String className;
+    /**
+     * Get an annotation by introspecting on a class.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotationFromClass(final Class cls, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                
+                Annotation a = cls.getAnnotation(annotation);
+                return a;
+            }
+        });
+    }
+
     private String[] classModifiers; //public, abstract, final, strictfp...
     private String extendsClass;    //Set to the name of the super class
     private List<String> interfacesList; //Set this for all implemented interfaces
@@ -134,6 +151,11 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     
     // Allow a unique XML CatalogManager per service description.
     private JAXWSCatalogManager catalogManager = null;
+    
+    // This is a bag of properties that apply to the DBC. Currently these properties will be
+    // copied over from the DBC to the description hierarchy. This will only occur on the
+    // server-side for now
+    private Map<String, Object> properties = null;
     
     public void setSparseComposite(Object key, DescriptionBuilderComposite sparseComposite) {
         if (key != null && sparseComposite != null) {
@@ -740,6 +762,14 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public void setIsDeprecatedServiceProviderConstruction(boolean value) {
         isDeprecatedServiceProviderConstruction = value;
     }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+    
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
     
 
     /**
@@ -902,21 +932,5 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         }
 
         return wsdlDef;
-    }
-    
-    /**
-     * Get an annotation by introspecting on a class.  This is wrappered to avoid a Java2Security violation.
-     * @param cls Class that contains annotation 
-     * @param annotation Class of requrested Annotation
-     * @return annotation or null
-     */
-    private static Annotation getAnnotationFromClass(final Class cls, final Class annotation) {
-        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                
-                Annotation a = cls.getAnnotation(annotation);
-                return a;
-            }
-        });
     }
 }

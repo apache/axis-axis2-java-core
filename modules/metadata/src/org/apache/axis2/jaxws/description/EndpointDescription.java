@@ -178,4 +178,15 @@ public interface EndpointDescription {
      * @return
      */
     public DescriptionBuilderComposite getDescriptionBuilderComposite();
+    
+    /**
+     * Return the Object that corresponds to the property key supplied.
+     */
+    public Object getProperty(String key);
+    
+    /**
+     * Store the property by the key specified.
+     */
+    public void setProperty(String key, Object value);
+    
 }

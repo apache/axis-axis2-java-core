@@ -320,7 +320,7 @@ class ServiceDescriptionImpl
         // it will be set to the annotation value.
         //EndpointDescription endpointDescription = new EndpointDescription(null, this, serviceImplName);
         EndpointDescriptionImpl endpointDescription =
-                new EndpointDescriptionImpl(this, serviceImplName);
+                new EndpointDescriptionImpl(this, serviceImplName, composite.getProperties());
         addEndpointDescription(endpointDescription);
     }
 

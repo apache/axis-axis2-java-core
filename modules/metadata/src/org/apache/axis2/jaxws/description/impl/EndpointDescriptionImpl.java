@@ -176,6 +176,8 @@ class EndpointDescriptionImpl
 
     // Supports WebServiceFeatureAnnotations
     private ServerFramework framework = new ServerFramework();
+    
+    private Map<String, Object> properties;
 
     
     /**
@@ -248,6 +250,10 @@ class EndpointDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(msg, e);
         }
     }
+    
+    EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
+        this(parent, serviceImplName, null);
+    }
 
     /**
      * Create a service-provider side EndpointDescription based on the DescriptionBuilderComposite. 
@@ -258,11 +264,15 @@ class EndpointDescriptionImpl
      * @param theClass The SEI or Impl class.  This will be NULL for Dispatch clients since they
      *                 don't use an SEI
      */
-    EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
+    EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName, Map<String, Object>
+        properties) {
         
         // initialize CustomAnnotationIntance list and CustomAnnotationProcessor map
         customAnnotations = new ArrayList<CustomAnnotationInstance>();
         customAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
+        
+        // set properties map
+        this.properties = properties;
         
 
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
@@ -792,7 +802,7 @@ class EndpointDescriptionImpl
         if (axisService == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr1",createAxisServiceName()));
         }
-
+        
         //Save the Port Type name
         Parameter portTypeNameParameter = new Parameter();
         portTypeNameParameter.setName(MDQConstants.WSDL_PORTTYPE_NAME);
@@ -1625,6 +1635,20 @@ class EndpointDescriptionImpl
             endpointAddress = getWSDLSOAPAddress();
         }
         return endpointAddress;
+    }
+    
+    public void setProperty(String key, Object value) {
+        if(properties == null) {
+            properties = new HashMap<String, Object>();
+        }
+        properties.put(key, value);
+    }
+    
+    public Object getProperty(String key) {
+        if(properties != null) {
+           return properties.get(key);
+        }
+        return null;
     }
 
     /**

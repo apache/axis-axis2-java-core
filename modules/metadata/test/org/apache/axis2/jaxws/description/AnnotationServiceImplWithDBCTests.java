@@ -21,6 +21,7 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
+
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
@@ -252,6 +253,52 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
         
         // make sure the WSDL definition was read in from the appropriate location
         assertNotNull(((ServiceDescriptionWSDL) sd).getWSDLDefinition());
+    }
+    
+    /**
+     * This is intended to verify  that properties set on a DescriptionBuilderComposite
+     * instance are carried over to the EndpointDescription object that is created 
+     * from the DBC.
+     */
+    public void testSetProperties() {
+        
+        //Build a Hashmap of DescriptionBuilderComposites that contains the serviceImpl and
+        //all necessary associated DBC's possibly including SEI and superclasses
+        HashMap<String, DescriptionBuilderComposite> dbcMap =
+                new HashMap<String, DescriptionBuilderComposite>();
+
+        DescriptionBuilderComposite dbc = buildDBCNoEndpointInterface();
+        Map<String, Object> props = new HashMap<String, Object>();
+        props.put("prop1", "prop1");
+        props.put("prop2", "prop2");
+        dbc.setProperties(props);
+
+        dbcMap.put(dbc.getClassName(), dbc);
+        try {
+            List<ServiceDescription> serviceDescList =
+                DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap);
+            assertNotNull(serviceDescList.get(0));
+
+            //We know this list contains only one SD, so no need to loop
+            EndpointDescription[] endpointDesc = serviceDescList.get(0).getEndpointDescriptions();
+            assertNotNull(endpointDesc);
+            assertEquals(endpointDesc.length, 1);
+            
+            // get the EndpointDescription so we can make sure the properties were
+            // propogated to the underlying Axis runtime objects
+            EndpointDescription ed = endpointDesc[0];          
+            // make sure we find the two properties that were set on the DBC
+            assertNotNull(ed.getProperty("prop1"));
+            assertTrue(ed.getProperty("prop1").equals("prop1"));
+            assertNotNull(ed.getProperty("prop2"));
+            assertTrue(ed.getProperty("prop2").equals("prop2"));
+            
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        
     }
     
     private String getEchoMessageServiceWSDLLocation() {
