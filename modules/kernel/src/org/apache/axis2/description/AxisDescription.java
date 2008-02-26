@@ -238,6 +238,10 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     public AxisDescription getChild(Object key) {
+        if(key == null) {
+            // FIXME: Why are folks sending in null?
+            return null;
+        }
         return (AxisDescription) children.get(key);
     }
 
