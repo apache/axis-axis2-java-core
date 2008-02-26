@@ -1080,6 +1080,10 @@
 					</includes>
 					<systemProperties>
 						<property>
+							<name>OASISCatalogManager.catalog.debug.level</name>
+							<value>9999</value>
+						</property>
+						<property>
 							<name>build.repository</name>
 							<value>./target/test-classes</value>
 						</property>
