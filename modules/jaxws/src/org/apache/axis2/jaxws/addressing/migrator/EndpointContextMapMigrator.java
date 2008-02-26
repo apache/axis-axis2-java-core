@@ -21,10 +21,7 @@ package org.apache.axis2.jaxws.addressing.migrator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.Constants;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.util.ThreadContextMigrator;
@@ -61,24 +58,9 @@ public class EndpointContextMapMigrator implements ThreadContextMigrator {
             mepConstant == WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
             mepConstant == WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY)
         {
-            AxisConfiguration axisConfig = axisOperation.getAxisConfiguration();
-            Parameter param = axisConfig.getParameter(Constants.ENDPOINT_CONTEXT_MAP);
-            
-            if (param != null) {
-                EndpointContextMap map = (EndpointContextMap) param.getValue();
-                
-                if (map != null) {
-                    EndpointContextMapManager.setEndpointContextMap(map);
-                }
-                else {
-                    //TODO NLS enable.
-                    throw ExceptionFactory.makeWebServiceException("The endpoint context map is null.");
-                }
-            }
-            else {
-                //TODO NLS enable.
-                throw ExceptionFactory.makeWebServiceException("Unable to locate endpoint context map.");
-            }
+            EndpointContextMap map = (EndpointContextMap) 
+                messageContext.getConfigurationContext().getProperty(Constants.ENDPOINT_CONTEXT_MAP);
+            EndpointContextMapManager.setEndpointContextMap(map);
         }        
     }
 
