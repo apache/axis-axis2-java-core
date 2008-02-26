@@ -40,7 +40,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
     * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
     */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        Object flag = msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED);
+        Object flag = msgContext.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED);
         if (log.isTraceEnabled()) {
             log.trace("invoke: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
         }
@@ -154,7 +154,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
      * @see AddressingSubmissionInHandler#checkForMandatoryHeaders
      */
     private void checkMessageIDHeader(MessageContext msgContext) throws AxisFault {
-        String namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
+        String namespace = (String)msgContext.getLocalProperty(WS_ADDRESSING_VERSION);
         if (!Final.WSA_NAMESPACE.equals(namespace)) {
             return;
         }
