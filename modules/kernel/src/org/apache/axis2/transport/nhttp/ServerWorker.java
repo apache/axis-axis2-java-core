@@ -439,7 +439,10 @@ public class ServerWorker implements Runnable {
             try {
                 os.write(msg.getBytes());
                 if (ex != null) {
-                    os.write(ex.getMessage().getBytes());
+                    String msg2 = ex.getMessage();
+                    if(msg2 != null) {
+                        os.write(msg2.getBytes());
+                    }
                 }
             } catch (IOException ignore) {}
 
