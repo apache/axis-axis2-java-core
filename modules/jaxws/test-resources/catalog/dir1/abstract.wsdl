@@ -46,7 +46,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:import namespace="urn:types1" schemaLocation="doesNotExist.xsd"/>
+      <xs:import namespace="urn:types1" schemaLocation="doesnotexist.xsd"/>
     </xs:schema>
     
   </wsdl:types>
