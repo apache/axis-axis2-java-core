@@ -20,6 +20,7 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -38,23 +39,24 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
-        if (bodyFirstChild == null) {
+        String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
+        if (localPart == null) {
             return null;
         }
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug(messageContext.getLogIDString() +
                     " Checking for Operation using SOAP message body's first child's local name : "
-                    + bodyFirstChild.getLocalName());
+                    + localPart);
         }
-        AxisOperation axisOperation = service.getOperation(new QName(bodyFirstChild.getLocalName()));
+        AxisOperation axisOperation = service.getOperation(new QName(localPart));
 
         if (axisOperation == null) {
-            axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
-        }
-
-        if (axisOperation == null) {
-            axisOperation = service.getOperation(bodyFirstChild.getQName());
+            OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
+            QName qName = new QName(ns.getNamespaceURI(), localPart);
+            axisOperation = service.getOperationByMessageElementQName(qName);
+            if (axisOperation == null) {
+                axisOperation = service.getOperation(qName);
+            }
         }
         return axisOperation;
     }

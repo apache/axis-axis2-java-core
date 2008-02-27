@@ -52,15 +52,17 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
 
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        String localName = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
 
         AxisOperation axisOperation = null;
-        if (bodyFirstChild != null){
-           axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
+        if (localName != null){
+           OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
+           QName qName = new QName(ns.getNamespaceURI(), localName);
+           axisOperation = service.getOperationByMessageElementQName(qName);
 
            // this is required for services uses the RPC message receiver
            if (axisOperation == null){
-               QName operationName = new QName(bodyFirstChild.getLocalName());
+               QName operationName = new QName(localName);
                axisOperation = service.getOperation(operationName);
            }
 
@@ -75,10 +77,10 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         String serviceName;
 
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
 
-        if (bodyFirstChild != null) {
-            OMNamespace ns = bodyFirstChild.getNamespace();
+        if (localPart != null) {
+            OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
 
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();

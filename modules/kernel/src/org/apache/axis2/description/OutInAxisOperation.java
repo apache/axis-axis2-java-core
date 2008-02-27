@@ -363,7 +363,7 @@ class OutInAxisOperationClient extends OperationClient {
             if (responseMessageContext.getReplyTo() != null) {
                 sc.setTargetEPR(responseMessageContext.getReplyTo());
             }
-            if (resenvelope.getBody().hasFault()||responseMessageContext.isProcessingFault()) {
+            if (resenvelope.hasFault()||responseMessageContext.isProcessingFault()) {
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
@@ -441,8 +441,9 @@ class OutInAxisOperationClient extends OperationClient {
                 // call the callback
                 if (response != null) {
                     SOAPEnvelope resenvelope = response.getEnvelope();
-                    SOAPBody body = resenvelope.getBody();
-                    if (body.hasFault()) {
+                    
+                    if (resenvelope.hasFault()) {
+                        SOAPBody body = resenvelope.getBody();
                         // If a fault was found, create an AxisFault with a MessageContext so that
                         // other programming models can deserialize the fault to an alternative form.
                         AxisFault fault = new AxisFault(body.getFault(), response);

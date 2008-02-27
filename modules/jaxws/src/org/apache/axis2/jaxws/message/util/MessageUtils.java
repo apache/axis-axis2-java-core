@@ -174,8 +174,7 @@ public class MessageUtils {
             // SOAPEnvelope, then all the data will be available to the provider.  Otherwise, it
             // will be missing the <Reason> element corresponding to the <faultstring> element.  
             // The SOAPFaultProviderTests will check for this failure.
-            SOAPBody soapBody = soapEnv.getBody();
-            if (soapBody.hasFault()) {
+            if (soapEnv.hasFault()) {
                 soapEnv.toString();
             }
 

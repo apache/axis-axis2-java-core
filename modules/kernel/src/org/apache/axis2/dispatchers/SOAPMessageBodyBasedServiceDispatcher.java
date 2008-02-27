@@ -38,10 +38,10 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         String serviceName = null;
-        OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
+        String localPart = messageContext.getEnvelope().getSOAPBodyFirstElementLocalName();
 
-        if (bodyFirstChild != null) {
-            OMNamespace ns = bodyFirstChild.getNamespace();
+        if (localPart != null) {
+            OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
 
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();

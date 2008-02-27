@@ -108,7 +108,7 @@ public class CallbackReceiver implements MessageReceiver {
                 opContext.addMessageContext(msgContext);
             }
 
-            if (envelope.getBody().hasFault()) {
+            if (envelope.hasFault()) {
                 AxisFault axisFault =
                         Utils.getInboundFaultFromMessageContext(msgContext);
                 callback.onError(axisFault);

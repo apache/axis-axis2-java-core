@@ -85,7 +85,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                 responseMessageContext.setEnvelope(envelope);
             }
             if (envelope != null) {
-                if (envelope.getBody().hasFault()|| responseMessageContext.isProcessingFault()) {
+                if (envelope.hasFault()|| responseMessageContext.isProcessingFault()) {
                     //receiving a fault
                     AxisEngine.receive(responseMessageContext);
                     throw Utils.getInboundFaultFromMessageContext(responseMessageContext);
