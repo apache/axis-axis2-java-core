@@ -62,6 +62,7 @@ public class TestUtils {
         inMC.setEnvelope(envelope);
         AxisConfiguration axisConfig = new AxisConfiguration();
         AxisService as = new AxisService();
+        as.setName("ScriptService");
         AxisServiceGroup asg = new AxisServiceGroup(axisConfig);
         asg.addService(as);
         as.addParameter(new Parameter("script.js",
