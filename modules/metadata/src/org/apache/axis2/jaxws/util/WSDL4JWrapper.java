@@ -174,7 +174,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
         } catch(IOException ex)  {
             throw ex;
         } catch (Exception ex) {
-            throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
+            throw new WSDLException("WSDL4JWrapper : ", ex.getMessage(), ex);
         }
     }
     
