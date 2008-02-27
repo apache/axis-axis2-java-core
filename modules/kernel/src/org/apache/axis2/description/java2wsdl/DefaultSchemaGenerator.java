@@ -951,7 +951,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected String getSimpleName(JClass type) {
         String name = type.getSimpleName();
         if (name.indexOf("$")>0){
-           name = name.replace("$","_");
+           name = name.replace('$','_');
         }
         return name;
     }
@@ -974,7 +974,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected String getQualifiedName(JClass type) {
         String name = type.getQualifiedName();
         if (name.indexOf("$")>0){
-           name = name.replace("$","_");
+           name = name.replace('$','_');
         }
         return name;
     }
