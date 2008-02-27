@@ -172,7 +172,10 @@ public class BeanUtil {
                     Method readMethod = propDesc.getReadMethod();
                     Object value;
                     if(readMethod!=null){
-                      value = readMethod.invoke(beanObject, null);
+                        if (property.getGetter() !=null && property.getGetter().isPublic()){
+                            readMethod.setAccessible(true);
+                        }
+                        value = readMethod.invoke(beanObject, null);
                     } else {
                         throw new AxisFault("can not find read method for : "  + propDesc.getName());
                     }
@@ -184,8 +187,10 @@ public class BeanUtil {
                         Method readMethod = propDesc.getReadMethod();
                         Object value;
                         if(readMethod!=null){
-                            value = readMethod.invoke(beanObject,
-                                    null);
+                            if (property.getGetter() !=null && property.getGetter().isPublic()){
+                                readMethod.setAccessible(true);
+                            }
+                            value = readMethod.invoke(beanObject,null);
                         } else {
                             throw new AxisFault("can not find read method for : "  + propDesc.getName());
                         }
@@ -206,8 +211,16 @@ public class BeanUtil {
                             object.add(value);
                         }
                     } else {
-                        Object value [] = (Object[])propDesc.getReadMethod().invoke(beanObject,
-                                                                                    null);
+                        Method readMethod = propDesc.getReadMethod();
+                        Object value [] = null;
+                        if(readMethod!=null){
+                            if (property.getGetter() !=null && property.getGetter().isPublic()){
+                                readMethod.setAccessible(true);
+                            }
+                            value = (Object[])propDesc.getReadMethod().invoke(beanObject,
+                                    null);
+                        }
+
                         if (value != null) {
                             for (int j = 0; j < value.length; j++) {
                                 Object o = value[j];
@@ -220,7 +233,11 @@ public class BeanUtil {
                         }
                     }
                 } else if (SimpleTypeMapper.isCollection(ptype)) {
-                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                    Method readMethod = propDesc.getReadMethod();
+                    if (property.getGetter() !=null && property.getGetter().isPublic()){
+                        readMethod.setAccessible(true);
+                    }
+                    Object value = readMethod.invoke(beanObject,
                                                                    null);
                     Collection objList = (Collection)value;
                     if (objList != null && objList.size() > 0) {
@@ -244,7 +261,11 @@ public class BeanUtil {
                     }
                 } else {
                     addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
-                    Object value = propDesc.getReadMethod().invoke(beanObject,
+                    Method readMethod = propDesc.getReadMethod();
+                    if (property.getGetter() !=null && property.getGetter().isPublic()){
+                        readMethod.setAccessible(true);
+                    }
+                    Object value = readMethod.invoke(beanObject,
                             null);
                     if ("java.lang.Object".equals(ptype.getName())){
                         if ((value instanceof Integer ) ||
@@ -421,6 +442,7 @@ public class BeanUtil {
                         Object [] parms = new Object[] { partObj };
                         Method writeMethod = prty.getWriteMethod();
                         if (writeMethod != null) {
+                            writeMethod.setAccessible(true);
                             writeMethod.invoke(beanObj, parms);
                         }
                     }
@@ -486,6 +508,7 @@ public class BeanUtil {
                     Object [] parms = new Object[] { partObj };
                     Method writeMethod = prty.getWriteMethod();
                     if (writeMethod != null) {
+                        writeMethod.setAccessible(true);
                         writeMethod.invoke(beanObj, parms);
                     }
                 }

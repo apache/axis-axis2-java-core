@@ -34,6 +34,7 @@ public class BitMask {
 
     BitMask(String v) {
         value = v;
+        values = new ArrayList();
         values.add(this);
     }
 

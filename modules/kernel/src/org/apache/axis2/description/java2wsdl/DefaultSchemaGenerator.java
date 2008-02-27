@@ -160,7 +160,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
             JClass jclass = (JClass) jClassIter.next();
-            if (getQualifiedName(jclass).equals(className)) {
+            if (getActualQualifiedName(jclass).equals(className)) {
                 /**
                  * Schema genertaion done in two stage 1. Load all the methods and
                  * create type for methods parameters (if the parameters are Bean
@@ -949,7 +949,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected String getSimpleName(JClass type) {
-        return type.getSimpleName();
+        String name = type.getSimpleName();
+        if (name.indexOf("$")>0){
+           name = name.replace("$","_");
+        }
+        return name;
     }
 
     protected String getSimpleName(JProperty peroperty) {
@@ -964,8 +968,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return method.getQualifiedName();
     }
 
-    protected String getQualifiedName(JClass type) {
+    protected String getActualQualifiedName(JClass type ) {
         return type.getQualifiedName();
+    }
+    protected String getQualifiedName(JClass type) {
+        String name = type.getQualifiedName();
+        if (name.indexOf("$")>0){
+           name = name.replace("$","_");
+        }
+        return name;
     }
 
     protected String getQualifiedName(JProperty peroperty) {
