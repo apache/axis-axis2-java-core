@@ -41,7 +41,7 @@ import junit.framework.TestCase;
  */
 public class MultiRedirectionCatalogTest extends TestCase {
 	private static final String ROOT_WSDL = "/test-resources/catalog/root.wsdl";
-	private static final String TEST_RESOURCES = "test-resources/catalog/";
+	private static final String TEST_RESOURCES = "/test-resources/catalog/";
 	
 	public void testOneCatalogSuccess() {
 		verifySuccess(ROOT_WSDL, TEST_RESOURCES + "basic-catalog.xml");
@@ -71,11 +71,11 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	 * Ensure that the catalog is used to locate imported resources.
 	 */
 	private void verifySuccess(String wsdlLocation, String catalogFile) {
-	    URL url = getURLFromLocatoinString(wsdlLocation);
+	    URL url = getURLFromLocation(wsdlLocation);
 	    
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
-			catalogManager.setCatalogFiles(catalogFile);
+			catalogManager.setCatalogFiles(getAbsolutePath(catalogFile));
 	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
 	    	Definition wsdlDef = w4j.getDefinition();
 	    	assertNotNull(wsdlDef);   
@@ -103,11 +103,11 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	 * catalog entry.
 	 */
 	private void verifyFailure(String wsdlLocation, String catalogFile) {
-	    URL url = getURLFromLocatoinString(wsdlLocation);
+	    URL url = getURLFromLocation(wsdlLocation);
 	    
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
-			catalogManager.setCatalogFiles(catalogFile);
+			catalogManager.setCatalogFiles(getAbsolutePath(catalogFile));
 	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
 	    	w4j.getDefinition();
 	    	fail("Should have received a WSDLException due to the invalid WSDL location " 
@@ -125,7 +125,7 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	 * @param wsdlLocation
 	 * @return
 	 */
-	private URL getURLFromLocatoinString(String wsdlLocation) {
+	private URL getURLFromLocation(String wsdlLocation) {
 		URL url = null;
 	    try {
 	    	try{
@@ -143,5 +143,16 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    }
 	    
 	    return url;
+	}
+
+	private String getAbsolutePath(String location) {
+	    try {
+	        String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+	        return new File(baseDir + location).getAbsolutePath();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        fail();
+                return null;
+	    }
 	}
 }

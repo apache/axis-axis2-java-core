@@ -101,7 +101,15 @@ public abstract class BaseWSDLLocator {
                     lastestImportURI = absoluteURL.toExternalForm();
                 }
                 catch(Throwable t){
-                    //No FFDC code needed
+                    if (relativeLocation.startsWith("file://")) {
+                        try {
+                            relativeLocation = "file:/" + relativeLocation.substring("file://".length());
+                            absoluteURL = new URL(relativeLocation);
+                            is = absoluteURL.openStream();
+                            lastestImportURI = absoluteURL.toExternalForm();
+                        } catch (Throwable t2) {
+                        }
+                    }
                 }
                 if(is == null){
                     try{
