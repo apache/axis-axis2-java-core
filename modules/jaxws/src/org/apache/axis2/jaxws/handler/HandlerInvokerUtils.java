@@ -34,6 +34,9 @@ public class HandlerInvokerUtils {
     public static boolean invokeInboundHandlers(MEPContext mepMessageCtx, List<Handler> handlers,
                                                 HandlerChainProcessor.MEP mep, boolean isOneWay) {
 
+        if (handlers == null || handlers.isEmpty())
+            return true;
+
         String bindingProto = null;
         if (mep.equals(HandlerChainProcessor.MEP.REQUEST)) // inbound request; must be on the server
             bindingProto = mepMessageCtx.getEndpointDesc().getBindingType();
@@ -91,7 +94,7 @@ public class HandlerInvokerUtils {
     public static boolean invokeOutboundHandlers(MEPContext mepMessageCtx, List<Handler> handlers,
                                                  HandlerChainProcessor.MEP mep, boolean isOneWay) {
 
-        if (handlers == null)
+        if (handlers == null || handlers.isEmpty())
             return true;
 
         String bindingProto = null;
