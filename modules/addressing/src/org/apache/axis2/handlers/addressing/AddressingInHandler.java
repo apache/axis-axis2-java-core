@@ -64,6 +64,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         Parameter param = handlerdesc.getParameter(DISABLE_REF_PARAMETER_EXTRACT);
         String value = Utils.getParameterValue(param);
         disableRefparamExtract = JavaUtils.isTrueExplicitly(value);
+
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug("disableRefparamExtract=" + disableRefparamExtract);
         }

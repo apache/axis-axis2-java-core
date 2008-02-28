@@ -61,7 +61,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
     private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
 
-    private boolean includeOptionalHeaders = false;
+    private boolean includeOptionalHeaders;
+    private boolean disableAddressing;
 
     public void init(HandlerDescription arg0) {
         super.init(arg0);
@@ -71,11 +72,27 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         Parameter param = arg0.getParameter(INCLUDE_OPTIONAL_HEADERS);
         String value = Utils.getParameterValue(param);
         includeOptionalHeaders = JavaUtils.isTrueExplicitly(value);
+
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
+        }
+
+        //Determine whether to disable the handler by default.
+        param = arg0.getParameter(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        value = Utils.getParameterValue(param);
+        disableAddressing = JavaUtils.isTrueExplicitly(value);
+
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug("disableAddressing=" + disableAddressing);
+        }
     }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        // it should be able to disable addressing by some one.
-        if (msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES)) {
+        //determine whether outbound addressing has been disabled or not.
+        boolean disableAddressing =
+            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, this.disableAddressing);
+
+        if (disableAddressing) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(msgContext.getLogIDString() +
                         " Addressing is disabled. Not adding WS-Addressing headers.");
@@ -93,8 +110,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
 
         // Determine whether to include optional addressing headers in the output.
-        boolean includeOptionalHeaders = this.includeOptionalHeaders ||
-                                            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS);
+        boolean includeOptionalHeaders =
+            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS, this.includeOptionalHeaders);
 
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
