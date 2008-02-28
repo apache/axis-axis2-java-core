@@ -283,7 +283,9 @@ public class Phase implements Handler {
             log.debug(msgctx.getLogIDString() + " Invoking phase \"" + phaseName + "\"");
         }
 
-        while (currentIndex < handlers.size()) {
+        int handlersSize = handlers.size();
+        
+        while (currentIndex < handlersSize) {
             Handler handler = (Handler) handlers.get(currentIndex);
 
             if (isDebugEnabled) {
