@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.InvocationListenerFactory;
@@ -42,11 +44,8 @@ public class InvocationListenerRegistry {
     
     private static final Log log = LogFactory.getLog(InvocationListenerRegistry.class);
     
-    private static Map<String, InvocationListenerFactory> factoryMap = 
-        new Hashtable<String, InvocationListenerFactory>();
-    
     // This is a collection of all the InvocationListenerFactory instances
-    private static Collection<InvocationListenerFactory> factoryCollection = null;
+    private static Collection<InvocationListenerFactory> factoryList = new ArrayList<InvocationListenerFactory>();
     
     /**
      * This method accepts an object instance that is an implementation of
@@ -57,7 +56,17 @@ public class InvocationListenerRegistry {
         if(log.isDebugEnabled()) {
             log.debug("Adding InvocationListenerFactory instance: " + facInstance.getClass().getName());
         }
-        factoryMap.put(facInstance.getClass().getName(), facInstance);
+        // Ensure only one instance of a specific factory class is registered.
+        boolean found = false;
+        for (Iterator<InvocationListenerFactory> iterator = factoryList.iterator(); iterator.hasNext();) {
+            InvocationListenerFactory factory = iterator.next();
+            if (facInstance.getClass() == factory.getClass()) {
+                found = true;
+            }
+        }
+        if(!found){
+            factoryList.add(facInstance);
+        }
     }
     
     /**
@@ -65,7 +74,7 @@ public class InvocationListenerRegistry {
      * that have been registered.
      */
     public static Collection<InvocationListenerFactory> getFactories() {
-        return factoryMap.values();
+        return factoryList;
     }
 
 }
