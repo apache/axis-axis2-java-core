@@ -142,7 +142,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BindingToProtocolTests.class);
         
         // ------ Addressing Tests ------
-        //suite.addTestSuite(EndpointReferenceUtilsTests.class);
+        suite.addTestSuite(EndpointReferenceUtilsTests.class);
         suite.addTestSuite(ReferenceParameterListTests.class);
         
         // ------ Metadata Tests ------
@@ -174,8 +174,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SoapMessageMUProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
-        //TODO: FIXME - Was working, now doesn't
-        //suite.addTestSuite(ProxyNonWrappedTests.class);
+        suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(RPCProxyTests.class);
         suite.addTestSuite(RPCLitSWAProxyTests.class);
         suite.addTestSuite(GorillaDLWProxyTests.class);
@@ -223,7 +222,12 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(RPCLitEnumTests.class);
         suite.addTestSuite(BindingProviderTests.class);
         // Commented due to test failure...
-//        suite.addTestSuite(StringListTests.class);
+        /* FAILURE IS:
+         * org.apache.axiom.om.OMException: javax.xml.bind.MarshalException
+         *  - with linked exception:
+         *  [javax.xml.bind.JAXBException: java.util.List is not known to this context]
+         */
+        //suite.addTestSuite(StringListTests.class);
         suite.addTestSuite(RPCLitStringArrayTests.class);
         // ------ Endpoint Tests ------
         suite.addTestSuite(BasicEndpointTests.class);
