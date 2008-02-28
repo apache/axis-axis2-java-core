@@ -169,8 +169,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(StringMessageProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);
         suite.addTestSuite(SourceMessageProviderTests.class);
-        // TODO FIXME: Test fails
-        //suite.addTestSuite(SoapMessageProviderTests.class);
+        suite.addTestSuite(SoapMessageProviderTests.class);
         suite.addTestSuite(SoapMessageMUProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);

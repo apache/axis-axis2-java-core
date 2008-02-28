@@ -53,7 +53,9 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 @WebServiceProvider(serviceName="SoapMessageProviderService",
-		wsdlLocation="META-INF/ProviderSOAPMessage.wsdl")
+		targetNamespace="http://soapmsg.provider.jaxws.axis2.apache.org",
+		wsdlLocation="META-INF/ProviderSOAPMessage.wsdl",
+		portName="SoapMessageProviderPort")
 @BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class SoapMessageProvider implements Provider<SOAPMessage> {
