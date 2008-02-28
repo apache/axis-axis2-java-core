@@ -41,7 +41,7 @@ public class DLWMinTests extends TestCase {
             NAMESPACE, "GreeterService");
     private static final QName QNAME_PORT = new QName(
             NAMESPACE, "GreeterPort");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/GreeterService";
+    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/GreeterService.GreeterImplPort";
 
     private Greeter getProxy(String action) {
         Service service = Service.create(QNAME_SERVICE);

@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.wsdl.WSDLException;
+import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
@@ -43,12 +44,16 @@ import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
 public class PolymorphicTests extends TestCase {
+    String axisEndpoint = "http://localhost:6060/axis2/services/PolymorphicShapeService.PolymorphicShapePort";
 
 	public void testFormalAndActualTypeInDifferentPackages(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
 		PolymorphicShapeService service = new PolymorphicShapeService();
 		PolymorphicShapePortType port = service.getPolymorphicShapePort();
+        BindingProvider p = (BindingProvider) port;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 		Shape shapeType;
 
         TestLogger.logger.debug("Sending Request to draw Square");

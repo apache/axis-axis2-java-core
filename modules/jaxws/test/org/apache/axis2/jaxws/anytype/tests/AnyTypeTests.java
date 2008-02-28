@@ -18,19 +18,26 @@
  */
 package org.apache.axis2.jaxws.anytype.tests;
 
+import javax.xml.ws.BindingProvider;
+
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
 import org.apache.axis2.jaxws.TestLogger;
 
 public class AnyTypeTests extends TestCase {
-	
+    
+	String axisEndpoint = "http://localhost:6060/axis2/services/AnyTypeMessageService.AnyTypeMessagePortTypeImplPort";
+
 	public void testAnyTypeElementinWrappedWSDL(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
 		try{
 			AnyTypeMessageService service = new AnyTypeMessageService();
 			AnyTypeMessagePortType portType = service.getAnyTypePort();
+			BindingProvider p = (BindingProvider) portType;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 			String req = new String("Request as String");
 			Object response = portType.echoMessage(req);
 			assertTrue(response instanceof String);

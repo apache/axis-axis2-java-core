@@ -61,7 +61,7 @@ import org.test.mtom.SendImageResponse;
  */
 public class JAXBProviderTests extends ProviderTestCase {
 
-    String endpointUrl = "http://localhost:6060/axis2/services/JAXBProviderService";
+    String endpointUrl = "http://localhost:6060/axis2/services/JAXBProviderService.JAXBProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
     DataSource stringDS, imageDS;
     

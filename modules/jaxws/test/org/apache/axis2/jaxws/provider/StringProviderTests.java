@@ -29,7 +29,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 public class StringProviderTests extends ProviderTestCase {
 
-    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService";
+    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService.StringProviderPort";
     String xmlString = "<invoke>test input</invoke>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
 

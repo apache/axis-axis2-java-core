@@ -46,7 +46,7 @@ public class DispatchXPayloadJAXB extends TestCase {
 
     public String HOSTPORT = "http://localhost:6060";
         
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XPayloadSourceProvider";
+    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XPayloadSourceProvider.XPayloadSourceProviderPort";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProviderPort");
 

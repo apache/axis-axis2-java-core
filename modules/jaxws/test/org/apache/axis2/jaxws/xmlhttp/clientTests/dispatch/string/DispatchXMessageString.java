@@ -30,7 +30,7 @@ public class DispatchXMessageString extends TestCase {
 
     public String HOSTPORT = "http://localhost:6060";
         
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageStringProvider";
+    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageStringProvider.XMessageStringProviderPort";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProviderPort");
  

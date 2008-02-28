@@ -49,7 +49,7 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.test.faults.FaultyWebServiceResponse;
 
 public class FaultyWebServiceTests extends TestCase {
-	String axisEndpoint = "http://localhost:6060/axis2/services/FaultyWebServiceService";
+	String axisEndpoint = "http://localhost:6060/axis2/services/FaultyWebServiceService.FaultyWebServicePortTypeImplPort";
 	public void testFaultyWebService(){
 		FaultyWebServiceFault_Exception exception = null;
 		try{

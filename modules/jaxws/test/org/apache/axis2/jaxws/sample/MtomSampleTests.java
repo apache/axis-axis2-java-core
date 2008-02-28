@@ -46,7 +46,7 @@ public class MtomSampleTests extends TestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService";
+    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
     /*

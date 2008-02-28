@@ -43,7 +43,7 @@ public class RPCLitSWAProxyTests extends TestCase {
 
     private QName serviceName = new QName(
             "http://org/apache/axis2/jaxws/proxy/rpclitswa", "RPCLitSWAService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitSWAService";
+    private String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitSWAService.RPCLitSWA";
     private QName portName = new QName("http://org/apache/axis2/jaxws/proxy/rpclitswa",
             "RPCLitSWA");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+

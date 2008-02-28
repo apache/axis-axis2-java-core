@@ -31,7 +31,9 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.log4j.BasicConfigurator;
 
 public class BareTests extends TestCase {
-	
+    
+	String axisEndpoint = "http://localhost:6060/axis2/services/BareDocLitService.DocLitBarePortTypeImplPort";
+
 	public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
@@ -45,6 +47,8 @@ public class BareTests extends TestCase {
 	                    BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
 	            p.getRequestContext().put(
 	                    BindingProvider.SOAPACTION_URI_PROPERTY, "twoWaySimple");
+	            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 			String response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
             TestLogger.logger.debug("------------------------------");
@@ -62,6 +66,9 @@ public class BareTests extends TestCase {
             
             BareDocLitService service = new BareDocLitService();
             DocLitBarePortType proxy = service.getBareDocLitPort();
+			BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
             String response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
             TestLogger.logger.debug("------------------------------");
@@ -79,12 +86,14 @@ public class BareTests extends TestCase {
 			
 			BareDocLitService service = new BareDocLitService();
 			DocLitBarePortType proxy = service.getBareDocLitPort();
-			 BindingProvider p = (BindingProvider) proxy;
-			
-	            p.getRequestContext().put(
-	                    BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-	            p.getRequestContext().put(
-	                    BindingProvider.SOAPACTION_URI_PROPERTY, "oneWayEmpty");
+			BindingProvider p = (BindingProvider) proxy;
+
+			p.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY,
+					Boolean.TRUE);
+			p.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,
+					"oneWayEmpty");
+			p.getRequestContext().put(
+					BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 			proxy.oneWayEmpty();
 
             TestLogger.logger.debug("------------------------------");

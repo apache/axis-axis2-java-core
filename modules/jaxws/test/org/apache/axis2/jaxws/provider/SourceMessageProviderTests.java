@@ -32,7 +32,7 @@ import javax.xml.ws.Service;
 
 public class SourceMessageProviderTests extends ProviderTestCase {
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/SourceMessageProviderService";
+    private String endpointUrl = "http://localhost:6060/axis2/services/SourceMessageProviderService.SourceMessageProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceMessageProviderService");
     private String xmlDir = "xml";
 

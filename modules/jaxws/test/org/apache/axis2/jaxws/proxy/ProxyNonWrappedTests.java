@@ -42,7 +42,7 @@ import org.test.proxy.doclitnonwrapped.ReturnType;
 public class ProxyNonWrappedTests extends TestCase {
 
     QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
-    private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService";
+    private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort";
     private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test-resources/wsdl/ProxyDocLitnonWrapped.wsdl";
     public ProxyNonWrappedTests() {

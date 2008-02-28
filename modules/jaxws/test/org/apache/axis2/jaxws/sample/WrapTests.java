@@ -22,6 +22,7 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import junit.framework.TestCase;
@@ -35,6 +36,8 @@ import org.test.sample.wrap.HeaderResponse;
 
 public class WrapTests extends TestCase {
 
+    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitWrapService.DocLitWrapImplPort";
+	
 	/**
 	 * 
 	 */
@@ -58,6 +61,9 @@ public class WrapTests extends TestCase {
 			String reqString = "Test twoWay Sync";
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 			String response = proxy.twoWay(reqString);
             TestLogger.logger.debug("Sync Response =" + response);
             TestLogger.logger.debug("------------------------------");
@@ -74,6 +80,8 @@ public class WrapTests extends TestCase {
 			
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 			proxy.oneWayVoid();
 
             TestLogger.logger.debug("------------------------------");
@@ -93,6 +101,8 @@ public class WrapTests extends TestCase {
 			Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 			proxy.twoWayHolder(strHolder, intHolder);
             TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
             TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
@@ -116,6 +126,8 @@ public class WrapTests extends TestCase {
 			Holder<HeaderPart0> holder = new Holder<HeaderPart0>(hp0);
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 			HeaderResponse hr = proxy.header(header, holder, hp1);
 			hp0=holder.value;
             TestLogger.logger.debug("Holder Response String =" + hp0.getHeaderType());
@@ -137,6 +149,8 @@ public class WrapTests extends TestCase {
 			Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
 			DocLitWrapService service = new DocLitWrapService();
 			DocLitWrap proxy = service.getDocLitWrapPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 			proxy.twoWayHolder(strHolder, intHolder);
             TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
             TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
@@ -160,6 +174,8 @@ public class WrapTests extends TestCase {
             
             DocLitWrapService service = new DocLitWrapService();
             DocLitWrap proxy = service.getDocLitWrapPort();
+            BindingProvider p = (BindingProvider) proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             String response = proxy.echoStringWSGEN1(request);
             assertTrue(response.equals(request));
             TestLogger.logger.debug("------------------------------");
@@ -183,6 +199,8 @@ public class WrapTests extends TestCase {
             
             DocLitWrapService service = new DocLitWrapService();
             DocLitWrap proxy = service.getDocLitWrapPort();
+            BindingProvider p = (BindingProvider) proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             String response = proxy.echoStringWSGEN2(request);
             assertTrue(response.equals(request));
             TestLogger.logger.debug("------------------------------");

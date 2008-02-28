@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.rpclit.stringarray.tests;
 
 import java.util.Arrays;
 
+import javax.xml.ws.BindingProvider;
+
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo;
@@ -28,13 +30,19 @@ import org.test.rpclit.stringarray.StringArray;
 
 
 public class RPCLitStringArrayTests extends TestCase {
-    public void testStringArrayType() {
+
+	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoImplPort";
+
+	public void testStringArrayType() {
         System.out.println("------------------------------");
         System.out.println("Test : " + getName());
         try {
             
             RPCLitStringArrayService service = new RPCLitStringArrayService();
             Echo portType = service.getEchoPort();
+			BindingProvider p = (BindingProvider) portType;
+	            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
             String[] strArray= {"str1", "str2", "str3"};
             StringArray array = new StringArray();
             array.getItem().addAll(Arrays.asList(strArray));

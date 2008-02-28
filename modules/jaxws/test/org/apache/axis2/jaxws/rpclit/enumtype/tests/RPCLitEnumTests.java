@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.rpclit.enumtype.tests;
 
 
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
@@ -31,12 +32,19 @@ import junit.framework.TestCase;
 
 
 public class RPCLitEnumTests extends TestCase {
-    public void testEnumSimpleType(){
+    
+	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitEnumService.PortTypeImplPort";
+	
+	public void testEnumSimpleType(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         try{
                 Service service = new Service();
                 PortType portType = service.getPort();
+                
+                BindingProvider p = (BindingProvider) portType;
+                p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
                 Holder<ElementString> pString = new Holder<ElementString>(ElementString.A);
                 portType.echoString(pString);
                 ElementString es = pString.value;

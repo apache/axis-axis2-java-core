@@ -22,15 +22,20 @@
  */
 package org.apache.axis2.jaxws.nonanonymous.complextype;
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
+import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
+import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
 import org.apache.axis2.jaxws.TestLogger;
 
 public class NonAnonymousComplexTypeTests extends TestCase {
 
+    String axisEndpoint = "http://localhost:6060/axis2/services/EchoMessageService.EchoMessageImplPort";
+	
 	/**
 	 * 
 	 */
@@ -52,6 +57,9 @@ public class NonAnonymousComplexTypeTests extends TestCase {
 		try {
 			String msg = "Hello Server";
 		    EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
+	        BindingProvider p = (BindingProvider) myPort;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 		    String response = myPort.echoMessage(msg);
             TestLogger.logger.debug(response);
             TestLogger.logger.debug("------------------------------");

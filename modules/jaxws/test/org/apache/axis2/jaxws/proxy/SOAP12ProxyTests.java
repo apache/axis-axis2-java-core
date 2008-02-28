@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.proxy;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
@@ -35,7 +36,9 @@ public class SOAP12ProxyTests extends TestCase {
 
     private static final String SEND_SOAP11_RESPONSE = "RESPONSE-SOAP11";
     private static final String SEND_SOAP12_RESPONSE = "RESPONSE-SOAP12";
-    
+    String axisEndpoint = "http://localhost:6060/axis2/services/SOAP12EchoService.EchoPort";
+	
+
     public SOAP12ProxyTests(String name) {
         super(name);
     }
@@ -51,7 +54,9 @@ public class SOAP12ProxyTests extends TestCase {
         // should have a proper SOAP 1.2 binding configured
         SOAP12EchoService service = new SOAP12EchoService();
         Echo proxy = service.getPort(new QName("http://jaxws.axis2.apache.org/proxy/soap12", "EchoPort"), Echo.class);
-        
+        BindingProvider p = (BindingProvider) proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
         // invoke the remote operation.  send a key that tells the 
         // service send back a SOAP 1.2 response.
         String response = proxy.echo(SEND_SOAP12_RESPONSE);

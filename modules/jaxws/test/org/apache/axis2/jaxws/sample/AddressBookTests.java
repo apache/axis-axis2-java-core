@@ -45,7 +45,7 @@ public class AddressBookTests extends TestCase {
             NAMESPACE, "AddressBookService");
     private static final QName QNAME_PORT = new QName(
             NAMESPACE, "AddressBook");
-    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/AddressBookService";
+    private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/AddressBookService.AddressBookImplPort";
     
     /**
      * Test the endpoint by invoking it with a JAX-WS Dispatch.  

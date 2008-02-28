@@ -38,7 +38,7 @@ public class DispatchXMessageDataSource extends TestCase {
 
     public String HOSTPORT = "http://localhost:6060";
         
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageDataSourceProvider";
+    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageDataSourceProvider.XMessageDataSourceProviderPort";
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");
  

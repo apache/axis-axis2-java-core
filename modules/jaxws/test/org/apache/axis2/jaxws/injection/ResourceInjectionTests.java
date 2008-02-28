@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.injection;
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceContext;
 
 import junit.framework.TestCase;
@@ -29,7 +30,7 @@ import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectio
 import org.apache.axis2.jaxws.TestLogger;
 
 public class ResourceInjectionTests extends TestCase {
-
+    String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";
 
 	private Object resource = new WebServiceContextImpl();
 	public ResourceInjectionTests() {
@@ -129,6 +130,9 @@ public class ResourceInjectionTests extends TestCase {
 		try{
 			ResourceInjectionService service = new ResourceInjectionService();
 			ResourceInjectionPortType proxy = service.getResourceInjectionPort();
+	        BindingProvider p = (BindingProvider) proxy;
+	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
 			String response = proxy.echo("echo Request");
             TestLogger.logger.debug("Response String = " + response);
             TestLogger.logger.debug("------------------------------");

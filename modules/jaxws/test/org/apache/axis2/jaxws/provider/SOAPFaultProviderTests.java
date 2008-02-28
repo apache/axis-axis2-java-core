@@ -34,7 +34,7 @@ public class SOAPFaultProviderTests extends TestCase {
         new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
 
-    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService";
+    String endpointUrl = "http://localhost:6060/axis2/services/StringProviderService.StringProviderPort";
 
     private static final String sampleSoapEnvelopeHeader =
         "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"

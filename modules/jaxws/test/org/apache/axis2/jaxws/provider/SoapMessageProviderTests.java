@@ -34,6 +34,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Binding;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
@@ -49,7 +50,7 @@ import org.apache.axis2.jaxws.TestLogger;
  */
 public class SoapMessageProviderTests extends ProviderTestCase {
 
-    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageProviderService";
+    private String endpointUrl = "http://localhost:6060/axis2/services/SoapMessageProviderService.SoapMessageProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SoapMessageProviderService");
     
     private String reqMsgStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -108,7 +109,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
-            
+             
             // Create the SOAPMessage
             String msg = reqMsgStart + XML_INVOKE + reqMsgEnd;
             MessageFactory factory = MessageFactory.newInstance();
@@ -420,9 +421,12 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * @throws Exception
      */
     private Dispatch<SOAPMessage> createDispatch() throws Exception {
+    	
+    	
         Service svc = Service.create(serviceName);
         svc.addPort(portName,null, endpointUrl);
-        Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
+        Dispatch<SOAPMessage> dispatch = 
+        	svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
         return dispatch;
     }
     
