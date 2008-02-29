@@ -1040,14 +1040,6 @@
                         </xsl:otherwise>
                       </xsl:choose>
                     }
-                    <xsl:if test="not(@optional)">
-                    else
-                    {
-                        /* This is not a nillable attribute*/
-                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "non optional attribute <xsl:value-of select="$propertyName"/> missing");
-                        return AXIS2_FAILURE;
-                    }
-                    </xsl:if>
                 </xsl:when>
                 <xsl:when test="$simple"></xsl:when> <!-- just to avoid preceeding code to be parsed in a simple type -->
                 <xsl:otherwise> <!-- when it is an element not(@attribute) -->
