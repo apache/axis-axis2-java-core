@@ -78,7 +78,34 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
 
     public List<Handler> getHandlerChain(PortInfo portinfo) {
         // TODO:  would check and/or build cache here if implemented later
-        return resolveHandlers(portinfo);
+        List<Class> handlerClasses = resolveHandlers(portinfo);
+        if (handlerClasses.size() == 0) {
+            return new ArrayList<Handler>();
+        }
+
+        ArrayList<Handler> handlers = new ArrayList<Handler>();
+        // Create temporary MessageContext to pass information to HandlerLifecycleManager
+        MessageContext ctx = new MessageContext();
+        ctx.setEndpointDescription(serviceDesc.getEndpointDescription(portinfo.getPortName()));
+
+        HandlerLifecycleManager hlm = createHandlerlifecycleManager();
+
+        for (Iterator<Class> iterator = handlerClasses.iterator(); iterator.hasNext();) {
+            Class aClass = iterator.next();
+            //  instantiate portHandler class 
+            try {
+                handlers.add(hlm.createHandlerInstance(ctx, aClass));
+            } catch (Exception e) {
+                // TODO: should we just ignore this problem?
+                // TODO: NLS log and throw
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+            //TODO NLS
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                log.debug("Successfully instantiated the class: " + aClass);
+
+        }
+        return handlers;
     }
 
     /*
@@ -90,7 +117,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
 	 * running the annotated PostConstruct method, resolving the list,
 	 * and returning it.  We do not sort here.
       */
-    private ArrayList<Handler> resolveHandlers(PortInfo portinfo) throws WebServiceException {
+    private ArrayList<Class> resolveHandlers(PortInfo portinfo) throws WebServiceException {
         /*
 
             A sample XML file for the handler-chains:
@@ -132,7 +159,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         // which is where one might get the portinfo object.  We still have the 
         // passed-in variable, however, due to the spec
 
-        ArrayList<Handler> handlers = new ArrayList<Handler>();
+        ArrayList<Class> handlers = new ArrayList<Class>();
 
         /*
          * TODO: do a better job checking that the return value matches up
@@ -214,51 +241,35 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
             List<HandlerType> handlerTypeList = handlerChainType.getHandler();
             Iterator ht = handlerTypeList.iterator();
             while (ht.hasNext()) {
-                
-                HandlerType handlerType = (HandlerType)ht.next();
-                
+                HandlerType handlerType = (HandlerType) ht.next();
                 // TODO must do better job comparing the handlerType with the PortInfo param
                 // to see if the current iterator handler is intended for this service.
-
                 // TODO review: need to check for null getHandlerClass() return?
                 // or will schema not allow it?
                 String portHandler = handlerType.getHandlerClass().getValue();
-                Handler handler;
-                // Create temporary MessageContext to pass information to HandlerLifecycleManager
-                MessageContext ctx = new MessageContext();
-                ctx.setEndpointDescription(ed);
-                
-                HandlerLifecycleManager hlm = createHandlerlifecycleManager();
-                    
-                //  instantiate portHandler class 
+                Class aClass;
                 try {
-                    handler = hlm.createHandlerInstance(ctx, loadClass(portHandler));
+                    aClass = loadClass(portHandler);
                 } catch (Exception e) {
                     // TODO: should we just ignore this problem?
                     // TODO: NLS log and throw
                     throw ExceptionFactory.makeWebServiceException(e);
                 }
-                
-                //TODO NLS
-                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
-                    log.debug("Successfully instantiated the class: " + handler.getClass());
-                
+
                 // 9.2.1.2 sort them by Logical, then SOAP
-                if (LogicalHandler.class.isAssignableFrom(handler.getClass()))
-                    handlers.add((LogicalHandler) handler);
-                else if (SOAPHandler.class.isAssignableFrom(handler.getClass()))
+                if (LogicalHandler.class.isAssignableFrom(aClass))
+                    handlers.add(aClass);
+                else if (SOAPHandler.class.isAssignableFrom(aClass))
                     // instanceof ProtocolHandler
-                    handlers.add((SOAPHandler) handler);
-                else if (Handler.class.isAssignableFrom(handler.getClass())) {
+                    handlers.add(aClass);
+                else if (Handler.class.isAssignableFrom(aClass)) {
                     // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
-                            .getMessage("handlerChainErr1", handler
-                                    .getClass().getName()));
+                            .getMessage("handlerChainErr1", aClass.getName()));
                 } else {
                     // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
-                            .getMessage("handlerChainErr2", handler
-                                    .getClass().getName()));
+                            .getMessage("handlerChainErr2", aClass.getName()));
                 }
             }
         }
