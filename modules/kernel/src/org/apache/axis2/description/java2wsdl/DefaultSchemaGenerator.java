@@ -170,6 +170,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                  * messages and port types will be creteated
                  */
                 JAnnotation annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
+                JComment comment = jclass.getComment();
+                if (comment !=null) {
+                    System.out.println(comment.getText());
+                }
                 if (annotation != null) {
                     String tns =
                             annotation.getValue(AnnotationConstants.TARGETNAMESPACE).asString();
@@ -461,6 +465,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 if (tgtNamespacepfx == null) {
                     tgtNamespacepfx = generatePrefix();
                     targetNamespacePrefixMap.put(tgtNamespace, tgtNamespacepfx);
+                }
+                //if the parent class package name is differ from the child
+                if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
+                        contains(tgtNamespace)) {
+                    XmlSchemaImport importElement = new XmlSchemaImport();
+                    importElement.setNamespace(tgtNamespace);
+                    xmlSchema.getItems().add(importElement);
+                    ((NamespaceMap) xmlSchema.getNamespaceContext()).
+                            put(generatePrefix(),tgtNamespace);
                 }
 
                 QName basetype = new QName(tgtNamespace, superclassname, tgtNamespacepfx);
