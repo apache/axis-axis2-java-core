@@ -52,7 +52,7 @@ public class InvocationListenerRegistry {
      * the InvocationListenerFactory. The instance will be stored in an 
      * internal map by its class name.
      */
-    public static void addFactory(InvocationListenerFactory facInstance) {
+    public synchronized static void addFactory(InvocationListenerFactory facInstance) {
         if(log.isDebugEnabled()) {
             log.debug("Adding InvocationListenerFactory instance: " + facInstance.getClass().getName());
         }
