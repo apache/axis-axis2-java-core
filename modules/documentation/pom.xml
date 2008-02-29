@@ -377,4 +377,33 @@
 	     </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <activation>
+                <property>
+                    <name>site-stage</name>
+                </property>
+            </activation>
+			<build>
+       			<plugins>
+            		<plugin>
+            			<groupId>org.apache.maven.plugins</groupId>
+            			<artifactId>maven-site-plugin</artifactId>
+            			<configuration>
+            				<xdocDirectory>${basedir}/xdocs</xdocDirectory>
+            				<resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
+              		  	</configuration>
+   	                    <executions>
+ 	                    	<execution>
+ 	                        	<phase></phase>
+ 	                            <goals>
+ 	                            	<goal>stage</goal>
+ 	                            </goals>
+ 	                    	</execution>
+ 	               		</executions>
+            		</plugin>
+				</plugins>
+			</build>
+        </profile>
+	</profiles>
 </project>
