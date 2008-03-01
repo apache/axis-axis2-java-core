@@ -77,8 +77,19 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
     }
 
     public List<Handler> getHandlerChain(PortInfo portinfo) {
-        // TODO:  would check and/or build cache here if implemented later
-        List<Class> handlerClasses = resolveHandlers(portinfo);
+        List<Class> handlerClasses = null;
+        // Look into the cache only if the service delegate key is null.
+        if (serviceDelegateKey == null) {
+            handlerClasses = serviceDesc.getHandlerChainClasses(portinfo);
+        }
+        if (handlerClasses == null) {
+            // resolve handlers if we did not find them in the cache
+            handlerClasses = resolveHandlers(portinfo);
+            // Store the list of classes
+            if (serviceDelegateKey == null) {
+                serviceDesc.setHandlerChainClasses(portinfo, handlerClasses);
+            }
+        }
         if (handlerClasses.size() == 0) {
             return new ArrayList<Handler>();
         }

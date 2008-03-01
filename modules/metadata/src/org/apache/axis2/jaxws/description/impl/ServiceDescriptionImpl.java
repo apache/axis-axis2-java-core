@@ -56,6 +56,7 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 
 import java.io.FileNotFoundException;
@@ -103,6 +104,9 @@ class ServiceDescriptionImpl
     private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
                 new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
 
+    // Cache classes for the handler chain
+    Map<PortInfo, List<Class>> handlerClassesMap =
+            new WeakHashMap<PortInfo, List<Class>>();
     
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
@@ -2146,4 +2150,13 @@ class ServiceDescriptionImpl
 
         return cl;
     }
+
+    public List<Class> getHandlerChainClasses(PortInfo portinfo) {
+        return handlerClassesMap.get(portinfo);
+    }
+
+    public void setHandlerChainClasses(PortInfo portinfo, List<Class> handlerClasses) {
+        handlerClassesMap.put(portinfo, handlerClasses);
+    }
+
 }

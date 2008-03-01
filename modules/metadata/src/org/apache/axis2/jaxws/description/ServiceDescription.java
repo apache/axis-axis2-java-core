@@ -23,6 +23,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import javax.xml.namespace.QName;
+import javax.xml.ws.handler.PortInfo;
 import java.util.Collection;
 import java.util.List;
 
@@ -144,4 +145,8 @@ public interface ServiceDescription {
     public QName getPreferredPort(Object key);
     
     public JAXWSCatalogManager getCatalogManager();
+
+    public List<Class> getHandlerChainClasses(PortInfo portinfo);
+
+    public void setHandlerChainClasses(PortInfo portinfo, List<Class> handlerClasses);
 }
