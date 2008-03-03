@@ -69,13 +69,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Utils {
 
-    public static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
+    public static final String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     private static Log log = LogFactory.getLog(Utils.class);
 
@@ -130,18 +132,20 @@ public class Utils {
     }
 
     public static URL[] getURLsForAllJars(URL url, File tmpDir) {
+        FileInputStream fin = null;
+        InputStream in = null;
+        ZipInputStream zin = null;
         try {
             ArrayList array = new ArrayList();
-            InputStream in = url.openStream();
+            in = url.openStream();
             String fileName = url.getFile();
             int index = fileName.lastIndexOf('/');
             if (index != -1) {
                 fileName = fileName.substring(index + 1);
             }
             File f = createTempFile(fileName, in, tmpDir);
-            in.close();
-            ZipInputStream zin;
-            FileInputStream fin = new FileInputStream(f);
+            
+            fin = new FileInputStream(f);
             array.add(f.toURL());
             zin = new ZipInputStream(fin);
 
@@ -160,13 +164,31 @@ public class Utils {
                     array.add(f.toURL());
                 }
             }
-            zin.close();
-            if (fin != null) {
-                fin.close();
-            }
             return (URL[]) array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    //
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //
+                }
+            }
+            if (zin != null) {
+                try {
+                    zin.close();
+                } catch (IOException e) {
+                    //
+                }
+            }
         }
     }
 
@@ -175,7 +197,9 @@ public class Utils {
         int count;
         File f;
         if (tmpDir == null) {
-            new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs();
+            if (! new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs()) {
+                throw new IOException("Unable to create the directory");
+            }
             File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
             f = File.createTempFile("axis2", suffix, tempFile);
         } else {
@@ -207,7 +231,7 @@ public class Utils {
      * @return a new ClassLoader pointing to both the passed dir and jar files under lib/
      * @throws DeploymentException if problems occur
      */
-    public static ClassLoader getClassLoader(ClassLoader parent, File file)
+    public static ClassLoader getClassLoader(final ClassLoader parent, File file)
             throws DeploymentException {
         URLClassLoader classLoader;
 
@@ -243,11 +267,16 @@ public class Utils {
                 }
             }
 
-            URL urllist[] = new URL[urls.size()];
+            final URL urllist[] = new URL[urls.size()];
             for (int i = 0; i < urls.size(); i++) {
                 urllist[i] = (URL) urls.get(i);
             }
-            classLoader = new URLClassLoader(urllist, parent);
+            classLoader = 
+                (URLClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return new URLClassLoader(urllist, parent);
+                    }
+                });
             return classLoader;
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
@@ -366,8 +395,7 @@ public class Utils {
             }
             MessageReceiver mr = axisService.getMessageReceiver(
                     operation.getMessageExchangePattern());
-            if (mr != null) {
-            } else {
+            if (mr == null) {
                 mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
             }
             if (operation.getMessageReceiver() == null) {
@@ -532,6 +560,7 @@ public class Utils {
         int leadingSlashes = 0;
         for (leadingSlashes = 0; leadingSlashes < uri.length()
                 && uri.charAt(leadingSlashes) == '/'; ++leadingSlashes) {
+            //FIXME: this block is empty!!
         }
         boolean isDir = (uri.charAt(uri.length() - 1) == '/');
         StringTokenizer st = new StringTokenizer(uri, "/");
@@ -649,7 +678,7 @@ public class Utils {
         excludeList.add("shutDown");
     }
 
-    public static ClassLoader createClassLoader(ArrayList urls, ClassLoader serviceClassLoader,
+    public static ClassLoader createClassLoader(ArrayList urls, final ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
         URL url = (URL) urls.get(0);
         if (extractJars) {
@@ -657,16 +686,16 @@ public class Utils {
                 URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
                 urls.remove(0);
                 urls.addAll(0, Arrays.asList(urls1));
-                URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
-                return new DeploymentClassLoader(urls2, null, serviceClassLoader);
+                final URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+                return createDeploymentClassLoader(urls2, serviceClassLoader, null);
             } catch (Exception e){
                 log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
                 log.debug(e.getMessage(), e);
             }
         }
-        List embedded_jars = Utils.findLibJars(url);
-        URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
-        return new DeploymentClassLoader(urls2, embedded_jars, serviceClassLoader);
+        final List embedded_jars = Utils.findLibJars(url);
+        final URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
+        return createDeploymentClassLoader(urls2, serviceClassLoader, embedded_jars);
     }
     
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
@@ -674,14 +703,23 @@ public class Utils {
         if (extractJars) {
             try {
                 URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
-                return new DeploymentClassLoader(urls1, null, serviceClassLoader);
+                return createDeploymentClassLoader(urls1, serviceClassLoader, null);
             } catch (Exception e){
                 log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
                 log.debug(e.getMessage(), e);
             }
         }
         List embedded_jars = Utils.findLibJars(urls[0]);
-        return new DeploymentClassLoader(urls, embedded_jars, serviceClassLoader);
+        return createDeploymentClassLoader(urls, serviceClassLoader, embedded_jars);
+    }
+    
+    
+    private static DeploymentClassLoader createDeploymentClassLoader(final URL[] urls, final ClassLoader serviceClassLoader, final List embeddedJars) {
+        return (DeploymentClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return new DeploymentClassLoader(urls, embeddedJars, serviceClassLoader);
+            }
+        });
     }
 
     public static File toFile(URL url) throws UnsupportedEncodingException {
