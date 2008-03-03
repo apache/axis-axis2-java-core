@@ -191,7 +191,7 @@ public class XMPPPacketListener implements PacketListener {
 				}
 			} catch (AxisFault e) {
 				log.error("Error occurred while sending message"+e);
-   				if (msgCtx.isServerSide()) {
+   				if (msgCtx != null && msgCtx.isServerSide()) {
     				MessageContext faultContext;
 					try {
 						faultContext = MessageContextBuilder.createFaultMessageContext(msgCtx, e);
