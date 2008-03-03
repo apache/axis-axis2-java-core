@@ -128,7 +128,7 @@ public class ListenerManager {
                     }
                 }
             } catch (Exception e) {
-                log.info(e.getMessage());
+                log.info(e.getMessage(), e);
             }
         }
         Runtime.getRuntime().addShutdownHook(new ListenerManagerShutdownThread(this));
