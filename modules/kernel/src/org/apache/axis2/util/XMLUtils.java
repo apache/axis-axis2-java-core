@@ -114,8 +114,7 @@ public class XMLUtils {
                                        factoryClassName);
                 }
             } catch (Exception e) {
-                //log.error(Messages.getMessage("exception00"), e);
-                saxFactory = null;
+                saxFactory = SAXParserFactory.newInstance();
             }
         } else {
             saxFactory = SAXParserFactory.newInstance();
