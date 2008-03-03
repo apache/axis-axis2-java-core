@@ -31,6 +31,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
@@ -116,15 +117,15 @@ public class DispatchPhase extends Phase {
         Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
         if(disableAck == null || disableAck.booleanValue() == false) {
         	String mepString = msgContext.getAxisOperation().getMessageExchangePattern();
-        	if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)
-	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
+        	if (isOneway(mepString)) {
 	            Object requestResponseTransport =
 	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
 	            if (requestResponseTransport != null) {
 	                ((RequestResponseTransport) requestResponseTransport).acknowledgeMessage(msgContext);
 	            }
 	        } else if (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_OUT)
-	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)) { // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
+	                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)
+	                || mepString.equals(WSDL2Constants.MEP_URI_IN_OUT)) { // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
 	            // then we don't need to keep the transport waiting.
 	            Object requestResponseTransport =
 	                    msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
@@ -279,6 +280,16 @@ public class DispatchPhase extends Phase {
                 msgContext.setServiceGroupContextId(serviceGroupId.getText());
             }
         }
+    }
+    
+    /**
+     * This method will determine if the MEP indicated by 'mepString' specifies
+     * a oneway MEP.
+     */
+    boolean isOneway(String mepString) {
+        return (mepString.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)
+                || mepString.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)
+                || mepString.equals(WSDL2Constants.MEP_URI_IN_ONLY));
     }
 
 }
