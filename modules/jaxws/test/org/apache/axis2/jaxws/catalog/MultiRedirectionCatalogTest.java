@@ -47,10 +47,9 @@ public class MultiRedirectionCatalogTest extends TestCase {
 		verifySuccess(ROOT_WSDL, TEST_RESOURCES + "basic-catalog.xml");
 	}
 
-// FIXME: This test breaks on windows now.    
-//	public void testNextCatalogSuccess() {
-//		verifySuccess(ROOT_WSDL, TEST_RESOURCES + "root-catalog.xml");
-//	}
+	public void testNextCatalogSuccess() {
+		verifySuccess(ROOT_WSDL, TEST_RESOURCES + "root-catalog.xml");
+	}
 	
 	public void testNextCatalogFailure() {
 		verifyFailure(ROOT_WSDL, TEST_RESOURCES + "fail/root-catalog.xml");		
@@ -76,8 +75,8 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
-			catalogManager.setCatalogFiles(getAbsolutePath(catalogFile));
-	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
+			catalogManager.setCatalogFiles(getURLFromLocation(catalogFile).toString());
+            WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
 	    	Definition wsdlDef = w4j.getDefinition();
 	    	assertNotNull(wsdlDef);   
 	    	QName portTypeName = new QName("http://www.example.com/test/calculator",
@@ -108,7 +107,7 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
-			catalogManager.setCatalogFiles(getAbsolutePath(catalogFile));
+            catalogManager.setCatalogFiles(getURLFromLocation(catalogFile).toString());
 	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
 	    	w4j.getDefinition();
 	    	fail("Should have received a WSDLException due to the invalid WSDL location " 
@@ -144,16 +143,5 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    }
 	    
 	    return url;
-	}
-
-	private String getAbsolutePath(String location) {
-	    try {
-	        String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
-	        return new File(baseDir + location).getAbsolutePath();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        fail();
-                return null;
-	    }
 	}
 }
