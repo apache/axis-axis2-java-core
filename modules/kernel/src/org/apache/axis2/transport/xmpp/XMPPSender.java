@@ -117,7 +117,7 @@ public class XMPPSender extends AbstractHandler implements TransportSender {
 		if (targetAddress != null) {
 			xmppOutTransportInfo = new XMPPOutTransportInfo(targetAddress);
 			xmppOutTransportInfo.setConnectionFactory(connectionFactory);
-		} else if (targetAddress == null && msgCtx.getTo() != null &&
+		} else if (msgCtx.getTo() != null &&
 				!msgCtx.getTo().hasAnonymousAddress()) {
 			//TODO 
 		} else if (msgCtx.isServerSide()) {
