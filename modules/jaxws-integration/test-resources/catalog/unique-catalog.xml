@@ -1,0 +1,11 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+<public publicId="-//OASIS//DTD XML DocBook V4.1.2//EN"
+        uri="docbook/xml/docbookx.dtd"/>
+
+<system systemId="urn:x-oasis:docbook-xml-v4.1.2"
+        uri="docbook/xml/docbookx.dtd"/>
+
+<delegatePublic publicIdStartString="-//Example//"
+          catalog="http://www.example.com/catalog"/>
+</catalog>
