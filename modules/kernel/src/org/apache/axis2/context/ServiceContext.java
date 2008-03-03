@@ -507,9 +507,7 @@ public class ServiceContext extends AbstractContext
             // properties are preserved for future operations
             String groupName = metaParent.getId();
 
-            ServiceGroupContext existingSGC = null;
-
-            ServiceGroupContext sgc = cc.getServiceGroupContext(groupName);
+            ServiceGroupContext existingSGC = cc.getServiceGroupContext(groupName);
 
             if (existingSGC == null) {
                 // could not find an existing ServiceGroupContext
