@@ -106,13 +106,11 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     setWebLocationString(weblocation.getAbsolutePath());
                 } // if webpath not null
 
-                if (axis2Stream == null) {
-                    String axis2xmlpath = config.getInitParameter(PARAM_AXIS2_XML_PATH);
-                    if (axis2xmlpath != null) {
-                        // when init parameter was present.
-                        axis2Stream = new FileInputStream(axis2xmlpath);
-                        log.debug("using axis2.xml from path: " + axis2xmlpath);
-                    }
+                String axis2xmlpath = config.getInitParameter(PARAM_AXIS2_XML_PATH);
+                if (axis2xmlpath != null) {
+                    // when init parameter was present.
+                    axis2Stream = new FileInputStream(axis2xmlpath);
+                    log.debug("using axis2.xml from path: " + axis2xmlpath);
                 }
 
                 if (axis2Stream == null) {
@@ -188,14 +186,10 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      */
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
         try {
-            String repository = null;
-
-            if (repository == null) {
-                repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
-                if (repository != null) {
-                    loadRepository(repository);
-                    log.debug("loaded repository from path: " + repository);
-                }
+            String repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
+            if (repository != null) {
+                loadRepository(repository);
+                log.debug("loaded repository from path: " + repository);
             }
 
             if (repository == null) {
