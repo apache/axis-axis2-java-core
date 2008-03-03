@@ -36,7 +36,7 @@
         <td valign="top" align="left" width="80%">
         <table width="100%">
           <tr>
-            <td align="right" colspan="2"><a href="#" onclick="javaacript:history.back();">Back</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+            <td align="right" colspan="2"><a href="#" onclick="javascript:history.back();">Back</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
               href="axis2-admin/logout">Log out</a></td>
           </tr>
         </table>
