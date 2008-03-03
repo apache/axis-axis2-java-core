@@ -1065,10 +1065,10 @@
 						<include>**/*Tests.java</include>
 					</includes>
 					<systemProperties>
-						<property>
+						<!--<property>
 							<name>OASISCatalogManager.catalog.debug.level</name>
 							<value>9999</value>
-						</property>
+						</property>-->
 						<property>
 							<name>build.repository</name>
 							<value>./target/test-classes</value>
