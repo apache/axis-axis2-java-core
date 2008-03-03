@@ -1716,7 +1716,7 @@ public class SchemaCompiler {
 
         } else {
             // this attribute refers to a custom type, probably one of the extended simple types.
-            // with the inline scheam definition
+            // with the inline schema definition
             QName attributeQName = att.getQName();
             if (attributeQName != null) {
                 XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
@@ -2578,7 +2578,7 @@ public class SchemaCompiler {
                                       QName componentQName,
                                       int componetType) throws SchemaCompilationException {
         // if the componet do not have a propernamesapce or
-        // it is equals to the xsd scheam namesapce
+        // it is equals to the xsd schema namesapce
         // we do not have to do any thing.
         if ((componentQName == null) ||
               (componentQName.getNamespaceURI() == null) ||

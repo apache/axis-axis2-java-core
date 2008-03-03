@@ -18,16 +18,15 @@
  */
 package org.apache.axis2.jaxbri;
 
+import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
+import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.util.Loader;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JClass;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,9 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
-import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 
 public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     public JaxbSchemaGenerator(ClassLoader loader, String className,

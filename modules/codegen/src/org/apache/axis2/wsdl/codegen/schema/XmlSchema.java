@@ -23,8 +23,8 @@ import org.w3c.dom.Document;
 import java.util.*;
 
 /**
- * this class represents and scheam object.
- * it is assumed that we consider the xsd scheama
+ * this class represents and schema object.
+ * it is assumed that we consider the xsd schemaa
  * as the defualt name space.
  *
  */

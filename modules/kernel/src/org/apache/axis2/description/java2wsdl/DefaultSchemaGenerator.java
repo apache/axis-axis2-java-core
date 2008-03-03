@@ -94,7 +94,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected Class serviceClass = null;
     protected AxisService service;
     // location of the custom schema , if any
-    protected String customScheamLocation;
+    protected String customSchemaLocation;
     // location of the class name to package mapping file
     // File is simple file with qualifiedClassName:SchemaQName
     protected String mappingFileLocation;
@@ -145,13 +145,13 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    //This will locad the custom scheam file and add that into the scheam map
+    //This will locad the custom schema file and add that into the schema map
     private void loadCustomSchemaFile(){
-      if (customScheamLocation != null) {
+      if (customSchemaLocation != null) {
           try {
               DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
               documentBuilderFactory.setNamespaceAware(true);
-              Document doc = documentBuilderFactory.newDocumentBuilder().parse(new File(customScheamLocation));
+              Document doc = documentBuilderFactory.newDocumentBuilder().parse(new File(customSchemaLocation));
               XmlSchema schema = xmlSchemaCollection.read(doc,null);
               schemaMap.put(schema.getTargetNamespace() ,schema);
           } catch (Exception e) {
@@ -1077,12 +1077,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
 
-    public String getCustomScheamLocation() {
-        return customScheamLocation;
+    public String getCustomSchemaLocation() {
+        return customSchemaLocation;
     }
 
-    public void setCustomScheamLocation(String customScheamLocation) {
-        this.customScheamLocation = customScheamLocation;
+    public void setCustomSchemaLocation(String customSchemaLocation) {
+        this.customSchemaLocation = customSchemaLocation;
     }
 
     public String getMappingFileLocation() {

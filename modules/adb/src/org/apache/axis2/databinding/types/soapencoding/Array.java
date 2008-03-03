@@ -305,7 +305,7 @@ public class Array implements ADBBean {
         // since soap encoding does not enforce the name of the children items
         // here we use item as the child name.
 
-        // all the list objects must be ADBBeans for basic scheam types such as
+        // all the list objects must be ADBBeans for basic schema types such as
         // int,float corresponding soapencoding class must be used
         ADBBean adbBean;
         for (Iterator iter = objectList.iterator(); iter.hasNext();) {

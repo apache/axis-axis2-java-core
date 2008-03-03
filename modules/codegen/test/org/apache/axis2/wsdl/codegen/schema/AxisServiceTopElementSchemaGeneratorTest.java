@@ -25,9 +25,9 @@ import java.util.*;
 
 public class AxisServiceTopElementSchemaGeneratorTest extends TestCase {
 
-    public void testScheamGeneration(){
+    public void testSchemaGeneration(){
 
-        AxisServiceTopElementSchemaGenerator scheamGenerator = new AxisServiceTopElementSchemaGenerator(null);
+        AxisServiceTopElementSchemaGenerator schemaGenerator = new AxisServiceTopElementSchemaGenerator(null);
 
         Set topElements = new HashSet();
 
@@ -54,9 +54,9 @@ public class AxisServiceTopElementSchemaGeneratorTest extends TestCase {
         topElements.add(topElement);
 
 
-        Map schemaMap = scheamGenerator.getSchemaMap(topElements);
+        Map schemaMap = schemaGenerator.getSchemaMap(topElements);
         try {
-            List xmlSchemaList = scheamGenerator.getXmlSchemaList(schemaMap);
+            List xmlSchemaList = schemaGenerator.getXmlSchemaList(schemaMap);
             org.apache.ws.commons.schema.XmlSchema xmlSchema;
             for (Iterator iter = xmlSchemaList.iterator();iter.hasNext();){
                 xmlSchema = (org.apache.ws.commons.schema.XmlSchema) iter.next();

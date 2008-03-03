@@ -76,7 +76,7 @@ public class SchemaReaderImpl implements SchemaReader {
         Types types = wsdlDefinition.getTypes();
         if (types == null) {
             if (log.isDebugEnabled()) {
-                log.debug("WARNING: Could not find any Scheam/Types from WSDL");
+                log.debug("WARNING: Could not find any Schema/Types from WSDL");
                 log.debug("no packages will derived from WSDL schema");
             }
             return packageList;

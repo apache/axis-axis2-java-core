@@ -81,7 +81,7 @@ public class AxisServiceTopElementSchemaGenerator {
         NamespacePrefix namespacePrefix = new NamespacePrefix();
         for (Iterator iter = topElements.iterator(); iter.hasNext();) {
             topElement = (TopElement) iter.next();
-            xmlSchema = getXmlScheamForNamespace(topElement.getElementQName().getNamespaceURI(), schemaMap);
+            xmlSchema = getXmlSchemaForNamespace(topElement.getElementQName().getNamespaceURI(), schemaMap);
             if (!xmlSchema.isElementExists(topElement.getElementQName().getLocalPart())) {
                 if (topElement.getTypeQName() == null) {
                     //i.e this element is an annonymous complex element
@@ -94,7 +94,7 @@ public class AxisServiceTopElementSchemaGenerator {
                     // then we have an element with a complex type.
                     // first creates the complex type if it is note exists
                     XmlSchema complexElementSchema =
-                            getXmlScheamForNamespace(topElement.getTypeQName().getNamespaceURI(), schemaMap);
+                            getXmlSchemaForNamespace(topElement.getTypeQName().getNamespaceURI(), schemaMap);
                     if (!complexElementSchema.isComplexTypeExists(topElement.getTypeQName().getLocalPart())) {
                         XmlComplexType xmlComplexType = new XmlComplexType();
                         xmlComplexType.setName(topElement.getTypeQName().getLocalPart());
@@ -129,12 +129,12 @@ public class AxisServiceTopElementSchemaGenerator {
         return xmlElement;
     }
 
-    private XmlSchema getXmlScheamForNamespace(String targetNamespace, Map scheamMap) {
-        if (!scheamMap.containsKey(targetNamespace)) {
+    private XmlSchema getXmlSchemaForNamespace(String targetNamespace, Map schemaMap) {
+        if (!schemaMap.containsKey(targetNamespace)) {
             XmlSchema xmlSchema = new XmlSchema(targetNamespace);
-            scheamMap.put(targetNamespace, xmlSchema);
+            schemaMap.put(targetNamespace, xmlSchema);
         }
-        return (XmlSchema) scheamMap.get(targetNamespace);
+        return (XmlSchema) schemaMap.get(targetNamespace);
     }
 
     public Set getTopElements() {

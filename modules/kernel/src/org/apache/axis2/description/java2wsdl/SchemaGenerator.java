@@ -55,10 +55,10 @@ public interface SchemaGenerator {
 
     void setAxisService(AxisService service);
 
-    String getCustomScheamLocation();
+    String getCustomSchemaLocation();
 
 
-    void setCustomScheamLocation(String customScheamLocation);
+    void setCustomSchemaLocation(String customSchemaLocation);
 
     String getMappingFileLocation() ;
 

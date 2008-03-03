@@ -1608,7 +1608,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                  namespaceImportsMap,
                                                  namespaceToUse);
                 } else if (newSchemaMap.containsKey(namespaceToUse)) {
-                    // i.e this namespace is with a newly created scheam
+                    // i.e this namespace is with a newly created schema
                     addElementToAnExistingSchema((Element) newSchemaMap.get(namespaceToUse),
                                                  elementDeclaration,
                                                  namespacePrefixMap,
@@ -1702,7 +1702,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                  namespaceImportsMap,
                                                  namespaceToUse);
                 } else if (newSchemaMap.containsKey(namespaceToUse)) {
-                    // i.e this namespace is with a newly created scheam
+                    // i.e this namespace is with a newly created schema
                     addElementToAnExistingSchema((Element) newSchemaMap.get(namespaceToUse),
                                                  elementDeclaration,
                                                  namespacePrefixMap,

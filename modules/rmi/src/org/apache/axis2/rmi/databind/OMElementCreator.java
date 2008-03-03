@@ -71,7 +71,7 @@ public class OMElementCreator {
         } catch (MetaDataPopulateException e) {
             throw new OMElementCreationException("Problem in meta data population", e);
         } catch (SchemaGenerationException e) {
-            throw new OMElementCreationException("Problem in Scheam generation", e);
+            throw new OMElementCreationException("Problem in Schema generation", e);
         }
 
         return returnOMElement;

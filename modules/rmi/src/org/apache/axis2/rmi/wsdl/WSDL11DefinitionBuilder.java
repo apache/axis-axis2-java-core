@@ -87,7 +87,7 @@ public class WSDL11DefinitionBuilder {
     }
 
     /**
-     * generates the scheams for the wsdl
+     * generates the schemas for the wsdl
      *
      * @throws SchemaGenerationException
      */

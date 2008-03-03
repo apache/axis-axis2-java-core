@@ -177,7 +177,7 @@ public class AxisService extends AxisDescription {
     private String name;
     private ClassLoader serviceClassLoader;
 
-    //to keep the XMLScheam getting either from WSDL or java2wsdl
+    //to keep the XMLSchema getting either from WSDL or java2wsdl
     private ArrayList schemaList;
     //private XmlSchema schema;
 
@@ -2208,7 +2208,7 @@ public class AxisService extends AxisDescription {
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
 
-                    if (s != null && getScheamLocationWithDot(sourceURIToNewLocationMap, s) == null) {
+                    if (s != null && getSchemaLocationWithDot(sourceURIToNewLocationMap, s) == null) {
                         //insert the name into the table
                         insertIntoNameTable(nameTable, s, sourceURIToNewLocationMap, overrideAbsoluteAddress);
                         //recursively call the same procedure
@@ -2293,7 +2293,7 @@ public class AxisService extends AxisDescription {
      */
     private void adjustSchemaName(XmlSchema parentSchema,
                                   Hashtable nameTable,
-                                  Hashtable importedScheams,
+                                  Hashtable importedSchemas,
                                   Hashtable sourceURIToNewLocationMap) {
         XmlSchemaObjectCollection includes = parentSchema.getIncludes();
         for (int j = 0; j < includes.getCount(); j++) {
@@ -2304,7 +2304,7 @@ public class AxisService extends AxisDescription {
                 adjustSchemaLocation(s,
                         xmlSchemaExternal,
                         nameTable,
-                        importedScheams,
+                        importedSchemas,
                         sourceURIToNewLocationMap);
             }
         }
@@ -2321,24 +2321,24 @@ public class AxisService extends AxisDescription {
     private void adjustSchemaLocation(XmlSchema s,
                                       XmlSchemaExternal xmlSchemaExternal,
                                       Hashtable nameTable,
-                                      Hashtable importedScheams,
+                                      Hashtable importedSchemas,
                                       Hashtable sourceURIToNewLocationMap) {
         if (s != null) {
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
             
             if (schemaLocation.indexOf("://") == -1) {
-                String newscheamlocation = customSchemaNamePrefix == null ?
+                String newschemalocation = customSchemaNamePrefix == null ?
                         //use the default mode
-                        (getName() + "?xsd=" + getScheamLocationWithDot(sourceURIToNewLocationMap, s)) :
+                        (getName() + "?xsd=" + getSchemaLocationWithDot(sourceURIToNewLocationMap, s)) :
                             //custom prefix is present - add the custom prefix
-                            (customSchemaNamePrefix + getScheamLocationWithDot(sourceURIToNewLocationMap, s));
-                xmlSchemaExternal.setSchemaLocation(newscheamlocation);
-                importedScheams.put(schemaLocation, newscheamlocation);
+                            (customSchemaNamePrefix + getSchemaLocationWithDot(sourceURIToNewLocationMap, s));
+                xmlSchemaExternal.setSchemaLocation(newschemalocation);
+                importedSchemas.put(schemaLocation, newschemalocation);
             }
         }
     }
 
-    private Object getScheamLocationWithDot(Hashtable sourceURIToNewLocationMap, XmlSchema s) {
+    private Object getSchemaLocationWithDot(Hashtable sourceURIToNewLocationMap, XmlSchema s) {
         String o = (String) sourceURIToNewLocationMap.get(s.getSourceURI());
         if (o !=null && o.indexOf(".") <0){
             return o + ".xsd";

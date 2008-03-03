@@ -213,18 +213,18 @@ public class WSDL11Writer {
         }
     }
 
-    private void changeLocations(Element element, Map changedScheamLocations) {
+    private void changeLocations(Element element, Map changedSchemaLocations) {
         NodeList nodeList = element.getChildNodes();
         String tagName;
         for (int i = 0; i < nodeList.getLength(); i++) {
             tagName = nodeList.item(i).getLocalName();
             if (IMPORT_TAG.equals(tagName) || INCLUDE_TAG.equals(tagName)) {
-                processImport(nodeList.item(i), changedScheamLocations);
+                processImport(nodeList.item(i), changedSchemaLocations);
             }
         }
     }
 
-    private void processImport(Node importNode, Map changedScheamLocations) {
+    private void processImport(Node importNode, Map changedSchemaLocations) {
         NamedNodeMap nodeMap = importNode.getAttributes();
         Node attribute;
         String attributeValue;
@@ -232,9 +232,9 @@ public class WSDL11Writer {
             attribute = nodeMap.item(i);
             if (attribute.getNodeName().equals("schemaLocation")) {
                 attributeValue = attribute.getNodeValue();
-                if (changedScheamLocations.get(attributeValue) != null) {
+                if (changedSchemaLocations.get(attributeValue) != null) {
                     attribute.setNodeValue(
-                            (String)changedScheamLocations.get(attributeValue));
+                            (String)changedSchemaLocations.get(attributeValue));
                 }
             }
         }

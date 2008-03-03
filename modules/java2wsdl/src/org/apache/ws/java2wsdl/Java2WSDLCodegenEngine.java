@@ -228,7 +228,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
                            Java2WSDLConstants.CUSTOM_SCHEMA_LOCATION_LONG,
                            optionsMap);
         if (option != null) {
-            java2WsdlBuilder.setCustomScheamLocation(option.getOptionValue());
+            java2WsdlBuilder.setCustomSchemaLocation(option.getOptionValue());
         }
         option = loadOption(Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION,
                            Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION_LONG,

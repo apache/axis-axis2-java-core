@@ -667,7 +667,7 @@ public class Utils {
     }
 
     /**
-     * To add the exclude method when generating scheams , here the exclude methods
+     * To add the exclude method when generating schemas , here the exclude methods
      * will be session releated axis2 methods
      */
     public static void addExcludeMethods(ArrayList excludeList) {

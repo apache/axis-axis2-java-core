@@ -20,7 +20,7 @@ import org.w3c.dom.Document;
 import org.apache.axis2.namespace.Constants;
 
 /**
- * this class represents an xml scheam import
+ * this class represents an xml schema import
  */
 public class XmlImport {
 
