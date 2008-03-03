@@ -139,7 +139,7 @@
         <!-- <parameter name="requestTimeout"           >10000</parameter>                   -->
         <!-- <parameter name="requestTcpNoDelay"        >false</parameter>                   -->
         <!-- <parameter name="requestCoreThreadPoolSize">50</parameter>                      -->
-        <!-- <parameter name="RequestMaxThreadPoolSize" >100</parameter>                     -->
+        <!-- <parameter name="requestMaxThreadPoolSize" >100</parameter>                     -->
         <!-- <parameter name="threadKeepAliveTime"      >240000</parameter>                  -->
         <!-- <parameter name="threadKeepAliveTimeUnit"  >MILLISECONDS</parameter>            -->
     </transportReceiver>
