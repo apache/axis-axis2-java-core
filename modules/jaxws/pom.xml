@@ -216,6 +216,13 @@
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
 								</java>
+								<echo>Generating java from AddNumbers.wsdl</echo>
+								<java classname="com.sun.tools.xjc.Driver" fork="true">
+									<classpath refid="maven.runtime.classpath"/>
+									<classpath location="${compiled.classes.dir}"/>
+									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
+								</java>
+<!-- 
 								<echo>Generating java from ProxyDocLitnonWrapped.wsdl</echo>
 								<java classname="com.sun.tools.xjc.Driver" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
@@ -251,12 +258,6 @@
 									<classpath refid="maven.runtime.classpath"/>
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl"/>
-								</java>
-								<echo>Generating java from AddNumbers.wsdl</echo>
-								<java classname="com.sun.tools.xjc.Driver" fork="true">
-									<classpath refid="maven.runtime.classpath"/>
-									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
 								</java>
     	<echo>Generating java from AddNumbersHandler.wsdl</echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
@@ -373,6 +374,7 @@
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
 								</java>
+-->
 							</tasks>
 						</configuration>
 						<goals>
@@ -384,6 +386,7 @@
 						<phase>test-compile</phase>
 						<configuration>
 							<tasks>
+<!--
 								<mkdir dir="./target/test-classes/servicejars"/>
 								<copy toDir="target/test-classes/services/EchoService/">
 									<fileset dir="target/test-classes">
@@ -393,9 +396,6 @@
 										<exclude name="**/*.java"/>
 									</fileset>
 								</copy>
-								<!-- ================================================================ -->
-								<!--- Provider endpoint Service Samples -->
-								<!-- ================================================================ -->
 								<copy toDir="target/test-classes/servicejars/WSGenService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/wsgen/WSGenInterface.class"/>
@@ -418,12 +418,6 @@
 										<include name="org/apache/axis2/jaxws/security/server/**"/>
 										<exclude name="org/apache/axis2/jaxws/security/server/META-INF/services.xml"/>
 									</fileset>
-<!--
-									<fileset dir="test/org/apache/axis2/jaxws/security/server">
-										<include name="META-INF/**"/>
-										<exclude name="META-INF/services.xml"/>
-									</fileset>
--->
 								</copy>
 
 								<zip destfile="target/test-classes/servicejars/BasicAuthSecurityService.jar"
@@ -581,9 +575,6 @@
 								/>
 								<delete dir="target/test-classes/servicejars/SOAP12Service"/>														
 								
-								<!-- ================================================================ -->
-								<!--- Proxy endpoint Service Samples -->
-								<!-- ================================================================ -->
 								<copy toDir="target/test-classes/servicejars/ProxyDocLitWrapped/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/doclitwrapped/**"/>
@@ -689,9 +680,6 @@
 								/>
 								<delete dir="target/test-classes/servicejars/gorilla_dlw"/>								
 								
-								<!-- ================================================================ -->
-								<!--- XML HTTP Tests -->
-								<!-- ================================================================ -->
 								<copy toDir="target/test-classes/servicejars/XPayloadStringProvider/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class"/>
@@ -767,9 +755,6 @@
 								/>
 								<delete dir="target/test-classes/servicejars/XMessageDataSourceProvider"/>
 	
-								<!-- ================================================================ -->
-								<!--- Java Bean Endpoint Samples -->
-								<!-- ================================================================ -->
 								<copy toDir="target/test-classes/servicejars/AddressBookService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/sample/addressbook/**"/>
@@ -1033,7 +1018,7 @@
 									basedir="${pom.basedir}/target/test-classes/servicejars/RPCLitStringArrayService"
 								/>
 								<delete dir="target/test-classes/servicejars/RPCLitStringArrayService"/>								
-
+-->
 								<copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
@@ -1077,6 +1062,7 @@
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>
 						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
 					</includes>
 					<systemProperties>
 						<property>
