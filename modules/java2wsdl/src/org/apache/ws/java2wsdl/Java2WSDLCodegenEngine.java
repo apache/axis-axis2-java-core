@@ -223,6 +223,19 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         if (option != null) {
             java2WsdlBuilder.setGenerateDocLitBare(true);
         }
+
+        option = loadOption(Java2WSDLConstants.CUSTOM_SCHEMA_LOCATION,
+                           Java2WSDLConstants.CUSTOM_SCHEMA_LOCATION_LONG,
+                           optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setCustomScheamLocation(option.getOptionValue());
+        }
+        option = loadOption(Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION,
+                           Java2WSDLConstants.SCHEMA_MAPPING_FILE_LOCATION_LONG,
+                           optionsMap);
+        if (option != null) {
+            java2WsdlBuilder.setMappingFileLocation(option.getOptionValue());
+        }
     }
     
     private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption, Map options) {

@@ -19,12 +19,15 @@
 package org.apache.axis2.jaxbri;
 
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.util.Loader;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JClass;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -125,6 +128,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
 
         return itr.next();
     }
+
 
     protected List<Class<?>> processMethods(Method[] declaredMethods) throws Exception {
         List<Class<?>> list = new ArrayList<Class<?>>();

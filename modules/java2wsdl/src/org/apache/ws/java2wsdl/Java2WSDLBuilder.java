@@ -74,6 +74,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     private String schemaGenClassName = null;
     private boolean generateDocLitBare = false;
     private AxisConfiguration axisConfig;
+    private String customScheamLocation;
+    // location of the class name to package mapping file
+    // File is simple file with qualifiedClassName:SchemaQName
+    private String mappingFileLocation;
 
     public Java2WSDLBuilder() {
         try {
@@ -208,6 +212,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         schemaGenerator.setExtraClasses(getExtraClasses());
         schemaGenerator.setNsGen(resolveNSGen());
         schemaGenerator.setPkg2nsmap(getPkg2nsMap());
+        schemaGenerator.setMappingFileLocation(mappingFileLocation);
+        schemaGenerator.setCustomScheamLocation(customScheamLocation);
         if (getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() &&
             (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase()))) {
             schemaGenerator.setUseWSDLTypesNamespace(true);
@@ -382,6 +388,23 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public void setWSDLVersion(String wsdlVersion) {
         this.wsdlVersion = wsdlVersion;
+    }
+
+
+    public String getCustomScheamLocation() {
+        return customScheamLocation;
+    }
+
+    public void setCustomScheamLocation(String customScheamLocation) {
+        this.customScheamLocation = customScheamLocation;
+    }
+
+    public String getMappingFileLocation() {
+        return mappingFileLocation;
+    }
+
+    public void setMappingFileLocation(String mappingFileLocation) {
+        this.mappingFileLocation = mappingFileLocation;
     }
 }
 

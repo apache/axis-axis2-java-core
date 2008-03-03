@@ -132,7 +132,11 @@ public interface Java2WSDLConstants {
     String USE_OPTION_LONG = "use";
     String WSDL_VERSION_OPTION = "wv";
     String WSDL_VERSION_OPTION_LONG = "wsdl-version";
-    
+    String CUSTOM_SCHEMA_LOCATION = "csl";
+    String CUSTOM_SCHEMA_LOCATION_LONG = "custom-schema-location";
+    String SCHEMA_MAPPING_FILE_LOCATION = "mfl";
+    String SCHEMA_MAPPING_FILE_LOCATION_LONG = "mapping-file-location";
+
     String AXIS2_NAMESPACE_PREFIX = "ns1";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";

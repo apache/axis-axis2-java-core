@@ -54,4 +54,13 @@ public interface SchemaGenerator {
     void setNonRpcMethods(ArrayList nonRpcMethods);
 
     void setAxisService(AxisService service);
+
+    String getCustomScheamLocation();
+
+
+    void setCustomScheamLocation(String customScheamLocation);
+
+    String getMappingFileLocation() ;
+
+    void setMappingFileLocation(String mappingFileLocation) ;
 }

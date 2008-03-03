@@ -33,9 +33,14 @@ import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.codehaus.jam.*;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
+import java.io.*;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
 
@@ -88,6 +93,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected Class serviceClass = null;
     protected AxisService service;
+    // location of the custom schema , if any
+    protected String customScheamLocation;
+    // location of the class name to package mapping file
+    // File is simple file with qualifiedClassName:SchemaQName
+    protected String mappingFileLocation;
 
     //To check whether we need to generate Schema element for Exception
     protected boolean generateBaseException ;
@@ -135,6 +145,57 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
+    //This will locad the custom scheam file and add that into the scheam map
+    private void loadCustomSchemaFile(){
+      if (customScheamLocation != null) {
+          try {
+              DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+              documentBuilderFactory.setNamespaceAware(true);
+              Document doc = documentBuilderFactory.newDocumentBuilder().parse(new File(customScheamLocation));
+              XmlSchema schema = xmlSchemaCollection.read(doc,null);
+              schemaMap.put(schema.getTargetNamespace() ,schema);
+          } catch (Exception e) {
+              log.info(e.getMessage());
+          }
+      }
+    }
+
+    /**This will load the mapping file and update the Typetable with the Class name and the Qname
+     * Mapping file look like
+     * org.foo.bar.FooException|http://www.abc.com/soaframework/common/types|ErrorMessage
+     */
+    private void loadMappingFile(){
+        if(mappingFileLocation != null){
+            File file = new File(mappingFileLocation);
+            BufferedReader input = null;
+        try {
+            input = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+            String line;
+            while ((line = input.readLine()) != null) {
+                line = line.trim();
+                if (line.length() > 0 && line.charAt(0)!='#') {
+                    String values [] = line.split("\\|");
+                    if (values != null && values.length >2) {
+                        typeTable.addComplexSchema(values[0],new QName(values[1] , values[2]));
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        }
+    }
+
+
     /**
      * Generates schema for all the parameters in method. First generates schema for all different
      * parameter type and later refers to them.
@@ -143,7 +204,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
      * @throws Exception
      */
     public Collection generateSchema() throws Exception {
-
+        loadCustomSchemaFile();
+        loadMappingFile();
         JamServiceFactory factory = JamServiceFactory.getInstance();
         JamServiceParams jam_service_parms = factory.createServiceParams();
         //setting the classLoder
@@ -1012,5 +1074,22 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     public void setAxisService(AxisService service) {
         this.service = service;
+    }
+
+
+    public String getCustomScheamLocation() {
+        return customScheamLocation;
+    }
+
+    public void setCustomScheamLocation(String customScheamLocation) {
+        this.customScheamLocation = customScheamLocation;
+    }
+
+    public String getMappingFileLocation() {
+        return mappingFileLocation;
+    }
+
+    public void setMappingFileLocation(String mappingFileLocation) {
+        this.mappingFileLocation = mappingFileLocation;
     }
 }
