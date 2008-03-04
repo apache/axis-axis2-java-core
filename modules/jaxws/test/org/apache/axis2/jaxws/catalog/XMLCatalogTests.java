@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.catalog;
 
 import java.io.File;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,7 +38,7 @@ import junit.framework.TestCase;
  */
 public class XMLCatalogTests extends TestCase {
 	private static final String TEST_RESOURCES = "test-resources/catalog/";
-	private static final String BASIC_CATALOG = TEST_RESOURCES + "basic-catalog.xml";
+	private static final String BASIC_CATALOG = "/" + TEST_RESOURCES + "basic-catalog.xml";
 	private static final String IMPORT_BASE = TEST_RESOURCES + "importBase.xsd";
 	private static final String IMPORT_BAD = TEST_RESOURCES + "importBad.xsd";	
 
@@ -88,7 +90,7 @@ public class XMLCatalogTests extends TestCase {
      */
     public void testSchemaImportBasicCatalog() throws Exception{
 		OASISCatalogManager catalogManager = new OASISCatalogManager();
-		catalogManager.setCatalogFiles(BASIC_CATALOG);
+		catalogManager.setCatalogFiles(getURLFromLocation(BASIC_CATALOG).toString());
 		
         File file = new File(IMPORT_BAD);
         //create a DOM document
@@ -104,5 +106,30 @@ public class XMLCatalogTests extends TestCase {
 
         assertNotNull(schema.getTypeByName(new QName("http://soapinterop.org/xsd2","SOAPStruct")));
         assertNotNull(schema.getElementByName(new QName("http://soapinterop.org/xsd2","SOAPWrapper")));
+    }
+
+    /**
+     * Given a String representing a file location, return a URL.
+     * @param wsdlLocation
+     * @return
+     */
+    private URL getURLFromLocation(String wsdlLocation) {
+        URL url = null;
+        try {
+            try{
+                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            }
+               File file = new File(wsdlLocation);
+               url = file.toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            fail();
+        }
+	    
+        return url;
     }
 }
