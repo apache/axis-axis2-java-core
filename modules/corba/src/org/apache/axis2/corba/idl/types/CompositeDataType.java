@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public abstract class CompositeDataType extends DataType {
     public static final String IDL_REPO_STRING = "IDL:";
     public static final String IDL_VERSION = ":1.0";
+    public static final String MODULE_SEPERATOR = "::";
 
 	protected String id;
 	protected String name;
@@ -33,7 +34,7 @@ public abstract class CompositeDataType extends DataType {
 
     public String getId() {
         if (id==null)
-            id = IDL_REPO_STRING + module.replaceAll("::", "/") + name + IDL_VERSION;
+            id = IDL_REPO_STRING + module.replaceAll(MODULE_SEPERATOR, "/") + name + IDL_VERSION;
         return id;
     }
 

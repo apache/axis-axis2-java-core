@@ -18,6 +18,8 @@ public class IDLVisitor implements ASTVisitor {
     private static final Log log = LogFactory.getLog(IDLVisitor.class);
     private IDL idl = null;
     private String module = "";
+    private String moduleForInnerTypes = null;
+    private static final String INNERTYPE_SUFFIX = "Package";
 
     public IDL getIDL() {
         return idl;
@@ -68,7 +70,7 @@ public class IDLVisitor implements ASTVisitor {
                 }
 
                 case IDLTokenTypes.LITERAL_typedef: {
-                    visitAndAddTypedefs(node);
+                    visitAndAddTypedefs(node, module);
                     break;
                 }
 
@@ -168,16 +170,40 @@ public class IDLVisitor implements ASTVisitor {
         Interface intf = new Interface();
         intf.setModule(module);
         AST interfaceNode = node.getFirstChild();
-        intf.setName(interfaceNode.toString());
+        String interfaceName = interfaceNode.toString();
+        intf.setName(interfaceName);
+        moduleForInnerTypes = module + interfaceName + INNERTYPE_SUFFIX + CompositeDataType.MODULE_SEPERATOR;
         AST node2 = interfaceNode.getNextSibling();
         while (node2 != null) {
             switch (node2.getType()) {
             case IDLTokenTypes.LITERAL_struct:
+                Struct innerStruct = visitStruct(node2);
+                innerStruct.setModule(moduleForInnerTypes);
+                idl.addType(innerStruct);
+                break;
+            case IDLTokenTypes.LITERAL_valuetype:
+                log.error("Unsupported IDL token " + node2);
+                // CORBA 3.O spec does not support this
+                break;
             case IDLTokenTypes.LITERAL_exception:
-            case IDLTokenTypes.LITERAL_const:
+                Struct innerEx = visitException(node2);
+                innerEx.setModule(moduleForInnerTypes);
+                idl.addType(innerEx);
+                break;
             case IDLTokenTypes.LITERAL_enum:
+                EnumType innerEnum = visitEnum(node2);
+                innerEnum.setModule(moduleForInnerTypes);
+                idl.addType(innerEnum);
+                break;
             case IDLTokenTypes.LITERAL_union:
+                UnionType innerUnion = visitUnion(node2);
+                innerUnion.setModule(moduleForInnerTypes);
+                idl.addType(innerUnion);
+                break;
             case IDLTokenTypes.LITERAL_typedef:
+                visitAndAddTypedefs(node2, moduleForInnerTypes);
+                break;
+            case IDLTokenTypes.LITERAL_const:
                 log.error("Unsupported IDL token " + node2);
                 break;
             case IDLTokenTypes.LITERAL_attribute:
@@ -199,6 +225,7 @@ public class IDLVisitor implements ASTVisitor {
             }
             node2 = node2.getNextSibling();
         }
+        moduleForInnerTypes = null;
         return intf;
     }
 
@@ -289,6 +316,12 @@ public class IDLVisitor implements ASTVisitor {
                 }
             }
 
+            if (dataType==null && moduleForInnerTypes!=null) {
+                if (!typeName.startsWith(module)) {
+                    dataType = (DataType) idl.getCompositeDataTypes().get(moduleForInnerTypes + typeName);
+                }
+            }
+
             if (dataType==null)
                 dataType = (DataType) idl.getCompositeDataTypes().get(typeName);
         }
@@ -303,7 +336,7 @@ public class IDLVisitor implements ASTVisitor {
         String typeName = node.getText();
         AST memberTypeNodeChild = node.getFirstChild();
         while(memberTypeNodeChild!=null) {
-            typeName = typeName + "::" + memberTypeNodeChild.toString();
+            typeName = typeName + CompositeDataType.MODULE_SEPERATOR + memberTypeNodeChild.toString();
             memberTypeNodeChild = memberTypeNodeChild.getNextSibling();
         }
         return typeName;
@@ -312,8 +345,8 @@ public class IDLVisitor implements ASTVisitor {
     public void setModule(String module) {
         if (module==null || module.length()<1)
             module = "";
-        else if (!module.endsWith("::"))
-            module += "::";
+        else if (!module.endsWith(CompositeDataType.MODULE_SEPERATOR))
+            module += CompositeDataType.MODULE_SEPERATOR;
         this.module = module;
     }
 
@@ -364,7 +397,7 @@ public class IDLVisitor implements ASTVisitor {
         return unionType;
     }
 
-    private void visitAndAddTypedefs(AST node) {
+    private void visitAndAddTypedefs(AST node, String moduleName) {
         AST typedefNode = node.getFirstChild();
 
         DataType dataType;
@@ -388,7 +421,7 @@ public class IDLVisitor implements ASTVisitor {
                 int i = 1;
                 while(dimensionNode!=null) {
                     ArrayType temp = new ArrayType();
-                    temp.setElementModule(module);
+                    temp.setElementModule(moduleName);
                     temp.setElementName(typedefName);
                     temp.setDepth(i);
                     i++;
@@ -408,7 +441,7 @@ public class IDLVisitor implements ASTVisitor {
             }
             typedef = new Typedef();
             typedef.setDataType(dataType);
-            typedef.setModule(module);
+            typedef.setModule(moduleName);
             typedef.setName(typedefName);
             idl.addType(typedef);
             typedefNameNode = typedefNameNode.getNextSibling();

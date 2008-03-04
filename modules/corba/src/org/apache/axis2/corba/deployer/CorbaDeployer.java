@@ -57,6 +57,11 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
     public void init(ConfigurationContext configCtx) {
         this.configCtx = configCtx;
         this.axisConfig = this.configCtx.getAxisConfiguration();
+        /*try {
+            System.in.read();
+        } catch (IOException e) {
+
+        }*/
     }
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {

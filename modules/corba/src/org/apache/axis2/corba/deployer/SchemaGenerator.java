@@ -31,6 +31,7 @@ import java.util.*;
 
 import org.apache.axis2.corba.idl.types.*;
 import org.apache.axis2.corba.receivers.CorbaUtil;
+import org.apache.axis2.corba.exceptions.SchemaGeneratorException;
 
 public class SchemaGenerator implements CorbaConstants {
     private static int prefixCount = 1;
@@ -52,7 +53,7 @@ public class SchemaGenerator implements CorbaConstants {
     private String targetNamespace = null;
     private ArrayList nonRpcMethods = new ArrayList();
 
-    public NamespaceGenerator getNsGen() throws Exception {
+    public NamespaceGenerator getNsGen() throws SchemaGeneratorException {
         if ( nsGen == null ) {
             nsGen = new DefaultNamespaceGenerator();
         }
@@ -117,10 +118,17 @@ public class SchemaGenerator implements CorbaConstants {
      * parameter type and later refers to them.
      *
      * @return Returns XmlSchema.
-     * @throws Exception if failed
+     * @throws SchemaGeneratorException if failed
      */
-    public Collection generateSchema() throws Exception {
+    public Collection generateSchema() throws SchemaGeneratorException {
         Map interfaces = idl.getInterfaces();
+
+        if (interfaces==null)
+            throw new SchemaGeneratorException("No interfaces defined");
+
+        if (interfaceName==null)
+            throw new SchemaGeneratorException("Interface name required");
+
         Interface intf = (Interface) interfaces.get(interfaceName);
         /**
          * Schema genertaion done in two stage 1. Load all the methods and
@@ -146,7 +154,7 @@ public class SchemaGenerator implements CorbaConstants {
             }
 
             if (uniqueMethods.get(operationName) != null) {
-                throw new Exception(
+                throw new SchemaGeneratorException(
                         " Sorry we don't support methods overloading !!!! ");
             }
 
@@ -260,10 +268,10 @@ public class SchemaGenerator implements CorbaConstants {
      *
      * @param dataType object
      * @return Qname
-     * @throws Exception if fails
+     * @throws SchemaGeneratorException if fails
      */
     //private QName generateSchema(JClass dataType) throws Exception {
-    private QName generateSchema(CompositeDataType dataType) throws Exception {
+    private QName generateSchema(CompositeDataType dataType) throws SchemaGeneratorException {
         String name = CorbaUtil.getQualifiedName(dataType);
         QName schemaTypeName = typeTable.getComplexSchemaType(name);
         if (schemaTypeName == null) {
@@ -373,7 +381,7 @@ public class SchemaGenerator implements CorbaConstants {
     // moved code common to Fields & properties out of above method
     private XmlSchemaElement generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
                                                                   DataType type,
-                                                                  String name, boolean forceNotNillable) throws Exception {
+                                                                  String name, boolean forceNotNillable) throws SchemaGeneratorException {
         boolean isArryType = false;
         long maxOccurs = 0;
         long minOccurs = 0;
@@ -433,7 +441,7 @@ public class SchemaGenerator implements CorbaConstants {
                                 typeTable.getComplexSchemaType(propertyTypeName).getNamespaceURI());
             }
         } else {
-            throw new Exception("Unsupported type:" + type);
+            throw new SchemaGeneratorException("Unsupported type:" + type);
         }
         return elt1;
     }
@@ -451,7 +459,7 @@ public class SchemaGenerator implements CorbaConstants {
 
 
     private QName generateSchemaForType(XmlSchemaSequence sequence, DataType type, String partName)
-            throws Exception {
+            throws SchemaGeneratorException {
 
         boolean isArrayType = false;
         if(type!=null){
@@ -630,7 +638,7 @@ public class SchemaGenerator implements CorbaConstants {
         this.extraClasses = extraClasses;
     }
 
-    private String resolveSchemaNamespace(String packageName) throws Exception {
+    private String resolveSchemaNamespace(String packageName) throws SchemaGeneratorException {
         if (useWSDLTypesNamespace) {
             return (String) pkg2nsmap.get("all");
         } else {

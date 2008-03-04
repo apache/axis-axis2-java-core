@@ -33,6 +33,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.*;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA_2_3.ORB;
@@ -45,6 +46,7 @@ import org.omg.CORBA.Any;
 import org.omg.CORBA.TCKind;
 import org.omg.CORBA.TypeCode;
 
+import javax.xml.namespace.QName;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
@@ -319,7 +321,7 @@ public class CorbaUtil implements CorbaConstants {
         if (dataType!=null
                 && !getQualifiedName(dataType).equals(VOID)
                 && resObject!=null) {
-            processResponse(child, bodyContent, resObject, dataType, fac, ns, qualified);
+            processResponse(child, bodyContent, resObject, dataType, fac, ns, qualified, service);
         } else {
             child.addAttribute("nil", "true", fac.createOMNamespace(Constants.URI_2001_SCHEMA_XSI,
                     Constants.NS_PREFIX_SCHEMA_XSI));
@@ -338,7 +340,7 @@ public class CorbaUtil implements CorbaConstants {
                     child = fac.createOMElement(param.getName(), null);
                 }
                 bodyContent.addChild(child);
-                processResponse(child, bodyContent, paramsIter.next(), param.getDataType(), fac, ns, qualified);
+                processResponse(child, bodyContent, paramsIter.next(), param.getDataType(), fac, ns, qualified, service);
             }
         }
 
@@ -348,14 +350,15 @@ public class CorbaUtil implements CorbaConstants {
     }
 
     private static void processResponse(OMElement child, OMElement bodyContent, Object resObject, DataType dataType,
-                                        SOAPFactory fac, OMNamespace ns, boolean qualified) {
+                                        SOAPFactory fac, OMNamespace defaultNS, boolean qualified, AxisService service) {
         if (dataType instanceof PrimitiveDataType) {
             child.addChild(fac.createOMText(child, resObject.toString()));
         } else if (dataType instanceof Typedef) {
             Typedef typedef = (Typedef) dataType;
             AliasValue aliasValue = (AliasValue) resObject;
+            OMNamespace ns = getNameSpaceForType(fac, service, typedef);
             OMElement item = fac.createOMElement(ARRAY_ITEM, ns, child);
-            processResponse(item, child, aliasValue.getValue(), typedef.getDataType(), fac, ns, qualified);
+            processResponse(item, child, aliasValue.getValue(), typedef.getDataType(), fac, ns, qualified, service);
         } else if (dataType instanceof AbstractCollectionType) {
             AbstractCollectionType collectionType = (AbstractCollectionType) dataType;
             AbstractCollectionValue collectionValue = (AbstractCollectionValue) resObject;
@@ -366,16 +369,16 @@ public class CorbaUtil implements CorbaConstants {
                 if (collectionType.getDataType() instanceof AbstractCollectionType) {
                     outer = child;
                     if (qualified) {
-                        child = fac.createOMElement(ARRAY_ITEM, ns);
+                        child = fac.createOMElement(ARRAY_ITEM, defaultNS);
                     } else {
                         child = fac.createOMElement(ARRAY_ITEM, null);
                     }
                     outer.addChild(child);
                 }
-                processResponse(child, outer, values[i], collectionType.getDataType(), fac, ns, qualified);
+                processResponse(child, outer, values[i], collectionType.getDataType(), fac, defaultNS, qualified, service);
                 if (i < (length -1)) {
                     if (qualified) {
-                        child = fac.createOMElement(ARRAY_ITEM, ns);
+                        child = fac.createOMElement(ARRAY_ITEM, defaultNS);
                     } else {
                         child = fac.createOMElement(ARRAY_ITEM, null);
                     }
@@ -386,25 +389,37 @@ public class CorbaUtil implements CorbaConstants {
             AbstractValue resValue = (AbstractValue) resObject;
             Member[] members = resValue.getMembers();
             Object[] memberValues = resValue.getMemberValues();
+            OMNamespace ns = getNameSpaceForType(fac, service, (CompositeDataType) dataType);
             for (int i = 0; i < memberValues.length; i++) {
                 OMElement memberElement = fac.createOMElement(members[i].getName(), ns);
-                processResponse(memberElement, bodyContent, memberValues[i], members[i].getDataType(), fac, ns, qualified);
+                processResponse(memberElement, bodyContent, memberValues[i], members[i].getDataType(), fac, ns, qualified, service);
                 child.addChild(memberElement);
             }
         } else if (dataType instanceof UnionType) {
             UnionValue unionValue = (UnionValue) resObject;
             OMElement unMember;
-            if (qualified) {// ?
+            OMNamespace ns = getNameSpaceForType(fac, service, (CompositeDataType) dataType);
+            if (qualified) {
                 unMember = fac.createOMElement(unionValue.getMemberName(), ns);
             } else {
                 unMember = fac.createOMElement(unionValue.getMemberName(), null);
             }
-            processResponse(unMember, child, unionValue.getMemberValue(), unionValue.getMemberType(), fac, ns, qualified);
+            processResponse(unMember, child, unionValue.getMemberValue(), unionValue.getMemberType(), fac, ns, qualified, service);
             child.addChild(unMember);
         } else if (dataType instanceof EnumType) {
             EnumValue enumValue = (EnumValue) resObject;
             child.addChild(fac.createOMText(child, enumValue.getValueAsString()));
         }
+    }
+
+    private static OMNamespace getNameSpaceForType(SOAPFactory fac, AxisService service, CompositeDataType dataType) {
+        TypeTable typeTable = service.getTypeTable();
+        String fullname = (dataType.getModule()!=null) ? dataType.getModule() + dataType.getName() : dataType.getName();
+        fullname = fullname.replaceAll(CompositeDataType.MODULE_SEPERATOR, ".");
+        QName qname = typeTable.getQNamefortheType(fullname);
+        if (qname==null)
+            return null;
+        return fac.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
     }
 
     public static String getQualifiedName(DataType type){
