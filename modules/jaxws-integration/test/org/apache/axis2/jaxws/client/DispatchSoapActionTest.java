@@ -33,14 +33,37 @@ import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceResponseType;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceType;
 import org.apache.axis2.jaxws.client.soapaction.ObjectFactory;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * A suite of SOAPAction related tests for the dispatch client 
  */
-public class DispatchSoapActionTests extends TestCase {
+public class DispatchSoapActionTest extends TestCase {
     
     private static final String targetNamespace = "http://jaxws.axis2.apache.org/client/soapaction";
     private static final String portName = "BookStorePort";
+    
+    public DispatchSoapActionTest(String name) {
+        super(name);
+    }
+
+    static {
+        BasicConfigurator.configure();
+    }
+    
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
         
     /**
      * Invoke an operation this is defined in the WSDL as having a SOAPAction.

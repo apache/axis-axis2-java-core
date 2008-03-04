@@ -24,6 +24,44 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
+import org.apache.axis2.jaxws.client.DispatchSoapActionTest;
+import org.apache.axis2.jaxws.client.ProxySoapActionTest;
+import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
+import org.apache.axis2.jaxws.dispatch.SOAP12DispatchTest;
+import org.apache.axis2.jaxws.injection.ResourceInjectionTests;
+import org.apache.axis2.jaxws.message.SOAP12Tests;
+import org.apache.axis2.jaxws.misc.JAXBContextTest;
+import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
+import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
+import org.apache.axis2.jaxws.provider.JAXBProviderTests;
+import org.apache.axis2.jaxws.provider.SOAPFaultProviderTests;
+import org.apache.axis2.jaxws.provider.SoapMessageMUProviderTests;
+import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
+import org.apache.axis2.jaxws.provider.SourceProviderTests;
+import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
+import org.apache.axis2.jaxws.provider.StringProviderTests;
+import org.apache.axis2.jaxws.proxy.GorillaDLWProxyTests;
+import org.apache.axis2.jaxws.proxy.ProxyTests;
+import org.apache.axis2.jaxws.proxy.RPCLitSWAProxyTests;
+import org.apache.axis2.jaxws.proxy.RPCProxyTests;
+import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
+import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
+import org.apache.axis2.jaxws.rpclit.stringarray.tests.RPCLitStringArrayTests;
+import org.apache.axis2.jaxws.sample.AddNumbersHandlerTests;
+import org.apache.axis2.jaxws.sample.AddNumbersTests;
+import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.jaxws.sample.BareTests;
+import org.apache.axis2.jaxws.sample.DLWMinTests;
+import org.apache.axis2.jaxws.sample.FaultsServiceTests;
+import org.apache.axis2.jaxws.sample.WSGenTests;
+import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource.DispatchXMessageDataSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXB;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXMessageSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXPayloadSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXMessageString;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadString;
 import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
@@ -93,12 +131,13 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(BasicEndpointTests.class);        
         suite.addTestSuite(JAXWSServerTests.class);
 */
-/*        // --------- Integration Tests --------------
+       // --------- Integration Tests --------------
+        /*
         suite = DispatchTestSuite.addTestSuites(suite);
         suite.addTestSuite(JAXBContextTest.class);
-        suite.addTestSuite(SOAP12Dispatch.class);
-        suite.addTestSuite(DispatchSoapActionTests.class);
-        suite.addTestSuite(ProxySoapActionTests.class);
+        suite.addTestSuite(SOAP12DispatchTest.class);
+        suite.addTestSuite(DispatchSoapActionTest.class);
+        suite.addTestSuite(ProxySoapActionTest.class);
         suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SOAPFaultProviderTests.class);
@@ -152,21 +191,21 @@ public class JAXWSTest extends TestCase {
         // Commented due to test failure...
         //        suite.addTestSuite(StringListTests.class);
         suite.addTestSuite(RPCLitStringArrayTests.class);
-
-*///      END OF Integration Tests
+*/
+//      END OF Integration Tests
         
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {
                 TestLogger.logger.debug("Starting the server.");
-     //           StartServer startServer = new StartServer("server1");
-     //           startServer.testStartServer();
+  //              StartServer startServer = new StartServer("server1");
+  //              startServer.testStartServer();
             }
             public void tearDown() {
                 TestLogger.logger.debug("Stopping the server");
-       //         StopServer stopServer = new StopServer("server1");
-       //         stopServer.testStopServer();
+    //            StopServer stopServer = new StopServer("server1");
+     //           stopServer.testStopServer();
             }
         };
         return testSetup;

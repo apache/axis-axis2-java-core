@@ -33,6 +33,9 @@ import javax.xml.ws.Service;
 
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -65,6 +68,10 @@ public class JAXBProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
     DataSource stringDS, imageDS;
     
+    public JAXBProviderTests(String name) {
+        super(name);
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
         
@@ -77,17 +84,22 @@ public class JAXBProviderTests extends ProviderTestCase {
     	ImageInputStream fiis = new FileImageInputStream(file);
     	Image image = ImageIO.read(fiis);
     	imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
     	
     }
 
-    protected void tearDown() throws Exception {
-            super.tearDown();
+    static {
+        BasicConfigurator.configure();
     }
     
-    public JAXBProviderTests(String name) {
-        super(name);
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
     }
-    
+
     /**
      * test String
      * @throws Exception

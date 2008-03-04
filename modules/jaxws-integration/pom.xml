@@ -1075,6 +1075,18 @@
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>
 						<include>**/*Test.java</include>
+						<include>**/SOAP12Tests.java</include>
+						<include>**/StringProviderTests.java</include>
+						<include>**/SoapFaultProviderTests.java</include>
+						<include>**/StringMessageProviderTests.java</include>
+						<include>**/SourceProviderTests.java</include>
+						<include>**/SourceMessageProviderTests.java</include>
+						<include>**/SoapMessageProviderTests.java</include>
+						<include>**/SoapMessageMUProviderTests.java</include>
+						<include>**/JAXBProviderTests.java</include>
+						<include>**/ProxyTests.java</include>
+						<include>**/ProxyNonWrappedTests.java</include>
+						<include>**/RPCProxyTests.java</include>
 					</includes>
 					<systemProperties>
 						<property>

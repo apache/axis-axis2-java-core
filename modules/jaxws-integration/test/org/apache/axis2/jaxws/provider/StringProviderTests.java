@@ -19,6 +19,9 @@
 package org.apache.axis2.jaxws.provider;
 
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
@@ -33,18 +36,26 @@ public class StringProviderTests extends ProviderTestCase {
     String xmlString = "<invoke>test input</invoke>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
 
-    protected void setUp() throws Exception {
-            super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-            super.tearDown();
-    }
-
     public StringProviderTests(String name) {
         super(name);
     }
     
+    static {
+        BasicConfigurator.configure();
+    }
+    
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+        
     private Dispatch<String> getDispatch() {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, endpointUrl);

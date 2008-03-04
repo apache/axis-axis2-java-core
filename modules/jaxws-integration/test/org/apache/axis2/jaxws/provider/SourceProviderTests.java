@@ -19,6 +19,9 @@
 package org.apache.axis2.jaxws.provider;
 
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,18 +49,26 @@ public class SourceProviderTests extends ProviderTestCase {
     private String xmlDir = "xml";
 
 
-    protected void setUp() throws Exception {
-            super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-            super.tearDown();
-    }
-
     public SourceProviderTests(String name) {
         super(name);
     }
     
+    static {
+        BasicConfigurator.configure();
+    }
+    
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+        
     private Dispatch<Source> getDispatch() {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, endpointUrl);

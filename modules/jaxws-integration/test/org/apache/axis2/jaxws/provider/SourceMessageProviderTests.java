@@ -19,6 +19,9 @@
 package org.apache.axis2.jaxws.provider;
 
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,21 +39,26 @@ public class SourceMessageProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceMessageProviderService");
     private String xmlDir = "xml";
 
-
-    protected void setUp() throws Exception {
-            super.setUp();
+    static {
+        BasicConfigurator.configure();
     }
-
-    protected void tearDown() throws Exception {
-            super.tearDown();
-    }
-
+    
     public SourceMessageProviderTests(String name) {
         super(name);
     }
     
-
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
     
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+
     public void testProviderSource(){
         try{
         	String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();

@@ -28,9 +28,13 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ObjectFactory;
 import org.test.proxy.doclitnonwrapped.ReturnType;
@@ -45,10 +49,6 @@ public class ProxyNonWrappedTests extends TestCase {
     private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort";
     private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test-resources/wsdl/ProxyDocLitnonWrapped.wsdl";
-    public ProxyNonWrappedTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
     /**
      * @param arg0
@@ -56,6 +56,28 @@ public class ProxyNonWrappedTests extends TestCase {
     public ProxyNonWrappedTests(String arg0) {
         super(arg0);
         // TODO Auto-generated constructor stub
+    }
+    
+
+    public ProxyNonWrappedTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
     }
     
     public void testInvoke(){

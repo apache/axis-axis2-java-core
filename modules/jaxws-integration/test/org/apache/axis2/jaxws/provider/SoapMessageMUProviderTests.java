@@ -22,6 +22,12 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.soap.SOAPMessage;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
+
 import junit.framework.TestCase;
 
 /**
@@ -39,16 +45,24 @@ public class SoapMessageMUProviderTests extends TestCase {
     public static final String bindingID = SOAPBinding.SOAP11HTTP_BINDING;
     public static final Service.Mode mode = Service.Mode.MESSAGE;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     public SoapMessageMUProviderTests(String name) {
         super(name);
+    }
+
+    static {
+        BasicConfigurator.configure();
+    }
+    
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
     }
 
     /**

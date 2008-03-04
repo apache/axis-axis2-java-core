@@ -35,8 +35,9 @@ import javax.xml.ws.WebServiceException;
  * 
  */
 @WebService(name = "sendImageInterface", 
-		    targetNamespace = "urn://mtom1.sample.jaxws.axis2.apache.org",
-		    wsdlLocation = "META-INF/samplemtomjpeg.wsdl")
+//		targetNamespace="http://mtom1.sample.jaxws.axis2.apache.org")
+		    targetNamespace = "urn://mtom1.sample.jaxws.axis2.apache.org")
+	//	    wsdlLocation = "META-INF/samplemtomjpeg.wsdl")
 public interface SendImageInterface {
 
 

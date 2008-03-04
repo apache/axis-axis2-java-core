@@ -35,10 +35,14 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
@@ -50,6 +54,27 @@ public class RPCProxyTests extends TestCase {
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "RPCLit");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/rpclit/META-INF/RPCLit.wsdl";
+    
+    public RPCProxyTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
     
     /**
      * Utility method to get the proxy

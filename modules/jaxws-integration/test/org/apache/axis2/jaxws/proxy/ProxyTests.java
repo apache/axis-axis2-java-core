@@ -29,9 +29,13 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.proxy.doclitwrapped.ReturnType;
 
 public class ProxyTests extends TestCase {
@@ -42,7 +46,27 @@ public class ProxyTests extends TestCase {
             "ProxyDocLitWrappedPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     private boolean runningOnAxis = true;
+
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public ProxyTests(String name) {
+        super(name);
+    }
+   
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
     
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+
     public void testMultipleServiceCalls(){
         try{
             if(!runningOnAxis){

@@ -40,8 +40,11 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
@@ -85,19 +88,26 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     SoapMessageProvider.XML_WSE_REQUEST +
     "</invoke_str></ns2:invokeOp>";
                 
-    
-    protected void setUp() throws Exception {
-            super.setUp();
-    }
-
-    protected void tearDown() throws Exception {
-            super.tearDown();
-    }
-
     public SoapMessageProviderTests(String name) {
         super(name);
     }
+
+    static {
+        BasicConfigurator.configure();
+    }
     
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+   
     /**
      * Sends an SOAPMessage containing only xml data to the web service.  
      * Receives a response containing just xml data.
