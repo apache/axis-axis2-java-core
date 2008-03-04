@@ -42,6 +42,8 @@ import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -162,6 +164,16 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.String)
      */
     public void publish(String s) {
+        int port = -1;
+        try {
+            URI uri = new URI(s);
+            port = uri.getPort();
+        } catch (URISyntaxException e) {
+        }
+        // Default to 8080
+        if(port == -1){
+            port = 8080;
+        }
         ConfigurationContext ctx = endpointDesc.getServiceDescription().getAxisConfigContext();
 
         try {
@@ -179,7 +191,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         WorkerFactory wf = new HTTPWorkerFactory();
 
         try {
-            server = new SimpleHttpServer(ctx, wf, 6060);  //TODO: Add a configurable port
+            server = new SimpleHttpServer(ctx, wf, port);
             server.init();            
             server.start();
         } catch (IOException e) {
@@ -203,11 +215,11 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      */
     public void stop() {
         try {
-            server.destroy();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            if(server != null) {
+                server.destroy();
+            }
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
