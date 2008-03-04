@@ -96,8 +96,6 @@ public class EndpointCallback {
             OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
             opCtx.addMessageContext(axisResponseMsgCtx);
             
-            responseReady(eic);
-            
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                 eic.getRequestMessageContext().getAxisMessageContext());
             
