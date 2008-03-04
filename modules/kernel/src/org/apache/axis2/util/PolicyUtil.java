@@ -36,9 +36,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -225,6 +222,31 @@ public class PolicyUtil {
         
         if (policy != null) {
             policy = (Policy) policy.normalize(new AxisPolicyLocator(description), false);            
+        }
+        
+        return policy;        
+    }
+    
+    public static Policy getMergedPolicy(List policies, AxisService service) {
+    	
+        Policy policy = null;
+        
+        for (Iterator iterator = policies.iterator(); iterator.hasNext(); ) {
+            Object policyElement = iterator.next()
+            ;
+            if (policyElement instanceof Policy) {
+                policy = (policy == null) ? (Policy) policyElement : (Policy) policy.merge((Policy) policyElement);
+                
+            } else {
+                PolicyReference policyReference = (PolicyReference) policyElement;
+                Policy policy2 = (Policy) policyReference.normalize(new PolicyLocator(service), false);
+                policy = (policy == null) ? policy2 : (Policy) policy.merge(policy2);                 
+            }
+        }
+        
+        
+        if (policy != null) {
+            policy = (Policy) policy.normalize(new PolicyLocator(service), false);            
         }
         
         return policy;        

@@ -68,7 +68,6 @@ public class ServiceCreateTest extends UtilServerBasedTestCase {
         assertNotNull(messge.getSchemaElement());
         assertNotNull(service.getOperation(new QName("putValue")));
         assertNotNull(axisConfig.getService("MyService"));
-        service.printWSDL(System.out);
 
         RPCServiceClient client = new RPCServiceClient(clinetConfigurationctx, null);
 

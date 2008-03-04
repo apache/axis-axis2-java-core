@@ -61,7 +61,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
                                                         new QName(
                                                                 "http://engine.axis2.apache.org",
                                                                 "EchoXMLService"),
-                                                        "EchoXMLServiceSOAP11port_http");
+                                                        "EchoHttpSoap11Endpoint");
         OMElement payload =
                 TestingUtils.createDummyOMElement("http://engine.axis2.apache.org");
         String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT +

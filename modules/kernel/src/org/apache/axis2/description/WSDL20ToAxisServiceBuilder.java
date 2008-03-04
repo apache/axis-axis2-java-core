@@ -898,7 +898,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                        httpBindingMessageReferenceExtensions.getHttpHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING,
                                                httpBindingMessageReferenceExtensions.getHttpContentEncoding());
-                axisBindingOperation.addChild(axisMessage.getDirection(), axisBindingMessage);
+                axisBindingOperation.addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingMessage);
 
             }
 

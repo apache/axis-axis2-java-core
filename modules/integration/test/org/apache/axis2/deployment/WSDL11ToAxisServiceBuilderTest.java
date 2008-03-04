@@ -39,10 +39,8 @@ public class WSDL11ToAxisServiceBuilderTest extends XMLTestCase {
             WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(
                     new FileInputStream(testResourceFile));
             AxisService axisService = builder.populateService();
-            System.out.println("WSDL file: " + testResourceFile.getAbsolutePath());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             axisService.printWSDL(baos);
-            System.out.println(new String(baos.toByteArray()));
             assertXMLEqual(new FileReader(testResourceFile), new StringReader(new String(baos.toByteArray())));
         } catch (Exception e) {
             System.out.println("Error in WSDL : " + testResourceFile.getName());

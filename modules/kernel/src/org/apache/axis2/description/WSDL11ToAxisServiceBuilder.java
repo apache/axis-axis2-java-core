@@ -27,6 +27,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.LoggingControl;
@@ -681,7 +682,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingInMessage.setParent(axisBindingOperation);
                 axisBindingOperation
-                        .addChild(axisBindingInMessage.getDirection(), axisBindingInMessage);
+                        .addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingInMessage);
             }
 
             BindingOutput wsdl4jBindingOutput = wsdl4jBindingOperation.getBindingOutput();
@@ -722,7 +723,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingOutMessage.setParent(axisBindingOperation);
                 axisBindingOperation
-                        .addChild(axisBindingOutMessage.getDirection(), axisBindingOutMessage);
+                        .addChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE, axisBindingOutMessage);
             }
 
             Map bindingFaultsMap = wsdl4jBindingOperation.getBindingFaults();
@@ -2188,19 +2189,21 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 UnknownExtensibilityElement unknown =
                         (UnknownExtensibilityElement) (wsdl4jExtensibilityElement);
                 QName type = unknown.getElementType();
-
+                
                 // <wsp:Policy>
                 if (WSDLConstants.WSDL11Constants.POLICY.equals(type)) {
                     if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: PolicyElement found " + unknown);
                     }
                     Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
-                    int attachmentScope =
-                            getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-                    if (attachmentScope > -1) {
-                        description.getPolicyInclude().addPolicyElement(
-                                attachmentScope, policy);
-                    }
+                    description.getPolicySubject().attachPolicy(policy);
+                    
+//                    int attachmentScope =
+//                            getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+//                    if (attachmentScope > -1) {
+//                        description.getPolicyInclude().addPolicyElement(
+//                                attachmentScope, policy);
+//                    }
                     // <wsp:PolicyReference>
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
                         .equals(type)) {
@@ -2209,12 +2212,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                     PolicyReference policyReference = (PolicyReference) PolicyUtil
                             .getPolicyComponent(unknown.getElement());
-                    int attachmentScope =
-                            getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-                    if (attachmentScope > -1) {
-                        description.getPolicyInclude().addPolicyRefElement(
-                                attachmentScope, policyReference);
-                    }
+                    description.getPolicySubject().attachPolicyReference(policyReference);
+                    
+//                    int attachmentScope =
+//                            getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+//                    if (attachmentScope > -1) {
+//                        description.getPolicyInclude().addPolicyRefElement(
+//                                attachmentScope, policyReference);
+//                    }
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(type)
                            || AddressingConstants.Submission.WSAW_USING_ADDRESSING
@@ -2810,8 +2815,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     String key;
                     if ((key = policy.getName()) != null || (key = policy.getId()) != null) {
-                        registry.register(key, policy);
-                        registry.register("#" + key, policy);
+                    	axisService.registerPolicy(key, policy);
+//                        registry.register(key, policy);
+//                        registry.register("#" + key, policy);
                     }
 
                 }

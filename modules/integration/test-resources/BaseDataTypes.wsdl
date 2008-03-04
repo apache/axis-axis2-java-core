@@ -552,7 +552,7 @@
             <wsdl:output message="ns:retULongResponse" wsaw:Action="urn:retULongResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="BaseDataTypesSOAP11Binding" type="ns:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesHttpSoap11Binding" type="ns:BaseDataTypesPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap:operation soapAction="urn:retUInt" style="document"/>
@@ -753,7 +753,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="BaseDataTypesSOAP12Binding" type="ns:BaseDataTypesPortType">
+    <wsdl:binding name="BaseDataTypesHttpSoap12Binding" type="ns:BaseDataTypesPortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retUInt">
             <soap12:operation soapAction="urn:retUInt" style="document"/>
@@ -1156,13 +1156,13 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="BaseDataTypes">
-        <wsdl:port name="BaseDataTypesSOAP11port_http" binding="ns:BaseDataTypesSOAP11Binding">
+        <wsdl:port name="BaseDataTypesHttpSoap11Endpoint" binding="ns:BaseDataTypesHttpSoap11Binding">
             <soap:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesSOAP12port_http" binding="ns:BaseDataTypesSOAP12Binding">
+        <wsdl:port name="BaseDataTypesHttpSoap12Endpoint" binding="ns:BaseDataTypesHttpSoap12Binding">
             <soap12:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="BaseDataTypesHttpport" binding="ns:BaseDataTypesHttpBinding">
+        <wsdl:port name="BaseDataTypesHttpEndpoint" binding="ns:BaseDataTypesHttpBinding">
             <http:address location="http://localhost:8080/axis2/services/BaseDataTypes"/>
         </wsdl:port>
     </wsdl:service>

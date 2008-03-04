@@ -21,6 +21,8 @@ package org.apache.axis2.deployment.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -29,6 +31,11 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.description.AxisBinding;
+import org.apache.axis2.description.AxisBindingMessage;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
@@ -37,6 +44,8 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
@@ -47,6 +56,7 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
@@ -77,61 +87,67 @@ import java.util.zip.ZipInputStream;
 
 public class Utils {
 
-    public static final String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
-    private static Log log = LogFactory.getLog(Utils.class);
+	public static String defaultEncoding = new OutputStreamWriter(System.out)
+			.getEncoding();
 
-    public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
-        int count = flow.getHandlerCount();
+	private static Log log = LogFactory.getLog(Utils.class);
 
-        for (int j = 0; j < count; j++) {
-            HandlerDescription handlermd = flow.getHandler(j);
-            Class handlerClass;
-            Handler handler;
+	public static void addFlowHandlers(Flow flow, ClassLoader clsLoader)
+			throws AxisFault {
+		int count = flow.getHandlerCount();
 
-            handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
+		for (int j = 0; j < count; j++) {
+			HandlerDescription handlermd = flow.getHandler(j);
+			Class handlerClass;
+			Handler handler;
 
-            try {
-                handler = (Handler) handlerClass.newInstance();
-                handler.init(handlermd);
-                handlermd.setHandler(handler);
-            } catch (InstantiationException e) {
-                throw AxisFault.makeFault(e);
-            } catch (IllegalAccessException e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-    }
+			handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
 
-    public static void loadHandler(ClassLoader loader1, HandlerDescription desc)
-            throws DeploymentException {
-        String handlername = desc.getClassName();
-        Handler handler;
-        Class handlerClass;
+			try {
+				handler = (Handler) handlerClass.newInstance();
+				handler.init(handlermd);
+				handlermd.setHandler(handler);
+			} catch (InstantiationException e) {
+				throw AxisFault.makeFault(e);
+			} catch (IllegalAccessException e) {
+				throw AxisFault.makeFault(e);
+			}
+		}
+	}
 
-        try {
-            handlerClass = Loader.loadClass(loader1, handlername);
-            if(handlerClass.getPackage().getName().equals("org.apache.axis2.engine")){
-                String name = handlerClass.getName();
-                log.warn("Dispatcher " + name + " is now deprecated.");
-                if(name.indexOf("InstanceDispatcher")!=-1) {
-                    log.warn("Please remove the entry for " + handlerClass.getName() + "from axis2.xml");
-                } else {
-                    log.warn("Please edit axis2.xml " +
-                            "and replace with the same class in org.apache.axis2.dispatchers package");
-                }
-            }
-            handler = (Handler) handlerClass.newInstance();
-            handler.init(desc);
-            desc.setHandler(handler);
-        } catch (ClassNotFoundException e) {
-            throw new DeploymentException(e);
-        } catch (Exception e) {
-            throw new DeploymentException(e);
-        }
-    }
+	public static void loadHandler(ClassLoader loader1, HandlerDescription desc)
+			throws DeploymentException {
+		String handlername = desc.getClassName();
+		Handler handler;
+		Class handlerClass;
 
-    public static URL[] getURLsForAllJars(URL url, File tmpDir) {
+		try {
+			handlerClass = Loader.loadClass(loader1, handlername);
+			if (handlerClass.getPackage().getName().equals(
+					"org.apache.axis2.engine")) {
+				String name = handlerClass.getName();
+				log.warn("Dispatcher " + name + " is now deprecated.");
+				if (name.indexOf("InstanceDispatcher") != -1) {
+					log.warn("Please remove the entry for "
+							+ handlerClass.getName() + "from axis2.xml");
+				} else {
+					log
+							.warn("Please edit axis2.xml "
+									+ "and replace with the same class in org.apache.axis2.dispatchers package");
+				}
+			}
+			handler = (Handler) handlerClass.newInstance();
+			handler.init(desc);
+			desc.setHandler(handler);
+		} catch (ClassNotFoundException e) {
+			throw new DeploymentException(e);
+		} catch (Exception e) {
+			throw new DeploymentException(e);
+		}
+	}
+	
+	public static URL[] getURLsForAllJars(URL url, File tmpDir) {
         FileInputStream fin = null;
         InputStream in = null;
         ZipInputStream zin = null;
@@ -190,9 +206,9 @@ public class Utils {
                 }
             }
         }
-    }
-
-    public static File createTempFile(String suffix, InputStream in, File tmpDir) throws IOException {
+	}
+	
+	public static File createTempFile(String suffix, InputStream in, File tmpDir) throws IOException {
         byte data[] = new byte[2048];
         int count;
         File f;
@@ -216,13 +232,13 @@ public class Utils {
         out.close();
         return f;
     }
-
-    public static ClassLoader getClassLoader(ClassLoader parent, String path)
-            throws DeploymentException {
-        return getClassLoader(parent, new File(path));
-    }
-
-    /**
+	
+	public static ClassLoader getClassLoader(ClassLoader parent, String path)
+			throws DeploymentException {
+		return getClassLoader(parent, new File(path));
+	}
+	
+	/**
      * Get a ClassLoader which contains a classpath of a) the passed directory and b) any jar
      * files inside the "lib/" or "Lib/" subdirectory of the passed directory.
      *
@@ -283,133 +299,152 @@ public class Utils {
         }
     }
 
-    private static Class getHandlerClass(String className, ClassLoader loader1) throws AxisFault {
-        Class handlerClass;
+	private static Class getHandlerClass(String className, ClassLoader loader1)
+			throws AxisFault {
+		Class handlerClass;
 
-        try {
-            handlerClass = Loader.loadClass(loader1, className);
-        } catch (ClassNotFoundException e) {
-            throw AxisFault.makeFault(e);
-        }
+		try {
+			handlerClass = Loader.loadClass(loader1, className);
+		} catch (ClassNotFoundException e) {
+			throw AxisFault.makeFault(e);
+		}
 
-        return handlerClass;
-    }
+		return handlerClass;
+	}
 
-    /**
-     * This guy will create a AxisService using java reflection
-     *
-     * @param axisService       the target AxisService
-     * @param axisConfig        the in-scope AxisConfiguration
-     * @param excludeOperations a List of Strings (or null), each containing a method to exclude
-     * @param nonRpcMethods     a List of Strings (or null), each containing a non-rpc method name
-     * @throws Exception if a problem occurs
-     */
-    public static void fillAxisService(AxisService axisService,
-                                       AxisConfiguration axisConfig,
-                                       ArrayList excludeOperations,
-                                       ArrayList nonRpcMethods) throws Exception {
-        String serviceClass;
-        Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
+	/**
+	 * This guy will create a AxisService using java reflection
+	 * 
+	 * @param axisService
+	 *            the target AxisService
+	 * @param axisConfig
+	 *            the in-scope AxisConfiguration
+	 * @param excludeOperations
+	 *            a List of Strings (or null), each containing a method to
+	 *            exclude
+	 * @param nonRpcMethods
+	 *            a List of Strings (or null), each containing a non-rpc method
+	 *            name
+	 * @throws Exception
+	 *             if a problem occurs
+	 */
+	public static void fillAxisService(AxisService axisService,
+			AxisConfiguration axisConfig, ArrayList excludeOperations,
+			ArrayList nonRpcMethods) throws Exception {
+		String serviceClass;
+		Parameter implInfoParam = axisService
+				.getParameter(Constants.SERVICE_CLASS);
+		ClassLoader serviceClassLoader = axisService.getClassLoader();
 
-        if (implInfoParam != null) {
-            serviceClass = (String) implInfoParam.getValue();
-        } else {
-            // if Service_Class is null, every AbstractMR will look for
-            // ServiceObjectSupplier. This is user specific and may contain
-            // other looks.
-            implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
-            if (implInfoParam != null) {
-                String className = ((String) implInfoParam.getValue()).trim();
-                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, className);
-                if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
-                    throw new AxisFault("Service class " + className + " must have public as access Modifier");
-                }
+		if (implInfoParam != null) {
+			serviceClass = (String) implInfoParam.getValue();
+		} else {
+			// if Service_Class is null, every AbstractMR will look for
+			// ServiceObjectSupplier. This is user specific and may contain
+			// other looks.
+			implInfoParam = axisService
+					.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
+			if (implInfoParam != null) {
+				String className = ((String) implInfoParam.getValue()).trim();
+				Class serviceObjectMaker = Loader.loadClass(serviceClassLoader,
+						className);
+				if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
+					throw new AxisFault("Service class " + className
+							+ " must have public as access Modifier");
+				}
 
-                // Find static getServiceObject() method, call it if there
-                Method method = serviceObjectMaker.
-                        getMethod("getServiceObject",
-                                new Class[]{AxisService.class});
-                Object obj = null;
-                if (method != null) {
-                    obj = method.invoke(serviceObjectMaker.newInstance(),
-                            new Object[]{axisService});
-                }
-                if (obj == null) {
-                    log.warn("ServiceObjectSupplier implmentation Object could not be found");
-                    throw new DeploymentException(
-                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
-                }
-                serviceClass = obj.getClass().getName();
-            } else {
-                return;
-            }
-        }
-        // adding name spaces
-        NamespaceMap map = new NamespaceMap();
-        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
-                Java2WSDLConstants.AXIS2_XSD);
-        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
-                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-        axisService.setNameSpacesMap(map);
-        SchemaGenerator schemaGenerator;
-        Parameter generateBare = axisService.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
-        if (generateBare != null && "true".equals(generateBare.getValue())) {
-            schemaGenerator = new DocLitBareSchemaGenerator(serviceClassLoader,
-                    serviceClass.trim(),
-                    axisService.getSchematargetNamespace(),
-                    axisService.getSchemaTargetNamespacePrefix(), axisService);
-        } else {
-            schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
-                    serviceClass.trim(),
-                    axisService.getSchematargetNamespace(),
-                    axisService.getSchemaTargetNamespacePrefix(), axisService);
-        }
-        schemaGenerator.setExcludeMethods(excludeOperations);
-        schemaGenerator.setNonRpcMethods(nonRpcMethods);
-        if (!axisService.isElementFormDefault()) {
-            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
-        }
-        // package to namespace map
-        schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
-        Collection schemas = schemaGenerator.generateSchema();
-        axisService.addSchema(schemas);
-        axisService.setSchemaTargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
-        axisService.setTypeTable(schemaGenerator.getTypeTable());
-        if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
-                axisService.getTargetNamespace())) {
-            axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
-        }
+				// Find static getServiceObject() method, call it if there
+				Method method = serviceObjectMaker.getMethod(
+						"getServiceObject", new Class[] { AxisService.class });
+				Object obj = null;
+				if (method != null) {
+					obj = method.invoke(serviceObjectMaker.newInstance(),
+							new Object[] { axisService });
+				}
+				if (obj == null) {
+					log
+							.warn("ServiceObjectSupplier implmentation Object could not be found");
+					throw new DeploymentException(
+							"ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
+				}
+				serviceClass = obj.getClass().getName();
+			} else {
+				return;
+			}
+		}
+		// adding name spaces
+		NamespaceMap map = new NamespaceMap();
+		map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+				Java2WSDLConstants.AXIS2_XSD);
+		map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+				Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+		axisService.setNameSpacesMap(map);
+		SchemaGenerator schemaGenerator;
+		Parameter generateBare = axisService
+				.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
+		if (generateBare != null && "true".equals(generateBare.getValue())) {
+			schemaGenerator = new DocLitBareSchemaGenerator(serviceClassLoader,
+					serviceClass.trim(),
+					axisService.getSchematargetNamespace(), axisService
+							.getSchemaTargetNamespacePrefix(), axisService);
+		} else {
+			schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
+					serviceClass.trim(),
+					axisService.getSchematargetNamespace(), axisService
+							.getSchemaTargetNamespacePrefix(), axisService);
+		}
+		schemaGenerator.setExcludeMethods(excludeOperations);
+		schemaGenerator.setNonRpcMethods(nonRpcMethods);
+		if (!axisService.isElementFormDefault()) {
+			schemaGenerator
+					.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+		}
+		// package to namespace map
+		schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
+		Collection schemas = schemaGenerator.generateSchema();
+		axisService.addSchema(schemas);
+		axisService.setSchemaTargetNamespace(schemaGenerator
+				.getSchemaTargetNameSpace());
+		axisService.setTypeTable(schemaGenerator.getTypeTable());
+		if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(axisService
+				.getTargetNamespace())) {
+			axisService
+					.setTargetNamespace(schemaGenerator.getTargetNamespace());
+		}
 
-        JMethod[] method = schemaGenerator.getMethods();
-        PhasesInfo pinfo = axisConfig.getPhasesInfo();
+		JMethod[] method = schemaGenerator.getMethods();
+		PhasesInfo pinfo = axisConfig.getPhasesInfo();
 
-
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
-            String opName = getSimpleName(jmethod);
-            AxisOperation operation = axisService.getOperation(new QName(opName));
-            // if the operation there in services.xml then try to set it schema element name
-            if (operation == null) {
-                operation = axisService.getOperation(new QName(getSimpleName(jmethod)));
-            }
-            MessageReceiver mr = axisService.getMessageReceiver(
-                    operation.getMessageExchangePattern());
-            if (mr == null) {
-                mr = axisConfig.getMessageReceiver(operation.getMessageExchangePattern());
-            }
-            if (operation.getMessageReceiver() == null) {
-                operation.setMessageReceiver(mr);
-            }
-            pinfo.setOperationPhases(operation);
-            axisService.addOperation(operation);
-            if (operation.getSoapAction() == null) {
-                operation.setSoapAction("urn:" + opName);
-            }
-        }
-    }
-
-    public static AxisOperation getAxisOperationForJmethod(JMethod jmethod) throws AxisFault {
+		for (int i = 0; i < method.length; i++) {
+			JMethod jmethod = method[i];
+			String opName = getSimpleName(jmethod);
+			AxisOperation operation = axisService
+					.getOperation(new QName(opName));
+			// if the operation there in services.xml then try to set it schema
+			// element name
+			if (operation == null) {
+				operation = axisService.getOperation(new QName(
+						getSimpleName(jmethod)));
+			}
+			MessageReceiver mr = axisService.getMessageReceiver(operation
+					.getMessageExchangePattern());
+			if (mr != null) {
+			} else {
+				mr = axisConfig.getMessageReceiver(operation
+						.getMessageExchangePattern());
+			}
+			if (operation.getMessageReceiver() == null) {
+				operation.setMessageReceiver(mr);
+			}
+			pinfo.setOperationPhases(operation);
+			axisService.addOperation(operation);
+			if (operation.getSoapAction() == null) {
+				operation.setSoapAction("urn:" + opName);
+			}
+		}
+	}
+	
+	public static AxisOperation getAxisOperationForJmethod(JMethod jmethod) throws AxisFault {
         AxisOperation operation;
         if (jmethod.getReturnType().isVoidType()) {
             if (jmethod.getExceptionTypes().length > 0) {
@@ -435,119 +470,135 @@ public class Utils {
         return operation;
     }
 
-    public static String getSimpleName(JMethod method) {
-        JAnnotation methodAnnon = method.getAnnotation(AnnotationConstants.WEB_METHOD);
-        if (methodAnnon != null) {
-            if (methodAnnon.getValue(AnnotationConstants.OPERATION_NAME) !=null) {
-                String methodName = methodAnnon.getValue(AnnotationConstants.OPERATION_NAME).asString();
-                if(methodName.equals("")){
-                    methodName = method.getSimpleName();
-                }
-                return methodName;
-            }
-        }
-        return method.getSimpleName();
-    }
+	public static String getSimpleName(JMethod method) {
+		JAnnotation methodAnnon = method
+				.getAnnotation(AnnotationConstants.WEB_METHOD);
+		if (methodAnnon != null) {
+			if (methodAnnon.getValue(AnnotationConstants.OPERATION_NAME) != null) {
+				String methodName = methodAnnon.getValue(
+						AnnotationConstants.OPERATION_NAME).asString();
+				if (methodName.equals("")) {
+					methodName = method.getSimpleName();
+				}
+				return methodName;
+			}
+		}
+		return method.getSimpleName();
+	}
 
+	public static OMElement getParameter(String name, String value,
+			boolean locked) {
+		OMFactory fac = OMAbstractFactory.getOMFactory();
+		OMElement parameter = fac.createOMElement("parameter", null);
+		parameter.addAttribute("name", name, null);
+		parameter.addAttribute("locked", Boolean.toString(locked), null);
+		parameter.setText(value);
+		return parameter;
+	}
 
-    public static OMElement getParameter(String name, String value, boolean locked) {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMElement parameter = fac.createOMElement("parameter", null);
-        parameter.addAttribute("name", name, null);
-        parameter.addAttribute("locked", Boolean.toString(locked), null);
-        parameter.setText(value);
-        return parameter;
-    }
+	/**
+	 * This method is to get the list of services there in a module if module
+	 * want to add services then the way of doing that is 1. Add a directory
+	 * called services inside the module (both in mar case and expanded case) 2.
+	 * Then add a services.list file into that directory adding all the modules
+	 * you want to add 3. Then put all the services into services directory in
+	 * the module 4. All the class is module can be access via a the module
+	 * services.
+	 */
 
-    /**
-     * This method is to get the list of services there in a module
-     * if module want to add services then the way of doing that is
-     * 1. Add a directory called services inside the module (both in mar case and expanded case)
-     * 2. Then add a services.list file into that directory adding all the modules
-     * you want to add
-     * 3. Then put all the services into services directory in the module
-     * 4. All the class is module can be access via a the module services.
-     */
+	public static void deployModuleServices(AxisModule module,
+			ConfigurationContext configCtx) throws AxisFault {
+		try {
+			AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+			ArchiveReader archiveReader = new ArchiveReader();
+			PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
+			ClassLoader moduleClassLoader = module.getModuleClassLoader();
+			ArrayList services = new ArrayList();
+			InputStream in = moduleClassLoader
+					.getResourceAsStream("aars/aars.list");
+			if (in != null) {
+				BufferedReader input;
+				try {
+					input = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = input.readLine()) != null) {
+						line = line.trim();
+						if (line.length() > 0 && line.charAt(0) != '#') {
+							services.add(line);
+						}
+					}
+					input.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			if (services.size() > 0) {
+				for (int i = 0; i < services.size(); i++) {
+					String servicename = (String) services.get(i);
+					if (servicename == null || "".equals(servicename)) {
+						continue;
+					}
+					InputStream fin = moduleClassLoader
+							.getResourceAsStream("aars/" + servicename);
+					if (fin == null) {
+						throw new AxisFault("No service archive found : "
+								+ servicename);
+					}
+					File inputFile = Utils
+							.createTempFile(
+									servicename,
+									fin,
+									(File) axisConfig
+											.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+					DeploymentFileData filedata = new DeploymentFileData(
+							inputFile);
 
-    public static void deployModuleServices(AxisModule module,
-                                            ConfigurationContext configCtx) throws AxisFault {
-        try {
-            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
-            ArchiveReader archiveReader = new ArchiveReader();
-            PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
-            ClassLoader moduleClassLoader = module.getModuleClassLoader();
-            ArrayList services = new ArrayList();
-            InputStream in = moduleClassLoader.getResourceAsStream("aars/aars.list");
-            if (in != null) {
-                BufferedReader input;
-                try {
-                    input = new BufferedReader(new InputStreamReader(in));
-                    String line;
-                    while ((line = input.readLine()) != null) {
-                        line = line.trim();
-                        if (line.length() > 0 && line.charAt(0)!='#') {
-                            services.add(line);
-                        }
-                    }
-                    input.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if (services.size() > 0) {
-                for (int i = 0; i < services.size(); i++) {
-                    String servicename = (String) services.get(i);
-                    if (servicename == null || "".equals(servicename)) {
-                        continue;
-                    }
-                    InputStream fin = moduleClassLoader.getResourceAsStream("aars/" + servicename);
-                    if (fin == null) {
-                        throw new AxisFault("No service archive found : " + servicename);
-                    }
-                    File inputFile = Utils.createTempFile(servicename,
-                            fin,
-                            (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
-                    DeploymentFileData filedata = new DeploymentFileData(inputFile);
-
-                    filedata.setClassLoader(false,
-                            moduleClassLoader,
-                            (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
-                    HashMap wsdlservice = archiveReader.processWSDLs(filedata);
-                    if (wsdlservice != null && wsdlservice.size() > 0) {
-                        Iterator servicesitr = wsdlservice.values().iterator();
-                        while (servicesitr.hasNext()) {
-                            AxisService service = (AxisService) servicesitr.next();
-                            Iterator operations = service.getOperations();
-                            while (operations.hasNext()) {
-                                AxisOperation axisOperation = (AxisOperation) operations.next();
-                                phasesInfo.setOperationPhases(axisOperation);
-                            }
-                        }
-                    }
-                    AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
-                    serviceGroup.setServiceGroupClassLoader(filedata.getClassLoader());
-                    ArrayList serviceList = archiveReader.processServiceGroup(
-                            filedata.getAbsolutePath(), filedata,
-                            serviceGroup, false, wsdlservice,
-                            configCtx);
-                    for (int j = 0; j < serviceList.size(); j++) {
-                        AxisService axisService = (AxisService) serviceList.get(j);
-                        Parameter moduleService = new Parameter();
-                        moduleService.setValue("true");
-                        moduleService.setName(AxisModule.MODULE_SERVICE);
-                        axisService.addParameter(moduleService);
-                        serviceGroup.addService(axisService);
-                    }
-                    axisConfig.addServiceGroup(serviceGroup);
-                    fin.close();
-                }
-            }
-        } catch (IOException e) {
-            throw AxisFault.makeFault(e);
-        }
-    }
-
-    /**
+					filedata
+							.setClassLoader(
+									false,
+									moduleClassLoader,
+									(File) axisConfig
+											.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+					HashMap wsdlservice = archiveReader.processWSDLs(filedata);
+					if (wsdlservice != null && wsdlservice.size() > 0) {
+						Iterator servicesitr = wsdlservice.values().iterator();
+						while (servicesitr.hasNext()) {
+							AxisService service = (AxisService) servicesitr
+									.next();
+							Iterator operations = service.getOperations();
+							while (operations.hasNext()) {
+								AxisOperation axisOperation = (AxisOperation) operations
+										.next();
+								phasesInfo.setOperationPhases(axisOperation);
+							}
+						}
+					}
+					AxisServiceGroup serviceGroup = new AxisServiceGroup(
+							axisConfig);
+					serviceGroup.setServiceGroupClassLoader(filedata
+							.getClassLoader());
+					ArrayList serviceList = archiveReader.processServiceGroup(
+							filedata.getAbsolutePath(), filedata, serviceGroup,
+							false, wsdlservice, configCtx);
+					for (int j = 0; j < serviceList.size(); j++) {
+						AxisService axisService = (AxisService) serviceList
+								.get(j);
+						Parameter moduleService = new Parameter();
+						moduleService.setValue("true");
+						moduleService.setName(AxisModule.MODULE_SERVICE);
+						axisService.addParameter(moduleService);
+						serviceGroup.addService(axisService);
+					}
+					axisConfig.addServiceGroup(serviceGroup);
+					fin.close();
+				}
+			}
+		} catch (IOException e) {
+			throw AxisFault.makeFault(e);
+		}
+	}
+	
+	/**
      * Normalize a uri containing ../ and ./ paths.
      *
      * @param uri The uri path to normalize
@@ -595,49 +646,49 @@ public class Utils {
         }
         return sb.toString();
     }
-
-    public static String getPath(String parent, String childPath) {
-        Stack parentStack = new Stack();
-        Stack childStack = new Stack();
-        if (parent != null) {
-            String[] values = parent.split("/");
-            if (values.length > 0) {
-                for (int i = 0; i < values.length; i++) {
-                    String value = values[i];
-                    parentStack.push(value);
-                }
-            }
-        }
-        String[] values = childPath.split("/");
-        if (values.length > 0) {
-            for (int i = 0; i < values.length; i++) {
-                String value = values[i];
-                childStack.push(value);
-            }
-        }
-        String filepath = "";
-        while (!childStack.isEmpty()) {
-            String value = (String) childStack.pop();
-            if ("..".equals(value)) {
-                parentStack.pop();
-            } else if (!"".equals(value)) {
-                if ("".equals(filepath)) {
-                    filepath = value;
-                } else {
-                    filepath = value + "/" + filepath;
-                }
-            }
-        }
-        while (!parentStack.isEmpty()) {
-            String value = (String) parentStack.pop();
-            if (!"".equals(value)) {
-                filepath = value + "/" + filepath;
-            }
-        }
-        return filepath;
-    }
-
-    /**
+    
+	public static String getPath(String parent, String childPath) {
+		Stack parentStack = new Stack();
+		Stack childStack = new Stack();
+		if (parent != null) {
+			String[] values = parent.split("/");
+			if (values.length > 0) {
+				for (int i = 0; i < values.length; i++) {
+					String value = values[i];
+					parentStack.push(value);
+				}
+			}
+		}
+		String[] values = childPath.split("/");
+		if (values.length > 0) {
+			for (int i = 0; i < values.length; i++) {
+				String value = values[i];
+				childStack.push(value);
+			}
+		}
+		String filepath = "";
+		while (!childStack.isEmpty()) {
+			String value = (String) childStack.pop();
+			if ("..".equals(value)) {
+				parentStack.pop();
+			} else if (!"".equals(value)) {
+				if ("".equals(filepath)) {
+					filepath = value;
+				} else {
+					filepath = value + "/" + filepath;
+				}
+			}
+		}
+		while (!parentStack.isEmpty()) {
+			String value = (String) parentStack.pop();
+			if (!"".equals(value)) {
+				filepath = value + "/" + filepath;
+			}
+		}
+		return filepath;
+	}
+	
+	/**
      * Searches for jar files inside /lib dirctory. If there are any, the
      * names of those jar files will be added to the array list
      */
@@ -665,7 +716,7 @@ public class Utils {
         }
         return embedded_jars;
     }
-
+    
     /**
      * To add the exclude method when generating schemas , here the exclude methods
      * will be session releated axis2 methods
@@ -678,25 +729,37 @@ public class Utils {
         excludeList.add("shutDown");
     }
 
-    public static ClassLoader createClassLoader(ArrayList urls, final ClassLoader serviceClassLoader,
-                                                boolean extractJars, File tmpDir) {
-        URL url = (URL) urls.get(0);
-        if (extractJars) {
-            try {
-                URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
-                urls.remove(0);
-                urls.addAll(0, Arrays.asList(urls1));
-                final URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
-                return createDeploymentClassLoader(urls2, serviceClassLoader, null);
-            } catch (Exception e){
-                log.warn("Exception extracting jars into temporary directory : " + e.getMessage() + " : switching to alternate class loading mechanism");
-                log.debug(e.getMessage(), e);
-            }
-        }
-        final List embedded_jars = Utils.findLibJars(url);
-        final URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
-        return createDeploymentClassLoader(urls2, serviceClassLoader, embedded_jars);
-    }
+	public static ClassLoader createClassLoader(ArrayList urls,
+			ClassLoader serviceClassLoader, boolean extractJars, File tmpDir) {
+		URL url = (URL) urls.get(0);
+		if (extractJars) {
+			try {
+				URL[] urls1 = Utils.getURLsForAllJars(url, tmpDir);
+				urls.remove(0);
+				urls.addAll(0, Arrays.asList(urls1));
+				URL[] urls2 = (URL[]) urls.toArray(new URL[urls.size()]);
+				return new DeploymentClassLoader(urls2, null,
+						serviceClassLoader);
+			} catch (Exception e) {
+				log
+						.warn("Exception extracting jars into temporary directory : "
+								+ e.getMessage()
+								+ " : switching to alternate class loading mechanism");
+				log.debug(e.getMessage(), e);
+			}
+		}
+		List embedded_jars = Utils.findLibJars(url);
+		URL[] urls2 = (URL[]) urls.toArray(new URL[urls.size()]);
+		return new DeploymentClassLoader(urls2, embedded_jars,
+				serviceClassLoader);
+	}
+
+	public static File toFile(URL url) throws UnsupportedEncodingException {
+	    String path = URLDecoder.decode(url.getPath(), defaultEncoding);
+	    File file =
+	            new File(path.replace('/', File.separatorChar).replace('|', ':'));
+	    return file;
+	}
     
     public static ClassLoader createClassLoader(URL[] urls, ClassLoader serviceClassLoader,
                                                 boolean extractJars, File tmpDir) {
@@ -722,82 +785,380 @@ public class Utils {
         });
     }
 
-    public static File toFile(URL url) throws UnsupportedEncodingException {
-        String path = URLDecoder.decode(url.getPath(), defaultEncoding);
-        File file =
-                new File(path.replace('/', File.separatorChar).replace('|', ':'));
-        return file;
-    }
+	/**
+	 * This method is to process bean exclude parameter and the XML format of
+	 * that would be <parameter name="beanPropertyRules"> <bean class="full
+	 * qualified class name" excludeProperties="name,age"/>+ </parameter>
+	 * 
+	 * @param service ,
+	 *            AxisService object
+	 */
+	public static void processBeanPropertyExclude(AxisService service) {
+		Parameter excludeBeanProperty = service
+				.getParameter("beanPropertyRules");
+		if (excludeBeanProperty != null) {
+			OMElement parameterElement = excludeBeanProperty
+					.getParameterElement();
+			Iterator bneasItr = parameterElement.getChildrenWithName(new QName(
+					"bean"));
+			ExcludeInfo excludeInfo = new ExcludeInfo();
+			while (bneasItr.hasNext()) {
+				OMElement bean = (OMElement) bneasItr.next();
+				String clazz = bean.getAttributeValue(new QName(
+						DeploymentConstants.TAG_CLASS_NAME));
+				String excludePropertees = bean.getAttributeValue(new QName(
+						DeploymentConstants.TAG_EXCLUDE_PROPERTIES));
+				String includeProperties = bean.getAttributeValue(new QName(
+						DeploymentConstants.TAG_INCLUDE_PROPERTIES));
+				excludeInfo.putBeanInfo(clazz, new BeanExcludeInfo(
+						excludePropertees, includeProperties));
+			}
+			service.setExcludeInfo(excludeInfo);
+		}
+	}
 
-    /**
-     * This method is to process bean exclude parameter and the XML format of that would be
-     * <parameter name="beanPropertyRules">
-     *     <bean class="full qualified class name" excludeProperties="name,age"/>+
-     * </parameter>
-     * @param service , AxisService object
-     */
-    public static void processBeanPropertyExclude(AxisService  service){
-        Parameter excludeBeanProperty = service.getParameter("beanPropertyRules");
-        if (excludeBeanProperty != null) {
-            OMElement parameterElement = excludeBeanProperty.getParameterElement();
-            Iterator bneasItr =parameterElement.getChildrenWithName(new QName("bean"));
-            ExcludeInfo excludeInfo = new ExcludeInfo();
-            while (bneasItr.hasNext()) {
-                OMElement bean = (OMElement) bneasItr.next();
-                String clazz = bean.getAttributeValue(
-                        new QName(DeploymentConstants.TAG_CLASS_NAME));
-                String excludePropertees = bean.getAttributeValue(
-                        new QName(DeploymentConstants.TAG_EXCLUDE_PROPERTIES));
-                String includeProperties = bean.getAttributeValue(
-                        new QName(DeploymentConstants.TAG_INCLUDE_PROPERTIES));
-                excludeInfo.putBeanInfo(clazz, new BeanExcludeInfo(excludePropertees,includeProperties));
-            }
-            service.setExcludeInfo(excludeInfo);
-        }
-    }
+	/**
+	 * This will split a bean exclude property values into ArrayList
+	 * 
+	 * @param value :
+	 *            String to be splited
+	 * @return : Arryalist of the splited string
+	 */
+	private static List getArrayFromString(String value) {
+		String values[] = value.split(",");
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < values.length; i++) {
+			String s = values[i];
+			list.add(s);
+		}
+		return list;
+	}
 
-    /**
-     * This will split a bean exclude property values into ArrayList
-     * @param value : String to be splited
-     * @return : Arryalist of the splited string
-     */
-    private static List getArrayFromString(String value) {
-        String values [] = value.split(",");
-        ArrayList list = new ArrayList();
-        for (int i = 0; i < values.length; i++) {
-            String s = values[i];
-            list.add(s);
-        }
-       return list;
-    }
+	public static String getShortFileName(String filename) {
+		File file = new File(filename);
+		return file.getName();
+	}
 
-    public static String getShortFileName(String filename){
-        File file = new File(filename);
-        return file.getName();
-    }
+	/**
+	 * The util method to prepare the JSR 181 annotated service name from given
+	 * annotation or for defaults JSR 181 specifies that the in
+	 * javax.jws.WebService the parameter serviceName contains the wsdl:service
+	 * name to mapp. If its not available then the default will be Simple name
+	 * of the class + "Service"
+	 * 
+	 * @return String version of the ServiceName according to the JSR 181 spec
+	 */
+	public static String getAnnotatedServiceName(Class serviceClass,
+			JAnnotation serviceAnnotation) {
+		String serviceName = "";
+		if (serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME) != null) {
+			serviceName = (serviceAnnotation
+					.getValue(AnnotationConstants.SERVICE_NAME)).asString();
+		}
+		if (serviceName.equals("")) {
+			serviceName = serviceClass.getName();
+			int firstChar = serviceName.lastIndexOf('.') + 1;
+			if (firstChar > 0) {
+				serviceName = serviceName.substring(firstChar);
+			}
+			serviceName += "Service";
+		}
+		return serviceName;
+	}
 
+	public static void addEndpointsToService(AxisService axisService)
+			throws AxisFault {
 
-    /**
-     * The util method to prepare the JSR 181 annotated service name from given annotation or for defaults
-     * JSR 181 specifies that the in javax.jws.WebService the parameter serviceName contains the wsdl:service name
-     * to mapp. If its not available then the default will be Simple name of the class + "Service"
-     * @return String version of the ServiceName according to the JSR 181 spec
-     */
-    public static String getAnnotatedServiceName(Class serviceClass, JAnnotation serviceAnnotation){
-        String serviceName = "";
-        if(serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME) != null) {
-            serviceName = (serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME)).asString();
-        }
-        if(serviceName.equals("")){
-            serviceName=serviceClass.getName();
-            int firstChar = serviceName.lastIndexOf ('.') + 1;
-            if ( firstChar > 0 ) {
-                serviceName = serviceName.substring ( firstChar );
-            }
-            serviceName+="Service";
-        }
-        return serviceName;
-    }
-    
+		String serviceName = axisService.getName();
+		Iterator transportInValues = null;
 
+		if (axisService.isEnableAllTransports()) {
+			AxisConfiguration axisConfiguration = axisService
+					.getAxisConfiguration();
+			if (axisConfiguration != null) {
+				transportInValues = axisConfiguration.getTransportsIn()
+						.values().iterator();
+			}
+		} else {
+			transportInValues = axisService.getExposedTransports().iterator();
+		}
+
+		if (transportInValues != null) {
+			for (; transportInValues.hasNext();) {
+				TransportInDescription transportInDesc = (TransportInDescription) transportInValues
+						.next();
+
+				String transportName = transportInDesc.getName();
+				String protocol = transportName.substring(0, 1).toUpperCase()
+						+ transportName.substring(1, transportName.length())
+								.toLowerCase();
+				/*
+				 * populates soap11 endpoint
+				 */
+				String soap11EndpointName = serviceName + protocol
+						+ "Soap11Endpoint";
+
+				AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
+				httpSoap11Endpoint.setName(soap11EndpointName);
+				httpSoap11Endpoint.setParent(axisService);
+				httpSoap11Endpoint.setTransportInDescription(transportInDesc
+						.getName());
+				populateSoap11Endpoint(axisService, httpSoap11Endpoint);
+				axisService.addEndpoint(httpSoap11Endpoint.getName(),
+						httpSoap11Endpoint);
+				// setting soap11 endpoint as the default endpoint
+				axisService.setEndpointName(soap11EndpointName);
+
+				/*
+				 * generating Soap12 endpoint
+				 */
+				String soap12EndpointName = serviceName + protocol
+						+ "Soap12Endpoint";
+				AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
+				httpSoap12Endpoint.setName(soap12EndpointName);
+				httpSoap12Endpoint.setParent(axisService);
+				httpSoap12Endpoint.setTransportInDescription(transportInDesc
+						.getName());
+				populateSoap12Endpoint(axisService, httpSoap12Endpoint);
+				axisService.addEndpoint(httpSoap12Endpoint.getName(),
+						httpSoap12Endpoint);
+
+				/*
+				 * generating Http endpoint
+				 */
+				if ("http".equals(transportName)) {
+					String httpEndpointName = serviceName + protocol
+							+ "Endpoint";
+					AxisEndpoint httpEndpoint = new AxisEndpoint();
+					httpEndpoint.setName(httpEndpointName);
+					httpEndpoint.setParent(axisService);
+					httpEndpoint.setTransportInDescription(transportInDesc
+							.getName());
+					populateHttpEndpoint(axisService, httpEndpoint);
+					axisService.addEndpoint(httpEndpoint.getName(),
+							httpEndpoint);
+				}
+			}
+		}
+	}
+
+	public static void addSoap11Endpoint(AxisService axisService, URL url)
+			throws Exception {
+		String protocol = url.getProtocol();
+		protocol = protocol.substring(0, 1).toUpperCase()
+				+ protocol.substring(1, protocol.length()).toLowerCase();
+
+		String serviceName = axisService.getName();
+		String soap11EndpointName = serviceName + protocol + "Soap11Endpoint";
+
+		AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
+		httpSoap11Endpoint.setName(soap11EndpointName);
+		httpSoap11Endpoint.setParent(axisService);
+		httpSoap11Endpoint.setEndpointURL(url.toString());
+
+		populateSoap11Endpoint(axisService, httpSoap11Endpoint);
+		axisService.addEndpoint(httpSoap11Endpoint.getName(),
+				httpSoap11Endpoint);
+		// setting soap11 endpoint as the default endpoint
+		axisService.setEndpointName(soap11EndpointName);
+	}
+
+	public static void addSoap12Endpoint(AxisService axisService, URL url)
+			throws Exception {
+		String protocol = url.getProtocol();
+		protocol = protocol.substring(0, 1).toUpperCase()
+				+ protocol.substring(1, protocol.length()).toLowerCase();
+
+		String serviceName = axisService.getName();
+		String soap12EndpointName = serviceName + protocol + "Soap12Endpoint";
+
+		AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
+		httpSoap12Endpoint.setName(soap12EndpointName);
+		httpSoap12Endpoint.setParent(axisService);
+		httpSoap12Endpoint.setEndpointURL(url.toString());
+
+		populateSoap12Endpoint(axisService, httpSoap12Endpoint);
+		axisService.addEndpoint(httpSoap12Endpoint.getName(),
+				httpSoap12Endpoint);
+	}
+
+	public static void addHttpEndpoint(AxisService axisService, URL url) {
+		String serviceName = axisService.getName();
+		String protocol = url.getProtocol();
+		protocol = protocol.substring(0, 1).toUpperCase()
+				+ protocol.substring(1, protocol.length()).toLowerCase();
+
+		String httpEndpointName = serviceName + protocol + "Endpoint";
+		AxisEndpoint httpEndpoint = new AxisEndpoint();
+		httpEndpoint.setName(httpEndpointName);
+		httpEndpoint.setParent(axisService);
+		httpEndpoint.setEndpointURL(url.toString());
+		populateHttpEndpoint(axisService, httpEndpoint);
+		axisService.addEndpoint(httpEndpoint.getName(), httpEndpoint);
+	}
+
+	private static void populateSoap11Endpoint(AxisService axisService,
+			AxisEndpoint axisEndpoint) {
+		String endpointName = axisEndpoint.getName();
+		String name = endpointName.substring(0, endpointName
+				.indexOf("Endpoint"))
+				+ "Binding";
+
+		QName bindingName = new QName(name);
+
+		AxisBinding axisBinding = new AxisBinding();
+		axisBinding.setName(bindingName);
+
+		axisBinding.setType(Java2WSDLConstants.TRANSPORT_URI);
+		axisBinding.setProperty(WSDLConstants.WSDL_1_1_STYLE,
+				WSDLConstants.STYLE_DOC);
+
+		axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
+				SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+		for (Iterator iterator = axisService.getChildren(); iterator.hasNext();) {
+			AxisOperation operation = (AxisOperation) iterator.next();
+			AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+
+			axisBindingOperation.setName(operation.getName());
+			axisBindingOperation.setAxisOperation(operation);
+
+			String soapAction = operation.getSoapAction();
+			if (soapAction != null) {
+				axisBindingOperation.setProperty(
+						WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
+			}
+			axisBinding.addChild(axisBindingOperation.getName(),
+					axisBindingOperation);
+			populateBindingOperation(axisService, axisBinding,
+					axisBindingOperation);
+		}
+
+		axisBinding.setParent(axisEndpoint);
+		axisEndpoint.setBinding(axisBinding);
+	}
+
+	private static void populateSoap12Endpoint(AxisService axisService,
+			AxisEndpoint axisEndpoint) {
+		String endpointName = axisEndpoint.getName();
+		String name = endpointName.substring(0, endpointName
+				.indexOf("Endpoint"))
+				+ "Binding";
+
+		QName bindingName = new QName(name);
+		AxisBinding axisBinding = new AxisBinding();
+		axisBinding.setName(bindingName);
+
+		axisBinding.setType(Java2WSDLConstants.TRANSPORT_URI);
+		axisBinding.setProperty(WSDLConstants.WSDL_1_1_STYLE,
+				WSDLConstants.STYLE_DOC);
+
+		axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
+				SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+		for (Iterator iterator = axisService.getChildren(); iterator.hasNext();) {
+			AxisOperation operation = (AxisOperation) iterator.next();
+			AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+
+			axisBindingOperation.setName(operation.getName());
+			axisBindingOperation.setAxisOperation(operation);
+
+			String soapAction = operation.getSoapAction();
+			if (soapAction != null) {
+				axisBindingOperation.setProperty(
+						WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
+			}
+			axisBinding.addChild(axisBindingOperation.getName(),
+					axisBindingOperation);
+
+			populateBindingOperation(axisService, axisBinding,
+					axisBindingOperation);
+		}
+
+		axisBinding.setParent(axisEndpoint);
+		axisEndpoint.setBinding(axisBinding);
+	}
+
+	private static void populateHttpEndpoint(AxisService axisService,
+			AxisEndpoint axisEndpoint) {
+		String endpointName = axisEndpoint.getName();
+		String name = endpointName.substring(0, endpointName
+				.indexOf("Endpoint"))
+				+ "Binding";
+
+		QName bindingName = new QName(name);
+		AxisBinding axisBinding = new AxisBinding();
+		axisBinding.setName(bindingName);
+
+		axisBinding.setType(WSDL2Constants.URI_WSDL2_HTTP);
+		axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, "POST");
+
+		for (Iterator iterator = axisService.getChildren(); iterator.hasNext();) {
+			AxisOperation operation = (AxisOperation) iterator.next();
+			AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+
+			axisBindingOperation.setName(operation.getName());
+			axisBindingOperation.setAxisOperation(operation);
+
+			axisBinding.addChild(axisBindingOperation.getName(),
+					axisBindingOperation);
+
+			populateBindingOperation(axisService, axisBinding,
+					axisBindingOperation);
+		}
+
+		axisBinding.setParent(axisEndpoint);
+		axisEndpoint.setBinding(axisBinding);
+	}
+
+	private static void populateBindingOperation(AxisService axisService,
+			AxisBinding axisBinding, AxisBindingOperation axisBindingOperation) {
+
+		AxisOperation axisOperation = axisBindingOperation.getAxisOperation();
+
+		if (WSDLUtil.isInputPresentForMEP(axisOperation
+				.getMessageExchangePattern())) {
+			AxisMessage axisInMessage = axisOperation
+					.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+			AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
+
+			axisBindingInMessage.setName(axisInMessage.getName());
+			axisBindingInMessage.setDirection(axisInMessage.getDirection());
+			axisBindingInMessage.setAxisMessage(axisInMessage);
+
+			axisBindingInMessage.setParent(axisBindingOperation);
+			axisBindingOperation.addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE,
+					axisBindingInMessage);
+		}
+
+		if (WSDLUtil.isOutputPresentForMEP(axisOperation
+				.getMessageExchangePattern())) {
+			AxisMessage axisOutMessage = axisOperation
+					.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+			AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
+
+			axisBindingOutMessage.setName(axisOutMessage.getName());
+			axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
+			axisBindingOutMessage.setAxisMessage(axisOutMessage);
+
+			axisBindingOutMessage.setParent(axisOutMessage);
+			axisBindingOperation.addChild(
+					WSDLConstants.MESSAGE_LABEL_OUT_VALUE,
+					axisBindingOutMessage);
+		}
+
+		ArrayList faultMessagesList = axisOperation.getFaultMessages();
+		for (Iterator iterator2 = faultMessagesList.iterator(); iterator2
+				.hasNext();) {
+			AxisMessage axisFaultMessage = (AxisMessage) iterator2.next();
+			AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
+			axisBindingFaultMessage.setFault(true);
+			axisBindingFaultMessage.setAxisMessage(axisFaultMessage);
+			axisBindingFaultMessage.setParent(axisBindingOperation);
+			axisBindingOperation.addFault(axisBindingFaultMessage);
+		}
+
+		axisBindingOperation.setAxisOperation(axisOperation);
+		axisBindingOperation.setParent(axisBinding);
+	}
 }

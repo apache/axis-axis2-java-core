@@ -43,7 +43,6 @@ public class ComplexDataTypesTest extends XMLTestCase {
             builder.generateWSDL();
             FileReader control = new FileReader(wsdlLocation);
             StringReader test = new StringReader(new String(out.toByteArray()));
-            
             Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.getControlParser(), control), 
 		               XMLUnit.buildDocument(XMLUnit.getControlParser(), test), 
 		               new WSDLDifferenceEngine(new WSDLController()), new WSDLElementQualifier());

@@ -68,7 +68,7 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
     protected AxisConfiguration axisConfiguration;
 
     protected boolean finish = false;
-    org.tempuri.complex.ComplexDataTypesComplexDataTypesSOAP11Port_httpStub stub;
+    org.tempuri.complex.ComplexDataTypesComplexDataTypesHttpSoap11EndpointStub stub;
 
     public ComplexDataTypesComplexDataTypesSOAP11Test() {
         super(ComplexDataTypesComplexDataTypesSOAP11Test.class.getName());
@@ -97,7 +97,7 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
                 new EndpointReference("http://127.0.0.1:"
                         + (UtilServer.TESTING_PORT)
                         + "/axis2/services/ComplexDataTypes");
-        stub  = new org.tempuri.complex.ComplexDataTypesComplexDataTypesSOAP11Port_httpStub(null,targetEPR.getAddress());
+        stub  = new org.tempuri.complex.ComplexDataTypesComplexDataTypesHttpSoap11EndpointStub(null,targetEPR.getAddress());
     }
 
     protected void tearDown() throws Exception {

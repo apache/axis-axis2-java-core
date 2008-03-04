@@ -1029,7 +1029,7 @@
             <wsdl:output message="ns:retStructSNSAResponse" wsaw:Action="urn:retStructSNSAResponse"/>
         </wsdl:operation>
     </wsdl:portType>
-    <wsdl:binding name="ComplexDataTypesSOAP11Binding" type="ns:ComplexDataTypesPortType">
+    <wsdl:binding name="ComplexDataTypesHttpSoap11Binding" type="ns:ComplexDataTypesPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retObject">
             <soap:operation soapAction="urn:retObject" style="document"/>
@@ -1374,7 +1374,7 @@
             </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
-    <wsdl:binding name="ComplexDataTypesSOAP12Binding" type="ns:ComplexDataTypesPortType">
+    <wsdl:binding name="ComplexDataTypesHttpSoap12Binding" type="ns:ComplexDataTypesPortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="retObject">
             <soap12:operation soapAction="urn:retObject" style="document"/>
@@ -2065,13 +2065,13 @@
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="ComplexDataTypes">
-        <wsdl:port name="ComplexDataTypesSOAP11port_http" binding="ns:ComplexDataTypesSOAP11Binding">
+        <wsdl:port name="ComplexDataTypesHttpSoap11Endpoint" binding="ns:ComplexDataTypesHttpSoap11Binding">
             <soap:address location="http://localhost:8080/axis2/services/ComplexDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="ComplexDataTypesSOAP12port_http" binding="ns:ComplexDataTypesSOAP12Binding">
+        <wsdl:port name="ComplexDataTypesHttpSoap12Endpoint" binding="ns:ComplexDataTypesHttpSoap12Binding">
             <soap12:address location="http://localhost:8080/axis2/services/ComplexDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="ComplexDataTypesHttpport" binding="ns:ComplexDataTypesHttpBinding">
+        <wsdl:port name="ComplexDataTypesHttpEndpoint" binding="ns:ComplexDataTypesHttpBinding">
             <http:address location="http://localhost:8080/axis2/services/ComplexDataTypes"/>
         </wsdl:port>
     </wsdl:service>
