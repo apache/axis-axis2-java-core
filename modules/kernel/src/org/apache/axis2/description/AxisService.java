@@ -64,6 +64,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
 import org.apache.axis2.dataretrieval.DRConstants;
@@ -287,9 +288,12 @@ public class AxisService extends AxisDescription {
 
 	// name of the binding used : use in codegeneration
 	private String bindingName;
+        
+	// List of MessageContextListeners that listen for events on the MessageContext
+        private ArrayList messageContextListeners = new ArrayList();
 
-	// names list keep to preserve the parameter order
-	private List operationsNameList;
+        // names list keep to preserve the parameter order
+        private List operationsNameList;
 
 	private String[] eprs;
 	private boolean customWsdl = false;
@@ -2878,4 +2882,67 @@ public class AxisService extends AxisDescription {
 	public Policy lookupPolicy(String key) {
 		return (Policy) policyMap.get(key);
 	}
+    
+    /**
+     * Add a ServiceContextListener
+     * @param scl
+     */
+    public void addMessageContextListener(MessageContextListener scl) {
+        synchronized (messageContextListeners) {
+            messageContextListeners.add(scl);
+        }
+    }
+    
+    /**
+     * Remove a ServiceContextListener
+     * @param scl
+     */
+    public void removeMessageContextListener(MessageContextListener scl) {
+        synchronized (messageContextListeners) {
+            messageContextListeners.remove(scl);
+        }
+    }
+    
+    /**
+     * @param cls Class of ServiceContextListener
+     * @return true if ServiceContextLister is in the list
+     */
+    public boolean hasMessageContextListener(Class cls) {
+        synchronized (messageContextListeners) {
+            for (int i=0; i<messageContextListeners.size(); i++) {
+                if (messageContextListeners.get(i).getClass() == cls) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Signal an Attach ServiceContext Event
+     * @param sc ServiceContext
+     * @param mc MessageContext
+     */
+    public void attachServiceContextEvent(ServiceContext sc, MessageContext mc) {
+        synchronized (messageContextListeners) {
+            for (int i=0; i<messageContextListeners.size(); i++) {
+                ((MessageContextListener) messageContextListeners.get(i)).
+                    attachServiceContextEvent(sc, mc);
+            }
+        }
+    }
+    
+    /**
+     * Signal an Attach Envelope Event
+     * @param sc ServiceContext
+     * @param mc MessageContext
+     */
+    public void attachEnvelopeEvent(MessageContext mc) {
+        synchronized (messageContextListeners) {
+            for (int i=0; i<messageContextListeners.size(); i++) {
+                ((MessageContextListener) messageContextListeners.get(i)).
+                    attachEnvelopeEvent(mc);
+            }
+        }
+    }
 }

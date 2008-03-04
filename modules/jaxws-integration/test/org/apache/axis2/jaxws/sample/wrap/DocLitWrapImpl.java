@@ -25,6 +25,7 @@ package org.apache.axis2.jaxws.sample.wrap;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
+import org.apache.axis2.datasource.jaxb.JAXBCustomBuilderMonitor;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.TestLogger;
 import org.test.sample.wrap.FinancialOperation;
@@ -77,13 +78,42 @@ public class DocLitWrapImpl implements DocLitWrap {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#twoWay(java.lang.String)
-	 */
-	public String twoWay(String twowayStr) {
-		String retStr = new String("Acknowledgement : Request String received = "+ twowayStr);
-		return retStr;
-	}
+        /* (non-Javadoc)
+         * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#twoWay(java.lang.String)
+         */
+        public String twoWay(String twowayStr) {
+            if (twowayStr.equals("JAXBCustomBuilderMonitorStart")) {
+                // Clear the monitor and start monitoring
+                JAXBCustomBuilderMonitor.clear();
+                JAXBCustomBuilderMonitor.setMonitoring(true);
+                return "JAXBCustomBuilderMonitorStart";
+            } else if (twowayStr.equals("JAXBCustomBuilderMonitorEnd")) {
+                // End monitoring.
+                JAXBCustomBuilderMonitor.setMonitoring(false);
+                return "JAXBCustomBuilderMonitorEnd";
+            } else if (twowayStr.equals("JAXBCustomBuilderClient")) {
+                // Clear monitor so that changes on the client can be detected
+                JAXBCustomBuilderMonitor.clear();
+                String retStr = twowayStr;
+                return retStr;
+            } else if (twowayStr.equals("JAXBCustomBuilderServer1")) {
+                // Return the number of builders from the monitor
+                String retStr = ""  + JAXBCustomBuilderMonitor.getTotalBuilders();
+                return retStr;
+            } else if (twowayStr.equals("JAXBCustomBuilderServer2")) {
+                // Return the number of creates from the monitor
+                String retStr = ""  + JAXBCustomBuilderMonitor.getTotalCreates();
+                return retStr;
+            } else if (twowayStr.equals("JAXBCustomBuilderFault")) {
+                // Clear the monitor so that chagnes on the client can be detected
+                JAXBCustomBuilderMonitor.clear();
+                // An exception is expected for this input
+                throw new RuntimeException("System Fault Occurred");
+            } else {
+                String retStr = new String("Acknowledgement : Request String received = "+ twowayStr);
+                return retStr;
+            }
+        }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#invoke(java.lang.String)

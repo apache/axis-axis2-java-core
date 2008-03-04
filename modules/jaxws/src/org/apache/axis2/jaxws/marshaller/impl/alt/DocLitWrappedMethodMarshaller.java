@@ -87,6 +87,12 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
             String packagesKey = marshalDesc.getPackagesKey();
+            
+            // Remember this unmarshal information so that we can speed up processing
+            // the next time.
+            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                        packages,
+                                                        packagesKey);
 
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -211,6 +217,10 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
             String packagesKey = marshalDesc.getPackagesKey();
+            
+            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                        packages,
+                                                        packagesKey);
 
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
@@ -412,7 +422,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   3) The name of the data block (m:operation) is defined by the schema and match the name of the operation.
             //      This is called the wrapper element.  The wrapper element has a corresponding JAXB element pojo.
             //   4) The parameters (m:param) are child elements of the wrapper element.
-
+            
             // Get the operation information
             ParameterDescription[] pds = operationDesc.getParameterDescriptions();
 

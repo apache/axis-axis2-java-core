@@ -19,6 +19,9 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axis2.datasource.jaxb.JAXBDSContext;
+import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
@@ -26,6 +29,8 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -34,7 +39,7 @@ import javax.xml.ws.WebServiceException;
 
 /** JAXBBlockFactoryImpl Creates a JAXBBlock */
 public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockFactory {
-
+    private static final Log log = LogFactory.getLog(JAXBBlockFactoryImpl.class);
 
     /** Default Constructor required for Factory */
     public JAXBBlockFactoryImpl() {
@@ -61,6 +66,40 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
         if (qName == null) {
             qName = omElement.getQName();
         }
+        
+        if (omElement instanceof OMSourcedElement) {
+            
+            if ( ((OMSourcedElement) omElement).getDataSource() instanceof JAXBDataSource) {
+                JAXBDataSource ds = (JAXBDataSource) ((OMSourcedElement)omElement).getDataSource();
+                JAXBDSContext dsContext = ds.getContext();
+                try {
+                    if (dsContext.getJAXBContext() == ((JAXBBlockContext)context).getJAXBContext()) {
+                        // Shortcut, use existing JAXB object
+                        Object jaxb = ds.getObject();
+                        return new JAXBBlockImpl(jaxb, (JAXBBlockContext)context, qName, this);
+                    }
+                } catch (JAXBException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Falling back to using normal unmarshalling approach. " + e.getMessage());
+                    }
+                }
+            } else if ( ((OMSourcedElement) omElement).getDataSource() instanceof JAXBBlockImpl) {
+                JAXBBlockImpl block = (JAXBBlockImpl) ((OMSourcedElement)omElement).getDataSource();
+                JAXBBlockContext blockContext = (JAXBBlockContext) block.getBusinessContext();
+                try {
+                    if (blockContext.getJAXBContext() == ((JAXBBlockContext)context).getJAXBContext()) {
+                        // Shortcut, use existing JAXB object
+                        Object jaxb = block.getObject();
+                        return new JAXBBlockImpl(jaxb, (JAXBBlockContext)context, qName, this);
+                    }
+                } catch (JAXBException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Falling back to using normal unmarshalling approach. " + e.getMessage());
+                    }
+                }
+            }
+        }
+        
         return new JAXBBlockImpl(omElement, (JAXBBlockContext)context, qName, this);
     }
 

@@ -124,7 +124,9 @@ public class EndpointDescriptionValidator extends Validator {
         else if (wsdlBindingType.equals(HTTPBinding.HTTP_BINDING) &&
                 endpointDesc.isEndpointBased()) {
             addValidationFailure(this,
-                                 "The HTTPBinding can not be specified for SEI-based endpoints");
+                                 "An HTTPBinding was found on an @WebService SEI based endpoint. " +
+                                 "This is not supported.  " +
+                                 "An HTTPBinding must use an @WebServiceProvider endpoint.");
             isBindingValid = false;
         } else {
             addValidationFailure(this, "Invalid binding; wsdl = " + wsdlBindingType +

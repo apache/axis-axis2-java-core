@@ -1278,6 +1278,10 @@ public class MessageContext extends AbstractContext
                 throw new AxisFault(
                         "Unknown SOAP Version. Current Axis handles only SOAP 1.1 and SOAP 1.2 messages");
             }
+            // Inform the listeners of an attach envelope event
+            if (getAxisService() != null) {
+                getAxisService().attachEnvelopeEvent(this);
+            }
         }
     }
 
@@ -1417,7 +1421,13 @@ public class MessageContext extends AbstractContext
                 // setting service group context
                 serviceGroupContext = context.getServiceGroupContext();
             }
-            this.setAxisService(context.getAxisService());
+            AxisService axisService = context.getAxisService();
+            this.setAxisService(axisService);
+            
+            // Inform the listeners of an attach event
+            if (axisService != null) {
+                axisService.attachServiceContextEvent(serviceContext, this);
+            }
         }
     }
 

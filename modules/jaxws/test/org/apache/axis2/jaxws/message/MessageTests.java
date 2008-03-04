@@ -30,8 +30,12 @@ import javax.xml.stream.XMLStreamReader;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
+import org.apache.axis2.datasource.jaxb.JAXBDSContext;
+import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -774,30 +778,39 @@ public class MessageTests extends TestCase {
     private final int PERSIST         = 1;
     private final int SAVE_AND_PERSIST = 2;
     public void testJAXBInflow_soap11() throws Exception {
-		_testJAXBInflow(sampleJAXBEnvelope11, NO_PERSIST);
-	}
-	public void testJAXBInflow_soap12() throws Exception {
-		_testJAXBInflow(sampleJAXBEnvelope12, NO_PERSIST);
-	}
+        _testJAXBInflow(sampleJAXBEnvelope11, NO_PERSIST, false);
+    }
+    public void testJAXBInflow_soap11_withCustomBuilder() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope11, NO_PERSIST, true);
+    }
+    public void testJAXBInflow_soap12() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope12, NO_PERSIST, false);
+    }
     public void testJAXBInflow_soap11_withPersist() throws Exception {
-        _testJAXBInflow(sampleJAXBEnvelope11, PERSIST);
+        _testJAXBInflow(sampleJAXBEnvelope11, PERSIST, false);
     }
     public void testJAXBInflow_soap12_withPersist() throws Exception {
-        _testJAXBInflow(sampleJAXBEnvelope12, PERSIST);
+        _testJAXBInflow(sampleJAXBEnvelope12, PERSIST, false);
     }
     public void testJAXBInflow_soap11_withSaveAndPersist() throws Exception {
-        _testJAXBInflow(sampleJAXBEnvelope11, SAVE_AND_PERSIST);
+        _testJAXBInflow(sampleJAXBEnvelope11, SAVE_AND_PERSIST, false);
     }
     public void testJAXBInflow_soap12_withSaveAndPersist() throws Exception {
-        _testJAXBInflow(sampleJAXBEnvelope12, SAVE_AND_PERSIST);
+        _testJAXBInflow(sampleJAXBEnvelope12, SAVE_AND_PERSIST, false);
     }
-	public void _testJAXBInflow(String sampleJAXBEnvelope, int persist) throws Exception {
+    public void _testJAXBInflow(String sampleJAXBEnvelope, int persist, boolean installJAXBCustomBuilder) throws Exception {
         // Create a SOAP OM out of the sample incoming XML.  This
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
         XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
         StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
         OMElement omElement = builder.getSOAPEnvelope();
+        
+        if (installJAXBCustomBuilder) {
+            JAXBDSContext jds = new JAXBDSContext(EchoStringResponse.class.getPackage().getName());
+            JAXBCustomBuilder jcb = new JAXBCustomBuilder(jds);
+            builder.registerCustomBuilderForPayload(jcb);
+        }
         
         // Create a SOAP 1.1 Message from the sample incoming XML
         MessageFactory mf = (MessageFactory)
@@ -816,6 +829,17 @@ public class MessageTests extends TestCase {
             // Simulate saving the message so that it can be fully rebuilt.
             saveMsgText = m.getAsOMElement().toString();
         }
+        
+        Object customBuiltObject = null;
+        if (installJAXBCustomBuilder) {
+            OMElement om = m.getAsOMElement();
+            om = ((org.apache.axiom.soap.SOAPEnvelope) om).getBody().getFirstElement();
+            if (om instanceof OMSourcedElement &&
+                ((OMSourcedElement) om).getDataSource() instanceof JAXBDataSource) {
+                customBuiltObject = ((JAXBDataSource) ((OMSourcedElement) om).getDataSource()).getObject();
+            }
+        }
+        
         
         // Get the BlockFactory
         JAXBBlockFactory bf = (JAXBBlockFactory)
@@ -849,6 +873,11 @@ public class MessageTests extends TestCase {
             omElement = builder.getSOAPEnvelope();
             m = mf.createFrom(omElement, null);
         } 
+        
+        if (installJAXBCustomBuilder) {
+            // If installed jaxb custom builder, then custom built object should be same object as the business object
+            assertTrue (customBuiltObject == bo);
+        }
         
         
         // Check to make sure the right object was returned

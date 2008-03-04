@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.datasource.XMLStringDataSource;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -124,6 +123,13 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                     throw ExceptionFactory.makeWebServiceException(e);
                 }
                 return ((JAXBDataSource) ds).getObject();
+            } else if (ds instanceof JAXBBlockImpl) {
+                // Update the business context to use the one provided by the
+                // by the datasource
+                JAXBBlockContext blockContext = (JAXBBlockContext) ((JAXBBlockImpl) ds).getBusinessContext();
+                busContext = blockContext;
+
+                return ((JAXBBlockImpl) ds).getObject();
             }
         }
         return super._getBOFromOM(omElement, busContext);

@@ -111,9 +111,13 @@ public class Parameter implements Externalizable, SafeSerializable {
      * Field value
      */
     private Object value;
+    
+    private boolean _transient;  // Indicates that the parameter is transient (not persisted)
 
     //To check whether the parameter is editable or not ,
     // if the value is false then no one can call setvalue
+    // TODO
+    // Currently the editable field is not persisted. This seems like a problem.
     private boolean editable = true;
 
     /**
@@ -267,6 +271,12 @@ public class Parameter implements Externalizable, SafeSerializable {
      */
     public void writeExternal(ObjectOutput o) throws IOException {
         SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
+        
+        // Don't write out transient parameters
+        if (this.isTransient()) {
+            return;  
+        }
+        
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -399,5 +409,13 @@ public class Parameter implements Externalizable, SafeSerializable {
 
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    public boolean isTransient() {
+        return _transient;
+    }
+
+    public void setTransient(boolean _transient) {
+        this._transient = _transient;
     }
 }

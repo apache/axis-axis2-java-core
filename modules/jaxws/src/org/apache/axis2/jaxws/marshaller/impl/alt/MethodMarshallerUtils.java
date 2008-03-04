@@ -18,8 +18,12 @@
  */
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -1279,5 +1283,41 @@ public class MethodMarshallerUtils {
     static boolean isSWAAttachment(ParameterDescription pd) {
         return pd.getAttachmentDescription() != null &&
             pd.getAttachmentDescription().getAttachmentType() == AttachmentType.SWA;
+    }
+    
+    /**
+     * Register the unmarshalling information so that it can 
+     * be used to speed up subsequent marshalling events.
+     * @param mc
+     * @param packages
+     * @param packagesKey
+     */
+    static void registerUnmarshalInfo(MessageContext mc, 
+                                 TreeSet<String> packages, 
+                                 String packagesKey) throws AxisFault {
+        
+        // The information is registered on the AxisService.
+        if (mc == null ||
+            mc.getAxisMessageContext() == null ||
+            mc.getAxisMessageContext().getAxisService() == null) {
+            return;
+        }
+        AxisService ac = mc.getAxisMessageContext().getAxisService();
+        
+        // There are two things that need to be saved.
+        // 1) The UnmarshalInfo object containing the packages 
+        //    (which will be used by the CustomBuilder)
+        // 2) A MessageContextListener which (when triggered) registers
+        //    the JAXBCustomBuilder
+        Parameter param = ac.getParameter(UnmarshalInfo.KEY);
+        if (param == null) {
+            UnmarshalInfo info = new UnmarshalInfo(packages, packagesKey);
+            ac.addParameter(UnmarshalInfo.KEY, info);
+            param = ac.getParameter(UnmarshalInfo.KEY);
+            param.setTransient(true);
+            // Add a listener that will set the JAXBCustomBuilder
+            UnmarshalMessageContextListener.
+                create(mc.getAxisMessageContext().getServiceContext());
+        }
     }
 }

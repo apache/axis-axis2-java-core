@@ -18,7 +18,16 @@
  */
 package org.apache.axis2.description;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.engine.AxisConfiguration;
+
 import javax.xml.namespace.QName;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
 
@@ -92,5 +101,96 @@ public class AxisServiceTest extends TestCase {
         service.addParameterObserver(observer);
         service.addParameter(PARAM_NAME, PARAM_VALUE);
         assertTrue("Didn't get notification", observer.gotIt);
+    }
+     
+    /**
+     * Simple test to ensure that Parameters marked as Transient
+     * are not persisted.
+     * @throws Exception
+     */
+    public void testTransientParameters() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        
+        Parameter p1 = new Parameter("NORMAL", "Hello World");
+        Parameter p2 = new Parameter("TRANSIENT", "Hello World");
+        p2.setTransient(true);
+        
+        // The header in an object output is 4 bytes
+        final int HEADER_LENGTH = 4;
+        
+        // Make sure that non-transient value is written
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        p1.writeExternal(oos);
+        oos.flush();
+        oos.close();
+        int length1 = baos.toByteArray().length;
+        assertTrue( length1 > HEADER_LENGTH);
+        
+        // Make sure the transient value is not written
+        baos = new ByteArrayOutputStream();
+        oos = new ObjectOutputStream(baos);
+        p2.writeExternal(oos);
+        oos.flush();
+        oos.close();
+        int length2 = baos.toByteArray().length;
+        assertTrue( length2 <= HEADER_LENGTH);
+        
+        
+    }
+    
+    /**
+     * Simple test to make verify that the MessageContext listener
+     * is invoked when a ServiceContext is attached to the MessageContext
+     * @throws Exception
+     */
+    public void testMessageContextListener() throws Exception {
+        
+        AxisConfiguration ac = new AxisConfiguration();
+        ConfigurationContext cc = new ConfigurationContext(ac);
+        
+        // Create a dummy AxisService
+        AxisService service = new AxisService();
+        service.setName("dummy");
+        
+        AxisServiceGroup asg = new AxisServiceGroup();
+        asg.addService(service);
+        
+        // Attach a ServiceContextListener
+        // The ServiceContextListener will copy sample information from 
+        // the ServiceContext onto the MessageContext
+        service.addMessageContextListener(new MyMessageContextListener());
+        
+        // Create a Dummy ServiceContext
+        ServiceGroupContext sgc = new ServiceGroupContext(cc, asg);
+        ServiceContext sc = sgc.getServiceContext(service);
+        sc.setProperty("SERVICE_PROPERTY", "SUCCESSFUL");
+        
+        // Create a MessageContext
+        MessageContext mc = new MessageContext();
+        
+        // Attach the ServiceContext and MessageContext.
+        // This will trigger the MyServiceContextListener.attachEvent
+        mc.setServiceContext(sc);
+        
+        // Verify success
+        assertTrue("SUCCESSFUL".equals(mc.getProperty("MESSAGE_PROPERTY")));
+    }
+    
+    /**
+     * Sameple MessageContextListener which sets a property 
+     * on the MessageContext when the SerivceContext is attached.
+     */
+    class MyMessageContextListener implements MessageContextListener {
+
+
+        public void attachEnvelopeEvent(MessageContext mc) {
+            
+        }
+
+        public void attachServiceContextEvent(ServiceContext sc, MessageContext mc) {
+            String value = (String) sc.getProperty("SERVICE_PROPERTY");
+            mc.setProperty("MESSAGE_PROPERTY", value);
+        }
+        
     }
 }

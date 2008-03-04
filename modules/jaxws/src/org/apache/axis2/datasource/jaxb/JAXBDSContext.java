@@ -20,6 +20,7 @@ package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
+import org.apache.axiom.om.impl.llom.OMStAXWrapper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
