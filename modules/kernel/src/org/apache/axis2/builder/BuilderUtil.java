@@ -21,6 +21,7 @@ package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.lifecycle.LifecycleManager;
+import org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -548,8 +549,13 @@ public class BuilderUtil {
                                                  int contentLength) {
         LifecycleManager manager = null;
         try {
-            manager = (LifecycleManager) msgContext.getRootContext().getAxisConfiguration()
+            AxisConfiguration configuration = msgContext.getRootContext().getAxisConfiguration();
+            manager = (LifecycleManager) configuration
                     .getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
+            if(manager == null){
+                manager = new LifecycleManagerImpl();
+                configuration.addParameter(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER, manager);
+            }
         } catch (Exception e){
             if(log.isDebugEnabled()){
                 log.debug("Exception getting Attachments LifecycleManager", e);
