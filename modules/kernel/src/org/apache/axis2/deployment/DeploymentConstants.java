@@ -112,6 +112,9 @@ public interface DeploymentConstants {
     String EXTENSION = "extension";
     String DEPLOYER = "deployer";
 
+    //Attachments LifecycleManager 
+    String ATTACHMENTS_LIFECYCLE_MANAGER = "attachmentsLifecycleManager";
+
     // for parameters
     String ATTRIBUTE_NAME = "name";
     String ATTRIBUTE_WSADDRESSING = "wsaddressing";

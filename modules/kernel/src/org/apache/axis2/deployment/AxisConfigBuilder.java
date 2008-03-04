@@ -23,6 +23,7 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
+import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.ApplicationXMLBuilder;
@@ -232,6 +233,15 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (deployerItr != null) {
                 processDeployers(deployerItr);
             }
+
+            //process Attachments Lifecycle manager configuration
+            OMElement attachmentsLifecycleManagerElement =
+                    config_element
+                            .getFirstChildWithName(new QName(ATTACHMENTS_LIFECYCLE_MANAGER));
+
+            if (attachmentsLifecycleManagerElement != null) {
+                processAttachmentsLifecycleManager(axisConfig, attachmentsLifecycleManagerElement);
+            }
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
@@ -256,6 +266,21 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                         e.getMessage());
                     }
                 }
+            }
+        }
+    }
+
+    private void processAttachmentsLifecycleManager(AxisConfiguration axisConfig, OMElement element) {
+        String className = element.getAttributeValue(new QName(TAG_CLASS_NAME));
+        try {
+            Class classInstance = Loader.loadClass(className);
+            LifecycleManager manager = (LifecycleManager) classInstance.newInstance();
+            axisConfig.addParameter(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER, manager);
+        } catch (Exception e) {
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "processAttachmentsLifecycleManager: Exception thrown initialising LifecycleManager: " +
+                                e.getMessage());
             }
         }
     }

@@ -20,6 +20,7 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -42,6 +43,7 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
@@ -521,31 +523,45 @@ public class BuilderUtil {
                 }
             }
         }
-        Attachments attachments = null;
-        if (contentLength > 0) {
-            if (log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
+            if (contentLength > 0) {
                 log.debug("Creating an Attachments map.  The content-length is" + contentLength);
-            }
-            attachments =
-                new Attachments(inStream,
-                                contentTypeString,
-                                fileCacheForAttachments,
-                                attachmentRepoDir,
-                                attachmentSizeThreshold,
-                                contentLength);
-        } else {
-            if (log.isDebugEnabled()) {
+            } else {
                 log.debug("Creating an Attachments map.");
             }
-            attachments =
-                new Attachments(inStream,
-                                contentTypeString,
-                                fileCacheForAttachments,
-                                attachmentRepoDir,
-                                attachmentSizeThreshold);
         }
+        return createAttachments(msgContext,
+                inStream,
+                contentTypeString,
+                fileCacheForAttachments,
+                attachmentRepoDir,
+                attachmentSizeThreshold,
+                contentLength);
+    }
 
-        return attachments;
+    public static Attachments createAttachments(MessageContext msgContext, 
+                                                 InputStream inStream,
+                                                 String contentTypeString,
+                                                 boolean fileCacheForAttachments,
+                                                 String attachmentRepoDir,
+                                                 String attachmentSizeThreshold,
+                                                 int contentLength) {
+        LifecycleManager manager = null;
+        try {
+            manager = (LifecycleManager) msgContext.getRootContext().getAxisConfiguration()
+                    .getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
+        } catch (Exception e){
+            if(log.isDebugEnabled()){
+                log.debug("Exception getting Attachments LifecycleManager", e);
+            }
+        }
+        return new Attachments(manager, 
+                            inStream,
+                            contentTypeString,
+                            fileCacheForAttachments,
+                            attachmentRepoDir,
+                            attachmentSizeThreshold,
+                            contentLength);
     }
 
     /**
