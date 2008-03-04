@@ -30,6 +30,10 @@
     <!--parameter name="cacheAttachments">true</parameter>
     <parameter name="attachmentDIR"></parameter>
     <parameter name="sizeThreshold">4000</parameter-->
+    
+    <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->
+    <!--<attachmentsLifecycleManager class="org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl"/>-->
+
 
     <!--Uncomment if you want to enable the reduction of the in-memory cache of WSDL definitions -->
     <!--In some server environments, the available memory heap is limited and can fill up under load -->
