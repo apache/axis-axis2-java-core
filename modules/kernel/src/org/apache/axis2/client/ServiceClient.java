@@ -50,6 +50,7 @@ import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Client access to a service. Each instance of this class is associated with a
@@ -59,7 +60,7 @@ import java.util.ArrayList;
  */
 public class ServiceClient {
     protected static final Log log = LogFactory.getLog(ServiceClient.class);
-    
+
     /**
      * Base name used for a service created without an existing configuration.
      */
@@ -268,7 +269,7 @@ public class ServiceClient {
             return axisConfig;
         }
     }
-    
+
     /**
      * Return the AxisService this is a client for. This is primarily useful
      * when the AxisService is created anonymously or from WSDL as otherwise the
@@ -650,6 +651,12 @@ public class ServiceClient {
                     .getMessage("operationnotfound", operationQName.getLocalPart()));
         }
 
+        // add the option properties to the service context
+        String key;
+        for (Iterator iter = options.getProperties().keySet().iterator();iter.hasNext();){
+            key = (String) iter.next();
+            serviceContext.setProperty(key, options.getProperties().get(key));
+        }
         OperationClient operationClient = axisOperation.createClient(serviceContext, options);
 
         // if overide options have been set, that means we need to make sure
@@ -827,7 +834,7 @@ public class ServiceClient {
         synchronized(this.axisConfig) {
             axisConfig.removeService(this.axisService.getName());
             this.axisService = axisService;
-    
+
             axisService.setClientSide(true);
             axisConfig.addService(axisService);
         }
