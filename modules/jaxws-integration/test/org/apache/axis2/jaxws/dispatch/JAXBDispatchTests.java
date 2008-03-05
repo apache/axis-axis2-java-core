@@ -18,30 +18,35 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
-import org.xmlsoap.schemas.soap.envelope.Body;
-import org.xmlsoap.schemas.soap.envelope.Envelope;
-import test.EchoString;
-import test.EchoStringResponse;
-import test.ObjectFactory;
+import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import java.util.concurrent.Future;
 
-public class JAXBDispatch extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.xmlsoap.schemas.soap.envelope.Body;
+import org.xmlsoap.schemas.soap.envelope.Envelope;
+
+import test.EchoString;
+import test.EchoStringResponse;
+import test.ObjectFactory;
+
+public class JAXBDispatchTests extends AbstractTestCase {
 
     private Dispatch<Object> dispatchPayload;
     private Dispatch<Object> dispatchMessage;
     private JAXBContext jbc;
     
-    public JAXBDispatch(String name) {
-        super(name);
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBDispatchTests.class));
     }
-    
+
     public void setUp() throws Exception {
         //Create the Service object
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);

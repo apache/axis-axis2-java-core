@@ -18,50 +18,62 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.xml.sax.InputSource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.concurrent.Future;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-import java.io.ByteArrayInputStream;
-import java.util.concurrent.Future;
+import javax.xml.ws.Service.Mode;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 /**
- * This class tests the JAX-WS Dispatch<Source> with content in various 
- * forms of a javax.xml.transform.sax.SAXSource.
+ * This class tests the JAX-WS Dispatch<Source> functionality with various
+ * forms of a StreamSource object. 
+ *
  */
-public class SAXSourceDispatch extends TestCase{
+public class StreamSourceDispatchTests extends AbstractTestCase {
 
-    private static final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
     
-	public void testSyncPayloadMode() throws Exception {
+    
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StreamSourceDispatchTests.class));
+    }
+
+	/**
+     * Invoke a Dispatch<Source> synchronously with the content in PAYLOAD mode.
+	 */
+    public void testSyncPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
 		svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-		Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.PAYLOAD);
-        
-        // Create a SAXSource out of the string content
+		Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class, 
+                Service.Mode.PAYLOAD);
+		
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
-		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-		Source request = new SAXSource(input);
-
-        TestLogger.logger.debug(">> Invoking sync Dispatch");
-		Source response = dispatch.invoke(request);
+        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+        Source srcStream = new StreamSource((InputStream) stream);
         
-		assertNotNull("dispatch invoke returned null", response);
+        // Invoke the Dispatch<Source>
+        TestLogger.logger.debug(">> Invoking sync Dispatch with PAYLOAD mode");
+		Source response = dispatch.invoke(srcStream);
+		assertNotNull(response);
         
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
@@ -73,30 +85,31 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(!responseText.contains("soap"));
         assertTrue(!responseText.contains("Envelope"));
         assertTrue(!responseText.contains("Body"));
-        assertTrue(responseText.contains("echoStringResponse"));
+        assertTrue(responseText.contains("echoStringResponse"));            
 	}
 
-	public void testSyncMessageMode() throws Exception {
+    /**
+     * Invoke a Dispatch<Source> synchronously with the content in MESSAGE mode.
+     */
+    public void testSyncMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
-        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.MESSAGE);
+		Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+		svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+		Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+				Mode.MESSAGE);
 		
-        // Create a SAXSource out of the string content
+		// Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+        Source srcStream = new StreamSource((InputStream) stream);
 
-        TestLogger.logger.debug(">> Invoking sync Dispatch with Message Mode");
-		Source response = dispatch.invoke(request);
+        TestLogger.logger.debug(">> Invoking sync Dispatch with MESSAGE Mode");
+		StreamSource response = (StreamSource) dispatch.invoke(srcStream);
+        assertNotNull(response);
 
-        assertNotNull("dispatch invoke returned null", response);
-        
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
@@ -107,9 +120,12 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(responseText.contains("soap"));
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
-        assertTrue(responseText.contains("echoStringResponse"));
+        assertTrue(responseText.contains("echoStringResponse"));            
 	}
 
+    /**
+     * Invoke a Dispatch<Source> asynchronously with the content in PAYLOAD mode.
+     */
     public void testAsyncCallbackPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -117,28 +133,28 @@ public class SAXSourceDispatch extends TestCase{
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
         svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.PAYLOAD);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+                Service.Mode.PAYLOAD);
         
-        // Setup the callback for async responses
+        // We'll need a callback instance to handle the async responses
         AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
         
-        // Create a SAXSource out of the string content
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+        Source srcStream = new StreamSource((InputStream) stream);
 
-        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
-        Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
+        // Wait for the async response to be returned
         while (!monitor.isDone()) {
             TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         Source response = callbackHandler.getValue();
-        assertNotNull("dispatch invoke returned null", response);
+        assertNotNull(response);
         
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
@@ -153,36 +169,39 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
-    public void testAsyncCallbackMessageMode() throws Exception {
+    /**
+     * Invoke a Dispatch<Source> asynchronously with the content in MESSAGE mode.
+     */
+	public void testAsyncCallbackMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
-        // Initialize the JAX-WS client artifacts
+        // Initialize the JAX-WS client artifacts 
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.MESSAGE);
-		
-        // Setup the callback for async responses
-        AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
+		svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+                Mode.MESSAGE);
         
-        // Create a SAXSource out of the string content
+        // We'll need a callback instance to handle the async responses
+        AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
+
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+		Source srcStream = new StreamSource((InputStream) stream);
 
-        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
-        Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
+        Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
 
+        // Wait for the async response to be returned
         while (!monitor.isDone()) {
             TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         Source response = callbackHandler.getValue();
-        assertNotNull("dispatch invoke returned null", response);
-        
+        assertNotNull(response);
+
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
@@ -194,8 +213,11 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
-	}
-    
+    }
+
+    /**
+     * Invoke a Dispatch<Source> asynchronously with the content in PAYLOAD mode.
+     */
     public void testAsyncPollingPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -203,25 +225,24 @@ public class SAXSourceDispatch extends TestCase{
         // Initialize the JAX-WS client artifacts
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
         svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.PAYLOAD);
-        
-        // Create a SAXSource out of the string content
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+                Service.Mode.PAYLOAD);
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+        Source srcStream = new StreamSource((InputStream) stream);
 
-        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
-        Response<Source> asyncResponse = dispatch.invokeAsync(request);
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
+        // Wait for the async response to be returned
         while (!asyncResponse.isDone()) {
             TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         Source response = asyncResponse.get();
-        assertNotNull("dispatch invoke returned null", response);
+        assertNotNull(response);
         
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
@@ -236,33 +257,36 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
+    /**
+     * Invoke a Dispatch<Source> asynchronously with the content in MESSAGE mode.
+     */
     public void testAsyncPollingMessageMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
-        // Initialize the JAX-WS client artifacts
+        // Initialize the JAX-WS client artifacts 
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
         svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.MESSAGE);
-        
-        // Create a SAXSource out of the string content
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+                Mode.MESSAGE);
+
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+        Source srcStream = new StreamSource((InputStream) stream);
 
-        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
-        Response<Source> asyncResponse = dispatch.invokeAsync(request);
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
+        Response<Source> asyncResponse = dispatch.invokeAsync(srcStream);
 
+        // Wait for the async response to be returned
         while (!asyncResponse.isDone()) {
             TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
         
         Source response = asyncResponse.get();
-        assertNotNull("dispatch invoke returned null", response);
-        
+        assertNotNull(response);
+
         // Prepare the response content for checking
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
@@ -276,79 +300,25 @@ public class SAXSourceDispatch extends TestCase{
         assertTrue(responseText.contains("echoStringResponse"));
     }
     
-    public void testOneWayPayloadMode() throws Exception {
+    /**
+     * Invoke a Dispatch<Source> one-way operation
+     */
+	public void testOneWayPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
         // Initialize the JAX-WS client artifacts
-        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.PAYLOAD);
+		Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+		svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+		Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+				Service.Mode.PAYLOAD);
         
-        // Create a SAXSource out of the string content
+		// Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
+		Source srcStream = new StreamSource((InputStream) stream);
 
         TestLogger.logger.debug(">> Invoking One Way Dispatch");
-        dispatch.invokeOneWay(request);
-    }
-    
-    public void testOneWayMessageMode() throws Exception {
-        TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
-        
-        // Initialize the JAX-WS client artifacts
-        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.MESSAGE);
-        
-        // Create a SAXSource out of the string content
-        byte[] bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
-        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-        InputSource input = new InputSource(stream);
-        Source request = new SAXSource(input);
-
-        TestLogger.logger.debug(">> Invoking One Way Dispatch");
-		dispatch.invokeOneWay(request);
+		dispatch.invokeOneWay(srcStream);
 	}
-    
-    public void testBadSAXSource() throws Exception {
-        TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
-        
-        // Initialize the JAX-WS client artifacts
-        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
-                Source.class, Service.Mode.MESSAGE);
-        
-        // Create an empty (invalid) SAXSource
-        Source request = new SAXSource();
-        
-        try {
-            dispatch.invoke(request);
-            fail("WebServiceException was expected");
-        } catch (WebServiceException e) {
-            TestLogger.logger.debug("A Web Service Exception was expected: " + e.toString());
-            assertTrue(e.getMessage() != null);
-        } catch (Exception e) {
-            fail("WebServiceException was expected, but received:" + e);
-        }
-        
-        try {
-            dispatch.invokeOneWay(request);
-            fail("WebServiceException was expected");
-        } catch (WebServiceException e) {
-            TestLogger.logger.debug("A Web Service Exception was expected: " + e.toString());
-            assertTrue(e.getMessage() != null);
-        } catch (Exception e) {
-            fail("WebServiceException was expected, but received:" + e);
-        }
-        
-    }
-    
 }

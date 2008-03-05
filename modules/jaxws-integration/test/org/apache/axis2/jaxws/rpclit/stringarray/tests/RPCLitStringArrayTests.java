@@ -18,18 +18,25 @@
  */
 package org.apache.axis2.jaxws.rpclit.stringarray.tests;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
+
+import javax.xml.ws.BindingProvider;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.RPCLitStringArrayService;
 import org.test.rpclit.stringarray.StringArray;
 
-import javax.xml.ws.BindingProvider;
-import java.util.Arrays;
-
-
-public class RPCLitStringArrayTests extends TestCase {
+public class RPCLitStringArrayTests extends AbstractTestCase {
 
 	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoImplPort";
+
+	public static Test suite() {
+        return getTestSetup(new TestSuite(RPCLitStringArrayTests.class));
+    }
 
 	public void testStringArrayType() {
         System.out.println("------------------------------");

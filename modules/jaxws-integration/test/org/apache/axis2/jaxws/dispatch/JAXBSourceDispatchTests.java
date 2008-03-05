@@ -18,8 +18,13 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.AddNumbersHandlerTests;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
 
@@ -42,7 +47,7 @@ import java.io.StringWriter;
 */
 
 
-public class JAXBSourceDispatch extends TestCase {
+public class JAXBSourceDispatchTests extends AbstractTestCase {
 	/**
      * Invoke a sync Dispatch<JAXBSource> in PAYLOAD mode
      */
@@ -50,7 +55,11 @@ public class JAXBSourceDispatch extends TestCase {
 	private String url = "http://localhost:6060/axis2/services/SourceProviderService";
 	private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
 	private QName portName =new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
-	
+    
+	public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBSourceDispatchTests.class));
+    }
+
     public void testJAXBSourceSyncPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());

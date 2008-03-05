@@ -18,24 +18,27 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.TestCase;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * A suite for some tests for specific behavior in the Dispatch with 
  * null and invalid params.
  */
-public class ParamTests extends TestCase {
+public class ParamTests extends AbstractTestCase {
     
-    public ParamTests(String name) {
-        super(name);
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ParamTests.class));
     }
     
     public void testNullSoapParamWithMessageMode() {

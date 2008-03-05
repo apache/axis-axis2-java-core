@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -29,31 +29,40 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
-public class DispatchXMessageSource extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadStringTests;
+
+public class DispatchXPayloadSourceTests extends AbstractTestCase {
 
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
     public String HOSTPORT = "http://localhost:6060";
         
     private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageSourceProvider.XMessageSourceProviderPort";
-    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageSourceProvider");
-    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageSourceProviderPort");
+    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProvider");
+    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProviderPort");
  
     private static String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
     private static String XML_TEXT_NPE = "<p:echo xmlns:p=\"http://sample\">NPE</p:echo>";
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DispatchXPayloadSourceTests.class));
+    }
+  
     public Dispatch<Source> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
        service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
-       Dispatch<Source> dispatch = service.createDispatch(PORT_NAME, Source.class, Service.Mode.MESSAGE);
+       Dispatch<Source> dispatch = service.createDispatch(PORT_NAME, Source.class, Service.Mode.PAYLOAD);
        return dispatch;
     }
     
     /**
-     * Simple XML/HTTP Message Test
+     * Simple XML/HTTP Payload Test
      * @throws Exception
      */
     public void testSimple() throws Exception {

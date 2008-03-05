@@ -1098,8 +1098,7 @@
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>
 						
-                        
-                        <!-- Possibly non-server tests -->
+						<!-- Possibly non-server tests -->
 						<include>**/MultiRedirectionCatalogTest.java</include>
 						<include>**/DispatchSoapActionTest.java</include>
 						<include>**/ProxySoapActionTest.java</include>
@@ -1110,7 +1109,6 @@
 						<include>**/JAXBContextTest.java</include>
 
 						<!-- Possible server tests -->
-						<include>**/MessageContextTests.java</include>
 						<include>**/StringProviderTests.java</include>
 						<include>**/SoapFaultProviderTests.java</include>
 						<include>**/StringMessageProviderTests.java</include>
@@ -1130,7 +1128,6 @@
 						<include>**/MtomSampleTests.java</include>
 						<include>**/BareTests.java</include>
 				
-				<!-- Anything over 25 tests is potential for an OOM		
 						<include>**/AddNumbersHandlerTests.java</include>
 						<include>**/AddNumbersTests.java</include>
 						<include>**/DLWMinTests.java</include>
@@ -1142,9 +1139,26 @@
 						<include>**/ResourceInjectionTests.java</include>
 						<include>**/AnyTypeTests.java</include>
 						<include>**/PolymorphicTests.java</include>
-				-->				
 
+						<include>**/DispatchXPayloadStringTests.java</include>
+						<include>**/DispatchXMessageStringTests.java</include>
+						<include>**/DispatchXPayloadSourceTests.java</include>
+						<include>**/DispatchXMessageSourceTests.java</include>
+						<include>**/DispatchXPayloadJAXBTests.java</include>
+						<include>**/DispatchXMessageDataSourceTests.java</include>
+						<include>**/RPCLitEnumTests.java</include>
+						<include>**/RPCLitStringArrayTests.java</include>
 
+						<include>**/StreamSourceDispatchTests.java</include>
+						<include>**/DOMSourceDispatchTests.java</include>
+						<include>**/SAXSourceDispatchTests.java</include>
+						<include>**/SOAPMessageDispatchTests.java</include>
+						<include>**/JAXBDispatchTests.java</include>
+						<include>**/JAXBSourceDispatchTests.java</include>
+						<include>**/StringDispatchTests.java</include>
+						<include>**/ParamTests.java</include>
+						<include>**/MessageContextTests.java</include>
+						
 			<!--	These tests are currently failing    -->
 			<!--			<include>**/MtomSampleByteArrayTests.java</include> -->
 			<!--			<include>**/DocLitBareMinTests.java</include> -->

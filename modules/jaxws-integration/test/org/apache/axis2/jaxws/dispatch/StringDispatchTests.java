@@ -18,21 +18,30 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-public class StringDispatch extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-    /**
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
+public class StringDispatchTests extends AbstractTestCase {
+
+    
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StringDispatchTests.class));
+    }
+	
+	/**
      * Invoke a sync Dispatch<String> in PAYLOAD mode
      */
     public void testSyncPayloadMode() throws Exception {

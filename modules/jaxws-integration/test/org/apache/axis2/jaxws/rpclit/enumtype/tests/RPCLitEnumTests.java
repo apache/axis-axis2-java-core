@@ -19,20 +19,27 @@
 package org.apache.axis2.jaxws.rpclit.enumtype.tests;
 
 
-import junit.framework.TestCase;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.Service;
 import org.test.rpclit.schema.ElementString;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
 
-
-public class RPCLitEnumTests extends TestCase {
+public class RPCLitEnumTests extends AbstractTestCase {
     
 	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitEnumService.PortTypeImplPort";
-	
+
+	public static Test suite() {
+        return getTestSetup(new TestSuite(RPCLitEnumTests.class));
+    }
+
 	public void testEnumSimpleType(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());

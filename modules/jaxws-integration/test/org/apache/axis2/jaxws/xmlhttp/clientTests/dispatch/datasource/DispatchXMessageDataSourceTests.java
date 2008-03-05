@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import java.awt.Image;
+import java.io.File;
 
 import javax.activation.DataSource;
 import javax.imageio.ImageIO;
@@ -29,10 +29,15 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-import java.awt.*;
-import java.io.File;
 
-public class DispatchXMessageDataSource extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXBTests;
+
+public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
     public String HOSTPORT = "http://localhost:6060";
         
@@ -40,9 +45,12 @@ public class DispatchXMessageDataSource extends TestCase {
     private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProvider");
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");
  
-    
     private DataSource imageDS;
-    
+
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DispatchXMessageDataSourceTests.class));
+    }
+ 
     public void setUp() throws Exception {
         String imageResourceDir = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";
         

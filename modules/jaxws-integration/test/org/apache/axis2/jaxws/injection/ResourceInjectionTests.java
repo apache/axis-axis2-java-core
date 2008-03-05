@@ -41,13 +41,6 @@ public class ResourceInjectionTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(ResourceInjectionTests.class));
     }
     
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    	
-
 	public void testInjectionOnField(){
 		Object serviceInstance = new ResourceInjectionTestImpl1();
         TestLogger.logger.debug("------------------------------");

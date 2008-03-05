@@ -18,8 +18,9 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -27,11 +28,14 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.concurrent.Future;
 
-public class SOAPMessageDispatch extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
+public class SOAPMessageDispatchTests extends AbstractTestCase {
 	private String url = "http://localhost:6060/axis2/services/ProxyDocLitWrappedService.DocLitWrappedProxyImplPort";
 	private QName serviceName = new QName(
 			"http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService");
@@ -40,6 +44,10 @@ public class SOAPMessageDispatch extends TestCase {
 	
 	String messageResource = "test-resources" + File.separator  + "xml" + File.separator +"soapmessage.xml";
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAPMessageDispatchTests.class));
+    }
+
 	public void testSOAPMessageSyncMessageMode() throws Exception {
 		
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();

@@ -18,12 +18,6 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
-import test.EchoString;
-import test.EchoStringResponse;
-import test.ObjectFactory;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -32,7 +26,16 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 
-public class DispatchXPayloadJAXB extends TestCase {
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
+import test.EchoString;
+import test.ObjectFactory;
+
+public class DispatchXPayloadJAXBTests extends AbstractTestCase {
     
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -43,6 +46,11 @@ public class DispatchXPayloadJAXB extends TestCase {
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadSourceProviderPort");
 
     String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
+    
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DispatchXPayloadJAXBTests.class));
+    }
+
     public Dispatch<Object> getDispatch() throws JAXBException {
         Service service = Service.create(SERVICE_NAME);
         service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
