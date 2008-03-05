@@ -57,6 +57,7 @@ import javax.xml.ws.handler.HandlerResolver;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
@@ -603,7 +604,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     * @see javax.xml.ws.spi.ServiceDelegate#getWSDLDocumentLocation()
     */
     public URL getWSDLDocumentLocation() {
-        return ((ServiceDescriptionWSDL)serviceDescription).getWSDLLocation();
+        try {
+            String wsdlLocation = ((ServiceDescriptionWSDL) serviceDescription).getWSDLLocation();
+            if(wsdlLocation == null) {
+                return null;
+            }
+            return new URL(wsdlLocation);
+        } catch (MalformedURLException e) {
+            throw ExceptionFactory
+                    .makeWebServiceException(e);
+        }
     }
 
     /*

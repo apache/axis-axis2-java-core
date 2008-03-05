@@ -68,11 +68,11 @@ public class ContextUtils {
             ServiceDescription sd =
                     description.getServiceDescription();
             if (sd != null) {
-                URL wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
+                String wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
                 if (wsdlLocation != null && !"".equals(wsdlLocation)) {
                     URI wsdlLocationURI = null;
                     try {
-                        wsdlLocationURI = wsdlLocation.toURI();
+                        wsdlLocationURI = new URI(wsdlLocation);
                     }
                     catch (URISyntaxException ex) {
                         log.warn(Messages.getMessage("addPropertiesErr",

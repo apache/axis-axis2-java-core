@@ -63,12 +63,11 @@ public class MessageContextTests extends AbstractTestCase {
         runTest(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, type_expected, value_expected, false);
     }
 
-// FIXME: Please fix this test, it does not work.    
-//    public void testWSCtxt_WSDL_DESCRIPTION_read() {
-//        String type_expected = java.net.URI.class.getName();
-//        String value_expected = "META-INF/MessageContext.wsdl";
-//        runTest(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, type_expected, value_expected, false);
-//    }
+    public void testWSCtxt_WSDL_DESCRIPTION_read() {
+        String type_expected = java.net.URI.class.getName();
+        String value_expected = "META-INF/MessageContext.wsdl";
+        runTest(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, type_expected, value_expected, false);
+    }
 
     private void runTest(String propName, String exType, String exValue, boolean isValueFullySpecified) {
         MessageContext port = getPort();

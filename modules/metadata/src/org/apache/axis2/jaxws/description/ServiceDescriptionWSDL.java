@@ -54,7 +54,7 @@ public interface ServiceDescriptionWSDL {
      */
     public List<Port> getWSDLPortsUsingSOAPAddress(List<Port> wsdlPorts);
 
-    public abstract URL getWSDLLocation();
+    public abstract String getWSDLLocation();
 
     public Definition getWSDLDefinition();
 

@@ -66,6 +66,7 @@ import java.lang.annotation.Annotation;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.MalformedURLException;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -85,7 +86,7 @@ class ServiceDescriptionImpl
     private ClientConfigurationFactory clientConfigFactory;
     private ConfigurationContext configContext;
 
-    private URL wsdlURL;
+    private String wsdlURL;
     private QName serviceQName;
 
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
@@ -193,9 +194,9 @@ class ServiceDescriptionImpl
             if (log.isDebugEnabled()) {
                 log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
             }
-            this.wsdlURL = sparseCompositeWsdlURL;
+            this.wsdlURL = sparseCompositeWsdlURL == null ? null : sparseCompositeWsdlURL.toString();
         } else {
-            this.wsdlURL = wsdlURL;
+            this.wsdlURL = wsdlURL == null ? null : wsdlURL.toString();
         }
         if (log.isDebugEnabled()) {
             log.debug("Wsdl Location value used: " + this.wsdlURL);
@@ -677,7 +678,8 @@ class ServiceDescriptionImpl
                     (!(composite.getWebServiceProviderAnnot() == null))) {
                 //This is either an implicit SEI, or a WebService Provider
                 if (composite.getWsdlDefinition() != null) {
-                    this.wsdlURL = composite.getWsdlURL();
+                    URL url = composite.getWsdlURL();
+                    this.wsdlURL = url == null ? null : url.toString();
 
                     try {
                         if (log.isDebugEnabled() ) {
@@ -687,11 +689,14 @@ class ServiceDescriptionImpl
                                 log.debug("new WSDL4JWrapper-ConfigContext null1"); 
                             }
                         }
-                        this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,
+                        this.wsdlWrapper = new WSDL4JWrapper(new URL(this.wsdlURL),
                                                              composite.getWsdlDefinition(), 
                                                              configContext,
                                                              this.catalogManager);
                     } catch (WSDLException e) {
+                        throw ExceptionFactory.makeWebServiceException(
+                                Messages.getMessage("wsdlException", e.getMessage()), e);
+                    } catch (MalformedURLException e) {
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
                     }
@@ -727,8 +732,8 @@ class ServiceDescriptionImpl
                         if (log.isDebugEnabled()) {
                             log.debug("Get the wsdl definition from the SEI composite.");
                         }
-                        
-                        this.wsdlURL = seic.getWsdlURL();
+                        URL url = seic.getWsdlURL(); 
+                        this.wsdlURL = url.toString();
                         if (log.isDebugEnabled() ) {
                             if (configContext != null) {
                                 log.debug("new WSDL4JWrapper-ConfigContext not null2"); 
@@ -754,7 +759,8 @@ class ServiceDescriptionImpl
                                 log.debug("new WSDL4JWrapper-ConfigContext null3"); 
                             }
                         }
-                        this.wsdlURL = composite.getWsdlURL();
+                        URL url = composite.getWsdlURL();
+                        this.wsdlURL = url == null ? null : url.toString();
                         this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(),
                                                              composite.getWsdlDefinition(), 
                                                              configContext,
@@ -788,7 +794,8 @@ class ServiceDescriptionImpl
                     	    if (log.isDebugEnabled()) {
                     	        log.debug("wsdl location =" + wsdlLocation);
                     	    }
-                    	    setWSDLDefinitionOnDBC(wsdlLocation);
+                            this.wsdlURL = wsdlLocation;
+                            setWSDLDefinitionOnDBC(wsdlLocation);
                     	}
                     }
                 } catch (WSDLException e) {
@@ -807,7 +814,7 @@ class ServiceDescriptionImpl
                         log.debug("new WSDL4JWrapper-ConfigContext null4"); 
                     }
                 }
-                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL,configContext,
+                this.wsdlWrapper = new WSDL4JWrapper(new URL(this.wsdlURL),configContext,
                 		                             this.catalogManager);
              
             }
@@ -952,7 +959,7 @@ class ServiceDescriptionImpl
     /* (non-Javadoc)
     * @see org.apache.axis2.jaxws.description.ServiceDescriptionWSDL#getWSDLLocation()
     */
-    public URL getWSDLLocation() {
+    public String getWSDLLocation() {
         return wsdlURL;
     }
 

@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -230,9 +231,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
-        URL wsdlURL =
-            ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
-        String wsdlLocation = (wsdlURL != null) ? wsdlURL.toString() : null;
+        String wsdlLocation = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
         
         if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
             throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
