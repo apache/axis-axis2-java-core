@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns:tns="http://context.jaxws.axis2.apache.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://context.jaxws.axis2.apache.org/" name="MessageContextService">
+    <types>
+        <xs:schema xmlns:tns="http://context.jaxws.axis2.apache.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   targetNamespace="http://context.jaxws.axis2.apache.org/" version="1.0">
+            <!-- read the value of a property -->
+            <xs:element name="isPropertyPresent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="propertyName" type="xs:string"/>
+                        <xs:element name="value" type="xs:string"/>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="isFound" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="isPropertyPresentResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="propertyName" type="xs:string"/>
+                        <xs:element name="value" type="xs:string"/>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="isFound" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </types>
+    <message name="isPropertyPresent">
+        <part name="parameters" element="tns:isPropertyPresent"/>
+    </message>
+    <message name="isPropertyPresentResponse">
+        <part name="parameters" element="tns:isPropertyPresentResponse"/>
+    </message>
+    <portType name="MessageContext">
+        <operation name="isPropertyPresent">
+            <input message="tns:isPropertyPresent"/>
+            <output message="tns:isPropertyPresentResponse"/>
+        </operation>
+    </portType>
+    <binding name="MessageContextPortBinding" type="tns:MessageContext">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="isPropertyPresent">
+            <soap:operation/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MessageContextService">
+        <port name="MessageContextPort" binding="tns:MessageContextPortBinding">
+            <soap:address location="http://localhost:6060/axis2/services/MessageContextService"/>
+        </port>
+    </service>
+</definitions>

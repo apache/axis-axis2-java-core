@@ -341,6 +341,13 @@
 									<classpath location="${compiled.classes.dir}"/>
 									<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
 								</java>
+                                <echo>Generating java from MessageContext.wsdl for message context
+                                    properties support</echo>
+                                <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl"/>
+                                </java>
 								<echo>Generating java from WSDLMultiTests.wsdl</echo>
 								<java classname="com.sun.tools.xjc.Driver" fork="true">
 									<classpath refid="maven.runtime.classpath"/>
@@ -984,6 +991,22 @@
 								/>
 								<delete dir="target/test-classes/servicejars/AnyTypeMessageService"/>								
 
+								<copy toDir="target/test-classes/servicejars/MessageContextService/">
+									<fileset dir="target/test-classes">
+										<include name="org/apache/axis2/jaxws/context/**"/>
+										<exclude name="org/apache/axis2/jaxws/context/META-INF/services.xml"/>
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/context">
+										<include name="META-INF/**"/>
+									   	<exclude name="META-INF/services.xml"/>
+									</fileset>
+								</copy>
+
+								<zip destfile="target/test-classes/servicejars/MessageContextService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/MessageContextService"
+								/>
+								<delete dir="target/test-classes/servicejars/MessageContextService"/>								
+
 								<copy toDir="target/test-classes/servicejars/PolymorphicShapeService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/polymorphic/shape/**"/>
@@ -1075,7 +1098,8 @@
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
 					<includes>
 						
-						<!-- Possibly non-server tests -->
+                        
+                        <!-- Possibly non-server tests -->
 						<include>**/MultiRedirectionCatalogTest.java</include>
 						<include>**/DispatchSoapActionTest.java</include>
 						<include>**/ProxySoapActionTest.java</include>
@@ -1086,6 +1110,7 @@
 						<include>**/JAXBContextTest.java</include>
 
 						<!-- Possible server tests -->
+						<include>**/MessageContextTests.java</include>
 						<include>**/StringProviderTests.java</include>
 						<include>**/SoapFaultProviderTests.java</include>
 						<include>**/StringMessageProviderTests.java</include>
