@@ -18,10 +18,9 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
@@ -33,24 +32,8 @@ public class StringMessageProviderTests extends ProviderTestCase {
     String xmlString = "<test>test input</test>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringMessageProviderService");
 
-    static {
-        BasicConfigurator.configure();
-    }
-
-    public StringMessageProviderTests(String name) {
-        super(name);
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StringMessageProviderTests.class));
     }
         
     public void testProviderString() throws Exception {

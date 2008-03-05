@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.jaxws.client.soapaction;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @WebServiceClient(name = "BookStoreService", targetNamespace = "http://jaxws.axis2.apache.org/client/soapaction", wsdlLocation = "SOAPActionTest.wsdl")
 public class BookStoreService

@@ -18,15 +18,16 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.util.concurrent.Future;
-import javax.jws.WebService;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
+
 import javax.annotation.Resource;
 import javax.jws.HandlerChain;
+import javax.jws.WebService;
 import javax.xml.ws.AsyncHandler;
-import org.test.addnumbershandler.AddNumbersHandlerResponse;
-import org.apache.axis2.jaxws.TestLogger;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import java.util.concurrent.Future;
 
 
 @WebService(serviceName="AddNumbersHandlerService",endpointInterface="org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType")

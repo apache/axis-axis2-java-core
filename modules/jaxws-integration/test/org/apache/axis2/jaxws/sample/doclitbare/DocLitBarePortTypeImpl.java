@@ -22,15 +22,15 @@
  */
 package org.apache.axis2.jaxws.sample.doclitbare;
 
-import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.FaultBeanWithWrapper;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.SimpleFault;
 import org.test.sample.doclitbare.Composite;
+
+import javax.jws.WebParam;
+import javax.jws.WebParam.Mode;
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
 
 @WebService(serviceName="BareDocLitService",
 			endpointInterface="org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType")

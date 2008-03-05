@@ -18,6 +18,14 @@
  */
 package org.apache.axis2.jaxws.sample.faultsservice;
 
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.saaj.SOAPEnvelopeImpl;
+import org.test.polymorphicfaults.BaseFault;
+import org.test.polymorphicfaults.ComplexFault;
+import org.test.polymorphicfaults.DerivedFault1;
+import org.test.polymorphicfaults.DerivedFault2;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -27,20 +35,11 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
-
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axis2.saaj.SOAPEnvelopeImpl;
-import org.apache.axis2.jaxws.TestLogger;
-import org.test.polymorphicfaults.BaseFault;
-import org.test.polymorphicfaults.ComplexFault;
-import org.test.polymorphicfaults.DerivedFault1;
-import org.test.polymorphicfaults.DerivedFault2;
 
 /**
  * This class provides server side implementation for the 

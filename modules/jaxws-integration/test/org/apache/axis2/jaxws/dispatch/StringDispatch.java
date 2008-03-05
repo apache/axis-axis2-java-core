@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class StringDispatch extends TestCase {
 

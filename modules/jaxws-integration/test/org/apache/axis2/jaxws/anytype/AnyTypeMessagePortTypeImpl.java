@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.anytype;
 
-import javax.jws.WebService;
-
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
+
+import javax.jws.WebService;
 
 @WebService(serviceName="AnyTypeMessageService",
 		targetNamespace="http://anytype.test.org",

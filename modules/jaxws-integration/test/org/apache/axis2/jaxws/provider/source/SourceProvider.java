@@ -20,10 +20,6 @@ package org.apache.axis2.jaxws.provider.source;
 
 import org.apache.axis2.jaxws.TestLogger;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -33,11 +29,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.BindingType;
 import javax.xml.ws.http.HTTPBinding;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 @WebServiceProvider(serviceName="SourceProviderService")
 @BindingType(HTTPBinding.HTTP_BINDING)

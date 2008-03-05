@@ -18,37 +18,18 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.stringlist.sei.StringListPortType;
 import org.apache.axis2.jaxws.stringlist.sei.StringListService;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-
-import junit.framework.TestCase;
 
 
-public class StringListTests extends TestCase{
+public class StringListTests extends AbstractTestCase {
     
-	public StringListTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StringListTests.class));
     }
 	
 	public void testStringListScenario() throws Exception {

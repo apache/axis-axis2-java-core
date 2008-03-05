@@ -18,12 +18,11 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
-import org.apache.log4j.BasicConfigurator;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -35,15 +34,12 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
-
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import junit.framework.TestCase;
-
-public class RPCLitSWAProxyTests extends TestCase {
+public class RPCLitSWAProxyTests extends AbstractTestCase {
 
     private QName serviceName = new QName(
             "http://org/apache/axis2/jaxws/proxy/rpclitswa", "RPCLitSWAService");
@@ -53,36 +49,26 @@ public class RPCLitSWAProxyTests extends TestCase {
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+
     "test/org/apache/axis2/jaxws/proxy/rpclitswa/META-INF/RPCLitSWA.wsdl";
         
-    private DataSource imageDS;
-    
-    public RPCLitSWAProxyTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    
     static {
-        BasicConfigurator.configure();
-    }
-
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    
-    public void setUp() throws Exception {
         String imageResourceDir =
                 System.getProperty("basedir", ".") + "/" + "test-resources" + File.separator
                         + "image";
 
         //Create a DataSource from an image 
         File file = new File(imageResourceDir + File.separator + "test.jpg");
-        ImageInputStream fiis = new FileImageInputStream(file);
-        Image image = ImageIO.read(fiis);
-        imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
+        ImageInputStream fiis = null;
+        try {
+            fiis = new FileImageInputStream(file);
+            Image image = ImageIO.read(fiis);
+            imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
+        } catch (Exception e) {
+            throw new RuntimeException(e);    
+        }
+    }
+    private static DataSource imageDS;
+    
+    public static Test suite() {
+        return getTestSetup(new TestSuite(RPCLitSWAProxyTests.class));
     }
     
     /**

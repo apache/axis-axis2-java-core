@@ -18,11 +18,10 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.util.Set;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.util.Set;
 
 public class AddNumbersProtocolHandler2 implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 

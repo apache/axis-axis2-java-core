@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import javax.xml.ws.handler.MessageContext;
-
 import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+
+import javax.xml.ws.handler.MessageContext;
 
 /*
  * You can't actually specify whether a handler is for client or server,

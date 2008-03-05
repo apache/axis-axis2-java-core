@@ -19,21 +19,20 @@
 
 package org.apache.axis2.jaxws.sample.parallelasync.server;
 
-import java.util.concurrent.Future;      
-import java.util.Hashtable;
-
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
-
-import org.apache.axis2.jaxws.sample.parallelasync.common.Constants;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.sample.parallelasync.common.Constants;
 import org.test.parallelasync.AnotherResponse;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.InvokeAsyncResponse;
 import org.test.parallelasync.PingResponse;
 import org.test.parallelasync.SleepResponse;
+
+import javax.jws.WebService;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Holder;
+import javax.xml.ws.Response;
+import java.util.Hashtable;
+import java.util.concurrent.Future;
 
 /**
  * Async endpoint used for Async client side tests. Clients will invokeAsync

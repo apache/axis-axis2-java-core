@@ -18,10 +18,12 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringBufferInputStream;
-import java.util.Map;
-import java.util.StringTokenizer;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
+import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
@@ -38,13 +40,10 @@ import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
-
-import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
-import org.apache.axis2.jaxws.handler.LogicalMessageContext;
-import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
-import org.apache.axis2.jaxws.message.XMLFault;
-import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
-import org.apache.axis2.jaxws.utility.SAAJFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.StringBufferInputStream;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /*
  * You can't actually specify whether a handler is for client or server,

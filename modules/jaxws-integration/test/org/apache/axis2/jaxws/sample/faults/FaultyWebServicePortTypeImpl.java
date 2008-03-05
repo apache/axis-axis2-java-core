@@ -22,14 +22,13 @@
  */
 package org.apache.axis2.jaxws.sample.faults;
 
-import java.util.concurrent.Future;
+import org.test.faults.FaultyWebServiceFault;
+import org.test.faults.FaultyWebServiceResponse;
 
 import javax.jws.WebService;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import org.test.faults.FaultyWebServiceFault;
-import org.test.faults.FaultyWebServiceResponse;
+import java.util.concurrent.Future;
 
 @WebService(serviceName="FaultyWebServiceService",
 			endpointInterface="org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType")

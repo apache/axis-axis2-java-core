@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.rpclit.enumtype.sei;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**

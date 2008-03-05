@@ -19,14 +19,14 @@
  */
 package org.apache.axis2.jaxws.sample.mtom;
 
+import org.test.mtom.ImageDepot;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
-
-import org.test.mtom.ImageDepot;
 
 @WebService(name = "MtomSample", 
             targetNamespace = "http://org/apache/axis2/jaxws/sample/mtom", 

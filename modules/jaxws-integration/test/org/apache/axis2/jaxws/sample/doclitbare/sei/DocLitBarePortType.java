@@ -19,6 +19,8 @@
  */
 package org.apache.axis2.jaxws.sample.doclitbare.sei;
 
+import org.test.sample.doclitbare.Composite;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -28,8 +30,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.Holder;
-
-import org.test.sample.doclitbare.Composite;
 
 
 /**

@@ -18,27 +18,19 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb;
 
-import java.io.ByteArrayInputStream;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+import test.EchoString;
+import test.EchoStringResponse;
+import test.ObjectFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.TestLogger;
-
-import test.EchoString;
-import test.EchoStringResponse;
-import test.ObjectFactory;
-
-import junit.framework.TestCase;
 
 public class DispatchXPayloadJAXB extends TestCase {
     

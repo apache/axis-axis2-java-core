@@ -18,26 +18,23 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
+import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
-import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
-import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
-import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
-import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-
-import junit.framework.TestCase;
-
-public class DLWMinTests extends TestCase {
+public class DLWMinTests extends AbstractTestCase {
 
     private static final String NAMESPACE = "http://apache.org/axis2/jaxws/sample/dlwmin";
     private static final QName QNAME_SERVICE = new QName(
@@ -46,28 +43,10 @@ public class DLWMinTests extends TestCase {
             NAMESPACE, "GreeterPort");
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/GreeterService.GreeterImplPort";
 	
-    public DLWMinTests() {
-        super();
-        // TODO Auto-generated constructor stub
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DLWMinTests.class));
     }
 
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    	
-    
     private Greeter getProxy(String action) {
         Service service = Service.create(QNAME_SERVICE);
         Greeter proxy = service.getPort(QNAME_PORT, Greeter.class);

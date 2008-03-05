@@ -18,8 +18,15 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import java.awt.Image;
-import java.io.File;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
+import org.apache.axis2.jaxws.sample.mtom1.Invoke;
+import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
+import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
+import org.w3._2005._05.xmlmime.Base64Binary;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
@@ -27,49 +34,19 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
+import java.awt.*;
+import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
-import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
-import org.apache.axis2.jaxws.sample.mtom1.Invoke;
-import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-import org.w3._2005._05.xmlmime.Base64Binary;
-
-import com.sun.xml.bind.v2.runtime.unmarshaller.Base64Data;
-
-public class MtomSampleByteArrayTests extends TestCase {
+public class MtomSampleByteArrayTests extends AbstractTestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "SendImageService");
     private static final QName QNAME_PORT    = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "sendImageSoap");
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SendImageService";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+File.separator+"test-resources"+File.separator+"image";
 
-	public MtomSampleByteArrayTests() {
-        super();
-        // TODO Auto-generated constructor stub
+    public static Test suite() {
+        return getTestSetup(new TestSuite(MtomSampleByteArrayTests.class));
     }
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    	
     
     /*
      * Enable attachment Optimization through the SOAPBinding method 

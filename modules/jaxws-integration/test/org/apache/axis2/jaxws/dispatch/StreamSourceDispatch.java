@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.concurrent.Future;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -30,10 +30,9 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.concurrent.Future;
 
 /**
  * This class tests the JAX-WS Dispatch<Source> functionality with various

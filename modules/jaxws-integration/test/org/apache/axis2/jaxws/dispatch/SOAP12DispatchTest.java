@@ -18,8 +18,10 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
@@ -32,20 +34,14 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.description.builder.MDQConstants;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * This class uses the JAX-WS Dispatch API to test sending and receiving
  * messages using SOAP 1.2.
  */
-public class SOAP12DispatchTest extends TestCase {
+public class SOAP12DispatchTest extends AbstractTestCase {
     
     private static final QName QNAME_SERVICE = new QName(
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Service");
@@ -80,24 +76,8 @@ public class SOAP12DispatchTest extends TestCase {
         sampleRequest + 
         sampleEnvelopeTail;
     
-    public SOAP12DispatchTest(String name) {
-        super(name);
-    }
-
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAP12DispatchTest.class));
     }
     
     /**

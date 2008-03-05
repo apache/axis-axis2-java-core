@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import junit.framework.TestCase;
+
 import javax.jws.HandlerChain;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -29,10 +31,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
-
 import java.net.URL;
-
-import junit.framework.TestCase;
 
 /**
  * Test that the annotations valid on a service requester can be 

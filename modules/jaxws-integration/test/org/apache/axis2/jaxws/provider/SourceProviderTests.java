@@ -18,16 +18,9 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
@@ -41,6 +34,11 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 public class SourceProviderTests extends ProviderTestCase {
 
@@ -48,25 +46,12 @@ public class SourceProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
     private String xmlDir = "xml";
 
-
-    public SourceProviderTests(String name) {
-        super(name);
+    public SourceProviderTests() {
+        super();
     }
     
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SourceProviderTests.class));
     }
         
     private Dispatch<Source> getDispatch() {

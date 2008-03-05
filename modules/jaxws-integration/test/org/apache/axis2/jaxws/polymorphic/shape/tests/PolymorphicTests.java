@@ -18,57 +18,37 @@
  */
 package org.apache.axis2.jaxws.polymorphic.shape.tests;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ConnectException;
-import java.net.UnknownHostException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.wsdl.WSDLException;
-import javax.xml.ws.BindingProvider;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-public class PolymorphicTests extends TestCase {
+import javax.wsdl.WSDLException;
+import javax.xml.ws.BindingProvider;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Iterator;
+import java.util.Set;
+
+public class PolymorphicTests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/PolymorphicShapeService.PolymorphicShapePort";
 	
-    public PolymorphicTests() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(PolymorphicTests.class));
     }
 
 	public void testFormalAndActualTypeInDifferentPackages(){

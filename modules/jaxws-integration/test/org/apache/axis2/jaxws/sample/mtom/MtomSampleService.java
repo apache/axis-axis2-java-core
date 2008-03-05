@@ -19,8 +19,10 @@
 package org.apache.axis2.jaxws.sample.mtom;
 
 
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.test.mtom.ImageDepot;
+import org.test.mtom.ObjectFactory;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -29,11 +31,8 @@ import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
-
-import org.apache.axis2.jaxws.provider.DataSourceImpl;
-import org.apache.axis2.jaxws.TestLogger;
-import org.test.mtom.ImageDepot;
-import org.test.mtom.ObjectFactory;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
 
 @WebService(serviceName="MtomSampleService",
 			endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")

@@ -18,18 +18,16 @@
  */
 package org.apache.axis2.jaxws.catalog;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.util.CatalogURIResolver;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Document;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 
 /**
  * Tests the use of the Apache Commons Resolver API to resolve URIs.

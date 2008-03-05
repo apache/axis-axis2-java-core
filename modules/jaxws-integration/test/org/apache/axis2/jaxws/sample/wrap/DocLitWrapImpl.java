@@ -22,17 +22,17 @@
  */
 package org.apache.axis2.jaxws.sample.wrap;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilderMonitor;
-import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.test.sample.wrap.FinancialOperation;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
+
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
 
 @WebService(serviceName="DocLitWrapService",
 			endpointInterface="org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap")

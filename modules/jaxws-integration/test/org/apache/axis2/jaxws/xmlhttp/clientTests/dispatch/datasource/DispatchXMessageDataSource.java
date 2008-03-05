@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource;
 
-import java.awt.Image;
-import java.io.File;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.provider.DataSourceImpl;
 
 import javax.activation.DataSource;
 import javax.imageio.ImageIO;
@@ -29,10 +29,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.apache.axis2.jaxws.provider.DataSourceImpl;
-
-import junit.framework.TestCase;
+import java.awt.*;
+import java.io.File;
 
 public class DispatchXMessageDataSource extends TestCase {
 

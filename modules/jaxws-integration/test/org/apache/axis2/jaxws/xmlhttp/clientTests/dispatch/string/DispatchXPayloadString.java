@@ -18,13 +18,13 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string;
 
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
 
 public class DispatchXPayloadString extends TestCase {
 

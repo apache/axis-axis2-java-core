@@ -18,12 +18,11 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
+import javax.xml.ws.handler.MessageContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.ws.handler.MessageContext;
 
 public class HandlerTracker {
 

@@ -19,13 +19,14 @@
  */
 package org.apache.axis2.jaxws.rpclit.stringarray.sei;
 
+import org.test.rpclit.stringarray.StringArray;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
-import org.test.rpclit.stringarray.StringArray;
 
 
 /**

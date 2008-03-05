@@ -22,45 +22,23 @@
  */
 package org.apache.axis2.jaxws.misc;
 
-import java.util.TreeSet;
-import java.util.Set;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.utility.JavaUtils;
-import org.apache.log4j.BasicConfigurator;
-
-import junit.extensions.TestSetup;
-import junit.framework.TestCase;
+import java.util.TreeSet;
 
 /**
  * Tests Namespace to Package Algorithm
  *
  */
-public class JAXBContextTest extends TestCase {
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public JAXBContextTest(String name) {
-        super(name);
-    }
+public class JAXBContextTest extends AbstractTestCase {
 
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for JAXBContextTest");
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBContextTest.class));
     }
 
     /**

@@ -18,10 +18,8 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringBufferInputStream;
-import java.util.Map;
-import java.util.StringTokenizer;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
 import javax.annotation.PostConstruct;
 import javax.xml.transform.OutputKeys;
@@ -34,9 +32,10 @@ import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
-
-import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
-import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+import java.io.ByteArrayOutputStream;
+import java.io.StringBufferInputStream;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class AddNumbersLogicalHandler 
 implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {

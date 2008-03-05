@@ -18,51 +18,33 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service.Mode;
-
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceResponseType;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceType;
 import org.apache.axis2.jaxws.client.soapaction.ObjectFactory;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service.Mode;
+import java.util.Map;
 
 /**
  * A suite of SOAPAction related tests for the dispatch client 
  */
-public class DispatchSoapActionTest extends TestCase {
+public class DispatchSoapActionTest extends AbstractTestCase {
     
     private static final String targetNamespace = "http://jaxws.axis2.apache.org/client/soapaction";
     private static final String portName = "BookStorePort";
     
-    public DispatchSoapActionTest(String name) {
-        super(name);
-    }
-
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DispatchSoapActionTest.class));
     }
         
     /**

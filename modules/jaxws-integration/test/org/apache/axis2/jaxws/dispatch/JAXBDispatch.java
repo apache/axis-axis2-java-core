@@ -18,21 +18,19 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.util.concurrent.Future;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+import org.xmlsoap.schemas.soap.envelope.Body;
+import org.xmlsoap.schemas.soap.envelope.Envelope;
+import test.EchoString;
+import test.EchoStringResponse;
+import test.ObjectFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-
-import org.xmlsoap.schemas.soap.envelope.Body;
-import org.xmlsoap.schemas.soap.envelope.Envelope;
-import org.apache.axis2.jaxws.TestLogger;
-
-import junit.framework.TestCase;
-import test.EchoString;
-import test.EchoStringResponse;
-import test.ObjectFactory;
+import java.util.concurrent.Future;
 
 public class JAXBDispatch extends TestCase {
 

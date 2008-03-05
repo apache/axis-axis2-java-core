@@ -18,33 +18,19 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import java.io.File;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 import javax.xml.namespace.QName;
+import java.io.File;
 
-import junit.framework.TestCase;
-
-public abstract class ProviderTestCase extends TestCase {
+public abstract class ProviderTestCase extends AbstractTestCase {
 
     public QName portName = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     public String providerResourceDir = "test-resources"+File.separator+"provider";
     public String imageResourceDir = "test-resources"+File.separator+"image";
     public String basedir = null;
     
-	protected void setUp() throws Exception {
-		super.setUp();
-		//StartServer startServer = new StartServer("server1");
-		//startServer.testStartServer();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		//StopServer stopServer = new StopServer("server1");
-		//stopServer.testStopServer();
-	}
-	
-    public ProviderTestCase(String name) {
-        super(name);
+    public ProviderTestCase() {
         if(basedir == null){
             basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         }

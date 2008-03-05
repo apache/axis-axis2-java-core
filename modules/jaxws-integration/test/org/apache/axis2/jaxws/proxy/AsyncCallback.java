@@ -18,13 +18,12 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import java.util.concurrent.ExecutionException;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.proxy.doclitwrapped.ReturnType;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import org.test.proxy.doclitwrapped.ReturnType;
-import org.apache.axis2.jaxws.TestLogger;
+import java.util.concurrent.ExecutionException;
 
 /**
  *

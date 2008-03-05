@@ -22,14 +22,13 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import java.util.concurrent.ExecutionException;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.sample.nonwrap.ReturnType;
+import org.test.sample.nonwrap.TwoWayHolder;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import org.test.sample.nonwrap.ReturnType;
-import org.test.sample.nonwrap.TwoWayHolder;
-import org.apache.axis2.jaxws.TestLogger;
+import java.util.concurrent.ExecutionException;
 
 
 public class AsyncCallback implements AsyncHandler {

@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.stringlist;
 
-import javax.jws.WebService;
-
 import org.apache.axis2.jaxws.stringlist.sei.StringListPortType;
+
+import javax.jws.WebService;
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.stringlist.sei.StringListPortType")
 public class StringListPortTypeImpl implements StringListPortType {

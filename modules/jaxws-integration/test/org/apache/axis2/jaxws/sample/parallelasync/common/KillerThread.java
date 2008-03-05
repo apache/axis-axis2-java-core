@@ -21,10 +21,9 @@ package org.apache.axis2.jaxws.sample.parallelasync.common;
 
 import org.apache.axis2.jaxws.TestLogger;
 
+import javax.xml.ws.Service;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-
-import javax.xml.ws.Service;
 
 public class KillerThread extends Thread{
 

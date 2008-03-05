@@ -27,9 +27,6 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
-
 @WebServiceProvider(targetNamespace="http://jaxws.axis2.apache.org/proxy/soap12",
 					serviceName="SOAP12EchoService",
 					wsdlLocation="META-INF/SOAP12Echo.wsdl",

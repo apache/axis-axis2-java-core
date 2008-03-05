@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
+import org.apache.axis2.jaxws.TestLogger;
+import test.EchoStringResponse;
+
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import test.EchoStringResponse;
-import org.apache.axis2.jaxws.TestLogger;
 
 public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
 

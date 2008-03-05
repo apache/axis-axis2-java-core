@@ -18,9 +18,7 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringBufferInputStream;
-import java.util.StringTokenizer;
+import org.apache.axis2.jaxws.handler.LogicalMessageContext;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -30,8 +28,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.LogicalMessage;
 import javax.xml.ws.handler.MessageContext;
-
-import org.apache.axis2.jaxws.handler.LogicalMessageContext;
+import java.io.ByteArrayOutputStream;
+import java.io.StringBufferInputStream;
+import java.util.StringTokenizer;
 
 /*
  * You can't actually specify whether a handler is for client or server,

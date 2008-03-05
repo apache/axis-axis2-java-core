@@ -18,38 +18,27 @@
  */
 package org.apache.axis2.jaxws.injection;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceContext;
-
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
-import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionService;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
 
-public class ResourceInjectionTests extends TestCase {
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceContext;
+
+public class ResourceInjectionTests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";
 
 	private Object resource = new WebServiceContextImpl();
 	
-	public ResourceInjectionTests() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ResourceInjectionTests.class));
     }
     
     public void tearDown() {

@@ -18,10 +18,9 @@
  */
 package org.apache.axis2.jaxws.sample.doclitbaremin;
 
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-
 import org.apache.axis2.jaxws.sample.doclitbaremin.sei.DocLitBareMinPortType;
+
+import javax.jws.WebService;
 
 /**
  * Test DocLitBareMinPort

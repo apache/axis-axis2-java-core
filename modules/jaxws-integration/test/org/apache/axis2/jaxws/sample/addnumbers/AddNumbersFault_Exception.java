@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbers;
 
-import javax.xml.ws.WebFault;
-
 import org.test.addnumbers.AddNumbersFault;
+
+import javax.xml.ws.WebFault;
 
 
 /**

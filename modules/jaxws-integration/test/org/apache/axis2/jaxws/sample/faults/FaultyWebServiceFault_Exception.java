@@ -19,8 +19,6 @@
  */
 package org.apache.axis2.jaxws.sample.faults;
 
-import javax.xml.ws.WebFault;
-
 import org.test.faults.FaultyWebServiceFault;
 
 /**

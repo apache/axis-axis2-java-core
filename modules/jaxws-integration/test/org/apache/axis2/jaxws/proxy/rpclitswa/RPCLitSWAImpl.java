@@ -16,11 +16,11 @@
  */
 package org.apache.axis2.jaxws.proxy.rpclitswa;
 
+import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
+
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
-
-import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
 
 @WebService(targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclitswa",
             serviceName="RPCLitSWAService", 

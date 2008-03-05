@@ -18,9 +18,7 @@
  */
 package org.apache.axis2.jaxws.provider.sourcemsg;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -32,8 +30,9 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 @WebServiceProvider(serviceName="SourceMessageProviderService")
 @BindingType(HTTPBinding.HTTP_BINDING)

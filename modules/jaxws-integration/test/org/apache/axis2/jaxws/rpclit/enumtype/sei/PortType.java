@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.rpclit.enumtype.sei;
 
+import org.test.rpclit.schema.ElementString;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
@@ -25,7 +27,6 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.ws.Holder;
-import org.test.rpclit.schema.ElementString;
 
 
 /**

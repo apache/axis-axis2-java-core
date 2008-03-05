@@ -19,7 +19,8 @@
  */
 package org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei;
 
-import java.util.concurrent.Future;
+import org.test.proxy.doclitnonwrapped.Invoke;
+import org.test.proxy.doclitnonwrapped.ReturnType;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -29,9 +30,7 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import org.test.proxy.doclitnonwrapped.Invoke;
-import org.test.proxy.doclitnonwrapped.ReturnType;
+import java.util.concurrent.Future;
 
 
 /**

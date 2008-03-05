@@ -19,15 +19,12 @@
  */
 package org.apache.axis2.jaxws.sample.doclitbaremin.sei;
 
-import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.ws.Holder;
 
 
 

@@ -19,8 +19,8 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import java.util.concurrent.Future;
-import javax.jws.HandlerChain;
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
+
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -29,8 +29,7 @@ import javax.jws.WebService;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
-
-import org.test.addnumbershandler.AddNumbersHandlerResponse;
+import java.util.concurrent.Future;
 
 
 

@@ -18,40 +18,21 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.wsgen.client.WSGenInterface;
+import org.apache.axis2.jaxws.sample.wsgen.client.WSGenService;
+
 import javax.xml.ws.BindingProvider;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.sample.wsgen.client.WSGenService;
-import org.apache.axis2.jaxws.sample.wsgen.client.WSGenInterface;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-
-public class WSGenTests extends TestCase {
+public class WSGenTests extends AbstractTestCase {
     
     String axisEndpoint = "http://localhost:6060/axis2/services/WSGenService.WSGenPort";
     
-	public WSGenTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(WrapTests.class));
     }
     	
     

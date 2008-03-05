@@ -18,27 +18,24 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.Future;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
+import org.test.proxy.doclitwrapped.ReturnType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+import java.io.File;
+import java.net.URL;
+import java.util.concurrent.Future;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
-import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.apache.log4j.BasicConfigurator;
-import org.test.proxy.doclitwrapped.ReturnType;
-
-public class ProxyTests extends TestCase {
+public class ProxyTests extends AbstractTestCase {
     private QName serviceName = new QName(
             "http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedService");
     private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitWrappedService.DocLitWrappedProxyImplPort";
@@ -47,24 +44,8 @@ public class ProxyTests extends TestCase {
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     private boolean runningOnAxis = true;
 
-    static {
-        BasicConfigurator.configure();
-    }
-
-    public ProxyTests(String name) {
-        super(name);
-    }
-   
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ProxyTests.class));
     }
 
     public void testMultipleServiceCalls(){

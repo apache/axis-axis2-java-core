@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbers;
 
-import java.util.Map;
-
 import org.apache.axis2.jaxws.TestLogger;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import java.util.Map;
 
 
 @WebService(serviceName="AddNumbersService",endpointInterface="org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType")

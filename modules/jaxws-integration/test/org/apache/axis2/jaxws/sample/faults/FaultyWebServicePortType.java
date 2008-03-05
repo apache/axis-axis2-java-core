@@ -19,7 +19,7 @@
  */
 package org.apache.axis2.jaxws.sample.faults;
 
-import java.util.concurrent.Future;
+import org.test.faults.FaultyWebServiceResponse;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -29,8 +29,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
-
-import org.test.faults.FaultyWebServiceResponse;
+import java.util.concurrent.Future;
 
 @WebService(name = "FaultyWebServicePortType", targetNamespace = "http://org/test/faults")
 public interface FaultyWebServicePortType {

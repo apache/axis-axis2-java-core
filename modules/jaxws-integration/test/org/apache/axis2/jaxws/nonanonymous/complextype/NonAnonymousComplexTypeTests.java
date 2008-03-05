@@ -22,56 +22,23 @@
  */
 package org.apache.axis2.jaxws.nonanonymous.complextype;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
+import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
+
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
-import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
-import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
-import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-
-public class NonAnonymousComplexTypeTests extends TestCase {
+public class NonAnonymousComplexTypeTests extends AbstractTestCase {
 
     String axisEndpoint = "http://localhost:6060/axis2/services/EchoMessageService.EchoMessageImplPort";
 	
-	/**
-	 * 
-	 */
-	public NonAnonymousComplexTypeTests() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param arg0
-	 */
-	public NonAnonymousComplexTypeTests(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
-	}
-
-	static {
-        BasicConfigurator.configure();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(NonAnonymousComplexTypeTests.class));
     }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    	
 
 	public void testSimpleProxy() {
         TestLogger.logger.debug("------------------------------");

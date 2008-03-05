@@ -16,15 +16,15 @@
  */
 package org.apache.axis2.jaxws.provider.soapmsgmu;
 
-import javax.xml.ws.Provider;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.soap.SOAPMessage;
-
 import org.apache.axis2.jaxws.provider.AttachmentUtil;
+
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 
 /**
  * This class provides the server side implementation for JAX-WS Provider<MESSAGE>

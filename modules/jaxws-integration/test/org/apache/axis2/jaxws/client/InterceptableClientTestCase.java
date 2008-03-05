@@ -18,10 +18,9 @@
  */
 package org.apache.axis2.jaxws.client;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
-import junit.framework.TestCase;
 
 /**
  * This TestCase can be extended to write JAX-WS client side unit tests without 

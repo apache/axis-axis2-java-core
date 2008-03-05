@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.rpclit.enumtype;
 
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
+import org.test.rpclit.schema.ElementString;
+
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
-
-import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
-import org.apache.axis2.jaxws.TestLogger;
-import org.test.rpclit.schema.ElementString;
 
 @WebService(serviceName="RPCLitEnumService",
 		endpointInterface="org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType")

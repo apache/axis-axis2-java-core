@@ -18,31 +18,24 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
+import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
+import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
+import org.test.parallelasync.CustomAsyncResponse;
+import org.test.parallelasync.SleepResponse;
+import org.test.parallelasync.WakeUpResponse;
+
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Response;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Response;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
-import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
-import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-import org.test.parallelasync.CustomAsyncResponse;
-import org.test.parallelasync.SleepResponse;
-import org.test.parallelasync.WakeUpResponse;
 
 /**
  * Tests for Asynchrony in JAX-WS. Most of the simple invokeAsync/async
@@ -50,7 +43,7 @@ import org.test.parallelasync.WakeUpResponse;
  * 
  * ExecutionException tests are covered in jaxws.dispatch and jaxws.proxy
  */
-public class ParallelAsyncTests extends TestCase {
+public class ParallelAsyncTests extends AbstractTestCase {
 
     private static final String DOCLITWR_ASYNC_ENDPOINT =
         "http://localhost:6060/axis2/services/AsyncService.DocLitWrappedPortImplPort";
@@ -58,25 +51,8 @@ public class ParallelAsyncTests extends TestCase {
     // used for logging
     private String myClassName = "ParallelAsyncTests";
 
-	public ParallelAsyncTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ParallelAsyncTests.class));
     }
     	
     public void testNOOP () {}

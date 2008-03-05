@@ -20,10 +20,9 @@ package org.apache.axis2.jaxws.sample.addressbook;
 
 import org.apache.axis2.jaxws.TestLogger;
 
+import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.jws.WebService;
 
 @WebService(serviceName="AddressBookService",
 			endpointInterface="org.apache.axis2.jaxws.sample.addressbook.AddressBook")

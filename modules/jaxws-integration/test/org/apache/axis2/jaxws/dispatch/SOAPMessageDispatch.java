@@ -18,9 +18,8 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.concurrent.Future;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -28,9 +27,9 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.concurrent.Future;
 
 public class SOAPMessageDispatch extends TestCase {
 	private String url = "http://localhost:6060/axis2/services/ProxyDocLitWrappedService.DocLitWrappedProxyImplPort";

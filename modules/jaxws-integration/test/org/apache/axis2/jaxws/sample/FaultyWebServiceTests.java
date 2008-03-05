@@ -22,57 +22,31 @@
  */
 package org.apache.axis2.jaxws.sample;
 
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
+import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
+import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
+import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
+import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
+import org.test.faults.FaultyWebServiceResponse;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
-import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
-import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
-import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
-import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
-import org.apache.axis2.jaxws.util.Constants;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.ThreadContextMigrator;
-import org.apache.axis2.util.ThreadContextMigratorUtil;
-import org.apache.log4j.BasicConfigurator;
-import org.test.faults.FaultyWebServiceResponse;
-
-public class FaultyWebServiceTests extends TestCase {
+public class FaultyWebServiceTests extends AbstractTestCase {
 	String axisEndpoint = "http://localhost:6060/axis2/services/FaultyWebServiceService.FaultyWebServicePortTypeImplPort";
 
-	public FaultyWebServiceTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(FaultyWebServiceTests.class));
     }
     	
 	

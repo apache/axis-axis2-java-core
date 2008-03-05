@@ -22,13 +22,6 @@
  */
 package org.apache.axis2.jaxws.sample.nonwrap;
 
-import java.util.concurrent.Future;
-
-import javax.jws.WebService;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
-
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.OneWay;
@@ -36,6 +29,12 @@ import org.test.sample.nonwrap.OneWayVoid;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
 import org.test.sample.nonwrap.TwoWayHolder;
+
+import javax.jws.WebService;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Holder;
+import javax.xml.ws.Response;
+import java.util.concurrent.Future;
 
 @WebService(serviceName="DocLitNonWrapService",
 			endpointInterface="org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType")

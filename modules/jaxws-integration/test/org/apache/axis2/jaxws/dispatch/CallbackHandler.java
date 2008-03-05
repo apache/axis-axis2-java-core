@@ -18,15 +18,15 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
+
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.TestLogger;
 
 public class CallbackHandler<T> implements AsyncHandler <T> {
 

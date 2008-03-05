@@ -18,23 +18,20 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
-
-import junit.framework.TestCase;
-
 /**
  * 
  */
-public class SOAPFaultProviderTests extends TestCase {
+public class SOAPFaultProviderTests extends AbstractTestCase {
     public QName portName =
         new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
@@ -54,24 +51,8 @@ public class SOAPFaultProviderTests extends TestCase {
         + "</soap:Fault>";
     
 
-    public SOAPFaultProviderTests(String name) {
-        super(name);
-    }
-
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAPFaultProviderTests.class));
     }
         
 

@@ -18,20 +18,19 @@
  */
 package org.apache.axis2.jaxws.security;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.BindingProvider;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
-
-public class BasicAuthSecurityTests extends TestCase {
+public class BasicAuthSecurityTests extends AbstractTestCase {
 
     private String endpointUrl = "http://localhost:6060/axis2/services/BasicAuthSecurityService.SimpleProviderServiceSOAP11port0";
     private String xmlString = "<invokeOp>test input</invokeOp>";
@@ -41,24 +40,8 @@ public class BasicAuthSecurityTests extends TestCase {
     private String USER_ID = "testid";
     private String PASSWORD = "testid";
 
-    static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    
-    public BasicAuthSecurityTests(String name) {
-        super(name);
+    public static Test suite() {
+        return getTestSetup(new TestSuite(BasicAuthSecurityTests.class));
     }
     
     public void testBasicAuth() throws Exception {

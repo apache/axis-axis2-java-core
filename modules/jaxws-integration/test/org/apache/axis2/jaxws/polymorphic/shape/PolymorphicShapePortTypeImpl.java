@@ -18,14 +18,14 @@
  */
 package org.apache.axis2.jaxws.polymorphic.shape;
 
-import javax.jws.WebService;
-
-import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.test.shape.Circle;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
+
+import javax.jws.WebService;
 
 @WebService(serviceName="PolymorphicShapeService",
         portName="PolymorphicShapePort",

@@ -19,8 +19,15 @@
 package org.apache.axis2.jaxws.sample;
 
 
-import java.awt.Image;
-import java.io.File;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.test.mtom.ImageDepot;
+import org.test.mtom.ObjectFactory;
+import org.test.mtom.SendImage;
+import org.test.mtom.SendImageResponse;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -33,44 +40,18 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
+import java.awt.*;
+import java.io.File;
 
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.provider.DataSourceImpl;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-import org.test.mtom.ImageDepot;
-import org.test.mtom.ObjectFactory;
-import org.test.mtom.SendImage;
-import org.test.mtom.SendImageResponse;
-
-public class MtomSampleTests extends TestCase {
+public class MtomSampleTests extends AbstractTestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
-    static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-    
-    public MtomSampleTests(String name) {
-        super(name);
+    public static Test suite() {
+        return getTestSetup(new TestSuite(MtomSampleTests.class));
     }
    
     /*

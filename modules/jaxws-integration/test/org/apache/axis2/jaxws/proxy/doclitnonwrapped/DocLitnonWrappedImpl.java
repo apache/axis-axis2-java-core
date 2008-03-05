@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.proxy.doclitnonwrapped;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.apache.axis2.jaxws.TestLogger;
 
 
 @WebServiceProvider(serviceName="ProxyDocLitUnwrappedService")

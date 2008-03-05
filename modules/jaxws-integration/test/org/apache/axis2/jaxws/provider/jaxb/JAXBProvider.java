@@ -18,8 +18,10 @@
  */
 package org.apache.axis2.jaxws.provider.jaxb;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.mtom.ObjectFactory;
+import org.test.mtom.SendImage;
+import org.test.mtom.SendImageResponse;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -30,11 +32,8 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.test.mtom.ObjectFactory;
-import org.test.mtom.SendImage;
-import org.test.mtom.SendImageResponse;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * A JAXWS Source Provider implementation

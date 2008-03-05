@@ -19,11 +19,10 @@
 
 package org.apache.axis2.jaxws.sample.parallelasync.common;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
-
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Generic Async callback handler. The get method emulates Response.get by

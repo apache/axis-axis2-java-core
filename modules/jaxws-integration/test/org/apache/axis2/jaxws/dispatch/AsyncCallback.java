@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 

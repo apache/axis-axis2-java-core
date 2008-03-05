@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.provider.stringmsg;
 
+import org.apache.axis2.jaxws.TestLogger;
+
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
-
-import org.apache.axis2.jaxws.TestLogger;
 
 @WebServiceProvider(serviceName="StringMessageProviderService")
 @BindingType(HTTPBinding.HTTP_BINDING)

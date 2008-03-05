@@ -1,5 +1,6 @@
 package org.apache.axis2.jaxws.client.dispatch;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
@@ -14,10 +15,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.util.concurrent.Future;
-
-import junit.framework.TestCase;
 
 public class InvocationControllerTest extends TestCase {
 

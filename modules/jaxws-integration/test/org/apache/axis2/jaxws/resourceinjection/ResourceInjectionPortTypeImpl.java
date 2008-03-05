@@ -18,15 +18,15 @@
  */
 package org.apache.axis2.jaxws.resourceinjection;
 
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-
-import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
-import org.apache.axis2.jaxws.TestLogger;
 
 @WebService(serviceName="ResourceInjectionService",
 			endpointInterface="org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType")

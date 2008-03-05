@@ -18,16 +18,15 @@
  */
 package org.apache.axis2.jaxws.spi.handler;
 
-import java.io.File;
-import java.util.List;
+import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
-
-import junit.framework.TestCase;
+import java.io.File;
+import java.util.List;
 
 public class HandlerResolverTests extends TestCase {
     private String testResourceDir = System.getProperty("basedir", ".") + "/" + "test-resources";

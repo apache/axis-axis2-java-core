@@ -19,8 +19,10 @@
 package org.apache.axis2.jaxws.provider;
 
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -33,18 +35,11 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Binding;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
@@ -88,24 +83,8 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     SoapMessageProvider.XML_WSE_REQUEST +
     "</invoke_str></ns2:invokeOp>";
                 
-    public SoapMessageProviderTests(String name) {
-        super(name);
-    }
-
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SoapMessageProviderTests.class));
     }
    
     /**

@@ -22,9 +22,8 @@ package org.apache.axis2.jaxws.sample.mtom1;
 import org.apache.axis2.jaxws.TestLogger;
 
 import javax.jws.WebService;
-import java.rmi.RemoteException;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.BindingType;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 

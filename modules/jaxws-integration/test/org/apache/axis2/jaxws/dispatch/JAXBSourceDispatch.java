@@ -18,7 +18,10 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.StringWriter;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.dispatch.jaxbsource.Invoke;
+import org.test.dispatch.jaxbsource.ObjectFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.util.JAXBSource;
@@ -30,11 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-
-import junit.framework.TestCase;
-import org.test.dispatch.jaxbsource.Invoke;
-import org.test.dispatch.jaxbsource.ObjectFactory;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.StringWriter;
 
 /*
 * This is a test case for Invoking Dispatch with a JAXBSource.

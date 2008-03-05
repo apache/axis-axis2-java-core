@@ -22,10 +22,10 @@
  */
 package org.apache.axis2.jaxws.nonanonymous.complextype;
 
-import javax.jws.WebService;
-
-import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
+
+import javax.jws.WebService;
 
 @WebService(serviceName="EchoMessageService",
 	 	targetNamespace="http://testApp.jaxws",

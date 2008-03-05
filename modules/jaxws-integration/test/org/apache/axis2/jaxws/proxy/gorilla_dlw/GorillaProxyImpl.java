@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.jaxws.proxy.gorilla_dlw;
 
-import java.util.List;
-
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
-
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.data.Fruit;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.AssertFault;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
+
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
+import java.util.List;
 
 /**
  * Tests more complicated Document/Literal Wrapped scenarios

@@ -18,8 +18,14 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import java.awt.*;
-import java.io.File;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axis2.jaxws.TestLogger;
+import org.test.mtom.ImageDepot;
+import org.test.mtom.ObjectFactory;
+import org.test.mtom.SendImage;
+import org.test.mtom.SendImageResponse;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -30,16 +36,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.log4j.BasicConfigurator;
-import org.test.mtom.ImageDepot;
-import org.test.mtom.ObjectFactory;
-import org.test.mtom.SendImage;
-import org.test.mtom.SendImageResponse;
+import java.awt.*;
+import java.io.File;
 
 /**
  * The intended purpose of this testcase is to test the MTOM functions in Axis2. 
@@ -68,36 +66,25 @@ public class JAXBProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
     DataSource stringDS, imageDS;
     
-    public JAXBProviderTests(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        
+    public JAXBProviderTests() {
+        super();
         //Create a DataSource from a String
         String string = "Sending a JAXB generated string object to Source Provider endpoint";
         stringDS = new ByteArrayDataSource(string.getBytes(),"text/plain");
-    	
-        //Create a DataSource from an image 
-        File file = new File(imageResourceDir+File.separator+"test.jpg");
-    	ImageInputStream fiis = new FileImageInputStream(file);
-    	Image image = ImageIO.read(fiis);
-    	imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    	
+
+        try {
+            //Create a DataSource from an image 
+            File file = new File(imageResourceDir + File.separator + "test.jpg");
+            ImageInputStream fiis = new FileImageInputStream(file);
+            Image image = ImageIO.read(fiis);
+            imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    static {
-        BasicConfigurator.configure();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBProviderTests.class));
     }
 
     /**

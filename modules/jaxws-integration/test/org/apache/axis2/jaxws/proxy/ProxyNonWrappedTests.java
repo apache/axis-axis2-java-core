@@ -18,66 +18,37 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.Future;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
+import org.test.proxy.doclitnonwrapped.Invoke;
+import org.test.proxy.doclitnonwrapped.ObjectFactory;
+import org.test.proxy.doclitnonwrapped.ReturnType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
-import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
-import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.log4j.BasicConfigurator;
-import org.test.proxy.doclitnonwrapped.Invoke;
-import org.test.proxy.doclitnonwrapped.ObjectFactory;
-import org.test.proxy.doclitnonwrapped.ReturnType;
+import java.io.File;
+import java.net.URL;
+import java.util.concurrent.Future;
 
 /**
  * This test cases will use proxy NON wrapped wsdl to invoke methods
  * on a deployed Server Endpoint.
  */
-public class ProxyNonWrappedTests extends TestCase {
+public class ProxyNonWrappedTests extends AbstractTestCase {
 
     QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
     private String axisEndpoint = "http://localhost:6060/axis2/services/ProxyDocLitUnwrappedService.DocLitnonWrappedImplPort";
     private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test-resources/wsdl/ProxyDocLitnonWrapped.wsdl";
 
-    /**
-     * @param arg0
-     */
-    public ProxyNonWrappedTests(String arg0) {
-        super(arg0);
-        // TODO Auto-generated constructor stub
-    }
-    
-
-    public ProxyNonWrappedTests() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    
-    static {
-        BasicConfigurator.configure();
-    }
-
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ProxyNonWrappedTests.class));
     }
     
     public void testInvoke(){
