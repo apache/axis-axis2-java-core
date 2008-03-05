@@ -109,6 +109,7 @@ public class UnmarshalMessageContextListener implements MessageContextListener {
         
         // Crate a JAXBCustomBuilder and register it on the Axiom StAXOMBuilder
         JAXBDSContext jaxbDSC = new JAXBDSContext(info.getPackages(), info.getPackagesKey());
+        jaxbDSC.setMessageContext(mc);
         JAXBCustomBuilder jcb = new JAXBCustomBuilder(jaxbDSC);
         ((StAXOMBuilder) envelope.getBuilder()).registerCustomBuilderForPayload(jcb);
         if (log.isDebugEnabled()) {
