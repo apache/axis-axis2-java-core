@@ -35,8 +35,12 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -49,6 +53,26 @@ public class MtomSampleTests extends TestCase {
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    
+    public MtomSampleTests(String name) {
+        super(name);
+    }
+   
     /*
      * Enable attachment Optimization through the SOAPBinding method 
      * -- setMTOMEnabled([true|false])
@@ -188,6 +212,7 @@ public class MtomSampleTests extends TestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
+/*
     public void testSendImageAttachmentProperty12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -225,12 +250,13 @@ public class MtomSampleTests extends TestCase {
         } catch (Exception e) {
             assertNotNull(e);
         }
-        /*
-        assertNotNull(response);
-        assertNotNull(response.getOutput().getImageData());
-        */
-    }
-    
+        
+        //assertNotNull(response);
+        //assertNotNull(response.getOutput().getImageData());
+        
+
+	}
+  */
     
     /*
      * Enable attachment optimization using both the SOAP12 binding API

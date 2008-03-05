@@ -24,17 +24,16 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.jaxws.framework.StartServer;
-import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.TestLogger;
 import org.apache.log4j.BasicConfigurator;
 
 /**
@@ -71,20 +70,7 @@ public class SOAP12Tests extends TestCase {
     static {
         BasicConfigurator.configure();
     }
-    
-    public void setUp() {
-    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
-    	StartServer startServer = new StartServer("server1");
-    	startServer.testStartServer();
-    }
-    
-    public void tearDown() {
-    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
-    	StopServer stopServer = new StopServer("server1");
-    	stopServer.testStopServer();
-    }
-        
-    
+
     /**
      * Simulate creating a SOAP 1.2 message when the business object
      * provided is just the payload. 

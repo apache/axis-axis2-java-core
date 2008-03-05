@@ -28,9 +28,13 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
@@ -51,6 +55,23 @@ public class NonWrapTests extends TestCase {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
+
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    	
 	
 	public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");

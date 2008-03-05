@@ -32,6 +32,9 @@ import javax.wsdl.WSDLException;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
@@ -39,12 +42,34 @@ import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
 public class PolymorphicTests extends TestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/PolymorphicShapeService.PolymorphicShapePort";
+	
+    public PolymorphicTests() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
 
 	public void testFormalAndActualTypeInDifferentPackages(){
         TestLogger.logger.debug("------------------------------");

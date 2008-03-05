@@ -23,12 +23,36 @@ import javax.xml.ws.BindingProvider;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 
 public class AnyTypeTests extends TestCase {
     
 	String axisEndpoint = "http://localhost:6060/axis2/services/AnyTypeMessageService.AnyTypeMessagePortTypeImplPort";
+	
+	public AnyTypeTests() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+ 	
 	public void testAnyTypeElementinWrappedWSDL(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());

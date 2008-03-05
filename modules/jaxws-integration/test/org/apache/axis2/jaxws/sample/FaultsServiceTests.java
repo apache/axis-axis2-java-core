@@ -29,6 +29,9 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.faultsservice.BaseFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.ComplexFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.DerivedFault1_Exception;
@@ -38,6 +41,7 @@ import org.apache.axis2.jaxws.sample.faultsservice.FaultsServicePortType;
 import org.apache.axis2.jaxws.sample.faultsservice.InvalidTickerFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.SimpleFault;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.polymorphicfaults.BaseFault;
 import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
@@ -46,6 +50,27 @@ import org.test.polymorphicfaults.DerivedFault2;
 public class FaultsServiceTests extends TestCase {
     
     String axisEndpoint = "http://localhost:6060/axis2/services/FaultsService.FaultsPort";
+    
+	public FaultsServiceTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
     
     /**
      * Utility method to get the proxy

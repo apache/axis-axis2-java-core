@@ -48,6 +48,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import junit.framework.TestCase;
 
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
@@ -56,6 +58,7 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolH
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 /**
@@ -67,11 +70,29 @@ public class AddNumbersHandlerTests extends TestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";
     File requestFile = null;
     
+	public AddNumbersHandlerTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    
     public void setUp() throws Exception {
         String resourceDir = System.getProperty("basedir",".")+
             File.separator+"test-resources"+File.separator+"xml";
         requestFile = new File(resourceDir+File.separator+"addnumberstest.xml");
-        
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+       
     }
     /**
      * Client app sends 10, 10 as params to sum.  No client-side handlers are configured

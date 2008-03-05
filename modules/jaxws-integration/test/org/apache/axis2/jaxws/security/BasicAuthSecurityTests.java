@@ -27,6 +27,9 @@ import javax.xml.ws.soap.SOAPBinding;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
+import org.apache.log4j.BasicConfigurator;
 
 public class BasicAuthSecurityTests extends TestCase {
 
@@ -38,14 +41,22 @@ public class BasicAuthSecurityTests extends TestCase {
     private String USER_ID = "testid";
     private String PASSWORD = "testid";
 
-    protected void setUp() throws Exception {
-            super.setUp();
+    static {
+        BasicConfigurator.configure();
     }
 
-    protected void tearDown() throws Exception {
-            super.tearDown();
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
     }
-
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    
     public BasicAuthSecurityTests(String name) {
         super(name);
     }

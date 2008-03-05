@@ -23,9 +23,13 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.proxy.soap12.Echo;
 import org.apache.axis2.jaxws.proxy.soap12.SOAP12EchoService;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * A suite of tests to test dynamic proxy clients sending SOAP 1.2
@@ -42,7 +46,24 @@ public class SOAP12ProxyTests extends TestCase {
     public SOAP12ProxyTests(String name) {
         super(name);
     }
+
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
     
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    
+
     /**
      * Send a SOAP 1.2 request and expect a SOAP 1.2 response.
      */

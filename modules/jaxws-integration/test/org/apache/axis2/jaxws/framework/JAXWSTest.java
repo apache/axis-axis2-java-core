@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.client.ProxySoapActionTest;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.dispatch.SOAP12DispatchTest;
 import org.apache.axis2.jaxws.injection.ResourceInjectionTests;
-import org.apache.axis2.jaxws.message.SOAP12Tests;
+//import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.misc.JAXBContextTest;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
 import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
@@ -130,6 +130,8 @@ public class JAXWSTest extends TestCase {
         // ------ Endpoint Tests ------
         suite.addTestSuite(BasicEndpointTests.class);        
         suite.addTestSuite(JAXWSServerTests.class);
+        suite.addTestSuite(SOAP12Tests.class);
+
 */
        // --------- Integration Tests --------------
         /*
@@ -138,7 +140,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SOAP12DispatchTest.class);
         suite.addTestSuite(DispatchSoapActionTest.class);
         suite.addTestSuite(ProxySoapActionTest.class);
-        suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SOAPFaultProviderTests.class);
         suite.addTestSuite(StringMessageProviderTests.class);
@@ -163,6 +164,7 @@ public class JAXWSTest extends TestCase {
         // This test fails only on Solaris
         //suite.addTestSuite(MtomSampleByteArrayTests.class);
         suite.addTestSuite(BareTests.class);
+        
         // Intermittent failure, logged bug AXIS2-2605
         //suite.addTestSuite(DocLitBareMinTests.class);
         //TODO: FIXME - Was working, now doesn't
@@ -181,6 +183,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ResourceInjectionTests.class);
         suite.addTestSuite(AnyTypeTests.class);
         suite.addTestSuite(PolymorphicTests.class);
+        
+//MADE IT TO HERE        
         suite.addTestSuite(DispatchXPayloadString.class);
         suite.addTestSuite(DispatchXMessageString.class);
         suite.addTestSuite(DispatchXPayloadSource.class);

@@ -30,11 +30,14 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
 
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
 import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtom1.Invoke;
 import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 import com.sun.xml.bind.v2.runtime.unmarshaller.Base64Data;
@@ -46,6 +49,28 @@ public class MtomSampleByteArrayTests extends TestCase {
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/SendImageService";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+File.separator+"test-resources"+File.separator+"image";
 
+	public MtomSampleByteArrayTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    	
+    
     /*
      * Enable attachment Optimization through the SOAPBinding method 
      * -- setMTOMEnabled([true|false])

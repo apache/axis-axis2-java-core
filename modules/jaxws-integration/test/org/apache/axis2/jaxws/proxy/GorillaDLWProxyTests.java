@@ -33,8 +33,12 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.log4j.BasicConfigurator;
 
 public class GorillaDLWProxyTests extends TestCase {
 
@@ -44,6 +48,27 @@ public class GorillaDLWProxyTests extends TestCase {
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "GorillaPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl";
+    
+    public GorillaDLWProxyTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void setUp() {
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
+    }
+    
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
     
     /**
      * Utility method to get the proxy

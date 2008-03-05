@@ -18,8 +18,12 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.proxy.rpclitswa.sei.RPCLitSWA;
+import org.apache.log4j.BasicConfigurator;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -51,6 +55,21 @@ public class RPCLitSWAProxyTests extends TestCase {
         
     private DataSource imageDS;
     
+    public RPCLitSWAProxyTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+    
+    static {
+        BasicConfigurator.configure();
+    }
+
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    
     public void setUp() throws Exception {
         String imageResourceDir =
                 System.getProperty("basedir", ".") + "/" + "test-resources" + File.separator
@@ -61,6 +80,9 @@ public class RPCLitSWAProxyTests extends TestCase {
         ImageInputStream fiis = new FileImageInputStream(file);
         Image image = ImageIO.read(fiis);
         imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
     }
     
     /**

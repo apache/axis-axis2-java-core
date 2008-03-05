@@ -32,6 +32,9 @@ import javax.xml.ws.Response;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.framework.StartServer;
+import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.parallelasync.common.CallbackHandler;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
@@ -55,20 +58,27 @@ public class ParallelAsyncTests extends TestCase {
     // used for logging
     private String myClassName = "ParallelAsyncTests";
 
-    public ParallelAsyncTests(String str) {
-        super(str);
+	public ParallelAsyncTests() {
+        super();
+        // TODO Auto-generated constructor stub
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ParallelAsyncTests.class);
-        return suite;
-        
+	static {
+        BasicConfigurator.configure();
     }
 
     public void setUp() {
-        TestLogger.logger.debug("==================== " + getName());
+    	TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+    	StartServer startServer = new StartServer("server1");
+    	startServer.testStartServer();
     }
     
+    public void tearDown() {
+    	TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+    	StopServer stopServer = new StopServer("server1");
+    	stopServer.testStopServer();
+    }
+    	
     public void testNOOP () {}
 
     /**
