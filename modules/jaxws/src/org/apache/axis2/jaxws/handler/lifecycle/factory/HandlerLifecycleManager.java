@@ -32,6 +32,9 @@ public interface HandlerLifecycleManager {
     public Handler createHandlerInstance(MessageContext mc, Class handlerClass)
             throws LifecycleException, ResourceInjectionException;
 
+    public void destroyHandlerInstance(MessageContext mc, Handler handler)
+    		throws LifecycleException, ResourceInjectionException;
+    
     /*
       * Invokes method on endpoint marked with @PostConstruct annotation.
       */

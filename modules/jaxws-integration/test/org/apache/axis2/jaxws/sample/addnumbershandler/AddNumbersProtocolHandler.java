@@ -18,13 +18,19 @@
  */
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Set;
+
+import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.util.Set;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
 
 public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
@@ -80,6 +86,26 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
 
         tracker.handleMessage(messagecontext);
         return true;
+    }
+    
+    @PreDestroy
+    public void preDestroy() {
+    	try {
+    		/*
+    		 * since @PreDestroy methods are called just before the managed (server) side
+    		 * handler instance goes out of scope, there's not a good way to test if it is
+    		 * called.  So, we are creating a file that one of the AddNumbersHandlerTests tests
+    		 * checks the existance of.
+    		 */
+    		File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
+    		file.createNewFile();
+    		FileOutputStream fos = new FileOutputStream(file);
+    		fos.write(new byte[]{'h','i'});
+    		fos.close();
+    		file.deleteOnExit();
+    	} catch (Exception e) {
+    		throw ExceptionFactory.makeWebServiceException(e);
+    	}
     }
 
 }

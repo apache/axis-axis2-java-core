@@ -38,6 +38,8 @@ import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
 import org.apache.axis2.jaxws.handler.HandlerInvoker;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
+import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -53,6 +55,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 
 import java.io.StringReader;
@@ -274,7 +277,7 @@ public class EndpointController {
                // If the message is one way, we should not invoke the response handlers.  There is no response
                // MessageContext since a one way invocation is considered to have a "void" return.
                
-               if (!isOneWay(eic.getRequestMessageContext().getAxisMessageContext())) {
+               if (!isOneWay(request.getAxisMessageContext())) {
                     response.setMEPContext(request.getMEPContext());
                     
                     HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
@@ -291,6 +294,17 @@ public class EndpointController {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
             throw ExceptionFactory.makeWebServiceException(e);  
         } finally {
+        	// at this point, we are done with handler instances on the server; call @PreDestroy on all of them
+            HandlerLifecycleManager hlm = createHandlerlifecycleManager();
+            for (Iterator it = eic.getHandlers().iterator(); it.hasNext();) {
+				try {
+					Handler handler = (Handler) it.next();
+					hlm.destroyHandlerInstance(request, handler);
+				} catch (Exception e) {
+					// TODO: can we ignore this?
+					throw ExceptionFactory.makeWebServiceException(e);
+				}
+			}
             responseReady(eic);
             restoreRequestMessage(request);
         }
@@ -597,5 +611,14 @@ public class EndpointController {
                 }
             }
         }
+    }
+    
+    /**
+     * we need a HandlerLifecycleManager so we can call the @PreDestroy when we are done with the server-side handler instances
+     */
+    private HandlerLifecycleManager createHandlerlifecycleManager() {
+        HandlerLifecycleManagerFactory elmf = (HandlerLifecycleManagerFactory)FactoryRegistry
+                .getFactory(HandlerLifecycleManagerFactory.class);
+        return elmf.createHandlerLifecycleManager();
     }
 }
