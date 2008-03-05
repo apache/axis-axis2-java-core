@@ -396,7 +396,11 @@
 						<phase>test-compile</phase>
 						<configuration>
 							<tasks>
-								<mkdir dir="./target/test-classes/servicejars"/>
+								
+								<!-- ================================================================ -->
+								<!--- Non-JAXWS services -->
+								<!-- ================================================================ -->
+							
 								<copy toDir="target/test-classes/services/EchoService/">
 									<fileset dir="target/test-classes">
 										<include name="server/**"/>
@@ -405,6 +409,19 @@
 										<exclude name="**/*.java"/>
 									</fileset>
 								</copy>
+								<copy toDir="target/test-classes/services/BookStoreService/">
+									<fileset dir="target/test-classes">
+										<include name="org/apache/axis2/jaxws/client/soapaction/**"/>
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/client/soapaction/server">
+										<include name="META-INF/**"/>
+									</fileset>
+								</copy>
+								
+								<mkdir dir="./target/test-classes/servicejars"/>
+								<!-- ================================================================ -->
+								<!--- JAXWS services -->
+								<!-- ================================================================ -->
 								<!-- ================================================================ -->
 								<!--- Provider endpoint Service Samples -->
 								<!-- ================================================================ -->
@@ -670,15 +687,6 @@
 								/>
 								<delete dir="target/test-classes/servicejars/SOAP12EchoService"/>														
 								
-								<copy toDir="target/test-classes/services/BookStoreService/">
-									<fileset dir="target/test-classes">
-										<include name="org/apache/axis2/jaxws/client/soapaction/**"/>
-									</fileset>
-									<fileset dir="test/org/apache/axis2/jaxws/client/soapaction/server">
-										<include name="META-INF/**"/>
-									</fileset>
-								</copy>
-
 								<copy toDir="target/test-classes/servicejars/gorilla_dlw/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/proxy/gorilla_dlw/**"/>
