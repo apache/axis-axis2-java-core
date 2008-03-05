@@ -1110,7 +1110,7 @@
 
 						<!-- Possible server tests -->
 						<include>**/StringProviderTests.java</include>
-						<include>**/SoapFaultProviderTests.java</include>
+						<include>**/SOAPFaultProviderTests.java</include>
 						<include>**/StringMessageProviderTests.java</include>
 						<include>**/SourceProviderTests.java</include>
 						<include>**/SourceMessageProviderTests.java</include>

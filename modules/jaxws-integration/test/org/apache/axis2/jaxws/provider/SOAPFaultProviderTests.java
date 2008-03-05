@@ -18,20 +18,19 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 /**
  * 
  */
-public class SOAPFaultProviderTests extends AbstractTestCase {
+public class SOAPFaultProviderTests extends ProviderTestCase {
     public QName portName =
         new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringProviderService");
@@ -55,6 +54,9 @@ public class SOAPFaultProviderTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(SOAPFaultProviderTests.class));
     }
         
+    public SOAPFaultProviderTests() {
+        super();
+    }
 
     private Dispatch<String> getDispatch() {
         Service svc = Service.create(serviceName);
