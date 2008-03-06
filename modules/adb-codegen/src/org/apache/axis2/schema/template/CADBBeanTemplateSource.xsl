@@ -2691,9 +2691,14 @@
                     </xsl:when>
 
                     <!-- add int64_t s -->
-                    <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                    <xsl:when test="$nativePropertyType='int64_t'">
                        text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
-                       sprintf (text_value, "%d", (int)<xsl:value-of select="$propertyInstanceName"/>);
+                       sprintf (text_value, AXIS2_PRINTF_INT64_FORMAT_SPECIFIER, (int64_t)<xsl:value-of select="$propertyInstanceName"/>);
+                    </xsl:when>
+
+                    <xsl:when test="$nativePropertyType='uint64_t'">
+                       text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                       sprintf (text_value, AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER, (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
                     </xsl:when>
 
                     <!-- add float s -->
@@ -3496,9 +3501,17 @@
                         </xsl:when>
 
                         <!-- add int64_t s -->
-                        <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                        <xsl:when test="$nativePropertyType='int64_t'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
-                           sprintf (text_value, "%d", (int)<xsl:value-of select="$propertyInstanceName"/>);
+                           sprintf (text_value, AXIS2_PRINTF_INT64_FORMAT_SPECIFIER, (int64_t)<xsl:value-of select="$propertyInstanceName"/>);
+                           text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
+                           axiom_element_add_attribute (parent_element, env, text_attri, parent);
+                           AXIS2_FREE(env-> allocator, text_value);
+                        </xsl:when>
+
+                        <xsl:when test="$nativePropertyType='uint64_t'">
+                           text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                           sprintf (text_value, AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER, (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            axiom_element_add_attribute (parent_element, env, text_attri, parent);
                            AXIS2_FREE(env-> allocator, text_value);
