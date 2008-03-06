@@ -441,11 +441,15 @@
 									basedir="${pom.basedir}/target/test-classes/servicejars/WSGenService"
 								/>
 								<delete dir="target/test-classes/servicejars/WSGenService"/>								
-								
+
 								<copy toDir="target/test-classes/servicejars/BasicAuthSecurityService/">
 									<fileset dir="target/test-classes">
 										<include name="org/apache/axis2/jaxws/security/server/**"/>
 										<exclude name="org/apache/axis2/jaxws/security/server/META-INF/services.xml"/>
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/security/server">
+										<include name="META-INF/**"/>
+										<exclude name="META-INF/services.xml"/>
 									</fileset>
 								</copy>
 
