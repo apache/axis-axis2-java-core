@@ -412,8 +412,7 @@ public class EndpointController {
     private EndpointDescription getEndpointDescription(MessageContext mc, Class implClass) {
         AxisService axisSvc = mc.getAxisMessageContext().getAxisService();
 
-        //Check to see if we've already created a ServiceDescription for this
-        //service before trying to create a new one. 
+        //Make sure that a ServiceDescription was created and added to the AxisService
 
         if (axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER) != null) {
             Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
@@ -427,49 +426,10 @@ public class EndpointController {
             
             return ed;
         } else {
-        	//We were unable to find the service
-        	//TODO: Uncomment this when all tests are passing with JAXWSDeployer
-            //throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
+        	// If we've made it here, its very likely that although the AxisService was deployed, the 
+        	// associated ServiceDescription was not created successfully
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescErr1"));
 
-            // TODO: This is using a deprecated factory method to create the ServiceDescription.
-            // The correct way to fix this is to create the ServiceDescriptions (and the AxisService
-            // and associated descritpion hierahcy) at startup.  However, that is currently not done
-            // in the Axis2 testing environment.  So, for testing, we create a Description hierachy
-            // on the fly and attach the AxisService to it.  This should be changed to not used the
-            // deprecated factory method.  HOWEVER doing so currently causes testcase failures in 
-            // JAXWS and or Metadata
-//            ServiceDescription sd = DescriptionFactory.createServiceDescription(implClass);
-            
-            ServiceDescription sd =
-                    DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
-            EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
-            
-            // TODO: This is only temporary until the deprecated method is no longer used
-            try {
-                QName service = ed.getServiceQName();
-                QName endpoint = ed.getPortQName();
-                EndpointKey key = new EndpointKey(service, endpoint);
-                axisSvc = ed.getAxisService();                
-                Parameter param = axisSvc.getParameter(EndpointContextMap.class.getCanonicalName());
-                EndpointContextMap map = null;
-                
-                if (param == null) {
-                    map = EndpointContextMapManager.getEndpointContextMap();
-                    axisSvc.addParameter(EndpointContextMap.class.getCanonicalName(), map);
-                }
-                else {
-                    map = (EndpointContextMap) param.getValue();
-                    EndpointContextMapManager.setEndpointContextMap(map);
-                }
-                
-                map.put(key, axisSvc.getEPRs()[0]);
-            }
-            catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException(e);
-            }
-            
-            return ed;
-        
         }
     }
 
