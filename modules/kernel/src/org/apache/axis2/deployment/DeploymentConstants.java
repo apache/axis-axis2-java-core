@@ -50,6 +50,8 @@ public interface DeploymentConstants {
     String TAG_TYPE = "type";
     String TAG_TARGET_RESOLVERS = "targetResolvers";
     String TAG_TARGET_RESOLVER = "targetResolver";
+    String TAG_THREAD_CONTEXT_MIGRATORS = "threadContextMigrators";
+    String TAG_THREAD_CONTEXT_MIGRATOR = "threadContextMigrator";
     String TAG_TRANSPORT_SENDER = "transportSender";
     String TAG_TRANSPORT_RECEIVER = "transportReceiver";
     String TAG_SERVICE_GROUP = "serviceGroup";
@@ -91,6 +93,7 @@ public interface DeploymentConstants {
     String TAG_DISPATCHER = "dispatcher";
     String TAG_DESCRIPTION = "Description";
     String TAG_CLASS_NAME = "class";
+    String TAG_LIST_ID = "listId";
     String TAG_EXCLUDE_PROPERTIES= "excludeProperties";
     String TAG_INCLUDE_PROPERTIES= "includeProperties";
     String TAG_AFTER = "after";

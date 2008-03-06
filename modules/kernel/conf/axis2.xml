@@ -103,6 +103,13 @@
     <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
     <!--        <parameter name="RSS_URL">http://127.0.0.1/rss</parameter>-->
     <!--    </listener>-->
+    
+    <!-- Uncomment if JAX-WS 2.1 support is needed. -->
+    <!--
+    <threadContextMigrators>
+        <threadContextMigrator listId="JAXWS-ThreadContextMigrator-List" class="org.apache.axis2.jaxws.addressing.migrator.EndpointContextMapMigrator"/>
+    </threadContextMigrators>
+    -->
 
     <!-- ================================================= -->
     <!-- Message Receivers -->

@@ -22,6 +22,8 @@ package org.apache.axis2.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,21 +39,40 @@ public class ThreadContextMigratorUtil {
      * Register a new ThreadContextMigrator.
      *
      * @param configurationContext
-     * @param threadContextMigratorListID The name of the property in the
-     *                                    ConfigurationContext that contains
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
      *                                    the list of migrators.
      * @param migrator
      */
     public static void addThreadContextMigrator(ConfigurationContext configurationContext,
                                                 String threadContextMigratorListID,
-                                                ThreadContextMigrator migrator) {
-        List migratorList = (List) configurationContext.getProperty(threadContextMigratorListID);
+                                                ThreadContextMigrator migrator)
+    throws AxisFault {
+        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+        addThreadContextMigrator(axisConfiguration, threadContextMigratorListID, migrator);
+    }
 
-        if (migratorList == null) {
-            migratorList = new LinkedList();
-            configurationContext.setProperty(threadContextMigratorListID, migratorList);
+    /**
+     * Register a new ThreadContextMigrator.
+     *
+     * @param axisConfiguration
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
+     *                                    the list of migrators.
+     * @param migrator
+     */
+    public static void addThreadContextMigrator(AxisConfiguration axisConfiguration,
+                                                String threadContextMigratorListID,
+                                                ThreadContextMigrator migrator)
+    throws AxisFault {
+        Parameter param = axisConfiguration.getParameter(threadContextMigratorListID);
+        
+        if (param == null) {
+            param = new Parameter(threadContextMigratorListID, new LinkedList());
+            axisConfiguration.addParameter(param);
         }
 
+        List migratorList = (List) param.getValue();
         migratorList.add(migrator);
     }
 
@@ -59,23 +80,25 @@ public class ThreadContextMigratorUtil {
      * Activate any registered ThreadContextMigrators to move context info
      * to the thread of execution.
      *
-     * @param threadContextMigratorListID The name of the property in the
-     *                                    ConfigurationContext that contains
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
      *                                    the list of migrators.
      * @param msgContext
      * @throws AxisFault
      */
     public static void performMigrationToThread(String threadContextMigratorListID,
                                                 MessageContext msgContext)
-            throws AxisFault {
+    throws AxisFault {
         if (msgContext == null) {
             return;
         }
 
-        List migratorList = (List) msgContext.getConfigurationContext()
-                .getProperty(threadContextMigratorListID);
+        AxisConfiguration axisConfiguration = 
+            msgContext.getConfigurationContext().getAxisConfiguration();
+        Parameter param = axisConfiguration.getParameter(threadContextMigratorListID);
 
-        if (migratorList != null) {
+        if (param != null) {
+            List migratorList = (List) param.getValue();
             ListIterator threadContextMigrators = migratorList.listIterator();
             while (threadContextMigrators.hasNext()) {
                 ((ThreadContextMigrator) threadContextMigrators.next())
@@ -88,8 +111,8 @@ public class ThreadContextMigratorUtil {
      * Activate any registered ThreadContextMigrators to remove information
      * from the thread of execution if necessary.
      *
-     * @param threadContextMigratorListID The name of the property in the
-     *                                    ConfigurationContext that contains
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
      *                                    the list of migrators.
      * @param msgContext
      */
@@ -99,10 +122,12 @@ public class ThreadContextMigratorUtil {
             return;
         }
 
-        List migratorList = (List) msgContext.getConfigurationContext()
-                .getProperty(threadContextMigratorListID);
+        AxisConfiguration axisConfiguration = 
+            msgContext.getConfigurationContext().getAxisConfiguration();
+        Parameter param = axisConfiguration.getParameter(threadContextMigratorListID);
 
-        if (migratorList != null) {
+        if (param != null) {
+            List migratorList = (List) param.getValue();
             ListIterator threadContextMigrators = migratorList.listIterator();
             while (threadContextMigrators.hasNext()) {
                 ((ThreadContextMigrator) threadContextMigrators.next()).cleanupThread(msgContext);
@@ -114,23 +139,25 @@ public class ThreadContextMigratorUtil {
      * Activate any registered ThreadContextMigrators to move info from the
      * thread of execution into the context.
      *
-     * @param threadContextMigratorListID The name of the property in the
-     *                                    ConfigurationContext that contains
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
      *                                    the list of migrators.
      * @param msgContext
      * @throws AxisFault
      */
     public static void performMigrationToContext(String threadContextMigratorListID,
                                                  MessageContext msgContext)
-            throws AxisFault {
+    throws AxisFault {
         if (msgContext == null) {
             return;
         }
 
-        List migratorList = (List) msgContext.getConfigurationContext()
-                .getProperty(threadContextMigratorListID);
+        AxisConfiguration axisConfiguration = 
+            msgContext.getConfigurationContext().getAxisConfiguration();
+        Parameter param = axisConfiguration.getParameter(threadContextMigratorListID);
 
-        if (migratorList != null) {
+        if (param != null) {
+            List migratorList = (List) param.getValue();
             ListIterator threadContextMigrators = migratorList.listIterator();
             while (threadContextMigrators.hasNext()) {
                 ((ThreadContextMigrator) threadContextMigrators.next())
@@ -143,8 +170,8 @@ public class ThreadContextMigratorUtil {
      * Activate any registered ThreadContextMigrators to remove information from
      * the context if necessary.
      *
-     * @param threadContextMigratorListID The name of the property in the
-     *                                    ConfigurationContext that contains
+     * @param threadContextMigratorListID The name of the parameter in the
+     *                                    AxisConfiguration that contains
      *                                    the list of migrators.
      * @param msgContext
      */
@@ -154,10 +181,12 @@ public class ThreadContextMigratorUtil {
             return;
         }
 
-        List migratorList = (List) msgContext.getConfigurationContext()
-                .getProperty(threadContextMigratorListID);
+        AxisConfiguration axisConfiguration = 
+            msgContext.getConfigurationContext().getAxisConfiguration();
+        Parameter param = axisConfiguration.getParameter(threadContextMigratorListID);
 
-        if (migratorList != null) {
+        if (param != null) {
+            List migratorList = (List) param.getValue();
             ListIterator threadContextMigrators = migratorList.listIterator();
             while (threadContextMigrators.hasNext()) {
                 ((ThreadContextMigrator) threadContextMigrators.next()).cleanupContext(msgContext);

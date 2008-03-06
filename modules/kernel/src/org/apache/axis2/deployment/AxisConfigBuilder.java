@@ -53,6 +53,8 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.TargetResolver;
+import org.apache.axis2.util.ThreadContextMigrator;
+import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -127,6 +129,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement targetResolvers =
                     config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
             processTargetResolvers(axisConfig, targetResolvers);
+
+            // Process ThreadContextMigrators
+            OMElement threadContextMigrators =
+                    config_element.getFirstChildWithName(new QName(TAG_THREAD_CONTEXT_MIGRATORS));
+            processThreadContextMigrators(axisConfig, threadContextMigrators);
 
             // Process Observers
             Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
@@ -263,6 +270,32 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     if (log.isTraceEnabled()) {
                         log.trace(
                                 "processTargetResolvers: Exception thrown initialising TargetResolver: " +
+                                        e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    private void processThreadContextMigrators(AxisConfiguration axisConfig, OMElement targetResolvers) {
+        if (targetResolvers != null) {
+            Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_THREAD_CONTEXT_MIGRATOR));
+            while (iterator.hasNext()) {
+                OMElement threadContextMigrator = (OMElement) iterator.next();
+                OMAttribute listIdAttribute =
+                    threadContextMigrator.getAttribute(new QName(TAG_LIST_ID));
+                String listId = listIdAttribute.getAttributeValue();
+                OMAttribute classNameAttribute =
+                    threadContextMigrator.getAttribute(new QName(TAG_CLASS_NAME));
+                String className = classNameAttribute.getAttributeValue();
+                try {
+                    Class clazz = Loader.loadClass(className);
+                    ThreadContextMigrator migrator = (ThreadContextMigrator) clazz.newInstance();
+                    ThreadContextMigratorUtil.addThreadContextMigrator(axisConfig, listId, migrator);
+                } catch (Exception e) {
+                    if (log.isTraceEnabled()) {
+                        log.trace(
+                                "processThreadContextMigrators: Exception thrown initialising ThreadContextMigrator: " +
                                         e.getMessage());
                     }
                 }
