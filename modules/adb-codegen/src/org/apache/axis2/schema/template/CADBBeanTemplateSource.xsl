@@ -2841,10 +2841,16 @@
                     </xsl:when>
 
                     <!-- add int64_t s -->
-                    <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                    <xsl:when test="$nativePropertyType='int64_t'">
                        allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
                        text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
-                       sprintf (text_value, "%s%d%s", text_value, element, seperator);
+                       sprintf (text_value, "%s" AXIS2_PRINTF_INT64_FORMAT_SPECIFIER "%s", text_value, element, seperator);
+                    </xsl:when>
+
+                    <xsl:when test="$nativePropertyType='uint64_t'">
+                       allocated_len += sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT + 1;
+                       text_value = (axis2_char_t*) AXIS2_REALLOC (env-> allocator, text_value, allocated_len);
+                       sprintf (text_value, "%s" AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER "%s", text_value, element, seperator);
                     </xsl:when>
 
                     <!-- add float s -->
@@ -3195,11 +3201,23 @@
                         </xsl:when>
 
                         <!-- add int64_t s -->
-                        <xsl:when test="$nativePropertyType='int64_t' or $nativePropertyType='uint64_t'">
+                        <xsl:when test="$nativePropertyType='int64_t'">
                            text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
                                                             (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT + 
                                                                 axutil_strlen("<xsl:value-of select="$propertyName"/>")));
-                           sprintf(text_value, " %s%s%s=\"%d\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
+                           sprintf(text_value, " %s%s%s=\"" AXIS2_PRINTF_INT64_FORMAT_SPECIFIER  "\"", p_prefix?p_prefix:"", 
+                                                (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
+                                                "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
+                           axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+                           AXIS2_FREE(env-> allocator, text_value);
+                        </xsl:when>
+
+                        <xsl:when test="$nativePropertyType='uint64_t'">
+                           text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) *
+                                                            (ADB_DEFAULT_DIGIT_LIMIT + 5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
+                                                                axutil_strlen("<xsl:value-of select="$propertyName"/>")));
+                           sprintf(text_value, " %s%s%s=\"" AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER  "\"", p_prefix?p_prefix:"", 
+                                                (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
                                                 "<xsl:value-of select="$propertyName"/>", <xsl:value-of select="$propertyInstanceName"/>);
                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
                            AXIS2_FREE(env-> allocator, text_value);
