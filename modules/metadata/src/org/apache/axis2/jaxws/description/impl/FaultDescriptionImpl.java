@@ -92,7 +92,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             // no need for defaults here.  The exceptionClass stored in this
             // FaultDescription object is one that has been declared to be
             // thrown from the service method
-            return exceptionClass.getCanonicalName();
+            return exceptionClass.getName();
         } else {
             return composite.getClassName();
         }

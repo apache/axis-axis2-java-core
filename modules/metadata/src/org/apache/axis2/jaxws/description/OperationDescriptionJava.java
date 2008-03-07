@@ -25,6 +25,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -97,5 +98,7 @@ public interface OperationDescriptionJava {
     public Oneway getAnnoOneway();
 
     public boolean isAnnoOneWay();
+    
+    public Action getAnnoAction();
 
 }

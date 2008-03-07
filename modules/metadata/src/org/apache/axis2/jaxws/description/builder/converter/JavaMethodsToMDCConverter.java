@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.jaxws.description.builder.converter;
 
+import org.apache.axis2.jaxws.description.builder.ActionAnnot;
+import org.apache.axis2.jaxws.description.builder.FaultActionAnnot;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.RequestWrapperAnnot;
@@ -29,6 +31,8 @@ import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
+import javax.xml.ws.Action;
+import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebEndpoint;
@@ -79,6 +83,7 @@ public class JavaMethodsToMDCConverter {
                 attachWebMethodAnnotation(mdc, method);
                 attachWebResultAnnotation(mdc, method);
                 attachWebServiceRefAnnotation(mdc, method);
+                attachActionAnnotation(mdc, method);
                 if (method.getGenericParameterTypes().length > 0) {
                     JavaParamToPDCConverter paramConverter = new JavaParamToPDCConverter(
                             method.getGenericParameterTypes(), method.getParameterAnnotations());
@@ -283,6 +288,39 @@ public class JavaMethodsToMDCConverter {
     private void attachWebServiceRefAnnotation(MethodDescriptionComposite mdc, Method
             method) {
         ConverterUtils.attachWebServiceRefAnnotation(mdc, method);
+    }
+
+    /**
+     * This method will drive the attachment of @Action annotation data to the
+     * <code>MethodDescriptionComposite</code>
+     *
+     * @param mdc    - <code>MethodDescriptionComposite</code>
+     * @param method - <code>Method</code>
+     */
+    private void attachActionAnnotation(MethodDescriptionComposite mdc, Method
+            method) {
+        Action action = (Action)ConverterUtils.getAnnotation(Action.class,
+                                                             method);
+        if (action != null) {
+            ActionAnnot actionAnnot = ActionAnnot.createActionAnnotImpl();
+            FaultAction[] faults = action.fault();
+            
+            if (faults != null && faults.length != 0) {
+                List<FaultAction> list = new ArrayList<FaultAction>();
+                for (FaultAction fault : faults) {
+                    FaultActionAnnot faultAnnot =
+                        FaultActionAnnot.createFaultActionAnnotImpl();
+                    faultAnnot.setClassName(fault.className());
+                    faultAnnot.setValue(fault.value());
+                    list.add(faultAnnot);
+                }
+                actionAnnot.setFault(list.toArray(new FaultAction[0]));
+            }
+            
+            actionAnnot.setInput(action.input());
+            actionAnnot.setOutput(action.output());
+            mdc.setActionAnnot(actionAnnot);
+        }
     }
 
     /**

@@ -49,6 +49,8 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     private List<ParameterDescriptionComposite> parameterDescriptions;//TODO EDIT CHECK: only on methods of SEI
 
     private DescriptionBuilderComposite parentDBC;
+    
+    private ActionAnnot actionAnnot;
 
     /*
       * Default Constructor
@@ -195,6 +197,11 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
         return webServiceRefAnnot;
     }
 
+    /** @return Returns the actionAnnot. */
+    public ActionAnnot getActionAnnot() {
+        return actionAnnot;
+    }
+
     /** @return Returns the exceptions. */
     public String[] getExceptions() {
         return exceptions;
@@ -284,6 +291,11 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     /** @param webServiceRefAnnot The webServiceRefAnnot to set. */
     public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
         this.webServiceRefAnnot = webServiceRefAnnot;
+    }
+
+    /** @param actionAnnot The actionAnnot to set. */
+    public void setActionAnnot(ActionAnnot actionAnnot) {
+        this.actionAnnot = actionAnnot;
     }
 
     /** @param parameterDescription The parameterDescription to add to the set. */
@@ -434,6 +446,12 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
             sb.append(newLine);
             sb.append("WebServiceRef: ");
             sb.append(webServiceRefAnnot.toString());
+        }
+
+        if (actionAnnot != null) {
+            sb.append(newLine);
+            sb.append("Action: ");
+            sb.append(actionAnnot.toString());
         }
 
         if (handlerChainAnnot != null) {

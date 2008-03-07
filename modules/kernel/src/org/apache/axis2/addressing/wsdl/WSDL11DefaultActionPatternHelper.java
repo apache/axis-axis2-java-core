@@ -152,7 +152,7 @@ public class WSDL11DefaultActionPatternHelper {
             if (messageExchangePattern.indexOf("in-out") >= 0) {
                 inputName += REQUEST;
             } else if (messageExchangePattern.indexOf("out-in") >= 0) {
-                inputName += REQUEST;
+                inputName += RESPONSE;
             }
         }
 
