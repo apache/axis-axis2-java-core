@@ -214,7 +214,7 @@ public class AxisHttpResponseImpl implements AxisHttpResponse, OutTransportInfo 
             try {
                 commit();
             } catch (HttpException ex) {
-                throw new IOException("HTTP protocol exception: " + ex.getMessage());
+                throw (IOException) new IOException().initCause(ex);  
             }
             if (this.out == null) {
                 this.out = conn.getOutputStream();

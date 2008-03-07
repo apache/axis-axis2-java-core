@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -534,17 +535,31 @@ public abstract class AbstractHTTPSender {
         boolean isCustomUserAgentSet = false;
         // set the custom headers, if available
         Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
-        if (httpHeadersObj != null && httpHeadersObj instanceof ArrayList) {
-            ArrayList httpHeaders = (ArrayList) httpHeadersObj;
-            Header header;
-            for (int i = 0; i < httpHeaders.size(); i++) {
-                header = (Header) httpHeaders.get(i);
-                if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
-                    isCustomUserAgentSet = true;
+        if (httpHeadersObj != null) {
+            if (httpHeadersObj instanceof ArrayList) {
+                ArrayList httpHeaders = (ArrayList) httpHeadersObj;
+                Header header;
+                for (int i = 0; i < httpHeaders.size(); i++) {
+                    header = (Header) httpHeaders.get(i);
+                    if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
+                        isCustomUserAgentSet = true;
+                    }
+                    method.addRequestHeader(header);
                 }
-                method.addRequestHeader(header);
+    
             }
-
+            if (httpHeadersObj instanceof Map) {
+                Map httpHeaders = (Map) httpHeadersObj;
+                for (Iterator iterator = httpHeaders.entrySet().iterator(); iterator.hasNext();) {
+                    Map.Entry entry  = (Map.Entry) iterator.next();
+                    String key = (String) entry.getKey();
+                    String value = (String) entry.getValue();
+                    if (HTTPConstants.HEADER_USER_AGENT.equals(key)) {
+                        isCustomUserAgentSet = true;
+                    }
+                    method.addRequestHeader(key, value);
+                }
+            }
         }
 
         if (!isCustomUserAgentSet) {

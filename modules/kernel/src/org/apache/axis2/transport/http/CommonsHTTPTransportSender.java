@@ -32,6 +32,7 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.server.AxisHttpResponseImpl;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpException;
@@ -46,6 +47,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements
@@ -259,6 +261,29 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     if (header != null) {
                         servletBasedOutTransportInfo
                                 .addHeader(header.getName(), header.getValue());
+                    }
+                }
+            }
+        } else if (transportInfo instanceof AxisHttpResponseImpl) {
+            Object customHeaders = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+            if (customHeaders != null) {
+                if (customHeaders instanceof List) {
+                    Iterator iter = ((List) customHeaders).iterator();
+                    while (iter.hasNext()) {
+                        Header header = (Header) iter.next();
+                        if (header != null) {
+                            ((AxisHttpResponseImpl) transportInfo)
+                                    .addHeader(header.getName(), header.getValue());
+                        }
+                    }
+                } else if (customHeaders instanceof Map) {
+                    Iterator iter = ((Map) customHeaders).entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry header = (Map.Entry) iter.next();
+                        if (header != null) {
+                            ((AxisHttpResponseImpl) transportInfo)
+                                    .addHeader((String) header.getKey(), (String) header.getValue());
+                        }
                     }
                 }
             }
