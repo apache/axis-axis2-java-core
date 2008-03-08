@@ -429,9 +429,8 @@ public class EndpointController {
 
         //Make sure that a ServiceDescription was created and added to the AxisService
 
-        if (axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER) != null) {
-            Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
-
+        Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+        if (param != null) {
             EndpointDescription ed = (EndpointDescription)param.getValue();
             param = axisSvc.getParameter(EndpointContextMap.class.getCanonicalName());
             if(param != null) {
