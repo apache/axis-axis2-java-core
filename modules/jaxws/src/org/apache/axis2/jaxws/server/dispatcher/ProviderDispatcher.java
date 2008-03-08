@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.InvocationHelper;
 import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
@@ -367,6 +368,14 @@ public class ProviderDispatcher extends JavaDispatcher {
         if (log.isDebugEnabled()) {
             log.debug("Create XMLFault for createFaultResponse");
         }
+        
+        // call the InvocationListener instances before marshalling
+        // the fault into a message
+        Throwable faultMessage = InvocationHelper.determineMappedException(fault, request);
+        if(faultMessage != null) {
+            fault = faultMessage;
+        }
+        
         Message m;
         try {
             EndpointDescription endpointDesc = request.getEndpointDescription();

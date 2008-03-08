@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.InvocationHelper;
 import org.apache.axis2.jaxws.server.InvocationListener;
 import org.apache.axis2.jaxws.server.InvocationListenerBean;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -145,6 +146,10 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 } 
                 catch (Exception e) {
                     fault = ClassUtils.getRootCause(e);
+                    Throwable newFault = InvocationHelper.determineMappedException(fault, eic);
+                    if(newFault != null) {
+                        fault = newFault;
+                    }
                     faultThrown = true;
                 }
                 
@@ -153,6 +158,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                     if (log.isDebugEnabled()) {
                         log.debug("Invocation pattern was one way, work complete.");
                     }
+                    
                     responseReady(eic);
                     return null;
                 }

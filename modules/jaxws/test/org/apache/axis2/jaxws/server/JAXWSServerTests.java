@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -111,6 +112,74 @@ public class JAXWSServerTests extends TestCase {
         assertTrue((Boolean) response.getProperty("responseReady"));
     }
     
+    /**
+     * This will test that exceptions are properly handed down to the registered
+     * instances of InvocationListener objects.
+     */
+    public void testHandleException() {
+        EndpointController controller = new EndpointController();
+        EndpointCallback callback = new EndpointCallback();
+        EndpointInvocationContext eic = new EndpointInvocationContextImpl();
+        MessageContext request = new MessageContext();
+        eic.setRequestMessageContext(request);
+        eic.addInvocationListener(new TestInvocationListener());
+        Exception e = new Exception();
+        InvocationHelper.callListenersForException(e, eic);
+        assertNotNull(request.getProperty(org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION));
+        
+        // now test that in the case this happens on a response, we set values 
+        // on the response message context
+        MessageContext response = new MessageContext();
+        eic.setResponseMessageContext(response);
+        eic.addInvocationListener(new TestInvocationListener());
+        e = new Exception();
+        InvocationHelper.callListenersForException(e, eic);
+        assertNotNull(response.getProperty(org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION));
+        
+        // now test the InvocationHelper method that accepts a throwable and
+        // MessageContext
+        controller = new EndpointController();
+        callback = new EndpointCallback();
+        eic = new EndpointInvocationContextImpl();
+        request = new MessageContext();
+        eic.setRequestMessageContext(request);
+        eic.addInvocationListener(new TestInvocationListener());
+        e = new Exception();
+        request.setProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST, 
+                            eic.getInvocationListeners());
+        InvocationHelper.callListenersForException(e, request);
+        assertNotNull(request.getProperty(org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION));
+        
+    }
+    
+    /**
+     * This test will verify that the InvocationHelper.determineMappedException method is 
+     * capable of correctly identifying the method to be thrown on the server-side.
+     */
+    public void testDetermineException() {
+        
+        // test the signature of determineMappedException that takes an EndpointInvocationContext
+        EndpointController controller = new EndpointController();
+        EndpointInvocationContext eic = new EndpointInvocationContextImpl();
+        MessageContext request = new MessageContext();
+        eic.setRequestMessageContext(request);
+        eic.addInvocationListener(new TestInvocationListener());
+        Throwable t = InvocationHelper.determineMappedException(new ArrayIndexOutOfBoundsException(), eic);
+        assertNotNull(t);
+        assertTrue(t.getClass().getName().equals(NullPointerException.class.getName()));
+        
+        // test the signature of determineMappedException that takes a MessageContext
+        controller = new EndpointController();
+        request = new MessageContext();
+        List<InvocationListener> invocationListeners = new ArrayList<InvocationListener>();
+        invocationListeners.add(new TestInvocationListener());
+        request.setProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST, 
+                            invocationListeners);
+        t = InvocationHelper.determineMappedException(new ArrayIndexOutOfBoundsException(), request);
+        assertNotNull(t);
+        assertTrue(t.getClass().getName().equals(NullPointerException.class.getName()));
+    }
+    
     static class TestInvocationProcessorFactory1 implements InvocationListenerFactory {
         public InvocationListener createInvocationListener(MessageContext context) {
             return new TestInvocationListener();
@@ -131,9 +200,22 @@ public class JAXWSServerTests extends TestCase {
                 bean.getEndpointInvocationContext().getRequestMessageContext().
                     setProperty("requestReceived", true);
             }
-            else {
+            else if (bean.getState().equals(InvocationListenerBean.State.RESPONSE)){
                 bean.getEndpointInvocationContext().getResponseMessageContext().
                     setProperty("responseReady", true);
+            }
+        }
+        
+        public void notifyOnException(InvocationListenerBean bean) {
+            if(bean.getState().equals(InvocationListenerBean.State.REQUEST)) {
+                bean.getEndpointInvocationContext().getRequestMessageContext().
+                    setProperty(org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION, 
+                                new NullPointerException());
+            }
+            else if (bean.getState().equals(InvocationListenerBean.State.RESPONSE)){
+                bean.getEndpointInvocationContext().getResponseMessageContext().
+                    setProperty(org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION, 
+                                new NullPointerException());
             }
         }
     }

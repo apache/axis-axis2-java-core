@@ -35,6 +35,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
+import org.apache.axis2.jaxws.server.InvocationHelper;
 import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
 import org.apache.axis2.jaxws.spi.Constants;
@@ -326,6 +327,15 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     }
     
     public MessageContext createFaultResponse(MessageContext request, Protocol p, Throwable t) {
+        
+        // call the InvocationListener instances before marshalling
+        // the fault into a message
+        // call the InvocationListener instances before marshalling
+        // the fault into a message
+        Throwable faultMessage = InvocationHelper.determineMappedException(t, request);
+        if(faultMessage != null) {
+            t = faultMessage;
+        }
         
         MethodMarshaller marshaller = getMethodMarshaller(p, request.getOperationDescription(),
                                                           request);

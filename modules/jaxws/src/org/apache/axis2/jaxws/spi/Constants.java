@@ -56,6 +56,16 @@ public class Constants {
     // one that was used to create the request
     public static final String CACHE_CLASSLOADER = "CACHE_CLASSLOADER";
     
+    // Value = List
+    // Usage: Store list of InvocationListener instances for a given request/response
+    public static final String INVOCATION_LISTENER_LIST = 
+        "org.apache.axis2.jaxws.spi.INVOCATION_LISTENER_LIST";
+    
+    // Value = Throwable
+    // Usage: Store Throwable type that should be used when constructing message to be
+    // sent back to the client
+    public static final String MAPPED_EXCEPTION = "org.apache.axis2.jaxws.spi.MAPPED_EXCEPTION";
+    
     /** Intentionally Private */
     private Constants() {
     }

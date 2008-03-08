@@ -91,16 +91,15 @@ public class EndpointController {
         if (log.isDebugEnabled()) {
             log.debug("Invocation pattern: synchronous");
         }
-
-        boolean good = handleRequest(eic);
-
-        if (!good) {
-            return eic;
-        }
         
         MessageContext request = eic.getRequestMessageContext();
-        MessageContext response = null;
         try {
+            boolean good = handleRequest(eic);
+
+            if (!good) {
+                return eic;
+            }
+            MessageContext response = null;
             EndpointDispatcher dispatcher = eic.getDispatcher();
             if (request != null && dispatcher != null) {
                 response = dispatcher.invoke(request);    
@@ -110,13 +109,16 @@ public class EndpointController {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
+            Throwable toBeThrown = InvocationHelper.determineMappedException(e, eic);
+            if(toBeThrown == null) {
+                toBeThrown = e;
+            }
+            throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
             // Passed pivot point
             request.getMessage().setPostPivot();
+            handleResponse(eic);    
         }
-        
-        handleResponse(eic);            
         
         return eic;
     }
@@ -126,14 +128,13 @@ public class EndpointController {
             log.debug("Invocation pattern: asynchronous");
         }
         
-        boolean good = handleRequest(eic);
-
-        if (!good) {
-            return;
-        }
-        
         MessageContext request = eic.getRequestMessageContext();
         try {
+            boolean good = handleRequest(eic);
+
+            if (!good) {
+                return;
+            }
             EndpointDispatcher dispatcher = eic.getDispatcher();
             if (request != null && dispatcher != null) {
                 dispatcher.invokeAsync(request, eic.getCallback());    
@@ -142,7 +143,11 @@ public class EndpointController {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
+            Throwable toBeThrown = InvocationHelper.determineMappedException(e, eic);
+            if(toBeThrown == null) {
+                toBeThrown = e;
+            }
+            throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
             // FIXME (NLG): Probably need to revisit this location.  Should it be moved down?
             // Passed pivot point
@@ -157,14 +162,14 @@ public class EndpointController {
             log.debug("Invocation pattern: one-way");
         }
     
-        boolean good = handleRequest(eic);
 
-        if (!good) {
-            return;
-        }
-        
         MessageContext request = eic.getRequestMessageContext();
         try {
+            boolean good = handleRequest(eic);
+
+            if (!good) {
+                return;
+            }
             EndpointDispatcher dispatcher = eic.getDispatcher();
             if (request != null && dispatcher != null) {
                 dispatcher.invokeOneWay(request);    
@@ -173,7 +178,11 @@ public class EndpointController {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
         } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
+            Throwable toBeThrown = InvocationHelper.determineMappedException(e, eic);
+            if(toBeThrown == null) {
+                toBeThrown = e;
+            }
+            throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
             // Passed pivot point
             request.getMessage().setPostPivot();
@@ -184,31 +193,7 @@ public class EndpointController {
     
     protected boolean handleRequest(EndpointInvocationContext eic) {
         
-        requestReceived(eic);
-        
-        MessageContext request = eic.getRequestMessageContext();
-        
-        Class serviceEndpoint = getServiceImplementation(request);
-        EndpointDescription endpointDesc = getEndpointDescription(request, serviceEndpoint);
-        request.setEndpointDescription(endpointDesc);
-        
-        //  TODO: review: make sure the handlers are set on the InvocationContext
-        //  This implementation of the JAXWS runtime does not use Endpoint, which
-        //  would normally be the place to initialize and store the handler list.
-        //  In lieu of that, we will have to intialize and store them on the 
-        //  InvocationContext.  also see the InvocationContextFactory.  On the client
-        //  side, the binding is not yet set when we call into that factory, so the
-        //  handler list doesn't get set on the InvocationContext object there.  Thus
-        //  we gotta do it here.
-        //  
-        //  Since we're on the server, and there apparently is no Binding object
-        //  anywhere to be found...
-        if (eic.getHandlers() == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No handlers found on the InvocationContext, initializing handler list.");
-            }
-            eic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
-        }
+
 
         //Not needed since this is already handled when eic reaches this level
         //if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
@@ -221,6 +206,32 @@ public class EndpointController {
         MessageContext responseMsgContext = null;
 
         try {
+            requestReceived(eic);
+            
+            MessageContext request = eic.getRequestMessageContext();
+            
+            Class serviceEndpoint = getServiceImplementation(request);
+            EndpointDescription endpointDesc = getEndpointDescription(request, serviceEndpoint);
+            request.setEndpointDescription(endpointDesc);
+            
+            //  TODO: review: make sure the handlers are set on the InvocationContext
+            //  This implementation of the JAXWS runtime does not use Endpoint, which
+            //  would normally be the place to initialize and store the handler list.
+            //  In lieu of that, we will have to intialize and store them on the 
+            //  InvocationContext.  also see the InvocationContextFactory.  On the client
+            //  side, the binding is not yet set when we call into that factory, so the
+            //  handler list doesn't get set on the InvocationContext object there.  Thus
+            //  we gotta do it here.
+            //  
+            //  Since we're on the server, and there apparently is no Binding object
+            //  anywhere to be found...
+            if (eic.getHandlers() == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No handlers found on the InvocationContext, initializing handler list.");
+                }
+                eic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
+            }
+            
             // Get the service instance.  This will run the @PostConstruct code.
             ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
                 FactoryRegistry.getFactory(ServiceInstanceFactory.class);
@@ -292,7 +303,11 @@ public class EndpointController {
            } 
         } catch (Exception e) {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
-            throw ExceptionFactory.makeWebServiceException(e);  
+            Throwable toBeThrown = InvocationHelper.determineMappedException(e, eic);
+            if(toBeThrown == null) {
+                toBeThrown = e;
+            }
+            throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
         	// at this point, we are done with handler instances on the server; call @PreDestroy on all of them
             HandlerLifecycleManager hlm = createHandlerlifecycleManager();
@@ -551,6 +566,9 @@ public class EndpointController {
                     }
                 }
             }
+            MessageContext request = eic.getRequestMessageContext();
+            request.setProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST, 
+                                eic.getInvocationListeners());
         }
     }
     
@@ -581,4 +599,5 @@ public class EndpointController {
                 .getFactory(HandlerLifecycleManagerFactory.class);
         return elmf.createHandlerLifecycleManager();
     }
+    
 }

@@ -108,6 +108,14 @@ public class EndpointInvocationContextImpl extends InvocationContextImpl
     
     /*
      * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#setInvocationListeners(List<InvocationListener> listeners)
+     */
+    public void setInvocationListeners(List<InvocationListener> listeners) {
+        this.ilInstances = listeners;
+    }
+    
+    /*
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.server.EndpointInvocationContext#addInvocationListener(InvocationListener)
      */
     public void addInvocationListener(InvocationListener listener) {

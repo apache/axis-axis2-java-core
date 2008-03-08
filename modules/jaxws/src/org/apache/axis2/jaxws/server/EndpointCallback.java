@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.server;
 
 import java.util.List;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -75,6 +76,12 @@ public class EndpointCallback {
                 t.printStackTrace();
             }
             
+            Throwable faultMessage = InvocationHelper.determineMappedException(t, eic);
+            if(faultMessage != null) {
+                t = faultMessage;
+            }
+            eic.getResponseMessageContext().setCausedByException(AxisFault.makeFault(t));
+            
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                 eic.getRequestMessageContext().getAxisMessageContext());
             
@@ -105,8 +112,12 @@ public class EndpointCallback {
             engine.sendFault(axisResponseMsgCtx);
             
         } catch (Throwable t) {
-            // TODO Auto-generated catch block
-            t.printStackTrace();
+            Throwable faultMessage = InvocationHelper.determineMappedException(t, eic);
+            if(faultMessage != null) {
+                t = faultMessage;
+            }
+            
+            throw ExceptionFactory.makeWebServiceException(AxisFault.makeFault(t));
         }
     }
     

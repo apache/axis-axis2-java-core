@@ -28,6 +28,8 @@ package org.apache.axis2.jaxws.server;
  */
 public class InvocationListenerBean {
     
+    private Throwable throwable;
+    
     public InvocationListenerBean() {
         
     }
@@ -39,7 +41,8 @@ public class InvocationListenerBean {
     
     public static enum State {
         REQUEST,
-        RESPONSE
+        RESPONSE,
+        EXCEPTION
     }
     
     private EndpointInvocationContext eic;
@@ -60,6 +63,14 @@ public class InvocationListenerBean {
 
     public void setState(State state) {
         this.state = state;
+    }
+    
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+    
+    public Throwable getThrowable() {
+        return throwable;
     }
     
 }

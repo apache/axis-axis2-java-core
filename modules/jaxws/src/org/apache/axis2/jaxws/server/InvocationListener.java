@@ -35,4 +35,14 @@ public interface InvocationListener {
      */
     public void notify(InvocationListenerBean bean) throws Exception;
     
+    /**
+     * This method will be called anytime that an exception occurs
+     * within the JAX-WS server-side code flow. InvocationListener
+     * instances may change the exception being operated on by setting 
+     * the org.apache.axis2.jaxws.spi.Constants.MAPPED_EXCEPTION
+     * property on either the request or response MessageContext. The
+     * value of the property should be an instance of Throwable.
+     */
+    public void notifyOnException(InvocationListenerBean bean);
+    
 }

@@ -93,6 +93,11 @@ public interface EndpointInvocationContext extends InvocationContext {
     public void addInvocationListener(InvocationListener listener);
     
     /**
+     * Sets list of InvocationListener instances
+     */
+    public void setInvocationListeners(List<InvocationListener> listeners);
+    
+    /**
      * Gets the InvocationListener instances from the context.
      */
     public List<InvocationListener> getInvocationListeners();
