@@ -1085,7 +1085,20 @@
 								/>
 								<delete dir="target/test-classes/servicejars/BareDocLitMinService"/>								
 
-								<copy toDir="target/test-classes/">
+                                <copy toDir="target/test-classes/servicejars/StringListService/">
+                                    <fileset dir="target/test-classes">
+                                       <include name="org/apache/axis2/jaxws/stringlist/**"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/stringlist/">
+                                       <include name="META-INF/**"/>
+                                    </fileset>
+                                </copy>	
+                                <zip destfile="target/test-classes/servicejars/StringListService.jar"
+                                    basedir="${pom.basedir}/target/test-classes/servicejars/StringListService"
+                                />
+                                <delete dir="target/test-classes/servicejars/StringListService"/>								
+                                
+                                <copy toDir="target/test-classes/">
 									<fileset dir="test-resources/">
 										<include name="**/*.properties"/>
 										<include name="**/axis2.xml"/>

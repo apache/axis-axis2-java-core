@@ -25,8 +25,11 @@ import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.stringlist.sei.StringListPortType;
 import org.apache.axis2.jaxws.stringlist.sei.StringListService;
 
+import javax.xml.ws.BindingProvider;
+
 
 public class StringListTests extends AbstractTestCase {
+    String axisEndpoint = "http://localhost:6060/axis2/services/StringListPortTypeImpl.StringListPortType";
     
     public static Test suite() {
         return getTestSetup(new TestSuite(StringListTests.class));
@@ -37,6 +40,8 @@ public class StringListTests extends AbstractTestCase {
         TestLogger.logger.debug("test: " + getName());
         StringListService sls = new StringListService();
         StringListPortType portType =sls.getStringListPort();
+        BindingProvider p =	(BindingProvider)portType;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
         String[] retString = portType.stringList(new String[]{"String1","String2","String3"});
         assertNotNull(retString);
         assertTrue(retString.length == 3);
