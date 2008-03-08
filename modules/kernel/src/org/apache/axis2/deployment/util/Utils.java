@@ -124,7 +124,8 @@ public class Utils {
 
 		try {
 			handlerClass = Loader.loadClass(loader1, handlername);
-			if (handlerClass.getPackage().getName().equals(
+            Package aPackage = handlerClass.getPackage();
+            if (aPackage != null && aPackage.getName().equals(
 					"org.apache.axis2.engine")) {
 				String name = handlerClass.getName();
 				log.warn("Dispatcher " + name + " is now deprecated.");
