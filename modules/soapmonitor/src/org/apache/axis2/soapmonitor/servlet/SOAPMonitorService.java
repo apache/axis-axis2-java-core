@@ -164,12 +164,12 @@ public class SOAPMonitorService extends HttpServlet {
    response.getWriter().println("</head>");
    response.getWriter().println("<body>");
    response.getWriter().println("<object classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\" width=100% height=100% codebase=\"http://java.sun.com/products/plugin/1.3/jinstall-13-win32.cab#Version=1,3,0,0\">");
-   response.getWriter().println("<param name=code value=SOAPMonitorApplet.class>");
+   response.getWriter().println("<param name=code value=org.apache.axis2.soapmonitor.applet.SOAPMonitorApplet.class>");
    response.getWriter().println("<param name=\"type\" value=\"application/x-java-applet;version=1.3\">");
    response.getWriter().println("<param name=\"scriptable\" value=\"false\">");
    response.getWriter().println("<param name=\"port\" value=\""+port+"\">");
    response.getWriter().println("<comment>");
-   response.getWriter().println("<embed type=\"application/x-java-applet;version=1.3\" code=SOAPMonitorApplet.class width=100% height=100% port=\""+port+"\" scriptable=false pluginspage=\"http://java.sun.com/products/plugin/1.3/plugin-install.html\">"); 
+   response.getWriter().println("<embed type=\"application/x-java-applet;version=1.3\" code=org.apache.axis2.soapmonitor.applet.SOAPMonitorApplet.class width=100% height=100% port=\""+port+"\" scriptable=false pluginspage=\"http://java.sun.com/products/plugin/1.3/plugin-install.html\">"); 
    response.getWriter().println("<noembed>"); 
    response.getWriter().println("</comment>"); 
    response.getWriter().println("</noembed>"); 

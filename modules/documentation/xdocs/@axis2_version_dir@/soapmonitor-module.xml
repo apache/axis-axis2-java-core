@@ -139,7 +139,7 @@ code to the web.xml (The SOAPMonitorPort is configurable.):</p>
 &lt;CATALINA_HOME&gt;/webapps/axis2/) of the extracted WAR file. You can find
 the SOAPMonitorApplet.java in the source distribution. To compile, use the
 following command:</p>
-<pre>javac -classpath axis2-soapmonitor.jar SOAPMonitorApplet.java</pre>
+<pre>javac -classpath axis2-soapmonitor.jar org/apache/axis2/soapmonitor/applet/SOAPMonitorApplet.java</pre>
 
 <p>Alternatively, you can directly get the <strong>compiled applet
 classes</strong> from the WEB-INF/lib/soapmonitor-1.3.jar which is inside
