@@ -45,7 +45,7 @@ goto end
 rem check the AXIS2_HOME environment variable
 if not "%AXIS2_HOME%" == "" goto gotHome
 set AXIS2_HOME=%CURRENT_DIR%
-if exist "%AXIS2_HOME%\bin\start.bat" goto okHome
+if exist "%AXIS2_HOME%\bin\axis2.bat" goto okHome
 
 rem guess the home. Jump one directory up to check if that is the home
 cd ..
