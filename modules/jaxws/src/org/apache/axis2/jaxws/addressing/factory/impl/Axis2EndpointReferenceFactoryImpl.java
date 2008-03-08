@@ -23,14 +23,12 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.metadata.ServiceName;
-import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
+import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -95,10 +93,7 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
             //This code is locate here instead of in the createEndpointReference(QName, QName)
             //method so that if the address is also specified the EPR metadata will still be
             //filled in correctly.
-            if (serviceName != null && portName != null) {
-                ServiceName service = new ServiceName(serviceName, portName.getLocalPart());
-                EndpointReferenceHelper.setServiceNameMetadata(axis2EPR, addressingNamespace, service);
-            }
+            EndpointReferenceUtils.addService(axis2EPR, serviceName, portName, addressingNamespace);
 
             if (wsdlDocumentLocation != null) {
             	URL wsdlURL = new URL(wsdlDocumentLocation);
@@ -126,11 +121,10 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
                 		//TODO NLS enable
                 		if (!found)
                 			throw new IllegalStateException("The specified port name does not exist in the specified WSDL service.");
-                	}
+
+                        EndpointReferenceUtils.addLocation(axis2EPR, portName.getNamespaceURI(), wsdlDocumentLocation, addressingNamespace);
+                    }
             	}
-            	
-                WSDLLocation wsdlLocation = new WSDLLocation(portName.getNamespaceURI(), wsdlDocumentLocation);
-                EndpointReferenceHelper.setWSDLLocationMetadata(axis2EPR, addressingNamespace, wsdlLocation);
             }
         }
         catch (IllegalStateException ise) {

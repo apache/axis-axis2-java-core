@@ -20,7 +20,6 @@ package org.apache.axis2.addressing.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;

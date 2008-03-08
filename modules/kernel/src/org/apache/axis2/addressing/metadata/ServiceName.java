@@ -20,7 +20,6 @@ package org.apache.axis2.addressing.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
@@ -110,7 +109,7 @@ public class ServiceName {
      * <p>or</p>
      * <p>
      * OMElement omElement =
-     * serviceName.toOM(new QName("http://www.w3.org/2007/02/addressing/metadata", "ServiceName", "wsam"));
+     * serviceName.toOM(new QName("http://www.w3.org/2007/05/addressing/metadata", "ServiceName", "wsam"));
      * </p>
      * <p>
      * the difference being whether the EndpointReference is meant to represent a 2004/08
@@ -155,7 +154,7 @@ public class ServiceName {
      * Convenience method to extract metadata from the ServiceName element.
      * 
      * <p>
-     * &lt;wsam:ServiceName xmlns:wsam="http://www.w3.org/2007/02/addressing/metadata" EndpointName="..."&gt;...&lt;/wsam:ServiceName&gt;
+     * &lt;wsam:ServiceName xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" EndpointName="..."&gt;...&lt;/wsam:ServiceName&gt;
      * </p>
      * <p>or</p>
      * <p>

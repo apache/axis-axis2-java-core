@@ -23,8 +23,8 @@ import java.io.ByteArrayOutputStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -32,6 +32,8 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.InterfaceName;
+import org.apache.axis2.addressing.metadata.ServiceName;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -49,7 +51,6 @@ public final class EndpointReferenceUtils {
      * Convert from a {@link EndpointReference} to a
      * subclass of {@link javax.xml.ws.EndpointReference}.
      * 
-     * @param <T>
      * @param axis2EPR
      * @param addressingNamespace
      * @return
@@ -60,8 +61,10 @@ public final class EndpointReferenceUtils {
         QName qname = new QName(addressingNamespace, "EndpointReference", "wsa");
         OMElement omElement =
             EndpointReferenceHelper.toOM(omFactory, axis2EPR, qname, addressingNamespace);
-        Element eprElement = XMLUtils.toDOM(omElement);
-        Source eprInfoset = new DOMSource(eprElement);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        omElement.serialize(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());        
+        Source eprInfoset = new StreamSource(bais);
         
         return convertFromSource(eprInfoset);
     }
@@ -70,9 +73,7 @@ public final class EndpointReferenceUtils {
      * Convert from a {@link Source} to a
      * subclass of {@link javax.xml.ws.EndpointReference}.
      * 
-     * @param <T>
      * @param eprInfoset
-     * @param addressingNamespace
      * @return
      * @throws Exception
      */
@@ -90,7 +91,7 @@ public final class EndpointReferenceUtils {
      * 
      * @param axis2EPR
      * @param jaxwsEPR
-     * @return
+     * @return the WS-Addressing namespace of the <code>javax.xml.ws.EndpointReference</code>.
      * @throws Exception
      */
     public static String convertToAxis2(EndpointReference axis2EPR, javax.xml.ws.EndpointReference jaxwsEPR)
@@ -103,13 +104,28 @@ public final class EndpointReferenceUtils {
         return EndpointReferenceHelper.fromOM(axis2EPR, eprElement);
     }
 
-    public static String getAddressingNamespace(Class clazz) {
+    /**
+     * 
+     * @param <T>
+     * @param clazz
+     * @return
+     */
+    public static <T extends javax.xml.ws.EndpointReference> String getAddressingNamespace(Class<T> clazz) {
         JAXWSEndpointReferenceFactory factory = (JAXWSEndpointReferenceFactory)
             FactoryRegistry.getFactory(JAXWSEndpointReferenceFactory.class);
         
         return factory.getAddressingNamespace(clazz);
     }
     
+    /**
+     * 
+     * @param address
+     * @param serviceName
+     * @param portName
+     * @param wsdlDocumentLocation
+     * @param addressingNamespace
+     * @return
+     */
     public static EndpointReference createAxis2EndpointReference(String address, QName serviceName, QName portName, String wsdlDocumentLocation, String addressingNamespace) {
         Axis2EndpointReferenceFactory factory = (Axis2EndpointReferenceFactory)
             FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
@@ -117,6 +133,11 @@ public final class EndpointReferenceUtils {
         return factory.createEndpointReference(address, serviceName, portName, wsdlDocumentLocation, addressingNamespace);
     }
     
+    /**
+     * 
+     * @param address
+     * @return
+     */
     public static EndpointReference createAxis2EndpointReference(String address) {
         Axis2EndpointReferenceFactory factory = (Axis2EndpointReferenceFactory)
             FactoryRegistry.getFactory(Axis2EndpointReferenceFactory.class);
@@ -124,6 +145,12 @@ public final class EndpointReferenceUtils {
     	return factory.createEndpointReference(address);
     }
     
+    /**
+     * 
+     * @param axis2EPR
+     * @param referenceParameters
+     * @throws Exception
+     */
     public static void addReferenceParameters(EndpointReference axis2EPR, Element...referenceParameters)
     throws Exception {
         if (referenceParameters != null) {
@@ -134,6 +161,12 @@ public final class EndpointReferenceUtils {
         }    	
     }
     
+    /**
+     * 
+     * @param axis2EPR
+     * @param metadata
+     * @throws Exception
+     */
     public static void addMetadata(EndpointReference axis2EPR, Element...metadata)
     throws Exception {
         if (metadata != null) {
@@ -144,12 +177,50 @@ public final class EndpointReferenceUtils {
         }
     }
     
-    public static void addInterface(EndpointReference axis2EPR, QName portType, QName interfaceType)
+    /**
+     * 
+     * @param axis2EPR
+     * @param portType
+     * @param addressingNamespace
+     * @throws Exception
+     */
+    public static void addInterface(EndpointReference axis2EPR, QName portType, String addressingNamespace)
     throws Exception {
     	if (portType != null) {
     		InterfaceName interfaceName = new InterfaceName(portType);
-    		OMElement omElement = interfaceName.toOM(interfaceType, omFactory);
-    		axis2EPR.addExtensibleElement(omElement);
+    		EndpointReferenceHelper.setInterfaceNameMetadata(omFactory, axis2EPR, addressingNamespace, interfaceName);
     	}
+    }
+    
+    /**
+     * 
+     * @param axis2EPR
+     * @param service
+     * @param port
+     * @param addressingNamespace
+     * @throws Exception
+     */
+    public static void addService(EndpointReference axis2EPR, QName service, QName port, String addressingNamespace)
+    throws Exception {
+        if (service != null && port != null) {
+            ServiceName serviceName = new ServiceName(service, port.getLocalPart());
+            EndpointReferenceHelper.setServiceNameMetadata(omFactory, axis2EPR, addressingNamespace, serviceName);
+        }
+    }
+    
+    /**
+     * 
+     * @param axis2EPR
+     * @param targetNamespace
+     * @param wsdlDocumentLocation
+     * @param addressingNamespace
+     * @throws Exception
+     */
+    public static void addLocation(EndpointReference axis2EPR, String targetNamespace, String wsdlDocumentLocation, String addressingNamespace)
+    throws Exception {
+        if (targetNamespace != null && wsdlDocumentLocation != null) {
+            WSDLLocation wsdlLocation = new WSDLLocation(targetNamespace, wsdlDocumentLocation);
+            EndpointReferenceHelper.setWSDLLocationMetadata(omFactory, axis2EPR, addressingNamespace, wsdlLocation);
+        }
     }
 }

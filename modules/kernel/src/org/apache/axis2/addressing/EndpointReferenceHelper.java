@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.addressing;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -29,6 +28,7 @@ import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.metadata.InterfaceName;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
 import org.apache.commons.logging.Log;
@@ -356,10 +356,13 @@ public class EndpointReferenceHelper {
     }
     
     /**
+     * Retrieves the WS-Addressing EPR ServiceName element from an EPR.
      * 
-     * @param epr
-     * @param addressingNamespace
-     * @return
+     * @param epr the EPR to retrieve the element from
+     * @param addressingNamespace the WS-Addressing namespace associated with
+     * the EPR.
+     * @return an instance of <code>ServiceName</code>. The return value is
+     * never <code>null</code>.
      * @throws AxisFault
      */
     public static ServiceName getServiceNameMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
@@ -376,14 +379,8 @@ public class EndpointReferenceHelper {
             for (int i = 0, size = elements.size(); i < size; i++) {
                 OMElement omElement = (OMElement) elements.get(i);
                 if (ServiceName.isServiceNameElement(omElement)) {
-                    try {
-                        serviceName.fromOM(omElement);
-                        break;
-                    }
-                    catch (Exception e) {
-                        //TODO NLS enable.
-                        throw new AxisFault("Metadata conversion error.", e);
-                    }
+                    serviceName.fromOM(omElement);
+                    break;
                 }
             }
         }
@@ -392,10 +389,47 @@ public class EndpointReferenceHelper {
     }
     
     /**
+     * Retrieves the WS-Addressing EPR PortType, or InterfaceName, element from an EPR,
+     * as appropriate.
      * 
-     * @param epr
-     * @param addressingNamespace
-     * @return
+     * @param epr the EPR to retrieve the element from
+     * @param addressingNamespace the WS-Addressing namespace associated with
+     * the EPR.
+     * @return an instance of <code>InterfaceName</code>. The return value is
+     * never <code>null</code>.
+     * @throws AxisFault
+     */
+    public static InterfaceName getInterfaceNameMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
+        InterfaceName interfaceName = new InterfaceName();
+        List elements = null;
+        
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace))
+            elements = epr.getExtensibleElements();
+        else
+            elements = epr.getMetaData();
+        
+        if (elements != null) {
+            //Retrieve the service name and endpoint name.
+            for (int i = 0, size = elements.size(); i < size; i++) {
+                OMElement omElement = (OMElement) elements.get(i);
+                if (InterfaceName.isInterfaceNameElement(omElement)) {
+                    interfaceName.fromOM(omElement);
+                    break;
+                }
+            }
+        }
+        
+        return interfaceName;
+    }
+    
+    /**
+     * Retrieves the wsdli:wsdlLocation attribute from an EPR.
+     * 
+     * @param epr the EPR to retrieve the attribute from
+     * @param addressingNamespace the WS-Addressing namespace associated with
+     * the EPR.
+     * @return an instance of <code>WSDLLocation</code>. The return value is
+     * never <code>null</code>.
      * @throws AxisFault
      */
     public static WSDLLocation getWSDLLocationMetadata(EndpointReference epr, String addressingNamespace) throws AxisFault {
@@ -412,14 +446,8 @@ public class EndpointReferenceHelper {
             for (int i = 0, size = attributes.size(); i < size; i++) {
                 OMAttribute omAttribute = (OMAttribute) attributes.get(i);
                 if (WSDLLocation.isWSDLLocationAttribute(omAttribute)) {
-                    try {
-                        wsdlLocation.fromOM(omAttribute);
-                        break;
-                    }
-                    catch (Exception e) {
-                        //TODO NLS enable.
-                        throw new AxisFault("Metadata conversion error.", e);
-                    }
+                    wsdlLocation.fromOM(omAttribute);
+                    break;
                 }
             }
         }
@@ -428,14 +456,18 @@ public class EndpointReferenceHelper {
     }
 
     /**
+     * Adds an instance of <code>ServiceName</code> as metadata to the specified EPR.
+     * The metadata is mapped to a WS-Addressing EPR ServiceName element.
      * 
-     * @param epr
-     * @param addressingNamespace
-     * @param serviceName
+     * @param factory an <code>OMFactory</code>
+     * @param epr the EPR to retrieve the attribute from
+     * @param addressingNamespace the WS-Addressing namespace associated with
+     * the EPR.
+     * @param serviceName an instance of <code>ServiceName</code> that contains the
+     * metadata
      * @throws AxisFault
      */
-    public static void setServiceNameMetadata(EndpointReference epr, String addressingNamespace, ServiceName serviceName) throws AxisFault {
-        OMFactory factory = OMAbstractFactory.getOMFactory();
+    public static void setServiceNameMetadata(OMFactory factory, EndpointReference epr, String addressingNamespace, ServiceName serviceName) throws AxisFault {
         if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
             OMElement omElement = serviceName.toOM(factory, ServiceName.subQName);
             epr.addExtensibleElement(omElement);
@@ -445,16 +477,43 @@ public class EndpointReferenceHelper {
             epr.addMetaData(omElement);
         }
     }
-    
+
     /**
+     * Adds an instance of <code>InterfaceName</code> as metadata to the specified EPR.
+     * The metadata is mapped to a WS-Addressing EPR PortType or InterfaceName element.
      * 
-     * @param epr
-     * @param addressingNamespace
-     * @return
+     * @param factory an <code>OMFactory</code>
+     * @param epr the EPR to retrieve the attribute from
+     * @param addressingNamespace the WS-Addressing namespace associated with
+     * the EPR.
+     * @param interfaceName an instance of <code>InterfaceName</code> that contains the
+     * metadata
      * @throws AxisFault
      */
-    public static void setWSDLLocationMetadata(EndpointReference epr, String addressingNamespace, WSDLLocation wsdlLocation) throws AxisFault {
-        OMFactory factory = OMAbstractFactory.getOMFactory();
+     public static void setInterfaceNameMetadata(OMFactory factory, EndpointReference epr, String addressingNamespace, InterfaceName interfaceName) throws AxisFault {
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+            OMElement omElement = interfaceName.toOM(factory, InterfaceName.subQName);
+            epr.addExtensibleElement(omElement);
+        }
+        else {
+            OMElement omElement = interfaceName.toOM(factory, InterfaceName.finalQName);
+            epr.addMetaData(omElement);
+        }
+    }
+    
+     /**
+      * Adds an instance of <code>WSDLLocation</code> as metadata to the specified EPR.
+      * The metadata is mapped to a wsdli:wsdlLocation attribute.
+      * 
+      * @param factory an <code>OMFactory</code>
+      * @param epr the EPR to retrieve the attribute from
+      * @param addressingNamespace the WS-Addressing namespace associated with
+      * the EPR.
+      * @param wsdlLocation an instance of <code>WSDLLocation</code> that contains the
+      * metadata
+      * @throws AxisFault
+      */
+    public static void setWSDLLocationMetadata(OMFactory factory, EndpointReference epr, String addressingNamespace, WSDLLocation wsdlLocation) throws AxisFault {
         OMAttribute attribute = wsdlLocation.toOM(factory);
 
         if (AddressingConstants.Submission.WSA_NAMESPACE.equals(addressingNamespace)) {

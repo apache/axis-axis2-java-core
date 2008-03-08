@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.addressing.metadata.InterfaceName;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.w3c.dom.Element;
@@ -179,7 +178,7 @@ public final class SubmissionEndpointReferenceBuilder {
                 EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters.toArray(ZERO_LENGTH_ARRAY));
         	
             if (portType != null)
-                EndpointReferenceUtils.addInterface(axis2EPR, portType, InterfaceName.subQName);
+                EndpointReferenceUtils.addInterface(axis2EPR, portType, addressingNamespace);
         	
             submissionEPR =
                 (SubmissionEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
@@ -194,7 +193,32 @@ public final class SubmissionEndpointReferenceBuilder {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        StringBuffer buffer = new StringBuffer();
+        
+        if (address != null) {
+            buffer.append("Address: ").append(address);
+        }
+        
+        if (serviceName != null) {
+            buffer.append(", Service name: ").append(serviceName);
+        }
+        
+        if (endpointName != null) {
+            buffer.append(", Endpoint name: ").append(endpointName);
+        }
+        
+        if (portType != null) {
+            buffer.append(", Port type: ").append(portType);
+        }
+        
+        if (referenceParameters != null) {
+            buffer.append(", Reference parameters: ").append(referenceParameters);
+        }
+        
+        if (wsdlDocumentLocation != null) {
+            buffer.append(", WSDL location: ").append(wsdlDocumentLocation);
+        }
+
+        return buffer.toString();
     }
 }

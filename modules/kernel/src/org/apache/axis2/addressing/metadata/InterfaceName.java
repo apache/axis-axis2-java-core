@@ -20,7 +20,6 @@ package org.apache.axis2.addressing.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
@@ -79,7 +78,7 @@ public class InterfaceName {
      * <p>or</p>
      * <p>
      * OMElement omElement =
-     * serviceName.toOM(new QName("http://www.w3.org/2007/02/addressing/metadata", "InterfaceName", "wsam"));
+     * serviceName.toOM(new QName("http://www.w3.org/2007/05/addressing/metadata", "InterfaceName", "wsam"));
      * </p>
      * <p>
      * the difference being whether the EndpointReference is meant to represent a 2004/08
@@ -90,7 +89,7 @@ public class InterfaceName {
      * @param fac TODO
      * @return an OMElement that can be added to the metadata of an EndpointReference.
      */
-    public OMElement toOM(QName qname, OMFactory fac) throws AxisFault {
+    public OMElement toOM(OMFactory fac, QName qname) throws AxisFault {
         String prefix = qname.getPrefix();
         if (prefix == null) {
             throw new AxisFault("The prefix cannot be null.");
@@ -117,7 +116,7 @@ public class InterfaceName {
      * Convenience method to extract metadata from an element.
      * 
      * <p>
-     * &lt;wsam:InterfaceName xmlns:wsam="http://www.w3.org/2007/02/addressing/metadata"&gt;...&lt;/wsam:ServiceName&gt;
+     * &lt;wsam:InterfaceName xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"&gt;...&lt;/wsam:ServiceName&gt;
      * </p>
      * <p>or</p>
      * <p>
