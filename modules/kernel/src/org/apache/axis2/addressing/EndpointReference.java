@@ -356,6 +356,10 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         if (metaData != null) {
             buffer.append(", Metadata: ").append(metaData);
         }
+        
+        if (metaDataAttributes != null) {
+            buffer.append(", Metadata Attributes: ").append(metaDataAttributes);
+        }
 
         if (referenceParameters != null) {
             buffer.append(", Reference Parameters: ").append(referenceParameters);
