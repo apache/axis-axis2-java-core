@@ -253,14 +253,25 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         if (transportInfo instanceof ServletBasedOutTransportInfo) {
             servletBasedOutTransportInfo =
                     (ServletBasedOutTransportInfo) transportInfo;
-            List customHeaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+            Object customHeaders = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
             if (customHeaders != null) {
-                Iterator iter = customHeaders.iterator();
-                while (iter.hasNext()) {
-                    Header header = (Header) iter.next();
-                    if (header != null) {
-                        servletBasedOutTransportInfo
-                                .addHeader(header.getName(), header.getValue());
+                if (customHeaders instanceof List) {
+                    Iterator iter = ((List) customHeaders).iterator();
+                    while (iter.hasNext()) {
+                        Header header = (Header) iter.next();
+                        if (header != null) {
+                            servletBasedOutTransportInfo
+                                    .addHeader(header.getName(), header.getValue());
+                        }
+                    }
+                } else if (customHeaders instanceof Map) {
+                    Iterator iter = ((Map) customHeaders).entrySet().iterator();
+                    while (iter.hasNext()) {
+                        Map.Entry header = (Map.Entry) iter.next();
+                        if (header != null) {
+                            servletBasedOutTransportInfo
+                                    .addHeader((String) header.getKey(), (String) header.getValue());
+                        }
                     }
                 }
             }
