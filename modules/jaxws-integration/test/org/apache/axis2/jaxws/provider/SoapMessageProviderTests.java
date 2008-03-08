@@ -94,7 +94,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     
     // TODO: test disabled due to XMLDispatch.createMessageFromValue failing to copy
     // mime header to request.  Server sample has an assert that checks for it, and fails.
-    public void _testProviderSourceXMLOnly(){
+    public void testProviderSourceXMLOnly(){
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();

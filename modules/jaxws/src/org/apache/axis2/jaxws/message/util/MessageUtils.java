@@ -200,6 +200,7 @@ public class MessageUtils {
         // Put the Headers onto the MessageContext
         Map headerMap = message.getMimeHeaders();
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
+        msgContext.setProperty(HTTPConstants.HTTP_HEADERS, headerMap);
 
         if (message.getProtocol() == Protocol.rest) {
             msgContext.setDoingREST(true);

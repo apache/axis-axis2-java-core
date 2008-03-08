@@ -74,6 +74,7 @@ public class SoapMessageMUProvider implements Provider<SOAPMessage> {
                             + AttachmentUtil.toString(response));
                 } else {
                     response = request;
+                    response.getMimeHeaders().removeAllHeaders();
                 }
             } else {
                 String badResult = "***ERROR at Service Endpoint: Received message is NULL.";

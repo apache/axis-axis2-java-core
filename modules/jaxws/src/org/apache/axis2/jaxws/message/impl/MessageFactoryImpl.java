@@ -29,13 +29,17 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.MimeHeader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 import java.util.Iterator;
+import java.util.HashMap;
 
 /** MessageFactoryImpl */
 public class MessageFactoryImpl implements MessageFactory {
@@ -86,6 +90,22 @@ public class MessageFactoryImpl implements MessageFactory {
         try {
             // Create a Message with an XMLPart from the SOAPEnvelope
             Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
+
+            MimeHeaders mimeHeaders = message.getMimeHeaders();
+            HashMap map = new HashMap();
+            Iterator iterator = mimeHeaders.getAllHeaders();
+            while (iterator.hasNext()) {
+                MimeHeader mimeHeader = (MimeHeader)iterator.next();
+                String key = mimeHeader.getName();
+                String value = mimeHeader.getValue();
+                if(key != null && value != null) {
+                    if(!HTTPConstants.HEADER_CONTENT_TYPE.equalsIgnoreCase(key)) {
+                        map.put(key, value);
+                    }
+                }
+            }
+            m.setMimeHeaders(map);
+
             if (message.countAttachments() > 0) {
                 Iterator it = message.getAttachments();
                 m.setDoingSWA(true);
