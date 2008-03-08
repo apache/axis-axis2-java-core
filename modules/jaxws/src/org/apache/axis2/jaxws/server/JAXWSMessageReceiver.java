@@ -19,20 +19,21 @@
 
 package org.apache.axis2.jaxws.server;
 
-import javax.xml.ws.Binding;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
@@ -46,6 +47,9 @@ import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.ws.Binding;
+import javax.xml.ws.WebServiceException;
 
 /**
  * The JAXWSMessageReceiver is the entry point, from the server's perspective, to the JAX-WS code.
@@ -73,20 +77,37 @@ public class JAXWSMessageReceiver implements MessageReceiver {
         //Get the name of the service impl that was stored as a parameter
         // inside of the services.xml.
         AxisService service = axisRequestMsgCtx.getAxisService();
+        
+        org.apache.axis2.description.Parameter svcClassParam =
+                service.getParameter(PARAM_SERVICE_CLASS);
+
+        if (svcClassParam == null) {
+            throw new RuntimeException(
+                    Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
+        }
+
+        Parameter endpointDescParam =
+                service.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+        if (endpointDescParam == null) {
+            ClassLoader serviceClassLoader = service.getClassLoader();
+            String serviceClass = (String) svcClassParam.getValue();
+            try {
+                Class clazz = Class.forName(serviceClass, true, service.getClassLoader());
+                ServiceDescription serviceDesc =
+                        DescriptionFactory.createServiceDescriptionFromServiceImpl(
+                                clazz, service);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(
+                        Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
+            }
+        }
         AxisOperation operation = axisRequestMsgCtx.getAxisOperation();
         String mep = operation.getMessageExchangePattern();
         if (log.isDebugEnabled()) {
             log.debug("MEP: " + mep);
         }
 
-        org.apache.axis2.description.Parameter svcClassParam =
-                service.getParameter(PARAM_SERVICE_CLASS);
         try {
-
-            if (svcClassParam == null) {
-                throw new RuntimeException(
-                        Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
-            }
 
             //This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToThread(
