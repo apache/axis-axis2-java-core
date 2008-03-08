@@ -365,4 +365,8 @@ public class CodeGenerationEngine {
         }
 
     }
+
+    public CodeGenConfiguration getConfiguration() {
+        return configuration;
+    }
 }
