@@ -158,11 +158,11 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             Parameter param = new Parameter();
             param.setName(Constants.Configuration.ARTIFACTS_TEMP_DIR);
             File f = new File((File) config.getServletContext().getAttribute("javax.servlet.context.tempdir"), "_axis2");
-            if (f.mkdirs()) {
+            if (f.exists() || f.mkdirs()) {
                 param.setValue(f);
             } else {
                 f = new File(System.getProperty("java.io.tmpdir"), "_axis2");
-                if (f.mkdirs()) {
+                if (f.exists() || f.mkdirs()) {
                     param.setValue(f);
                 } else {
                     throw new DeploymentException("Unable to create a temporary working directory");
