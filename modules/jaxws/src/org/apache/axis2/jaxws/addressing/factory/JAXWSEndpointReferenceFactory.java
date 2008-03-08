@@ -39,8 +39,9 @@ public interface JAXWSEndpointReferenceFactory {
     /**
      * Map the specified class to a supported WS-Addressing namespace.
      * 
+     * @param <T> a subclass of <code>EndpointReference</code>.
      * @param clazz the class.
      * @return the WS-Addressing namespace that is associated with the class.
      */
-    public String getAddressingNamespace(Class clazz);
+    public <T extends EndpointReference> String getAddressingNamespace(Class<T> clazz);
 }

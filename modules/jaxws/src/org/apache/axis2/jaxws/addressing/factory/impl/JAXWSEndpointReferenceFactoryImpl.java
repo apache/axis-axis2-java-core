@@ -66,12 +66,12 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
         Unmarshaller um = jaxbContext.createUnmarshaller();
         return (EndpointReference) um.unmarshal(eprInfoset);
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory#getAddressingNamespace(java.lang.Class)
      */
-    public String getAddressingNamespace(Class clazz) {
+    public <T extends EndpointReference> String getAddressingNamespace(Class<T> clazz) {
         String addressingNamespace = null;
         
         if (W3CEndpointReference.class.isAssignableFrom(clazz))
