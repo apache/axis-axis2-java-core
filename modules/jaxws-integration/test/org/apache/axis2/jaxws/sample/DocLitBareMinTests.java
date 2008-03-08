@@ -33,6 +33,7 @@ import javax.xml.ws.BindingProvider;
 
 
 public class DocLitBareMinTests extends AbstractTestCase {
+    String axisEndpoint = "http://localhost:6060/axis2/services/DocLitBareMinPortTypeImplService.DocLitBareMinPortTypeImplPort";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(DocLitBareMinTests.class));
@@ -47,6 +48,7 @@ public class DocLitBareMinTests extends AbstractTestCase {
         BareDocLitMinService service = new BareDocLitMinService();
         DocLitBareMinPortType proxy = service.getBareDocLitMinPort();
         BindingProvider p = (BindingProvider) proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
