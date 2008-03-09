@@ -56,9 +56,9 @@ public class WSDL2CodeMojo extends AbstractMojo {
     /**
      * The WSDL file, which is being read.
      *
-     * @parameter expression="${axis2.wsdl2code.wsdl}" default-value="src/main/axis2/service.wsdl"
+     * @parameter expression="${axis2.wsdl2code.wsdlFile}" default-value="src/main/axis2/service.wsdl"
      */
-    private File wsdlFile;
+    private String wsdlFile;
 
     /**
      * The output directory, where the generated sources are being created.
@@ -249,7 +249,7 @@ public class WSDL2CodeMojo extends AbstractMojo {
                 CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(wsdlFile.getPath())));
+                        getStringArray(wsdlFile)));
         //output location
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
