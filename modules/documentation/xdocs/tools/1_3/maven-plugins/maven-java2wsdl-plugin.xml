@@ -68,12 +68,13 @@ POM</a> (Project Object Model):</p>
 generate-resources phase. You can also invoke it directly from the
 command line by running the command:</p>
 <pre>
-mvn java2wsdl:java2wsdl
+mvn axis2-java2wsdl:java2wsdl
 </pre>
 <h3>The Java2WSDL Goal</h3>
 <p>By default, the plugin reads the given Java class and creates a
 file
-<strong>target/generated-resources/java2wsdl/service.xml</strong>.
+<strong>target/generated-resources/java2wsdl/service.wsdl
+</strong>.
 The Java class is given by the configuration element
 <strong>className</strong> above.</p>
 <h2>Configuration</h2>
