@@ -468,16 +468,18 @@ public class WSDL2CodeMojo extends AbstractMojo {
                             new String[]{targetResourcesFolderLocation}));
         }
 
-        Iterator iterator = options.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
-            String value = (String) entry.getValue();
-            optionMap.put(
-                    key,
-                    new CommandLineOption(
-                            key,
-                            new String[]{value}));
+        if(options != null) {
+            Iterator iterator = options.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX + entry.getKey();
+                String value = (String) entry.getValue();
+                optionMap.put(
+                        key,
+                        new CommandLineOption(
+                                key,
+                                new String[]{value}));
+            }
         }
 
         optionMap.put(

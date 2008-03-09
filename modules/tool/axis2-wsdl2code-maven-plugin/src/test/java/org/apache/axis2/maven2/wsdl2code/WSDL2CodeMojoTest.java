@@ -39,7 +39,6 @@ public class WSDL2CodeMojoTest extends AbstractMojoTestCase {
         MavenProjectStub project = new MavenProjectStub();
         project.setDependencyArtifacts(new HashSet());
         setVariableValueToObject(mojo, "project", project);
-        setVariableValueToObject(mojo, "pluginArtifacts", new ArrayList());
         setVariableValueToObject(mojo, "wsdlFile",
                                  new File(baseDir, "src/main/axis2/service.wsdl").getAbsolutePath());
         setVariableValueToObject(mojo, "outputDirectory",
