@@ -52,7 +52,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Arrays;
+import java.util.TimeZone;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 
 import junit.framework.TestCase;
 import junit.framework.Test;
@@ -347,15 +349,17 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
         assertTrue(ret==43.0f);
     }
 
+    private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     /**
      * Auto generated test method
      */
     public void testretDateTime() throws java.lang.Exception {
-
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar input = Calendar.getInstance();
         Calendar ret = stub.retDateTime(input);
         assertNotNull(ret);
-        assertEquals(ret, input);
+        assertEquals(zulu.format(input.getTime()), zulu.format(ret.getTime()));
     }
 
     /**

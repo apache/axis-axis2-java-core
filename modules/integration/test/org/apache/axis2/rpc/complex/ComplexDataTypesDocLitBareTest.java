@@ -41,6 +41,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
 
 /*
  *  ComplexDataTypesDocLitBareTest Junit test case
@@ -344,17 +346,19 @@ public class ComplexDataTypesDocLitBareTest extends
         assertTrue(ret == 43.0f);
     }
 
+    private SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     /**
      * Auto generated test method
      */
     public void testretDateTime() throws java.lang.Exception {
-
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         Calendar input = Calendar.getInstance();
         ComplexDataTypesDocLitBareStub.InDateTime req = new ComplexDataTypesDocLitBareStub.InDateTime();
         req.setInDateTime(input);
         Calendar ret = stub.retDateTime(req).getRetDateTimeResult();
         assertNotNull(ret);
-        assertEquals(ret, input);
+        assertEquals(zulu.format(input.getTime()), zulu.format(ret.getTime()));
     }
 
     /**

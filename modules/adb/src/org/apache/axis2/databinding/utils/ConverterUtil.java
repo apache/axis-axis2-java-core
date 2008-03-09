@@ -882,6 +882,7 @@ public class ConverterUtil {
                     if (rest.endsWith("Z")) {
                         // this is in gmt time zone
                         timeZoneOffSet = 0;
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         miliSecond = Integer.parseInt(rest.substring(1, rest.lastIndexOf("Z")));
                         milliSecondPartLength = rest.substring(1,rest.lastIndexOf("Z")).trim().length();
                     } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
@@ -917,6 +918,7 @@ public class ConverterUtil {
 
                 } else {
                     if (rest.startsWith("Z")) {
+                        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
                         // this is in gmt time zone
                         timeZoneOffSet = 0;
                     } else if (rest.startsWith("+") || rest.startsWith("-")) {
