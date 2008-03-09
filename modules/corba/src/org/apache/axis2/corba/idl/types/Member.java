@@ -25,9 +25,9 @@ public class Member {
 	protected String mode;
 	protected String modifier;
 
-    public static String MODE_IN = "in";
-    public static String MODE_INOUT = "inout";
-    public static String MODE_OUT = "out";
+    public static final String MODE_IN = "in";
+    public static final String MODE_INOUT = "inout";
+    public static final String MODE_OUT = "out";
 
     public DataType getDataType() {
         return dataType;
