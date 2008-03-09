@@ -689,6 +689,9 @@ public class BuilderUtil {
                 msgContext.getConfigurationContext().getAxisConfiguration();
         Builder builder = configuration
                 .getMessageBuilder(type);
+        if (builder == null) {
+            builder = configuration.getMessageBuilder(type.toLowerCase());
+        }
         if (builder != null) {
             // Check whether the request has a Accept header if so use that as the response
             // message type.
