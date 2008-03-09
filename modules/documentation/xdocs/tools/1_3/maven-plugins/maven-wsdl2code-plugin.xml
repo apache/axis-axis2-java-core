@@ -174,9 +174,15 @@ target/generated-sources/axis2/wsdl2code generated.</td>
 <td>portName</td>
 <td>${axis2.wsdl2code.portName}</td>
 <td>Port name, for which sources are being generated. By default,
-sources are generated for all ports.</td>
+sources are generated for a randomly picked port.</td>
 <td></td>
 </tr>
+    <tr>
+    <td>allPorts</td>
+    <td>${axis2.wsdl2code.allPorts}</td>
+    <td>Set this to true to generate code for all ports.</td>
+    <td>false</td>
+    </tr>
 <tr>
 <td>serviceName</td>
 <td>${axis2.wsdl2code.serviceName}</td>
