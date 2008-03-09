@@ -228,13 +228,19 @@ public class Java2WSDLMojo extends AbstractMojo {
                         Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
                         outputFile.getName() );
 
+        Artifact artifact = project.getArtifact();
         Set artifacts = project.getArtifacts();
-        String[] artifactFileNames = new String[artifacts.size() + 1];
+        String[] artifactFileNames = new String[artifacts.size() + (artifact == null ? 0 : 1)];
         int j = 0;
         for(Iterator i = artifacts.iterator(); i.hasNext(); j++) {
             artifactFileNames[j] = ((Artifact) i.next()).getFile().getAbsolutePath();
         }
-        artifactFileNames[j] = project.getArtifact().getFile().getAbsolutePath();
+        if(artifact != null) {
+            File file = artifact.getFile();
+            if(file != null){
+                artifactFileNames[j] = file.getAbsolutePath();
+            }
+        }
 
         addToOptionMap( optionMap,
                         Java2WSDLConstants.CLASSPATH_OPTION,
@@ -301,17 +307,19 @@ public class Java2WSDLMojo extends AbstractMojo {
         }
 
         ArrayList list = new ArrayList();
-        Iterator iterator = package2Namespace.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String packageName = (String) entry.getKey();
-            String namespace = (String) entry.getValue();
-            list.add(OPEN_BRACKET +
-                    packageName +
-                    COMMA +
-                    namespace +
-                    CLOSE_BRACKET);
+        if(package2Namespace != null){
+            Iterator iterator = package2Namespace.entrySet().iterator();
+    
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String packageName = (String) entry.getKey();
+                String namespace = (String) entry.getValue();
+                list.add(OPEN_BRACKET +
+                        packageName +
+                        COMMA +
+                        namespace +
+                        CLOSE_BRACKET);
+            }
         }
         addToOptionMap(optionMap,
                 Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
