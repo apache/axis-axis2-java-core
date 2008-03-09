@@ -2607,14 +2607,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
                         WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
-                        WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
             }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(
                         WSDL2Constants.ATTR_WSOAP_HEADER, bindingOperation.getName(),
-                        WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                        WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             }
         }
         if (headerparamList != null) {
@@ -3239,6 +3239,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 addAttribute(doc, "location", location, param);
                 if (header.isMustUnderstand()) {
                     addAttribute(doc, "mustUnderstand", "true", param);
+                }
+
+                if (name != null) {
+                    Element qNameElement = doc.createElement("qname");
+                    addAttribute(doc, "nsuri", name.getNamespaceURI(), qNameElement);
+                    addAttribute(doc, "localname", name.getLocalPart(), qNameElement);
+                    param.appendChild(qNameElement);
                 }
                 parameterElementList.add(param);
             }
