@@ -100,6 +100,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                     !WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageCtx.getAxisOperation().getMessageExchangePattern())) {
                 log.error(fault);
             } else {
+                fault.setFaultType(Constants.APPLICATION_FAULT);
                 throw fault;
             }
         } finally {

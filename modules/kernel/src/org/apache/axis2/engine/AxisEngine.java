@@ -511,6 +511,68 @@ public class AxisEngine {
         }
     }
 
+    /**
+     * here we assume that it is resume from an operation level handler
+     * @param msgContext
+     * @throws AxisFault
+     */
+    public static void resumeSendFault(MessageContext msgContext) throws AxisFault{
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(msgContext.getLogIDString() + " resumeSendFault:" + msgContext.getMessageID());
+        }
+        OperationContext opContext = msgContext.getOperationContext();
+
+        if (opContext != null) {
+
+            try {
+                InvocationResponse pi = invoke(msgContext, RESUMING_EXECUTION);
+
+                if (pi.equals(InvocationResponse.SUSPEND)) {
+                    log.warn(msgContext.getLogIDString() +
+                            " The resumption of this flow may function incorrectly, as the OutFaultFlow will not be used");
+                    return;
+                } else if (pi.equals(InvocationResponse.ABORT)) {
+                    flowComplete(msgContext);
+                    return;
+                } else if (!pi.equals(InvocationResponse.CONTINUE)) {
+                    String errorMsg =
+                            "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";
+                    log.error(msgContext.getLogIDString() + " " + errorMsg);
+                    throw new AxisFault(errorMsg);
+                }
+            } catch (AxisFault e) {
+                msgContext.setFailureReason(e);
+                flowComplete(msgContext);
+                throw e;
+            }
+        }
+
+        msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext()
+                .getAxisConfiguration().getOutFaultFlowPhases().clone());
+        msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
+        InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
+
+        if (pi.equals(InvocationResponse.CONTINUE)) {
+            // Actually send the SOAP Fault
+            TransportOutDescription transportOut = msgContext.getTransportOut();
+            if (transportOut == null) {
+                throw new AxisFault("Transport out has not been set");
+            }
+            TransportSender sender = transportOut.getSender();
+
+            sender.invoke(msgContext);
+            flowComplete(msgContext);
+        } else if (pi.equals(InvocationResponse.SUSPEND)) {
+        } else if (pi.equals(InvocationResponse.ABORT)) {
+            flowComplete(msgContext);
+        } else {
+            String errorMsg =
+                    "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";
+            log.error(msgContext.getLogIDString() + " " + errorMsg);
+            throw new AxisFault(errorMsg);
+        }
+    }
+
 
     /**
      * This class is used when someone invoke a service invocation with two transports

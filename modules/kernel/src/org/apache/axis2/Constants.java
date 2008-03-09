@@ -238,6 +238,14 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String DEFAULT_REST_PATH = "rest";
     public static final String DEFAULT_SERVICES_PATH = "services";
 
+    public static final int APPLICATION_FAULT = 1;
+    public static final int TRANSPORT_FAULT = 2;
+    public static final int SOAP_PROCESSING_FAULT = 3;
+
+    public static final String APPLICATION_FAULT_STRING = "applicationFault";
+    public static final String TRANSPORT_FAULT_STRING = "transportFault";
+    public static final String SOAP_PROCESSING_FAULT_STRING = "soapProcessingFault";
+
     /**
      * Field Builder Selector
      */

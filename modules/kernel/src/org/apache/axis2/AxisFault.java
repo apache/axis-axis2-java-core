@@ -620,4 +620,17 @@ public class AxisFault extends RemoteException {
     public String getMessage() {
         return message;
     }
+
+    /**
+     * this field is used to identify the axis2 fault type
+     */
+    private int faultType;
+
+    public int getFaultType() {
+        return faultType;
+    }
+
+    public void setFaultType(int faultType) {
+        this.faultType = faultType;
+    }
 }
