@@ -116,6 +116,9 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
             try {
                 for (int i = 0; i < classPathEntries.length; i++) {
                     String classPathEntry = classPathEntries[i];
+                    if(classPathEntry == null) {
+                        continue;
+                    }
                     //this should be a file(or a URL)
                     if (Java2WSDLUtils.isURL(classPathEntry)) {
                         urls[i] = new URL(classPathEntry);
