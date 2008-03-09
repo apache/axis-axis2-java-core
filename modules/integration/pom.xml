@@ -573,7 +573,7 @@
                            	<echo>${test.skip}</echo>
                             <property name="addressing_version" value="${version}"/>
                             <property name="groovy.all.version" value="${groovy.all.version}"/>
-                            <property name="maven.repo.local" value="${user.home}/.m2/repository"/>
+                            <property name="maven.repo.local" value="${settings.localRepository}"/>
                                 <path id="maven.dependency.classpath">
                                     <path refid="maven.compile.classpath"/>
                                     <path refid="maven.runtime.classpath"/>
