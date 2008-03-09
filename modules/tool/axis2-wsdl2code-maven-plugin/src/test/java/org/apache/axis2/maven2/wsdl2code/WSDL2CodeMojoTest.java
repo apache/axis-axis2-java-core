@@ -41,7 +41,7 @@ public class WSDL2CodeMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "project", project);
         setVariableValueToObject(mojo, "pluginArtifacts", new ArrayList());
         setVariableValueToObject(mojo, "wsdlFile",
-                                 new File(baseDir, "src/main/axis2/service.wsdl"));
+                                 new File(baseDir, "src/main/axis2/service.wsdl").getAbsolutePath());
         setVariableValueToObject(mojo, "outputDirectory",
                                  new File(baseDir, "target/generated-sources/axis2/wsdl2code"));
         setVariableValueToObject(mojo, "syncMode", "both");
