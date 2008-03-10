@@ -185,7 +185,7 @@ public abstract class AbstractHTTPSender {
     private String processCookieHeader(HeaderElement element) {
         String cookie = element.getName() + "=" + element.getValue();
         NameValuePair[] parameters =  element.getParameters();
-        for (int j = 0; j < parameters.length; j++) {
+        for (int j = 0; parameters != null && j < parameters.length; j++) {
             NameValuePair parameter = parameters[j];
             cookie = cookie + "; " + parameter.getName() + "=" + parameter.getValue();
         }
