@@ -762,7 +762,7 @@ and is likely to complain for certain schemas!</li>
 <li><strong>XMLBeans</strong> - XMLbeans claims that it supports
 the complete schema specification, and it is preferred if full
 schema support is needed!</li>
-<li><strong>JAX-Me</strong> - JaxMe support has been added in a
+<li><strong>JAXB-RI</strong> - JAXB2 support has been added in a
 similar manner to XMLbeans and serves as another option for the
 user</li>
 <li><strong>JibX</strong> - This is the most recent addition to the

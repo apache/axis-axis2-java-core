@@ -39,10 +39,6 @@
 			<artifactId>axis2-adb</artifactId>
 			<version>${version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.jaxme</groupId>
-			<artifactId>jaxme2</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

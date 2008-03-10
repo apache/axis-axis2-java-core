@@ -238,7 +238,7 @@ servlet container. It should look something like this:</p>
 <p>ADB is not your only option for generating Web service clients.
 Other options include <a href=
 "userguide-creatingclients-xmlbeans.html">XmlBeans</a>, <a href=
-"userguide-creatingclients-jibx.html">JiBX</a>, JAXME and
+"userguide-creatingclients-jibx.html">JiBX</a> and
 JAXBRI.</p>
 <p><strong>See the Next Section</strong> -<a href=
 "userguide-buildingservices.html#buildservices">Building

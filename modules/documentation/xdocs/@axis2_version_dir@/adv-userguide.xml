@@ -120,9 +120,7 @@ href="reference.html#wsdl2code">Axis2 Reference Document</a>.</p>
 
 <p>The parameters for the wsdl2java tool in our example are as follows.
 Please note that, for this example, we are using xmlbeans as the data binding framework, and the generated
-code will be placed in a "samples" directory. Other data binding tools you can
-use are adb (Axis data binding) and jaxme (<a
-href="http://ws.apache.org/jaxme/">JaxMe data binding</a>)</p>
+code will be placed in a "samples" directory. </p>
 <pre>wsdl2java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans 
 -o ../samples -p org.apache.axis2.userguide</pre>
 

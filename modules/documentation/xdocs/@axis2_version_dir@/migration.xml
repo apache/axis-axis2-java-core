@@ -469,7 +469,7 @@ location' be changed to:</p>
 &lt;soap:address location="http://localhost:8080/axis2/services/SimpleEndpoint"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;
 </pre>
 <p>In Axis2, the default databinding uses ADB. However, XMLBeans,
-JiBX and JaxMe are also supported. This example uses XMLBeans. For
+JiBX and JAXB-RI are also supported. This example uses XMLBeans. For
 Axis2, our example uses the following Ant task:</p>
 <pre>
 &lt;target name="wsdl2java"&gt;

@@ -84,22 +84,6 @@
 
     </xsl:template>
     <!-- #################################################################################  -->
-    <!-- ############################   jaxme template   ##############################  -->
-    <xsl:template match="databinders[@dbtype='jaxme']">
-        //Create the desired Object and provide it as the test object
-        public  java.lang.Object getTestObject(java.lang.Class type) throws java.lang.Exception{
-            Class factoryClazz = org.apache.axis2.util.Loader.loadClass(type.getPackage().getName() + ".ObjectFactory"); 
-            Object factory = factoryClazz.newInstance();   
-            java.lang.reflect.Method creatorMethod = factoryClazz.getMethod("newInstance", new Class[]{ Class.class });
-            if (creatorMethod != null) {
-                return creatorMethod.invoke(factory, null);
-            } else {
-                throw new java.lang.Exception("newInstance method not found!");
-            }
-        }
-
-    </xsl:template>
-    <!-- #################################################################################  -->
     <!-- ############################   ADB template   ###################################  -->
     <xsl:template match="databinders[@dbtype='adb']">
         //Create an ADBBean and provide it as the test object
@@ -161,7 +145,7 @@
 
     </xsl:template>
     <!-- #################################################################################  -->
-    <!-- ############################   jaxme template   ##############################  -->
+    <!-- ############################   jibx template   ##############################  -->
     <xsl:template match="databinders[@dbtype='jibx']">
         // create the desired object and provide it as the test object
         public java.lang.Object getTestObject(java.lang.Class type) throws java.lang.Exception {
