@@ -23,23 +23,17 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyRegistry;
-import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,12 +45,9 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class ListingAgent extends AbstractAgent {
 
@@ -74,13 +65,13 @@ public class ListingAgent extends AbstractAgent {
         super(aConfigContext);
     }
 
-    private void addTransportListner(String schema, int port) {
+    private void addTransportListener(String schema, int port) {
         try {
             TransportInDescription trsIn =
                     configContext.getAxisConfiguration().getTransportIn(schema);
             if (trsIn == null) {
                 trsIn = new TransportInDescription(schema);
-                HTTPSListener httspReceiver = new HTTPSListener(port, schema);
+                CustomListener httspReceiver = new CustomListener(port, schema);
                 httspReceiver.init(configContext, trsIn);
                 trsIn.setReceiver(httspReceiver);
                 configContext.getListenerManager().addListener(trsIn, true);
@@ -131,7 +122,7 @@ public class ListingAgent extends AbstractAgent {
                 portstr = "80";
             }
             try {
-                addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
+                addTransportListener(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
                 log.debug(e.toString(), e);
             }
@@ -467,78 +458,6 @@ public class ListingAgent extends AbstractAgent {
         }
 
         return null;
-    }
-
-    /**
-     * This class is just to add tarnsport at the runtime if user send requet using
-     * diffrent schemes , simly to handle http/https seperetaly
-     */
-    private class HTTPSListener implements TransportListener {
-
-        private int port;
-        private String schema;
-        private ConfigurationContext axisConf;
-
-        public HTTPSListener(int port, String schema) {
-            this.port = port;
-            this.schema = schema;
-        }
-
-        public void init(ConfigurationContext axisConf,
-                         TransportInDescription transprtIn) throws AxisFault {
-            this.axisConf = axisConf;
-            Parameter param = transprtIn.getParameter(PARAM_PORT);
-            if (param != null) {
-                this.port = Integer.parseInt((String) param.getValue());
-            }
-        }
-
-        public void start() throws AxisFault {
-        }
-
-        public void stop() throws AxisFault {
-        }
-
-        public EndpointReference[] getEPRsForService(String serviceName, String ip)
-                throws AxisFault {
-            String path = axisConf.getServiceContextPath() + "/" + serviceName;
-            if(path.charAt(0)!='/'){
-                path = '/' + path;
-            }
-            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path )};
-        }
-
-        public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return getEPRsForService(serviceName, ip)[0];
-        }
-
-        public SessionContext getSessionContext(MessageContext messageContext) {
-            HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
-                    HTTPConstants.MC_HTTP_SERVLETREQUEST);
-            SessionContext sessionContext =
-                    (SessionContext) req.getSession(true).getAttribute(
-                            Constants.SESSION_CONTEXT_PROPERTY);
-            String sessionId = null;
-            try {
-                sessionId = req.getSession().getId();
-                if (sessionContext == null) {
-                sessionContext = new SessionContext(null);
-                sessionContext.setCookieID(sessionId);
-                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                                              sessionContext);
-            }
-            } catch (Throwable t){
-                log.info("Old Servlet API :" + t);
-                return null;
-            }
-            messageContext.setSessionContext(sessionContext);
-            messageContext.setProperty(AxisServlet.SESSION_ID, sessionId);
-            return sessionContext;
-        }
-
-        public void destroy() {
-        }
-
     }
 
 }
