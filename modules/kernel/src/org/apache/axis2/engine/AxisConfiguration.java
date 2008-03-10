@@ -290,7 +290,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
-            if (axisService.getSchematargetNamespace() == null) {
+            if (axisService.getSchemaTargetNamespace() == null) {
                 axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }

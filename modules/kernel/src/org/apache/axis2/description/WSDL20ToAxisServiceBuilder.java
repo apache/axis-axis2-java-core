@@ -228,7 +228,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // Create the namespacemap
 
-            axisService.setNameSpacesMap(stringBasedNamespaceMap);
+            axisService.setNamespaceMap(stringBasedNamespaceMap);
             // TypeDefinition[] typeDefinitions =
             // description.getTypeDefinitions();
             // for(int i=0; i<typeDefinitions.length; i++){

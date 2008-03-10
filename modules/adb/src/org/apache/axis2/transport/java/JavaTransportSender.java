@@ -117,7 +117,7 @@ public class JavaTransportSender extends AbstractHandler implements TransportSen
             //Send empty body
             envelope.getBody().addChild(fac.createOMElement("item", ns));
         } else if (resObject instanceof Object[]) {
-            QName resName = new QName(service.getSchematargetNamespace(),
+            QName resName = new QName(service.getSchemaTargetNamespace(),
                     method.getName() + "Response",
                     service.getSchemaTargetNamespacePrefix());
             //create the omelement from the response array

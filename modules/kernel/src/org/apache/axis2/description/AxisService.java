@@ -1790,7 +1790,15 @@ public class AxisService extends AxisDescription {
 		this.active = active;
 	}
 
-	public String getSchematargetNamespace() {
+    /**
+     * @deprecated please use getSchemaTargetNamespace
+     * @return
+     */
+    public String getSchematargetNamespace() {
+        return schematargetNamespace;
+    }
+
+	public String getSchemaTargetNamespace() {
 		return schematargetNamespace;
 	}
 
@@ -1802,7 +1810,16 @@ public class AxisService extends AxisDescription {
 		return schematargetNamespacePrefix;
 	}
 
-	public void setSchematargetNamespacePrefix(
+    /**
+     * @deprecated please use setSchemaTargetNamespacePrefix
+     * @param schematargetNamespacePrefix
+     */
+    public void setSchematargetNamespacePrefix(
+            String schematargetNamespacePrefix) {
+        this.schematargetNamespacePrefix = schematargetNamespacePrefix;
+    }
+
+	public void setSchemaTargetNamespacePrefix(
 			String schematargetNamespacePrefix) {
 		this.schematargetNamespacePrefix = schematargetNamespacePrefix;
 	}
@@ -2147,7 +2164,7 @@ public class AxisService extends AxisDescription {
 				Java2WSDLConstants.AXIS2_XSD);
 		map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
 				Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-		axisService.setNameSpacesMap(map);
+		axisService.setNamespaceMap(map);
 		Utils.processBeanPropertyExclude(axisService);
 		axisService.setElementFormDefault(false);
 		try {
@@ -2248,12 +2265,11 @@ public class AxisService extends AxisDescription {
 		return namespaceMap;
 	}
 
-	/**
-	 * Sets the
-	 * 
-	 * @param nameSpacesMap
-	 */
-	public void setNameSpacesMap(NamespaceMap nameSpacesMap) {
+    /**
+     * @deprecated please use setNamespaceMap
+     * @param nameSpacesMap
+     */
+    public void setNameSpacesMap(NamespaceMap nameSpacesMap) {
 		this.namespaceMap = nameSpacesMap;
 	}
 

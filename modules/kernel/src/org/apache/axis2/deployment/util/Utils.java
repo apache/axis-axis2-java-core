@@ -379,19 +379,19 @@ public class Utils {
 				Java2WSDLConstants.AXIS2_XSD);
 		map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
 				Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-		axisService.setNameSpacesMap(map);
+		axisService.setNamespaceMap(map);
 		SchemaGenerator schemaGenerator;
 		Parameter generateBare = axisService
 				.getParameter(Java2WSDLConstants.DOC_LIT_BARE_PARAMETER);
 		if (generateBare != null && "true".equals(generateBare.getValue())) {
 			schemaGenerator = new DocLitBareSchemaGenerator(serviceClassLoader,
 					serviceClass.trim(),
-					axisService.getSchematargetNamespace(), axisService
+					axisService.getSchemaTargetNamespace(), axisService
 							.getSchemaTargetNamespacePrefix(), axisService);
 		} else {
 			schemaGenerator = new DefaultSchemaGenerator(serviceClassLoader,
 					serviceClass.trim(),
-					axisService.getSchematargetNamespace(), axisService
+					axisService.getSchemaTargetNamespace(), axisService
 							.getSchemaTargetNamespacePrefix(), axisService);
 		}
 		schemaGenerator.setExcludeMethods(excludeOperations);

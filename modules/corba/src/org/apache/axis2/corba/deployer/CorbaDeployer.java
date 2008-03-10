@@ -421,12 +421,12 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
         NamespaceMap map = new NamespaceMap();
         map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX, Java2WSDLConstants.AXIS2_XSD);
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX, Java2WSDLConstants.URI_2001_SCHEMA_XSD);
-        axisService.setNameSpacesMap(map);
+        axisService.setNamespaceMap(map);
 
         Parameter interfaceNameParam = axisService.getParameter(INTERFACE_NAME);
         String interfaceName = (String) ((interfaceNameParam==null) ? null : interfaceNameParam.getValue());
         SchemaGenerator schemaGenerator = new SchemaGenerator(idl, interfaceName,
-                axisService.getSchematargetNamespace(),
+                axisService.getSchemaTargetNamespace(),
                 axisService.getSchemaTargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
         schemaGenerator.setNonRpcMethods(nonRpcMethods);

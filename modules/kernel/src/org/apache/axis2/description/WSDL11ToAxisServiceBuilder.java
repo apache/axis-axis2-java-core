@@ -316,7 +316,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // setting target name space
             axisService.setTargetNamespace(wsdl4jDefinition.getTargetNamespace());
-            axisService.setNameSpacesMap(new NamespaceMap(wsdl4jDefinition.getNamespaces()));
+            axisService.setNamespaceMap(new NamespaceMap(wsdl4jDefinition.getNamespaces()));
 
             //TODO : find the service also in imported wsdls
             Service wsdl4jService = findService(wsdl4jDefinition);

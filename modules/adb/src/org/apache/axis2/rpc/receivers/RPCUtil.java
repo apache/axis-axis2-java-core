@@ -34,7 +34,6 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
@@ -324,7 +323,7 @@ public class RPCUtil {
                                            SOAPEnvelope envelope, String partName) {
         QName resName;
         if (service.isElementFormDefault()) {
-            resName = new QName(service.getSchematargetNamespace(),
+            resName = new QName(service.getSchemaTargetNamespace(),
                     partName,
                     service.getSchemaTargetNamespacePrefix());
         } else {
@@ -352,7 +351,7 @@ public class RPCUtil {
         if (resObject == null) {
             QName resName;
             if (service.isElementFormDefault()) {
-                resName = new QName(service.getSchematargetNamespace(),
+                resName = new QName(service.getSchemaTargetNamespace(),
                         RETURN_WRAPPER,
                         service.getSchemaTargetNamespacePrefix());
             } else {
@@ -363,7 +362,7 @@ public class RPCUtil {
             StAXOMBuilder stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
                             OMAbstractFactory.getSOAP11Factory(), parser);
-            ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+            ns = fac.createOMNamespace(service.getSchemaTargetNamespace(),
                     service.getSchemaTargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
             bodyChild.addChild(stAXOMBuilder.getDocumentElement());

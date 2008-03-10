@@ -40,7 +40,6 @@ import org.apache.axis2.util.XMLPrettyPrinter;
 
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -247,7 +246,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		axisService.setTargetNamespacePrefix(getTargetNamespacePrefix());
 		axisService.setSchemaTargetNamespace(getSchemaTargetNamespace());
 		axisService
-				.setSchematargetNamespacePrefix(getSchemaTargetNamespacePrefix());
+				.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
 		String uri = locationUri;
 		if (uri == null) {
 			uri = DEFAULT_LOCATION_URL

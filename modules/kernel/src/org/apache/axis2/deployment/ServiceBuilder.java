@@ -20,10 +20,7 @@
 package org.apache.axis2.deployment;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -33,18 +30,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisBinding;
-import org.apache.axis2.description.AxisBindingMessage;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
@@ -53,19 +44,15 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
-import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -240,7 +227,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 				// package to namespace mapping. This will be an element that
 				// maps pkg names to a namespace
-				// when this is doing AxisService.getSchematargetNamespace will
+				// when this is doing AxisService.getSchemaTargetNamespace will
 				// be overridden
 				// This will be <mapping/> with @namespace and @package
 				Iterator mappingIterator = schemaElement
