@@ -68,6 +68,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
+/**
+ * Implementation of WSDLWrapper interface which controls access
+ * to the underlying Definition (WSDLDefinitionWrapper).
+ * The WSDLDefinitionWrapper implementation uses various strategies
+ * to control its in-memory footprint.
+ */
 public class WSDL4JWrapper implements WSDLWrapper {
     private static final Log log = LogFactory.getLog(WSDL4JWrapper.class);
 
@@ -77,21 +83,66 @@ public class WSDL4JWrapper implements WSDLWrapper {
     private String wsdlExplicitURL;
     private ConfigurationContext configContext;
     private JAXWSCatalogManager catalogManager = null;
+    private boolean limitMemory = false;
+    private int memoryType = 0;
+    
    /**
     * Constructor
     *
     * @param URL   The URL for the WSDL
+    * @deprecated Use a constructor that passes in the ConfigContext, or memoryLimit parameter
     */
     public WSDL4JWrapper(URL wsdlURL) throws FileNotFoundException, UnknownHostException,
             ConnectException, IOException, WSDLException {
         super();
         this.commonPartsURLConstructor(wsdlURL, (ConfigurationContext)null);
     }
+    
+    /**
+     * @param wsdlURL
+     * @param limitMemory true if memory should be limited
+     * @throws FileNotFoundException
+     * @throws UnknownHostException
+     * @throws ConnectException
+     * @throws IOException
+     * @throws WSDLException
+     */
+    public WSDL4JWrapper(URL wsdlURL, boolean limitMemory, int memoryType) throws FileNotFoundException, UnknownHostException,
+    ConnectException, IOException, WSDLException {
+        super();
+        this.limitMemory = limitMemory;
+        this.memoryType = memoryType;
+        this.commonPartsURLConstructor(wsdlURL, (ConfigurationContext)null);
+    }
 
+    /**
+     * @param wsdlURL
+     * @param catalogManager
+     * @throws FileNotFoundException
+     * @throws UnknownHostException
+     * @throws ConnectException
+     * @throws IOException
+     * @throws WSDLException
+     * @deprecated use a constructor with a ConfigurationContext or limitMemory parameter
+     */
     public WSDL4JWrapper(URL wsdlURL, JAXWSCatalogManager catalogManager) throws FileNotFoundException, 
+    UnknownHostException, ConnectException, IOException, WSDLException {
+        this(wsdlURL, catalogManager, false, 0);
+    }
+    
+    public WSDL4JWrapper(URL wsdlURL, JAXWSCatalogManager catalogManager, boolean limitMemory) throws FileNotFoundException, 
     UnknownHostException, ConnectException, IOException, WSDLException {
         super();
         this.catalogManager = catalogManager;
+        this.limitMemory = limitMemory;
+        this.commonPartsURLConstructor(wsdlURL, (ConfigurationContext)null);
+    }
+    public WSDL4JWrapper(URL wsdlURL, JAXWSCatalogManager catalogManager, boolean limitMemory, int memoryType) throws FileNotFoundException, 
+    UnknownHostException, ConnectException, IOException, WSDLException {
+        super();
+        this.catalogManager = catalogManager;
+        this.limitMemory = limitMemory;
+        this.memoryType = memoryType;
         this.commonPartsURLConstructor(wsdlURL, (ConfigurationContext)null);
     }
         
@@ -375,10 +426,34 @@ public class WSDL4JWrapper implements WSDLWrapper {
     *
     * @param URL   The URL for the WSDL
     * @param Definition   Definition for the WSDL
+    * @deprecated Use a constructor that has a ConfigContext or memoryLimit parameter
     */
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException {
         this(wsdlURL, wsdlDefinition, null, null);
     }
+    
+    /**
+     * Constructor
+     *
+     * @param URL   The URL for the WSDL
+     * @param Definition   Definition for the WSDL
+     * @param ConfigurationContext
+     */
+     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, 
+                          ConfigurationContext configContext) throws WSDLException {
+         this(wsdlURL, wsdlDefinition, configContext, null);
+     }
+     
+     /**
+      * Constructor
+      *
+      * @param URL   The URL for the WSDL
+      * @param Definition   Definition for the WSDL
+      * @param limitMemory boolean
+      */
+      public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, boolean limitMemory, int memoryType) throws WSDLException {
+          this(wsdlURL, wsdlDefinition, null, null, limitMemory, memoryType);
+      }
 
     /**
      * Constructor
@@ -387,8 +462,22 @@ public class WSDL4JWrapper implements WSDLWrapper {
      * @param Definition   Definition for the WSDL
      * @param JAXWSCatalogManager Catalog Manager to use for locating external resources
      */
+    public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, 
+                         JAXWSCatalogManager catalogManager, 
+                         boolean limitMemory, int memoryType) throws WSDLException {
+        this(wsdlURL, wsdlDefinition, null, catalogManager, limitMemory, memoryType);
+    }
+    
+    /**
+     * Constructor
+     *
+     * @param URL   The URL for the WSDL
+     * @param Definition   Definition for the WSDL
+     * @param JAXWSCatalogManager Catalog Manager to use for locating external resources
+     * @deprecated Use a constructor with a ConfigurationContext or memory limit setting
+     */
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, JAXWSCatalogManager catalogManager) throws WSDLException {
-        this(wsdlURL, wsdlDefinition, null, catalogManager);
+        this(wsdlURL, wsdlDefinition, null, catalogManager, false, 0);
     }
     
     /**
@@ -401,49 +490,102 @@ public class WSDL4JWrapper implements WSDLWrapper {
     */
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, ConfigurationContext configContext,
             JAXWSCatalogManager catalogManager) throws WSDLException {
-        super();
-        if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(URL,Definition,ConfigContext) entry"); }
-
-        this.configContext = configContext;
-        this.catalogManager = catalogManager;
-        this.wsdlURL = wsdlURL;
-        if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
-        if (configContext != null) {
-                this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL, configContext.getAxisConfiguration() );
-            } else {
-                this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL);
-            }
-        } else {
-            this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
-        }
+        this(wsdlURL, wsdlDefinition, configContext, catalogManager, false, 0);
     }
+    
+    /**
+     * Full Constructor
+     */
+     private WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition, ConfigurationContext configContext,
+             JAXWSCatalogManager catalogManager, boolean limitMemory, int memoryType) throws WSDLException {
+         super();
+         if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(...) entry"); }
+
+         this.configContext = configContext;
+         this.catalogManager = catalogManager;
+         this.wsdlURL = wsdlURL;
+         this.limitMemory = limitMemory;  // Only used if configContext is not present
+         this.memoryType = memoryType;
+         if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
+             if (configContext != null && configContext.getAxisConfiguration() != null) {
+                 this.wsdlDefinition = 
+                     new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL, 
+                                               configContext.getAxisConfiguration() );
+             } else {
+                 this.wsdlDefinition = 
+                     new WSDLDefinitionWrapper(wsdlDefinition, wsdlURL, 
+                                               limitMemory, 2);
+             }
+         } else {
+             this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
+         }
+     }
 
 
    /**
     * Constructor
     *
     * @param Definition   Definition for the WSDL
+    * @deprecated Use WSDL4JWrapper(Definition,ConfigurationContext)
     */
     public WSDL4JWrapper(Definition wsdlDefinition) throws WSDLException {
-        super();
-        if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(Definition) entry"); }
-
-        if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
-            this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition);
-        } else {
-            this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
-        }
-
-        if (this.wsdlDefinition != null) {
-            String baseURI = wsdlDefinition.getDocumentBaseURI();
-            try {
-                wsdlURL = new URL(baseURI);
-            } catch (Exception ex) {
-                // just absorb the error
-            }
-        }
+        this(wsdlDefinition, false, 0);
+        
     }
+    
+    /**
+     * Constructor
+     *
+     * @param Definition   Definition for the WSDL
+     * @boolean limitMemory
+     */
+     public WSDL4JWrapper(Definition wsdlDefinition, boolean limitMemory, int memoryType) throws WSDLException {
+         if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(Definition, boolean) entry"); }
 
+         this.limitMemory = limitMemory;
+         this.memoryType = memoryType;
+         if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
+             this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, null, limitMemory, memoryType);
+         } else {
+             this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
+         }
+
+         if (this.wsdlDefinition != null) {
+             String baseURI = wsdlDefinition.getDocumentBaseURI();
+             try {
+                 wsdlURL = new URL(baseURI);
+             } catch (Exception ex) {
+                 // just absorb the error
+             }
+         }
+     }
+
+    /**
+     * Constructor
+     *
+     * @param Definition   Definition for the WSDL
+     * @param ConfigurationContext
+     */
+     public WSDL4JWrapper(Definition wsdlDefinition, 
+                          ConfigurationContext configContext) throws WSDLException {
+         super();
+         if (log.isDebugEnabled() ) { log.debug("WSDL4JWrapper(Definition) entry"); }
+
+         if ((wsdlDefinition != null) && !(wsdlDefinition instanceof WSDLDefinitionWrapper)) {
+             this.wsdlDefinition = new WSDLDefinitionWrapper(wsdlDefinition, configContext.getAxisConfiguration());
+         } else {
+             this.wsdlDefinition = (WSDLDefinitionWrapper) wsdlDefinition;
+         }
+
+         if (this.wsdlDefinition != null) {
+             String baseURI = wsdlDefinition.getDocumentBaseURI();
+             try {
+                 wsdlURL = new URL(baseURI);
+             } catch (Exception ex) {
+                 // just absorb the error
+             }
+         }
+     }
     //TODO: Perform validations for each method to check for null parameters on QName.
 
     /*
@@ -453,10 +595,10 @@ public class WSDL4JWrapper implements WSDLWrapper {
         if (wsdlDefinition == null) {
             Definition def = loadDefinition();
             if (def != null) {
-            if (configContext != null) {
+                if (configContext != null) {
                     wsdlDefinition = new WSDLDefinitionWrapper(def, configContext.getAxisConfiguration() );
                 } else {
-                    wsdlDefinition = new WSDLDefinitionWrapper(def, (AxisConfiguration)null);
+                    wsdlDefinition = new WSDLDefinitionWrapper(def, wsdlURL, limitMemory, memoryType);
                 }
             }
         }

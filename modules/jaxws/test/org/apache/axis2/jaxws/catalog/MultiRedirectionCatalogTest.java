@@ -76,7 +76,7 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
 			catalogManager.setCatalogFiles(getURLFromLocation(catalogFile).toString());
-            WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
+            WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager, false, 0);
 	    	Definition wsdlDef = w4j.getDefinition();
 	    	assertNotNull(wsdlDef);   
 	    	QName portTypeName = new QName("http://www.example.com/test/calculator",
@@ -108,7 +108,7 @@ public class MultiRedirectionCatalogTest extends TestCase {
 	    try{
 			OASISCatalogManager catalogManager = new OASISCatalogManager();
             catalogManager.setCatalogFiles(getURLFromLocation(catalogFile).toString());
-	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager);
+	    	WSDL4JWrapper w4j = new WSDL4JWrapper(url, catalogManager, false, 0);
 	    	w4j.getDefinition();
 	    	fail("Should have received a WSDLException due to the invalid WSDL location " 
 	        		+ "not redirected by the catalog.");

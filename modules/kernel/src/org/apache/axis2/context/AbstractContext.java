@@ -23,16 +23,25 @@ package org.apache.axis2.context;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.context.Replicator;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This is the top most level of the Context hierarchy and is a bag of properties.
  */
 public abstract class AbstractContext {
 
+    private static final Log log = LogFactory.getLog(AbstractContext.class);
+    
+    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
+    
     /**
      * Property used to indicate copying of properties is needed by context.
      */
@@ -168,6 +177,9 @@ public abstract class AbstractContext {
         }
         properties.put(key, value);
         addPropertyDifference(key, value, false);
+        if (DEBUG_ENABLED) {
+            debugPropertySet(key, value);
+        }
     }
 
     private void addPropertyDifference(String key, Object value,  boolean isRemoved) {
@@ -303,6 +315,17 @@ public abstract class AbstractContext {
             if ((copyProperties != null) && copyProperties.booleanValue()) {
                 mergeProperties(properties);
             } else {
+                
+                if (this.properties != properties) {
+                    if (DEBUG_ENABLED) {
+                        for (Iterator iterator = properties.entrySet().iterator();
+                        iterator.hasNext();) {
+                            Entry entry = (Entry) iterator.next();
+                            debugPropertySet((String) entry.getKey(), entry.getValue());
+
+                        }
+                    }
+                }
                 this.properties = properties;
             }
         }
@@ -322,7 +345,11 @@ public abstract class AbstractContext {
             for (Iterator iterator = props.keySet().iterator();
                  iterator.hasNext();) {
                 Object key = iterator.next();
-                this.properties.put(key, props.get(key));
+                Object value = props.get(key);
+                this.properties.put(key, value);
+                if (DEBUG_ENABLED) {
+                    debugPropertySet((String) key, value);
+                }
             }
         }
     }
@@ -357,4 +384,32 @@ public abstract class AbstractContext {
 
     public abstract ConfigurationContext getRootContext();
 
+    /**
+     * Debug for for property key and value.
+     * @param key
+     * @param value
+     */
+    private void debugPropertySet(String key, Object value) {
+        if (DEBUG_ENABLED) {
+            String className = (value == null) ? "null" : value.getClass().getName();
+            String classloader = (value == null || value.getClass().getClassLoader() == null) ? "null" : 
+                value.getClass().getClassLoader().toString();
+            String valueText = (value instanceof String) ? value.toString() : null;
+            String identity = getClass().getName() + '@' + 
+                Integer.toHexString(System.identityHashCode(this));
+            
+            log.debug("==================");
+            log.debug(" Property set on object " + identity);
+            log.debug("  Key =" + key);
+            if (valueText != null) {
+                log.debug("  Value =" + valueText);
+            }
+            log.debug("  Value Class = " + className);
+            log.debug("  Value Classloader = " + classloader);
+            if (this.DEBUG_CALLSTACK_ON_SET) {
+                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
+            }
+            log.debug("==================");
+        }
+    }
 }

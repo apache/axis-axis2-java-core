@@ -27,7 +27,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.LoggingControl;
@@ -365,7 +365,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
 
             if (!(wsdl4jDefinition instanceof WSDLDefinitionWrapper)) {
-                WSDLDefinitionWrapper wrapper = new WSDLDefinitionWrapper(wsdl4jDefinition);
+                AxisConfiguration ac = axisService.getAxisConfiguration();
+                if (ac == null) {
+                    ac = this.axisConfig;
+                }
+                WSDLDefinitionWrapper wrapper = new WSDLDefinitionWrapper(wsdl4jDefinition, ac);
                 wsdlDefinitionParameter.setValue(wrapper);
             } else {
                 wsdlDefinitionParameter.setValue(wsdl4jDefinition);

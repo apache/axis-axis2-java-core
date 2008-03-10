@@ -868,9 +868,17 @@ class ServiceDescriptionImpl
                             log.debug("new WSDL4JWrapper-ConfigContext null5");
                         }
                     }
-		    URL url = getWSDLURL(wsdlLocation);
-			this.wsdlWrapper = new WSDL4JWrapper(url, this.catalogManager);
-			composite.setWsdlDefinition(wsdlWrapper.getDefinition());
+
+                    URL url = getWSDLURL(wsdlLocation);
+                    ConfigurationContext cc = composite.getConfigurationContext();
+                    if (cc != null) {
+                        this.wsdlWrapper = new WSDL4JWrapper(url, cc, this.catalogManager);
+                    } else {
+                        // Probably shouldn't get here.  But if we do, use a memory sensitive
+                        // wsdl wrapper
+                        this.wsdlWrapper = new WSDL4JWrapper(url, this.catalogManager, true, 2);
+                    }
+                    composite.setWsdlDefinition(wsdlWrapper.getDefinition());
 		}
 		catch(Exception e) {
 			if(log.isDebugEnabled()) {

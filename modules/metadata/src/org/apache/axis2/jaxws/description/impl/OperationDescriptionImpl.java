@@ -2006,7 +2006,7 @@ class OperationDescriptionImpl
                 try {
                     File file = new File(wsdlLocation);
                     URL url = file.toURL();
-                    wsdl4j = new WSDL4JWrapper(url);
+                    wsdl4j = new WSDL4JWrapper(url, true, 2);  // In this context, limit the wsdl memory
                     def = wsdl4j.getDefinition();
                 } catch (Throwable t) {
                     if (log.isDebugEnabled()) {

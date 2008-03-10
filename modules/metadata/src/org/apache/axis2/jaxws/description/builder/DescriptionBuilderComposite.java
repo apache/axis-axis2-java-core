@@ -608,7 +608,15 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
                 def = wsdlWrapper.getDefinition();
             } else {
                 try {
-                    wsdlWrapper = new WSDL4JWrapper(wsdlDef);
+                    if (myConfigContext != null) {
+                        // Construct WSDL4JWrapper with configuration information
+                        wsdlWrapper = new WSDL4JWrapper(wsdlDef, 
+                                                        myConfigContext);
+                    } else {
+                        // If there is no configuration, default to using a 
+                        // memory sensitive wrapper
+                        wsdlWrapper = new WSDL4JWrapper(wsdlDef, true, 2);
+                    }
                     def = wsdlWrapper.getDefinition();
                 } catch (Exception ex) {
                     // absorb
@@ -932,5 +940,9 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
         }
 
         return wsdlDef;
+    }
+
+    public ConfigurationContext getConfigurationContext() {
+        return myConfigContext;
     }
 }

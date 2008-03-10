@@ -20,6 +20,7 @@
 package org.apache.axis2.wsdl.util;
 
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -92,6 +93,10 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
      * @param def    The WSDL Definition
      */
     public WSDLWrapperReloadImpl(Definition def) {
+        if (log.isDebugEnabled()) {
+            log.debug("WSDLWrapperReloadImpl(Definition def) called");
+            log.debug(JavaUtils.callStackToString());
+        }
         prepare(def, null);
     }
 
@@ -103,6 +108,10 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
      * @param wURL   The URL for the wsdl
      */
     public WSDLWrapperReloadImpl(Definition def, URL wURL) {
+        if (log.isDebugEnabled()) {
+            log.debug("WSDLWrapperReloadImpl(Definition def, URL wURL) called");
+            log.debug(JavaUtils.callStackToString());
+        }
         prepare(def, wURL);
     }
 

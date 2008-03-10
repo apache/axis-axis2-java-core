@@ -48,7 +48,9 @@ import org.apache.axis2.jaxws.feature.ServerFramework;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
+import org.apache.axis2.wsdl.util.WSDLWrapperReloadImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -399,7 +401,17 @@ class EndpointDescriptionImpl
                 if (def instanceof WSDLDefinitionWrapper) {
                     wsdlDefParameter.setValue(def);
                 } else {
-                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    // Create WSDLDefinitionWrapper
+                    WSDLDefinitionWrapper wrap = null;
+                    ConfigurationContext cc = composite.getConfigurationContext();
+                    if (cc != null && cc.getAxisConfiguration() != null) {
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, 
+                                                         cc.getAxisConfiguration());
+                    } else {
+                        // Probably shouldn't get here.  But if we do, use
+                        // a memory sensitve wsdl wrapper
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, true, 2);
+                    }
                     wsdlDefParameter.setValue(wrap);
                 }
 
@@ -413,7 +425,17 @@ class EndpointDescriptionImpl
                 if (def instanceof WSDLDefinitionWrapper) {
                     wsdlDefParameter.setValue(def);
                 } else {
-                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    // Create WSDLDefinitionWrapper
+                    WSDLDefinitionWrapper wrap = null;
+                    ConfigurationContext cc = composite.getConfigurationContext();
+                    if (cc != null && cc.getAxisConfiguration() != null) {
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, 
+                                                         cc.getAxisConfiguration());
+                    } else {
+                        // Probably shouldn't get here.  But if we do, use
+                        // a memory sensitve wsdl wrapper
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, true, 2);
+                    }
                     wsdlDefParameter.setValue(wrap);
                 }
 
@@ -448,7 +470,17 @@ class EndpointDescriptionImpl
                 if (def instanceof WSDLDefinitionWrapper) {
                     wsdlDefParameter.setValue(def);
                 } else {
-                    WSDLDefinitionWrapper wrap = new WSDLDefinitionWrapper(def, wsdlUrl);
+                    // Create WSDLDefinitionWrapper
+                    WSDLDefinitionWrapper wrap = null;
+                    ConfigurationContext cc = composite.getConfigurationContext();
+                    if (cc != null && cc.getAxisConfiguration() != null) {
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, 
+                                                         cc.getAxisConfiguration());
+                    } else {
+                        // Probably shouldn't get here.  But if we do, use
+                        // a memory sensitve wsdl wrapper
+                        wrap = new WSDLDefinitionWrapper(def, wsdlUrl, true, 2);
+                    }
                     wsdlDefParameter.setValue(wrap);
                 }
             }
@@ -880,7 +912,38 @@ class EndpointDescriptionImpl
             else
                 serviceBuilder.setServerSide(false);
 
+            // Associate the AxisConfiguration with the ServiceBuilder if it
+            // is available.  This is done so that the serviceBuilder can
+            // use the appropriate WSDL wrapper memory parameters.
+            AxisConfiguration ac = null;
+            if (composite.getConfigurationContext() != null) {
+                ac = composite.getConfigurationContext().getAxisConfiguration();
+                if (ac != null) {
+                    serviceBuilder.useAxisConfiguration(ac);
+                }
+            }
+            // Create and populate the AxisService
             axisService = serviceBuilder.populateService();
+            
+            // If an AxisConfiguration was not available,
+            // default to using a memory efficient wrapper
+            if (ac == null) {
+                Parameter wsdlWrapperParam = 
+                    axisService.getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+                if (wsdlWrapperParam != null &&
+                    wsdlWrapperParam.getValue() instanceof WSDLDefinitionWrapper) {
+                    
+                    WSDLDefinitionWrapper wrapper = 
+                        (WSDLDefinitionWrapper)  wsdlWrapperParam.getValue();
+                    
+                    Definition wsdlDef = wrapper.getUnwrappedDefinition();
+                    
+                    WSDLDefinitionWrapper wrapper2 = 
+                            new WSDLDefinitionWrapper(wsdlDef, true, 2);
+                    
+                    wsdlWrapperParam.setValue(wrapper2);
+                }
+            }
             axisService.setName(createAxisServiceName());
             isBuiltFromWSDL = true;
 
@@ -1797,7 +1860,13 @@ class EndpointDescriptionImpl
                     Definition wsdlDef = wsdlComposite.getRootWsdlDefinition();
 
                     try {
-                        WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(dbc.getWsdlURL(), wsdlDef);
+                        ConfigurationContext cc = dbc.getConfigurationContext();
+                        WSDL4JWrapper wsdl4jWrapper = null;
+                        if (cc != null) {
+                            wsdl4jWrapper = new WSDL4JWrapper(dbc.getWsdlURL(), wsdlDef, cc);
+                        } else {
+                            wsdl4jWrapper = new WSDL4JWrapper(dbc.getWsdlURL(), wsdlDef, true, 2);
+                        }
                         getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
                     } catch (Exception e) {
                         throw ExceptionFactory.makeWebServiceException(Messages.getMessage("generateWSDLErr"),e);

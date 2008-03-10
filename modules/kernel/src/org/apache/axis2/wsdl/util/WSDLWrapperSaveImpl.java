@@ -22,6 +22,7 @@ package org.apache.axis2.wsdl.util;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.Counter;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -126,6 +127,10 @@ public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
      * @param def    The WSDL Definition
      */
     public WSDLWrapperSaveImpl(Definition def) {
+        if (log.isDebugEnabled()) {
+            log.debug("WSDLWrapperSaveImpl(Definition def) called");
+            log.debug(JavaUtils.callStackToString());
+        }
         prepare(def, null);
     }
 
@@ -137,6 +142,10 @@ public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
      * @param wURL   The URL for the wsdl
      */
     public WSDLWrapperSaveImpl(Definition def, URL wURL) {
+        if (log.isDebugEnabled()) {
+            log.debug("WSDLWrapperSaveImpl(Definition def, URL wURL) called");
+            log.debug(JavaUtils.callStackToString());
+        }
         prepare(def, wURL);
     }
 

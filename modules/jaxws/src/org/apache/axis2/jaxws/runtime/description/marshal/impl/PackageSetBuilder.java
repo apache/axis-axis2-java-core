@@ -449,7 +449,10 @@ public class PackageSetBuilder {
                                 if(log.isDebugEnabled()){
                                     log.debug("Reading WSDL from URL:" +url.toString());
                                 }
-                                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+                                // This is a temporary wsdl and we use it to dig into the schemas,
+                                // Thus the memory limit is set to false.  It will be discarded after it is used
+                                // by the PackageSetBuilder implementation.
+                                WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url, false, 0);
                                 return wsdlWrapper.getDefinition();
                             }
                         });

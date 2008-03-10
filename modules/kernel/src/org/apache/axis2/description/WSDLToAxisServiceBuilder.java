@@ -19,6 +19,7 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.namespace.Constants;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -76,6 +77,8 @@ public abstract class WSDLToAxisServiceBuilder {
     protected AxisService axisService;
 
     protected PolicyRegistry registry;
+    
+    protected AxisConfiguration axisConfig;
 
     protected QName serviceName;
     protected boolean isServerSide = true;
@@ -294,5 +297,9 @@ public abstract class WSDLToAxisServiceBuilder {
         }
 
         return new String(sb);
+    }
+    
+    public void useAxisConfiguration(AxisConfiguration axisConfig) {
+        this.axisConfig = axisConfig;
     }
 }

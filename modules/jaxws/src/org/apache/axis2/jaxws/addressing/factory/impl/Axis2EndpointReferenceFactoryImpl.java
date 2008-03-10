@@ -97,7 +97,8 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
 
             if (wsdlDocumentLocation != null) {
             	URL wsdlURL = new URL(wsdlDocumentLocation);
-            	WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL);
+            	// This is a temporary usage, so use a memory sensitive wrapper
+                WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL, true, 2);
             	
             	if (serviceName != null) {
             		//TODO NLS

@@ -36,6 +36,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,8 +49,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
@@ -68,6 +71,8 @@ public class Options implements Externalizable, SafeSerializable {
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(Options.class);
+    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
 
     private static final String myClassName = "Options";
 
@@ -653,6 +658,17 @@ public class Options implements Externalizable, SafeSerializable {
      * @param properties
      */
     public void setProperties(Map properties) {
+        
+        if (this.properties != properties) {
+            if (DEBUG_ENABLED) {
+                for (Iterator iterator = properties.entrySet().iterator();
+                iterator.hasNext();) {
+                    Entry entry = (Entry) iterator.next();
+                    debugPropertySet((String) entry.getKey(), entry.getValue());
+
+                }
+            }
+        }
         this.properties = properties;
     }
 
@@ -846,6 +862,9 @@ public class Options implements Externalizable, SafeSerializable {
             this.properties = new HashMap();
         }
         properties.put(propertyKey, property);
+        if (DEBUG_ENABLED) {
+            debugPropertySet(propertyKey, property);
+        }
     }
 
     /**
@@ -1611,5 +1630,35 @@ public class Options implements Externalizable, SafeSerializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    /**
+     * Debug for for property key and value.
+     * @param key
+     * @param value
+     */
+    private void debugPropertySet(String key, Object value) {
+        if (DEBUG_ENABLED) {
+            String className = (value == null) ? "null" : value.getClass().getName();
+            String classloader = (value == null || value.getClass().getClassLoader() == null)? "null" : 
+                value.getClass().getClassLoader().toString();
+            String valueText = (value instanceof String) ? value.toString() : null;
+            
+            String identity = getClass().getName() + '@' + 
+                Integer.toHexString(System.identityHashCode(this));
+            
+            log.debug("==================");
+            log.debug(" Property set on object " + identity);
+            log.debug("  Key =" + key);
+            if (valueText != null) {
+                log.debug("  Value =" + valueText);
+            }
+            log.debug("  Value Class = " + className);
+            log.debug("  Value Classloader = " + classloader);
+            if (DEBUG_CALLSTACK_ON_SET) {
+                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
+            }
+            log.debug("==================");
+        }
     }
 }

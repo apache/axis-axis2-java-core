@@ -28,6 +28,7 @@ import org.apache.axis2.context.externalize.SafeObjectInputStream;
 import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,6 +53,8 @@ public class ParameterIncludeImpl
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(ParameterIncludeImpl.class);
+    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
 
     private static final String myClassName = "ParameterIncludeImpl";
 
@@ -99,6 +102,9 @@ public class ParameterIncludeImpl
     public void addParameter(Parameter param) {
         if (param != null) {
             parameters.put(param.getName(), param);
+            if (DEBUG_ENABLED) {
+                this.debugParameterAdd(param);
+            }
         }
     }
 
@@ -277,4 +283,34 @@ public class ParameterIncludeImpl
         //---------------------------------------------------------
     }
 
+    /**
+     * Debug for for property key and value.
+     * @param key
+     * @param value
+     */
+    private void debugParameterAdd(Parameter parameter) {
+        if (DEBUG_ENABLED) {
+            String key = parameter.getName();
+            Object value = parameter.getValue();
+            String className = (value == null) ? "null" : value.getClass().getName();
+            String classloader = (value == null || value.getClass().getClassLoader() == null) ? "null" : 
+                value.getClass().getClassLoader().toString();
+            String valueText = (value instanceof String) ? value.toString() : null;
+            String identity = getClass().getName() + '@' + 
+                Integer.toHexString(System.identityHashCode(this));
+            
+            log.debug("==================");
+            log.debug(" Parameter add on object " + identity);
+            log.debug("  Key =" + key);
+            if (valueText != null) {
+                log.debug("  Value =" + valueText);
+            }
+            log.debug("  Value Class = " + className);
+            log.debug("  Value Classloader = " + classloader);
+            if (this.DEBUG_CALLSTACK_ON_SET) {
+                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
+            }
+            log.debug("==================");
+        }
+    }
 }

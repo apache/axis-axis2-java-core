@@ -21,8 +21,8 @@ package org.apache.axis2.wsdl.util;
 
 
 import org.apache.axis2.Constants;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,17 +43,11 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Types;
-import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +85,6 @@ public class WSDLDefinitionWrapper implements Definition {
     // the optional setting used to specify which type of reduction to use
     private int reduceWSDLMemoryType = 0;
 
-
-
     // the wrapper implementation to use 
     private WSDLWrapperImpl wrapperImpl = null;
 
@@ -105,6 +97,8 @@ public class WSDLDefinitionWrapper implements Definition {
      * Constructor
      * 
      * @param def    The WSDL Definition
+     * @deprecated because this constructor does not provide any guidance for 
+     * memory usage
      */
     public WSDLDefinitionWrapper(Definition def) {
         if (log.isDebugEnabled() ) {
@@ -112,7 +106,24 @@ public class WSDLDefinitionWrapper implements Definition {
         }
         prepare(def, null);
     }
+    
+    /**
+     * @param def
+     * @param limitMemory true if you want to use a memory sensitive wrapper
+     */
+    public WSDLDefinitionWrapper(Definition def, boolean limitMemory, int memoryType) {
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition, boolean) entry");
+        }
+        reduceWSDLMemoryCache  = limitMemory;
+        reduceWSDLMemoryType = memoryType;
+        prepare(def, null);
+    }
 
+    /**
+     * @param def WDDL Definition
+     * @param axisConfig Axis Configuration
+     */
     public WSDLDefinitionWrapper(Definition def,AxisConfiguration axisConfig ) {
         if (log.isDebugEnabled() ) {
             log.debug("WSDLDefinitionWrapper(Definition,AxisConfiguration) entry ");
@@ -126,6 +137,7 @@ public class WSDLDefinitionWrapper implements Definition {
      * 
      * @param def    The WSDL Definition
      * @param wURL   The URL for the wsdl
+     * @deprecated use a constructor with a AxisConfiguration or memory limit parameter
      */
     public WSDLDefinitionWrapper(Definition def, URL wURL) {
         if (log.isDebugEnabled() ) {
@@ -145,6 +157,24 @@ public class WSDLDefinitionWrapper implements Definition {
      */
     public WSDLDefinitionWrapper(Definition def, URL wURL, boolean limitInMemory) {
         reduceWSDLMemoryCache = limitInMemory;
+        if (log.isDebugEnabled() ) {
+            log.debug("WSDLDefinitionWrapper(Definition,URL,boolean) entry");
+        }
+        prepare(def, wURL);
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param def    The WSDL Definition
+     * @param wURL   The URL for the wsdl
+     * @param limitInMemory  The setting indicating whether the in-memory WSDL copy
+     *                       should be manipulated to reduce memory footprint
+     * @param memoryType
+     */
+    public WSDLDefinitionWrapper(Definition def, URL wURL, boolean limitInMemory, int memoryType) {
+        reduceWSDLMemoryCache = limitInMemory;
+        this.reduceWSDLMemoryType = memoryType;
         if (log.isDebugEnabled() ) {
             log.debug("WSDLDefinitionWrapper(Definition,URL,boolean) entry");
         }
@@ -215,7 +245,12 @@ public class WSDLDefinitionWrapper implements Definition {
             if (log.isDebugEnabled() ) {
                 log.debug("reduceWSDLMemoryCache:"+ reduceWSDLMemoryCache + ", reduceWSDLMemoryType:" + reduceWSDLMemoryType );
             }
+        } else {
+            if (log.isDebugEnabled() ) {
+                log.debug("AxisConfiguration is null.  This is unexpected" );
+            }
         }
+        
     }
 
 

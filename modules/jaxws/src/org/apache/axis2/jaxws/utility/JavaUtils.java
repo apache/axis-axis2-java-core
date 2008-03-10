@@ -174,42 +174,6 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         return name;
     }
 
-    /**
-     * replace: Like String.replace except that the old new items are strings.
-     *
-     * @param name string
-     * @param oldT old text to replace
-     * @param newT new text to use
-     * @return replacement string
-     */
-    public static final String replace(String name,
-                                       String oldT, String newT) {
-
-        if (name == null) return "";
-
-        // Create a string buffer that is twice initial length.
-        // This is a good starting point.
-        StringBuffer sb = new StringBuffer(name.length() * 2);
-
-        int len = oldT.length();
-        try {
-            int start = 0;
-            int i = name.indexOf(oldT, start);
-
-            while (i >= 0) {
-                sb.append(name.substring(start, i));
-                sb.append(newT);
-                start = i + len;
-                i = name.indexOf(oldT, start);
-            }
-            if (start < name.length())
-                sb.append(name.substring(start));
-        } catch (NullPointerException e) {
-            // No FFDC code needed
-        }
-
-        return new String(sb);
-    }
 
     /**
      * Get a string containing the stack of the current location
