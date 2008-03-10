@@ -24,7 +24,7 @@ import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -232,6 +232,7 @@ public class EMailSender {
     }
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
+        System.out.println("Sending message ID ==> " + msgId);
         storeMessageContext(msgContext, msgId);
         ConfigurationContext cc = msgContext.getConfigurationContext();
         //While sysncmial listner .not complete
@@ -240,7 +241,10 @@ public class EMailSender {
         SynchronousMailListener synchronousMailListener = null;
         //No need to stor the message context if the mep is out-only
         AxisOperation axisOperation = msgContext.getAxisOperation();
-        if(axisOperation instanceof OutOnlyAxisOperation) {
+        // piggy back message constant is used to pass a piggy back
+        // message context in asnych model
+        if(axisOperation instanceof OutOnlyAxisOperation &&
+                (msgContext.getProperty(org.apache.axis2.Constants.PIGGYBACK_MESSAGE) == null)) {
             return;
         }
 

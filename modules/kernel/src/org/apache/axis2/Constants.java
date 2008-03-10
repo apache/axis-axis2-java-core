@@ -246,6 +246,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String TRANSPORT_FAULT_STRING = "transportFault";
     public static final String SOAP_PROCESSING_FAULT_STRING = "soapProcessingFault";
 
+    // used to handle piggy back messages with mail transport
+    public static final String PIGGYBACK_MESSAGE = "piggybackMessage";
+
     /**
      * Field Builder Selector
      */

@@ -18,7 +18,7 @@
  */
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.AxisFault;
+import org.apache.axis2.*;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
@@ -48,18 +48,34 @@ public class SynchronousMailListener {
         OperationContext operationContext = outMessageContext.getOperationContext();
         MessageContext msgCtx =
                 operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+
         if(msgCtx==null){
-            inMessageContext.setOperationContext(operationContext);
-            inMessageContext.setServiceContext(outMessageContext.getServiceContext());
-            if(!operationContext.isComplete()){
-                operationContext.addMessageContext(inMessageContext);
+            // try to see whether there is a piggy back message context
+            if (outMessageContext.getProperty(org.apache.axis2.Constants.PIGGYBACK_MESSAGE) != null) {
+                
+                msgCtx = (MessageContext) outMessageContext.getProperty(org.apache.axis2.Constants.PIGGYBACK_MESSAGE);
+                msgCtx.setTransportIn(inMessageContext.getTransportIn());
+                msgCtx.setTransportOut(inMessageContext.getTransportOut());
+                msgCtx.setServerSide(false);
+                msgCtx.setProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
+                        inMessageContext.getProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE));
+                msgCtx.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
+                msgCtx.setEnvelope(inMessageContext.getEnvelope());
+
+            } else {
+                inMessageContext.setOperationContext(operationContext);
+                inMessageContext.setServiceContext(outMessageContext.getServiceContext());
+                if (!operationContext.isComplete()) {
+                    operationContext.addMessageContext(inMessageContext);
+                }
+                AxisOperation axisOp = operationContext.getAxisOperation();
+                //TODO need to handle fault case as well ,
+                //TODO  need to check whether the message contains fault , if so we need to get the fault message
+                AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                inMessageContext.setAxisMessage(inMessage);
+                inMessageContext.setServerSide(false);
             }
-            AxisOperation axisOp = operationContext.getAxisOperation();
-            //TODO need to handle fault case as well ,
-            //TODO  need to check whether the message contains fault , if so we need to get the fault message
-            AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            inMessageContext.setAxisMessage(inMessage);
-            inMessageContext.setServerSide(false);
+
         } else {
             msgCtx.setOperationContext(operationContext);
             msgCtx.setServiceContext(outMessageContext.getServiceContext());
