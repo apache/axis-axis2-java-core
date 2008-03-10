@@ -35,6 +35,15 @@ public class LoggingControl {
      * or
      * if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())...
      */
-    public static final boolean debugLoggingAllowed =
-            (System.getProperty("Axis2.prohibitDebugLogging") == null);
+    public static final boolean debugLoggingAllowed;
+
+    static {
+        String prop = null;
+        try {
+            prop = System.getProperty("Axis2.prohibitDebugLogging");
+        } catch (SecurityException SE) {
+            //do nothing
+        }
+        debugLoggingAllowed = prop == null;
+    }
 }
