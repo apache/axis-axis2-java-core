@@ -689,19 +689,12 @@ class ServiceDescriptionImpl
                                 log.debug("new WSDL4JWrapper-ConfigContext null1"); 
                             }
                         }
-                        
-                        // only create a URL instance if one was not supplied on the DBC
-                        if(url == null) {
-                            url = new URL(this.wsdlURL);
-                        }
+
                         this.wsdlWrapper = new WSDL4JWrapper(url,
                                                              composite.getWsdlDefinition(), 
                                                              configContext,
                                                              this.catalogManager);
                     } catch (WSDLException e) {
-                        throw ExceptionFactory.makeWebServiceException(
-                                Messages.getMessage("wsdlException", e.getMessage()), e);
-                    } catch (MalformedURLException e) {
                         throw ExceptionFactory.makeWebServiceException(
                                 Messages.getMessage("wsdlException", e.getMessage()), e);
                     }
