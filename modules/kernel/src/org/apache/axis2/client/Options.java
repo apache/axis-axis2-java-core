@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -377,7 +376,7 @@ public class Options implements Externalizable, SafeSerializable {
         if (relationships == null) {
             return null;
         }
-        for (int i = 0; i < relationships.size(); i++) {
+        for (int i = 0, size = relationships.size(); i < size; i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(type)) {
@@ -401,7 +400,7 @@ public class Options implements Externalizable, SafeSerializable {
         if (relationships == null) {
             return null;
         }
-        for (int i = 0; i < relationships.size(); i++) {
+        for (int i = 0, size = relationships.size(); i < size; i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
