@@ -213,7 +213,9 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		schemaGenerator.setExtraClasses(getExtraClasses());
 		schemaGenerator.setNsGen(resolveNSGen());
 		schemaGenerator.setPkg2nsmap(getPkg2nsMap());
-		if (getPkg2nsMap() != null
+        schemaGenerator.setMappingFileLocation(getMappingFileLocation());
+        schemaGenerator.setCustomSchemaLocation(getCustomSchemaLocation());
+        if (getPkg2nsMap() != null
 				&& !getPkg2nsMap().isEmpty()
 				&& (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap()
 						.containsKey(ALL.toUpperCase()))) {

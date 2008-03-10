@@ -392,28 +392,32 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
      *  - No matter what it will generate Schema element for java.lang.Exception so that for other
      *    exception which extend java.lang.Excetion can use as the base class type
      */
-    protected void processException(JMethod jMethod, 
-                                                 AxisOperation axisOperation) throws Exception {
+    protected void processException(JMethod jMethod,
+                                    AxisOperation axisOperation) throws Exception {
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence;
         if (jMethod.getExceptionTypes().length > 0) {
             if (!generateBaseException) {
-                sequence = new XmlSchemaSequence();
-                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
-                QName elementName = new QName(schemaTargetNameSpace,
-                        "Exception",
-                        schema_namespace_prefix);
-                XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
-                complexType.setName("Exception");
-                xmlSchema.getItems().add(complexType);
-                xmlSchema.getElements().add(elementName, complexType);
-                typeTable.addComplexSchema(Exception.class.getName(), elementName);
-                QName schemaTypeName = TypeTable.ANY_TYPE;
-                addContentToMethodSchemaType(sequence,
-                        schemaTypeName,
-                        "Exception",
-                        false);
-                complexType.setParticle(sequence);
+                if (typeTable.getComplexSchemaType(Exception.class.getName()) !=null) {
+
+                } else {
+                    sequence = new XmlSchemaSequence();
+                    XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+                    QName elementName = new QName(schemaTargetNameSpace,
+                            "Exception",
+                            schema_namespace_prefix);
+                    XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+                    complexType.setName("Exception");
+                    xmlSchema.getItems().add(complexType);
+                    xmlSchema.getElements().add(elementName, complexType);
+                    typeTable.addComplexSchema(Exception.class.getName(), elementName);
+                    QName schemaTypeName = TypeTable.ANY_TYPE;
+                    addContentToMethodSchemaType(sequence,
+                            schemaTypeName,
+                            "Exception",
+                            false);
+                    complexType.setParticle(sequence);
+                }
                 generateBaseException = true;
             }
             JClass[] extypes = jMethod.getExceptionTypes();
@@ -428,13 +432,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         new QName(this.schemaTargetNameSpace, partQname, this.schema_namespace_prefix);
                 sequence = new XmlSchemaSequence();
                 if (Exception.class.getName().equals(extype.getQualifiedName())) {
+                    QName schemaTypeName = typeTable.getComplexSchemaType(Exception.class.getName());
                     addContentToMethodSchemaType(sequence,
-                            typeTable.getComplexSchemaType(Exception.class.getName()),
+                            schemaTypeName,
                             partQname,
                             false);
                     methodSchemaType.setParticle(sequence);
                     typeTable.addComplexSchema(Exception.class.getPackage().getName(),
                             methodSchemaType.getQName());
+                    String schemaNamespace = resolveSchemaNamespace(Exception.class.getPackage().getName());
+                    addImport(getXmlSchema(schemaTargetNameSpace),schemaTypeName );
                 } else {
                     generateSchemaForType(sequence, extype, extype.getSimpleName());
                     methodSchemaType.setParticle(sequence);
