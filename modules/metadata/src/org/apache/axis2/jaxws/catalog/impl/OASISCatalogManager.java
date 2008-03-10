@@ -18,8 +18,11 @@
  */
 package org.apache.axis2.jaxws.catalog.impl;
 
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.logging.Logger;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.xml.resolver.Catalog;
 import org.apache.xml.resolver.CatalogManager;
@@ -32,7 +35,8 @@ import org.apache.xml.resolver.CatalogManager;
  *  of a static catalog per CatalogManager.  
  */
 public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogManager {
-    public static final String DEFAULT_CATALOG_NAME = "WEB-INF/jax-ws-catalog.xml";
+    public static final String DEFAULT_CATALOG_WEB = "WEB-INF/jax-ws-catalog.xml";
+    public static final String DEFAULT_CATALOG_EJB = "META-INF/jax-ws-catalog.xml";
     public static final String CATALOG_DEBUG_KEY = "OASISCatalogManager.catalog.debug.level";
 
     private static final Logger LOG =
@@ -53,8 +57,15 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     	if (DEBUG_LEVEL != null) {
     		this.debug.setDebug(Integer.parseInt(DEBUG_LEVEL)); 
     	}
+    	
+    	String filepath = determineFileName();
+    
+        if (filepath != null) {
+            this.setCatalogFiles(filepath);
+        }
     }
 
+    
     /**
      * Constructor that specifies an explicit property file.
      * @param propertyFileName
@@ -69,7 +80,6 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     private void acceptDefaults() {
     	this.setUseStaticCatalog(true);
     	this.setIgnoreMissingProperties(true);
-    	this.setCatalogFiles(DEFAULT_CATALOG_NAME);
     }
     
     /**
@@ -85,6 +95,21 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
             catalog = getPrivateCatalog();
         }
         return catalog;
+    }
+
+
+    private String determineFileName() {
+
+    	ClassLoader classLoader = findClassLoader();
+    	// try web app WEB-INF first
+    	URL url = classLoader.getResource(DEFAULT_CATALOG_WEB);
+    	if (url != null) {
+    		return url.toString();
+    	}
+    	// have not returned -- perhaps we're in an EJB?
+    	url = classLoader.getResource(DEFAULT_CATALOG_EJB);
+    	return url == null? null: url.toString();
+    	
     }
     
     /**
@@ -138,4 +163,37 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     	staticCatalog = null;
     	super.setCatalogFiles(fileList);
     }
+    
+    /**
+     * COPIED FROM javax.xml.ws.spi.FactoryFinder
+     * 
+     * Figure out which ClassLoader to use.  For JDK 1.2 and later use
+     * the context ClassLoader.
+     *
+     * @return the <code>ClassLoader</code>
+     * @throws ConfigurationError if this class is unable to work with the
+     *                            host JDK
+     */
+    private static ClassLoader findClassLoader() {
+		// REVIEW need a doPriv block?
+
+		Method m = null;
+
+		try {
+
+			m = Thread.class.getMethod("getContextClassLoader", (Class[]) null);
+		} catch (NoSuchMethodException e) {
+			// Assume that we are running JDK 1.1, use the current ClassLoader
+			// TODO print debug statement about assuming JDK 1.1
+			return OASISCatalogManager.class.getClassLoader();
+		}
+		try {
+			return (ClassLoader) m.invoke(Thread.currentThread(),
+					(Object[]) null);
+		} catch (Exception x) {
+			throw ExceptionFactory.makeWebServiceException(x);
+		}
+
+	}
+   
 }

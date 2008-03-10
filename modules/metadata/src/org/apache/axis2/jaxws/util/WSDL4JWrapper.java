@@ -493,8 +493,9 @@ public class WSDL4JWrapper implements WSDLWrapper {
                     try {
                         InputStream is = getInputStream(urlConn);
                         if(is != null) {
-                            if (catalogManager == null)
+                            if (catalogManager == null) {
                                 catalogManager = new OASISCatalogManager();
+                            }
                             final CatalogWSDLLocator locator = new CatalogWSDLLocator(wsdlExplicitURL, is, 
                                     getThreadClassLoader(), catalogManager);
                             if(log.isDebugEnabled()) {
