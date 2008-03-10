@@ -1,0 +1,16 @@
+<serviceGroup>
+	<service name="BookService"
+             targetNamespace="http://ws.apache.org/axis2/samples/book/">
+		<description>
+			Book sample service
+		</description>
+        <schema schemaNamespace="http://ws.apache.org/axis2/samples/book/xsd/"/>
+        <parameter name="ServiceClass" locked="false">samples.demo.BookService</parameter>
+		<operation name="getBooks">
+			<messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
+		</operation>
+        <operation name="findBook">
+            <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
+        </operation>
+	</service>
+</serviceGroup>
