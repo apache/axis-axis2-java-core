@@ -100,6 +100,9 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 // we can set the web location path in the deployment engine.
                 // This will let us
                 String webpath = config.getServletContext().getRealPath("");
+                if (webpath == null || webpath.length() == 0) {
+                    webpath = config.getServletContext().getRealPath("/");
+                }
                 if (webpath != null && !"".equals(webpath)) {
                     log.debug("setting web location string: " + webpath);
                     File weblocation = new File(webpath);
@@ -215,6 +218,12 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     // this is an unpacked war file
                     repository = config.getServletContext().getRealPath("/WEB-INF");
                 }
+                if (repository == null) {
+                    if (config.getServletContext().getRealPath("/") != null) {
+                        // this is an unpacked war file
+                        repository = config.getServletContext().getRealPath("/WEB-INF");
+                    }
+                }
                 if (repository != null) {
                     loadRepository(repository);
                     log.debug("loaded repository from /WEB-INF folder (unpacked war)");
@@ -269,7 +278,8 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 return;
             }
             loadServicesFromWebInf();
-            if (config.getServletContext().getRealPath("") != null) {
+            if (config.getServletContext().getRealPath("") != null || 
+                    config.getServletContext().getRealPath("/") != null) {
                 super.loadServices();
                 log.debug("loaded services from webapp");
                 return;
