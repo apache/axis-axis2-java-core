@@ -25,7 +25,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
@@ -289,17 +288,18 @@ class OutInAxisOperationClient extends OperationClient {
             useCustomListener = Boolean.TRUE;
         }
         if (useCustomListener == null || !useCustomListener.booleanValue()) {
-            if(mc.getReplyTo()==null){
+            EndpointReference replyTo = mc.getReplyTo();
+            if (replyTo == null || replyTo.hasAnonymousAddress()){
                 EndpointReference replyToFromTransport =
                         mc.getConfigurationContext().getListenerManager().
                                 getEPRforService(sc.getAxisService().getName(),
                                         axisOp.getName().getLocalPart(), mc
                                         .getTransportIn().getName());
 
-                if (mc.getReplyTo() == null) {
+                if (replyTo == null) {
                     mc.setReplyTo(replyToFromTransport);
                 } else {
-                    mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                    replyTo.setAddress(replyToFromTransport.getAddress());
                 }
             }
         }
