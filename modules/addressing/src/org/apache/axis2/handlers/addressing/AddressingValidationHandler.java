@@ -54,6 +54,9 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
 
                 // Check if the wsa:MessageID is required or not.
                 checkMessageIDHeader(msgContext);
+                
+                // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
+                checkWSAMInvocationPattern(msgContext);
             }
         }
 
@@ -61,9 +64,6 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
             // Check that if wsaddressing=required that addressing headers were found inbound
             checkUsingAddressing(msgContext);
         }
-        
-        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
-        checkWSAMInvocationPattern(msgContext);
 
         return InvocationResponse.CONTINUE;
     }
@@ -151,7 +151,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
      *
      * @param msgContext
      * @throws AxisFault
-     * @see AddressingSubmissionInHandler#checkForMandatoryHeaders
+     * @see AddressingInHandler#checkForMandatoryHeaders
      */
     private void checkMessageIDHeader(MessageContext msgContext) throws AxisFault {
         String namespace = (String)msgContext.getLocalProperty(WS_ADDRESSING_VERSION);
