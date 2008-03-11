@@ -52,9 +52,12 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
 
         if (axisOperation == null) {
             OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
-            QName qName = new QName(ns.getNamespaceURI(), localPart);
-            axisOperation = service.getOperationByMessageElementQName(qName);
+            if (ns != null) {
+                QName qName = new QName(ns.getNamespaceURI(), localPart);
+                axisOperation = service.getOperationByMessageElementQName(qName);
+            }
             if (axisOperation == null) {
+                QName qName = new QName(localPart);
                 axisOperation = service.getOperation(qName);
             }
         }

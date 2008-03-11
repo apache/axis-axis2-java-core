@@ -57,8 +57,11 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         AxisOperation axisOperation = null;
         if (localName != null){
            OMNamespace ns = messageContext.getEnvelope().getSOAPBodyFirstElementNS();
-           QName qName = new QName(ns.getNamespaceURI(), localName);
-           axisOperation = service.getOperationByMessageElementQName(qName);
+           QName qName = null;
+           if (ns != null) {
+               qName = new QName(ns.getNamespaceURI(), localName);
+               axisOperation = service.getOperationByMessageElementQName(qName);
+           }
 
            // this is required for services uses the RPC message receiver
            if (axisOperation == null){
