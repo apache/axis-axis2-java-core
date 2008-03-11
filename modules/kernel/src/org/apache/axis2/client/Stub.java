@@ -217,7 +217,7 @@ public abstract class Stub {
         addHeader(omElementToadd,envelop,false);
     }
 
-    protected void addAnnonymousOperations(){
+    protected void addAnonymousOperations(){
         RobustOutOnlyAxisOperation robustoutoonlyOperation =
                 new RobustOutOnlyAxisOperation(ServiceClient.ANON_ROBUST_OUT_ONLY_OP);
         _service.addOperation(robustoutoonlyOperation);
