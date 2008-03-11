@@ -173,6 +173,28 @@ HTTPS.</p>
 <p>For a particular proxy, if authentication is not available, enter the
 "userName:domain:passWord" as "anonymous:anonymous:anonymous".</p>
 
+<p>Prior shown configuration has been deprecated after Axis2 1.2 release and we strongly recommend using the new
+proxy configuration as below. </p>
+<p>
+    New proxy configuration would require the user to add a TOP level parameter in the axis2.xml named "Proxy".
+</p>
+    <pre>
+        &lt;parameter name="Proxy"&gt;
+             &lt;Configuration&gt;
+                      &lt;ProxyHost&gt;example.org&lt;/ProxyHost&gt;
+                      &lt;ProxyPort&gt;5678&lt;/ProxyPort&gt;
+                      &lt;ProxyUser&gt;EXAMPLE\saminda&lt;/ProxyUser&gt;
+                      &lt;ProxyPassword>ppp&lt;/ProxyPassword&gt;
+              &lt;/Configuration&gt;
+&lt;/parameter&gt;
+    </pre>
+
+    <p> Thus, if its a open proxy, user can ignore ProxyUser and ProxyPassword elements. </p>
+
+    <p>In addition to this, if you don't want to go through writing the above parameter you could
+        use Java Networking Properties for open proxies,
+-Dhttp.proxyHost=10.150.112.254 -Dhttp.proxyPort=8080 </p>
+
 <p>At runtime, the user can override the PROXY settings using the
 HttpTransportProperties.ProxyProperties object. Within your client stub, 
 create an instance of this object, configure proxy values for it,
