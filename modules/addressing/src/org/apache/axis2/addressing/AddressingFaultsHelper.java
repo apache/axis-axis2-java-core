@@ -135,6 +135,29 @@ public class AddressingFaultsHelper {
     //    wsa:InvalidAddressingHeader [Reason] the string: "A header representing a Message Addressing Property is not valid and the message cannot be processed"
     //      wsa:InvalidAddress
     //      wsa:InvalidEPR
+    public static void triggerInvalidEPRFault(MessageContext messageContext,
+            String incorrectHeaderName)
+    throws AxisFault {
+        log.warn("triggerInvalidEPRFault: messageContext: " + messageContext +
+                " incorrectHeaderName: " + incorrectHeaderName);
+        String namespace =
+            (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace)) {
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
+                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
+                    incorrectHeaderName, Submission.FAULT_INVALID_HEADER,
+                    null, AddressingMessages.getMessage(
+                    "spec.submission.FAULT_INVALID_HEADER_REASON"));
+        } else {
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
+                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
+                    incorrectHeaderName, Final.FAULT_INVALID_HEADER,
+                    "InvalidEPR",
+                    AddressingMessages.getMessage(
+                    "spec.final.FAULT_INVALID_HEADER_REASON"));
+        }
+    }
+
     //      wsa:InvalidCardinality
     public static void triggerInvalidCardinalityFault(MessageContext messageContext,
                                                       String incorrectHeaderName) throws AxisFault {

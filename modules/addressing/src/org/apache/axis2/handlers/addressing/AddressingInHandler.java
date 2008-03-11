@@ -136,21 +136,20 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 log.debug(namespace +
                           " headers present in the SOAP message. Starting to process ...");
             }
+
+            //Need to set these properties here, before we extract the WS-Addressing
+            //information, in case we throw a fault.
+            msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
+            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
             
-            if (extractAddressingInformation(msgContext, iterator, namespace)) {
-                // check for reference parameters
-                if (!disableRefparamExtract) {
-                    extractToEprReferenceParameters(msgContext.getTo(), header, namespace);
-                }
-                
-                msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
-                msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-                msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
+            extractAddressingInformation(msgContext, iterator, namespace);
+            
+            // check for reference parameters
+            if (!disableRefparamExtract) {
+                extractToEprReferenceParameters(msgContext.getTo(), header, namespace);
             }
-            else {
-                msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-                msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);                
-            }
+            
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         }
         else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
@@ -170,10 +169,9 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
      * @param messageContext the active MessageContext
      * @param headers an Iterator over the addressing headers targeted to me
      * @param namespace the addressing namespace
-     * @return true if addressing information was found
      * @throws AxisFault if an error occurs
      */
-    private boolean extractAddressingInformation(MessageContext messageContext, Iterator headers,
+    private void extractAddressingInformation(MessageContext messageContext, Iterator headers,
                                          String namespace)
             throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
@@ -230,14 +228,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             }
         }
 
-        if (actionBlock == null && toBlock == null && messageIDBlock == null
-            && replyToBlock == null && faultToBlock == null
-            && fromBlock == null && relatesToHeaders == null) {
-            // All of the headers must have had the non local roles so further
-            // processing should be skipped.
-            return false;
-        }
-
         if (actionBlock != null && !ignoreHeaders[ACTION_FLAG]) {
             extractActionInformation(actionBlock, messageContext);
         }
@@ -279,8 +269,6 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
         // provide default values for headers that have not been found.
         setDefaults(checkedHeaderNames, messageContext, namespace);
-
-        return true;
     }
 
     private void checkForMandatoryHeaders(boolean[] alreadyFoundAddrHeader,
@@ -324,7 +312,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             //used instead, such as the transport URL. Therefore, we only apply the default
             //on the inbound response side of a synchronous request-response exchange.
             if (!alreadyFoundAddrHeader[TO_FLAG] && !messageContext.isServerSide()) {
-                if (log.isTraceEnabled()) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(messageContext.getLogIDString() +
                     " setDefaults: Setting WS-Addressing default value for the To property.");
                 }
@@ -333,7 +321,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             
             if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
                 messageContext.setReplyTo(new EndpointReference(Final.WSA_ANONYMOUS_URL));
-                if (log.isTraceEnabled()) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(messageContext.getLogIDString() +
                     " setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
                 }
@@ -345,7 +333,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             //the absence of a ReplyTo header indicates that a response is NOT required.
             if (!alreadyFoundAddrHeader[REPLYTO_FLAG]) {
                 messageContext.setReplyTo(new EndpointReference(Final.WSA_NONE_URI));
-                if (log.isTraceEnabled()) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace(
                             "setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
                 }
@@ -384,7 +372,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         String relationshipTypeString =
                 relationshipType == null ? null : relationshipType.getAttributeValue();
 
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractRelatesToInformation: Extracted Relationship. Value=" + address +
                       " RelationshipType=" + relationshipTypeString);
         }
@@ -410,7 +398,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             messageContextOptions.setFaultTo(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractFaultToEPRInformation: Extracted FaultTo EPR: " + epr);
         }
         soapHeaderBlock.setProcessed();
@@ -426,7 +414,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             messageContextOptions.setReplyTo(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractReplyToEPRInformation: Extracted ReplyTo EPR: " + epr);
         }
         soapHeaderBlock.setProcessed();
@@ -444,7 +432,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
             messageContextOptions.setFrom(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractFromEPRInformation: Extracted From EPR: " + epr);
         }
         soapHeaderBlock.setProcessed();
@@ -471,7 +459,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
         soapHeaderBlock.setProcessed();
 
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractToEPRInformation: Extracted To EPR: " + epr);
         }
     }
@@ -484,13 +472,13 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 OMElement headerElement = (OMElement)headerBlocks.next();
                 OMAttribute isRefParamAttr =
                     headerElement.getAttribute(new QName(namespace, "IsReferenceParameter"));
-                if (log.isTraceEnabled()) {
+                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace("extractToEprReferenceParameters: Checking header: " +
                             headerElement.getQName());
                 }
                 if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
                     toEPR.addReferenceParameter(headerElement);
-                    if (log.isTraceEnabled()) {
+                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                         log.trace("extractToEprReferenceParameters: Header: " +
                                 headerElement.getQName() +
                         " has IsReferenceParameter attribute. Adding to toEPR.");
@@ -517,7 +505,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         String soapAction = messageContextOptions.getAction();
         String wsaAction = soapHeaderBlock.getText();
 
-        if (log.isTraceEnabled()) {
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
             log.trace("extractActionInformation: soapAction='" + soapAction + "' wsa:Action='" +
                       wsaAction + "'");
         }
@@ -573,16 +561,29 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr,
                                        String addressingNamespace, MessageContext messageContext)
             throws AxisFault {
+        String namespace = null;
+        
         try {
-            EndpointReferenceHelper.fromOM(epr, headerBlock, addressingNamespace);
+            namespace = EndpointReferenceHelper.fromOM(epr, headerBlock);            
         } catch (AxisFault af) {
-            if (log.isTraceEnabled()) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(
                         "extractEPRInformation: Exception occurred deserialising an EndpointReference.",
                         af);
             }
             AddressingFaultsHelper
                     .triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
+        }
+        
+        //Check that the EPR has the correct namespace.
+        if (!namespace.equals(addressingNamespace)) {
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(
+                        "extractEPRInformation: Addressing namespace = " + addressingNamespace +
+                        ", EPR namespace = " + namespace);
+            }
+            AddressingFaultsHelper
+                    .triggerInvalidEPRFault(messageContext, headerBlock.getLocalName());
         }
     }
 
