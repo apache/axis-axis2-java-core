@@ -28,7 +28,8 @@
 # -----------------------------------------------------------------------------
 
 # Get the context and from that find the location of setenv.sh
-. `dirname $0`/setenv.sh
+dir=`dirname "$0"`
+. "${dir}"/setenv.sh
 
 #add any user given classpath's
 USER_COMMANDS=""
@@ -48,5 +49,5 @@ do
 done 
 
 
-$JAVA_HOME/bin/java -classpath "$AXIS2_CLASSPATH" \
+"$JAVA_HOME"/bin/java -classpath "$AXIS2_CLASSPATH" \
 -Daxis2.xml="$AXIS2_HOME/conf/axis2.xml" -Daxis2.repo="$AXIS2_HOME/repository"  $USER_COMMANDS

@@ -14,4 +14,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-sh `dirname $0`/axis2.sh org.apache.axis2.wsdl.WSDL2Java $*
+dir=`dirname "$0"`
+sh "$dir"/axis2.sh org.apache.axis2.wsdl.WSDL2Java $*
