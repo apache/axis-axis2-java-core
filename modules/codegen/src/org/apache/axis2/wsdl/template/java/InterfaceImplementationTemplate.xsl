@@ -78,6 +78,7 @@
 
      //creating the Service with a unique name
      _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + getUniqueSuffix());
+     addAnnonymousOperations();
 
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
