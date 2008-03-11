@@ -232,7 +232,6 @@ public class EMailSender {
     }
 
     private void sendReceive(MessageContext msgContext, String msgId) throws AxisFault {
-        System.out.println("Sending message ID ==> " + msgId);
         storeMessageContext(msgContext, msgId);
         ConfigurationContext cc = msgContext.getConfigurationContext();
         //While sysncmial listner .not complete
