@@ -374,8 +374,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Class deployerClass = Loader.loadClass(deployerClassName);
                 deployer = (Deployer) deployerClass.newInstance();
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                return;
+                log.info("Unable to instantiate deployer " + deployerClassName);
+                log.debug(e.getMessage(), e);
+                continue;
             }
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
