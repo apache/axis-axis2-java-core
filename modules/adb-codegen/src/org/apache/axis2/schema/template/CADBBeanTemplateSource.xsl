@@ -9,7 +9,7 @@
          * <xsl:value-of select="$axis2_name"/>.c
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/Java version: #axisVersion# #today#
+         * by the Apache Axis2/Java version: SNAPSHOT  Built on : Mar 10, 2008 (08:35:52 GMT+00:00)
          */
          
         #include "<xsl:value-of select="$axis2_name"/>.h"
@@ -42,7 +42,7 @@
          * <xsl:value-of select="$axis2_name"/>.c
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/C version: #axisVersion# #today#
+         * by the Apache Axis2/C version: SNAPSHOT  Built on : Mar 10, 2008 (08:35:52 GMT+00:00)
          */
 
         #include "<xsl:value-of select="$axis2_name"/>.h"
@@ -3806,6 +3806,7 @@
                             if(!adb_<xsl:value-of select="@type"/>_is_particle())
                             {
                                 axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                                AXIS2_FREE(env->allocator,start_input_str);
                             }
                             </xsl:if>
                             
@@ -3824,6 +3825,7 @@
                             if(!adb_<xsl:value-of select="@type"/>_is_particle())
                             {
                                 axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                                AXIS2_FREE(env->allocator,end_input_str);
                             }
                             </xsl:if>
                         </xsl:when>
@@ -3840,10 +3842,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3877,10 +3881,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3895,10 +3901,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3913,10 +3921,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3932,10 +3942,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3950,10 +3962,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3971,10 +3985,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -3990,10 +4006,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4009,10 +4027,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4028,10 +4048,12 @@
                            </xsl:choose>
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4040,6 +4062,7 @@
                            text_value_<xsl:value-of select="$position"/> = <xsl:value-of select="$propertyInstanceName"/>;
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                             
                            text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
@@ -4054,6 +4077,7 @@
                            }
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4062,10 +4086,12 @@
                            text_value_<xsl:value-of select="$position"/> = axutil_uri_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4074,10 +4100,12 @@
                            text_value_<xsl:value-of select="$position"/> = axutil_duration_serialize_duration(<xsl:value-of select="$propertyInstanceName"/>, env);
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4086,6 +4114,7 @@
                            <!-- Handled above -->
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
 
                            <!-- TODO: Do this in single step -->
@@ -4120,6 +4149,7 @@
                            AXIS2_FREE(env-> allocator, text_value_<xsl:value-of select="$position"/>);
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4128,10 +4158,12 @@
                            strcpy(text_value_<xsl:value-of select="$position"/>, (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false");
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4142,10 +4174,12 @@
                                 text_value_<xsl:value-of select="$position"/> = axiom_node_to_string(<xsl:value-of select="$propertyInstanceName"/>, env);
                                 <xsl:if test="not(@any)">
                                 axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                                AXIS2_FREE(env->allocator,start_input_str);
                                 </xsl:if>
                                 axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                                 <xsl:if test="not(@any)">
                                 axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                                AXIS2_FREE(env->allocator,end_input_str);
                                 </xsl:if>
                               </xsl:when>
                               <xsl:otherwise>
@@ -4159,10 +4193,12 @@
                           text_value_<xsl:value-of select="$position"/> = axutil_date_time_serialize_date_time(<xsl:value-of select="$propertyInstanceName"/>, env);
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4170,10 +4206,12 @@
                           text_value_<xsl:value-of select="$position"/> =axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$propertyInstanceName"/>, env);
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                            axutil_stream_write(stream, env, text_value_<xsl:value-of select="$position"/>, axutil_strlen(text_value_<xsl:value-of select="$position"/>));
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, end_input_str, end_input_str_len);
+                           AXIS2_FREE(env->allocator,end_input_str);
                            </xsl:if>
                         </xsl:when>
 
@@ -4215,8 +4253,7 @@
                 </xsl:if>
               </xsl:for-each>
             </xsl:if>
-            AXIS2_FREE(env->allocator,start_input_str);
-            AXIS2_FREE(env->allocator,end_input_str);
+
             return parent;
         }
 
