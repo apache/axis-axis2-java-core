@@ -39,7 +39,6 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
 	private boolean 				isListType = false;
     private WebMethodAnnot webMethodAnnot;
     private WebResultAnnot webResultAnnot;
-    private WebServiceContextAnnot webServiceContextAnnot;
     private HandlerChainAnnot handlerChainAnnot;
     private SoapBindingAnnot soapBindingAnnot;
     private WebServiceRefAnnot webServiceRefAnnot;
@@ -70,8 +69,7 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
             WebServiceRefAnnot webServiceRefAnnot,
             WebEndpointAnnot webEndpointAnnot,
             RequestWrapperAnnot requestWrapperAnnot,
-            ResponseWrapperAnnot responseWrapperAnnot,
-            WebServiceContextAnnot webServiceContextAnnot
+            ResponseWrapperAnnot responseWrapperAnnot
     ) {
 
         this.methodName = methodName;
@@ -85,7 +83,6 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
         this.webEndpointAnnot = webEndpointAnnot;
         this.requestWrapperAnnot = requestWrapperAnnot;
         this.responseWrapperAnnot = responseWrapperAnnot;
-        this.webServiceContextAnnot = webServiceContextAnnot;
     }
 
     /** @return Returns the methodName */
@@ -165,11 +162,6 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
     /** @return Returns the responseWrapperAnnot. */
     public ResponseWrapperAnnot getResponseWrapperAnnot() {
         return responseWrapperAnnot;
-    }
-
-    /** @return Returns the webServiceContextAnnot. */
-    public WebServiceContextAnnot getWebServiceContextAnnot() {
-        return webServiceContextAnnot;
     }
 
     /** @return Returns the handlerChainAnnot. */
@@ -261,12 +253,6 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
             ResponseWrapperAnnot responseWrapperAnnot) {
         this.responseWrapperAnnot = responseWrapperAnnot;
     }
-
-    /** @param webServiceContextAnnot The webServiceContextAnnot to set. */
-    public void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
-        this.webServiceContextAnnot = webServiceContextAnnot;
-    }
-
 
     /** @param handlerChainAnnot The handlerChainAnnot to set. */
     public void setHandlerChainAnnot(HandlerChainAnnot handlerChainAnnot) {

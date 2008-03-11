@@ -88,7 +88,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private SoapBindingAnnot soapBindingAnnot;
     private List<WebServiceRefAnnot> webServiceRefAnnotList;
     private BindingTypeAnnot bindingTypeAnnot;
-    private WebServiceContextAnnot webServiceContextAnnot;
     
     private List<Annotation> features;
     
@@ -394,11 +393,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
                                                          BindingTypeAnnot.class,
                                                          javax.xml.ws.BindingType.class);
     }
-
-    /** @return Returns the webServiceContextAnnot. */
-    public WebServiceContextAnnot getWebServiceContextAnnot() {
-        return (WebServiceContextAnnot) webServiceContextAnnot;
-    }
     
     public List<Annotation> getWebServiceFeatures() {
         return features;
@@ -651,12 +645,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public void setBindingTypeAnnot(
             BindingTypeAnnot bindingTypeAnnot) {
         this.bindingTypeAnnot = bindingTypeAnnot;
-    }
-
-    /** @param webServiceContextAnnot The webServiceContextAnnot to set. */
-    public void setWebServiceContextAnnot(
-            WebServiceContextAnnot webServiceContextAnnot) {
-        this.webServiceContextAnnot = webServiceContextAnnot;
     }
 
     /** @param isInterface Sets whether this composite represents a class or interface */

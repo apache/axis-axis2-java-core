@@ -46,20 +46,6 @@ public class WebServiceContextAnnot implements javax.xml.ws.WebServiceContext {
         this.isUserInRole = isUserInRole;
     }
 
-    public static WebServiceContextAnnot createWebServiceConextAnnot() {
-        return new WebServiceContextAnnot();
-    }
-
-    public static WebServiceContextAnnot createWebServiceContextAnnot(
-            MessageContext messageContext,
-            Principal userPrincipal,
-            boolean isUserInRole
-    ) {
-        return new WebServiceContextAnnot(messageContext,
-                                          userPrincipal,
-                                          isUserInRole);
-    }
-
     /**
      * @param role The role to check.
      * @return Returns boolean indicating whether user is in Role

@@ -27,7 +27,6 @@ public class ParameterDescriptionComposite {
     private Class parameterTypeClass;
     private WebParamAnnot webParamAnnot;
     private WebServiceRefAnnot webServiceRefAnnot;
-    private WebServiceContextAnnot webServiceContextAnnot;
     private int listOrder;
 	// Will indicate whether or not we found an @XMLList annotation on the parameter
 	private boolean                 isListType;
@@ -42,14 +41,12 @@ public class ParameterDescriptionComposite {
             String parameterType,
             Class parameterTypeClass,
             WebParamAnnot webParamAnnot,
-            WebServiceRefAnnot webServiceRefAnnot,
-            WebServiceContextAnnot webServiceContextAnnot) {
+            WebServiceRefAnnot webServiceRefAnnot) {
 
         this.parameterType = parameterType;
         this.parameterTypeClass = parameterTypeClass;
         this.webParamAnnot = webParamAnnot;
         this.webServiceRefAnnot = webServiceRefAnnot;
-        this.webServiceContextAnnot = webServiceContextAnnot;
     }
 
     /**
@@ -133,11 +130,6 @@ public class ParameterDescriptionComposite {
     }
 
     /** @return Returns the webServiceContextAnnot. */
-    public WebServiceContextAnnot getWebServiceContextAnnot() {
-        return webServiceContextAnnot;
-    }
-
-    /** @return Returns the webServiceContextAnnot. */
     public int getListOrder() {
         return listOrder;
     }
@@ -165,11 +157,6 @@ public class ParameterDescriptionComposite {
     /** @param webServiceRefAnnot The webServiceRefAnnot to set. */
     public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
         this.webServiceRefAnnot = webServiceRefAnnot;
-    }
-
-    /** @param webServiceContextAnnot The webServiceContextAnnot to set. */
-    public void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
-        this.webServiceContextAnnot = webServiceContextAnnot;
     }
 
     /** @param webServiceContextAnnot The webServiceContextAnnot to set. */
