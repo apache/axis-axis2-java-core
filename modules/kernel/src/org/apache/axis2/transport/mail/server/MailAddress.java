@@ -35,11 +35,41 @@ public class MailAddress extends Address {
         this.mailAddy = mAddy;
     }
 
-    public boolean equals(Object addr) {
-        return this.mailAddy.equals(addr);
-    }
+    
 
-    public String toString() {
+    /**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((mailAddy == null) ? 0 : mailAddy.hashCode());
+		return result;
+	}
+
+
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof MailAddress))
+			return false;
+		final MailAddress other = (MailAddress) obj;
+		if (mailAddy == null) {
+			if (other.mailAddy != null)
+				return false;
+		} else if (!mailAddy.equals(other.mailAddy))
+			return false;
+		return true;
+	}
+
+
+
+	public String toString() {
         return this.mailAddy;
     }
 

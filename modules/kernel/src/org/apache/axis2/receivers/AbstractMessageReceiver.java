@@ -47,6 +47,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     protected static final Log log = LogFactory.getLog(AbstractMessageReceiver.class);
@@ -58,7 +60,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String DO_ASYNC = "messageReceiver.invokeOnSeparateThread";
 
     // Place to store previous values
-    public class ThreadContextDescriptor {
+    public static class ThreadContextDescriptor {
         public ClassLoader oldClassLoader;
         public MessageContext oldMessageContext;
     }
@@ -118,10 +120,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @param msgContext the current MessageContext
      * @return a ThreadContextDescriptor containing the old values
      */
-    protected ThreadContextDescriptor setThreadContext(MessageContext msgContext) {
+    protected ThreadContextDescriptor setThreadContext(final MessageContext msgContext) {
         ThreadContextDescriptor tc = new ThreadContextDescriptor();
         tc.oldMessageContext = (MessageContext) MessageContext.currentMessageContext.get();
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         tc.oldClassLoader = contextClassLoader;
 
         AxisService service = msgContext.getAxisService();
@@ -131,10 +133,15 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
             if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
                 Thread.currentThread().setContextClassLoader(
-                        new MultiParentClassLoader(new URL[] {}, new ClassLoader[] {
-                                msgContext.getAxisService().getClassLoader(),
-                                contextClassLoader,
-                        }));
+                	(ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+                		public Object run() {
+                			return new MultiParentClassLoader(new URL[] {}, 
+                				new ClassLoader[] {
+                					msgContext.getAxisService().getClassLoader(),
+                					contextClassLoader
+                			});
+                		}
+                	}));
             } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
                 Thread.currentThread().setContextClassLoader(
                         msgContext.getAxisService().getClassLoader()
