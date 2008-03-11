@@ -27,8 +27,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.httpclient.Header;
@@ -216,6 +215,18 @@ public abstract class Stub {
     protected void addHeader(OMElement omElementToadd,
                              SOAPEnvelope envelop){
         addHeader(omElementToadd,envelop,false);
+    }
+
+    protected void addAnnonymousOperations(){
+        RobustOutOnlyAxisOperation robustoutoonlyOperation =
+                new RobustOutOnlyAxisOperation(ServiceClient.ANON_ROBUST_OUT_ONLY_OP);
+        _service.addOperation(robustoutoonlyOperation);
+
+        OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP);
+        _service.addOperation(outOnlyOperation);
+
+        OutInAxisOperation outInOperation = new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
+        _service.addOperation(outInOperation);
     }
 
 }
