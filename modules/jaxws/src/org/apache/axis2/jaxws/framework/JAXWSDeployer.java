@@ -186,13 +186,13 @@ public class JAXWSDeployer implements Deployer {
             if ((wsAnnotation != null
                     || wspAnnotation != null)
                     && !pojoClass.isInterface()) {
-                log.info("Deploying JAXWS class : " + className);
                 AxisService axisService;
                 axisService =
                         createAxisService(classLoader,
                                 className,
                                 location);
                 if(axisService != null) {
+                    log.info("Deploying JAXWS annotated class " + className + " as a service - " + axisService.getName());
                     axisServiceList.add(axisService);
                 }
             }
