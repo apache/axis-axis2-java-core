@@ -309,7 +309,6 @@ class OperationDescriptionImpl
         }
 
         newAxisOperation.setName(determineOperationQName(seiMethod));
-
         newAxisOperation.setSoapAction(this.getAction());
         
         //*************************************************************************************
@@ -318,55 +317,46 @@ class OperationDescriptionImpl
         //*************************************************************************************
         
         String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
+        String operationName = newAxisOperation.getName().getLocalPart();
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
         String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
-        ArrayList inputActions = new ArrayList();
-        Action action = getAnnoAction();
          
         //We don't have a name at this point, shouldn't matter if we have the MEP
-        //String inputName = newAxisOperation.getName().getLocalPart();
         String inputName = null;
-        String inputAction = null;
-        
-        //Check the annotation first, if it exists.
-        if (action != null) {
-            inputAction = action.output();
-        }
+        String inputAction = getInputAction();
 
         //If we still don't have an action then fall back to the Default Action Pattern.
         if (inputAction == null) {
-            inputAction = WSDL11ActionHelper.getInputActionFromStringInformation( messageExchangePattern, 
+            inputAction =
+                WSDL11ActionHelper.getInputActionFromStringInformation( messageExchangePattern, 
                                                                         targetNS, 
                                                                         portTypeName, 
-                                                                        newAxisOperation.getName().getLocalPart(), 
+                                                                        operationName, 
                                                                         inputName);
         }
                 
+        ArrayList inputActions = new ArrayList();
         inputActions.add(inputAction);
         newAxisOperation.setWsamappingList(inputActions);
         
         //Map the action to the operation on the actual axisService
         //TODO: Determine whether this should be done at a higher level in the 
         //      description hierarchy
-        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().mapActionToOperation(inputAction, newAxisOperation);        
+        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().
+            getAxisService().mapActionToOperation(inputAction, newAxisOperation);        
         
         //set the OUTPUT ACTION
 
         //We don't have a name at this point, shouldn't matter if we have the MEP
-        //String outputName = newAxisOperation.getName().getLocalPart();  //REVIEW:
         String outputName = null;
-        String outputAction = null;
-        
-        //Check the annotation first, if it exists.
-        if (action != null) {
-            outputAction = action.input();
-        }
+        String outputAction = getOutputAction();
 
         if (outputAction == null) {
-            outputAction = WSDL11ActionHelper.getOutputActionFromStringInformation( messageExchangePattern, 
+            outputAction =
+                WSDL11ActionHelper.getOutputActionFromStringInformation( messageExchangePattern, 
                                                                          targetNS, 
                                                                          portTypeName, 
-                                                                         newAxisOperation.getName().getLocalPart(), 
+                                                                         operationName, 
                                                                          outputName);
         }
         
@@ -375,11 +365,12 @@ class OperationDescriptionImpl
         //Set the FAULT ACTION
         // Walk the fault information
         FaultDescription[] faultDescs = getFaultDescriptions();
+        
         if (faultDescs != null) {
-            for (int i=0; i <faultDescs.length; i++) {
+            for (FaultDescription faultDesc : faultDescs) {
         
                 AxisMessage faultMessage = new AxisMessage();
-                String faultName = faultDescs[i].getName();
+                String faultName = faultDesc.getName();
                 faultMessage.setName(faultName);
                 
                 String faultAction = 
@@ -388,29 +379,26 @@ class OperationDescriptionImpl
                                         newAxisOperation.getName().getLocalPart(), 
                                         faultMessage.getName());
                 
-                if (faultAction != null) {
-                        newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
-                }
+                newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
                 newAxisOperation.setFaultMessages(faultMessage);
             }
         }
         
         //Override the actions based on any FaultAction annotations that are defined.
-        if (action != null) {
-            FaultAction[] faultActions = action.fault();
-            
-            if (faultActions != null) {
-                for (FaultAction faultAction : faultActions) {
-                    String className = faultAction.className().getName();
-                    FaultDescription faultDesc = resolveFaultByExceptionName(className);
-                    if (faultDesc != null)  {
-                        newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
-                    }
+        FaultAction[] faultActions = getFaultActions();
+        
+        if (faultActions != null) {
+            for (FaultAction faultAction : faultActions) {
+                String className = faultAction.className().getName();
+                FaultDescription faultDesc = resolveFaultByExceptionName(className);
+                if (faultDesc != null)  {
+                    newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
                 }
             }
         }
 
-        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getAxisService().addOperation(newAxisOperation);
+        getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().
+            getAxisService().addOperation(newAxisOperation);
         
         return newAxisOperation;
     }
@@ -447,31 +435,25 @@ class OperationDescriptionImpl
         //*************************************************************************************
         
         String messageExchangePattern = newAxisOperation.getMessageExchangePattern();
+        String operationName = newAxisOperation.getName().getLocalPart();
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
         String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
-        ArrayList inputActions = new ArrayList();
-        Action action = getAnnoAction();
          
         //We don't have a name at this point, shouldn't matter if we have the MEP
-        //String inputName = newAxisOperation.getName().getLocalPart();
         String inputName = null;
-        String inputAction = null;
+        String inputAction = getInputAction();
         
-        //Check the annotation first, if it exists.
-        if (action != null) {
-            inputAction = action.input();
-        }
-        
-        //If we still don't have an action then fall back to the Default Action Pattern.
+        //If we don't have an action then fall back to the Default Action Pattern.
         if (inputAction == null) {
             inputAction =
                 WSDL11ActionHelper.getInputActionFromStringInformation(messageExchangePattern, 
                                                                        targetNS, 
                                                                        portTypeName, 
-                                                                       newAxisOperation.getName().getLocalPart(), 
+                                                                       operationName, 
                                                                        inputName);
         }
         
+        ArrayList inputActions = new ArrayList();
         inputActions.add(inputAction);
         newAxisOperation.setWsamappingList(inputActions);
         
@@ -484,22 +466,16 @@ class OperationDescriptionImpl
         //set the OUTPUT ACTION
 
         //We don't have a name at this point, shouldn't matter if we have the MEP
-        //String outputName = newAxisOperation.getName().getLocalPart();  //REVIEW:
         String outputName = null;
-        String outputAction = null;
+        String outputAction = getOutputAction();
         
-        //Check the annotation first, if it exists.
-        if (action != null) {
-            outputAction = action.output();
-        }
-        
-        //If we still don't have an action then fall back to the Default Action Pattern.
+        //If we don't have an action then fall back to the Default Action Pattern.
         if (outputAction == null) {
             outputAction =
                 WSDL11ActionHelper.getOutputActionFromStringInformation(messageExchangePattern,
                                                                         targetNS, 
                                                                         portTypeName, 
-                                                                        newAxisOperation.getName().getLocalPart(), 
+                                                                        operationName, 
                                                                         outputName);
         }
         
@@ -509,7 +485,7 @@ class OperationDescriptionImpl
         // Walk the fault information
         FaultDescription[] faultDescs = getFaultDescriptions();
         
-        //Generate actions according to the Default Action Pattern for all declared exceptions.
+        //Generate fault actions according to the Default Action Pattern.
         if (faultDescs != null) {
             for (FaultDescription faultDesc : faultDescs) {
         
@@ -528,17 +504,15 @@ class OperationDescriptionImpl
             }
         }
         
-        //Override the actions based on any FaultAction annotations that are defined.
-        if (action != null) {
-            FaultAction[] faultActions = action.fault();
-            
-            if (faultActions != null) {
-                for (FaultAction faultAction : faultActions) {
-                    String className = faultAction.className().getName();
-                    FaultDescription faultDesc = resolveFaultByExceptionName(className);
-                    if (faultDesc != null)  {
-                        newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
-                    }
+        //Override the fault actions based on any FaultAction annotations that are defined.
+        FaultAction[] faultActions = getFaultActions();
+        
+        if (faultActions != null) {
+            for (FaultAction faultAction : faultActions) {
+                String className = faultAction.className().getName();
+                FaultDescription faultDesc = resolveFaultByExceptionName(className);
+                if (faultDesc != null)  {
+                    newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
                 }
             }
         }
@@ -1551,6 +1525,39 @@ class OperationDescriptionImpl
             }
         }
         return actionAnnotation;
+    }
+    
+    private String getInputAction() {
+        String inputAction = null;
+        Action action = getAnnoAction();
+        
+        if (action != null) {
+            inputAction = action.input();
+        }
+        
+        return inputAction;
+    }
+    
+    private String getOutputAction() {
+        String outputAction = null;
+        Action action = getAnnoAction();
+        
+        if (action != null) {
+            outputAction = action.output();
+        }
+        
+        return outputAction;
+    }
+    
+    private FaultAction[] getFaultActions() {
+        FaultAction[] faultActions = null;
+        Action action = getAnnoAction();
+        
+        if (action !=  null) {
+            faultActions = action.fault();
+        }
+        
+        return faultActions;
     }
 
     // ===========================================
