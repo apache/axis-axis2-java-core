@@ -35,7 +35,9 @@ import org.w3c.dom.TypeInfo;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPPart;
 
 /**
  * A representation of a node (element) in a DOM representation of an XML document that provides
@@ -256,6 +258,30 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
                     = new org.apache.axis2.saaj.SOAPHeaderImpl(doomSOAPHeader);
             doomSOAPHeader.setUserData(SAAJ_NODE, saajSOAPHeader, null);
             return saajSOAPHeader;
+        } else if (domNode instanceof org.apache.axiom.om.impl.dom.DocumentImpl) {
+            
+            // Must be a SOAPEnvelope
+            if (!(this instanceof org.apache.axis2.saaj.SOAPEnvelopeImpl)) {
+                return null;
+            }
+            org.apache.axiom.om.impl.dom.DocumentImpl doomDocument
+                = (org.apache.axiom.om.impl.dom.DocumentImpl)domNode;
+            org.apache.axis2.saaj.SOAPEnvelopeImpl saajEnv = 
+                (org.apache.axis2.saaj.SOAPEnvelopeImpl) this;
+            javax.xml.soap.SOAPPart saajSOAPPart = null;
+            if (saajEnv.getSOAPPartParent() != null) {
+                // return existing SOAPPart
+                saajSOAPPart = saajEnv.getSOAPPartParent();
+                
+            } else {
+                // Create Message and SOAPPart
+                SOAPMessageImpl saajSOAPMessage = 
+                        new SOAPMessageImpl(saajEnv);
+                saajSOAPPart = saajSOAPMessage.getSOAPPart();
+            }
+            
+            domNode.setUserData(SAAJ_NODE, saajSOAPPart, null);
+            return saajSOAPPart;
         } else { // instanceof org.apache.axis2.om.impl.dom.ElementImpl
             ElementImpl doomElement = (ElementImpl)domNode;
             SOAPElementImpl saajSOAPElement = new SOAPElementImpl(doomElement);

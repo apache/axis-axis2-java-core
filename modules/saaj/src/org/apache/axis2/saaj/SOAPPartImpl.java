@@ -95,6 +95,7 @@ public class SOAPPartImpl extends SOAPPart {
         soapMessage = parentSoapMsg;
         envelope = soapEnvelope;
         document = soapEnvelope.getOwnerDocument();
+        envelope.setSOAPPartParent(this);
     }
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
@@ -219,6 +220,7 @@ public class SOAPPartImpl extends SOAPPart {
                     (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
+            envelope.setSOAPPartParent(this);
             javax.xml.transform.Source xmlSource =
                     new javax.xml.transform.stream.StreamSource( isReader);
             this.source = xmlSource;
@@ -401,6 +403,7 @@ public class SOAPPartImpl extends SOAPPart {
                     (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
+            envelope.setSOAPPartParent(this);
         } catch (TransformerFactoryConfigurationError e) {
             log.error(e);
             throw new SOAPException(e);

@@ -720,7 +720,10 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      */
     public SOAPElement getParentElement() {
         if (this.parentElement == null) {
-            return (SOAPElement)toSAAJNode(element.getParentNode());
+            javax.xml.soap.Node parentNode = toSAAJNode(element.getParentNode());
+            if (parentNode instanceof SOAPElement) {
+                this.parentElement = (SOAPElement) parentNode;
+            }
         }
         return this.parentElement;
     }
@@ -775,7 +778,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public Node getParentNode() {
-        return getParentElement();
+        Node parentNode = null;
+        if (this.parentElement == null) {
+            parentNode = toSAAJNode(element.getParentNode());
+            if (parentNode instanceof SOAPElement) {
+                this.parentElement = (SOAPElement) parentNode;
+            }
+        } else {
+            parentNode = this.parentElement;
+        }
+        return parentNode;
     }
 
     /** dom Node method */

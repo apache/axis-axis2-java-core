@@ -42,6 +42,7 @@ import javax.xml.soap.SOAPHeader;
 public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.SOAPEnvelope {
 
     private org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl omSOAPEnvelope;
+    private SOAPPartImpl soapPart;
 
     public SOAPEnvelopeImpl(final org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl envelope) {
         super(envelope);
@@ -230,5 +231,20 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
             return super.addChildElement(name);
         }
         return null;
+    }
+    
+    /**
+     * Set SOAPPart parent
+     * @param sp
+     */
+    void setSOAPPartParent(SOAPPartImpl sp) {
+        this.soapPart = sp;
+    }
+    
+    /**
+     * @return SOAPPart
+     */
+    SOAPPartImpl getSOAPPartParent() {
+        return this.soapPart;
     }
 }
