@@ -58,6 +58,10 @@
 			<artifactId>maven-plugin-testing-harness</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+        </dependency>
 	</dependencies>
 	<developers>
 		<developer>
