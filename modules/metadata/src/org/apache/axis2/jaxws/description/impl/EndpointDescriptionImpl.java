@@ -172,6 +172,9 @@ class EndpointDescriptionImpl
     public static final String BindingType_DEFAULT =
             javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
     
+    // ANNOTATION: @RespectBinding
+    private boolean respectBinding = true;
+    
     private List<CustomAnnotationInstance> customAnnotations;
     
     private Map<String, CustomAnnotationProcessor> customAnnotationProcessors;
@@ -1463,6 +1466,18 @@ class EndpointDescriptionImpl
         }
         
         return false;
+    }
+    
+    // ===========================================
+    // ANNOTATION: MTOM
+    // ===========================================
+    
+    public boolean respectBinding() {
+        return respectBinding;
+    }
+    
+    public void setRespectBinding(boolean r) {
+        respectBinding = r;
     }
     
     /*

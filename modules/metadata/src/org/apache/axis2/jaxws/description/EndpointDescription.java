@@ -172,6 +172,18 @@ public interface EndpointDescription {
      */
     public int getMTOMThreshold();
     
+    /**
+     * Returns true if the contents of the <code>&lt;wsdl:binding&gt;</code> must be 
+     * strictly respected by the runtime.
+     * 
+     * @return a boolean value
+     */
+    public boolean respectBinding();
+    
+    /**
+     * Indicate whether or not strict binding support should be used.
+     */
+    public void setRespectBinding(boolean respect);
     
     /**
      * Return the DescriptionBuilderComposite, if any, used to build this service description.

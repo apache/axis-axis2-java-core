@@ -21,28 +21,44 @@ package org.apache.axis2.jaxws.server.config;
 import javax.xml.ws.RespectBinding;
 import javax.xml.ws.RespectBindingFeature;
 
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * An implementation of the <code>ServerConfigurator</code> interface that will
+ * configure the endpoint based on the presence of a <code>RespectBinding</code>
+ * attribute.
  */
 public class RespectBindingConfigurator implements ServerConfigurator {
 
+    private static final Log log = LogFactory.getLog(RespectBindingConfigurator.class); 
+    
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.WebServiceFeatureConfigurator#configure(org.apache.axis2.jaxws.description.EndpointDescription)
      */
     public void configure(EndpointDescription endpointDescription) {
-    	RespectBinding mtomAnnoation =
+    	RespectBinding annotation =
     		(RespectBinding) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(RespectBindingFeature.ID);
-    	AxisService service = endpointDescription.getAxisService();
+    	
+        if (annotation != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Setting respectBinding to " + annotation.enabled());
+            }
+            endpointDescription.setRespectBinding(annotation.enabled());
+        }
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("No @RespectBinding annotation was found.");
+            }
+        }
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.feature.ServerConfigurator#supports(java.lang.String)
      */
     public boolean supports(String bindingId) {

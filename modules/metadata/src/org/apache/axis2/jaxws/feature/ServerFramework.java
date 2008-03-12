@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.spi.WebServiceFeatureAnnotation;
 
@@ -28,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerFramework {
+    private static final Log log = LogFactory.getLog(ServerFramework.class);
+    
     private static final Annotation[] ZERO_LENGTH_ARRAY = new Annotation[0];
 
     private Map<String, ServerConfigurator> configuratorMap;
@@ -78,11 +82,24 @@ public class ServerFramework {
         for (Annotation annotation : getAllAnnotations()) {
             WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
             ServerConfigurator configurator = configuratorMap.get(wsfAnnotation.id());
+            if (log.isDebugEnabled()) {
+                log.debug("Found ServerConfigurator: " + configurator.getClass().getName());
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Starting " + configurator.getClass().getName() + ".configure()");
+            }
             configurator.configure(endpointDescription);
+            if (log.isDebugEnabled()) {
+                log.debug("Completed " + configurator.getClass().getName() + ".configure()");
+            }
         }
     }
     
     private WebServiceFeatureAnnotation getWebServiceFeatureAnnotation(Annotation annotation) {
+        if (log.isDebugEnabled()) {
+            log.debug("Looking up WebServiceFeature annotation for " + annotation.annotationType());
+        }
         return annotation.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
     }
 }
