@@ -26,18 +26,30 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axis2.transport.http.SOAPMessageFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.*;
-import javax.xml.stream.XMLStreamException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.jms.BytesMessage;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.jms.Topic;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingException;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -58,6 +70,13 @@ public class JMSSender extends AbstractHandler implements TransportSender {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
         log.debug("JMSSender invoke()");
+        
+        /* Added due to possible bug in Axis2, MTOM enablement is based on msgContext.isDoingMTOM
+         * However msgContext.isDoingMTOM will always return false unless set programmatically.
+         * HTTP sets this boolean programmatically by looking up whether enableMTOM has been set
+         * in axis2.xml or as an option on the client.
+         */
+        msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
 
         JMSOutTransportInfo transportInfo = null;
         String targetAddress = null;
@@ -267,6 +286,13 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             BytesMessage bytesMsg = (BytesMessage) message;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OMOutputFormat format = new OMOutputFormat();
+            
+            /* Added due to possible bug in Axis2, OMOutputFormat's boolean isSOAP11 defaults to true.
+             * This means that if left untouched all JMS byte messages must be SOAP 1.1
+             * We set the boolean here based on the messageContexts value, which is assertained from
+             * the soap namespace used. This is what HTTP does also.
+             */
+            format.setSOAP11(msgContext.isSOAP11());
             format.setCharSetEncoding(
                     getProperty(msgContext, Constants.Configuration.CHARACTER_SET_ENCODING));
             format.setDoOptimize(msgContext.isDoingMTOM());
@@ -279,7 +305,13 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 handleException("IO Error while creating BytesMessage", e);
             }
             bytesMsg.writeBytes(baos.toByteArray());
-
+            
+            /* Added due to possible bug in Axis2, the content type is never set for a JMS byte message. This
+             * goes unnoticed when MTOM is not used, as the server can handle the message. However once MTOM
+             * is used a contentType of multipart/related is required.
+             */
+            bytesMsg.setStringProperty(JMSConstants.CONTENT_TYPE,
+            		new SOAPMessageFormatter().getContentType(msgContext, format, null));
         } else {
             message = session.createTextMessage();  // default
             TextMessage txtMsg = (TextMessage) message;
