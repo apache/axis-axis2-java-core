@@ -9,7 +9,7 @@
          * <xsl:value-of select="$axis2_name"/>.c
          *
          * This file was auto-generated from WSDL
-         * by the Apache Axis2/Java version: SNAPSHOT  Built on : Mar 10, 2008 (08:35:52 GMT+00:00)
+         * by the Apache Axis2/Java version: #axisVersion# #today#
          */
          
         #include "<xsl:value-of select="$axis2_name"/>.h"
