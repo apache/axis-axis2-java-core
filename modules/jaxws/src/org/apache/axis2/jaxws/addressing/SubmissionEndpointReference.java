@@ -18,11 +18,15 @@
  */
 package org.apache.axis2.jaxws.addressing;
 
+import org.apache.axis2.java.security.AccessController;
+
+import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,6 +46,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * <p>Java class for EndpointReferenceType complex type.
@@ -98,7 +103,14 @@ public class SubmissionEndpointReference extends EndpointReference {
     
     static {
         try { 
-            jaxbContext = JAXBContext.newInstance(SubmissionEndpointReference.class);
+            jaxbContext =(JAXBContext)
+            AccessController.doPrivileged(
+               new PrivilegedExceptionAction() {
+                                              
+                   public Object run() throws JAXBException {
+                       return JAXBContext.newInstance(SubmissionEndpointReference.class);
+                   }
+               });
         }
         catch (Exception e) {
             //TODO NLS enable

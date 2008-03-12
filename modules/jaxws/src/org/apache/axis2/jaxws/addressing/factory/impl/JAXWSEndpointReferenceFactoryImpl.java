@@ -26,8 +26,11 @@ import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
+import java.security.PrivilegedExceptionAction;
+
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
@@ -49,8 +52,15 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
         super();
 
         try { 
-            jaxbContext = JAXBContext.newInstance(W3CEndpointReference.class,
-                                                  SubmissionEndpointReference.class);
+            jaxbContext =(JAXBContext)
+              AccessController.doPrivileged(
+                 new PrivilegedExceptionAction() {
+                                                
+                     public Object run() throws JAXBException {
+                         return JAXBContext.newInstance(W3CEndpointReference.class,
+                                                        SubmissionEndpointReference.class);
+                     }
+                 });
         }
         catch (Exception e) {
             //TODO NLS enable
