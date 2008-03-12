@@ -1202,9 +1202,9 @@
 						<include>**/ParamTests.java</include>
 						<include>**/MessageContextTests.java</include>
 						<include>**/DocLitBareMinTests.java</include>
+						<include>**/MtomSampleByteArrayTests.java</include>
 
 			<!--	These tests are currently failing    -->
-			<!--			<include>**/MtomSampleByteArrayTests.java</include> -->
 			<!-- 			<include>**/FaultyWebServiceTests.java</include> -->
 			<!-- 			<include>**/ParallelAsyncTests.java</include> -->
 			<!--			<include>**/StringListTests.java</include> -->
