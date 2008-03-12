@@ -214,8 +214,10 @@ public class Utils {
         int count;
         File f;
         if (tmpDir == null) {
-            if (! new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs()) {
-                throw new IOException("Unable to create the directory");
+            if (!new File(System.getProperty("java.io.tmpdir"), "_axis2").exists()) {
+                if (! new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs()) {
+                    throw new IOException("Unable to create the directory");
+                }
             }
             File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
             f = File.createTempFile("axis2", suffix, tempFile);
