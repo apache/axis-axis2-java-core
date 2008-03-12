@@ -105,7 +105,7 @@ public class AxisServiceGroup extends AxisDescription {
             }
 
         }
-        service.setLastupdate();
+        service.setLastUpdate();
         addChild(service);
         if (axisConfig != null) {
             axisConfig.addToAllServicesMap(service);

@@ -1529,9 +1529,17 @@ public class AxisService extends AxisDescription {
 		return fileName;
 	}
 
-	public long getLastupdate() {
+    /**
+     * @deprecated please use getLastUpdate
+     * @return
+     */
+    public long getLastupdate() {
 		return lastupdate;
 	}
+
+    public long getLastUpdate() {
+        return lastupdate;
+    }
 
 	public ModuleConfiguration getModuleConfig(String moduleName) {
 		return (ModuleConfiguration) moduleConfigmap.get(moduleName);
@@ -1712,10 +1720,18 @@ public class AxisService extends AxisDescription {
 
 	/**
 	 * Sets the current time as last update time of the service.
+     * @deprecated please use setLastUpdate
 	 */
 	public void setLastupdate() {
 		lastupdate = new Date().getTime();
 	}
+
+    /**
+     * Sets the current time as last update time of the service.
+     */
+    public void setLastUpdate() {
+        lastupdate = new Date().getTime();
+    }
 
 	public void setName(String name) {
 		this.name = name;
