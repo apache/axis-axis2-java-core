@@ -38,11 +38,11 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
-    private LocalTransportSender sender;
 
     public LocalTransportReceiver(ConfigurationContext configContext) {
         confContext = configContext;
@@ -50,23 +50,26 @@ public class LocalTransportReceiver {
 
     public LocalTransportReceiver(LocalTransportSender sender) {
         this(CONFIG_CONTEXT);
-        this.sender = sender;
     }
 
-    public void processMessage(InputStream in, EndpointReference to, String action)
+    public void processMessage(InputStream in, EndpointReference to, String action, OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
         TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
                 Constants.TRANSPORT_LOCAL);
         TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
                 Constants.TRANSPORT_LOCAL);
+                
+        // CAUTION : When using Local Transport of Axis2,  class LocalTransportReceiver changed the name of LocalTransportSender's class in configContext.
+        // We escaped this problem by the following code.
+        LocalResponseTransportOutDescription localTransportResOut = new LocalResponseTransportOutDescription(
+                tOut);
+        localTransportResOut.setSender(new LocalResponder(response));
+        
         try {
-
-            tOut.setSender(new LocalResponder(sender));
-
             msgCtx.setTransportIn(tIn);
-            msgCtx.setTransportOut(tOut);
-            msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
+            msgCtx.setTransportOut(localTransportResOut);
+            msgCtx.setProperty(MessageContext.TRANSPORT_OUT, response);
 
             msgCtx.setTo(to);
             msgCtx.setWSAAction(action);
@@ -89,9 +92,8 @@ public class LocalTransportReceiver {
             try {
                 MessageContext faultContext =
                         MessageContextBuilder.createFaultMessageContext(msgCtx, e);
-                
-                faultContext.setTransportOut(tOut);
-                faultContext.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
+                faultContext.setTransportOut(localTransportResOut);
+                faultContext.setProperty(MessageContext.TRANSPORT_OUT, response);
 
                 AxisEngine.sendFault(faultContext);
             } catch (AxisFault axisFault) {

@@ -42,10 +42,12 @@ import java.io.ByteArrayOutputStream;
 public class LocalResponder extends AbstractHandler implements TransportSender {
     protected static final Log log = LogFactory.getLog(LocalResponder.class);
     
-    LocalTransportSender sender;
+    
+    //  fixed for Executing LocalTransport in MulthThread. 
+    private OutputStream out;
 
-    public LocalResponder(LocalTransportSender sender) {
-        this.sender = sender;
+    public LocalResponder(OutputStream response) {
+        this.out = response;        
     }
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
@@ -71,7 +73,6 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
         msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
         msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
 
-        OutputStream out;
         EndpointReference epr = null;
 
         if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
@@ -87,7 +88,6 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
 
             if (epr != null) {
                 if (!epr.hasNoneAddress()) {
-                    out = sender.getResponse();
                     TransportUtils.writeMessage(msgContext, out);
                 }
             } else {

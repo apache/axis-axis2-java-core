@@ -42,8 +42,6 @@ import java.io.OutputStream;
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
     protected static final Log log = LogFactory.getLog(LocalTransportSender.class);
 
-    private ByteArrayOutputStream response;
-
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
             throws AxisFault {
     }
@@ -52,10 +50,6 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
-    }
-
-    protected OutputStream getResponse() {
-        return response;
     }
 
     /**
@@ -106,10 +100,10 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
             throws AxisFault {
         try {
             InputStream in = new ByteArrayInputStream(out.toByteArray());
-            response = new ByteArrayOutputStream();
+            ByteArrayOutputStream response = new ByteArrayOutputStream();
 
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
-            localTransportReceiver.processMessage(in, msgContext.getTo(), msgContext.getOptions().getAction());
+            localTransportReceiver.processMessage(in, msgContext.getTo(), msgContext.getOptions().getAction(), response);
             in.close();
             out.close();
             in = new ByteArrayInputStream(response.toByteArray());
