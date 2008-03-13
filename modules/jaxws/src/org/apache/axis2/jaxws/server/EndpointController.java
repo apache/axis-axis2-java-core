@@ -211,7 +211,7 @@ public class EndpointController {
             MessageContext request = eic.getRequestMessageContext();
             
             Class serviceEndpoint = getServiceImplementation(request);
-            EndpointDescription endpointDesc = getEndpointDescription(request, serviceEndpoint);
+            EndpointDescription endpointDesc = getEndpointDescription(request);
             request.setEndpointDescription(endpointDesc);
             
             //  TODO: review: make sure the handlers are set on the InvocationContext
@@ -421,30 +421,21 @@ public class EndpointController {
     }
 
     /*
-    * Gets the ServiceDescription associated with the request that is currently
+    * Gets the EndpointDescription associated with the request that is currently
     * being processed.
     */
-    private EndpointDescription getEndpointDescription(MessageContext mc, Class implClass) {
+    private EndpointDescription getEndpointDescription(MessageContext mc) {
         AxisService axisSvc = mc.getAxisMessageContext().getAxisService();
-
-        //Make sure that a ServiceDescription was created and added to the AxisService
-
         Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
-        if (param != null) {
-            EndpointDescription ed = (EndpointDescription)param.getValue();
-            param = axisSvc.getParameter(EndpointContextMap.class.getCanonicalName());
-            if(param != null) {
-                EndpointContextMap map = (EndpointContextMap) param.getValue();
-                EndpointContextMapManager.setEndpointContextMap(map);
-            }
-            
-            return ed;
-        } else {
+        
+        if (param == null) {
         	// If we've made it here, its very likely that although the AxisService was deployed, the 
         	// associated ServiceDescription was not created successfully
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescErr1"));
-
         }
+        
+        EndpointDescription ed = (EndpointDescription) param.getValue();
+        return ed;
     }
 
     /**

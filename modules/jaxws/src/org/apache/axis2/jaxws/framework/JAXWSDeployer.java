@@ -30,9 +30,15 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
+import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
+import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.server.JAXWSMessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.io.FileUtils;
@@ -40,6 +46,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.jws.WebService;
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,8 +71,8 @@ public class JAXWSDeployer implements Deployer {
 
     private static Log log = LogFactory.getLog(JAXWSDeployer.class);
 
-    protected ConfigurationContext configCtx = null;
-    protected AxisConfiguration axisConfig = null;
+    protected ConfigurationContext configCtx;
+    protected AxisConfiguration axisConfig;
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
@@ -172,7 +179,7 @@ public class JAXWSDeployer implements Deployer {
     protected AxisServiceGroup deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
         ArrayList axisServiceList = new ArrayList();
-        for (int i = 0; i < classList.size(); i++) {
+        for (int i = 0, size = classList.size(); i < size; i++) {
             String className = (String) classList.get(i);
             Class pojoClass = Loader.loadClass(classLoader, className);
             WebService wsAnnotation = (WebService) pojoClass.getAnnotation(WebService.class);
@@ -197,17 +204,18 @@ public class JAXWSDeployer implements Deployer {
                 }
             }
         }
-        int count = axisServiceList.size();
-        if (count <= 0) {
+        int size = axisServiceList.size();
+        if (size <= 0) {
             return null;
         }
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupName(groupName);
-        for (int i = 0; i < axisServiceList.size(); i++) {
+        for (int i = 0; i < size; i++) {
             AxisService axisService = (AxisService) axisServiceList.get(i);
             serviceGroup.addService(axisService);
         }
         axisConfig.addServiceGroup(serviceGroup);
+        configureAddressing(serviceGroup);
         return serviceGroup;
     }
 
@@ -275,10 +283,10 @@ public class JAXWSDeployer implements Deployer {
                     axisOperation.setMessageReceiver(new JAXWSMessageReceiver());
                 }
             }
+            axisService.setElementFormDefault(false);
+            axisService.setFileName(serviceLocation);
+            axisService.setClassLoader(classLoader);
         }
-        axisService.setElementFormDefault(false);
-        axisService.setFileName(serviceLocation);
-        axisService.setClassLoader(classLoader);
         return axisService;
     }
 
@@ -327,6 +335,31 @@ public class JAXWSDeployer implements Deployer {
 
     private boolean isEmpty(String string) {
         return (string == null || "".equals(string));
+    }
+    
+    //Store the address URIs that we will need to create endpoint references at runtime.
+    private void configureAddressing(AxisServiceGroup serviceGroup) throws AxisFault {
+        EndpointContextMap map =
+            (EndpointContextMap) configCtx.getProperty(org.apache.axis2.jaxws.Constants.ENDPOINT_CONTEXT_MAP);
+        
+        if (map == null) {
+            map = EndpointContextMapManager.getEndpointContextMap();
+            configCtx.setProperty(org.apache.axis2.jaxws.Constants.ENDPOINT_CONTEXT_MAP, map);
+        }
+        
+        Iterator iterator = serviceGroup.getServices();
+        
+        while (iterator.hasNext()) {
+            AxisService axisService = (AxisService) iterator.next();
+            Parameter param =
+                axisService.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+            EndpointDescription ed = (EndpointDescription) param.getValue();
+            QName serviceName = ed.getServiceQName();
+            QName portName = ed.getPortQName();
+            EndpointKey key = new EndpointKey(serviceName, portName);
+            
+            map.put(key, axisService.getEPRs()[0]);
+        }
     }
 }
 
