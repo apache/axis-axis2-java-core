@@ -46,7 +46,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 /**
  * <p>Java class for EndpointReferenceType complex type.
