@@ -64,6 +64,7 @@ import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 import org.apache.woden.wsdl20.extensions.rpc.RPCInterfaceOperationExtensions;
@@ -383,32 +384,57 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisEndpoint axisEndpoint = new AxisEndpoint();
         axisEndpoint.setName(endpoint.getName().toString());
         axisEndpoint.setEndpointURL(endpoint.getAddress().toString());
-        if (processedBindings.containsKey(endpoint.getBinding().getName())) {
-            axisEndpoint.setBinding(
-                    (AxisBinding) processedBindings.get(endpoint.getBinding().getName()));
+        Binding binding = endpoint.getBinding();
+        AxisBinding axisBinding = null;
+        if (processedBindings.containsKey(binding.getName())) {
+            axisBinding = (AxisBinding) processedBindings.get(binding.getName());
         } else {
-            axisEndpoint.setBinding(processBinding(endpoint.getBinding(), serviceInterface));
+            axisBinding = processBinding(binding, serviceInterface);
         }
+        axisEndpoint.setBinding(axisBinding);
+        
+        String bindingType = binding.getType().toString();
+        if (bindingType.equals(WSDL2Constants.URI_WSDL2_SOAP)) {
+            processSOAPBindingEndpointExtensions(endpoint, axisEndpoint);
+        } else if (bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+            processHTTPBindingEndpointExtensions(endpoint, axisEndpoint);
+        }
+        addDocumentation(axisEndpoint, endpoint.toElement());
+        return axisEndpoint;
+    }
 
-        SOAPEndpointExtensions soapEndpointExtensions;
+    private void processSOAPBindingEndpointExtensions(Endpoint endpoint, AxisEndpoint axisEndpoint) throws AxisFault {
+        SOAPEndpointExtensions soapEndpointExtensions = null;
         try {
             soapEndpointExtensions = (SOAPEndpointExtensions) endpoint
                     .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
         } catch (URISyntaxException e) {
-            throw new AxisFault("HTTP Binding Extention not found");
+            throw new AxisFault("SOAP Binding Endpoint Extension not found");
         }
 
         if (soapEndpointExtensions != null) {
-
             axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,
                                      soapEndpointExtensions.getHttpAuthenticationScheme());
             axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,
                                      soapEndpointExtensions.getHttpAuthenticationRealm());
-
         }
-        addDocumentation(axisEndpoint, endpoint.toElement());
-        return axisEndpoint;
+    }
 
+    private void processHTTPBindingEndpointExtensions(Endpoint endpoint, AxisEndpoint axisEndpoint) throws AxisFault {
+        HTTPEndpointExtensions httpEndpointExtensions = null;
+        try {
+            httpEndpointExtensions = (HTTPEndpointExtensions) endpoint
+                    .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("HTTP Binding Endpoint Extension not found");
+        }
+
+        if (httpEndpointExtensions != null) {
+            axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,
+                                     httpEndpointExtensions.getHttpAuthenticationScheme());
+            axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,
+                                     httpEndpointExtensions.getHttpAuthenticationRealm());
+        }
     }
 
     /**
