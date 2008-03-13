@@ -1120,6 +1120,28 @@
                                         />
                                 <delete dir="target/test-classes/servicejars/StringListService"/>
 
+								<copy toDir="target/test-classes/servicejars/HandlerHeaderService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/handler/header/**"/>
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/handler/header">
+									   <include name="META-INF/**"/>
+									   <include name="handler.xml"/>									   
+									</fileset>
+									
+								</copy>	
+								<!-- We have to explicitly copy the xml file refered to by the client interface HandlerChain annotation -->
+								<copy toDir="target/test-classes/">
+									<fileset dir="test">
+										<include name="org/apache/axis2/jaxws/handler/header/handler.xml"/>
+									</fileset>
+								</copy>
+								
+								<zip destfile="target/test-classes/servicejars/HandlerHeaderService.jar"
+									basedir="${pom.basedir}/target/test-classes/servicejars/HandlerHeaderService"
+								/>
+								<delete dir="target/test-classes/servicejars/HandlerHeaderService"/>
+
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
                                         <include name="**/*.properties"/>
@@ -1225,6 +1247,7 @@
                         <include>**/MessageContextTests.java</include>
                         <include>**/DocLitBareMinTests.java</include>
                         <include>**/MtomSampleByteArrayTests.java</include>
+                        <include>**/HandlerTests.java</include>
 
                         <!--    These tests are currently failing    -->
                         <!--             <include>**/FaultyWebServiceTests.java</include> -->

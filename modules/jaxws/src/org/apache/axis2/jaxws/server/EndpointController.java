@@ -19,6 +19,9 @@
 package org.apache.axis2.jaxws.server;
 
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.RolePlayer;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -37,6 +40,7 @@ import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
 import org.apache.axis2.jaxws.handler.HandlerInvoker;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
@@ -61,6 +65,7 @@ import javax.xml.ws.handler.Handler;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -231,7 +236,12 @@ public class EndpointController {
                 }
                 eic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
             }
-            
+            //Lets Initialize the understood QName here, add only the headers that the handler 
+            //injects when we invoke the getHeader().
+            //Since we are adding the handlers to description layer here we will register all the
+            //headers set by SOAPHandler->getHeader().
+             List<QName> understood =HandlerUtils.registerSOAPHandlerHeaders(request.getAxisMessageContext(), eic.getHandlers());
+
             // Get the service instance.  This will run the @PostConstruct code.
             ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
                 FactoryRegistry.getFactory(ServiceInstanceFactory.class);
@@ -241,7 +251,10 @@ public class EndpointController {
             // modify/destroy parts of the message.  Make sure to save
             // the request message if appropriate.
             saveRequestMessage(request);
-            
+            //As per section 10.2.1 of JAXWS Specification, perform a mustUnderstand processing before
+            //invoking inbound handlers.
+            HandlerUtils.checkMustUnderstand(request.getAxisMessageContext(), understood);
+
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
             HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
@@ -327,7 +340,7 @@ public class EndpointController {
         eic.setResponseMessageContext(response);
         return true;
     }
-    
+
     /*
      * Returns the Class object for the implementation of the web service.
      */

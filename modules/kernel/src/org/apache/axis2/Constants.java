@@ -266,7 +266,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String SOAP_ROLE_IS_ULTIMATE_RECEIVER_ATTRIBUTE = "isUltimateReceiver";
     public static final String SOAP_ROLE_ELEMENT = "role";
     public static final String SOAP_ROLE_PLAYER_PARAMETER = "rolePlayer";
-    
+    /**
+     * This is used to store Header QNames that failed mustUnderstand check in AxisEngine.
+     */
+    public static final String UNPROCESSED_HEADER_QNAMES = "unprocessedHeaderQNames";
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";

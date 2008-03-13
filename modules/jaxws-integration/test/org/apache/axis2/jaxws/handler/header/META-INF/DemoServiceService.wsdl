@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="http://demo/" name="DemoServiceService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://demo/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://demo/" schemaLocation="DemoServiceService_schema1.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="echo">
+    <part name="parameters" element="tns:echo"/>
+  </message>
+  <message name="echoResponse">
+    <part name="parameters" element="tns:echoResponse"/>
+  </message>
+  <portType name="DemoService">
+    <operation name="echo">
+      <input message="tns:echo"/>
+      <output message="tns:echoResponse"/>
+    </operation>
+  </portType>
+  <binding name="DemoServicePortBinding" type="tns:DemoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="echo">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="DemoServiceService">
+    <port name="DemoServicePort" binding="tns:DemoServicePortBinding">
+      <soap:address location="http://localhost:8080/axis2/services/DemoServiceService"/>
+    </port>
+  </service>
+</definitions>
+

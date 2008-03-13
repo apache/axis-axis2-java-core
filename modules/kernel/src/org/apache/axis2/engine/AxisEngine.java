@@ -24,12 +24,15 @@ import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.Constants;
 import org.apache.axis2.client.async.AxisCallback;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -45,6 +48,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -67,31 +71,57 @@ public class AxisEngine {
     }
 
     private static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
+        List unprocessed = null;
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope.getHeader() == null) {
             return;
         }
-
         // Get all the headers targeted to us
         Iterator headerBlocks = envelope.getHeader().getHeadersToProcess((RolePlayer)msgContext.getConfigurationContext().getAxisConfiguration().getParameterValue("rolePlayer"));
-
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
-
+            QName headerName = headerBlock.getQName();
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
             if (headerBlock.isProcessed() || !headerBlock.getMustUnderstand()) {
                 continue;
             }
 
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
+                log.debug("MustUnderstand header not processed or registered as understood"+headerName);
+            }
+            if(isReceiverMustUnderstandProcessor(msgContext)){
+                if(unprocessed == null){
+                    unprocessed = new ArrayList();
+                }
+                if(!unprocessed.contains(headerName)){
+                    unprocessed.add(headerName);
+                }
+                continue;
+            }
             // Oops, throw an appropriate MustUnderstand fault!!
             QName faultQName = headerBlock.getVersion().getMustUnderstandFaultCode();
             throw new AxisFault(Messages.getMessage("mustunderstandfailed",
-                                                    headerBlock.getNamespace().getNamespaceURI(),
-                                                    headerBlock.getLocalName()), faultQName);
+                headerBlock.getNamespace().getNamespaceURI(),
+                headerBlock.getLocalName()), faultQName);
         }
+        if(unprocessed !=null && unprocessed.size()>0){
+            //Adding HeaderQNames that failed MU check as AxisService Parameter
+            //They will be examined later by MessageReceivers.
+            if(log.isDebugEnabled()){
+                log.debug("Adding Unprocessed headers to MessageContext.");
+            }
+            msgContext.setProperty(Constants.UNPROCESSED_HEADER_QNAMES, unprocessed);           
+        }       
     }
 
+    private static boolean isReceiverMustUnderstandProcessor(MessageContext msgContext){
+        MessageReceiver receiver = null;
+        if(msgContext.isServerSide()){
+            receiver = msgContext.getAxisOperation().getMessageReceiver();
+        }
+        return (receiver!=null && receiver.getClass().getName().endsWith("JAXWSMessageReceiver"));
+    }
     /**
      * This method is called to handle any error that occurs at inflow or outflow. But if the
      * method is called twice, it implies that sending the error handling has failed, in which case
@@ -591,7 +621,7 @@ public class AxisEngine {
         private TransportSender sender;
 
         public TransportNonBlockingInvocationWorker(MessageContext msgctx,
-                                                    TransportSender sender) {
+            TransportSender sender) {
             this.msgctx = msgctx;
             this.sender = sender;
         }
