@@ -318,10 +318,6 @@
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
-                                    <packageset dir="../../modules/mex-mar/src" defaultexcludes="yes">
-                                        <include name="org/apache/axis2/**"/>
-                                        <include name="javax/**"/>
-                                    </packageset>
                                     <packageset dir="../../modules/mtompolicy/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>

@@ -30,7 +30,6 @@
                 <include>modules/kernel/**</include>
                 <include>modules/metadata/**</include>
                 <include>modules/mex/**</include>
-                <include>modules/mex-mar/**</include>
                 <include>modules/mtompolicy/**</include>
                 <include>modules/parent/**</include>
                 <include>modules/ping/**</include>

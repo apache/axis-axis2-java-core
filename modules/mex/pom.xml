@@ -66,6 +66,24 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2-mar-maven-plugin</artifactId>
+                <version>${version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>generate-mar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>mar</goal>
+                        </goals>
+                        <configuration>
+                            <includeDependencies>false</includeDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>

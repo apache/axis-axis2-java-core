@@ -28,19 +28,18 @@ Axis2 modules:
 16. kernel
 17. metadata
 18. mex
-19. mex-mar
-20. mtompolicy
-21. parent
-22. ping
-23. saaj
-24. saaj-api
-25. samples
-26. scripting
-27. soapmonitor
-28. spring
-29. tool
-30. webapp
-31. xmlbeans
+19. mtompolicy
+20. parent
+21. ping
+22. saaj
+23. saaj-api
+24. samples
+25. scripting
+26. soapmonitor
+27. spring
+28. tool
+29. webapp
+30. xmlbeans
 
 One can use maven 2.x to create the Standard Binary Distribution from this, 
 by typing "mvn clean install".

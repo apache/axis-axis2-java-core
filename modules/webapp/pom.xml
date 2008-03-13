@@ -1358,7 +1358,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../mex-mar/target</directory>
+                            <directory>${basedir}/../mex/target</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>mex*.mar</include>
