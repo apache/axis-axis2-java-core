@@ -213,7 +213,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             remoteExceptionObject = it.next();
             className = remoteExceptionObject.toString();
             if (!("".equals(className)) && className.contains("RemoteException")) {
-                classes.remove(remoteExceptionObject);
+                it.remove();
             }
         }
 
