@@ -1320,75 +1320,79 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
-				// AxisBindingMessage axisBindingInMessage =
-				// axisBindingOperation.getC);
-				AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-				AxisMessage inaxisMessage = axisBindingInMessage
-						.getAxisMessage();
+                AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (axisBindingInMessage != null) {
+                    AxisMessage inaxisMessage = axisBindingInMessage
+                            .getAxisMessage();
 
-				if (inaxisMessage != null) {
-					operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
-					OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
-							wsdl);
-					addPolicyAsExtElement(axisBindingInMessage, input);
-					addExtensionElement(fac, input, SOAP_BODY, SOAP_USE, use,
-							null, targetNamespace, soap);
-					// addPolicyAsExtElement(PolicyInclude.BINDING_INPUT_POLICY,
-					// inaxisMessage.getPolicyInclude(), input);
-					operation.addChild(input);
-					writeSoapHeaders(inaxisMessage, fac, input, soap12);
-				}
-			}
+                    if (inaxisMessage != null) {
+                        operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
+                        OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
+                                wsdl);
+                        addPolicyAsExtElement(axisBindingInMessage, input);
+                        addExtensionElement(fac, input, SOAP_BODY, SOAP_USE, use,
+                                null, targetNamespace, soap);
+                        // addPolicyAsExtElement(PolicyInclude.BINDING_INPUT_POLICY,
+                        // inaxisMessage.getPolicyInclude(), input);
+                        operation.addChild(input);
+                        writeSoapHeaders(inaxisMessage, fac, input, soap12);
+                    }
+                }
+            }
 
-			if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
+            if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
-				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-				AxisMessage outAxisMessage = axisBindingOutMessage
-						.getAxisMessage();
-				if (outAxisMessage != null) {
-					OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
-							wsdl);
-					addPolicyAsExtElement(axisBindingOutMessage, output);
-					addExtensionElement(fac, output, SOAP_BODY, SOAP_USE, use,
-							null, targetNamespace, soap);
-					// addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
-					// outAxisMessage.getPolicyInclude(), output);
-					operation.addChild(output);
-					writeSoapHeaders(outAxisMessage, fac, output, soap12);
-				}
-			}
+                AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (axisBindingOutMessage != null) {
+                    AxisMessage outAxisMessage = axisBindingOutMessage
+                            .getAxisMessage();
+                    if (outAxisMessage != null) {
+                        OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
+                                wsdl);
+                        addPolicyAsExtElement(axisBindingOutMessage, output);
+                        addExtensionElement(fac, output, SOAP_BODY, SOAP_USE, use,
+                                null, targetNamespace, soap);
+                        // addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
+                        // outAxisMessage.getPolicyInclude(), output);
+                        operation.addChild(output);
+                        writeSoapHeaders(outAxisMessage, fac, output, soap12);
+                    }
+                }
+            }
 
-			// generate fault Messages
-			ArrayList faultyMessages = axisBindingOperation.getFaults();
-			if (faultyMessages != null) {
-				for (int i = 0; i < faultyMessages.size(); i++) {
-					AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage) faultyMessages
-							.get(i);
-					AxisMessage faultyMessage = bindingFaultyMessage
-							.getAxisMessage();
+            // generate fault Messages
+            ArrayList faultyMessages = axisBindingOperation.getFaults();
+            if (faultyMessages != null) {
+                for (int i = 0; i < faultyMessages.size(); i++) {
+                    AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage) faultyMessages
+                            .get(i);
+                    if (bindingFaultyMessage != null) {
+                        AxisMessage faultyMessage = bindingFaultyMessage
+                                .getAxisMessage();
 
-					OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
-							wsdl);
+                        OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
+                                wsdl);
 
-					addPolicyAsExtElement(bindingFaultyMessage, fault);
-					addExtensionElement(fac, fault, FAULT_LOCAL_NAME, SOAP_USE,
-							use, ATTRIBUTE_NAME, faultyMessage.getName(), soap);
-					fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),
-							null);
-					// add policies for fault messages
-					operation.addChild(fault);
-					writeSoapHeaders(faultyMessage, fac, fault, soap);
-				}
-			}
-		}
-	}
+                        addPolicyAsExtElement(bindingFaultyMessage, fault);
+                        addExtensionElement(fac, fault, FAULT_LOCAL_NAME, SOAP_USE,
+                                use, ATTRIBUTE_NAME, faultyMessage.getName(), soap);
+                        fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),
+                                null);
+                        // add policies for fault messages
+                        operation.addChild(fault);
+                        writeSoapHeaders(faultyMessage, fac, fault, soap);
+                    }
+                }
+            }
+        }
+    }
 
 	private void generateSoap12Binding(OMFactory fac, OMElement defintions,
 			AxisBinding axisBinding) throws Exception {
@@ -1457,72 +1461,76 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
-				// AxisBindingMessage axisBindingInMessage =
-				// axisBindingOperation.getC);
-				AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-				AxisMessage inaxisMessage = axisBindingInMessage
-						.getAxisMessage();
+                AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (axisBindingInMessage != null) {
+                    AxisMessage inaxisMessage = axisBindingInMessage
+                            .getAxisMessage();
 
-				if (inaxisMessage != null) {
-					operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
-					OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
-							wsdl);
-					addPolicyAsExtElement(axisBindingInMessage, input);
-					addExtensionElement(fac, input, SOAP_BODY, SOAP_USE, use,
-							null, targetNamespace, soap12);
-					operation.addChild(input);
-					writeSoapHeaders(inaxisMessage, fac, input, soap12);
-				}
-			}
+                    if (inaxisMessage != null) {
+                        operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
+                        OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
+                                wsdl);
+                        addPolicyAsExtElement(axisBindingInMessage, input);
+                        addExtensionElement(fac, input, SOAP_BODY, SOAP_USE, use,
+                                null, targetNamespace, soap12);
+                        operation.addChild(input);
+                        writeSoapHeaders(inaxisMessage, fac, input, soap12);
+                    }
+                }
+            }
 
-			if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
+            if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
-				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-				AxisMessage outAxisMessage = axisBindingOutMessage
-						.getAxisMessage();
-				if (outAxisMessage != null) {
-					OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
-							wsdl);
-					addPolicyAsExtElement(axisBindingOutMessage, output);
-					addExtensionElement(fac, output, SOAP_BODY, SOAP_USE, use,
-							null, targetNamespace, soap12);
-					// addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
-					// outAxisMessage.getPolicyInclude(), output);
-					operation.addChild(output);
-					writeSoapHeaders(outAxisMessage, fac, output, soap12);
-				}
-			}
+                AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (axisBindingOutMessage != null) {
+                    AxisMessage outAxisMessage = axisBindingOutMessage
+                            .getAxisMessage();
+                    if (outAxisMessage != null) {
+                        OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
+                                wsdl);
+                        addPolicyAsExtElement(axisBindingOutMessage, output);
+                        addExtensionElement(fac, output, SOAP_BODY, SOAP_USE, use,
+                                null, targetNamespace, soap12);
+                        // addPolicyAsExtElement(PolicyInclude.BINDING_OUTPUT_POLICY,
+                        // outAxisMessage.getPolicyInclude(), output);
+                        operation.addChild(output);
+                        writeSoapHeaders(outAxisMessage, fac, output, soap12);
+                    }
+                }
+            }
 
-			// generate fault Messages
-			ArrayList faultyMessages = axisBindingOperation.getFaults();
-			if (faultyMessages != null) {
-				for (int i = 0; i < faultyMessages.size(); i++) {
-					AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage) faultyMessages
-							.get(i);
-					AxisMessage faultyMessage = bindingFaultyMessage
-							.getAxisMessage();
-					OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
-							wsdl);
-					addPolicyAsExtElement(bindingFaultyMessage, fault);
-					addExtensionElement(fac, fault, FAULT_LOCAL_NAME, SOAP_USE,
-							use, ATTRIBUTE_NAME, faultyMessage.getName(),
-							soap12);
-					fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),
-							null);
-					// add policies for fault messages
-					operation.addChild(fault);
-					writeSoapHeaders(faultyMessage, fac, fault, soap12);
-				}
-			}
-		}
-	}
+            // generate fault Messages
+            ArrayList faultyMessages = axisBindingOperation.getFaults();
+            if (faultyMessages != null) {
+                for (int i = 0; i < faultyMessages.size(); i++) {
+                    AxisBindingMessage bindingFaultyMessage = (AxisBindingMessage) faultyMessages
+                            .get(i);
+                    if (bindingFaultyMessage != null) {
+                        AxisMessage faultyMessage = bindingFaultyMessage
+                                .getAxisMessage();
+                        OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME,
+                                wsdl);
+                        addPolicyAsExtElement(bindingFaultyMessage, fault);
+                        addExtensionElement(fac, fault, FAULT_LOCAL_NAME, SOAP_USE,
+                                use, ATTRIBUTE_NAME, faultyMessage.getName(),
+                                soap12);
+                        fault.addAttribute(ATTRIBUTE_NAME, faultyMessage.getName(),
+                                null);
+                        // add policies for fault messages
+                        operation.addChild(fault);
+                        writeSoapHeaders(faultyMessage, fac, fault, soap12);
+                    }
+                }
+            }
+        }
+    }
 
 	private void generateHttpBinding(OMFactory fac, OMElement defintions,
 			AxisBinding axisBinding) throws Exception {
@@ -1568,52 +1576,54 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
-				// AxisBindingMessage axisBindingInMessage =
-				// axisBindingOperation.getC);
-				AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-				AxisMessage inaxisMessage = axisBindingInMessage
-						.getAxisMessage();
+                AxisBindingMessage axisBindingInMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (axisBindingInMessage != null) {
+                    AxisMessage inaxisMessage = axisBindingInMessage
+                            .getAxisMessage();
 
-				if (inaxisMessage != null) {
-					operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
-					OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
-							wsdl);
-					OMElement inputelement = fac.createOMElement("content",
-							mime);
-					input.addChild(inputelement);
-					inputelement.addAttribute("type", "text/xml", null);
-					inputelement.addAttribute("part", axisOperation.getName()
-							.getLocalPart(), null);
-					operation.addChild(input);
-				}
-			}
+                    if (inaxisMessage != null) {
+                        operation.addAttribute(ATTRIBUTE_NAME, opeartionName, null);
+                        OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
+                                wsdl);
+                        OMElement inputelement = fac.createOMElement("content",
+                                mime);
+                        input.addChild(inputelement);
+                        inputelement.addAttribute("type", "text/xml", null);
+                        inputelement.addAttribute("part", axisOperation.getName()
+                                .getLocalPart(), null);
+                        operation.addChild(input);
+                    }
+                }
+            }
 
-			if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
+            if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
-				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
-						.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-				AxisMessage outAxisMessage = axisBindingOutMessage
-						.getAxisMessage();
-				if (outAxisMessage != null) {
-					OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
-							wsdl);
-					OMElement outElement = fac.createOMElement("content", mime);
-					outElement.addChild(outElement);
-					outElement.addAttribute("type", "text/xml", null);
-					outElement.addAttribute("part", axisOperation.getName()
-							.getLocalPart(), null);
-					output.addChild(outElement);
-					operation.addChild(output);
-				}
-			}
-		}
-	}
+                AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
+                        .getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (axisBindingOutMessage != null) {
+                    AxisMessage outAxisMessage = axisBindingOutMessage
+                            .getAxisMessage();
+                    if (outAxisMessage != null) {
+                        OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
+                                wsdl);
+                        OMElement outElement = fac.createOMElement("content", mime);
+                        outElement.addChild(outElement);
+                        outElement.addAttribute("type", "text/xml", null);
+                        outElement.addAttribute("part", axisOperation.getName()
+                                .getLocalPart(), null);
+                        output.addChild(outElement);
+                        operation.addChild(output);
+                    }
+                }
+            }
+        }
+    }
 
 	private void addPolicyAsExtElement(AxisDescription axisDescription,
 			OMElement element) throws Exception {
