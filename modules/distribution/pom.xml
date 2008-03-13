@@ -32,7 +32,7 @@
     <packaging>pom</packaging>
 
     <properties>
-       <docs.folder.version>1_3</docs.folder.version>
+        <docs.folder.version>1_3</docs.folder.version>
     </properties>
 
     <dependencies>
@@ -210,20 +210,21 @@
             <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
-	<distributionManagement>
-		<repository>
-			<id>apache-repo</id>
-			<name>Maven Central Repository</name>
-			<url>
-            scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-		</repository>
-		<snapshotRepository>
-			<id>apache-snapshots</id>
-			<name>Apache Development Repository</name>
-			<url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>apache-repo</id>
+            <name>Maven Central Repository</name>
+            <url>
+                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>apache-snapshots</id>
+            <name>Apache Development Repository</name>
+            <url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -242,8 +243,8 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/war-assembly.xml</descriptor>
                                 <descriptor>src/main/assembly/src-assembly.xml</descriptor>
-                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor> 
-                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor> 
+                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -257,133 +258,61 @@
                 <inherited>false</inherited>
                 <executions>
                     <execution>
-                      <id>package</id>
-                      <phase>process-resources</phase>
-                      <configuration>
-                        <tasks>
-                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
-                                <fileset dir="../documentation/xdocs/@axis2_version_dir@">
-                                    <exclude name="**/*.xml"/>
-                                </fileset>
-                            </copy>
-
-                            <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
-                            <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on" overwrite="true">
-                                <globmapper from="*.xml" to="*.html"/>
-                                <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
-                            </copy>
-
-			    <filter token="axisVersion" value="${version}"/>
-                            <tstamp>	
-                               <format property="TODAY" pattern="dd-MM-yyyy"/>
-                            </tstamp>
-  	                    <filter token="TODAY" value="${TODAY}"/>
-                            <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
-                                <fileset dir="../..">
-                                    <include name="LICENSE.txt"/>
-		                    <include name="README.txt"/>
-				    <include name="release-notes.html"/>
-                                </fileset>
-                                <fileset dir="../../release-docs/readme-files">
-                                    <include name="*.txt"/>
-                                </fileset>
-			    </copy>
-
-			    <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
-                                <globmapper from="*.xml" to="*.html"/>
-                                <fileset dir="../documentation/xdocs">
-                                    <exclude name="@axis2_version_dir@/**"/>
-                                    <exclude name="**/*.gif"/>
-                                    <exclude name="**/*.jpg"/>
-                                    <exclude name="**/*.png"/>
-                                </fileset>
-                            </copy>
-
-                            <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
-                                <fileset dir="../documentation/xdocs">
-                                    <exclude name="@axis2_version_dir@/**"/>
-                                    <include name="**/*.gif"/>
-                                    <include name="**/*.jpg"/>
-                                    <include name="**/*.png"/>
-                                    <include name="**/*.css"/>
-                                    <include name="**/*.xsd"/>
-                                    <include name="**/*.cgi"/>
-                                    <include name="**/*.properties"/>
-                                </fileset>
-                            </copy>
-                        </tasks>
-                       </configuration>
-                       <goals>
-                         <goal>run</goal>
-                       </goals>
-                    </execution>
-                    <execution>
-                        <id>service-module-list-generation</id>
+                        <id>package</id>
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
-				<mkdir dir="target/tmp-repository"/>
-				<mkdir dir="target/tmp-repository/modules"/>
-				<mkdir dir="target/tmp-repository/services"/>
-				<mkdir dir="target/tmp-repository/rmiservices"/>
+                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
+                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@">
+                                        <exclude name="**/*.xml"/>
+                                    </fileset>
+                                </copy>
 
-				<copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar" tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
-				<copy file="../../modules/addressing/target/addressing-${version}.mar" tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
-				<copy file="../../modules/ping/target/ping-${version}.mar" tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
-				<copy file="../../modules/mex-mar/target/mex-${version}.mar" tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
-				<copy file="../../modules/scripting/target/axis2-scripting-${version}.mar" tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
-				<copy file="../../modules/kernel/target/smtpfault.mar" tofile="target/tmp-repository/modules/smtpfault.mar"/>
+                                <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
+                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on"
+                                      overwrite="true">
+                                    <globmapper from="*.xml" to="*.html"/>
+                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
+                                </copy>
 
-				<!-- generate modules.list -->			        
-				<echo file="target/tmp-repository/modules/modules.list" append="false">
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements. See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership. The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License. You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-soapmonitor-${soapmonitor.mar.version}.mar
-addressing-${addressing.mar.version}.mar
-ping-${ping.mar.version}.mar
-mex-${mex.mar.version}.mar
-scripting-${scripting.mar.version}.mar
-			        </echo>
+                                <filter token="axisVersion" value="${version}"/>
+                                <tstamp>
+                                    <format property="TODAY" pattern="dd-MM-yyyy"/>
+                                </tstamp>
+                                <filter token="TODAY" value="${TODAY}"/>
+                                <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
+                                    <fileset dir="../..">
+                                        <include name="LICENSE.txt"/>
+                                        <include name="README.txt"/>
+                                        <include name="release-notes.html"/>
+                                    </fileset>
+                                    <fileset dir="../../release-docs/readme-files">
+                                        <include name="*.txt"/>
+                                    </fileset>
+                                </copy>
 
-				<copy file="../../modules/samples/target/toWar/services/version.aar" todir="target/tmp-repository/services"/>
-				<!-- generate services.list -->			        
-			        <echo file="target/tmp-repository/services/services.list" append="false">
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements. See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership. The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License. You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-version.aar
-			        </echo>
+                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
+                                    <globmapper from="*.xml" to="*.html"/>
+                                    <fileset dir="../documentation/xdocs">
+                                        <exclude name="@axis2_version_dir@/**"/>
+                                        <exclude name="**/*.gif"/>
+                                        <exclude name="**/*.jpg"/>
+                                        <exclude name="**/*.png"/>
+                                    </fileset>
+                                </copy>
+
+                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
+                                    <fileset dir="../documentation/xdocs">
+                                        <exclude name="@axis2_version_dir@/**"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.css"/>
+                                        <include name="**/*.xsd"/>
+                                        <include name="**/*.cgi"/>
+                                        <include name="**/*.properties"/>
+                                    </fileset>
+                                </copy>
                             </tasks>
                         </configuration>
                         <goals>
@@ -391,21 +320,101 @@ version.aar
                         </goals>
                     </execution>
                     <execution>
-		        <id>delete-temporary-files</id>
-			<phase>install</phase>
-			<configuration>
-			   <tasks>
-			     <delete dir="target/tmp-doc-distro"/>
-			     <delete dir="target/tmp-repository"/>
-			     <delete dir="target/archive-tmp"/>
-			   </tasks>
-		        </configuration>
-		        <goals>
-		            <goal>run</goal>
-		        </goals>
-	            </execution>
+                        <id>service-module-list-generation</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/tmp-repository"/>
+                                <mkdir dir="target/tmp-repository/modules"/>
+                                <mkdir dir="target/tmp-repository/services"/>
+                                <mkdir dir="target/tmp-repository/rmiservices"/>
+
+                                <copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar"
+                                      tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
+                                <copy file="../../modules/addressing/target/addressing-${version}.mar"
+                                      tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
+                                <copy file="../../modules/ping/target/ping-${version}.mar"
+                                      tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+                                <copy file="../../modules/mex-mar/target/mex-${version}.mar"
+                                      tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
+                                <copy file="../../modules/scripting/target/axis2-scripting-${version}.mar"
+                                      tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
+                                <copy file="../../modules/kernel/target/smtpfault.mar"
+                                      tofile="target/tmp-repository/modules/smtpfault.mar"/>
+
+                                <!-- generate modules.list -->
+                                <echo file="target/tmp-repository/modules/modules.list" append="false">
+                                    #
+                                    # Licensed to the Apache Software Foundation (ASF) under one
+                                    # or more contributor license agreements. See the NOTICE file
+                                    # distributed with this work for additional information
+                                    # regarding copyright ownership. The ASF licenses this file
+                                    # to you under the Apache License, Version 2.0 (the
+                                    # "License"); you may not use this file except in compliance
+                                    # with the License. You may obtain a copy of the License at
+                                    #
+                                    # http://www.apache.org/licenses/LICENSE-2.0
+                                    #
+                                    # Unless required by applicable law or agreed to in writing,
+                                    # software distributed under the License is distributed on an
+                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                    # KIND, either express or implied. See the License for the
+                                    # specific language governing permissions and limitations
+                                    # under the License.
+                                    #
+                                    soapmonitor-${soapmonitor.mar.version}.mar
+                                    addressing-${addressing.mar.version}.mar
+                                    ping-${ping.mar.version}.mar
+                                    mex-${mex.mar.version}.mar
+                                    scripting-${scripting.mar.version}.mar
+                                </echo>
+
+                                <copy file="../../modules/samples/target/toWar/services/version.aar"
+                                      todir="target/tmp-repository/services"/>
+                                <!-- generate services.list -->
+                                <echo file="target/tmp-repository/services/services.list" append="false">
+                                    #
+                                    # Licensed to the Apache Software Foundation (ASF) under one
+                                    # or more contributor license agreements. See the NOTICE file
+                                    # distributed with this work for additional information
+                                    # regarding copyright ownership. The ASF licenses this file
+                                    # to you under the Apache License, Version 2.0 (the
+                                    # "License"); you may not use this file except in compliance
+                                    # with the License. You may obtain a copy of the License at
+                                    #
+                                    # http://www.apache.org/licenses/LICENSE-2.0
+                                    #
+                                    # Unless required by applicable law or agreed to in writing,
+                                    # software distributed under the License is distributed on an
+                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                    # KIND, either express or implied. See the License for the
+                                    # specific language governing permissions and limitations
+                                    # under the License.
+                                    #
+                                    version.aar
+                                </echo>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>delete-temporary-files</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <delete dir="target/tmp-doc-distro"/>
+                                <delete dir="target/tmp-repository"/>
+                                <delete dir="target/archive-tmp"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
-	     </plugin>
+            </plugin>
         </plugins>
     </build>
 </project>

@@ -60,7 +60,8 @@
         -oriented and exploit many different message exchange patterns. The Axis2 engine
         architecture is careful to not build in any assumptions of request-response patterns to
         ensure that it can be used easily to support arbitrary message exchange
-        patterns.</description>
+        patterns.
+    </description>
     <url>http://ws.apache.org/axis2/</url>
     <organization>
         <name>Apache Software Foundation</name>
@@ -82,11 +83,11 @@
         <version>SNAPSHOT</version>
 
         <!-- Version #'s for the mars that we generate -->
-      	<addressing.mar.version>SNAPSHOT</addressing.mar.version>
-      	<soapmonitor.mar.version>SNAPSHOT</soapmonitor.mar.version>
-      	<mex.mar.version>SNAPSHOT</mex.mar.version>
-      	<ping.mar.version>SNAPSHOT</ping.mar.version>
-      	<scripting.mar.version>SNAPSHOT</scripting.mar.version>
+        <addressing.mar.version>SNAPSHOT</addressing.mar.version>
+        <soapmonitor.mar.version>SNAPSHOT</soapmonitor.mar.version>
+        <mex.mar.version>SNAPSHOT</mex.mar.version>
+        <ping.mar.version>SNAPSHOT</ping.mar.version>
+        <scripting.mar.version>SNAPSHOT</scripting.mar.version>
 
         <!-- Version #'s of all our dependencies -->
         <activemq.version>5.0.0</activemq.version>
@@ -162,7 +163,7 @@
             <unsubscribe>axis-dev-unsubscribe@ws.apache.org</unsubscribe>
             <post>axis-dev@ws.apache.org</post>
             <archive>http://marc.theaimsgroup.com/?l=axis-dev</archive>
-			<otherArchives>
+            <otherArchives>
                 <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-dev</otherArchive>
             </otherArchives>
         </mailingList>
@@ -172,11 +173,11 @@
             <unsubscribe>axis-user-unsubscribe@ws.apache.org</unsubscribe>
             <post>axis-user@ws.apache.org</post>
             <archive>http://marc.theaimsgroup.com/?l=axis-user</archive>
-			<otherArchives>
+            <otherArchives>
                 <otherArchive>http://markmail.org/search/list:org.apache.ws.axis-user</otherArchive>
             </otherArchives>
         </mailingList>
-    	<mailingList>
+        <mailingList>
             <name>CVS Commit Message List</name>
             <subscribe>axis-cvs-subscribe@ws.apache.org</subscribe>
             <unsubscribe>axis-cvs-unsubscribe@ws.apache.org</unsubscribe>
@@ -427,8 +428,8 @@
             <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
-       
-<contributor>
+
+        <contributor>
             <name>Shivantha Huruggamuwa</name>
             <email>shivanthah AT gmail.com</email>
             <organization>University Of Peradeniya , Sri Lanaka</organization>
@@ -839,28 +840,28 @@
                 <version>${log4j.version}</version>
                 <exclusions>
                     <exclusion>
-                      <groupId>javax.mail</groupId>
-                      <artifactId>mail</artifactId>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>javax.jms</groupId>
-                      <artifactId>jms</artifactId>
-                    </exclusion>
-                   <exclusion>
-                      <groupId>com.sun.jdmk</groupId>
-                      <artifactId>jmxtools</artifactId>
-                    </exclusion>
-                   <exclusion>
-                      <groupId>com.sun.jmx</groupId>
-                      <artifactId>jmxri</artifactId>
-                    </exclusion>
-                   <exclusion>
-                      <groupId>oro</groupId>
-                      <artifactId>oro</artifactId>
+                        <groupId>javax.jms</groupId>
+                        <artifactId>jms</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>junit</groupId>
-                      <artifactId>junit</artifactId>
+                        <groupId>com.sun.jdmk</groupId>
+                        <artifactId>jmxtools</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jmx</groupId>
+                        <artifactId>jmxri</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>oro</groupId>
+                        <artifactId>oro</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -939,29 +940,29 @@
                         <artifactId>stax-api</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>org.apache.activemq</groupId>
-                      <artifactId>activeio-core</artifactId>
+                        <groupId>org.apache.activemq</groupId>
+                        <artifactId>activeio-core</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>activesoap</groupId>
-                      <artifactId>jaxp-api</artifactId>
+                        <groupId>activesoap</groupId>
+                        <artifactId>jaxp-api</artifactId>
                     </exclusion>
                     <exclusion>
-                      <groupId>axis</groupId>
-                      <artifactId>axis</artifactId>
+                        <groupId>axis</groupId>
+                        <artifactId>axis</artifactId>
                     </exclusion>
-                </exclusions>                
+                </exclusions>
             </dependency>
-			<dependency>
-				<groupId>jalopy</groupId>
-				<artifactId>jalopy</artifactId>
-                <version>${jalopy.version}</version>
-			</dependency>
             <dependency>
-                 <groupId>xerces</groupId>
+                <groupId>jalopy</groupId>
+                <artifactId>jalopy</artifactId>
+                <version>${jalopy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>${xerces.version}</version>
-           </dependency>
+            </dependency>
 
 
             <dependency>
@@ -1019,18 +1020,18 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-           <dependency>
+            <dependency>
                 <groupId>org.igniterealtime</groupId>
                 <artifactId>smack</artifactId>
                 <version>${smack.version}</version>
-                <scope>provided</scope> 
-           </dependency>
-           <dependency>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons.lang.version}</version>
                 <scope>provided</scope>
-           </dependency>                              
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
@@ -1132,7 +1133,8 @@
             <id>apache-repo</id>
             <name>Maven Central Repository</name>
             <url>
-                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository
+            </url>
         </repository>
         <snapshotRepository>
             <id>apache-snapshots</id>

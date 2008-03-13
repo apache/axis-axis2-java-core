@@ -120,12 +120,12 @@
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/DocLitBareService.wsdl"/>
                                 </java>
                                 <echo>Generating Service / Service Client for Test01 test</echo>
-								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<classpath refid="maven.runtime.classpath"/>
-									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-d jaxbri -ss -sd -t -o target/wsdl/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl"/>
-								</java>
-								<ant dir="target/wsdl/Test01"/>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-d jaxbri -ss -sd -t -o target/wsdl/Test01 -u -uri ${wsdl.source.dir}/Test01.wsdl"/>
+                                </java>
+                                <ant dir="target/wsdl/Test01"/>
                             </tasks>
                         </configuration>
                         <goals>

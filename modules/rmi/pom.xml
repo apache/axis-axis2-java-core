@@ -34,9 +34,11 @@
     <description>Axis2 Remote Method Invocation</description>
     <scm>
         <connection>
-            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/rmi</connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/rmi
+        </connection>
         <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/rmi</developerConnection>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/rmi
+        </developerConnection>
         <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/rmi</url>
     </scm>
     <dependencies>

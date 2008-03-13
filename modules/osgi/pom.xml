@@ -65,7 +65,9 @@
                         <Bundle-Description>OSGi Bundle for Axis2</Bundle-Description>
                         <Bundle-SymbolicName>org.apache.axis2.osgi</Bundle-SymbolicName>
                         <Bundle-Activator>org.apache.axis2.extensions.osgi.Activator</Bundle-Activator>
-                        <Export-Package>${bundle.namespace}.*;version="1.4",javax.jws.*;version="0.0.0",com.sun.tools.ws.spi.*;version="0.0.0"</Export-Package>
+                        <Export-Package>
+                            ${bundle.namespace}.*;version="1.4",javax.jws.*;version="0.0.0",com.sun.tools.ws.spi.*;version="0.0.0"
+                        </Export-Package>
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>org.apache.axis2.extensions.osgi.*</Private-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
@@ -128,7 +130,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.ws</groupId> 
+            <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <exclusions>
                 <exclusion>
@@ -150,7 +152,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.ws</groupId> 
+            <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
             <exclusions>
                 <exclusion>

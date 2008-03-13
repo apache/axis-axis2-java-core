@@ -17,110 +17,111 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.axis2</groupId>
-		<artifactId>axis2-parent</artifactId>
-		<version>SNAPSHOT</version>
-		<relativePath>../parent/pom.xml</relativePath>
-	</parent>
-	<artifactId>axis2-fastinfoset</artifactId>
-	<name>Apache Axis 2.0 - Fast Infoset</name>
-	<description>Axis2 Fast Infoset module</description>
-	<dependencies>
-		<dependency>
-			<groupId>com.sun.xml.fastinfoset</groupId>
-			<artifactId>FastInfoset</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-kernel</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb</artifactId>
-			<version>${version}</version>
-		</dependency>
-		<dependency>
-			<groupId>wsdl4j</groupId>
-			<artifactId>wsdl4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.schema</groupId>
-			<artifactId>XmlSchema</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-java2wsdl</artifactId>
-			<version>${version}</version>
-		</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>axis2-fastinfoset</artifactId>
+    <name>Apache Axis 2.0 - Fast Infoset</name>
+    <description>Axis2 Fast Infoset module</description>
+    <dependencies>
         <dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-adb-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
-         <dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-codegen</artifactId>
-			<version>${version}</version>
-		</dependency>
+            <groupId>com.sun.xml.fastinfoset</groupId>
+            <artifactId>FastInfoset</artifactId>
+        </dependency>
         <dependency>
-			<groupId>annogen</groupId>
-			<artifactId>annogen</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>backport-util-concurrent</groupId>
-			<artifactId>backport-util-concurrent</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-          <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>annogen</groupId>
+            <artifactId>annogen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
         </dependency>
     </dependencies>
-	<profiles>
-		<profile>
-			<id>java14</id>
-			<activation>
-				<jdk>1.4</jdk>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.sun.xml.fastinfoset</groupId>
-					<artifactId>FastInfoset</artifactId>
-					<version>${fi.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-					<version>${junit.version-jdk1.4}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
+    <profiles>
+        <profile>
+            <id>java14</id>
+            <activation>
+                <jdk>1.4</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun.xml.fastinfoset</groupId>
+                    <artifactId>FastInfoset</artifactId>
+                    <version>${fi.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                    <version>${junit.version-jdk1.4}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
         <resources>
             <resource>
@@ -153,7 +154,7 @@
                 </includes>
             </testResource>
         </testResources>
-		<plugins>
+        <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
@@ -173,15 +174,15 @@
                             <tasks>
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
-								<property name="maven.test.path" refid="maven.compile.classpath"/>
+                                <property name="maven.test.path" refid="maven.compile.classpath"/>
                                 <!-- copy the mars so that they are available on the test classpath -->
                                 <copy file="../addressing/target/addressing-${version}.mar"
                                       tofile="target/test-classes/modules/addressing-${version}.mar"/>
 
                                 <property name="axis2.home" value="${basedir}/target"/>
-								<path id="maven.dependency.classpath">
-									<path refid="maven.compile.classpath"/>
-								</path>
+                                <path id="maven.dependency.classpath">
+                                    <path refid="maven.compile.classpath"/>
+                                </path>
                                 <!-- compiling some custom wsdl files -->
                                 <property name="wsdl.source.dir" value="test-resources/wsdl"/>
                                 <property name="wsdl.output.base.dir" value="target/wsdl"/>
@@ -194,7 +195,7 @@
                                     <include name="**/*SimpleAddService.java"/>
                                     <src path="test/"/>
                                 </javac>
-                               <echo>Generating the WSDL</echo>
+                                <echo>Generating the WSDL</echo>
                                 <java classname="org.apache.ws.java2wsdl.Java2WSDL" fork="true">
                                     <classpath>
                                         <path refid="maven.dependency.classpath"/>
@@ -204,18 +205,18 @@
                                 </java>
 
                                 <echo>Compiling SimpleAddService.wsdl</echo>
-								<mkdir dir="${wsdl.output.base.dir}/simpleAddService"/>
+                                <mkdir dir="${wsdl.output.base.dir}/simpleAddService"/>
 
-								<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-									<classpath refid="maven.runtime.classpath"/>
-									<classpath location="${compiled.classes.dir}"/>
-									<arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or"/>
-								</java>
-								<javac fork="true" destdir="target/classes" debug="on">
-									<classpath refid="maven.runtime.classpath"/>
-									<classpath location="${compiled.classes.dir}"/>
-									<src path="target/wsdl/simpleAddService"/>
-								</javac>
+                                <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-uri target/test-classes/SimpleAddService.wsdl -o target/wsdl/simpleAddService -S . -or"/>
+                                </java>
+                                <javac fork="true" destdir="target/classes" debug="on">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <src path="target/wsdl/simpleAddService"/>
+                                </javac>
 
                             </tasks>
                         </configuration>
@@ -238,9 +239,9 @@
                     <argLine>-Xms256m -Xmx512m</argLine>
                     <!-- Enable the next 2 lines if you want to attach a debugger
                    <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
-                   <includes>
-                       <include>**/*Test.java</include>
-                   </includes>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
                     <systemProperties>
                         <property>
                             <name>build.repository</name>
@@ -250,5 +251,5 @@
                 </configuration>
             </plugin>
         </plugins>
-	</build>
+    </build>
 </project>

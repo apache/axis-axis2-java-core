@@ -214,14 +214,14 @@
                     <xdocDirectory>${basedir}/xdocs</xdocDirectory>
                     <resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
                 </configuration>
-   	                                 <executions>
- 	                                        <execution>
- 	                                                <phase>install</phase>
- 	                                                <goals>
- 	                                                        <goal>site</goal>
- 	                                                </goals>
- 	                                        </execution>
- 	                                </executions>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -235,134 +235,134 @@
                         <configuration>
                             <tasks>
 
-							<mkdir dir="${basedir}/target/apidocs"/>
-							<javadoc packagenames="org.apache.axis2.*"
-									 destdir="${basedir}/target/apidocs"
-									 classpathref="maven.runtime.classpath"
-									 author="true"
-									 version="true"
-									 use="true"
-									 windowtitle="Axis2 API"
-									 doctitle="Axis2"
-									 bottom="Copyright &#169; 2007 Apache Web Services Project. All Rights Reserved."
-							>
-								<packageset dir="../../modules/kernel/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/adb/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/adb-codegen/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/addressing/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/clustering/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/codegen/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/distribution/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/fastinfoset/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/java2wsdl/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/jaxbri/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/jaxws/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/jaxws-api/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/jibx/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/json/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/jws-api/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/kernel/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/metadata/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/mex/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/mex-mar/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/mtompolicy/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/ping/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/saaj/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/saaj-api/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/scripting/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/soapmonitor/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/spring/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/webapp/src" defaultexcludes="yes">
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>    
-								<packageset dir="../../modules/xmlbeans/src" defaultexcludes="yes">    
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>  
-                                                 <packageset dir="../../modules/corba/src" defaultexcludes="yes">    
-								  <include name="org/apache/axis2/**"/>
-								  <include name="javax/**"/>
-								</packageset>      
-							</javadoc>
+                                <mkdir dir="${basedir}/target/apidocs"/>
+                                <javadoc packagenames="org.apache.axis2.*"
+                                         destdir="${basedir}/target/apidocs"
+                                         classpathref="maven.runtime.classpath"
+                                         author="true"
+                                         version="true"
+                                         use="true"
+                                         windowtitle="Axis2 API"
+                                         doctitle="Axis2"
+                                         bottom="Copyright &#169; 2007 Apache Web Services Project. All Rights Reserved."
+                                        >
+                                    <packageset dir="../../modules/kernel/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/adb/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/adb-codegen/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/addressing/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/clustering/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/codegen/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/distribution/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/fastinfoset/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/java2wsdl/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/jaxbri/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/jaxws/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/jaxws-api/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/jibx/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/json/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/jws-api/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/kernel/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/metadata/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/mex/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/mex-mar/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/mtompolicy/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/ping/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/saaj/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/saaj-api/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/scripting/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/soapmonitor/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/spring/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/webapp/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/xmlbeans/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                    <packageset dir="../../modules/corba/src" defaultexcludes="yes">
+                                        <include name="org/apache/axis2/**"/>
+                                        <include name="javax/**"/>
+                                    </packageset>
+                                </javadoc>
                             </tasks>
                         </configuration>
                         <goals>
@@ -370,7 +370,7 @@
                         </goals>
                     </execution>
                 </executions>
-	     </plugin>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -380,26 +380,26 @@
                     <name>site-stage</name>
                 </property>
             </activation>
-			<build>
-       			<plugins>
-            		<plugin>
-            			<groupId>org.apache.maven.plugins</groupId>
-            			<artifactId>maven-site-plugin</artifactId>
-            			<configuration>
-            				<xdocDirectory>${basedir}/xdocs</xdocDirectory>
-            				<resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
-              		  	</configuration>
-   	                    <executions>
- 	                    	<execution>
- 	                        	<phase>deploy</phase>
- 	                            <goals>
- 	                            	<goal>stage</goal>
- 	                            </goals>
- 	                    	</execution>
- 	               		</executions>
-            		</plugin>
-				</plugins>
-			</build>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <configuration>
+                            <xdocDirectory>${basedir}/xdocs</xdocDirectory>
+                            <resourcesDirectory>${basedir}/xdocs/resources</resourcesDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>stage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
-	</profiles>
+    </profiles>
 </project>
