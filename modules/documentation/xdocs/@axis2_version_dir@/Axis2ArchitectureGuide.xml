@@ -607,9 +607,9 @@ server, and provides the following information:</p>
 </ol>
 <a name="servicearchive" id="servicearchive"></a>
 <h3>Service Archive</h3>
-<p>The Service archive must have a <em>META-INF/<a href=
-"resources/schemas/services.xsd">services.xml</a></em> file and may
-contain the dependent classes. The <em>services.xml</em> file has
+<p>The Service archive must have a <em>META-INF/services.xml</em> file and may
+contain the dependent classes. Please see modules/kernel/resources/services.xsd in 
+the source distribution for the schema for services.xml. The <em>services.xml</em> file has
 the following information.</p>
 <ol>
 <li>Service level parameters</li>
