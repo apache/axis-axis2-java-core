@@ -879,19 +879,20 @@ public class Utils {
 			AxisConfiguration axisConfiguration = axisService
 					.getAxisConfiguration();
 			if (axisConfiguration != null) {
-				transportInValues = axisConfiguration.getTransportsIn()
-						.values().iterator();
+				ArrayList transports = new ArrayList();
+				for (Iterator iterator = axisConfiguration.getTransportsIn().values().iterator(); iterator.hasNext(); ){
+					TransportInDescription transportInDescription = (TransportInDescription) iterator.next();
+					transports.add(transportInDescription.getName());
+				}
+				transportInValues = transports.iterator(); 
 			}
 		} else {
 			transportInValues = axisService.getExposedTransports().iterator();
 		}
 
 		if (transportInValues != null) {
-			for (; transportInValues.hasNext();) {
-				TransportInDescription transportInDesc = (TransportInDescription) transportInValues
-						.next();
-
-				String transportName = transportInDesc.getName();
+			for (; transportInValues.hasNext();) {			
+				String transportName = (String) transportInValues.next();
 				String protocol = transportName.substring(0, 1).toUpperCase()
 						+ transportName.substring(1, transportName.length())
 								.toLowerCase();
@@ -904,8 +905,7 @@ public class Utils {
 				AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
 				httpSoap11Endpoint.setName(soap11EndpointName);
 				httpSoap11Endpoint.setParent(axisService);
-				httpSoap11Endpoint.setTransportInDescription(transportInDesc
-						.getName());
+				httpSoap11Endpoint.setTransportInDescription(transportName);
 				populateSoap11Endpoint(axisService, httpSoap11Endpoint);
 				axisService.addEndpoint(httpSoap11Endpoint.getName(),
 						httpSoap11Endpoint);
@@ -920,8 +920,7 @@ public class Utils {
 				AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
 				httpSoap12Endpoint.setName(soap12EndpointName);
 				httpSoap12Endpoint.setParent(axisService);
-				httpSoap12Endpoint.setTransportInDescription(transportInDesc
-						.getName());
+				httpSoap12Endpoint.setTransportInDescription(transportName);
 				populateSoap12Endpoint(axisService, httpSoap12Endpoint);
 				axisService.addEndpoint(httpSoap12Endpoint.getName(),
 						httpSoap12Endpoint);
@@ -935,8 +934,7 @@ public class Utils {
 					AxisEndpoint httpEndpoint = new AxisEndpoint();
 					httpEndpoint.setName(httpEndpointName);
 					httpEndpoint.setParent(axisService);
-					httpEndpoint.setTransportInDescription(transportInDesc
-							.getName());
+					httpEndpoint.setTransportInDescription(transportName);
 					populateHttpEndpoint(axisService, httpEndpoint);
 					axisService.addEndpoint(httpEndpoint.getName(),
 							httpEndpoint);
