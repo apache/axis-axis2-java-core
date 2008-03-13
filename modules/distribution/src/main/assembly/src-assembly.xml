@@ -18,12 +18,16 @@
                 <include>modules/addressing/**</include>
                 <include>modules/clustering/**</include>
                 <include>modules/codegen/**</include>
+                <include>modules/corba/**</include>
+                <include>modules/distribution/**</include>
+                <include>modules/documentation/**</include>
                 <include>modules/fastinfoset/**</include>
                 <include>modules/integration/**</include>
                 <include>modules/java2wsdl/**</include>
                 <include>modules/jaxbri/**</include>
                 <include>modules/jaxws/**</include>
                 <include>modules/jaxws-api/**</include>
+                <include>modules/jaxws-integration/**</include>
                 <include>modules/jibx/**</include>
                 <include>modules/json/**</include>
                 <include>modules/jws-api/**</include>
@@ -31,8 +35,10 @@
                 <include>modules/metadata/**</include>
                 <include>modules/mex/**</include>
                 <include>modules/mtompolicy/**</include>
+                <include>modules/osgi/**</include>
                 <include>modules/parent/**</include>
                 <include>modules/ping/**</include>
+                <include>modules/rmi/**</include>
                 <include>modules/saaj/**</include>
                 <include>modules/saaj-api/**</include>
                 <include>modules/samples/**</include>
@@ -41,9 +47,7 @@
                 <include>modules/spring/**</include>
                 <include>modules/tool/**</include>
                 <include>modules/webapp/**</include>
-                <include>modules/xmlbeans/**</include>
-                <include>modules/corba/**</include>
-                <include>modules/distribution/**</include>
+                <include>modules/xmlbeans/**</include>                
             </includes>
 
 	    <excludes>
