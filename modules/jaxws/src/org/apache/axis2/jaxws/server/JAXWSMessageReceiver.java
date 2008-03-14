@@ -201,6 +201,8 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                 }
             }
 
+        } catch (AxisFault af) {
+            throw af;
         } catch (Exception e) {
             ThreadContextMigratorUtil.performThreadCleanup(
                     Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);

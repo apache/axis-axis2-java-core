@@ -115,7 +115,8 @@ public class HandlerUtils {
             for(int i=0; i<qNames.length; i++){
                 headerNames[i] ="{" + qNames[i].getNamespaceURI()+ "}" + qNames[i].getLocalPart();
             }
-            throw new AxisFault(Messages.getMessage("mustunderstandfailed", headerNames)); 
+            QName faultQName = envelope.getVersion().getMustUnderstandFaultCode();
+            throw new AxisFault(Messages.getMessage("mustunderstandfailed2", headerNames), faultQName); 
         }
 
         checkUnprocessed(envelope, unprocessed, understood, msgContext);

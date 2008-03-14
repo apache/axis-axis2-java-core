@@ -19,23 +19,16 @@
 package org.apache.axis2.jaxws.server;
 
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.RolePlayer;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointKey;
-import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
-import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
-import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
 import org.apache.axis2.jaxws.handler.HandlerInvoker;
@@ -61,11 +54,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
-
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -92,7 +83,7 @@ public class EndpointController {
      * @param eic
      * @return
      */
-    public EndpointInvocationContext invoke(EndpointInvocationContext eic) {
+    public EndpointInvocationContext invoke(EndpointInvocationContext eic) throws AxisFault, WebServiceException {
         if (log.isDebugEnabled()) {
             log.debug("Invocation pattern: synchronous");
         }
@@ -113,6 +104,8 @@ public class EndpointController {
             else {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invokeErr"));
             }
+        } catch (AxisFault af) {
+            throw af;
         } catch (Exception e) {
             Throwable toBeThrown = InvocationHelper.determineMappedException(e, eic);
             if(toBeThrown == null) {
@@ -196,7 +189,7 @@ public class EndpointController {
         return;
     }
     
-    protected boolean handleRequest(EndpointInvocationContext eic) {
+    protected boolean handleRequest(EndpointInvocationContext eic) throws AxisFault, WebServiceException {
         
 
 
@@ -285,6 +278,8 @@ public class EndpointController {
                 responseReady(eic);
                 return false;
             }
+        } catch (AxisFault af) {
+            throw af;
         } catch (Exception e) {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
             throw ExceptionFactory.makeWebServiceException(e);
