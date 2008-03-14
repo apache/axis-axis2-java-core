@@ -180,6 +180,12 @@
                 <order phase="Transport"/>
             </handler>
         </phase>
+        <phase name="Addressing">
+             <handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+                 <order phase="Addressing"/>
+            </handler>
+        </phase>
         <phase name="Security"/>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
@@ -193,10 +199,6 @@
                 <order phase="Dispatch"/>
             </handler>
 
-            <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
             <handler name="RequestURIOperationDispatcher"
                      class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
                 <order phase="Dispatch"/>
@@ -247,6 +249,12 @@
         <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
+        <phase name="Addressing">
+             <handler name="AddressingBasedDispatcher"
+                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+                 <order phase="Addressing"/>
+            </handler>
+        </phase>
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
@@ -259,10 +267,6 @@
                 <order phase="Dispatch"/>
             </handler>
 
-            <handler name="AddressingBasedDispatcher"
-                     class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
             <handler name="RequestURIOperationDispatcher"
                      class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher">
                 <order phase="Dispatch"/>

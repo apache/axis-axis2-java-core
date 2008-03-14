@@ -20,15 +20,14 @@ package org.apache.axis2.jaxws.client;
 
 import org.apache.axis2.jaxws.core.controller.InvocationControllerFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
-import junit.framework.TestCase;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 /**
  * This TestCase can be extended to write JAX-WS client side unit tests without 
  * having to have an end-to-end test.  The <source>TestClientInvocationController</source>
  * will be used to capture the request.  
  */
-public class InterceptableClientTestCase extends TestCase {
+public class InterceptableClientTestCase extends XMLTestCase {
 
     private InvocationControllerFactory oldFactory;
     private TestClientInvocationControllerFactory newFactory;

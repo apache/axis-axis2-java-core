@@ -164,6 +164,9 @@
                                         <include name="org/apache/axis2/jaxws/description/HandlerConfigFile.xml"/>
                                     </fileset>
                                 </copy>
+                                <property name="addressing_version" value="${version}"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="." target="build-repo"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -199,6 +202,12 @@
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>
+                    <systemProperties>
+                        <property>
+                            <name>org.apache.axis2.jaxws.repo.path</name>
+                            <value>./target/repository</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

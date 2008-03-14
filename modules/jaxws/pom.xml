@@ -232,6 +232,9 @@
                                         <include name="**/axis2.xml"/>
                                     </fileset>
                                 </copy>
+                                <property name="addressing_version" value="${version}"/>
+                                <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                     dir="." target="build-repo"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -300,6 +303,10 @@
                         <property>
                             <name>org.apache.axis2.jaxws.config.path</name>
                             <value>./target/test-classes/axis2.xml</value>
+                        </property>
+                        <property>
+                            <name>org.apache.axis2.jaxws.repo.path</name>
+                            <value>./target/repository</value>
                         </property>
                     </systemProperties>
                 </configuration>
