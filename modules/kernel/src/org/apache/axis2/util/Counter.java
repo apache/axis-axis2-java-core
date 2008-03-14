@@ -19,8 +19,6 @@
 
 package org.apache.axis2.util;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * This class provides a simple zero-based counter with synchronized access.

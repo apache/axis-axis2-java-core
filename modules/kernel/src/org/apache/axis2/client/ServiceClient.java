@@ -115,6 +115,8 @@ public class ServiceClient {
 
     //whether we create configctx or not
     private boolean createConfigCtx;
+    
+    private int hashCode;
 
     /**
      * Create a service client configured to work with a specific AxisService.
@@ -146,6 +148,7 @@ public class ServiceClient {
             }
         }
         this.configContext = configContext;
+        hashCode = (int) anonServiceCounter.incrementAndGet();
 
         // Initialize transports
         ListenerManager transportManager = configContext.getListenerManager();
@@ -843,4 +846,28 @@ public class ServiceClient {
                 configContext.createServiceGroupContext(axisServiceGroup);
         this.serviceContext = serviceGroupContext.getServiceContext(axisService);
     }
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return this.hashCode;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ServiceClient))
+			return false;
+		final ServiceClient other = (ServiceClient) obj;
+		if (hashCode != other.hashCode)
+			return false;
+		return true;
+	}
+    
 }
