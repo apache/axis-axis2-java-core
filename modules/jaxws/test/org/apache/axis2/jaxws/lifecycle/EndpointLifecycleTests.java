@@ -20,84 +20,88 @@ package org.apache.axis2.jaxws.lifecycle;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.resourceinjection.ResourceInjectionPortTypeImpl;
+import org.apache.axis2.jaxws.injection.ResourceInjectionTestImpl1;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
 import org.apache.axis2.jaxws.TestLogger;
 
+/**
+ * Unit Tests for lifecycle creatoin
+ *
+ */
 public class EndpointLifecycleTests extends TestCase {
-	Object endpointInstance = new ResourceInjectionPortTypeImpl();
-	Object badObject = new Object();
-	public EndpointLifecycleTests() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    Object endpointInstance = new ResourceInjectionTestImpl1();
+    Object badObject = new Object();
+    public EndpointLifecycleTests() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param arg0
-	 */
-	public EndpointLifecycleTests(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public void testPostConstruct(){
-        TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-		try{
-			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
-			assertNotNull(elmf);
-			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
-			assertNotNull(elmf);
-			elm.invokePostConstruct();
-            TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			fail(e.getMessage());
-		}
-	}
+    /**
+     * @param arg0
+     */
+    public EndpointLifecycleTests(String arg0) {
+        super(arg0);
+        // TODO Auto-generated constructor stub
+    }
 
-	public void testPreDestroy(){
+    public void testPostConstruct(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
-			assertNotNull(elmf);
-			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
-			assertNotNull(elm);
-			elm.invokePreDestroy();
+        try{
+            EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
+            assertNotNull(elmf);
+            EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
+            assertNotNull(elmf);
+            elm.invokePostConstruct();
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			fail(e.getMessage());
-		}
-	}
-	
-	public void testBadPostConstruct(){
-        TestLogger.logger.debug("------------------------------");
-        TestLogger.logger.debug("Test : " + getName());
-		try{
-			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
-			assertNotNull(elmf);
-			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
-			assertNotNull(elmf);
-			elm.invokePostConstruct();
-            TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			fail(e.getMessage());
-		}
-	}
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
 
-	public void testBadPreDestroy(){
+    public void testPreDestroy(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
-			assertNotNull(elmf);
-			EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
-			assertNotNull(elm);
-			elm.invokePreDestroy();
+        try{
+            EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
+            assertNotNull(elmf);
+            EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(endpointInstance);
+            assertNotNull(elm);
+            elm.invokePreDestroy();
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			fail(e.getMessage());
-		}
-	}
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    public void testBadPostConstruct(){
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
+        try{
+            EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
+            assertNotNull(elmf);
+            EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
+            assertNotNull(elmf);
+            elm.invokePostConstruct();
+            TestLogger.logger.debug("------------------------------");
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    public void testBadPreDestroy(){
+        TestLogger.logger.debug("------------------------------");
+        TestLogger.logger.debug("Test : " + getName());
+        try{
+            EndpointLifecycleManagerFactory elmf = (EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
+            assertNotNull(elmf);
+            EndpointLifecycleManager elm = elmf.createEndpointLifecycleManager(badObject);
+            assertNotNull(elm);
+            elm.invokePreDestroy();
+            TestLogger.logger.debug("------------------------------");
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
 }

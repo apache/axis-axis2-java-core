@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.resourceinjection.sei;
+package org.apache.axis2.jaxws.sample.resourceinjection.sei;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -34,18 +34,18 @@ public class ResourceInjectionService
 
     private final static URL RESOURCEINJECTIONSERVICE_WSDL_LOCATION;
 
-    private static String wsdlLocation="/test/org/apache/axis2/jaxws/resourceinjection/META-INF/resourceinjection.wsdl";
+    private static String wsdlLocation="/test/org/apache/axis2/jaxws/sample/resourceinjection/META-INF/resourceinjection.wsdl";
     static {
         URL url = null;
         try {
-        	try{
-	        	String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
-	        	wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
-        	}catch(Exception e){
-        		e.printStackTrace();
-        	}
-        	File file = new File(wsdlLocation);
-        	url = file.toURL();
+            try{
+                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            File file = new File(wsdlLocation);
+            url = file.toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

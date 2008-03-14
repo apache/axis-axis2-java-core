@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.resourceinjection.sei;
+package org.apache.axis2.jaxws.sample.resourceinjection.sei;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -38,9 +38,9 @@ public interface ResourceInjectionPortType {
      */
     @WebMethod(action = "http://resourceinjection.sample.test.org/NewOperation")
     @WebResult(name = "response", targetNamespace = "")
-    @RequestWrapper(localName = "echo", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.Echo")
-    @ResponseWrapper(localName = "echoResponse", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.EchoResponse")
-    public String echo(
+    @RequestWrapper(localName = "testInjection", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.TestInjection")
+    @ResponseWrapper(localName = "testInjectionResponse", targetNamespace = "http://resourceinjection.sample.test.org", className = "org.test.sample.resourceinjection.TestInjectionResponse")
+    public String testInjection(
         @WebParam(name = "arg", targetNamespace = "")
         String arg);
 

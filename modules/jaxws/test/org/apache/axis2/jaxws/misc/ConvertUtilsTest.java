@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  */
 public class ConvertUtilsTest extends TestCase {
 
-    public void test() throws Exception {
+    public void test1() throws Exception {
         Byte[] input = new Byte[3];
         input[0] = new Byte((byte) 0);
         input[1] = new Byte((byte) 1);
