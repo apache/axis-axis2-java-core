@@ -27,7 +27,7 @@
     </parent>
     <artifactId>version</artifactId>
     <packaging>aar</packaging>
-    <name>Apache Axis 2.0 - Version Service</name>
+    <name>Apache Axis2 - Version Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <plugins>
