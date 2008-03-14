@@ -1020,7 +1020,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>mex</artifactId>
+            <artifactId>mex-impl</artifactId>
             <version>${version}</version>
             <type>mar</type>
             <exclusions>
