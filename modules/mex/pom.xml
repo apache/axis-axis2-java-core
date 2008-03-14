@@ -26,7 +26,7 @@
         <version>SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>mex-impl</artifactId>
+    <artifactId>mex</artifactId>
     <packaging>jar</packaging>
     <name>Apache Axis 2.0 - MEX</name>
     <description>WS-Metadata Exchange implementation</description>

@@ -256,7 +256,7 @@
             <directory>../../modules/mex/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>mex-impl-${version}.jar</include>
+                <include>mex-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
