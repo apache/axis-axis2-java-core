@@ -102,7 +102,7 @@ public class HandlerUtils {
         }
  
         List<QName> unprocessed = (List)msgContext.getProperty(Constants.UNPROCESSED_HEADER_QNAMES);
-        if(unprocessed == null && unprocessed.size()>0){
+        if(unprocessed == null || unprocessed.size() == 0){
             if(log.isDebugEnabled()){
                 log.debug("UNPROCESSED_HEADER_QNAMES not found.");
             }
