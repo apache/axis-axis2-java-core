@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.stringlist;
+package org.apache.axis2.jaxws.sample.stringlist;
 
-import org.apache.axis2.jaxws.stringlist.sei.StringListPortType;
+import org.apache.axis2.jaxws.sample.stringlist.sei.StringListPortType;
 
 import javax.jws.WebService;
 
-@WebService(endpointInterface="org.apache.axis2.jaxws.stringlist.sei.StringListPortType")
+@WebService(serviceName="StringListService", endpointInterface="org.apache.axis2.jaxws.sample.stringlist.sei.StringListPortType")
 public class StringListPortTypeImpl implements StringListPortType {
 
     /* (non-Javadoc)

@@ -24,11 +24,14 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.security.PrivilegedAction;
 
 
 /** This class serves as a factory for ConfigurationContexts suitable in the client environment. */
@@ -73,8 +76,8 @@ public class ClientConfigurationFactory {
         }
         
         // Get the system properties for axis2.xml and the repository.
-        String repoPath = System.getProperty(Constants.AXIS2_REPO_PATH);
-        String axisConfigPath = System.getProperty(Constants.AXIS2_CONFIG_PATH);
+        String repoPath = getProperty_doPriv(Constants.AXIS2_REPO_PATH);
+        String axisConfigPath = getProperty_doPriv(Constants.AXIS2_CONFIG_PATH);
         if (log.isDebugEnabled()) {
             log.debug("Axis2 repository path : " + repoPath);
             log.debug("Axis2 Config path : " + axisConfigPath);
@@ -98,6 +101,21 @@ public class ClientConfigurationFactory {
         }
     }
 
+    private static String getProperty_doPriv(final String property) {
+        return (String)
+         AccessController.doPrivileged(
+              new PrivilegedAction() {
+
+                  public Object run() {
+                      try {
+                          return System.getProperty(property);
+                      } catch (Throwable t) {
+                          return null;
+                      }
+                  }
+              });
+    }
+    
     /**
      * Perform any final client-specific configuration on a newly created AxisService.
      *

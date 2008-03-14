@@ -20,8 +20,10 @@ package org.apache.axis2.jaxws.catalog.impl;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.xml.resolver.Catalog;
@@ -41,8 +43,22 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
 
     private static final Logger LOG =
     	Logger.getLogger(OASISCatalogManager.class.getName());
-    private static final String DEBUG_LEVEL = System.getProperty(CATALOG_DEBUG_KEY);
+    private static String DEBUG_LEVEL = null;
 
+    static {
+        DEBUG_LEVEL = (String)
+            AccessController.doPrivileged(
+                  new PrivilegedAction() {
+
+                      public Object run() {
+                          try {
+                              return System.getProperty(CATALOG_DEBUG_KEY);
+                          } catch (Throwable t) {
+                              return null;
+                          }
+                      }
+                  });
+    }
     /** The static catalog used by this manager. */
     private Catalog staticCatalog = null;
 

@@ -9,6 +9,7 @@ import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -39,6 +40,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,7 +98,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         File tempFile = (File) axisConfiguration.getParameterValue(
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
         if (tempFile == null) {
-            tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
+            tempFile = new File(getProperty_doPriv("java.io.tmpdir"), "_axis2");
         }
 
         Parameter servletConfigParam = axisConfiguration
@@ -506,7 +508,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
      * @param property
      */
     private static void getClassPathFromDirectoryProperty(HashSet classpath, String property) {
-        String dirs = System.getProperty(property);
+        String dirs = getProperty_doPriv(property);
         String path = null;
         try {
             path = expandDirs(dirs);
@@ -518,6 +520,20 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         }
     }
 
+    private static String getProperty_doPriv(final String property) {
+        return (String)
+         AccessController.doPrivileged(
+              new PrivilegedAction() {
+
+                  public Object run() {
+                      try {
+                          return System.getProperty(property);
+                      } catch (Throwable t) {
+                          return null;
+                      }
+                  }
+              });
+    }
     /**
      * Add a classpath stored in a property.
      *
@@ -525,7 +541,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
      * @param property
      */
     private static void getClassPathFromProperty(HashSet classpath, String property) {
-        String path = System.getProperty(property);
+        String path = getProperty_doPriv(property);
         if (path != null) {
             addPath(classpath, path);
         }

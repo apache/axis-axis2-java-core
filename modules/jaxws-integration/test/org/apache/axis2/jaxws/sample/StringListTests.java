@@ -22,20 +22,20 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.stringlist.sei.StringListPortType;
-import org.apache.axis2.jaxws.stringlist.sei.StringListService;
+import org.apache.axis2.jaxws.sample.stringlist.sei.StringListPortType;
+import org.apache.axis2.jaxws.sample.stringlist.sei.StringListService;
 
 import javax.xml.ws.BindingProvider;
 
 
 public class StringListTests extends AbstractTestCase {
-    String axisEndpoint = "http://localhost:6060/axis2/services/StringListPortTypeImpl.StringListPortType";
-    
+    String axisEndpoint = "http://localhost:6060/axis2/services/StringListService.StringListPortTypeImplPort";
+
     public static Test suite() {
         return getTestSetup(new TestSuite(StringListTests.class));
     }
-	
-	public void testStringListScenario() throws Exception {
+
+    public void testStringListScenario() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         StringListService sls = new StringListService();

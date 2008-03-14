@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.stringlist.sei;
+package org.apache.axis2.jaxws.sample.stringlist.sei;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -26,6 +26,7 @@ import javax.xml.ws.WebServiceClient;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 
 /**
@@ -40,7 +41,7 @@ public class StringListService
 {
 
     private final static URL STRINGLISTSERVICE_WSDL_LOCATION;
-    private static String wsdlLocation="/test/org/apache/axis2/jaxws/stringlist/META-INF/StringList.wsdl";
+    private static String wsdlLocation="/test/org/apache/axis2/jaxws/sample/stringlist/META-INF/StringList.wsdl";
     static {
         URL url = null;
         try {

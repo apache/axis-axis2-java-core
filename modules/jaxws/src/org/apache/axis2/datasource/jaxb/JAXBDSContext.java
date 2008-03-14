@@ -409,12 +409,20 @@ public class JAXBDSContext {
                             // list on client array on server, Can happen only in start from java
                             // case.
                             else if ((ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY)) {
+                                jaxb = unmarshalAsListOrArray(reader, u, type);
+                                /*
+                                 * Commenting out code...
+                                 * 
                                 // The type could be any Object or primitive
                                 // I will first unmarshall the xmldata to a String[]
                                 // Then use the unmarshalled jaxbElement to create
                                 // proper type Object Array.
+                                
                                 jaxb = u.unmarshal(reader, String[].class);
+                                
+                                
                                 Object typeObj = getTypeEnabledObject(jaxb);
+                                
                                 // Now convert String Array in to the required Type Array.
                                 if (getTypeEnabledObject(typeObj) instanceof String[]) {
                                     String[] strArray = (String[]) typeObj;
@@ -422,14 +430,18 @@ public class JAXBDSContext {
                                     for (String str : strArray) {
                                         strTokens = strTokens + " " + str;
                                     }
+                                   
                                     QName qName =
                                             XMLRootElementUtil.
                                             getXmlRootElementQNameFromObject(jaxb);
                                     Object obj = XSDListUtils.fromXSDListString(strTokens, type);
                                     jaxb = new JAXBElement(qName, type, obj);
                                 }
+                                */
                             } else {
+                                
                                 jaxb = u.unmarshal(reader, type);
+                                
                             }
 
                         } else if (type.isEnum()) {
@@ -476,7 +488,9 @@ public class JAXBDSContext {
                         // list or array (see NOTE above)
                         // First unmarshal as a String
                         //Second convert the String into a list or array
+                        
                         jaxb = unmarshalAsListOrArray(reader, u, type);
+                        
                     }
                     return jaxb;
                 } catch (OMException e) {
@@ -579,21 +593,34 @@ public class JAXBDSContext {
                     // String instead. Then we get the correct wire format:
                     // <foo>1 2 3</foo>
                     Object jbo = b;
-
                     if (isList || (type != null && type.isArray())) {
                         if (DEBUG_ENABLED) {
                             log.debug("marshalling type which is a List or Array");
                         }
-                        // We conver to xsdListString only if the type is not known
-                        // to the context. In case a jaxbcontext is created from package
-                        // the array types or list are not know to the context.
+                        
+                        // This code assumes that the JAXBContext does not understand
+                        // the array or list. In such cases, the contents are converted
+                        // to a String and passed directly.
+                        
                         if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
                             QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(b);
                             String text = XSDListUtils.toXSDListString(getTypeEnabledObject(b));
+                            if (DEBUG_ENABLED) {
+                                log.debug("marshalling [context path approach] " +
+                                                "with xmllist text = " + text);
+                            }
                             jbo = new JAXBElement(qName, String.class, text);
                         } else if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY) {
-                            // do nothing common array types should be know to the jaxbcontext.
-                            // so do not use xsdListString conversion.
+                            // Some versions of JAXB have array/list processing built in.
+                            // This code is a safeguard because apparently some versions
+                            // of JAXB don't.
+                            QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(b);
+                            String text = XSDListUtils.toXSDListString(getTypeEnabledObject(b));
+                            if (DEBUG_ENABLED) {
+                                log.debug("marshalling [class array approach] " +
+                                                "with xmllist text = " + text);
+                            }
+                            jbo = new JAXBElement(qName, String.class, text); 
                         }
                     }
 
@@ -630,6 +657,10 @@ public class JAXBDSContext {
                                         "Marshaling to an XMLStreamWriter. Object is "
                                 + getDebugName(b));
                     }
+                    
+                    /// TODO 
+                    // For the cases like enum and list, should we 
+                    // intercept exceptions and try a different approach ?
                     m.marshal(jbo, writer);
 
                 } catch (OMException e) {

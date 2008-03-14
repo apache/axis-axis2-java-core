@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.stringlist.sei;
+package org.apache.axis2.jaxws.sample.stringlist.sei;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
