@@ -32,7 +32,7 @@
     <artifactId>axis2-parent</artifactId>
     <version>SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Apache Axis 2.0 - Parent</name>
+    <name>Apache Axis2 - Parent</name>
     <inceptionYear>2004</inceptionYear>
     <description>Axis2 is an effort to re-design and totally re-implement both Axis/Java and
         (eventually) Axis/C++ on a new architecture. Evolving from the now standard "handler chain"

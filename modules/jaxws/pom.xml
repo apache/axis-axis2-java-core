@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jaxws</artifactId>
-    <name>Apache Axis 2.0 - JAXWS</name>
+    <name>Apache Axis2 - JAXWS</name>
     <description>Axis2 JAXWS Implementation</description>
     <dependencies>
         <dependency>

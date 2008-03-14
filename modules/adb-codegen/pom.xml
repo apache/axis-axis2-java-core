@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-adb-codegen</artifactId>
-    <name>Apache Axis 2.0 - ADB Codegen</name>
+    <name>Apache Axis2 - ADB Codegen</name>
     <description>ADB code generation support for Axis2</description>
     <dependencies>
         <dependency>

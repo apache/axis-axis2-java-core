@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-integration</artifactId>
-    <name>Apache Axis 2.0 - Integration</name>
+    <name>Apache Axis2 - Integration</name>
     <description>Axis2 Integration</description>
     <dependencies>
         <dependency>

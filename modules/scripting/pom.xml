@@ -28,7 +28,7 @@
     </parent>
     <artifactId>axis2-scripting</artifactId>
     <packaging>mar</packaging>
-    <name>Apache Axis 2.0 - Scripting</name>
+    <name>Apache Axis2 - Scripting</name>
     <description>Axis2 scripting support for services implemented with scripting languages</description>
     <dependencies>
         <dependency>

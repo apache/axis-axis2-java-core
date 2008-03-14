@@ -30,7 +30,7 @@
     </parent>
 
     <artifactId>axis2-rmi</artifactId>
-    <name>Apache Axis 2.0 - Remote Method Invocation</name>
+    <name>Apache Axis2 - Remote Method Invocation</name>
     <description>Axis2 Remote Method Invocation</description>
     <scm>
         <connection>

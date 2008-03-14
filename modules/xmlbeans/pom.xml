@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-xmlbeans</artifactId>
-    <name>Apache Axis 2.0 - XMLBeans Data Binding</name>
+    <name>Apache Axis2 - XMLBeans Data Binding</name>
     <description>XMLBeans data binding support for Axis2</description>
     <dependencies>
         <dependency>

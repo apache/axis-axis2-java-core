@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-saaj-api</artifactId>
-    <name>Apache Axis 2.0 - SAAJ API</name>
+    <name>Apache Axis2 - SAAJ API</name>
     <description>Axis2 SAAJ API</description>
     <dependencies>
         <dependency>

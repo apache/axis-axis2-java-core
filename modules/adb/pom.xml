@@ -30,7 +30,7 @@
     </parent>
 
     <artifactId>axis2-adb</artifactId>
-    <name>Apache Axis 2.0 - Data Binding</name>
+    <name>Apache Axis2 - Data Binding</name>
     <description>Axis2 Data Binding module</description>
     <scm>
         <connection>

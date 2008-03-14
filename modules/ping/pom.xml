@@ -28,7 +28,7 @@
     </parent>
     <artifactId>ping</artifactId>
     <packaging>mar</packaging>
-    <name>Apache Axis 2.0 - Ping</name>
+    <name>Apache Axis2 - Ping</name>
     <description>Pinging capability to services deployed in Axis2</description>
     <dependencies>
         <dependency>

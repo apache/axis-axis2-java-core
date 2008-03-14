@@ -28,7 +28,7 @@
     </parent>
     <artifactId>axis2-mar-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Apache Axis 2.0 - tool - MAR Maven Plugin</name>
+    <name>Apache Axis2 - tool - MAR Maven Plugin</name>
     <description>
         A Maven 2 plugin for creating Axis 2 module archives (mar files)
     </description>

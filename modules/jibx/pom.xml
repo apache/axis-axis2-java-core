@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jibx</artifactId>
-    <name>Apache Axis 2.0 - JiBX Data Binding</name>
+    <name>Apache Axis2 - JiBX Data Binding</name>
     <description>JiBX data binding support for Axis 2.0</description>
     <dependencies>
         <dependency>

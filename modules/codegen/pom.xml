@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-codegen</artifactId>
-    <name>Apache Axis 2.0 - Code Generation</name>
+    <name>Apache Axis2 - Code Generation</name>
     <description>Axis2 Code Generation module</description>
     <dependencies>
         <dependency>

@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-corba</artifactId>
-    <name>Apache Axis 2.0 - CORBA</name>
+    <name>Apache Axis2 - CORBA</name>
     <description>Axis2 CORBA module</description>
     <dependencies>
         <dependency>

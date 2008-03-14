@@ -27,7 +27,7 @@
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2.eclipse.codegen.plugin</artifactId>
-    <name>Apache Axis 2.0 - tool - Eclipse Codegen Plugin</name>
+    <name>Apache Axis2 - tool - Eclipse Codegen Plugin</name>
     <packaging>maven-plugin</packaging>
     <description>The Axis 2 Eclipse Codegen Plugin for wsdl2java and java2wsdl</description>
     <dependencies>

@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-mtompolicy</artifactId>
-    <name>Apache Axis 2.0 - MTOM Policy</name>
+    <name>Apache Axis2 - MTOM Policy</name>
     <description>Axis2 : MTOM Policy</description>
     <dependencies>
         <dependency>

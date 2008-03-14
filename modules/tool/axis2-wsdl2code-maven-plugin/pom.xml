@@ -27,7 +27,7 @@
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-    <name>Apache Axis 2.0 - tool - WSDL2Code Maven Plugin</name>
+    <name>Apache Axis2 - tool - WSDL2Code Maven Plugin</name>
     <packaging>maven-plugin</packaging>
     <description>The Axis 2 Plugin for Maven allows client side and server side sources from a WSDL.</description>
     <dependencies>

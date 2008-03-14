@@ -28,7 +28,7 @@
     </parent>
     <artifactId>addressing</artifactId>
     <packaging>mar</packaging>
-    <name>Apache Axis 2.0 - Addressing</name>
+    <name>Apache Axis2 - Addressing</name>
     <description>WS-Addressing implementation</description>
     <dependencies>
         <dependency>

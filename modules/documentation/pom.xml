@@ -27,7 +27,7 @@
 
     <groupId>org.apache.axis2</groupId>
     <artifactId>documentation</artifactId>
-    <name>Apache Axis 2.0 - Documentation</name>
+    <name>Apache Axis2 - Documentation</name>
     <description>Apache Axis2 Documentation</description>
     <packaging>pom</packaging>
 

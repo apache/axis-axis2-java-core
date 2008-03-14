@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-saaj</artifactId>
-    <name>Apache Axis 2.0 - SAAJ</name>
+    <name>Apache Axis2 - SAAJ</name>
     <description>Axis2 SAAJ implementation</description>
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/saaj</connection>

@@ -28,7 +28,7 @@
     </parent>
     <artifactId>mex</artifactId>
     <packaging>jar</packaging>
-    <name>Apache Axis 2.0 - MEX</name>
+    <name>Apache Axis2 - MEX</name>
     <description>WS-Metadata Exchange implementation</description>
     <dependencies>
         <dependency>

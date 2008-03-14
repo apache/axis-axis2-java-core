@@ -28,7 +28,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-osgi</artifactId>
-    <name>Apache Axis 2.0 - OSGi</name>
+    <name>Apache Axis2 - OSGi</name>
     <description>OSGi for Axis 2.0</description>
     <build>
         <sourceDirectory>src</sourceDirectory>

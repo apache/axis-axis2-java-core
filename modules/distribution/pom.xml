@@ -27,7 +27,7 @@
 
     <groupId>org.apache.axis2</groupId>
     <artifactId>distribution</artifactId>
-    <name>Apache Axis 2.0 - Distribution</name>
+    <name>Apache Axis2 - Distribution</name>
     <description>Apache Axis2 Distribution</description>
     <packaging>pom</packaging>
 

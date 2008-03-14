@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-fastinfoset</artifactId>
-    <name>Apache Axis 2.0 - Fast Infoset</name>
+    <name>Apache Axis2 - Fast Infoset</name>
     <description>Axis2 Fast Infoset module</description>
     <dependencies>
         <dependency>

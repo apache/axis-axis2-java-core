@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jaxbri</artifactId>
-    <name>Apache Axis 2.0 - JAXB-RI Data Binding</name>
+    <name>Apache Axis2 - JAXB-RI Data Binding</name>
     <description>JAXB-RI data binding support for Axis 2.0</description>
     <dependencies>
         <dependency>

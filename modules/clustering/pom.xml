@@ -28,7 +28,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-clustering</artifactId>
-    <name>Apache Axis 2.0 - Clustering</name>
+    <name>Apache Axis2 - Clustering</name>
     <description>Axis2 Clustering module</description>
     <dependencies>
         <dependency>

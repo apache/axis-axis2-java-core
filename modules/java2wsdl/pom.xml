@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-java2wsdl</artifactId>
-    <name>Apache Axis 2.0 - Java2WSDL</name>
+    <name>Apache Axis2 - Java2WSDL</name>
     <description>To generate WSDL file for a given Java class</description>
     <dependencies>
         <dependency>

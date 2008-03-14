@@ -27,7 +27,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-metadata</artifactId>
-    <name>Apache Axis 2.0 - Metadata</name>
+    <name>Apache Axis2 - Metadata</name>
     <description>JSR-181 and JSR-224 Annotations Processing</description>
     <dependencies>
         <dependency>
