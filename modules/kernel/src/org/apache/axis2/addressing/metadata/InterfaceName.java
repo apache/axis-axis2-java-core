@@ -30,7 +30,8 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 
 public class InterfaceName {
     public static final QName subQName = new QName(Submission.WSA_NAMESPACE, Submission.WSA_INTERFACE_NAME, AddressingConstants.WSA_DEFAULT_PREFIX);
-    public static final QName finalQName = new QName(Final.WSAM_NAMESPACE, Final.WSA_INTERFACE_NAME, Final.WSA_DEFAULT_METADATA_PREFIX);
+    public static final QName wsamQName = new QName(Final.WSAM_NAMESPACE, Final.WSA_INTERFACE_NAME, Final.WSA_DEFAULT_METADATA_PREFIX);
+    public static final QName wsawQName = new QName(Final.WSAW_NAMESPACE, Final.WSA_INTERFACE_NAME, Final.WSA_ORIGINAL_METADATA_PREFIX);
     
     /**
      * Field name
@@ -128,7 +129,7 @@ public class InterfaceName {
     public void fromOM(OMElement omElement) throws AxisFault {
         QName qname = omElement.getQName();
         
-        if (!finalQName.equals(qname) && !subQName.equals(qname)) {
+        if (!wsamQName.equals(qname) && !wsawQName.equals(qname) && !subQName.equals(qname)) {
             throw new AxisFault("Unrecognized element.");
         }
 
@@ -148,7 +149,7 @@ public class InterfaceName {
         boolean result = false;
         QName qname = omElement.getQName();
         
-        if (finalQName.equals(qname) || subQName.equals(qname))
+        if (wsamQName.equals(qname) || wsawQName.equals(qname) || subQName.equals(qname))
             result = true;
         
         return result;

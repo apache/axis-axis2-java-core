@@ -158,6 +158,7 @@ public interface AddressingConstants {
         static final String WSA_POLICIES = "Policies";
         static final String WSA_METADATA = "Metadata";
         static final String WSA_DEFAULT_METADATA_PREFIX = "wsam";
+        static final String WSA_ORIGINAL_METADATA_PREFIX = "wsaw";
 
         static final String WSA_INTERFACE_NAME = "InterfaceName";
 

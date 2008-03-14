@@ -473,7 +473,7 @@ public class EndpointReferenceHelper {
             epr.addExtensibleElement(omElement);
         }
         else {
-            OMElement omElement = serviceName.toOM(factory, ServiceName.finalQName);
+            OMElement omElement = serviceName.toOM(factory, ServiceName.wsamQName);
             epr.addMetaData(omElement);
         }
     }
@@ -496,7 +496,7 @@ public class EndpointReferenceHelper {
             epr.addExtensibleElement(omElement);
         }
         else {
-            OMElement omElement = interfaceName.toOM(factory, InterfaceName.finalQName);
+            OMElement omElement = interfaceName.toOM(factory, InterfaceName.wsamQName);
             epr.addMetaData(omElement);
         }
     }

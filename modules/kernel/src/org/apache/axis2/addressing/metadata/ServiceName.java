@@ -30,7 +30,8 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 
 public class ServiceName {
     public static final QName subQName = new QName(Submission.WSA_NAMESPACE, AddressingConstants.EPR_SERVICE_NAME, AddressingConstants.WSA_DEFAULT_PREFIX);
-    public static final QName finalQName = new QName(Final.WSAM_NAMESPACE, AddressingConstants.EPR_SERVICE_NAME, Final.WSA_DEFAULT_METADATA_PREFIX);
+    public static final QName wsamQName = new QName(Final.WSAM_NAMESPACE, AddressingConstants.EPR_SERVICE_NAME, Final.WSA_DEFAULT_METADATA_PREFIX);
+    public static final QName wsawQName = new QName(Final.WSAW_NAMESPACE, AddressingConstants.EPR_SERVICE_NAME, Final.WSA_ORIGINAL_METADATA_PREFIX);
     
     /**
      * Field name
@@ -166,7 +167,7 @@ public class ServiceName {
     public void fromOM(OMElement omElement) throws AxisFault {
         QName qname = omElement.getQName();
         String attributeName = null;
-        if (finalQName.equals(qname)) {
+        if (wsamQName.equals(qname) || wsawQName.equals(qname)) {
             attributeName = Final.WSA_SERVICE_NAME_ENDPOINT_NAME;
         }
         else if (subQName.equals(qname)) {
@@ -193,7 +194,7 @@ public class ServiceName {
         boolean result = false;
         QName qname = omElement.getQName();
         
-        if (finalQName.equals(qname) || subQName.equals(qname))
+        if (wsamQName.equals(qname) || wsawQName.equals(qname) || subQName.equals(qname))
             result = true;
         
         return result;
