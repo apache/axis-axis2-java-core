@@ -1022,7 +1022,7 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>mex</artifactId>
             <version>${version}</version>
-            <type>mar</type>
+            <type>jar</type>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
