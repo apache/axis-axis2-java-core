@@ -205,7 +205,7 @@ public class SOAP12DispatchTest extends AbstractTestCase {
     /**
      * Test sending a SOAP 1.2 request in MESSAGE mode
      */
-    public void testSOAP12DispatchMessageMode_MustUnderstand() throws Exception {
+    public void _testSOAP12DispatchMessageMode_MustUnderstand() throws Exception {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
         service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
