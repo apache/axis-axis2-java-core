@@ -374,9 +374,9 @@ class OperationDescriptionImpl
                 faultMessage.setName(faultName);
                 
                 String faultAction = 
-                        WSDL11ActionHelper.getFaultActionFromStringInformation( messageExchangePattern, 
+                        WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
                                         portTypeName, 
-                                        newAxisOperation.getName().getLocalPart(), 
+                                        operationName, 
                                         faultMessage.getName());
                 
                 newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
@@ -494,9 +494,9 @@ class OperationDescriptionImpl
                 faultMessage.setName(faultName);
                 
                 String faultAction = 
-                        WSDL11ActionHelper.getFaultActionFromStringInformation( messageExchangePattern, 
+                        WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
                                         portTypeName, 
-                                        newAxisOperation.getName().getLocalPart(), 
+                                        operationName, 
                                         faultMessage.getName());
                 
                 newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
