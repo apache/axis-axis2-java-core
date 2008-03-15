@@ -130,26 +130,41 @@ public class PropertyDescriptorPlus {
     public void set(Object targetBean, Object propValue)
             throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
 
-        // No set occurs if the value is null
-        if (propValue == null) {
-            return;
-        }
+        Method writeMethod  = null;
+        try {
+            // No set occurs if the value is null
+            if (propValue == null) {
+                return;
+            }
 
-        // There are 3 different types of setters that can occur.
-        // 1) Normal Attomic Setter : setFoo(type)
-        // 2) Indexed Array Setter : setFoo(type[])
-        // 3) No Setter case if the property is a List<T>.
+            // There are 3 different types of setters that can occur.
+            // 1) Normal Attomic Setter : setFoo(type)
+            // 2) Indexed Array Setter : setFoo(type[])
+            // 3) No Setter case if the property is a List<T>.
 
-        Method writeMethod = descriptor.getWriteMethod();
-        if (descriptor instanceof IndexedPropertyDescriptor) {
-            // Set for indexed  T[]
-            setIndexedArray(targetBean, propValue, writeMethod);
-        } else if (writeMethod == null) {
-            // Set for List<T>
-            setList(targetBean, propValue);
-        } else {
-            // Normal case
-            setAtomic(targetBean, propValue, writeMethod);
+            writeMethod = descriptor.getWriteMethod();
+            if (descriptor instanceof IndexedPropertyDescriptor) {
+                // Set for indexed  T[]
+                setIndexedArray(targetBean, propValue, writeMethod);
+            } else if (writeMethod == null) {
+                // Set for List<T>
+                setList(targetBean, propValue);
+            } else {
+                // Normal case
+                setAtomic(targetBean, propValue, writeMethod);
+            }
+        } catch (RuntimeException e) {
+            
+            if (DEBUG_ENABLED) {
+                String propClass = (propValue == null) ? "null" : propValue.getClass().getName();
+                log.debug("An exception occurred while attempting to set a property on " +
+                          targetBean.getClass().getName());
+                log.debug("The setter method is " + writeMethod );
+                log.debug("The class of the argument is :" +propClass);
+                log.debug("The PropertyDescriptor is: " + this.toString());
+                log.debug("The exception is: " + e);
+            }
+            throw e;
         }
     }
 
