@@ -19,10 +19,7 @@
 
 package org.apache.axis2.scripting.convertors;
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
@@ -31,6 +28,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.scripting.ScriptReceiver;
 import org.apache.axis2.scripting.TestUtils;
+
+import java.util.Iterator;
 
 public class JSOMElementConvertorTest extends TestCase {
 

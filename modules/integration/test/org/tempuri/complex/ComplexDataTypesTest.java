@@ -18,13 +18,13 @@
  */
 package org.tempuri.complex;
 
+import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.tempuri.differenceEngine.WSDLController;
 import org.tempuri.differenceEngine.WSDLDifferenceEngine;
 import org.tempuri.elementQualifier.WSDLElementQualifier;
-import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;

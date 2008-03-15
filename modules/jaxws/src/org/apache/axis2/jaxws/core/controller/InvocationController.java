@@ -22,7 +22,6 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
-
 import java.util.concurrent.Future;
 
 /**

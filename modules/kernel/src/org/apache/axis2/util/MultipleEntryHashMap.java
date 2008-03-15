@@ -19,11 +19,9 @@
 package org.apache.axis2.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
-import java.util.Hashtable;
-import java.io.Serializable;
 
 /**
  * This will make a hash map which can contain multiple entries for the same hash value.

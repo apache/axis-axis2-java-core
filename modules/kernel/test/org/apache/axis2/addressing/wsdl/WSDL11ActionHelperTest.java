@@ -20,6 +20,7 @@
 package org.apache.axis2.addressing.wsdl;
 
 import junit.framework.TestCase;
+import org.apache.axis2.AbstractTestCase;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -33,8 +34,6 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-
-import org.apache.axis2.AbstractTestCase;
 
 public class WSDL11ActionHelperTest extends TestCase {
 

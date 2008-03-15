@@ -18,7 +18,6 @@
  */
 
 package org.apache.axis2.mex.om;
-import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -29,6 +28,8 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.mex.MexConstants;
 import org.apache.axis2.mex.MexException;
 import org.apache.axis2.mex.util.MexUtil;
+
+import javax.xml.namespace.QName;
 
 /**
  * Class implemented for MetadataReference element defined in 

@@ -19,9 +19,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
@@ -32,6 +29,9 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class AxisHttpRequestImpl implements AxisHttpRequest {
 

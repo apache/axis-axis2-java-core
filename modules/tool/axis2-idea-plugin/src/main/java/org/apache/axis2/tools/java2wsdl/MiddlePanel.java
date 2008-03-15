@@ -19,17 +19,17 @@
 package org.apache.axis2.tools.java2wsdl;
 
 import org.apache.axis2.tools.bean.ClassLoadingTestBean;
-import org.apache.axis2.tools.bean.WsdlgenBean;
 import org.apache.axis2.tools.bean.NamespaceFinder;
-import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.bean.WsdlgenBean;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;

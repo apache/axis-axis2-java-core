@@ -39,7 +39,6 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

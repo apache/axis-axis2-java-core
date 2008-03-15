@@ -15,35 +15,34 @@
  */
 package org.apache.axis2.rmi.client;
 
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
-import org.apache.axis2.rmi.metadata.Service;
-import org.apache.axis2.rmi.metadata.Operation;
-import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.databind.RMIDataSource;
 import org.apache.axis2.rmi.databind.JavaObjectSerializer;
+import org.apache.axis2.rmi.databind.RMIDataSource;
 import org.apache.axis2.rmi.databind.XmlStreamParser;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
-import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.metadata.Operation;
+import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.metadata.Service;
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.net.URL;
-import java.util.List;
 
 
 public class RMIClient extends ServiceClient {

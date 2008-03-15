@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.server;
 
+import org.apache.axis2.jaxws.core.InvocationContextImpl;
+import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.axis2.jaxws.core.InvocationContextImpl;
-import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 
 public class EndpointInvocationContextImpl extends InvocationContextImpl
     implements EndpointInvocationContext {

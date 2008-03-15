@@ -18,10 +18,10 @@
  */
 package org.apache.axis2.metadata.resource.impl;
 
+import org.apache.axis2.metadata.resource.ResourceFinder;
+
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import org.apache.axis2.metadata.resource.ResourceFinder;
 
 
 public class ResourceFinderImpl implements ResourceFinder {

@@ -22,9 +22,9 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.soapencoding.Array;
 import org.apache.axis2.databinding.types.soapencoding._double;
+import org.tempuri.soapencoding.TestComplexType;
 import org.tempuri.soapencoding.TestSoapElement1;
 import org.tempuri.soapencoding.TestSoapElement2;
-import org.tempuri.soapencoding.TestComplexType;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

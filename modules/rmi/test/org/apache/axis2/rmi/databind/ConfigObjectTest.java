@@ -15,23 +15,28 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.deploy.config.*;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.rmi.deploy.config.ClassInfo;
+import org.apache.axis2.rmi.deploy.config.Config;
+import org.apache.axis2.rmi.deploy.config.CustomClassInfo;
+import org.apache.axis2.rmi.deploy.config.ExtensionClasses;
 import org.apache.axis2.rmi.deploy.config.FieldInfo;
-import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.deploy.config.PackageToNamespaceMap;
+import org.apache.axis2.rmi.deploy.config.PackageToNamespaceMapings;
+import org.apache.axis2.rmi.deploy.config.Service;
+import org.apache.axis2.rmi.deploy.config.Services;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.metadata.Parameter;
 import org.apache.axis2.rmi.util.NamespacePrefix;
-import org.apache.axis2.rmi.config.*;
-import org.apache.axis2.rmi.databind.dto.TestClass2;
-import org.apache.axiom.om.util.StAXUtils;
 
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.*;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 
 
 public class ConfigObjectTest extends DataBindTest {

@@ -1,11 +1,10 @@
 package org.apache.axis2.jaxws.server;
 
-import java.util.List;
-
 import org.apache.axis2.jaxws.core.MessageContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.List;
 
 /**
  * This class represents static methods that are utilized during the course

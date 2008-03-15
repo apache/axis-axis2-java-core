@@ -15,17 +15,15 @@
  */
 package org.apache.axis2.schema.union2;
 
-import org.tempuri.union2.*;
-import org.apache.axiom.om.OMElement;
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
+import org.tempuri.union2.*;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 

@@ -1,8 +1,8 @@
 package org.apache.axis2.wsdl.codegen.emitter.jaxws;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 import org.apache.axis2.util.XSLTUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class AnnotationElementBuilder {
 

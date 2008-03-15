@@ -19,8 +19,8 @@
 
 package org.apache.axis2.corba.idl.values;
 
-import org.apache.axis2.corba.idl.types.CompositeDataType;
 import org.apache.axis2.corba.idl.types.AbstractCollectionType;
+import org.apache.axis2.corba.idl.types.CompositeDataType;
 import org.omg.CORBA_2_3.portable.InputStream;
 import org.omg.CORBA_2_3.portable.OutputStream;
 

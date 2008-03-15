@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.schema.writer;
 
-import javax.xml.namespace.QName;
 import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.Map;
 

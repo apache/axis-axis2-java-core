@@ -18,16 +18,15 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 public class DispatchXMessageStringTests extends AbstractTestCase {
 

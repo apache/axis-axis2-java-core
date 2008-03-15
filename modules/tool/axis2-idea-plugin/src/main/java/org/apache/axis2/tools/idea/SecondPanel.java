@@ -19,19 +19,19 @@
 package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
-import org.apache.axis2.tools.wizardframe.CodegenFrame;
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 import org.apache.axis2.util.URLProcessor;
 
 import javax.swing.*;
-import javax.xml.namespace.QName;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 import java.awt.*;
-import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.util.Iterator;
+import java.awt.event.ItemListener;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class SecondPanel  extends  WizardPanel {

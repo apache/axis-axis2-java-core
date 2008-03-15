@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.maven2.mar;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
@@ -30,6 +27,9 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Build a mar.

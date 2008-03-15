@@ -19,9 +19,6 @@
 
 package sample.axisversion;
 
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.OperationContext;
-
 public class Version {
     public String getVersion() throws Exception {
         return "Hello I am Axis2 version service ," +

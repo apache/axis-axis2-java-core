@@ -18,8 +18,13 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
-import java.io.ByteArrayInputStream;
-import java.util.concurrent.Future;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,16 +36,8 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.sample.AddNumbersHandlerTests;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.io.ByteArrayInputStream;
+import java.util.concurrent.Future;
 
 /**
  * This class tests the JAX-WS Dispatch with various forms of the 

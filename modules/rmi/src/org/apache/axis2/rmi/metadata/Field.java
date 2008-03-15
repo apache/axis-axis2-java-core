@@ -15,13 +15,10 @@
  */
 package org.apache.axis2.rmi.metadata;
 
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.util.Util;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.util.Constants;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;

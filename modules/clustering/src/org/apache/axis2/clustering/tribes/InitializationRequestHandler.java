@@ -15,13 +15,13 @@
  */
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.catalina.tribes.group.RpcCallback;
-import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
-import org.apache.axis2.clustering.control.ControlCommand;
-import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.catalina.tribes.group.RpcCallback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

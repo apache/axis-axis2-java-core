@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description.feature;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -25,8 +26,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RespectBinding;
-
-import junit.framework.TestCase;
 
 public class RespectBindingFeatureTests extends TestCase {
 

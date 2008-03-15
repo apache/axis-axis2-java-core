@@ -18,13 +18,10 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.injection.factory;
 
-import javax.xml.ws.WebServiceContext;
-
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
-import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 
 /**
  * This class is is responsible for creating instances that can 

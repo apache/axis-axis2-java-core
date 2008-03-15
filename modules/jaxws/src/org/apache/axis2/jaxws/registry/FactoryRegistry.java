@@ -62,10 +62,9 @@ import org.apache.axis2.jaxws.utility.JAXWSExecutorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.ws.WebServiceContext;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.ws.WebServiceContext;
 
 /** 
  * FactoryRegistry Registry containing Factories related to the JAX-WS Implementation.

@@ -19,19 +19,17 @@
 
 package org.apache.axis2.jaxws.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-
-import javax.wsdl.xml.WSDLLocator;
-
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.resolver.Catalog;
+
+import javax.wsdl.xml.WSDLLocator;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * This class is an implementation of a WSDL4J interface and is the

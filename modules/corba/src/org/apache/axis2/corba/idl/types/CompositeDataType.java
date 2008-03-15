@@ -19,8 +19,8 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CompositeDataType extends DataType {
     public static final String IDL_REPO_STRING = "IDL:";

@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.rmi.databind.type;
 
-import org.apache.axis2.rmi.metadata.xml.AbstractXmlType;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.xml.AbstractXmlType;
 import org.apache.axis2.rmi.util.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

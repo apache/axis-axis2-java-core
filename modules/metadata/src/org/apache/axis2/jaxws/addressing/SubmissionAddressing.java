@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.addressing;                                                                                         
-                                                                                                              
-import java.lang.annotation.RetentionPolicy;                                                                  
-import java.lang.annotation.ElementType;                                                                      
-import java.lang.annotation.Retention;                                                                        
-import java.lang.annotation.Target;                                                                           
-import java.lang.annotation.Documented;
+package org.apache.axis2.jaxws.addressing;
 
 import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
                                                                                                               
 @Documented                                                                                                   
 @Retention(value=RetentionPolicy.RUNTIME)                                                                     

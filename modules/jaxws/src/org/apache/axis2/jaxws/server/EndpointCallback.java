@@ -19,8 +19,6 @@
 
 package org.apache.axis2.jaxws.server;
 
-import java.util.List;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.AxisEngine;
@@ -36,6 +34,8 @@ import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.List;
 
 public class EndpointCallback {
     

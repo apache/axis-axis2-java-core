@@ -19,12 +19,12 @@
 
 package org.apache.axis2.faults;
 
-import org.apache.axis2.LocalTestCase;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.ServiceClient;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.LocalTestCase;
+import org.apache.axis2.client.ServiceClient;
 
 import javax.xml.namespace.QName;
 

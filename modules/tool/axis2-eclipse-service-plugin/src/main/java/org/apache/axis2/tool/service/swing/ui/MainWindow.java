@@ -23,12 +23,8 @@ import org.apache.axis2.tool.service.bean.WizardBean;
 import org.apache.axis2.tool.service.control.Controller;
 import org.apache.axis2.tool.service.control.ProcessException;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

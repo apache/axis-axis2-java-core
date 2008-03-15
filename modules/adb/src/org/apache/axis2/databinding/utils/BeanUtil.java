@@ -19,21 +19,25 @@
 package org.apache.axis2.databinding.utils;
 
 
-import org.apache.axiom.om.*;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.util.BeanExcludeInfo;
-import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
+import org.apache.axis2.deployment.util.ExcludeInfo;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
-import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.StreamWrapper;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JProperty;
 import org.codehaus.jam.JamClassIterator;

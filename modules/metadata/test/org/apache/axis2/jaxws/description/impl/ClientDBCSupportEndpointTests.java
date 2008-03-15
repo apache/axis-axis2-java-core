@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -30,12 +31,9 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import junit.framework.TestCase;
 
 /**
  * Test client sparse composite support in the MDQ layer at the Endpoint creation level.

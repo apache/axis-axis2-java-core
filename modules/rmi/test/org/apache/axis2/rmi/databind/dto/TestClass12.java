@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.rmi.databind.dto;
 
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 
 
 public class TestClass12 {

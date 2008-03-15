@@ -15,14 +15,13 @@
  */
 package org.apache.axis2.rmi.client;
 
-import org.apache.axis2.rmi.server.services.Service1;
-import org.apache.axis2.rmi.server.services.Service1Interface;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.ConverterUtil;
-
-import java.util.*;
-
 import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.rmi.server.services.Service1Interface;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class RMIClientService1Test extends TestCase {

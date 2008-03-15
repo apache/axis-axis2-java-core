@@ -18,12 +18,11 @@
  */
 package javax.xml.ws;
 
-import java.io.ByteArrayOutputStream;
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.spi.Provider;
+import java.io.ByteArrayOutputStream;
 
 public abstract class EndpointReference {
     protected EndpointReference() {

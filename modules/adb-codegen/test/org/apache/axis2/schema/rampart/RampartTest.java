@@ -16,18 +16,18 @@
 package org.apache.axis2.schema.rampart;
 
 import junit.framework.TestCase;
-import org.w3.www._2005._05.xmlmime.TestExtension;
-import org.w3.www._2005._05.xmlmime.Base64Binary;
-import org.w3.www._2005._05.xmlmime.ContentType_type0;
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
+import org.w3.www._2005._05.xmlmime.Base64Binary;
+import org.w3.www._2005._05.xmlmime.ContentType_type0;
+import org.w3.www._2005._05.xmlmime.TestExtension;
 
 import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 

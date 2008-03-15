@@ -19,14 +19,14 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.omg.CORBA.TypeCode;
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.TCKind;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.TCKind;
+import org.omg.CORBA.TypeCode;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PrimitiveDataType extends DataType {
     private static final Log log = LogFactory.getLog(PrimitiveDataType.class);

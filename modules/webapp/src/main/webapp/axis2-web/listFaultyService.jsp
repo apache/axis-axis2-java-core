@@ -3,7 +3,6 @@
 <%@ page import="org.apache.axis2.description.AxisService"%>
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--
   ~ Licensed to the Apache Software Foundation (ASF) under one

@@ -18,17 +18,17 @@
  */
 package org.apache.axis2.tools.idea;
 
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * this panel used for as chooser

@@ -19,11 +19,8 @@
 
 package org.apache.axis2.engine;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -40,6 +37,8 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.namespace.QName;
 
 public class ThirdPartyResponseRawXMLTest extends UtilServerBasedTestCase implements TestConstants {
     public static Test suite() {

@@ -18,19 +18,18 @@
  */
 package org.apache.axis2.tools.java2wsdl;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import org.apache.axis2.tools.bean.WsdlgenBean;
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.module.Module;
 
 /** this class java 2 wsdl output wizard panel   */
 public class OutputPanel extends WizardPanel {

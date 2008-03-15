@@ -18,13 +18,13 @@
  */
 package org.apache.ws.java2wsdl;
 
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -19,8 +19,6 @@
 
 package org.apache.axis2.mex;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -44,6 +42,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Message Receiver for processing WS-MEX GetMetadata request. 

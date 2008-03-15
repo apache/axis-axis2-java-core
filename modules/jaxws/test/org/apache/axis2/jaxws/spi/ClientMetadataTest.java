@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.spi;
 
+import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
@@ -26,22 +27,17 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceClientAnnot;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
-
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
-
-import junit.framework.TestCase;
 
 /**
  * Test creation of a generic Service and generated Service with and without additional

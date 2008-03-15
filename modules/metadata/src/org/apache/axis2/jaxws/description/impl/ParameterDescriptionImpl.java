@@ -21,7 +21,6 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.jaxws.description.AttachmentDescription;
-import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
@@ -34,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlList;
 import javax.xml.ws.Holder;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

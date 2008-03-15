@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description.feature;
 
+import junit.framework.TestCase;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -29,8 +30,6 @@ import org.apache.axis2.util.Utils;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.Addressing;
-
-import junit.framework.TestCase;
 
 public class AddressingFeatureTests extends TestCase {
     

@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.addressing.metadata;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
+
+import javax.xml.namespace.QName;
 
 public class WSDLLocation {
     private static final QName WSDLI = new QName("http://www.w3.org/2006/01/wsdl-instance", "wsdlLocation", "wsdli");

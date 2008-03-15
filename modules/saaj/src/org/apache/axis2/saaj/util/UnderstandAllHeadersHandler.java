@@ -18,13 +18,13 @@
  */
 package org.apache.axis2.saaj.util;
 
-import java.util.Iterator;
-
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
+
+import java.util.Iterator;
 
 /**
  * Marks all SOAP headers as processed.

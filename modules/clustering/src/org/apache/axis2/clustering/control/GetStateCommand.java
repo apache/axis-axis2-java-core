@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.clustering.control;
 
-import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.ContextClusteringCommand;
 import org.apache.axis2.clustering.context.ContextClusteringCommandFactory;
 import org.apache.axis2.clustering.context.ContextManager;

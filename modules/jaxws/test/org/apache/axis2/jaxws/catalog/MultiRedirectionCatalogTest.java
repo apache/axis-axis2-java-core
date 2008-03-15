@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.catalog;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
@@ -30,11 +30,9 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
-
-import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
-import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-
-import junit.framework.TestCase;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Tests the use of the Apache Commons Resolver API to resolve URIs.

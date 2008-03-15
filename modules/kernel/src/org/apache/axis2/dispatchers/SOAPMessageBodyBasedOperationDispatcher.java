@@ -19,7 +19,6 @@
 
 package org.apache.axis2.dispatchers;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;

@@ -20,10 +20,10 @@
 package org.apache.axis2.json;
 
 
-import java.io.InputStream;
-
 import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
 import org.codehaus.jettison.json.JSONTokener;
+
+import java.io.InputStream;
 
 /**
  * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in

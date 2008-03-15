@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.rmi.client;
 
-import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.rmi.Configurator;
 
-import java.lang.reflect.Proxy;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 
 /**
  * this class is used to generate the proxy clients.

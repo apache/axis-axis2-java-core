@@ -19,11 +19,11 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;

@@ -19,13 +19,12 @@
 package org.apache.axis2.transport.jms;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;

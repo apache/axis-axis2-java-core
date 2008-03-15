@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.rpc;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 
 import javax.xml.namespace.QName;
 

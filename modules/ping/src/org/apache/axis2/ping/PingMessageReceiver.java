@@ -19,20 +19,20 @@
 
 package org.apache.axis2.ping;
 
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
-import org.apache.axis2.engine.Pingable;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.Pingable;
+import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PingMessageReceiver extends AbstractInOutSyncMessageReceiver implements PingConstants {
     private static Log log = LogFactory.getLog(PingMessageReceiver.class);

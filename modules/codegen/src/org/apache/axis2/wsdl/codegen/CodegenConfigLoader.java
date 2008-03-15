@@ -20,8 +20,8 @@ package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.codegen.extension.XMLBeansExtension;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import java.io.File;
 import java.io.FileInputStream;

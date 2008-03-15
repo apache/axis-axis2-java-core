@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.LocalTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.LocalTestCase;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.service.Lifecycle;
 

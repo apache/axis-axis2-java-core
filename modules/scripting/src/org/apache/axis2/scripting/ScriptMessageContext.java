@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.scripting;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.scripting.convertors.OMElementConvertor;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * ScriptMessageContext decorates the Axis2 MessageContext adding methods to use

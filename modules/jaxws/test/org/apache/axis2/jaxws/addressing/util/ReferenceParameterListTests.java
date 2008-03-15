@@ -18,22 +18,19 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
+import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.w3c.dom.Element;
+
+import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
-
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.jaxws.addressing.util.ReferenceParameterList;
-import org.w3c.dom.Element;
 
 public class ReferenceParameterListTests extends TestCase {
     private String testResourceDir = System.getProperty("basedir", ".") + "/test-resources";

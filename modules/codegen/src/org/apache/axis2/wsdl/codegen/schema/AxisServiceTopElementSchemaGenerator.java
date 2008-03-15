@@ -15,21 +15,31 @@
  */
 package org.apache.axis2.wsdl.codegen.schema;
 
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.codegen.schema.exception.DummySchemaGenerationException;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.ws.commons.schema.*;
-import org.w3c.dom.Element;
+import org.apache.axis2.wsdl.codegen.schema.exception.DummySchemaGenerationException;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.namespace.QName;
-import java.util.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * this class is used to generate dummy schema with only top level

@@ -15,26 +15,23 @@
  */
 package org.apache.axis2.rmi.metadata;
 
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.metadata.xml.XmlSchema;
-import org.apache.axis2.rmi.metadata.xml.XmlImport;
-import org.apache.axis2.rmi.metadata.xml.XmlType;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlTypeImpl;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.rmi.metadata.xml.XmlImport;
+import org.apache.axis2.rmi.metadata.xml.XmlSchema;
+import org.apache.axis2.rmi.metadata.xml.XmlType;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlTypeImpl;
+import org.apache.axis2.rmi.util.Constants;
 
 import javax.xml.namespace.QName;
-import javax.wsdl.*;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPFault;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class Operation {
 

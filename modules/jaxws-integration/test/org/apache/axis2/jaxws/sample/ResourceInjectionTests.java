@@ -20,17 +20,11 @@ package org.apache.axis2.jaxws.sample;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.framework.StopServer;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.sample.resourceinjection.sei.ResourceInjectionService;
-import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
-import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceContext;
 
 public class ResourceInjectionTests extends AbstractTestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";

@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
-
 import java.io.File;
 import java.util.ArrayList;
 

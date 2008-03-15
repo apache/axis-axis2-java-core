@@ -18,9 +18,9 @@ package org.apache.axis2.rmi.metadata;
 import junit.framework.TestCase;
 import org.apache.axis2.rmi.metadata.service.BasicService;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 public class TestReflection extends TestCase {

@@ -19,19 +19,47 @@
 
 package org.apache.axis2.corba.deployer;
 
-import org.apache.ws.commons.schema.*;
-import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
+import org.apache.axis2.corba.exceptions.SchemaGeneratorException;
+import org.apache.axis2.corba.idl.types.AbstractCollectionType;
+import org.apache.axis2.corba.idl.types.ArrayType;
+import org.apache.axis2.corba.idl.types.CompositeDataType;
+import org.apache.axis2.corba.idl.types.DataType;
+import org.apache.axis2.corba.idl.types.EnumType;
+import org.apache.axis2.corba.idl.types.ExceptionType;
+import org.apache.axis2.corba.idl.types.IDL;
+import org.apache.axis2.corba.idl.types.Interface;
+import org.apache.axis2.corba.idl.types.Member;
+import org.apache.axis2.corba.idl.types.Operation;
+import org.apache.axis2.corba.idl.types.PrimitiveDataType;
+import org.apache.axis2.corba.idl.types.Typedef;
+import org.apache.axis2.corba.idl.types.UnionType;
+import org.apache.axis2.corba.receivers.CorbaUtil;
 import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
+import org.apache.axis2.description.java2wsdl.TypeTable;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaForm;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 
 import javax.xml.namespace.QName;
-import java.util.*;
-
-import org.apache.axis2.corba.idl.types.*;
-import org.apache.axis2.corba.receivers.CorbaUtil;
-import org.apache.axis2.corba.exceptions.SchemaGeneratorException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class SchemaGenerator implements CorbaConstants {
     private static int prefixCount = 1;

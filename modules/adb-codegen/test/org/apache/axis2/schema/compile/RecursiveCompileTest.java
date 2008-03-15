@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.schema.compile;
 
-import junit.framework.TestCase;
-
 public class RecursiveCompileTest extends AbstractSchemaCompilerTester {
       protected void setUp() throws Exception {
          this.fileName = "test-resources/xsd/simple_recursive.xsd";

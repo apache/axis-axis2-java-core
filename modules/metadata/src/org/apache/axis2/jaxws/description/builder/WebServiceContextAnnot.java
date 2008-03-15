@@ -18,11 +18,10 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.handler.MessageContext;
-
 import org.w3c.dom.Element;
 
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.handler.MessageContext;
 import java.lang.annotation.Annotation;
 import java.security.Principal;
 

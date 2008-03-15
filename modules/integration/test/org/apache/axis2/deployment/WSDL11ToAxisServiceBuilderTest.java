@@ -18,12 +18,16 @@
  */
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
-import org.apache.axis2.description.AxisService;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.StringReader;
 
 /**
  *

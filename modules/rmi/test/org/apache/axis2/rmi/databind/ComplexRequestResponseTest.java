@@ -15,13 +15,13 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.Operation;
-import org.apache.axis2.rmi.databind.service.Service2;
 import org.apache.axis2.rmi.databind.dto.TestClass1;
 import org.apache.axis2.rmi.databind.dto.TestClass2;
+import org.apache.axis2.rmi.databind.service.Service2;
+import org.apache.axis2.rmi.metadata.Operation;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ComplexRequestResponseTest extends RequestResponseTest {

@@ -43,7 +43,6 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultDetailImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultRoleImpl;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultTextImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultValueImpl;
 
 import javax.xml.namespace.QName;

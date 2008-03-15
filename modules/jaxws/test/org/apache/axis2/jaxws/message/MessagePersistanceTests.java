@@ -15,11 +15,11 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
-import org.apache.axiom.om.ds.ByteArrayDataSource;
 import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -35,7 +35,6 @@ import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.SendImage;
-
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
@@ -44,16 +43,13 @@ import javax.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
-
-import java.awt.Image;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import junit.framework.TestCase;
 
 /**
  * These tests simulate the outbound processing 

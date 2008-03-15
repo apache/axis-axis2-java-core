@@ -18,21 +18,19 @@
  */
 package org.apache.axis2.schema.base64binary;
 
+import junit.framework.TestCase;
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.databinding.types.HexBinary;
 import org.w3.www._2005._05.xmlmime.*;
 import org.w3.www._2005._05.xmlmime.HexBinary;
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.types.*;
-import org.apache.axis2.databinding.ADBException;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 
 

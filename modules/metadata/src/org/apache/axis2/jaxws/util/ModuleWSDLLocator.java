@@ -19,16 +19,15 @@
 
 package org.apache.axis2.jaxws.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.wsdl.xml.WSDLLocator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-
-import javax.wsdl.xml.WSDLLocator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is an implementation of a WSDL4J interface and is the

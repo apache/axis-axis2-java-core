@@ -1,12 +1,12 @@
 package org.apache.axis2.description;
 
-import java.util.HashMap;
-import java.util.Set;
-
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
+
+import java.util.HashMap;
+import java.util.Set;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file

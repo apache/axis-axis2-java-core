@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionTestUtils;
@@ -30,10 +31,7 @@ import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceClient;
-
 import java.net.URL;
-
-import junit.framework.TestCase;
 
 /**
  * Test client sparse composite support in the MDQ layer at the Service creation level.

@@ -20,14 +20,13 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.net.URL;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import java.net.URL;
 
 /**
  * Tests building a ServiceDescription using WSDL and the JAXWS Service API.  

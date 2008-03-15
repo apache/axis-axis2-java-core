@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.config.ClassInfo;
 import org.apache.axis2.rmi.config.FieldInfo;
 import org.apache.axis2.rmi.databind.dto.TestClass2;

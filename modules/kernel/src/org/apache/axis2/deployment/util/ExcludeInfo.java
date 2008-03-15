@@ -15,10 +15,9 @@
  */
 package org.apache.axis2.deployment.util;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
+import java.util.Map;
 
 /**
  * this class is used to keep the exclude property details of all the classes.

@@ -16,18 +16,16 @@
 package org.apache.axis2.rmi.custombeans;
 
 import junit.framework.TestCase;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.util.NamespacePrefix;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 

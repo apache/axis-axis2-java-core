@@ -19,10 +19,10 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.omg.CORBA.TypeCode;
-import org.omg.CORBA.ORB;
-import org.omg.CORBA.Any;
 import org.apache.axis2.corba.receivers.CorbaUtil;
+import org.omg.CORBA.Any;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.TypeCode;
 
 public class UnionType extends CompositeDataType {
     private DataType discriminatorType;

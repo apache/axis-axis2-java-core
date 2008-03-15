@@ -1,13 +1,11 @@
 package org.apache.axis2.metadata.registry;
 
-import java.io.File;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
 
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-
-import org.apache.axis2.jaxws.wsdl.WSDLReaderConfigurator;
-
-import junit.framework.TestCase;
+import java.io.File;
 
 
 public class MetadataFactoryRegistryTests extends TestCase {

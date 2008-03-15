@@ -1,11 +1,9 @@
 <%@ page import="org.apache.axis2.Constants" %>
+<%@ page import="org.apache.axis2.description.AxisModule" %>
 <%@ page import="org.apache.axis2.description.AxisService" %>
 <%@ page import="org.apache.axis2.description.AxisServiceGroup" %>
-<%@ page import="javax.xml.namespace.QName" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Collection" %>
-<%@ page import="org.apache.axis2.description.AxisModule" %>
+<%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--
   ~ Licensed to the Apache Software Foundation (ASF) under one

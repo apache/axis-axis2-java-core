@@ -26,8 +26,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.StringReader;
 
 public class DocLitBareWSDLTest extends XMLTestCase {
     private String wsdlLocation = System.getProperty("basedir", ".") + "/" + "test-resources/wsdl/DocLitBareService.wsdl";

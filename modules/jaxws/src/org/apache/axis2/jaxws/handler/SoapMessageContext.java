@@ -37,7 +37,6 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

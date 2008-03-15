@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.binding;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.Handler;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -34,6 +27,12 @@ import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
 import org.apache.axis2.jaxws.registry.ClientConfiguratorRegistry;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
+
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.handler.Handler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Classes that would normally "implement javax.xml.ws.Binding"

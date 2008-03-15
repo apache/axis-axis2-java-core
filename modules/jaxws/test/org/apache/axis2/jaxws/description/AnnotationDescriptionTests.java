@@ -20,13 +20,12 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Method;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import java.lang.reflect.Method;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file.

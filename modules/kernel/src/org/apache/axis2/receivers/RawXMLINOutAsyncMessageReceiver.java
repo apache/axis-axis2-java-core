@@ -18,15 +18,8 @@
  */
 package org.apache.axis2.receivers;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.i18n.Messages;
-
-import java.lang.reflect.Method;
 
 /**
  * The RawXMLINOutAsyncMessageReceiver MessageReceiver hands over the raw request received to

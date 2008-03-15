@@ -19,9 +19,9 @@
 
 package org.apache.axis2.corba.idl.types;
 
+import org.omg.CORBA.ORB;
 import org.omg.CORBA.StructMember;
 import org.omg.CORBA.TypeCode;
-import org.omg.CORBA.ORB;
 
 public class Struct extends CompositeDataType {
 

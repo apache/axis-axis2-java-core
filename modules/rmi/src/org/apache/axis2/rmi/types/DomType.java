@@ -15,10 +15,10 @@
  */
 package org.apache.axis2.rmi.types;
 
-import org.apache.axis2.rmi.metadata.AbstractType;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.AbstractType;
 
 import java.util.Map;
 

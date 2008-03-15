@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.jaxws.handler.lifecycle.impl;
 
-import javax.xml.ws.handler.Handler;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -29,6 +27,8 @@ import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescriptionFactory;
+
+import javax.xml.ws.handler.Handler;
 
 public class HandlerLifecycleManagerImpl extends BaseLifecycleManager implements HandlerLifecycleManager {
         

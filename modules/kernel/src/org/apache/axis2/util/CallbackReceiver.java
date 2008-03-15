@@ -19,8 +19,7 @@
 
 package org.apache.axis2.util;
 
-import java.util.Map;
-
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
@@ -33,7 +32,7 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 /**
  * This is a MessageReceiver which is used on the client side to accept the

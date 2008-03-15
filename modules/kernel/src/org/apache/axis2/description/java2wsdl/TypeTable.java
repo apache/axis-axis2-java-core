@@ -21,7 +21,12 @@ package org.apache.axis2.description.java2wsdl;
 import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class TypeTable {
     

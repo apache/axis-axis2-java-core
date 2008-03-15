@@ -18,19 +18,17 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.JAXWSRIWSDLGenerator;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
-import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;

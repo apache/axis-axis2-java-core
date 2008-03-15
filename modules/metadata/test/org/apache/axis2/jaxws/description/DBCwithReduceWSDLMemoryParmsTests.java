@@ -18,29 +18,22 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
-
-import javax.jws.WebService;
-import javax.wsdl.Definition;
-
-//import org.apache.axis2.wsdl.util.WSDLWrapperImpl;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
-//import org.apache.axis2.wsdl.util.WSDLWrapperReloadImpl;
-
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
+import javax.jws.WebService;
+import javax.wsdl.Definition;
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * These tests are intended to test various aspects of the OperationDescription.

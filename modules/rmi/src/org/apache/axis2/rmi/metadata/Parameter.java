@@ -17,19 +17,18 @@ package org.apache.axis2.rmi.metadata;
 
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.databind.RMIBean;
-import org.apache.axis2.rmi.types.MapType;
-import org.apache.axis2.rmi.util.Util;
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlElementImpl;
+import org.apache.axis2.rmi.types.MapType;
+import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.util.Util;
 
-import java.util.Map;
-import java.util.List;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * this class is used to keep the Parameter details of a java method

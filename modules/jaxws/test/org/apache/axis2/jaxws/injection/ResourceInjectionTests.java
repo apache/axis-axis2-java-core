@@ -18,16 +18,13 @@
  */
 package org.apache.axis2.jaxws.injection;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
 
 import javax.xml.ws.WebServiceContext;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class ResourceInjectionTests extends TestCase {
     String axisEndpoint = "http://localhost:6060/axis2/services/ResourceInjectionService.ResourceInjectionPortTypeImplPort";

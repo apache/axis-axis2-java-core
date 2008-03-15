@@ -21,16 +21,20 @@ import org.apache.axis2.rmi.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.WSDLException;
 import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class XmlSchema {
 

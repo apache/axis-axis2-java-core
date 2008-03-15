@@ -19,8 +19,6 @@
 
 package org.apache.axis2.scripting.convertors;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.xmlbeans.XmlObject;
@@ -29,6 +27,8 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Wrapper;
 import org.mozilla.javascript.xml.XMLObject;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * JSObjectConvertor converts between OMElements and JavaScript E4X XML objects

@@ -19,12 +19,6 @@
 
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.WSDLException;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
@@ -49,6 +43,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Options Page lets the user change general settings on the code generation. It

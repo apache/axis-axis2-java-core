@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.wsdl.codegen.schema;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 import org.apache.axis2.namespace.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * this class represents an xml complex type

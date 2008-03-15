@@ -19,17 +19,17 @@
 
 package org.apache.axis2.jaxws.util;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.StringTokenizer;
-
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.xml.sax.InputSource;
 
 
 /**

@@ -19,10 +19,10 @@
 
 package org.apache.axis2.transport.nhttp;
 
-import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Properties;
 
 /**
  * Store and manage properties that tune the nhttp transport

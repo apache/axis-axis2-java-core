@@ -21,7 +21,6 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
@@ -33,10 +32,8 @@ import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConver
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
-
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

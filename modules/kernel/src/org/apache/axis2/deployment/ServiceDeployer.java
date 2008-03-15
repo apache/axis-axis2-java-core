@@ -32,13 +32,13 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.net.URL;
 
 public class ServiceDeployer implements Deployer {
     private static final Log log = LogFactory.getLog(ServiceDeployer.class);

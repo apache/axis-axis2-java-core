@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.rmi.config;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * this is used to keep the custome information

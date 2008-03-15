@@ -15,23 +15,23 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
-import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
-import org.apache.axis2.rmi.exception.MetaDataPopulateException;
-import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.exception.OMElementCreationException;
-import org.apache.axis2.rmi.util.NamespacePrefix;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.exception.MetaDataPopulateException;
+import org.apache.axis2.rmi.exception.OMElementCreationException;
+import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.util.NamespacePrefix;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
-import java.util.Map;
+import javax.xml.stream.XMLStreamException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * this class is used to create omElements from the

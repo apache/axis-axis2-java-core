@@ -19,11 +19,10 @@
 
 package org.apache.axis2.engine;
 
+import junit.framework.TestCase;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
-
-import junit.framework.TestCase;
 
 public class DispatchPhaseTest extends TestCase {
     

@@ -21,10 +21,10 @@ package org.apache.axis2.schema;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * This is a bean class that captures all the compiler options.

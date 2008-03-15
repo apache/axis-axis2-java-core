@@ -18,31 +18,46 @@
  */
 package org.apache.axis2.schema.writer;
 
-import org.apache.axis2.schema.*;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
+import org.apache.axis2.schema.CompilerOptions;
+import org.apache.axis2.schema.SchemaCompilationException;
+import org.apache.axis2.schema.SchemaConstants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
-import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
-import org.apache.axis2.util.*;
+import org.apache.axis2.schema.util.SchemaPropertyLoader;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PrettyPrinter;
+import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.apache.axis2.util.XSLTUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMAttribute;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 

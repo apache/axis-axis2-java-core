@@ -43,7 +43,6 @@ import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.ExtensionRegistry;
 import javax.xml.namespace.QName;
-
 import java.net.URL;
 import java.util.List;
 import java.util.Map;

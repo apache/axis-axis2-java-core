@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.spi;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionTestUtils2;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -25,16 +26,11 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Binding;
-import javax.xml.ws.Holder;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.net.URL;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 /**
  * 

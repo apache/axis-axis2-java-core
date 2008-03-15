@@ -19,13 +19,17 @@
 
 package org.apache.axis2.corba.idl.values;
 
-import org.apache.axis2.corba.idl.types.*;
+import org.apache.axis2.corba.idl.types.DataType;
+import org.apache.axis2.corba.idl.types.EnumType;
+import org.apache.axis2.corba.idl.types.Member;
+import org.apache.axis2.corba.idl.types.UnionMember;
+import org.apache.axis2.corba.idl.types.UnionType;
 import org.apache.axis2.corba.receivers.CorbaUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.omg.CORBA.TCKind;
 import org.omg.CORBA_2_3.portable.InputStream;
 import org.omg.CORBA_2_3.portable.OutputStream;
-import org.omg.CORBA.TCKind;
 
 public class UnionValue extends AbstractValue {
     private static final Log log = LogFactory.getLog(UnionValue.class);

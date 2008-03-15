@@ -18,10 +18,10 @@
  */
 package org.apache.axis2.maven2.java2wsdl;
 
-import java.io.File;
-
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+
+import java.io.File;
 
 
 /**

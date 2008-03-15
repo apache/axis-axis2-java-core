@@ -19,12 +19,6 @@
 
 package org.apache.axis2.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -38,6 +32,11 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.integration.LocalTestCase;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HandlerExecutionTest extends LocalTestCase {
     private static ArrayList testResults;

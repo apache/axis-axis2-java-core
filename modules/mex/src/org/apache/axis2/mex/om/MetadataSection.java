@@ -18,7 +18,6 @@
  */
 
 package org.apache.axis2.mex.om;
-import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -29,6 +28,8 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.mex.MexConstants;
 import org.apache.axis2.mex.MexException;
 import org.apache.axis2.mex.util.MexUtil;
+
+import javax.xml.namespace.QName;
 
 
 /**

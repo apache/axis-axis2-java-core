@@ -18,7 +18,18 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
-import java.io.StringReader;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,20 +39,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
-import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+import java.io.StringReader;
 
 /**
  * This class tests the enpoint reference classes used in the JAX-WS 2.1 API.

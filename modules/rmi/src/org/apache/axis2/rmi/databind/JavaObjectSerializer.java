@@ -15,30 +15,30 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.Type;
-import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.metadata.ElementField;
-import org.apache.axis2.rmi.metadata.AttributeField;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.util.NamespacePrefix;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.metadata.AttributeField;
+import org.apache.axis2.rmi.metadata.ElementField;
+import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.metadata.Type;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
 import org.apache.axis2.rmi.types.MapType;
+import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.util.NamespacePrefix;
 
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Array;
 
 /**
  * this class serializes a given java object with its corresponding

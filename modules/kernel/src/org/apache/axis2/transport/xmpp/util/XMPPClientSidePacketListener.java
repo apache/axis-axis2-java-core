@@ -1,8 +1,5 @@
 package org.apache.axis2.transport.xmpp.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -10,6 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class XMPPClientSidePacketListener implements PacketListener {
 	private Log log = LogFactory.getLog(XMPPClientSidePacketListener.class);

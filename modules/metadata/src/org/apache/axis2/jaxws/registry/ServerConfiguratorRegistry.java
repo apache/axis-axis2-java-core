@@ -18,21 +18,20 @@
  */
 package org.apache.axis2.jaxws.registry;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.server.config.AddressingConfigurator;
+import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
+import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
 
 import javax.xml.ws.RespectBindingFeature;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
-
-import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
-import org.apache.axis2.jaxws.server.config.AddressingConfigurator;
-import org.apache.axis2.jaxws.server.config.MTOMConfigurator;
-import org.apache.axis2.jaxws.server.config.RespectBindingConfigurator;
-import org.apache.axis2.jaxws.description.builder.MDQConstants;
-import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerConfiguratorRegistry {
     private static Map<String, ServerConfigurator> map =

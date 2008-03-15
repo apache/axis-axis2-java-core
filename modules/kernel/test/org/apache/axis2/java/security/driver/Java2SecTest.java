@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.java.security.action.Action;
 import org.apache.axis2.java.security.less.LessPermission;
@@ -31,7 +32,6 @@ import org.apache.axis2.java.security.less.LessPermissionPrivilegedExceptionActi
 import org.apache.axis2.java.security.more.MorePermission;
 import org.apache.axis2.java.security.more.MorePermissionAccessControlContext;
 import org.apache.axis2.java.security.more.MorePermissionPrivilegedExceptionAction;
-import org.apache.axis2.AbstractTestCase;
 
 import java.security.AccessControlException;
 import java.security.Permission;

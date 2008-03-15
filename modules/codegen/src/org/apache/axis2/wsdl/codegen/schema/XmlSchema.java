@@ -15,12 +15,13 @@
  */
 package org.apache.axis2.wsdl.codegen.schema;
 
-import org.apache.woden.XMLElement;
 import org.apache.axis2.namespace.Constants;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * this class represents and schema object.

@@ -20,12 +20,16 @@
 
 package org.apache.axis2.deployment.repository.util;
 
+import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.Deployer;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class WSInfoList implements DeploymentConstants {
 

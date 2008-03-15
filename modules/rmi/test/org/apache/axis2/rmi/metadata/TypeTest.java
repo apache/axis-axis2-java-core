@@ -15,15 +15,14 @@
  */
 package org.apache.axis2.rmi.metadata;
 
-import org.apache.axis2.rmi.metadata.service.dto.ChildClass;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
+import junit.framework.TestCase;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
+import org.apache.axis2.rmi.metadata.service.dto.ChildClass;
 
-import java.util.Map;
 import java.util.HashMap;
-
-import junit.framework.TestCase;
+import java.util.Map;
 
 
 public class TypeTest extends TestCase {

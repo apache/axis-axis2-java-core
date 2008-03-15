@@ -18,16 +18,7 @@
  */
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.SocketException;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -56,14 +47,21 @@ import org.apache.http.HttpVersion;
 import org.apache.http.MethodNotSupportedException;
 import org.apache.http.ProtocolException;
 import org.apache.http.ProtocolVersion;
-import org.apache.http.UnsupportedHttpVersionException;
 import org.apache.http.RequestLine;
+import org.apache.http.UnsupportedHttpVersionException;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 
-import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class is an extension of the defaulf HTTP service responsible for

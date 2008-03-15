@@ -18,19 +18,15 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
-import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
 import test.EchoString;
 import test.ObjectFactory;
 
@@ -40,12 +36,9 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.TreeSet;
-
-import junit.framework.TestCase;
 
 /**
  * Unit Testing of JAXBCustomBuilder.

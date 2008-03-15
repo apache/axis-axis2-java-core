@@ -18,12 +18,18 @@
  */
 package org.apache.axis2.tools.wizardframe;
 
-import org.apache.axis2.tools.component.*;
-import org.apache.axis2.tools.bean.WsdlgenBean;
+import com.intellij.openapi.project.Project;
 import org.apache.axis2.tools.bean.CodegenBean;
 import org.apache.axis2.tools.bean.SrcCompiler;
-import org.apache.axis2.tools.idea.ProgressBarPanel;
+import org.apache.axis2.tools.bean.WsdlgenBean;
+import org.apache.axis2.tools.component.CancelAction;
+import org.apache.axis2.tools.component.DefaultWizardComponents;
+import org.apache.axis2.tools.component.FinishAction;
+import org.apache.axis2.tools.component.Utilities;
+import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.idea.FirstPanel;
+import org.apache.axis2.tools.idea.ProgressBarPanel;
 import org.apache.axis2.tools.idea.SecondPanel;
 import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
 import org.apache.ideaplugin.bean.ArchiveBean;
@@ -35,10 +41,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.TimerTask;
-import java.io.*;
-
-import com.intellij.openapi.project.Project;
 
 /**
  * wizardFrame class

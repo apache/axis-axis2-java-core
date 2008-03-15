@@ -24,7 +24,6 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 

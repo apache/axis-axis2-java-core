@@ -22,9 +22,8 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.woden.wsdl20.Endpoint;
-import org.apache.woden.wsdl20.Service;
 import org.apache.woden.WSDLException;
+import org.apache.woden.wsdl20.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;

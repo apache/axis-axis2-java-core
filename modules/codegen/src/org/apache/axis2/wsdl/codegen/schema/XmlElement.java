@@ -15,10 +15,9 @@
  */
 package org.apache.axis2.wsdl.codegen.schema;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.w3c.dom.Attr;
 import org.apache.axis2.namespace.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.util.Map;

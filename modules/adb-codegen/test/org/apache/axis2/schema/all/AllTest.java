@@ -18,16 +18,13 @@
  */
 package org.apache.axis2.schema.all;
 
-import org.tempuri.Update;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
+import org.tempuri.Update;
 
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 

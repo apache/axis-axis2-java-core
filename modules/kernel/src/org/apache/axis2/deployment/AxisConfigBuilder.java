@@ -20,10 +20,11 @@
 
 package org.apache.axis2.deployment;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
-import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.ApplicationXMLBuilder;
@@ -57,8 +58,6 @@ import org.apache.axis2.util.ThreadContextMigrator;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

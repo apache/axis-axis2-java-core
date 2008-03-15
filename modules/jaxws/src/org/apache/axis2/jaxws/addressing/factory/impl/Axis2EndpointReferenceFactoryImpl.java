@@ -18,19 +18,18 @@
  */
 package org.apache.axis2.jaxws.addressing.factory.impl;
 
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
-import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
+import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+
+import javax.xml.namespace.QName;
+import java.net.URL;
 
 /**
  * This class produces instances of {@link EndpointReference}.

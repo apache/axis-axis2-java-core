@@ -16,19 +16,18 @@
 package org.apache.axis2.databinding.types.xsd;
 
 
+import junit.framework.TestCase;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.soapencoding.Array;
 import org.apache.axis2.databinding.types.soapencoding.ArrayE;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 
 public class ArrayTest extends TestCase {

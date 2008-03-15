@@ -15,12 +15,12 @@
  */
 package org.apache.axis2.rmi.metadata.xml.impl;
 
-import org.apache.axis2.rmi.metadata.xml.XmlType;
-import org.apache.axis2.rmi.metadata.xml.XmlElement;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.xml.XmlElement;
+import org.apache.axis2.rmi.metadata.xml.XmlType;
 import org.apache.axis2.rmi.util.Constants;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.Map;
 

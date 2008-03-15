@@ -18,22 +18,19 @@
  */
 package org.apache.axis2.schema.defaultnamespaces;
 
-import org.tempuri.defaultnamepaces.TestElement1;
-import org.tempuri.defaultnamepaces.TestChildType;
-import org.tempuri.defaultnamepaces.TestSimpleUnion;
-import org.apache.axiom.om.OMElement;
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.tempuri.defaultnamepaces.TestChildType;
+import org.tempuri.defaultnamepaces.TestElement1;
+import org.tempuri.defaultnamepaces.TestSimpleUnion;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 

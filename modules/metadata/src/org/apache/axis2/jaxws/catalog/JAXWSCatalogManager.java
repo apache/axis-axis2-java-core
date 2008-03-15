@@ -19,9 +19,9 @@
 
 package org.apache.axis2.jaxws.catalog;
 
-import java.util.Vector;
-
 import org.apache.xml.resolver.Catalog;
+
+import java.util.Vector;
 
 public abstract interface JAXWSCatalogManager {
 

@@ -19,7 +19,6 @@
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
-
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.Constants;

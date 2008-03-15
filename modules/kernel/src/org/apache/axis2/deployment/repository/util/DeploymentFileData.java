@@ -21,8 +21,8 @@
 package org.apache.axis2.deployment.repository.util;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.i18n.Messages;

@@ -24,7 +24,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.transport.tcp.TCPServer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

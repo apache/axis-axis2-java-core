@@ -20,8 +20,8 @@ package org.apache.axis2.deployment.resolver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.woden.resolver.URIResolver;
 import org.apache.woden.WSDLException;
+import org.apache.woden.resolver.URIResolver;
 import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 

@@ -15,10 +15,8 @@
  */
 package org.apache.axis2.rmi.server.services;
 
-import org.apache.axis2.rmi.databind.dto.TestRestrictionBean;
-
-import java.util.Map;
 import java.util.Date;
+import java.util.Map;
 
 
 public class Service1 implements Service1Interface {

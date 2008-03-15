@@ -1,8 +1,8 @@
 package org.apache.axis2.jaxws.addressing.factory;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.EndpointReference;
+
+import javax.xml.namespace.QName;
 
 /**
  * This class represents factories that can be use to create instances of

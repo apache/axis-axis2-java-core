@@ -20,8 +20,8 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.transport.OutTransportInfo;
 
 public class MailBasedOutTransportInfo implements OutTransportInfo {
     protected String contentType;

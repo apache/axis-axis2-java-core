@@ -15,8 +15,6 @@
  */
 package org.apache.axis2.transport.xmpp.util;
 
-import java.util.HashMap;
-
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +25,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.FromContainsFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
+
+import java.util.HashMap;
 
 public class XMPPConnectionFactory {
 	private Log log = LogFactory.getLog(XMPPConnectionFactory.class);

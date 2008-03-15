@@ -18,16 +18,16 @@
  */
 package org.apache.axis2.jaxws.catalog.impl;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.logging.Logger;
-
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.xml.resolver.Catalog;
 import org.apache.xml.resolver.CatalogManager;
+
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.logging.Logger;
 
 /**
  *  OASISCatalogManager provides an interface to the catalog properties.

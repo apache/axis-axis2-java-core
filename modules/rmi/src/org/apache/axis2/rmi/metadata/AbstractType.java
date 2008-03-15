@@ -18,8 +18,8 @@ package org.apache.axis2.rmi.metadata;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.metadata.xml.XmlType;
 import org.apache.axis2.rmi.metadata.xml.XmlSchema;
+import org.apache.axis2.rmi.metadata.xml.XmlType;
 
 import java.util.ArrayList;
 import java.util.List;

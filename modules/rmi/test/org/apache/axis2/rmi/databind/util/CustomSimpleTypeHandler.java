@@ -17,8 +17,8 @@ package org.apache.axis2.rmi.databind.util;
 
 import org.apache.axis2.rmi.databind.SimpleTypeHandler;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CustomSimpleTypeHandler extends SimpleTypeHandler {
     public String convertToString(Date value) {

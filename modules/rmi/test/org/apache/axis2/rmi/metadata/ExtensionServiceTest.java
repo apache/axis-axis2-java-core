@@ -16,20 +16,15 @@
 package org.apache.axis2.rmi.metadata;
 
 import junit.framework.TestCase;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.metadata.service.BasicService;
 import org.apache.axis2.rmi.metadata.service.ExtensionService;
 import org.apache.axis2.rmi.metadata.service.dto.ChildClass2;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 
 import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 
 

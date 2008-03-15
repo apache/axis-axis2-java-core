@@ -19,9 +19,6 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -29,6 +26,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBase {
 

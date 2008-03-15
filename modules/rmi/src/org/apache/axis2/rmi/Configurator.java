@@ -15,15 +15,14 @@
  */
 package org.apache.axis2.rmi;
 
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.databind.SimpleTypeHandler;
 import org.apache.axis2.rmi.config.ClassInfo;
-import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
+import org.apache.axis2.rmi.databind.SimpleTypeHandler;
+import org.apache.axis2.rmi.util.Constants;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * this class is used to keep all the

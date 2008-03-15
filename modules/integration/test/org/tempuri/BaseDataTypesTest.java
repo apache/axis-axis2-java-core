@@ -18,8 +18,8 @@
  */
 package org.tempuri;
 
-import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.apache.axis2.integration.TestingUtils;
+import org.apache.ws.java2wsdl.Java2WSDLBuilder;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.DifferenceEngine;
 import org.custommonkey.xmlunit.XMLTestCase;

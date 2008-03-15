@@ -22,7 +22,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.message.Protocol;
 
 import javax.xml.ws.handler.Handler;
-
 import java.util.List;
 
 public class HandlerInvokerUtils {

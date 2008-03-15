@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.schema.group;
 
-import junit.framework.TestCase;
 import group.test.axis2.apache.org.*;
-import org.apache.axiom.om.OMElement;
+import group.test.axis2.apache.org.TestAttributeGroupElement;
+import group.test.axis2.apache.org.TestNestedAttributeGroupElement;
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-
-import group.test.axis2.apache.org.TestAttributeGroupElement;
-import group.test.axis2.apache.org.TestNestedAttributeGroupElement;
 
 
 public class GroupTest extends TestCase {

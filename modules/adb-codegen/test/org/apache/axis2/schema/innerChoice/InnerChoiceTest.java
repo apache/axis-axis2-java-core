@@ -18,19 +18,18 @@
  */
 package org.apache.axis2.schema.innerChoice;
 
+import com.mynamespace.testinnerparticle.TestInnerParticle1Sequence_type0;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import test.axis2.apache.org.*;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
-
-import com.mynamespace.testinnerparticle.TestInnerParticle1Sequence_type0;
 
 public class InnerChoiceTest extends TestCase {
 

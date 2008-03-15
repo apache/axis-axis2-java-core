@@ -4,7 +4,11 @@
 <%@ page import="org.apache.axis2.description.Parameter" %>
 <%@ page import="org.apache.axis2.engine.AxisConfiguration" %>
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="java.util.Enumeration" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Hashtable" %>
+<%@ page import="java.util.Iterator" %>
 <%--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file

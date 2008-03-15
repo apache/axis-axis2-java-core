@@ -18,21 +18,6 @@
  */
 package org.apache.axis2.description.java2wsdl;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.NamespaceGenerator;
-import org.apache.axis2.description.java2wsdl.DefaultNamespaceGenerator;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-
 public class Java2WSDLUtils {
 
     public static final String HTTP = "http://";

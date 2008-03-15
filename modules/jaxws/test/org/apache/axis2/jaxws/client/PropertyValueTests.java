@@ -18,7 +18,8 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.util.Map;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -26,9 +27,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.util.Map;
 
 /**
  * A suite to test the validation of the client request/response context properties

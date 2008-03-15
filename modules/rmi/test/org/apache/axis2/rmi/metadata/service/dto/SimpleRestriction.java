@@ -20,9 +20,8 @@ import org.apache.axis2.rmi.databind.JavaObjectSerializer;
 import org.apache.axis2.rmi.databind.XmlStreamParser;
 import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axis2.rmi.exception.XmlSerializingException;
-import org.apache.axis2.rmi.util.NamespacePrefix;
-import org.apache.axis2.rmi.metadata.Type;
 import org.apache.axis2.rmi.metadata.type.SimpleRestrictionType;
+import org.apache.axis2.rmi.util.NamespacePrefix;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

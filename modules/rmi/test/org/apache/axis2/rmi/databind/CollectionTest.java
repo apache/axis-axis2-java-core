@@ -19,9 +19,9 @@ import org.apache.axis2.rmi.databind.dto.TestClass11;
 import org.apache.axis2.rmi.metadata.Parameter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 
 public class CollectionTest extends DataBindTest {

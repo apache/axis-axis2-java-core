@@ -7,24 +7,23 @@
 
 package org.apache.axis2.databinding.types.soapencoding;
 
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.ADBDataSource;
+import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.lang.*;
-import java.lang.reflect.Method;
+import java.util.List;
 
 
 /**

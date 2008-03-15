@@ -19,10 +19,8 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicBoolean;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionClosedException;
@@ -30,8 +28,9 @@ import org.apache.http.HttpException;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicBoolean;
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 /**
  * I/O processor intended to process requests and fill in responses.

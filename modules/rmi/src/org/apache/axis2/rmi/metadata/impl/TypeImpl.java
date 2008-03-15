@@ -15,31 +15,31 @@
  */
 package org.apache.axis2.rmi.metadata.impl;
 
-import org.apache.axis2.rmi.metadata.xml.XmlType;
-import org.apache.axis2.rmi.metadata.xml.XmlSchema;
-import org.apache.axis2.rmi.metadata.xml.XmlImport;
-import org.apache.axis2.rmi.metadata.xml.impl.XmlTypeImpl;
-import org.apache.axis2.rmi.metadata.Type;
-import org.apache.axis2.rmi.metadata.ElementField;
-import org.apache.axis2.rmi.metadata.Field;
-import org.apache.axis2.rmi.metadata.AttributeField;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.config.ClassInfo;
 import org.apache.axis2.rmi.config.FieldInfo;
-import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
-import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.AttributeField;
+import org.apache.axis2.rmi.metadata.ElementField;
+import org.apache.axis2.rmi.metadata.Field;
+import org.apache.axis2.rmi.metadata.Type;
+import org.apache.axis2.rmi.metadata.xml.XmlImport;
+import org.apache.axis2.rmi.metadata.xml.XmlSchema;
+import org.apache.axis2.rmi.metadata.xml.XmlType;
+import org.apache.axis2.rmi.metadata.xml.impl.XmlTypeImpl;
+import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
 
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Iterator;
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.beans.IntrospectionException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 public class TypeImpl implements Type {

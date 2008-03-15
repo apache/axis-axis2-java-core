@@ -18,10 +18,9 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
-import java.lang.annotation.Annotation;
-
 import javax.xml.ws.Action;
 import javax.xml.ws.FaultAction;
+import java.lang.annotation.Annotation;
 
 public class ActionAnnot implements Action {
     

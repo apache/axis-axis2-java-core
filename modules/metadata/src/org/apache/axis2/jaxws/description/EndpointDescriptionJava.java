@@ -18,13 +18,12 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.lang.annotation.Annotation;
-
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+import java.lang.annotation.Annotation;
 
 /**
  * 

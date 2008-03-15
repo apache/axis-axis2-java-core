@@ -19,8 +19,8 @@
 
 package org.apache.axis2.classloader;
 
-import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 
 public class JarStreamHandlerFactory implements URLStreamHandlerFactory {
     public URLStreamHandler createURLStreamHandler(String protocol) {

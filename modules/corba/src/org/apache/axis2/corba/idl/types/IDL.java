@@ -19,9 +19,6 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.apache.axis2.corba.idl.types.CompositeDataType;
-import org.apache.axis2.corba.idl.types.Interface;
-
 import java.util.Map;
 import java.util.TreeMap;
 

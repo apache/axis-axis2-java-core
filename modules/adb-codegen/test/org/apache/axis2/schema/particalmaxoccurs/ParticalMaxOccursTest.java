@@ -18,18 +18,15 @@
  */
 package org.apache.axis2.schema.particalmaxoccurs;
 
+import com.mynamespace.testparticlemaxoccurs.*;
 import junit.framework.TestCase;
-
-
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-
-import com.mynamespace.testparticlemaxoccurs.*;
 
 
 public class ParticalMaxOccursTest extends TestCase {

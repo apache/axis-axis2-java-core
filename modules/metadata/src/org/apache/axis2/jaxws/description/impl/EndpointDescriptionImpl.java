@@ -50,7 +50,6 @@ import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
-import org.apache.axis2.wsdl.util.WSDLWrapperReloadImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

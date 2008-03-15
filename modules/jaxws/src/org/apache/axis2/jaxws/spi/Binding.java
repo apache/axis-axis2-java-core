@@ -18,10 +18,10 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.ws.WebServiceFeature;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.core.MessageContext;
+
+import javax.xml.ws.WebServiceFeature;
 
 /**
  * 

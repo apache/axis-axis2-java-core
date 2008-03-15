@@ -31,11 +31,8 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.AbstractMap;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * The <code>org.apache.axis2.jaxws.core.MessageContext</code> is an interface that extends the

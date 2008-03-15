@@ -18,29 +18,28 @@
  */
 package org.apache.ideaplugin.frames;
 
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 import org.apache.ideaplugin.bean.ArchiveBean;
+import org.apache.ideaplugin.bean.ClassFileFilter;
 import org.apache.ideaplugin.bean.OperationObj;
 import org.apache.ideaplugin.bean.ServiceObj;
-import org.apache.ideaplugin.bean.ClassFileFilter;
 import org.apache.ideaplugin.frames.table.ArchiveTableModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableModel;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class ServiceXMLGenerationPage extends WizardPanel {

@@ -18,10 +18,6 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.lifecycle.impl;
 
-import java.lang.reflect.Method;
-
-import javax.xml.ws.WebServiceContext;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -34,6 +30,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
@@ -42,10 +39,12 @@ import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
-import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.ws.WebServiceContext;
+import java.lang.reflect.Method;
 
 public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implements
         EndpointLifecycleManager {

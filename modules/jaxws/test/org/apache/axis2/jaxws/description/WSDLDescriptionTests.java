@@ -20,7 +20,9 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.net.URL;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.ws.axis2.tests.EchoPort;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -34,10 +36,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.ws.axis2.tests.EchoPort;
+import java.net.URL;
 
 /**
  * Directly test the Description classes built with a WSDL file.

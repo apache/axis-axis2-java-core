@@ -45,7 +45,6 @@ import javax.jws.soap.SOAPBinding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -54,8 +53,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-//import org.apache.log4j.BasicConfigurator;
 import java.util.Map;
 
 /** @see ../EndpointInterfaceDescription */

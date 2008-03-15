@@ -39,12 +39,9 @@ import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
 import java.io.IOException;
-import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;

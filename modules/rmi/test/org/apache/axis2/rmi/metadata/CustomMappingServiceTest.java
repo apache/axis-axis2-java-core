@@ -27,9 +27,6 @@ import org.apache.axis2.rmi.metadata.service.dto.ComplexType3;
 import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 
 import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLWriter;
 import java.io.IOException;
 
 

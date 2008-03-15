@@ -19,14 +19,13 @@
 
 package org.apache.axis2.scripting.convertors;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.bsf.BSFEngine;
 import org.apache.bsf.BSFException;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
 
 /**
  * OMElementConvertor for Ruby scripts

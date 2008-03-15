@@ -18,8 +18,10 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -29,13 +31,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadStringTests;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class DispatchXPayloadSourceTests extends AbstractTestCase {
 

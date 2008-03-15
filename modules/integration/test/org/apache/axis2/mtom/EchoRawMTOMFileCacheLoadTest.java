@@ -24,8 +24,8 @@ import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
-import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;

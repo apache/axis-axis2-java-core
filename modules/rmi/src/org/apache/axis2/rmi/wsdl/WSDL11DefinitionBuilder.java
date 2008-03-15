@@ -15,21 +15,40 @@
  */
 package org.apache.axis2.rmi.wsdl;
 
-import org.apache.axis2.rmi.metadata.*;
+import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.Operation;
+import org.apache.axis2.rmi.metadata.Parameter;
 import org.apache.axis2.rmi.metadata.Service;
 import org.apache.axis2.rmi.metadata.xml.XmlSchema;
-import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.util.Util;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.extensions.soap.*;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * this class is used to create the wsdl11 object sturcture from the

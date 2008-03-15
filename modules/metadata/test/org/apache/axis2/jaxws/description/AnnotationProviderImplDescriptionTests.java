@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.description;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.log4j.BasicConfigurator;
 
@@ -31,8 +32,6 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
-
-import junit.framework.TestCase;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {
     static {

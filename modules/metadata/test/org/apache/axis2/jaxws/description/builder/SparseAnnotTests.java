@@ -18,16 +18,14 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionTestUtils;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
-
 import java.net.URL;
-
-import junit.framework.TestCase;
 
 /**
  * 

@@ -22,7 +22,6 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.tempuri.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;

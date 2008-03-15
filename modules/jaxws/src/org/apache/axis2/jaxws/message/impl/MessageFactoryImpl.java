@@ -28,18 +28,17 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /** MessageFactoryImpl */
 public class MessageFactoryImpl implements MessageFactory {

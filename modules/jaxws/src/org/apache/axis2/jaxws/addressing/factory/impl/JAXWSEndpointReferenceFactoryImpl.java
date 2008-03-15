@@ -18,6 +18,13 @@
  */
 package org.apache.axis2.jaxws.addressing.factory.impl;
 
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -25,15 +32,7 @@ import javax.xml.transform.Source;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
 import java.security.PrivilegedExceptionAction;
-
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
-import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
 
 /**
  * This class is used to generate instances of the following subclasses of

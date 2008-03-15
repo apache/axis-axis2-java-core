@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionSer
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;

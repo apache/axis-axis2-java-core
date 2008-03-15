@@ -21,8 +21,8 @@ package org.apache.axis2.corba.idl.types;
 
 import org.omg.CORBA.TypeCode;
 
-import java.util.TreeMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 public class Interface extends CompositeDataType {
 	private java.util.Map operations;

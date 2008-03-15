@@ -18,40 +18,39 @@
  */
 package org.apache.axis2.async;
 
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.TestingUtils;
-import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Echo;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.threadpool.ThreadPool;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMElement;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.client.async.AsyncResult;
+import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Echo;
+import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.threadpool.ThreadPool;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class AsyncService2Test extends UtilServerBasedTestCase implements TestConstants {
 

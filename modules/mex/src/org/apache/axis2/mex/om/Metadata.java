@@ -19,22 +19,23 @@
 
 package org.apache.axis2.mex.om;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.xml.namespace.QName;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.AxisFault;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.dataretrieval.OutputForm;
+import org.apache.axis2.mex.MexConstants;
 import org.apache.axis2.mex.MexException;
 import org.apache.axis2.mex.util.MexUtil;
-import org.apache.axis2.mex.MexConstants;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 

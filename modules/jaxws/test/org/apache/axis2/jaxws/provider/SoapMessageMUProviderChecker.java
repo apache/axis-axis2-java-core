@@ -24,8 +24,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
-
-import java.util.HashMap;
 import java.util.Iterator;
 
 /**

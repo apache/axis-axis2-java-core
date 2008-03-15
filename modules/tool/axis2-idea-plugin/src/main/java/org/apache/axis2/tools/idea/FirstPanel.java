@@ -19,8 +19,8 @@
 package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.wizardframe.CodegenFrame;
 
 import javax.swing.*;

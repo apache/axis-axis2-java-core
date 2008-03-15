@@ -22,12 +22,12 @@ package org.apache.axis2.deployment;
 import junit.framework.TestCase;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.registry.Handler3;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Phase;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.Phase;
+import org.apache.axis2.registry.Handler3;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;

@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.clustering.context;
 
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.context.commands.ContextClusteringCommandCollection;
 import org.apache.axis2.clustering.context.commands.DeleteServiceGroupContextCommand;

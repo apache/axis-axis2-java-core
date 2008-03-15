@@ -1,14 +1,13 @@
 package org.apache.axis2.jaxws.handler.header.tests;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 public class HandlerTests extends AbstractTestCase {
     public static Test suite() {

@@ -22,9 +22,8 @@
  */
 package org.apache.axis2.jaxws.misc;
 
-import org.apache.axis2.jaxws.utility.JavaUtils;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 
 /**
  * Tests Namespace to Package Algorithm

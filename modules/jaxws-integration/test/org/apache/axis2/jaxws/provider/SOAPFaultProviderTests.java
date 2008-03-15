@@ -18,14 +18,14 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * 

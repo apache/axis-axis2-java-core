@@ -27,14 +27,19 @@ import org.w3c.dom.NodeList;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
-import javax.wsdl.Types;
 import javax.wsdl.Service;
+import javax.wsdl.Types;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class WSDL11Writer {
 

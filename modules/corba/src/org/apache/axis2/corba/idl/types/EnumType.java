@@ -19,11 +19,11 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.omg.CORBA.TypeCode;
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.TypeCode;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EnumType extends CompositeDataType {
     private List enumMembers = new ArrayList();

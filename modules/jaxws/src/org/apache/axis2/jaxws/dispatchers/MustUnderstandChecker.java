@@ -18,20 +18,10 @@
  */
 package org.apache.axis2.jaxws.dispatchers;
 
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Plugin to remove "understood" headers for the JAXWS related headers.  This class must

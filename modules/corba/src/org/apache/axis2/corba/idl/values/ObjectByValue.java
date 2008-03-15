@@ -19,12 +19,11 @@
 
 package org.apache.axis2.corba.idl.values;
 
+import org.apache.axis2.corba.idl.types.Member;
+import org.apache.axis2.corba.idl.types.ValueType;
+import org.omg.CORBA.TypeCode;
 import org.omg.CORBA.portable.InputStream;
 import org.omg.CORBA.portable.OutputStream;
-import org.omg.CORBA.TypeCode;
-
-import org.apache.axis2.corba.idl.types.ValueType;
-import org.apache.axis2.corba.idl.types.Member;
 
 public class ObjectByValue extends AbstractValue implements org.omg.CORBA.portable.StreamableValue {
 

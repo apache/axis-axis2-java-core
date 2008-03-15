@@ -16,8 +16,8 @@
 package org.apache.axis2.databinding.types.soapencoding;
 
 import junit.framework.TestCase;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 

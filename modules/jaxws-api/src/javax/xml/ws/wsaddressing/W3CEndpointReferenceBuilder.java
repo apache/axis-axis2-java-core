@@ -18,13 +18,12 @@
  */
 package javax.xml.ws.wsaddressing;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.spi.Provider;
-
-import org.w3c.dom.Element;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class W3CEndpointReferenceBuilder {
     private String address;

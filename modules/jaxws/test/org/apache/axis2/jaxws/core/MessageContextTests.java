@@ -18,9 +18,9 @@
  */
 package org.apache.axis2.jaxws.core;
 
-import java.util.Map;
-
 import junit.framework.TestCase;
+
+import java.util.Map;
 
 /*
  * Testing jaxws message context's interation with axis2 message context.

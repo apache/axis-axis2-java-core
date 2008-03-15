@@ -19,20 +19,13 @@
 
 package org.apache.axis2.jaxws.server;
 
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.registry.InvocationListenerRegistry;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.registry.InvocationListenerRegistry;
-import org.apache.axis2.jaxws.server.EndpointController;
-import org.apache.axis2.jaxws.server.EndpointInvocationContext;
-import org.apache.axis2.jaxws.server.EndpointInvocationContextImpl;
-import org.apache.axis2.jaxws.server.InvocationListenerBean;
-import org.apache.axis2.jaxws.server.JAXWSMessageReceiver;
 
 public class JAXWSServerTests extends TestCase {
     

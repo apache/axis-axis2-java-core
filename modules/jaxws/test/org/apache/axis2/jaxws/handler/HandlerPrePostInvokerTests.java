@@ -18,15 +18,7 @@
  */
 package org.apache.axis2.jaxws.handler;
 
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.handler.factory.HandlerPostInvokerFactory;
 import org.apache.axis2.jaxws.handler.factory.HandlerPreInvokerFactory;
@@ -36,6 +28,12 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * HandlerPrePostInvokerTests verifies that the mechanisms for finding the implementation classes to 

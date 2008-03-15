@@ -22,14 +22,11 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 
-import javax.xml.ws.handler.MessageContext.Scope;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 /**
  * The <tt>MEPContext</tt> is the version of the MessageContext

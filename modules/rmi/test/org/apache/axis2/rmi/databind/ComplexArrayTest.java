@@ -15,7 +15,11 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.databind.dto.*;
+import org.apache.axis2.rmi.databind.dto.TestClass2;
+import org.apache.axis2.rmi.databind.dto.TestClass3;
+import org.apache.axis2.rmi.databind.dto.TestClass4;
+import org.apache.axis2.rmi.databind.dto.TestClass7;
+import org.apache.axis2.rmi.databind.dto.TestClass9;
 import org.apache.axis2.rmi.metadata.Parameter;
 
 

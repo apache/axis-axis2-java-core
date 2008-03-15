@@ -18,19 +18,18 @@
  */
 package org.apache.axis2.jaxws.registry;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.ws.RespectBindingFeature;
-import javax.xml.ws.soap.AddressingFeature;
-import javax.xml.ws.soap.MTOMFeature;
-
 import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
 import org.apache.axis2.jaxws.client.config.AddressingConfigurator;
 import org.apache.axis2.jaxws.client.config.MTOMConfigurator;
 import org.apache.axis2.jaxws.client.config.RespectBindingConfigurator;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
+
+import javax.xml.ws.RespectBindingFeature;
+import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientConfiguratorRegistry {
     private static Map<String, ClientConfigurator> map =

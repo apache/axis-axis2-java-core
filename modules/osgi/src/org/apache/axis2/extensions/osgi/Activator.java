@@ -19,12 +19,12 @@
 
 package org.apache.axis2.extensions.osgi;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.Bundle;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.log.LogService;
 

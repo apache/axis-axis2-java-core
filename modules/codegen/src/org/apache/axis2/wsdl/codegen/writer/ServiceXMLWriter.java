@@ -19,8 +19,6 @@
 
 package org.apache.axis2.wsdl.codegen.writer;
 
-import org.apache.axis2.i18n.Messages;
-
 import java.io.File;
 import java.io.FileOutputStream;
 

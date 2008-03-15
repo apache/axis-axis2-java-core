@@ -28,11 +28,11 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.dispatchers.AddressingBasedDispatcher;
 import org.apache.axis2.dispatchers.RequestURIBasedDispatcher;
 import org.apache.axis2.dispatchers.SOAPActionBasedDispatcher;
 import org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -41,11 +41,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.FileInputStream;
 import java.net.Socket;
 
 public class MessageWithServerTest extends UtilServerBasedTestCase {

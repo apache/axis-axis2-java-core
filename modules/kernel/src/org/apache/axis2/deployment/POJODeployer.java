@@ -18,6 +18,8 @@
  */
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
@@ -27,12 +29,9 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.AnnotationConstants;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.classloader.MultiParentClassLoader;
-import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;

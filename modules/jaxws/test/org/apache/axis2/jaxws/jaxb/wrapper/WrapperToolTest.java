@@ -19,15 +19,14 @@
 
 package org.apache.axis2.jaxws.jaxb.wrapper;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.WeakHashMap;
-
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
-import org.apache.axis2.jaxws.TestLogger;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class WrapperToolTest extends TestCase {
 	public void testWrapStockQuote(){

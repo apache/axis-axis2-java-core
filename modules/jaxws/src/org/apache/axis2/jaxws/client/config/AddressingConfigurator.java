@@ -18,13 +18,11 @@
  */
 package org.apache.axis2.jaxws.client.config;
 
-import javax.xml.ws.soap.AddressingFeature;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionAddressingFeature;
@@ -34,6 +32,8 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
+
+import javax.xml.ws.soap.AddressingFeature;
 
 /**
  * This class will enable/disable WS-Addressing in a JAX-WS 2.1 client,

@@ -27,9 +27,9 @@
 
             package server;
 
-            import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
-            import org.apache.axis2.databinding.ADBException;
             import org.apache.axiom.om.OMFactory;
+            import org.apache.axis2.databinding.ADBException;
+            import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
             import javax.xml.namespace.QName;
             import javax.xml.stream.XMLStreamException;

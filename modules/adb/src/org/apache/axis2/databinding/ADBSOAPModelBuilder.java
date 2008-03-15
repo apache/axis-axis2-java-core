@@ -19,17 +19,17 @@
 
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.util.StreamWrapper;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.util.StreamWrapper;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /** Builds a SOAPEnvelope around an ADB pull parser */
 public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {

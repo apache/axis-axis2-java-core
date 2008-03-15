@@ -19,8 +19,8 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.omg.CORBA.TypeCode;
 import org.omg.CORBA.ORB;
+import org.omg.CORBA.TypeCode;
 
 public class Typedef extends CompositeDataType {
     private DataType dataType;

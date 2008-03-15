@@ -20,8 +20,6 @@ package org.apache.axis2.jaxws.addressing.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.axis2.jaxws.addressing.util.EndpointKey;
-
 /**
  * This class stores the context needed to correctly produce instances of
  * {@link javax.xml.ws.EndpointReference} for a particular web service endpoint

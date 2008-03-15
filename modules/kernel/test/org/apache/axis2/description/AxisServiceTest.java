@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.description;
 
+import junit.framework.TestCase;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -25,11 +26,8 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
-
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-
-import junit.framework.TestCase;
 
 public class AxisServiceTest extends TestCase {
     public static final String PARAM_NAME = "CustomParameter";

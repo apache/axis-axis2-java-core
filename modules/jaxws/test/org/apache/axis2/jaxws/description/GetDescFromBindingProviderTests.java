@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Proxy;
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
-
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.ws.axis2.tests.EchoPort;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service;
+import java.lang.reflect.Proxy;
+import java.net.URL;
 
 /**
  * Test that the EndpointDescription can be gotten from

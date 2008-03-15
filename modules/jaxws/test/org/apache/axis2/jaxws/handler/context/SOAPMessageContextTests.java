@@ -18,11 +18,7 @@
  */
 package org.apache.axis2.jaxws.handler.context;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.soap.SOAPMessage;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.handler.MEPContext;
@@ -34,9 +30,11 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
 import test.EchoString;
 import test.ObjectFactory;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.soap.SOAPMessage;
 
 public class SOAPMessageContextTests extends TestCase {
 

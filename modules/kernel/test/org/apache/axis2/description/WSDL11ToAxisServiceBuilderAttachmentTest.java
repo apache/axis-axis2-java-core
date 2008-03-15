@@ -18,10 +18,10 @@
  */
 package org.apache.axis2.description;
 
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.FileInputStream;
-
-import junit.framework.TestCase;
 
 /**
  * 

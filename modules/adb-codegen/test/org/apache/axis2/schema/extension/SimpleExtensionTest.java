@@ -23,8 +23,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.types.Language;
-import test.axis2.apache.org.FullName;
 import test.axis2.apache.org.BaseType;
+import test.axis2.apache.org.FullName;
 import test.axis2.apache.org.SimpleType;
 
 import javax.xml.stream.XMLStreamReader;

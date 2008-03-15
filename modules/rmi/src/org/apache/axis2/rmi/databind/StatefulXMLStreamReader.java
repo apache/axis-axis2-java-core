@@ -18,13 +18,12 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import java.util.Stack;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.util.Stack;
 
 /**
  * StatefulXMLStreamReader class that primarily delegates to the initial reader. However, in 

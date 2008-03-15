@@ -18,21 +18,21 @@
  */
 package org.apache.ideaplugin.frames;
 
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.component.WizardComponents;
-import org.apache.axis2.tools.wizardframe.CodegenFrame;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.java2wsdl.JarFileFilter;
+import org.apache.axis2.tools.wizardframe.CodegenFrame;
 import org.apache.ideaplugin.bean.ArchiveBean;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.io.File;
+import java.util.ArrayList;
 
 
 public class LibraryAddingPage extends WizardPanel {

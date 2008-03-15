@@ -18,17 +18,6 @@
  */
 package org.apache.axis2.jaxws;
 
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Binding;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -43,6 +32,15 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Binding;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.handler.HandlerResolver;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
     private static final Log log = LogFactory.getLog(BindingProvider.class);

@@ -24,7 +24,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.modules.Module;
 
 import java.util.ArrayList;
 import java.util.HashMap;

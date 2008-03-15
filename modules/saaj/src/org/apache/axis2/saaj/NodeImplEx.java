@@ -35,9 +35,7 @@ import org.w3c.dom.TypeInfo;
 
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPPart;
 
 /**
  * A representation of a node (element) in a DOM representation of an XML document that provides

@@ -18,15 +18,14 @@
  */
 package javax.xml.ws.spi;
 
+import org.w3c.dom.Element;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.EndpointReference;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
-import org.w3c.dom.Element;
-
 import java.net.URL;
 import java.util.List;
 

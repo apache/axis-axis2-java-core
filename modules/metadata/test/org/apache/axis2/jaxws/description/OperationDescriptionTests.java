@@ -1,18 +1,16 @@
 package org.apache.axis2.jaxws.description;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-
 import junit.framework.TestCase;
-
-import javax.jws.WebService;
-import javax.wsdl.Definition;
-
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+
+import javax.jws.WebService;
+import javax.wsdl.Definition;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**

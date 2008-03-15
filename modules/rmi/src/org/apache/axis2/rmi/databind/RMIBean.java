@@ -1,14 +1,11 @@
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.Type;
-import org.apache.axis2.rmi.util.NamespacePrefix;
 import org.apache.axis2.rmi.exception.XmlSerializingException;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
+import org.apache.axis2.rmi.util.NamespacePrefix;
 
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * this interface is used to customize the

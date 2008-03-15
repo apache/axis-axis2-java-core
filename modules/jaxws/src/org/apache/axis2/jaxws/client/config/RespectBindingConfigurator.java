@@ -18,13 +18,13 @@
  */
 package org.apache.axis2.jaxws.client.config;
 
-import javax.xml.ws.RespectBindingFeature;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
+
+import javax.xml.ws.RespectBindingFeature;
 
 /**
  *

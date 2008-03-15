@@ -19,11 +19,11 @@
 package org.apache.axis2.jaxws.lifecycle;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.injection.ResourceInjectionTestImpl1;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
-import org.apache.axis2.jaxws.TestLogger;
 
 /**
  * Unit Tests for lifecycle creatoin

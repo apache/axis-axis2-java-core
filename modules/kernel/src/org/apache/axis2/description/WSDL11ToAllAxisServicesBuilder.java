@@ -22,15 +22,12 @@ import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.wsdl.Port;
-import javax.wsdl.Service;
 import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
+import javax.wsdl.Service;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * Extends the WSDL11ToAxisServiceBuilder class to provide functionality to return

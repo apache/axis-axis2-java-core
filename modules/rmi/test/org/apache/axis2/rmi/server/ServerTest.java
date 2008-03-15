@@ -19,14 +19,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
-import org.apache.axis2.rmi.databind.util.CustomSimpleTypeHandler;
-import org.apache.axis2.rmi.deploy.ClassDeployer;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.metadata.Service;
 import org.apache.axis2.rmi.server.services.Service1;
-import org.apache.axis2.rmi.server.services.Service2;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.wsdl.Definition;

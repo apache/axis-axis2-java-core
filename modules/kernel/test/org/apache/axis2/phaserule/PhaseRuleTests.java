@@ -18,23 +18,22 @@
  */
 package org.apache.axis2.phaserule;
 
-import org.apache.axis2.engine.Phase;
-import org.apache.axis2.engine.Handler;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DispatchPhase;
-import org.apache.axis2.phaseresolver.PhaseHolder;
-import org.apache.axis2.phaseresolver.PhaseException;
+import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DispatchPhase;
+import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.Phase;
+import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.phaseresolver.PhaseHolder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * Test various PhaseRule configurations

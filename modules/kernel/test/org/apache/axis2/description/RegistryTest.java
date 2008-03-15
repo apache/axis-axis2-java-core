@@ -24,11 +24,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.engine.Phase;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class RegistryTest extends AbstractTestCase {
     private AxisConfiguration axisConfiguration = new AxisConfiguration();

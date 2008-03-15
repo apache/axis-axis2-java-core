@@ -19,12 +19,11 @@
 package org.apache.axis2.schema.choice;
 
 import junit.framework.TestCase;
-import test.axis2.apache.org.TestChoise;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import test.axis2.apache.org.TestChoise;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 

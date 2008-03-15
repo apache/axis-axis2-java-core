@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.description.java2wsdl;
 
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-
 /**
  * This class provides the default implementatoin for mapping java classes to namespaces
  *

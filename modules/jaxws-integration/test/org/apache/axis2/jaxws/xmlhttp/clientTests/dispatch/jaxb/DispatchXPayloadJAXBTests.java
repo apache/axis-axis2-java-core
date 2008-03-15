@@ -18,6 +18,13 @@
  */
 package org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import test.EchoString;
+import test.ObjectFactory;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -25,15 +32,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-
-import test.EchoString;
-import test.ObjectFactory;
 
 public class DispatchXPayloadJAXBTests extends AbstractTestCase {
     

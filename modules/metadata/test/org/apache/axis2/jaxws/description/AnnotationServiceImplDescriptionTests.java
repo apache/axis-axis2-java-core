@@ -25,7 +25,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
-import org.apache.ws.axis2.tests.EchoPort;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;

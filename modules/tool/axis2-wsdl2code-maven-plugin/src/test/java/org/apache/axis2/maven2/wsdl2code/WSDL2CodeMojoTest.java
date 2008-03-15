@@ -22,7 +22,6 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /** Test class for running the wsdl2code mojo. */

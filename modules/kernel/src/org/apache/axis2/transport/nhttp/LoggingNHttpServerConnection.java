@@ -31,8 +31,6 @@
 
 package org.apache.axis2.transport.nhttp;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -43,6 +41,8 @@ import org.apache.http.impl.nio.DefaultNHttpServerConnection;
 import org.apache.http.nio.reactor.IOSession;
 import org.apache.http.nio.util.ByteBufferAllocator;
 import org.apache.http.params.HttpParams;
+
+import java.io.IOException;
 
 public class LoggingNHttpServerConnection extends DefaultNHttpServerConnection {
 

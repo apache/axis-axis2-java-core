@@ -20,10 +20,9 @@
 package org.apache.axis2.corba.idl;
 
 import antlr.collections.AST;
-//import antlr.DumpASTVisitor;
+import org.apache.axis2.corba.exceptions.IDLProcessorException;
 import org.apache.axis2.corba.idl.parser.IDLLexer;
 import org.apache.axis2.corba.idl.parser.IDLParser;
-import org.apache.axis2.corba.exceptions.IDLProcessorException;
 import org.apache.axis2.corba.idl.parser.IDLVisitor;
 import org.apache.axis2.corba.idl.types.IDL;
 

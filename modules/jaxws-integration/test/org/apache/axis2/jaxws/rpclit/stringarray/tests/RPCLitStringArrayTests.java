@@ -18,17 +18,15 @@
  */
 package org.apache.axis2.jaxws.rpclit.stringarray.tests;
 
-import java.util.Arrays;
-
-import javax.xml.ws.BindingProvider;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.Echo;
 import org.apache.axis2.jaxws.rpclit.stringarray.sei.RPCLitStringArrayService;
 import org.test.rpclit.stringarray.StringArray;
+
+import javax.xml.ws.BindingProvider;
+import java.util.Arrays;
 
 public class RPCLitStringArrayTests extends AbstractTestCase {
 

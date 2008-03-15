@@ -33,7 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;

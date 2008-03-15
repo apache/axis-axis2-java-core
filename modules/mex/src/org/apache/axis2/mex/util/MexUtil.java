@@ -19,11 +19,6 @@
 
 package org.apache.axis2.mex.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -33,14 +28,20 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.mex.MexException;
-import org.apache.axis2.mex.MexConstants;
-import org.apache.axis2.mex.om.Metadata;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.mex.MexConstants;
+import org.apache.axis2.mex.MexException;
+import org.apache.axis2.mex.om.Metadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class MexUtil {
 	private static final Log log = LogFactory.getLog(MexUtil.class);

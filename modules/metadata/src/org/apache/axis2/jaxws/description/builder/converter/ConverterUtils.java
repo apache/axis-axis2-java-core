@@ -33,8 +33,6 @@ import javax.jws.HandlerChain;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.GenericArrayType;

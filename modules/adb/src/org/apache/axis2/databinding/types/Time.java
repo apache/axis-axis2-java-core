@@ -21,8 +21,6 @@ package org.apache.axis2.databinding.types;
 
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;

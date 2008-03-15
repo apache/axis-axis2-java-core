@@ -19,16 +19,14 @@
 package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Method;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-
-import org.apache.axiom.om.util.StAXUtils;
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Method;
 
 public class PopulateChoiceTest extends TestCase {
     private String xmlString = "<myElement xmlns=\"http://soapinterop.org/types\">" +

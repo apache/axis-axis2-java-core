@@ -19,23 +19,23 @@
 package org.apache.axis2;
 
 import junit.framework.TestCase;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Phase;
-import org.apache.axis2.engine.DispatchPhase;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.local.LocalTransportSender;
-import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DispatchPhase;
+import org.apache.axis2.engine.Phase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.transport.local.LocalTransportReceiver;
+import org.apache.axis2.transport.local.LocalTransportSender;
 
 import java.util.ArrayList;
 

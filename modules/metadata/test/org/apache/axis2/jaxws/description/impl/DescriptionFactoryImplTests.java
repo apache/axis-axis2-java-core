@@ -19,6 +19,22 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import junit.framework.TestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationInstance;
+import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
+
+import javax.jws.WebService;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
@@ -29,25 +45,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.jws.WebService;
-import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.ClientConfigurationFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.description.builder.CustomAnnotationInstance;
-import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
-import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
-import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
-import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 public class DescriptionFactoryImplTests extends TestCase {
     

@@ -25,7 +25,6 @@ import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 
 import javax.wsdl.WSDLException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

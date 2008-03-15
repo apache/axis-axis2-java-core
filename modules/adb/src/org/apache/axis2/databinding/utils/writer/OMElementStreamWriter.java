@@ -15,15 +15,19 @@
  */
 package org.apache.axis2.databinding.utils.writer;
 
-import org.apache.axiom.om.*;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
 
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.namespace.NamespaceContext;
 import javax.activation.DataHandler;
-import java.util.Stack;
-import java.util.Map;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 
 public class OMElementStreamWriter implements XMLStreamWriter {

@@ -19,18 +19,17 @@
 package org.apache.ideaplugin.bean;
 
 
-import javax.xml.transform.stream.StreamSource;
+import org.apache.axis2.tools.component.WizardPanel;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-import org.w3c.dom.Document;
-import org.apache.axis2.tools.component.WizardPanel;
-
 import java.io.StringReader;
 
 /**

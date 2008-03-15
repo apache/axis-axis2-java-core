@@ -20,7 +20,11 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.codegen.schema.exception.DummySchemaGenerationException;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class AxisServiceTopElementSchemaGeneratorTest extends TestCase {

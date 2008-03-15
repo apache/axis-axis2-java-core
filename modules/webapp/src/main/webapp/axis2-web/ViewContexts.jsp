@@ -2,7 +2,6 @@
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ page import="org.apache.axis2.context.ServiceContext"%>
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
-<%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--

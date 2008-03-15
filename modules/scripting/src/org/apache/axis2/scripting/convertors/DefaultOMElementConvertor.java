@@ -19,13 +19,12 @@
 
 package org.apache.axis2.scripting.convertors;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.bsf.BSFEngine;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
 
 /**
  * The DefaultOMElementConvertor converts between Synapse OMElements and Strings

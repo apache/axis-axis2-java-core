@@ -20,11 +20,10 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.context.DefaultContextManager;
-import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
+import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 
 public class ConfigurationManagerTest extends

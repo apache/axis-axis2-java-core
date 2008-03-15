@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.service;
 
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ServiceContext;
 
 /**
  * The Lifecycle interface should be implemented by your back-end service

@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.jaxws.spi.handler;
 
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.apache.axis2.java.security.AccessController;
-import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
 
 public class LifecycleManager extends BaseLifecycleManager {
 

@@ -19,20 +19,17 @@
 package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
+import javax.xml.stream.XMLStreamReader;
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.beans.IntrospectionException;
-
-import org.apache.axiom.om.util.StAXUtils;
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class PopulateMinOccurs0Test extends TestCase {
 

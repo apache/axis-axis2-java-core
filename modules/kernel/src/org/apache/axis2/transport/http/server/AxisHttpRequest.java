@@ -19,9 +19,9 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.InputStream;
-
 import org.apache.http.HttpMessage;
+
+import java.io.InputStream;
 
 public interface AxisHttpRequest extends HttpMessage {
 

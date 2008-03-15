@@ -18,13 +18,12 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
 
 /**
  * 

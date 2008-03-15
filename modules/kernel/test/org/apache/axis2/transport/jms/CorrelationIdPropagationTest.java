@@ -18,12 +18,11 @@
  */
 package org.apache.axis2.transport.jms;
 
+import junit.framework.TestCase;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.MessageContextBuilder;
-
-import junit.framework.TestCase;
 
 /**
  * A simple test added to check the copy of correlation

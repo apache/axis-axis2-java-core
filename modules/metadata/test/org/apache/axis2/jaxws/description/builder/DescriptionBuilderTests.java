@@ -20,18 +20,16 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
-import javax.jws.WebService;
 import javax.jws.WebParam.Mode;
-
+import javax.jws.WebService;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file. These tests

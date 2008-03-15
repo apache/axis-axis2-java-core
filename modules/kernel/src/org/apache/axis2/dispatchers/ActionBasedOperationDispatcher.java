@@ -19,8 +19,6 @@
 
 package org.apache.axis2.dispatchers;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
@@ -29,6 +27,8 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher {
 

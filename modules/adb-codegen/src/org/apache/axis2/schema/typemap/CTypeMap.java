@@ -19,11 +19,8 @@
 package org.apache.axis2.schema.typemap;
 
 import org.apache.axis2.schema.SchemaConstants;
-import org.apache.axis2.namespace.Constants;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 

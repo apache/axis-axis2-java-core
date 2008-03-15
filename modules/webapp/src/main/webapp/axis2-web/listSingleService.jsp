@@ -3,7 +3,6 @@
 <%@ page import="org.apache.axis2.description.AxisService" %>
 <%@ page import="org.apache.axis2.description.Parameter" %>
 <%@ page import="org.apache.axis2.engine.AxisConfiguration" %>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet" %>
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>

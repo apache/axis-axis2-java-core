@@ -19,9 +19,7 @@
 
 package org.apache.axis2.transport;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.engine.AxisServer;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.CommandLineOption;

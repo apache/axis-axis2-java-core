@@ -25,17 +25,19 @@
  */
 package org.apache.axis2.rpc.complex;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfArrayOfstring;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfNullableOfdateTime;
 import org.tempuri.complex.data.arrays.xsd.ArrayOfNullableOfdecimal;
@@ -50,15 +52,10 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Arrays;
-import java.util.TimeZone;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
-
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 
 

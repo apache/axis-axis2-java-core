@@ -19,19 +19,17 @@
 package org.apache.axis2.schema.restriction;
 
 import junit.framework.TestCase;
-
-import java.io.ByteArrayInputStream;
-import java.math.BigInteger;
-
-import org.tempuri.GetExemplarResponseType;
-import org.tempuri.GetExemplarResponseTypeElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
+import org.tempuri.GetExemplarResponseType;
+import org.tempuri.GetExemplarResponseTypeElement;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 
 public class ComplexRestrictionTest extends TestCase {
 

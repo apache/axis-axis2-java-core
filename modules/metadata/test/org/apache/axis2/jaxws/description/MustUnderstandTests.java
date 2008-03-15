@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import junit.framework.TestCase;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 
@@ -25,10 +26,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
-
 import java.util.ArrayList;
-
-import junit.framework.TestCase;
 
 /**
  * 

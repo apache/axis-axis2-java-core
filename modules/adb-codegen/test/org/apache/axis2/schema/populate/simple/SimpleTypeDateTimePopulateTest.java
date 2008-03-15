@@ -20,9 +20,9 @@ package org.apache.axis2.schema.populate.simple;
 
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.text.SimpleDateFormat;
 
 public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
     private String values[] ={"2002-10-10T12:00:00+05:00",

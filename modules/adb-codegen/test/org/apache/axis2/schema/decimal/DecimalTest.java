@@ -16,18 +16,18 @@
 package org.apache.axis2.schema.decimal;
 
 import junit.framework.TestCase;
-import org.tempuri.boolean1.GetHistoricNavResponse;
-import org.tempuri.boolean1.ArrayOfDecimal;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.Duration;
+import org.tempuri.boolean1.ArrayOfDecimal;
+import org.tempuri.boolean1.GetHistoricNavResponse;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.math.BigDecimal;
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 

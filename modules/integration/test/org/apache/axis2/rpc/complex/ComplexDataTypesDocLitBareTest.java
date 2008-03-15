@@ -39,10 +39,10 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.text.SimpleDateFormat;
 
 /*
  *  ComplexDataTypesDocLitBareTest Junit test case

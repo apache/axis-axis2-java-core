@@ -16,9 +16,9 @@
 package org.apache.axis2.databinding.utils.writer;
 
 import javax.xml.namespace.NamespaceContext;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 
 public class OMStreamNamespaceContext implements NamespaceContext {

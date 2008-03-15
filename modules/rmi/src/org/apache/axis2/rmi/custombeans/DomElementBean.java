@@ -18,22 +18,28 @@ package org.apache.axis2.rmi.custombeans;
 import org.apache.axis2.rmi.databind.AbstractRMIBean;
 import org.apache.axis2.rmi.databind.JavaObjectSerializer;
 import org.apache.axis2.rmi.databind.XmlStreamParser;
-import org.apache.axis2.rmi.util.NamespacePrefix;
-import org.apache.axis2.rmi.util.Constants;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.XmlParsingException;
-import org.w3c.dom.*;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.util.Constants;
+import org.apache.axis2.rmi.util.NamespacePrefix;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import java.util.Map;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * this class is used to handle dom element related things.

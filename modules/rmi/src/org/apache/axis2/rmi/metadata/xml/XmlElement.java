@@ -15,10 +15,9 @@
  */
 package org.apache.axis2.rmi.metadata.xml;
 
+import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.util.Constants;
 
 import java.util.Map;
 

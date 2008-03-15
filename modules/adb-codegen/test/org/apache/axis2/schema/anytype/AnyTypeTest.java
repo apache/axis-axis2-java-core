@@ -16,15 +16,15 @@
 package org.apache.axis2.schema.anytype;
 
 import junit.framework.TestCase;
-import test.adb.anytype.*;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
+import test.adb.anytype.*;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 
 

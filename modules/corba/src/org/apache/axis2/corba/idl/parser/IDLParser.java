@@ -2,17 +2,17 @@
 
   package org.apache.axis2.corba.idl.parser;
 
-  import antlr.TokenBuffer;
-import antlr.TokenStreamException;
-  import antlr.Token;
-import antlr.TokenStream;
-import antlr.RecognitionException;
-import antlr.NoViableAltException;
-  import antlr.ParserSharedInputState;
-import antlr.collections.impl.BitSet;
-import antlr.collections.AST;
-  import antlr.ASTFactory;
+import antlr.ASTFactory;
 import antlr.ASTPair;
+import antlr.NoViableAltException;
+import antlr.ParserSharedInputState;
+import antlr.RecognitionException;
+import antlr.Token;
+import antlr.TokenBuffer;
+import antlr.TokenStream;
+import antlr.TokenStreamException;
+import antlr.collections.AST;
+import antlr.collections.impl.BitSet;
 
 /**
  *  This is a complete parser for the IDL language as defined

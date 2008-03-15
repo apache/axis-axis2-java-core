@@ -18,18 +18,16 @@
  */
 package org.apache.axis2.jaxws.wsdl.schemareader;
 
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
+
+import javax.wsdl.Definition;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
-
-import javax.wsdl.Definition;
-
-import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
-import org.apache.axis2.jaxws.TestLogger;
-
-import junit.framework.TestCase;
 
 public class SchemaReaderTests extends TestCase {
 	public void testSchemaReader(){

@@ -19,7 +19,6 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
-
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

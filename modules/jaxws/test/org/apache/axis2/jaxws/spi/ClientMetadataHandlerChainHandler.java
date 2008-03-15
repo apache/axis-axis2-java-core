@@ -18,11 +18,9 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import java.util.Set;
-
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.util.Set;
 
 /*
  * You can't actually specify whether a handler is for client or server,

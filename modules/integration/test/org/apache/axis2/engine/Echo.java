@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.engine;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.commons.logging.Log;

@@ -40,7 +40,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.http.HTTPBinding;
-
 import java.util.Collection;
 import java.util.Iterator;
 

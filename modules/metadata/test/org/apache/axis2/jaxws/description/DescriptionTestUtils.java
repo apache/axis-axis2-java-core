@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;

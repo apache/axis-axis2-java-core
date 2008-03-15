@@ -19,22 +19,21 @@
 
 package org.apache.axis2.fastinfoset;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.SocketException;
-import java.rmi.RemoteException;
-
-import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.extensions.TestSetup;
-
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.SocketException;
+import java.rmi.RemoteException;
 
 /**
  * @author Sanjaya Karunasena (sanjayak@yahoo.com)

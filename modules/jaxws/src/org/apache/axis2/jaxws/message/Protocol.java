@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

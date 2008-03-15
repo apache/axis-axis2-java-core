@@ -18,21 +18,21 @@
  */
 package org.apache.axis2.tools.wizardframe;
 
-import org.apache.axis2.tools.bean.WsdlgenBean;
-import org.apache.axis2.tools.bean.CodegenBean;
-import org.apache.axis2.tools.idea.FirstPanel;
+import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.idea.ChooserPanel;
+import org.apache.axis2.tools.idea.FirstPanel;
 import org.apache.axis2.tools.idea.SecondPanel;
 import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
-//import org.apache.axis2.tools.idea.WSDL2JavaOutputPanel;
-import org.apache.axis2.tools.component.Utilities;
-import org.apache.axis2.tools.component.WizardPanel;
 import org.apache.axis2.tools.java2wsdl.MiddlePanel;
 import org.apache.axis2.tools.java2wsdl.OptionPanel;
 import org.apache.axis2.tools.java2wsdl.OutputPanel;
-import org.apache.ideaplugin.frames.*;
-import org.apache.ideaplugin.bean.ArchiveBean;
-import com.intellij.openapi.project.Project;
+import org.apache.ideaplugin.frames.ClassFileLocationPage;
+import org.apache.ideaplugin.frames.LibraryAddingPage;
+import org.apache.ideaplugin.frames.ServiceArchiveOutputLocationPage;
+import org.apache.ideaplugin.frames.ServiceXMLEditPage;
+import org.apache.ideaplugin.frames.ServiceXMLFileSelectionPage;
+import org.apache.ideaplugin.frames.ServiceXMLGenerationPage;
+import org.apache.ideaplugin.frames.WSDLFileSelectionPage;
 
 /**
  * codeaFrame class

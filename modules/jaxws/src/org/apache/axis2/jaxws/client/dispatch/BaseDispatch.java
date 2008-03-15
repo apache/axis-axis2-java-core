@@ -18,24 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import java.net.HttpURLConnection;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
-
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.ProtocolException;
-import javax.xml.ws.Response;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.http.HTTPException;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.ws.WebServiceFeature;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
@@ -50,13 +32,25 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.ProtocolException;
+import javax.xml.ws.Response;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 public abstract class BaseDispatch<T> extends BindingProvider
         implements javax.xml.ws.Dispatch {

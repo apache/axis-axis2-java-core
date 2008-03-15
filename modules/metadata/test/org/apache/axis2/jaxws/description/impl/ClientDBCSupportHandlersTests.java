@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -27,12 +28,9 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
-
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
-
-import junit.framework.TestCase;
 
 /**
  * Test client composite support for handler chains specified via sparse composites

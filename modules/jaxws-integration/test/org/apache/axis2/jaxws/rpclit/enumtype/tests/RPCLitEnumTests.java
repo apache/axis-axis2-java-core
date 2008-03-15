@@ -19,17 +19,16 @@
 package org.apache.axis2.jaxws.rpclit.enumtype.tests;
 
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.PortType;
 import org.apache.axis2.jaxws.rpclit.enumtype.sei.Service;
 import org.test.rpclit.schema.ElementString;
+
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
 
 
 public class RPCLitEnumTests extends AbstractTestCase {

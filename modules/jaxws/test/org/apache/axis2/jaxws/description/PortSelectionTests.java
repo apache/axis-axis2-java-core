@@ -18,21 +18,20 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
-import javax.wsdl.Port;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
-
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.ws.axis2.tests.EchoPort;
+
+import javax.wsdl.Port;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 

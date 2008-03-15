@@ -18,15 +18,15 @@
  */
 package org.apache.axis2.addressing.metadata;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
+
+import javax.xml.namespace.QName;
 
 public class ServiceName {
     public static final QName subQName = new QName(Submission.WSA_NAMESPACE, AddressingConstants.EPR_SERVICE_NAME, AddressingConstants.WSA_DEFAULT_PREFIX);

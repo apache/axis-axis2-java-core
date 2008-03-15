@@ -22,8 +22,8 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 
 import java.io.File;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerationExtension {
     /** If the extension for property file changes it might effect this as well !!! */

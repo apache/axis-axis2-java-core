@@ -15,13 +15,13 @@
  */
 package org.apache.axis2.databinding.utils.writer;
 
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
 
+import javax.activation.DataHandler;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.namespace.NamespaceContext;
-import javax.activation.DataHandler;
 
 /**
  * this class wrapps the existing xmlStreamWriter and implements the new method

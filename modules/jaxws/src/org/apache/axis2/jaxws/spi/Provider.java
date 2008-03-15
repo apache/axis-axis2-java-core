@@ -18,15 +18,6 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.spi.ServiceDelegate;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.metadata.ServiceName;
 import org.apache.axis2.addressing.metadata.WSDLLocation;
@@ -36,6 +27,14 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.spi.ServiceDelegate;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.net.URL;
 import java.util.List;
 

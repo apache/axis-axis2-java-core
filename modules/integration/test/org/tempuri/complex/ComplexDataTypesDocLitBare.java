@@ -18,8 +18,19 @@
  */
 package org.tempuri.complex;
 
-import org.tempuri.complex.data.arrays.*;
-import org.tempuri.complex.data.*;
+import org.tempuri.complex.data.BitMask;
+import org.tempuri.complex.data.Employee;
+import org.tempuri.complex.data.Furniture;
+import org.tempuri.complex.data.Group;
+import org.tempuri.complex.data.Name;
+import org.tempuri.complex.data.Person;
+import org.tempuri.complex.data.arrays.ArrayOfArrayOfstring;
+import org.tempuri.complex.data.arrays.ArrayOfNullableOfdateTime;
+import org.tempuri.complex.data.arrays.ArrayOfNullableOfdecimal;
+import org.tempuri.complex.data.arrays.ArrayOfPerson;
+import org.tempuri.complex.data.arrays.ArrayOfanyType;
+import org.tempuri.complex.data.arrays.ArrayOfint;
+import org.tempuri.complex.data.arrays.ArrayOfstring;
 
 import javax.xml.namespace.QName;
 import java.math.BigDecimal;

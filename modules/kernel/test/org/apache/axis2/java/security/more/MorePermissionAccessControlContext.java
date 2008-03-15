@@ -19,9 +19,9 @@
 
 package org.apache.axis2.java.security.more;
 
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.java.security.interf.Actor;
-import org.apache.axis2.AbstractTestCase;
 
 import java.security.AccessControlContext;
 import java.security.Permission;

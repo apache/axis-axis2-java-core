@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
-
-import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ClientConfigTests extends TestCase {
 

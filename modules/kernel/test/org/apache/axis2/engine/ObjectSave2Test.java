@@ -19,6 +19,7 @@
 
 package org.apache.axis2.engine;
 
+import junit.framework.TestCase;
 import org.apache.axis2.context.externalize.SafeObjectInputStream;
 import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.util.MetaDataEntry;
@@ -37,8 +38,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import junit.framework.TestCase;
 
 public class ObjectSave2Test extends TestCase {
     protected static final Log log = LogFactory.getLog(ObjectSave2Test.class);

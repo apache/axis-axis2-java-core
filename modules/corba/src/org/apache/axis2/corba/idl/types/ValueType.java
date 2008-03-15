@@ -19,8 +19,11 @@
 
 package org.apache.axis2.corba.idl.types;
 
-import org.omg.CORBA.*;
+import org.omg.CORBA.ORB;
+import org.omg.CORBA.TCKind;
+import org.omg.CORBA.TypeCode;
 import org.omg.CORBA.TypeCodePackage.BadKind;
+import org.omg.CORBA.ValueMember;
 
 import java.util.HashMap;
 

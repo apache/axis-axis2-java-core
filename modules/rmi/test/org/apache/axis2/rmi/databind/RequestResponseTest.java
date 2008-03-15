@@ -15,18 +15,18 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.Service;
-import org.apache.axis2.rmi.metadata.Operation;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
-import org.apache.axis2.rmi.exception.XmlParsingException;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
+import org.apache.axis2.rmi.metadata.Operation;
+import org.apache.axis2.rmi.metadata.Service;
 
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamReader;
-import java.util.List;
-import java.io.StringWriter;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.util.List;
 
 public class RequestResponseTest extends DataBindTest {
 

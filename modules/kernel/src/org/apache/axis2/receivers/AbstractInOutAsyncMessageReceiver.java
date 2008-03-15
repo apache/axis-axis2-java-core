@@ -21,14 +21,7 @@
 package org.apache.axis2.receivers;
 
 import org.apache.axis2.AxisFault;
-
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This is takes care of the IN-OUT sync MEP in the server side

@@ -23,7 +23,6 @@ import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 
 import javax.jws.WebParam;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

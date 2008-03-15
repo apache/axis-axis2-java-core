@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.config;
 
-import java.io.InputStream;
-import java.util.List;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.xml.ws.soap.MTOMFeature;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -34,6 +27,12 @@ import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.xml.ws.soap.MTOMFeature;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  *

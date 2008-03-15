@@ -18,14 +18,6 @@
  */
 package org.apache.axis2.jaxws.addressing.util;
 
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.handler.MessageContext;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
@@ -35,6 +27,13 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.handler.MessageContext;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class is used to provide a read-only list of reference parameters

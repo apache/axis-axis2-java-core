@@ -19,9 +19,9 @@
 
 package org.apache.axis2.java.security.action;
 
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.java.security.driver.Java2SecTest;
 import org.apache.axis2.java.security.interf.Actor;
-import org.apache.axis2.AbstractTestCase;
 
 import java.io.CharArrayWriter;
 import java.io.FileReader;

@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.apache.xml.resolver.Catalog;
-
 import org.xml.sax.InputSource;
 
 import java.io.File;

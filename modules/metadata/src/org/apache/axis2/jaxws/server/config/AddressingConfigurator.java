@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxws.server.config;
 
-import javax.xml.ws.soap.Addressing;
-import javax.xml.ws.soap.AddressingFeature;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -37,6 +34,9 @@ import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.ws.soap.Addressing;
+import javax.xml.ws.soap.AddressingFeature;
 
 /**
  * This class will enable/disable WS-Addressing for a JAX-WS 2.1 web service

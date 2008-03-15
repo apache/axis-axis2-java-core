@@ -19,8 +19,8 @@
 package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -28,8 +28,6 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-
-import org.apache.axiom.om.util.StAXUtils;
 
 public class PopulateArrayTest extends TestCase {
     private String xmlString = "<myobject xmlns=\"http://soapinterop.org2/xsd\">" +

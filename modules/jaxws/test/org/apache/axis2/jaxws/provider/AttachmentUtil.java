@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Iterator;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
@@ -38,6 +31,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Iterator;
 
 /**
  * This will serve as a helper class for attachments utility methods. All methods

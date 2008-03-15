@@ -15,23 +15,35 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.metadata.*;
-import org.apache.axis2.rmi.metadata.impl.TypeImpl;
-import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.metadata.AttributeField;
+import org.apache.axis2.rmi.metadata.ElementField;
+import org.apache.axis2.rmi.metadata.Operation;
+import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.rmi.metadata.Type;
+import org.apache.axis2.rmi.metadata.impl.TypeImpl;
+import org.apache.axis2.rmi.types.MapType;
 import org.apache.axis2.rmi.util.Constants;
 import org.apache.axis2.rmi.util.JavaTypeToQNameMap;
-import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.types.MapType;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
-import java.lang.reflect.InvocationTargetException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class XmlStreamParser {
 

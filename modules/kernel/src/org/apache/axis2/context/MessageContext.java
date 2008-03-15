@@ -60,7 +60,6 @@ import org.apache.neethi.Policy;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
@@ -73,8 +72,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy

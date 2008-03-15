@@ -22,13 +22,13 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.ModuleHandler1;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.util.List;
 
 public class ModuleEngageTest extends TestCase {
     AxisConfiguration axisConfig;

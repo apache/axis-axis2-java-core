@@ -21,9 +21,9 @@ package org.apache.axis2.mail;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.transport.mail.Constants;
 import org.apache.axis2.transport.mail.server.MailServer;
 

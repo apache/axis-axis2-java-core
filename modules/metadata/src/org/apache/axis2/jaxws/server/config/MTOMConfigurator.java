@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxws.server.config;
 
-import javax.xml.ws.soap.MTOM;
-import javax.xml.ws.soap.MTOMFeature;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -31,6 +28,9 @@ import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.ws.soap.MTOM;
+import javax.xml.ws.soap.MTOMFeature;
 
 /**
  *

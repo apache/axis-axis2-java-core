@@ -1,10 +1,9 @@
 package org.apache.axis2.jaxws.handler;
 
-import java.util.List;
+import org.apache.axis2.jaxws.core.MessageContext;
 
 import javax.xml.ws.handler.Handler;
-
-import org.apache.axis2.jaxws.core.MessageContext;
+import java.util.List;
 
 /**
  * This data bean will be passed to the HandlerInvoker instance.

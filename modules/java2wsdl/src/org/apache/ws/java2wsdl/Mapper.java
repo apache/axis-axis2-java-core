@@ -18,9 +18,9 @@
  */
 package org.apache.ws.java2wsdl;
 
-import java.util.HashMap;
-
 import org.apache.tools.ant.BuildException;
+
+import java.util.HashMap;
 
 /**
  * interface that namespace mappers are expected to implement

@@ -18,16 +18,16 @@
  */
 package org.apache.axis2.wsdl.codegen.emitter;
 
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.CBuildScriptWriter;
 import org.apache.axis2.wsdl.codegen.writer.CServiceXMLWriter;
 import org.apache.axis2.wsdl.codegen.writer.CSkelHeaderWriter;
@@ -41,15 +41,11 @@ import org.apache.neethi.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";

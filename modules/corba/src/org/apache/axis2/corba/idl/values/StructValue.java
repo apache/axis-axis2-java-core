@@ -19,11 +19,10 @@
 
 package org.apache.axis2.corba.idl.values;
 
-import org.apache.axis2.corba.idl.types.Struct;
 import org.apache.axis2.corba.idl.types.Member;
-
-import org.omg.CORBA_2_3.portable.OutputStream;
+import org.apache.axis2.corba.idl.types.Struct;
 import org.omg.CORBA_2_3.portable.InputStream;
+import org.omg.CORBA_2_3.portable.OutputStream;
 
 public class StructValue extends AbstractValue {
 

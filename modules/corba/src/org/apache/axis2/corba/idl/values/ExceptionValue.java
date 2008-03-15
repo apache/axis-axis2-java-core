@@ -19,10 +19,9 @@
 
 package org.apache.axis2.corba.idl.values;
 
+import org.apache.axis2.corba.exceptions.CorbaInvocationException;
 import org.apache.axis2.corba.idl.types.ExceptionType;
 import org.apache.axis2.corba.idl.types.Member;
-import org.apache.axis2.corba.exceptions.CorbaInvocationException;
-
 import org.omg.CORBA_2_3.portable.InputStream;
 
 public class ExceptionValue extends AbstractValue {

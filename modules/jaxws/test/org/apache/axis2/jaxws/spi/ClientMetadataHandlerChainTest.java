@@ -18,8 +18,8 @@
  */
 package org.apache.axis2.jaxws.spi;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.builder.HandlerChainAnnot;
 import org.apache.axis2.jaxws.description.impl.DescriptionUtils;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
@@ -32,15 +32,12 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * Verify that handler chains specified using the HandlerChainsType in a sparse

@@ -20,8 +20,9 @@ package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.PortInfo;
 import java.util.Collection;

@@ -16,28 +16,26 @@
 package org.apache.axis2.rmi.metadata;
 
 import junit.framework.TestCase;
-import org.apache.axis2.rmi.metadata.service.BasicService;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.w3c.dom.Element;
+import org.apache.axis2.rmi.metadata.service.BasicService;
+import org.apache.axis2.rmi.wsdl.WSDL11DefinitionBuilder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.wsdl.Definition;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensionRegistry;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.WSDLException;
-import javax.wsdl.Definition;
-import javax.wsdl.Types;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**

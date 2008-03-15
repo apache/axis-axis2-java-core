@@ -16,12 +16,12 @@
 package org.apache.axis2.rmi.databind;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.exception.OMElementCreationException;
 import org.apache.axis2.rmi.databind.dto.Activate;
 import org.apache.axis2.rmi.databind.dto.CancelWorkflowRequest;
+import org.apache.axis2.rmi.exception.OMElementCreationException;
 import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axiom.om.OMElement;
 
 
 public class OMElementCreatorTest extends TestCase {

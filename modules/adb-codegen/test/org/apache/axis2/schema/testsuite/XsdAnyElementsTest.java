@@ -18,9 +18,8 @@
  */
 package org.apache.axis2.schema.testsuite;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import services.echo.types.*;
 

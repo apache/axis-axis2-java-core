@@ -18,25 +18,6 @@
  */
 package org.apache.axis2.jaxws.description.builder.converter;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.WebServiceRef;
-import javax.xml.ws.WebServiceRefs;
-import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
 import org.apache.axis2.jaxws.description.builder.BindingTypeAnnot;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.FieldDescriptionComposite;
@@ -49,6 +30,24 @@ import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jws.WebService;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebFault;
+import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.WebServiceRef;
+import javax.xml.ws.WebServiceRefs;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JavaClassToDBCConverter {
     private static final Log log = LogFactory.getLog(JavaClassToDBCConverter.class);

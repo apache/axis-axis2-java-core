@@ -19,13 +19,12 @@
 
 package org.apache.axis2.corba.idl.values;
 
+import org.apache.axis2.corba.idl.types.ValueType;
 import org.omg.CORBA.portable.ValueFactory;
-import org.omg.CORBA_2_3.portable.InputStream;
 import org.omg.CORBA_2_3.ORB;
+import org.omg.CORBA_2_3.portable.InputStream;
 
 import java.io.Serializable;
-
-import org.apache.axis2.corba.idl.types.ValueType;
 
 public class StreamableValueFactory implements ValueFactory {
     private ValueType valueType;

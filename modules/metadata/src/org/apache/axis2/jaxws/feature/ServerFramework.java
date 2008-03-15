@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.ws.spi.WebServiceFeatureAnnotation;
-
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;

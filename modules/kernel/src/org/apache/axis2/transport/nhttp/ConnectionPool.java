@@ -18,14 +18,18 @@
  */
 package org.apache.axis2.transport.nhttp;
 
-import org.apache.http.nio.NHttpClientConnection;
-import org.apache.http.protocol.ExecutionContext;
-import org.apache.http.HttpHost;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.nio.NHttpClientConnection;
+import org.apache.http.protocol.ExecutionContext;
 
-import java.util.*;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionPool {
 

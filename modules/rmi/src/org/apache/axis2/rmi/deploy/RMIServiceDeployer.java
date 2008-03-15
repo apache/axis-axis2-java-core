@@ -15,40 +15,44 @@
  */
 package org.apache.axis2.rmi.deploy;
 
-import org.apache.axis2.deployment.Deployer;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DeploymentClassLoader;
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axis2.rmi.deploy.config.*;
-import org.apache.axis2.rmi.deploy.config.ClassInfo;
-import org.apache.axis2.rmi.deploy.config.FieldInfo;
-import org.apache.axis2.rmi.Configurator;
-import org.apache.axis2.rmi.config.*;
-import org.apache.axis2.rmi.databind.XmlStreamParser;
-import org.apache.axis2.rmi.databind.SimpleTypeHandler;
-import org.apache.axis2.rmi.exception.MetaDataPopulateException;
-import org.apache.axis2.rmi.exception.XmlParsingException;
-import org.apache.axis2.rmi.exception.ConfigFileReadingException;
-import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.util.Loader;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.rmi.Configurator;
+import org.apache.axis2.rmi.databind.SimpleTypeHandler;
+import org.apache.axis2.rmi.databind.XmlStreamParser;
+import org.apache.axis2.rmi.deploy.config.ClassInfo;
+import org.apache.axis2.rmi.deploy.config.Config;
+import org.apache.axis2.rmi.deploy.config.CustomClassInfo;
+import org.apache.axis2.rmi.deploy.config.FieldInfo;
+import org.apache.axis2.rmi.deploy.config.PackageToNamespaceMap;
+import org.apache.axis2.rmi.deploy.config.Service;
+import org.apache.axis2.rmi.exception.ConfigFileReadingException;
+import org.apache.axis2.rmi.exception.MetaDataPopulateException;
+import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.exception.XmlParsingException;
+import org.apache.axis2.rmi.metadata.Parameter;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Map;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.zip.ZipInputStream;
+import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 public class RMIServiceDeployer implements Deployer {

@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
-import java.util.Collection;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+
+import java.util.Collection;
 
 /**
  * 

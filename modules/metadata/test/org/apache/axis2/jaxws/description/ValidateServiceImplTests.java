@@ -18,17 +18,14 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.jws.WebService;
-
-import org.apache.axis2.jaxws.ExceptionFactory;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 
-import junit.framework.TestCase;
+import javax.jws.WebService;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 

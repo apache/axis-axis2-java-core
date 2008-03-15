@@ -19,12 +19,12 @@
 package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
-import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

@@ -15,14 +15,12 @@
  */
 package org.apache.axis2.rmi.databind.type;
 
-import org.apache.axis2.rmi.metadata.AbstractType;
-import org.apache.axis2.rmi.metadata.xml.XmlSchema;
-import org.apache.axis2.rmi.metadata.type.xml.SimpleRestrictionXmlType;
-import org.apache.axis2.rmi.metadata.service.dto.SimpleRestriction;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.databind.dto.TestRestrictionBean;
-import org.apache.axis2.rmi.exception.SchemaGenerationException;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
+import org.apache.axis2.rmi.exception.SchemaGenerationException;
+import org.apache.axis2.rmi.metadata.AbstractType;
+import org.apache.axis2.rmi.metadata.type.xml.SimpleRestrictionXmlType;
 
 import javax.xml.namespace.QName;
 import java.util.Map;

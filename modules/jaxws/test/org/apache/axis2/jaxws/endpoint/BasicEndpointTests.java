@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.jaxws.endpoint;
 
+import junit.framework.TestCase;
+
 import javax.jws.WebService;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.SOAPBinding;
-
-import junit.framework.TestCase;
 
 public class BasicEndpointTests extends TestCase {
 

@@ -15,7 +15,10 @@
  */
 package org.apache.axis2.rmi.databind;
 
-import org.apache.axis2.rmi.databind.dto.*;
+import org.apache.axis2.rmi.databind.dto.TestClass14;
+import org.apache.axis2.rmi.databind.dto.TestClass15;
+import org.apache.axis2.rmi.databind.dto.TestClass2;
+import org.apache.axis2.rmi.databind.dto.TestClass9;
 import org.apache.axis2.rmi.metadata.Parameter;
 
 public class SameParamNameTest extends DataBindTest {

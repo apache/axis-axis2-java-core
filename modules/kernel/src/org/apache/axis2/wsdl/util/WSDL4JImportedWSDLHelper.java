@@ -25,9 +25,12 @@ import org.apache.commons.logging.LogFactory;
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
 import javax.wsdl.Types;
-import javax.wsdl.PortType;
 import javax.wsdl.extensions.ExtensibilityElement;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class provides support for processing a WSDL4J defintion which includes imports.

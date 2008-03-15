@@ -18,12 +18,11 @@
  */
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.description.AxisModule;
 import junit.framework.TestCase;
+import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.engine.AxisConfiguration;
 
 public class ModuleLoadingTest extends TestCase {
     public void testModuleLoading() throws Exception {

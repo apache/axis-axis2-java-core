@@ -38,9 +38,9 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.util.FaultHandler;
 import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.stream.XMLStreamException;

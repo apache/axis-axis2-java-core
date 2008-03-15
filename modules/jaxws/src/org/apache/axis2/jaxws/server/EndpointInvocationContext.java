@@ -19,11 +19,11 @@
 
 package org.apache.axis2.jaxws.server;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The EndpointInvocationContext is an extension of the base InvocationContext

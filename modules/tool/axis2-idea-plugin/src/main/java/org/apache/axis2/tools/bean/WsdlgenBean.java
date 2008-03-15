@@ -18,18 +18,17 @@
  */
 package org.apache.axis2.tools.bean;
 
-import org.apache.axis2.util.CommandLineOptionConstants;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
+import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class WsdlgenBean {
 

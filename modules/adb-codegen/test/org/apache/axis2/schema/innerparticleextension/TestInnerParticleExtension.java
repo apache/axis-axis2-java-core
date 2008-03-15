@@ -16,13 +16,13 @@
 package org.apache.axis2.schema.innerparticleextension;
 
 import junit.framework.TestCase;
-import org.tempuri.innerparticalextension.TestElement;
-import org.tempuri.innerparticalextension.ChildElement_type0;
-import org.tempuri.innerparticalextension.ParentTypeChoice;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
+import org.tempuri.innerparticalextension.ChildElement_type0;
+import org.tempuri.innerparticalextension.ParentTypeChoice;
+import org.tempuri.innerparticalextension.TestElement;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

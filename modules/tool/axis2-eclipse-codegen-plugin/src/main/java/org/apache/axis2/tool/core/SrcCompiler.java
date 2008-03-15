@@ -17,11 +17,12 @@
  * under the License.
  */
 package org.apache.axis2.tool.core;
-import java.io.File;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
+
+import java.io.File;
 
 /**
  * This is the custom class for compiling the source 

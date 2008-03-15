@@ -18,14 +18,14 @@
  */
 package org.apache.axis2.jaxws.server.config;
 
-import javax.xml.ws.RespectBinding;
-import javax.xml.ws.RespectBindingFeature;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.ws.RespectBinding;
+import javax.xml.ws.RespectBindingFeature;
 
 /**
  * An implementation of the <code>ServerConfigurator</code> interface that will

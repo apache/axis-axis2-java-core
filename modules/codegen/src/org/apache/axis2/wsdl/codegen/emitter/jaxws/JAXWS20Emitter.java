@@ -1,9 +1,10 @@
 package org.apache.axis2.wsdl.codegen.emitter.jaxws;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.WSDL2Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.AxisFault;
+
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 

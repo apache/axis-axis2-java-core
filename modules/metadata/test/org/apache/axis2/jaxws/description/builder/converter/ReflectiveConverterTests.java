@@ -24,7 +24,6 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.log4j.BasicConfigurator;
 
 import javax.jws.WebMethod;

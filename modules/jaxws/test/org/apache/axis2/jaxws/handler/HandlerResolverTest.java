@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -32,13 +33,10 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
-
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * Verify the HandlerResolverImpl functionality.

@@ -16,22 +16,22 @@
 package org.apache.axis2.rmi.databind;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.rmi.Configurator;
 import org.apache.axis2.rmi.exception.MetaDataPopulateException;
 import org.apache.axis2.rmi.exception.SchemaGenerationException;
-import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.exception.XmlParsingException;
-import org.apache.axis2.rmi.util.NamespacePrefix;
+import org.apache.axis2.rmi.exception.XmlSerializingException;
 import org.apache.axis2.rmi.metadata.Parameter;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.rmi.util.NamespacePrefix;
 
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.StringWriter;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataBindTest extends TestCase {
 

@@ -23,8 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.TestingUtils;
+import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 
 public class EchoRawSwAFileCacheTest extends EchoRawSwATest {

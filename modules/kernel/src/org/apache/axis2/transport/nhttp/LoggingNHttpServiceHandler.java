@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.transport.nhttp;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -29,6 +27,8 @@ import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.NHttpServerConnection;
 import org.apache.http.nio.NHttpServiceHandler;
+
+import java.io.IOException;
 
 /**
  * Decorator class intended to transparently extend an {@link NHttpServiceHandler} 

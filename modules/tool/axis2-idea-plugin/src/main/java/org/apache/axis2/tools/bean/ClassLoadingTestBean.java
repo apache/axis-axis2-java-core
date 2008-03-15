@@ -18,11 +18,11 @@
  */
 package org.apache.axis2.tools.bean;
 
-import java.util.List;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-import java.io.File;
+import java.util.List;
 
 public class ClassLoadingTestBean {
 

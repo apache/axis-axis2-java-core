@@ -19,8 +19,8 @@ import org.apache.axis2.rmi.databind.dto.TestClass12;
 import org.apache.axis2.rmi.metadata.Parameter;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 
 
 public class MapTest extends DataBindTest {

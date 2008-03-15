@@ -19,6 +19,7 @@
 
 package org.apache.axis2.util;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
@@ -41,8 +42,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class PolicyUtil {
 

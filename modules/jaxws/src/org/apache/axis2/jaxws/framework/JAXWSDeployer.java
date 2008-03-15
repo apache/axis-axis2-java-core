@@ -33,7 +33,6 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
@@ -61,7 +60,6 @@ import java.util.List;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.lang.annotation.Annotation;
 
 /*
  * JAXWSDeployer is a custom deployer modeled after the POJODeployer. Its purpose

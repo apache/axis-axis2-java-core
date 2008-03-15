@@ -47,7 +47,6 @@ import javax.wsdl.extensions.ExtensionRegistry;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

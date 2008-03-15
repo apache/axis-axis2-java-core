@@ -1,12 +1,6 @@
 package org.apache.axis2.transport.xmpp.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -27,7 +21,11 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class XMPPPacketListener implements PacketListener {
 	private static final Log log = LogFactory.getLog(XMPPPacketListener.class);

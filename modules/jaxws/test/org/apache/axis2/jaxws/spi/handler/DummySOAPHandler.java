@@ -18,11 +18,10 @@
  */
 package org.apache.axis2.jaxws.spi.handler;
 
-import java.util.Set;
-
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.util.Set;
 
 public class DummySOAPHandler implements SOAPHandler<SOAPMessageContext> {
 
