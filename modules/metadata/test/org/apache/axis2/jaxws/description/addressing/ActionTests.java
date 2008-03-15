@@ -47,12 +47,10 @@ public class ActionTests extends TestCase {
         AxisService axisService = ed.getAxisService();
         Iterator iterator = axisService.getOperations();
         
-        while (iterator.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation) iterator.next();
-            assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuoteRequest", axisOperation.getInputAction());
-            assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuoteResponse", axisOperation.getOutputAction());
-            assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuote/Fault/TestException", axisOperation.getFaultAction());
-        }
+        AxisOperation axisOperation = (AxisOperation) iterator.next();
+        assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuoteRequest", axisOperation.getInputAction());
+        assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuoteResponse", axisOperation.getOutputAction());
+        assertEquals("http://jaxws.axis2.apache.org/metadata/addressing/action/Service1/getQuote/Fault/TestException", axisOperation.getFaultAction());
     }
     
     public void testPlainAnnotation() {
@@ -63,12 +61,10 @@ public class ActionTests extends TestCase {
         AxisService axisService = ed.getAxisService();
         Iterator iterator = axisService.getOperations();
         
-        while (iterator.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation) iterator.next();
-            assertEquals("http://test/input", axisOperation.getInputAction());
-            assertEquals("http://test/output", axisOperation.getOutputAction());
-            assertEquals("http://test/fault", axisOperation.getFaultAction());
-        }
+        AxisOperation axisOperation = (AxisOperation) iterator.next();
+        assertEquals("http://test/input", axisOperation.getInputAction());
+        assertEquals("http://test/output", axisOperation.getOutputAction());
+        assertEquals("http://test/fault", axisOperation.getFaultAction());
     }
     
     @WebService(name="Service1", targetNamespace=ns, portName=defaultServicePortName)

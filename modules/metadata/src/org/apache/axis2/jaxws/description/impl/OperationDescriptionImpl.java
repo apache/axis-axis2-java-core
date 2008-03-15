@@ -320,9 +320,10 @@ class OperationDescriptionImpl
         String targetNS = getEndpointInterfaceDescriptionImpl().getTargetNamespace();        
         String portTypeName = getEndpointInterfaceDescriptionImpl().getPortType().getLocalPart();
          
-        //We don't have a name at this point, shouldn't matter if we have the MEP
+        //We don't have a name at this point, shouldn't matter if we have the MEP.
+        //On the client the input and output actions are reversed.
         String inputName = null;
-        String inputAction = getInputAction();
+        String inputAction = getOutputAction();
 
         //If we still don't have an action then fall back to the Default Action Pattern.
         if (inputAction == null) {
@@ -347,8 +348,9 @@ class OperationDescriptionImpl
         //set the OUTPUT ACTION
 
         //We don't have a name at this point, shouldn't matter if we have the MEP
+        //On the client the input and output actions are reversed.
         String outputName = null;
-        String outputAction = getOutputAction();
+        String outputAction = getInputAction();
 
         if (outputAction == null) {
             outputAction =
