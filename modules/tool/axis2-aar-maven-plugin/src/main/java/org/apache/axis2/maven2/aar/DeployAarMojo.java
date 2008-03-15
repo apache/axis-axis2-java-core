@@ -113,7 +113,7 @@ public class DeployAarMojo extends AbstractAarMojo {
         if(status != 200) {
             throw new MojoExecutionException("Failed to log in");
         }
-        if(post.getResponseBodyAsString().contains(LOGIN_FAILED_ERROR_MESSAGE)) {
+        if(post.getResponseBodyAsString().indexOf(LOGIN_FAILED_ERROR_MESSAGE)!=-1) {
             throw new MojoExecutionException("Failed to log into Axis2 administration web console using credentials");
         }
 
