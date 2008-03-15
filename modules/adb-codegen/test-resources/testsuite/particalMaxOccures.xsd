@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xsd:schema targetNamespace="http://mynamespace.com/testparticlemaxoccurs"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:tns="http://mynamespace.com/testparticlemaxoccurs"

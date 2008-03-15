@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xsd:schema targetNamespace="http://mynamespace.com/testinnerparticle"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:test1="http://mynamespace.com/testinnerparticle"
