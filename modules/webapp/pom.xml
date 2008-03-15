@@ -1357,6 +1357,9 @@
                             <includes>
                                 <include>soapmonitor*.jar</include>
                             </includes>
+                            <excludes>
+                                <exclude>*sources.jar</exclude>
+                            </excludes>
                         </resource>
                         <resource>
                             <directory>${basedir}/../mex/target</directory>
