@@ -26,7 +26,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.w3.www._2005._05.xmlmime.*;
-import org.w3.www._2005._05.xmlmime.HexBinary;
 
 import javax.activation.DataHandler;
 import javax.xml.stream.XMLStreamException;
@@ -75,7 +74,7 @@ public class Base64BinaryTest extends TestCase {
 
     public void testHexBinary(){
         TestHexBinary testHexBinary = new TestHexBinary();
-        HexBinary hexBinary = new HexBinary();
+        org.w3.www._2005._05.xmlmime.HexBinary hexBinary = new org.w3.www._2005._05.xmlmime.HexBinary();
         testHexBinary.setTestHexBinary(hexBinary);
 
         String testString = "ab";
