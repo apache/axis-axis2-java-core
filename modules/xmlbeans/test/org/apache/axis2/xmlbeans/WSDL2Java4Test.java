@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.xmlbeans;
 
 public class WSDL2Java4Test extends WSDL2JavaSuccessTestBase {

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <binding add-constructors="true" force-classes="true"
     xmlns:tns="http://ws.sosnoski.com/library/types">
 

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="module1" class="module1.java">
     <parameter name="para123" locked="xsd:true">10</parameter>
     <parameter name="para245">Colombo</parameter>

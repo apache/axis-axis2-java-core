@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
 
 	<jws:handler-chain name="LoggingHandlerChain">

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project basedir="../" default="create.war">
 	<property name="dist" value="dist" />
 	<property name="temp" value="${dist}/temp" />

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="ListnerService1">
 
    <parameter name="ServiceClass" locked="xsd:false">sample.eventing.ListnerService1</parameter>

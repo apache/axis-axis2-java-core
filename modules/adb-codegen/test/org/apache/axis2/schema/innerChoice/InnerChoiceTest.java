@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.schema.innerChoice;
 
 import com.mynamespace.testinnerparticle.TestInnerParticle1Sequence_type0;

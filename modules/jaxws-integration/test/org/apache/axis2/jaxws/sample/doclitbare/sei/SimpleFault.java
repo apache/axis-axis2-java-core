@@ -17,6 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.jaxws.sample.doclitbare.sei;
 
 import javax.xml.ws.WebFault;

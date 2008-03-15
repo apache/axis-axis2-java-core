@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.ws.java2wsdl.utils;
 
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;

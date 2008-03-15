@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.databinding.i18n;
 
 import org.apache.axis2.i18n.MessageBundle;

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <axisconfig name="AxisJava2.0">
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     <transportSender name="custom" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">

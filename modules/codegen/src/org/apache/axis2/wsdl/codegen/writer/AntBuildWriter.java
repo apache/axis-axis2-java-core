@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.util.XSLTTemplateProcessor;

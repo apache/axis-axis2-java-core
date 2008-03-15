@@ -1,9 +1,3 @@
-package org.apache.axis2.dataretrieval;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisService;
-
-import javax.wsdl.Definition;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -22,6 +16,13 @@ import javax.wsdl.Definition;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+package org.apache.axis2.dataretrieval;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+
+import javax.wsdl.Definition;
 
 /**
  * Return a WSDL as an OMElement.  This is used by any AxisService that wishes

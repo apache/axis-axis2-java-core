@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service messageReceiver="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" style="rpc" contextPath="services">
 
     <parameter name="ServiceClass">userguide.sample1.EchoXML</parameter>

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="">
     <parameter name="ServiceClass">org.apache.axis2.InvalidService</parameter>
     <module ref="serviceModule"/>

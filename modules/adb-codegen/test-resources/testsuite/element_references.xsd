@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <schema elementFormDefault="qualified"
         targetNamespace="http://www.americanexpress.com/wsdl/ctn/utilities/atb"
         xmlns:tns="http://www.americanexpress.com/wsdl/ctn/utilities/atb"

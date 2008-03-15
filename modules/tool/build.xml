@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project basedir="." default="help">
 
        <property name="output.folder" value="./target/eclipse_plugins"></property>

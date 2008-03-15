@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="addressing">
     <Description>This is the WS-Addressing implementation on Axis2, supporting the WS-Addressing 1.0 Recommendation, as well as the Submission version (2004/08).</Description>
     <InFlow>

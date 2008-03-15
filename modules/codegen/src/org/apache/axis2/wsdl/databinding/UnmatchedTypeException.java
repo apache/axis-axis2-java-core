@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.wsdl.databinding;
 
 /** A simple exception that will be thrown if a type is not matched! */

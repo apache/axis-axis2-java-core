@@ -16,4 +16,5 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"><SOAP-ENV:Body><m:echoVoidResponse xmlns:m="http://soapinterop.org/" SOAP-ENV:encodingStyle="http://www.w3.org/2003/05/soap-encoding" /></SOAP-ENV:Body></SOAP-ENV:Envelope>

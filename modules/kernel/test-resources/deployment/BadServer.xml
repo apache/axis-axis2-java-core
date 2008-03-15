@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <axisconfig name="AxisJava2.0">
     <parameter name="para1" locked="xsd:true">10</parameter>
     <parameter name="para2">Colombo</parameter>

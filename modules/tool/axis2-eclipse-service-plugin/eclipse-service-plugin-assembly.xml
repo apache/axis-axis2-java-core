@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <assembly>
     <id>axis2-eclipse-service-plugin</id>
     <includeBaseDirectory>false</includeBaseDirectory>

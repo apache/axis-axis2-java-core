@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
                   xmlns:ns0="http://axisversion.sample/xsd"
                   xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"

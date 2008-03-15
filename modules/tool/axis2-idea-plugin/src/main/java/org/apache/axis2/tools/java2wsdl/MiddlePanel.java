@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.tools.java2wsdl;
 
 import org.apache.axis2.tools.bean.ClassLoadingTestBean;

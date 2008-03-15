@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="ping">
    <operation name="pingService" mep="http://www.w3.org/2004/08/wsdl/in-out">
         <actionMapping>http://ws.apache.org/axis2/modules/ping</actionMapping>

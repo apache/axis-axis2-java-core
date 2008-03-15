@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions name="FaultsService" targetNamespace="http://org/test/polymorphicfaults"
      xmlns:tns="http://org/test/polymorphicfaults"
      xmlns:ts="http://org/test/polymorphicfaults"

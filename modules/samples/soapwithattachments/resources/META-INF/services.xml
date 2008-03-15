@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="SWASampleService">
     <description>
         This is a sample Web Service for illustrating Attachments API of Axis2

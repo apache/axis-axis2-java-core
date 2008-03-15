@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project name="samples" basedir=".." default="testCodeGen">
      <property name="maven.repo.local" value="${user.home}/.maven/repository/" />
      

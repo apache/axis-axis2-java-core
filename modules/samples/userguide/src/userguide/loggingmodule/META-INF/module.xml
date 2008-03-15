@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="sample-logging" class="userguide.loggingmodule.LoggingModule">
     <InFlow>
         <handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler">

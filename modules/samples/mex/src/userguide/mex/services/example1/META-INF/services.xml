@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="DefaultAxis2DataLocatorDemoService">
     <description>
      Sample web service to demostrate use of Default Axis2 Data Locator to handle ws-mex GetMetadata request.       

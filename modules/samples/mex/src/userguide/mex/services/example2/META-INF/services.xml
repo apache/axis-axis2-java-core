@@ -16,7 +16,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
- <service name="ServiceLevelDataLocatorDemoService">
+
+<service name="ServiceLevelDataLocatorDemoService">
     <description>
       Sample web service to demostrate use of  defined Service Level Data Locator to handle ws-mex GetMetadata request.       
        </description>

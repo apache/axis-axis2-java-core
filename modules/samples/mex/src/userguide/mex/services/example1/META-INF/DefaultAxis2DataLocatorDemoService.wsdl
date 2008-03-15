@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:ns1="http://org.apache.axis2/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns0="http://example1.services.mex.userguide/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:axis2="http://example1.services.mex.userguide" targetNamespace="http://example1.services.mex.userguide"><wsdl:documentation>
      Sample web service to demostrate use of Default Axis2 Data Locator to handle ws-mex GetMetadata request.       
      </wsdl:documentation><wsdl:types><xs:schema xmlns:ns="http://example1.services.mex.userguide/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://example1.services.mex.userguide/xsd">

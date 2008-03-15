@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:tns="http://www.w3.org/2004/06/xmlmime"
            targetNamespace="http://www.w3.org/2004/06/xmlmime" >

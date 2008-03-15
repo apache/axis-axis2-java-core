@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="WSDLDataLocatorDemoService">
     <description>
       Sample web service to demostrate use of  defined WSDL dialect specfic Data Locator to handle ws-mex GetMetadata request.       

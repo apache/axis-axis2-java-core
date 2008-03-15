@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="Library"
          class="sample.servicelifecycle.LibraryLifeCycle" scope="application">
     <description>

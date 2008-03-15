@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions targetNamespace="http://w3.ibm.com/schemas/services/2002/11/15/stockquote/wsdl"
 	xmlns="http://schemas.xmlsoap.org/wsdl/" 
 	xmlns:tns="http://w3.ibm.com/schemas/services/2002/11/15/stockquote/wsdl" 

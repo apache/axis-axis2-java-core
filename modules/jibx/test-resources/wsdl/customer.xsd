@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <schema elementFormDefault="qualified" targetNamespace="http://ws.apache.org/axis2/jibx/customer/data" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.apache.org/axis2/jibx/customer/data" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
   <!-- Created from mapping for class org.apache.axis2.jibx.Customer -->

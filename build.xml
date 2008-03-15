@@ -17,18 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!--
-  Sample ant commands:
-  "ant clean"                                 - cleans up
-  "ant install"                               - runs the build
-  "ant deploy"                                - deploys artifacts in apache m2 snapshots repo
-  "ant -Doffline=true clean"                  - offline clean up
-  "ant -Doffline=true install"                - offline build
-  "ant -Dskip=true install"                   - run the build, but skip the tests
-  "ant -Dskip=true install"                   - run the build, but skip the tests
-  "ant -Dskip=true deploy"                    - deploys artifacts, but skip the tests
-  "ant -Doffline=true -Dskip=true install"    - run the build in the offline and skips the tests
-  -->
 <project name="axis2_build" default="install">
 
     <!-- set the property to indicate that JAVA_HOME is set -->

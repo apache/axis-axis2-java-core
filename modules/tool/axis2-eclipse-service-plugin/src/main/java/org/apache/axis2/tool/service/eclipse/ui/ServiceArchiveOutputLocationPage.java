@@ -15,8 +15,7 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
- package org.apache.axis2.tool.service.eclipse.ui;
+ */ package org.apache.axis2.tool.service.eclipse.ui;
 
  import org.apache.axis2.tool.service.bean.Page3Bean;
 import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;

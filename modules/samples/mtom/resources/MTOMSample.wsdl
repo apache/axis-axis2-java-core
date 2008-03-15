@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:tns="http://ws.apache.org/axis2/mtomsample/"
 	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
 	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"

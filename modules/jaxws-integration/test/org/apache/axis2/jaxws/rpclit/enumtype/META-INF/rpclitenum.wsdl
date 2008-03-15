@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions targetNamespace="http://rpclit.test.org"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
   xmlns:tns="http://rpclit.test.org" 

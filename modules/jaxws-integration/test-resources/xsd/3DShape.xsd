@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		xmlns:tns1="http://shape.test.org"
 		xmlns:tns="http://threed.shape.test.org" 

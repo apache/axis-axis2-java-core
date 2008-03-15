@@ -1,4 +1,3 @@
-package org.apache.axis2.description;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -17,6 +16,8 @@ package org.apache.axis2.description;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+package org.apache.axis2.description;
 
 public interface ParameterObserver {
     void parameterChanged(String name, Object value);

@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="soapmonitor" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorModule">
     <InFlow>
         <handler name="InFlowSOAPMonitorHandler" class="org.apache.axis2.handlers.soapmonitor.SOAPMonitorHandler">

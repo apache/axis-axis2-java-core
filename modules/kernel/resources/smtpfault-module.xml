@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="smtpfault">
     <Description>This module is to handle the problem of not sending fault in the server side when SMTP transport is used</Description>
     <InFlow>

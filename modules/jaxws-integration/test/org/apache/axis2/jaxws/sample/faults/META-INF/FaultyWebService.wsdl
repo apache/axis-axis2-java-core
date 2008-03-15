@@ -19,6 +19,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
+
 <definitions name="FaultyWebService" targetNamespace="http://org/test/faults"
 	xmlns:tns="http://org/test/faults" xmlns="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"

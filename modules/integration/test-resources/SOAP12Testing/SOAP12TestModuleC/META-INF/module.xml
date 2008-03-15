@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="SOAP12TestModuleC">
     <InFlow>
 	<handler name="SOAP12InFlowHandlerDefaultC" class="org.apache.axis2.soap12testing.handlers.SOAP12InFlowHandlerDefaultC">

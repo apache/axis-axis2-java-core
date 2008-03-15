@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <description xmlns="http://www.w3.org/2005/05/wsdl" targetNamespace="http://greath.example.com/2004/wsdl/resSvc" xmlns:tns="http://greath.example.com/2004/wsdl/resSvc" xmlns:ghns="http://greath.example.com/2004/schemas/resSvc" xmlns:wsoap="http://www.w3.org/2005/05/wsdl/soap" xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
     <documentation>
         This document describes the GreatH Web service. Additional

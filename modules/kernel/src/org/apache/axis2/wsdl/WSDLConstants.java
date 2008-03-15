@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.wsdl;
 
 import org.apache.axis2.namespace.Constants;

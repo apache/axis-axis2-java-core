@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <service name="SOAP12TestServiceB">
     <description>This is a sample Web Service for SOAP 1.2 Testing</description>
     <module ref="SOAP12TestModuleB"/>

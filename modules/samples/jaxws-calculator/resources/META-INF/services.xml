@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <serviceGroup>
     <service name="CalculatorService">
         <parameter name="useOriginalwsdl">true</parameter>

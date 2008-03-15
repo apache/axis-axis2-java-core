@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project name="faulthandling" basedir="." default="generate.service">
 
     <property name="wsdl.uri" value="bank.wsdl"/>

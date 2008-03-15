@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <module name="serviceModule" class="org.apache.axis2.InavalidModuleImpl">
     <InFlow>
         <handler name="h1" class="org.apache.axis2.ModuleHandler1">

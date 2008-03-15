@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <binding>
   <namespace uri="http://ws.apache.org/axis2/jibx/customer/data" default="elements"/>
   <mapping name="customer" class="org.apache.axis2.jibx.Customer">

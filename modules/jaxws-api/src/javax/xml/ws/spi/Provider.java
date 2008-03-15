@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package javax.xml.ws.spi;
 
 import org.w3c.dom.Element;

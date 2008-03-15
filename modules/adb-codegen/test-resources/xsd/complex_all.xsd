@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <s:schema elementFormDefault="qualified" targetNamespace="http://www.strikeiron.com" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://www.strikeiron.com">
       <s:element name="GetQuotes">
         <s:complexType>

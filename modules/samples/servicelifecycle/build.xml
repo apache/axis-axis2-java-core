@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project name="servicelifecycle" basedir="." default="build">
 
     <property environment="env"/>

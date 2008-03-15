@@ -16,6 +16,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <project name="quickstartjibx" basedir="." default="generate.all">
 
     <property environment="env"/>
