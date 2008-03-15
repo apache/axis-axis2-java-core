@@ -47,7 +47,7 @@
             AxisConfiguration axisConfig = (AxisConfiguration)request.getSession().
                     getAttribute(Constants.GLOBAL_HANDLERS);
              if(axisConfig != null ){
-                 ArrayList handlers ;
+                 java.util.List handlers ;
                  ArrayList phases = axisConfig.getInFlowPhases();
                  %>
                  <h3> In Flow Up To and Including Dispatcher </h3>
