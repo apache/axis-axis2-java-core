@@ -221,7 +221,7 @@ public class ApplicationContextMigratorUtil {
         public void putAll(Map<? extends String, ? extends Object> m) {
             // we need to take advantage of the smarter put(String, Object)
             for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
-                Entry entry = (Entry)it.next();
+                Map.Entry entry = (Map.Entry)it.next();
                 put((String)entry.getKey(), entry.getValue());
             }
         }
@@ -325,7 +325,7 @@ public class ApplicationContextMigratorUtil {
                 // over the properties is due to this being the source object for a putAll(source)
                 // We would therefore be setting scope for a property that never actually makes
                 // its way into the messageContext
-                Entry entry = (Entry)containedIterator.next();
+                Map.Entry entry = (Map.Entry)containedIterator.next();
                 mepCtx.setScope((String)entry.getKey(), Scope.APPLICATION);
                 return entry;
             }
@@ -368,7 +368,7 @@ public class ApplicationContextMigratorUtil {
         public void putAll(Map<? extends String, ? extends Object> m) {
             // we need to take advantage of the smarter put(String, Object)
             for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
-                Entry entry = (Entry)it.next();
+                Map.Entry entry = (Map.Entry)it.next();
                 put((String)entry.getKey(), entry.getValue());
             }
         }
