@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.utility;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -106,6 +107,8 @@ public class ConvertUtils {
         // If it's List -> Array or vice versa, we're good.
         if ((Collection.class.isAssignableFrom(src) || src.isArray()) &&
                 (Collection.class.isAssignableFrom(dest) || dest.isArray())) {
+            
+            // TODO this should consider the component types instead of returning true.
             return true;
         }
 
@@ -286,82 +289,93 @@ public class ConvertUtils {
         } else {
             length = ((Collection)arg).size();
         }
-        if (destClass.isArray()) {
-            if (destClass.getComponentType().isPrimitive()) {
+        
+        try {
+            if (destClass.isArray()) {
+                if (destClass.getComponentType().isPrimitive()) {
 
-                Object array = Array.newInstance(destClass.getComponentType(),
-                                                 length);
-                // Assign array elements
-                if (arg.getClass().isArray()) {
-                    for (int i = 0; i < length; i++) {
-                        Array.set(array, i, Array.get(arg, i));
+                    Object array = Array.newInstance(destClass.getComponentType(),
+                                                     length);
+                    // Assign array elements
+                    if (arg.getClass().isArray()) {
+                        for (int i = 0; i < length; i++) {
+                            Array.set(array, i, Array.get(arg, i));
+                        }
+                    } else {
+                        int idx = 0;
+                        for (Iterator i = ((Collection)arg).iterator();
+                             i.hasNext();) {
+                            Array.set(array, idx++, i.next());
+                        }
                     }
+                    destValue = array;
+
                 } else {
-                    int idx = 0;
-                    for (Iterator i = ((Collection)arg).iterator();
-                         i.hasNext();) {
-                        Array.set(array, idx++, i.next());
+                    Object [] array;
+                    try {
+                        array = (Object [])Array.newInstance(destClass.getComponentType(),
+                                                             length);
+                    } catch (Exception e) {
+                        return arg;
                     }
-                }
-                destValue = array;
 
-            } else {
-                Object [] array;
+                    // Use convert to assign array elements.
+                    if (arg.getClass().isArray()) {
+                        for (int i = 0; i < length; i++) {
+                            array[i] = convert(Array.get(arg, i),
+                                               destClass.getComponentType());
+                        }
+                    } else {
+                        int idx = 0;
+                        for (Iterator i = ((Collection)arg).iterator();
+                             i.hasNext();) {
+                            array[idx++] = convert(i.next(),
+                                                   destClass.getComponentType());
+                        }
+                    }
+                    destValue = array;
+                }
+            } else if (Collection.class.isAssignableFrom(destClass)) {
+                Collection newList = null;
                 try {
-                    array = (Object [])Array.newInstance(destClass.getComponentType(),
-                                                         length);
+                    // if we are trying to create an interface, build something
+                    // that implements the interface
+                    if (destClass == Collection.class || destClass == List.class) {
+                        newList = new ArrayList();
+                    } else if (destClass == Set.class) {
+                        newList = new HashSet();
+                    } else {
+                        newList = (Collection)destClass.newInstance();
+                    }
                 } catch (Exception e) {
+                    // No FFDC code needed
+                    // Couldn't build one for some reason... so forget it.
                     return arg;
                 }
 
-                // Use convert to assign array elements.
                 if (arg.getClass().isArray()) {
-                    for (int i = 0; i < length; i++) {
-                        array[i] = convert(Array.get(arg, i),
-                                           destClass.getComponentType());
+                    for (int j = 0; j < length; j++) {
+                        newList.add(Array.get(arg, j));
                     }
                 } else {
-                    int idx = 0;
-                    for (Iterator i = ((Collection)arg).iterator();
-                         i.hasNext();) {
-                        array[idx++] = convert(i.next(),
-                                               destClass.getComponentType());
+                    for (Iterator j = ((Collection)arg).iterator();
+                         j.hasNext();) {
+                        newList.add(j.next());
                     }
                 }
-                destValue = array;
-            }
-        } else if (Collection.class.isAssignableFrom(destClass)) {
-            Collection newList = null;
-            try {
-                // if we are trying to create an interface, build something
-                // that implements the interface
-                if (destClass == Collection.class || destClass == List.class) {
-                    newList = new ArrayList();
-                } else if (destClass == Set.class) {
-                    newList = new HashSet();
-                } else {
-                    newList = (Collection)destClass.newInstance();
-                }
-            } catch (Exception e) {
-                // No FFDC code needed
-                // Couldn't build one for some reason... so forget it.
-                return arg;
-            }
-
-            if (arg.getClass().isArray()) {
-                for (int j = 0; j < length; j++) {
-                    newList.add(Array.get(arg, j));
-                }
+                destValue = newList;
             } else {
-                for (Iterator j = ((Collection)arg).iterator();
-                     j.hasNext();) {
-                    newList.add(j.next());
-                }
+                destValue = arg;
             }
-            destValue = newList;
-        } else {
-            destValue = arg;
+        } catch (Throwable t) {
+            throw ExceptionFactory.
+              makeWebServiceException( 
+                                    Messages.getMessage("convertUtils", 
+                                                        arg.getClass().toString(), 
+                                                        destClass.toString()),
+                                    t);                        
         }
+        
         return destValue;
     }
     
