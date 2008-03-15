@@ -4062,7 +4062,7 @@
                            text_value_<xsl:value-of select="$position"/> = <xsl:value-of select="$propertyInstanceName"/>;
                            <xsl:if test="$anon or $istype">
                            axutil_stream_write(stream, env, start_input_str, start_input_str_len);
-                           AXIS2_FREE(env->allocator,end_input_str);
+                           AXIS2_FREE(env->allocator,start_input_str);
                            </xsl:if>
                             
                            text_value_<xsl:value-of select="$position"/>_temp = axutil_xml_quote_string(env, text_value_<xsl:value-of select="$position"/>, AXIS2_TRUE);
