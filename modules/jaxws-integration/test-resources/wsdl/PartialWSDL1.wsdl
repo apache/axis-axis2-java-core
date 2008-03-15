@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions targetNamespace="http://serverPartial1.checkexception.webfault.annotations/" name="AddNumbersImplPartial1Service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://serverPartial1.checkexception.webfault.annotations/" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xsd:schema>

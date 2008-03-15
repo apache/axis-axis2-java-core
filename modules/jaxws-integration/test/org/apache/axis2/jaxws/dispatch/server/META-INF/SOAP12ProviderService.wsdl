@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions targetNamespace="http://org/apache/axis2/jaxws/test/SOAP12"
     xmlns:impl="http://org/apache/axis2/jaxws/test/SOAP12" 
     xmlns:intf="http://org/apache/axis2/jaxws/test/SOAP12" 

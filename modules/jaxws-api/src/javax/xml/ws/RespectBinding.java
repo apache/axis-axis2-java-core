@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package javax.xml.ws;
 
 import javax.xml.ws.spi.WebServiceFeatureAnnotation;

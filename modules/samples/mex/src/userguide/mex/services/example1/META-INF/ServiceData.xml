@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <ServiceData>
 <Data dialect="http://schemas.xmlsoap.org/wsdl/" file="META-INF/DefaultAxis2DataLocatorDemoService.wsdl">
  <URL>http://localhost:8080/axis2/services/DefaultAxis2DataLocatorDemoService?wsdl </URL>

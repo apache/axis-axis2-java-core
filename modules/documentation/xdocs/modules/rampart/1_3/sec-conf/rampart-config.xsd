@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ramp="http://ws.apache.org/rampart/policy" targetNamespace="http://ws.apache.org/rampart/policy" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="RampartConfig">
 		<xs:annotation>

@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <s:schema elementFormDefault="qualified" targetNamespace="http://xmlsoap.org/Ping" xmlns:s="http://www.w3.org/2001/XMLSchema">
             <s:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"/>
             <s:element name="Ping" nillable="true" type="tns:ping"/>

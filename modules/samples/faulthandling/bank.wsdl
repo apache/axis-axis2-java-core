@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions targetNamespace="http://example"
 	xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:tns="http://example"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"

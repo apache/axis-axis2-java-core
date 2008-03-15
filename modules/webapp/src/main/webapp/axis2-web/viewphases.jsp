@@ -15,8 +15,7 @@
   ~ KIND, either express or implied. See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  --%>
-<%@ page import="org.apache.axis2.Constants,
+  --%> <%@ page import="org.apache.axis2.Constants,
                  org.apache.axis2.deployment.util.PhasesInfo,
                  org.apache.axis2.engine.Phase"%>
  <%@ page import="java.util.ArrayList"%>

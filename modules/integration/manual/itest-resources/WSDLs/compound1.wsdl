@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions name="SoapInteropCompound"
 		targetNamespace="http://soapinterop.org/" 
 		xmlns:wsdlns="http://soapinterop.org/" 

@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   xmlns:ns4="http://xsd.arrays.pojo.doclitbare.temp.org/xsd"
                   xmlns:ns0="http://xsd.jaxb.doclitbare.temp.org/xsd"

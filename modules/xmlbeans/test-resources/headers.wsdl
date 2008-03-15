@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://soapinterop.org/" xmlns:types="http://soapinterop.org/xsd" targetNamespace="http://soapinterop.org/">
   <types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://soapinterop.org/xsd">

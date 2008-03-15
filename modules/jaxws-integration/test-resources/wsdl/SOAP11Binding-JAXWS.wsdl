@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions targetNamespace="http://jaxws.axis2.apache.org/bindingtest/soap11"
       xmlns:tns="http://jaxws.axis2.apache.org/bindingtest/soap11"
       xmlns="http://schemas.xmlsoap.org/wsdl/" 

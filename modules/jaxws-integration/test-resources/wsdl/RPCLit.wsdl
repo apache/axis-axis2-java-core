@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclit" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://org/apache/axis2/jaxws/proxy/rpclit" xmlns:intf="http://org/apache/axis2/jaxws/proxy/rpclit" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
  <wsdl:types>
   <schema targetNamespace="http://org/apache/axis2/jaxws/proxy/rpclit" xmlns="http://www.w3.org/2001/XMLSchema">

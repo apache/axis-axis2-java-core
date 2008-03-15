@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xsd:schema
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	targetNamespace="http://w3.ibm.com/schemas/services/2002/11/15/stockquote"

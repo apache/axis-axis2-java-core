@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://resourceinjection.sample.test.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="ResourceInjection" targetNamespace="http://resourceinjection.sample.test.org">
   <wsdl:types>
     <xsd:schema targetNamespace="http://resourceinjection.sample.test.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema">

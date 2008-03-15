@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <xs:schema version="1.0" targetNamespace="http://wsgen.sample.jaxws.axis2.apache.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="echoString" type="ns1:echoString" xmlns:ns1="http://wsgen.sample.jaxws.axis2.apache.org"/>

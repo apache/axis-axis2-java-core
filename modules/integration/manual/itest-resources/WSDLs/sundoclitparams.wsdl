@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://soapinterop.org/WSDLInteropTestDocLit" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://soapinterop.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="WSDLInteropTestDocLitService" targetNamespace="http://soapinterop.org/WSDLInteropTestDocLit">
     <types>
         <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://soapinterop.org/xsd">

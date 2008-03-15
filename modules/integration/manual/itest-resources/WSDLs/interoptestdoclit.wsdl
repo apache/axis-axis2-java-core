@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions name="WSDLInteropTestDocLitService"
     targetNamespace="http://soapinterop.org/WSDLInteropTestDocLit" 
     xmlns="http://schemas.xmlsoap.org/wsdl/" 

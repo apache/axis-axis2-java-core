@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions
 	xmlns="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:tns="http://soapinterop.org/wsdl"

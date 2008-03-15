@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <definitions name="EchoService" targetNamespace="http://sei.stringarray.rpclit.jaxws.axis2.apache.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://sei.stringarray.rpclit.jaxws.axis2.apache.org" xmlns:ns1= "http://stringarray.rpclit.test.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"

@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions targetNamespace="http://services.axis.apache.org" xmlns:impl="http://services.axis.apache.org-impl" xmlns:intf="http://services.axis.apache.org" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
     <!--WSDL created by Apache Axis version: 1.2.1
     Built on Jun 14, 2005 (09:15:57 EDT)-->

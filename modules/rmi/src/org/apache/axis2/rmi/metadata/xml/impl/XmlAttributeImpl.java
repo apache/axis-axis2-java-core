@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.axis2.rmi.metadata.xml.impl;
 
 import org.apache.axis2.rmi.exception.SchemaGenerationException;

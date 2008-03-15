@@ -18,6 +18,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+
 <wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://perf.samples" xmlns:intf="http://perf.samples" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://perf.samples">
 	<wsdl:types>
 		<schema elementFormDefault="qualified" targetNamespace="http://perf.samples" xmlns="http://www.w3.org/2001/XMLSchema">
