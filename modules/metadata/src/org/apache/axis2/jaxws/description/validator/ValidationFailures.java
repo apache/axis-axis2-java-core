@@ -19,19 +19,31 @@
 
 package org.apache.axis2.jaxws.description.validator;
 
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * 
+ * Record Validator Failures.
+ * The validator failures are gathered and then issued at the end of the validation phase.
  */
 public class ValidationFailures {
 
+    private static final Log log = LogFactory.getLog(ValidationFailures.class);
     ArrayList<ValidationFailure> validationFailures = new ArrayList<ValidationFailure>();
 
     public void add(Validator failingValidator, String message) {
-        validationFailures.add(new ValidationFailure(failingValidator, message));
+        ValidationFailure vf = new ValidationFailure(failingValidator, message);
+        validationFailures.add(vf);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Adding ValidationFailure = " + vf.toString());
+            log.debug("Location of Validation Failure = " + JavaUtils.callStackToString());
+        }
     }
 
     public List<ValidationFailure> getValidationFailures() {
@@ -40,6 +52,10 @@ public class ValidationFailures {
 
 }
 
+/**
+ * "Specific Validator Failures
+ *
+ */
 class ValidationFailure {
     Validator validator;
     String message;
@@ -56,4 +72,9 @@ class ValidationFailure {
     public Validator getValidator() {
         return validator;
     }
+
+    public String toString() {
+       return "Validator = [" + validator + "] Message = [" + message + "]";
+    }
+   
 }

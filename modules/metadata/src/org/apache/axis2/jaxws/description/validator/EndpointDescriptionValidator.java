@@ -130,10 +130,23 @@ public class EndpointDescriptionValidator extends Validator {
                                  "An HTTPBinding must use an @WebServiceProvider endpoint.");
             isBindingValid = false;
         } else {
-            addValidationFailure(this, "Invalid binding; wsdl = " + wsdlBindingType +
-                    ", annotation = " + bindingType);
+            
+            // Mismatched bindings 
+            String wsdlInsert = "[" + bindingHumanReadableDescription(wsdlBindingType) + "]" +
+                "namespace = {" + wsdlBindingType +"}";
+            String annotationInsert = "[" + bindingHumanReadableDescription(bindingType) + "]" +
+                "namespace = {" + bindingType +"}";
+            
+            // TODO NLS
+            String message = "There is a mismatch between the wsdl and annotation information.  " +
+                "Please make sure both use the same binding namespace.  " +
+                "The wsdl =" + wsdlInsert + ".  " +
+                "The annotation = " + annotationInsert + ".";
+            addValidationFailure(this, message);
+            
             isBindingValid = false;
-        }
+        } 
+        
         return isBindingValid;
     }
 
@@ -167,5 +180,29 @@ public class EndpointDescriptionValidator extends Validator {
             }
         }
         return VALID;
+    }
+    
+    private static String bindingHumanReadableDescription(String ns) {
+        if (SOAPBinding.SOAP11HTTP_BINDING.equals(ns)) {
+            return "SOAP 1.1 HTTP Binding";
+        } else if (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(ns)) {
+            return "SOAP 1.1 MTOM HTTP Binding";
+        } else if (SOAPBinding.SOAP12HTTP_BINDING.equals(ns)) {
+            return "SOAP 1.2 HTTP Binding";
+        } else if (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(ns)) {
+            return "SOAP 1.2 MTOM HTTP Binding";
+        } else if (MDQConstants.SOAP11JMS_BINDING.equals(ns)) {
+            return "SOAP 1.1 JMS Binding";
+        } else if (MDQConstants.SOAP11JMS_MTOM_BINDING.equals(ns)) {
+            return "SOAP 1.1 MTOM JMS Binding";
+        } else if (MDQConstants.SOAP12JMS_BINDING.equals(ns)) {
+            return "SOAP 1.2 JMS Binding";
+        } else if (MDQConstants.SOAP12JMS_MTOM_BINDING.equals(ns)) {
+            return "SOAP 1.2 MTOM JMS Binding";
+        } else if (HTTPBinding.HTTP_BINDING.equals(ns)) {
+            return "XML HTTP Binding";
+        } else {
+            return "Unknown Binding";
+        }
     }
 }
