@@ -101,7 +101,7 @@
         serviceDescription = "No description available for this service";
     }
 %>
-<h4>Service Description : <font color="black"><%=serviceDescription%></h4>
+<h4>Service Description : <font color="black"><%=serviceDescription%></font></h4>
 <i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br>
 <%
     if (opItr.hasNext()) {

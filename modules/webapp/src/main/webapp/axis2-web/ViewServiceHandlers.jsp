@@ -23,6 +23,7 @@
                  org.apache.axis2.engine.Handler,
                  org.apache.axis2.engine.Phase,
                  java.util.ArrayList,
+                 java.util.List,
                  java.util.Iterator"%>
 <%--
   ~ Licensed to the Apache Software Foundation (ASF) under one
@@ -50,7 +51,7 @@
             AxisService axisService = (AxisService)request.getSession().
                     getAttribute(Constants.SERVICE_HANDLERS);
              if(axisService != null ){
-                 ArrayList handlers ;
+                List handlers ;
                 Iterator operations =  axisService.getOperations();
                  while (operations.hasNext()) {
                      AxisOperation axisOperationon = (AxisOperation) operations.next();
