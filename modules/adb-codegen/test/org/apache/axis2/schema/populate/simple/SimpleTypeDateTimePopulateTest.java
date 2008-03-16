@@ -40,7 +40,10 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
     };
     // force others to implement this method
     public void testPopulate() throws Exception {
-
+        // Skip for JDK1.4
+        if (System.getProperty("java.version").startsWith("1.4.")) {
+            return;
+        }
         Calendar calendar;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
