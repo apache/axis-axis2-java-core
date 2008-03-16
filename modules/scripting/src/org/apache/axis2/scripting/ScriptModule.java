@@ -65,7 +65,7 @@ public class ScriptModule implements Module {
             deploymentEngine.loadRepository(scriptServicesDirectory);
             deploymentEngine.loadServices();
         }
-        log.info("script module activated");
+        log.debug("script module activated");
     }
 
     /**
