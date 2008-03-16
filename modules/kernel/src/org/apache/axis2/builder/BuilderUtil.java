@@ -457,26 +457,7 @@ public class BuilderUtil {
     protected static Attachments createAttachmentsMap(MessageContext msgContext,
                                                       InputStream inStream,
                                                       String contentTypeString) {
-        Object cacheAttachmentProperty = msgContext
-                .getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
-        String cacheAttachmentString = null;
-        boolean fileCacheForAttachments;
-
-        if (cacheAttachmentProperty != null
-                && cacheAttachmentProperty instanceof String) {
-            cacheAttachmentString = (String) cacheAttachmentProperty;
-            fileCacheForAttachments = (Constants.VALUE_TRUE
-                    .equals(cacheAttachmentString));
-        } else {
-            Parameter parameter_cache_attachment = msgContext
-                    .getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
-            cacheAttachmentString =
-                    (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
-                            .getValue()
-                            : null;
-        }
-        fileCacheForAttachments = (Constants.VALUE_TRUE
-                .equals(cacheAttachmentString));
+        boolean fileCacheForAttachments = isAttachmentsCacheEnabled(msgContext);
 
         String attachmentRepoDir = null;
         String attachmentSizeThreshold = null;
@@ -538,6 +519,30 @@ public class BuilderUtil {
                 attachmentRepoDir,
                 attachmentSizeThreshold,
                 contentLength);
+    }
+
+    public static boolean isAttachmentsCacheEnabled(MessageContext msgContext) {
+        Object cacheAttachmentProperty = msgContext
+                .getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
+        String cacheAttachmentString = null;
+        boolean fileCacheForAttachments;
+
+        if (cacheAttachmentProperty != null
+                && cacheAttachmentProperty instanceof String) {
+            cacheAttachmentString = (String) cacheAttachmentProperty;
+            fileCacheForAttachments = (Constants.VALUE_TRUE
+                    .equals(cacheAttachmentString));
+        } else {
+            Parameter parameter_cache_attachment = msgContext
+                    .getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
+            cacheAttachmentString =
+                    (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
+                            .getValue()
+                            : null;
+        }
+        fileCacheForAttachments = (Constants.VALUE_TRUE
+                .equals(cacheAttachmentString));
+        return fileCacheForAttachments;
     }
 
     public static Attachments createAttachments(MessageContext msgContext, 

@@ -479,7 +479,7 @@ public class TransportUtils {
            }
            
        	Attachments attachments = msgContext.getAttachmentMap();
-           if (attachments != null) {
+           if (attachments != null && BuilderUtil.isAttachmentsCacheEnabled(msgContext)) {
                String [] keys = attachments.getAllContentIDs(); 
                if (keys != null) {
                	String key = null;
