@@ -29,6 +29,7 @@ import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.context.externalize.SafeSerializable;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -292,8 +293,13 @@ public class ParameterIncludeImpl
             String key = parameter.getName();
             Object value = parameter.getValue();
             String className = (value == null) ? "null" : value.getClass().getName();
-            String classloader = (value == null || value.getClass().getClassLoader() == null) ? "null" : 
-                value.getClass().getClassLoader().toString();
+            String classloader = "null";
+            if(value != null) {
+                ClassLoader cl = Utils.getObjectClassLoader(value);
+                if(cl != null) {
+                    classloader = cl.toString();
+                }
+            }
             String valueText = (value instanceof String) ? value.toString() : null;
             String identity = getClass().getName() + '@' + 
                 Integer.toHexString(System.identityHashCode(this));

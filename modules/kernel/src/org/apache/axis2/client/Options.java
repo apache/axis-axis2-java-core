@@ -39,6 +39,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MetaDataEntry;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1640,8 +1641,13 @@ public class Options implements Externalizable, SafeSerializable {
     private void debugPropertySet(String key, Object value) {
         if (DEBUG_ENABLED) {
             String className = (value == null) ? "null" : value.getClass().getName();
-            String classloader = (value == null || value.getClass().getClassLoader() == null)? "null" : 
-                value.getClass().getClassLoader().toString();
+            String classloader = "null";
+            if(value != null) {
+                ClassLoader cl = Utils.getObjectClassLoader(value);
+                if(cl != null) {
+                    classloader = cl.toString();
+                }
+            }
             String valueText = (value instanceof String) ? value.toString() : null;
             
             String identity = getClass().getName() + '@' + 

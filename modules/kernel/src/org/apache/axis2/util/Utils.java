@@ -54,6 +54,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -491,5 +493,22 @@ public class Utils {
                     "The MessageContext does not have an associated SOAPFault.");
         }
         return result;
+    }
+    
+    /**
+     * This method will provide the logic needed to retrieve an Object's classloader
+     * in a Java 2 Security compliant manner.
+     */
+    public static ClassLoader getObjectClassLoader(final Object object) {
+        if(object == null) {
+            return null;
+        }
+        else {
+            return (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    return object.getClass().getClassLoader();
+                }
+            });
+        }
     }
 }
