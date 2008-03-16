@@ -29,7 +29,13 @@
                  javax.xml.parsers.SAXParserFactory,
                  java.io.IOException,
                  java.io.InputStream,
-                 java.io.StringWriter"
+                 java.io.StringWriter,
+                 org.apache.axiom.om.OMElement,
+                 org.apache.axiom.om.OMFactory,
+                 org.apache.axiom.om.OMNamespace,
+                 org.apache.axiom.om.OMAbstractFactory,
+                 javax.xml.stream.XMLOutputFactory,
+                 javax.xml.stream.XMLStreamException"
          session="false" %>
 
 <%--
