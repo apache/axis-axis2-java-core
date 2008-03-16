@@ -113,7 +113,7 @@
         <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
         <geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
         <groovy.all.version>1.0</groovy.all.version>
-        <httpcore.version>4.0-alpha6</httpcore.version>
+        <httpcore.version>4.0-beta1</httpcore.version>
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.1</jaxb.api.version>

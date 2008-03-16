@@ -50,8 +50,8 @@ import org.apache.http.ProtocolException;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.UnsupportedHttpVersionException;
+import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 
@@ -144,7 +144,8 @@ public class AxisHttpService {
             if (requestLine != null) {
                 msgContext.setProperty(HTTPConstants.HTTP_METHOD, requestLine.getMethod());
             }
-            HttpParamsLinker.link(request, this.params);
+            request.setParams(
+                new DefaultedHttpParams(request.getParams(), this.params));
             ProtocolVersion ver = request.getRequestLine().getProtocolVersion();
             if (!ver.lessEquals(HttpVersion.HTTP_1_1)) {
                 // Downgrade protocol version if greater than HTTP/1.1 
@@ -153,13 +154,15 @@ public class AxisHttpService {
 
             response = this.responseFactory.newHttpResponse
                     (ver, HttpStatus.SC_OK, context);
-            HttpParamsLinker.link(response, this.params);
+            response.setParams(
+                new DefaultedHttpParams(response.getParams(), this.params));
 
             if (request instanceof HttpEntityEnclosingRequest) {
                 if (((HttpEntityEnclosingRequest) request).expectContinue()) {
                     HttpResponse ack = this.responseFactory.newHttpResponse
                             (ver, HttpStatus.SC_CONTINUE, context);
-                    HttpParamsLinker.link(ack, this.params);
+                    ack.setParams(
+                        new DefaultedHttpParams(ack.getParams(), this.params));
                     conn.sendResponse(ack);
                     conn.flush();
                 }
@@ -204,7 +207,8 @@ public class AxisHttpService {
             response = this.responseFactory.newHttpResponse
                     (HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR,
                      context);
-            HttpParamsLinker.link(response, this.params);
+            response.setParams(
+                new DefaultedHttpParams(response.getParams(), this.params));
             handleException(ex, response);
             this.httpProcessor.process(response, context);
             conn.sendResponse(response);
@@ -329,7 +333,7 @@ public class AxisHttpService {
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
 
-		private CountDownLatch responseReadySignal = new CountDownLatch(1);
+        private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.WAITING;
         AxisFault faultToBeThrownOut = null;
         private boolean responseWritten = false;
@@ -363,12 +367,12 @@ public class AxisHttpService {
         }
         
         public boolean isResponseWritten() {
-			return responseWritten;
-		}
+            return responseWritten;
+        }
 
-		public void setResponseWritten(boolean responseWritten) {
-			this.responseWritten = responseWritten;
-		}
+        public void setResponseWritten(boolean responseWritten) {
+            this.responseWritten = responseWritten;
+        }
 
     }
 

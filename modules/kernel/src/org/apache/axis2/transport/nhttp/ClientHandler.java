@@ -47,8 +47,8 @@ import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.NHttpClientConnection;
 import org.apache.http.nio.NHttpClientHandler;
+import org.apache.http.params.DefaultedHttpParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
@@ -140,7 +140,8 @@ public class ClientHandler implements NHttpClientHandler {
             context.setAttribute(REQUEST_SOURCE_CHANNEL, axis2Req.getSourceChannel());
 
             HttpRequest request = axis2Req.getRequest();
-            HttpParamsLinker.link(request, this.params);
+            request.setParams(
+                new DefaultedHttpParams(request.getParams(), this.params));
             this.httpProcessor.process(request, context);
 
             conn.submitRequest(request);
@@ -174,7 +175,8 @@ public class ClientHandler implements NHttpClientHandler {
             context.setAttribute(REQUEST_SOURCE_CHANNEL, axis2Req.getSourceChannel());
 
             HttpRequest request = axis2Req.getRequest();
-            HttpParamsLinker.link(request, this.params);
+            request.setParams(
+                new DefaultedHttpParams(request.getParams(), this.params));
             this.httpProcessor.process(request, context);
 
             conn.submitRequest(request);

@@ -140,40 +140,13 @@
                         <inherited>true</inherited>
                         <configuration>
                             <excludes>
-                                <exclude>**/*NIOSSL*.java</exclude>
-                                <exclude>**/HttpCoreNIOListener*.java</exclude>
-                                <exclude>**/SSLServerIOEventDispatch.java</exclude>
-                                <exclude>**/SSLClientIOEventDispatch.java</exclude>
+                                <exclude>**/nhttp/**</exclude>
                                 <exclude>**/XMPP*.java</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>java15</id>
-            <activation>
-                <jdk>1.5</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore-niossl</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>java16</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore-niossl</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
     <build>
