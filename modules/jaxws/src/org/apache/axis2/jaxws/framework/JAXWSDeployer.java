@@ -356,8 +356,9 @@ public class JAXWSDeployer implements Deployer {
             QName serviceName = ed.getServiceQName();
             QName portName = ed.getPortQName();
             EndpointKey key = new EndpointKey(serviceName, portName);
-            
-            map.put(key, axisService.getEPRs()[0]);
+
+            String[] eprs = axisService.getEPRs();
+            map.put(key, (eprs == null || eprs.length == 0) ? axisService.getName() : eprs[0]);
         }
     }
 }
