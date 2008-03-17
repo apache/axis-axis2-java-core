@@ -337,7 +337,7 @@ public class JAXWSDeployer implements Deployer {
     }
     
     //Store the address URIs that we will need to create endpoint references at runtime.
-    private void configureAddressing(AxisServiceGroup serviceGroup) throws AxisFault {
+    private void configureAddressing(AxisServiceGroup serviceGroup) {
         EndpointContextMap map =
             (EndpointContextMap) configCtx.getProperty(org.apache.axis2.jaxws.Constants.ENDPOINT_CONTEXT_MAP);
         
@@ -357,8 +357,7 @@ public class JAXWSDeployer implements Deployer {
             QName portName = ed.getPortQName();
             EndpointKey key = new EndpointKey(serviceName, portName);
 
-            String[] eprs = axisService.getEPRs();
-            map.put(key, (eprs == null || eprs.length == 0) ? axisService.getName() : eprs[0]);
+            map.put(key, axisService);
         }
     }
 }

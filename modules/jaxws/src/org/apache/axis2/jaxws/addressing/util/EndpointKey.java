@@ -84,5 +84,16 @@ public class EndpointKey {
         result = PRIME * result + ((endpoint == null) ? 0 : endpoint.hashCode());
         result = PRIME * result + ((service == null) ? 0 : service.hashCode());
         return result;
-    }   
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("Sevice: ");
+        buffer.append(service);
+        buffer.append(", Port: ");
+        buffer.append(endpoint);
+        
+        return buffer.toString();
+    }
 }

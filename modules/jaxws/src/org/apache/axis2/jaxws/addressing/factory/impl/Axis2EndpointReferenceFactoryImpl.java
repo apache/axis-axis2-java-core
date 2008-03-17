@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.addressing.factory.impl;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.factory.Axis2EndpointReferenceFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
@@ -59,7 +60,19 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
     public EndpointReference createEndpointReference(QName serviceName, QName endpoint) {
         EndpointKey key = new EndpointKey(serviceName, endpoint);
         EndpointContextMap map = EndpointContextMapManager.getEndpointContextMap();
-        String address = (String) map.get(key);
+        
+        if (!map.containsKey(key))
+            throw new IllegalStateException("Unable to locate a deployed service that maps to the requested endpoint, " + key);
+        
+        AxisService axisService = (AxisService) map.get(key);
+        String address = null;
+        
+        try {
+            address = axisService.getEPRs()[0];
+        }
+        catch (Exception e) {
+            //do nothing
+        }
         
         return createEndpointReference(address);
     }
