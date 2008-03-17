@@ -1743,9 +1743,8 @@ class OperationDescriptionImpl
         }
         if (methodName != null && returnTypeName != null) {
             // REVIEW: Not sure the method MUST end with "Async"; I think it can be customized.
-            answer = methodName.endsWith("Async")
-                    && (returnTypeName.equals(Response.class.getName()) ||
-                    returnTypeName.equals(Future.class.getName()));
+            answer = (returnTypeName.contains(Response.class.getName()) ||
+                    returnTypeName.contains(Future.class.getName()));
         }
         return answer;
     }

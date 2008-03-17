@@ -1251,11 +1251,11 @@
                         <include>**/MtomSampleByteArrayTests.java</include>
                         <include>**/HandlerTests.java</include>
                         <include>**/StringListTests.java</include>
+                        <include>**/NonWrapTests.java</include>
+                        <include>**/FaultyWebServiceTests.java</include> 
 
                         <!--    These tests are currently failing    -->
-                        <!--             <include>**/FaultyWebServiceTests.java</include> -->
-                        <!--             <include>**/ParallelAsyncTests.java</include> -->
-                        <!--             <include>**/NonWrapTests.java</include> -->
+                        <!--          <include>**/ParallelAsyncTests.java</include> -->
                     </includes>
                     <systemProperties>
                         <property>

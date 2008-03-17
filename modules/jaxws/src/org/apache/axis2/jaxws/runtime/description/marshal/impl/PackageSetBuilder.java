@@ -169,7 +169,7 @@ public class PackageSetBuilder {
             EndpointInterfaceDescription endpointInterfaceDesc,
             MarshalServiceRuntimeDescription msrd) {
         TreeSet<String> set = new TreeSet<String>();
-        OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
+        OperationDescription[] opDescs = endpointInterfaceDesc.getDispatchableOperations();
 
         // Build a set of packages from all of the opertions
         if (opDescs != null) {

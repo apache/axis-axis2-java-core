@@ -97,7 +97,7 @@ public class AnnotationBuilder {
     private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc,
                                            ArtifactProcessor ap,
                                            Map<String, AnnotationDesc> map) {
-        OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
+        OperationDescription[] opDescs = endpointInterfaceDesc.getDispatchableOperations();
 
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
