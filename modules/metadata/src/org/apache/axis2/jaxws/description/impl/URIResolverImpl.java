@@ -285,20 +285,19 @@ public class URIResolverImpl implements URIResolver {
             	url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
             }
             else{
-            	if(log.isDebugEnabled()){
-            		if(baseURL !=null){
-            		    
-            		        // even though this is unknown, since there is a protocol, let's
-            		        // try to build the URL
-            			log.debug("unknown protocol in url "+ baseURL.getProtocol());
-            			if(log.isDebugEnabled()){
-            	                    log.debug("Constructing path with unknown protocol");
-            	                }
-            	                url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
-            		}else{
-            			log.debug("baseURL is NULL");
-            		}
-            	}
+                if(baseURL != null) {
+                    
+                    // try constructing it with unknown protocol
+                    if(log.isDebugEnabled()){
+                        log.debug("Constructing path with unknown protocol: " + baseURL.getProtocol());
+                    }
+                    url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+                }
+                else {
+                    if(log.isDebugEnabled()) {
+                        log.debug("baseURL is NULL");
+                    }
+                }
             }
                         
         }
