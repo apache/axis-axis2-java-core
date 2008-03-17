@@ -89,7 +89,7 @@ public class EndpointKey {
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("Sevice: ");
+        buffer.append("Service: ");
         buffer.append(service);
         buffer.append(", Port: ");
         buffer.append(endpoint);
