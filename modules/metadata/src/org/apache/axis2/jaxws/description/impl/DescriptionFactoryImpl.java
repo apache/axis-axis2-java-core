@@ -331,6 +331,9 @@ public class DescriptionFactoryImpl {
         if (log.isDebugEnabled()) {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
+        
+        setPropertiesOnEndpointDesc(endpointDesc, composite);
+        
         return endpointDesc;
     }
 
@@ -435,6 +438,29 @@ public class DescriptionFactoryImpl {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * This method will set any properties supplied on the DescriptionBuilderComposite instance
+     * on the EndpointDescription. If the DBC is null or there are no properties present, this
+     * method will have no effect.
+     */
+    static void setPropertiesOnEndpointDesc(EndpointDescription endpointDesc, DescriptionBuilderComposite 
+                                     composite) {
+        if(composite != null 
+                && 
+                composite.getProperties() != null
+                &&
+                !composite.getProperties().isEmpty()) {
+            for(String key : composite.getProperties().keySet()) {
+                Object value = composite.getProperties().get(key);
+                if(log.isDebugEnabled()) {
+                    log.debug("Setting property from DBC onto EndpointDescription, key= " + 
+                              key + ", value= " + value);
+                }
+                endpointDesc.setProperty(key, value);
+            }
+        }
     }
 
 }

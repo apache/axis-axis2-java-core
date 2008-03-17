@@ -30,6 +30,8 @@ import org.apache.axis2.jaxws.description.builder.CustomAnnotationInstance;
 import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
+import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
+import org.apache.axis2.jaxws.description.validator.EndpointDescriptionValidator;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
@@ -201,6 +203,41 @@ public class DescriptionFactoryImplTests extends TestCase {
         EndpointDescription ed = edColl.iterator().next();
         assertNotNull(ed);
         assertNotNull(ed.getHandlerChain());
+    }
+    
+    /**
+     * This will verify that properties are correctly copied from a DBC to an
+     * EndpointDescription instance by a helper method in DescriptionFactoryImpl.
+     */
+    public void testSetPropertiesOnEndpointDesc() {
+        
+        // first get an EndpointDescription instance
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(AnnotatedService.class);
+        HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+        DescriptionBuilderComposite dbc = dbcMap.get(AnnotatedService.class.getName());
+        assertNotNull(dbc);
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("testKey", "testValue");
+        dbc.setProperties(properties);
+        List<ServiceDescription> sdList = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
+        assertNotNull(sdList);
+        assertEquals(sdList.size(), 1);
+        ServiceDescription sd = sdList.get(0);
+        assertNotNull(sd);
+        assertNotNull(dbc.getWebServiceAnnot());
+        String pn = dbc.getWebServiceAnnot().portName();
+        String tns = dbc.getWebServiceAnnot().targetNamespace();
+        assertNotNull(pn);
+        assertNotNull(tns);
+        QName portQName = new QName(tns, pn);
+        EndpointDescription ed = sd.getEndpointDescription(portQName);
+        assertNotNull(ed);
+        
+        // now test the setPropertiesOnEndpointDesc method
+        DescriptionFactoryImpl.setPropertiesOnEndpointDesc(ed, dbc);
+        assertNotNull(ed.getProperty("testKey"));
+        assertEquals(ed.getProperty("testKey"), "testValue");
+        
     }
     
     private InputStream getXMLFileStream() {
