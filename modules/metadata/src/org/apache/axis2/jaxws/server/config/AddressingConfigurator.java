@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.server.config;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -59,10 +58,9 @@ public class AddressingConfigurator implements ServerConfigurator {
     		(Addressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(AddressingFeature.ID);
     	SubmissionAddressing submissionAddressing =
     		(SubmissionAddressing) ((EndpointDescriptionJava) endpointDescription).getAnnoFeature(SubmissionAddressingFeature.ID);
-    	AxisService service = endpointDescription.getAxisService();
     	Parameter namespace = new Parameter(AddressingConstants.WS_ADDRESSING_VERSION, null);
     	Parameter disabled = new Parameter(AddressingConstants.DISABLE_ADDRESSING_FOR_IN_MESSAGES, "false");
-    	String addressingRequired = AddressingConstants.ADDRESSING_UNSPECIFIED;
+    	Parameter required = new Parameter(AddressingConstants.ADDRESSING_REQUIREMENT_PARAMETER, AddressingConstants.ADDRESSING_UNSPECIFIED);
     	
     	if (addressing != null && submissionAddressing != null) {
             //Both annotations must have been specified.
@@ -76,19 +74,19 @@ public class AddressingConfigurator implements ServerConfigurator {
                 boolean submissionAddressingRequired = submissionAddressing.required();
 
                 if (w3cAddressingRequired || submissionAddressingRequired)
-                	addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+                	required.setValue(AddressingConstants.ADDRESSING_REQUIRED);
             }
             else if (w3cAddressingEnabled) {
             	namespace.setValue(AddressingConstants.Final.WSA_NAMESPACE);
             	
             	if (addressing.required())
-            		addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+            		required.setValue(AddressingConstants.ADDRESSING_REQUIRED);
             }
             else if (submissionAddressingEnabled) {
             	namespace.setValue(AddressingConstants.Submission.WSA_NAMESPACE);
             	
             	if (submissionAddressing.required())
-            		addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+            		required.setValue(AddressingConstants.ADDRESSING_REQUIRED);
             }
             else {
             	disabled.setValue("true");
@@ -102,7 +100,7 @@ public class AddressingConfigurator implements ServerConfigurator {
             	namespace.setValue(AddressingConstants.Final.WSA_NAMESPACE);
             	
             	if (addressing.required())
-            		addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+            		required.setValue(AddressingConstants.ADDRESSING_REQUIRED);
             }
             else {
             	namespace.setValue(AddressingConstants.Submission.WSA_NAMESPACE);
@@ -116,7 +114,7 @@ public class AddressingConfigurator implements ServerConfigurator {
             	namespace.setValue(AddressingConstants.Submission.WSA_NAMESPACE);
             	
             	if (submissionAddressing.required())
-            		addressingRequired = AddressingConstants.ADDRESSING_REQUIRED;
+            		required.setValue(AddressingConstants.ADDRESSING_REQUIRED);
             }
             else {
             	namespace.setValue(AddressingConstants.Final.WSA_NAMESPACE);
@@ -128,9 +126,10 @@ public class AddressingConfigurator implements ServerConfigurator {
     	}
     	
     	try {
+            AxisService service = endpointDescription.getAxisService();
     		service.addParameter(namespace);
     		service.addParameter(disabled);
-    		AddressingHelper.setAddressingRequirementParemeterValue(service, addressingRequired);
+    		service.addParameter(required);
             
             String value = Utils.getParameterValue(disabled);
     		if (JavaUtils.isFalseExplicitly(value)) {
