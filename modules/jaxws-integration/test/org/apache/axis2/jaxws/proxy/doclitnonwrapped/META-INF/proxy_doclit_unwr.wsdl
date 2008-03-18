@@ -94,7 +94,7 @@
 	</wsdl:binding>
 	
 	<wsdl:service name="ProxyDocLitUnwrappedService">
-		<wsdl:port binding="tns:ProxyDocLitnonWrapped" name="ProxyDocLitnonWrappedPort">
+		<wsdl:port binding="tns:ProxyDocLitnonWrapped" name="DocLitnonWrappedImplPort">
 			<soap:address location="http://@HOST@:@PORT@/jaxws.proxy/services/ProxyDocLitUnwrappedService" />
 		</wsdl:port>
 	</wsdl:service>

@@ -25,9 +25,12 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
-
-@WebServiceProvider(serviceName="ProxyDocLitWrappedService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+import javax.xml.ws.soap.SOAPBinding;
+@WebServiceProvider(
+        serviceName="ProxyDocLitWrappedService", 
+        wsdlLocation="META-INF/ProxyDocLitWrapped.wsdl", 
+        targetNamespace="http://doclitwrapped.proxy.test.org")
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class DocLitWrappedProxyImpl implements Provider<String> {
 
 	public String invoke(String invoke_str) {

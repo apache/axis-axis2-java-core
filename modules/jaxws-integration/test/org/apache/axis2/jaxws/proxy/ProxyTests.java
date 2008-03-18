@@ -135,14 +135,16 @@ public class ProxyTests extends AbstractTestCase {
     }
 
     public void testInvokeWithWSDL(){
-        try{ 
+
+    	try{ 
             if(!runningOnAxis){
                 return;
             }
             TestLogger.logger.debug("---------------------------------------");
             File wsdl= new File(wsdlLocation); 
             URL wsdlUrl = wsdl.toURL(); 
-            Service service = Service.create(wsdlUrl, serviceName);
+            Service service = Service.create(null, serviceName);
+//            Service service = Service.create(wsdlUrl, serviceName);
             String request = new String("some string request"); 
             Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
             TestLogger.logger.debug(">>Invoking Binding Provider property");
@@ -158,6 +160,7 @@ public class ProxyTests extends AbstractTestCase {
             e.printStackTrace(); 
             fail("Exception received" + e);
         }
+
     }
     
     public void testInvokeAsyncCallback(){

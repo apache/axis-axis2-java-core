@@ -26,9 +26,14 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
 
-@WebServiceProvider(serviceName="StringProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+
+@WebServiceProvider(
+        serviceName="StringProviderService", 
+        wsdlLocation="META-INF/echostring.wsdl", 
+        targetNamespace="http://stringprovider.sample.test.org")
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class StringProvider implements Provider<String> {
     
     public String invoke(String text) {

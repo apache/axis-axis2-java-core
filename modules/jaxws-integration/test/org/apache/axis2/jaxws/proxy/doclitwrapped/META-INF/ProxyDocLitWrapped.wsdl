@@ -293,7 +293,7 @@
 
 	<wsdl:service name="ProxyDocLitWrappedService">
 		<wsdl:port binding="tns:ProxyDocLitWrapped"
-			name="ProxyDocLitWrappedPort">
+			name="DocLitWrappedProxyImplPort">
 			<soap:address
 				location="http://localhost:9080/axis2/services/ProxyDocLitWrappedService/invoke" />
 		</wsdl:port>
