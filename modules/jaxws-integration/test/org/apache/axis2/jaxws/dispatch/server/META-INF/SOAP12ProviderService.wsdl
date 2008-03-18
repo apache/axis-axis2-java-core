@@ -108,9 +108,9 @@
 
    </wsdl:binding>
 
-   <wsdl:service name="SOAP12Service">
+   <wsdl:service name="SOAP12ProviderService">
 
-      <wsdl:port binding="impl:SOAP12Binding" name="SOAP12Port">
+      <wsdl:port binding="impl:SOAP12Binding" name="SOAP12ProviderPort">
 
          <wsdlsoap12:address location="http://localhost:9080/axis2/services/SOAP12Service"/>
 

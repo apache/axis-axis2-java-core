@@ -24,14 +24,17 @@ import org.apache.axis2.jaxws.TestLogger;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
 
 /**
  * A Provider&lt;String&gt; implementation used to test sending and 
  * receiving SOAP 1.2 messages.
  */
-@WebServiceProvider(serviceName="SOAP12ProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+@WebServiceProvider(
+        serviceName="SOAP12ProviderService", 
+        wsdlLocation="META-INF/SOAP12ProviderService.wsdl", 
+        targetNamespace="http://org/apache/axis2/jaxws/test/SOAP12")
+@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 public class SOAP12Provider implements Provider<String> {
 
     private static final String sampleResponse = 
