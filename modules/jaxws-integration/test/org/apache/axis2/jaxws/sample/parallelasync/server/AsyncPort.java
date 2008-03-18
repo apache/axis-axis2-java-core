@@ -264,12 +264,12 @@ public interface AsyncPort {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(operationName = "customAsync", action = "http://org/test/parallelasync/customAsync")
-    @WebResult(name = "response", targetNamespace = "")
-    @RequestWrapper(localName = "customAsync", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsync")
-    @ResponseWrapper(localName = "customAsyncResponse", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsyncResponse")
+    /*  TODO
+     * This should work...but for some reason exclude is not being picked up correctly.
+     *
+    @WebMethod(exclude=true)
     public String customAsync(
-        @WebParam(name = "request", targetNamespace = "")
         String request);
+        */
 
 }

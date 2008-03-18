@@ -1253,10 +1253,7 @@
                         <include>**/StringListTests.java</include>
                         <include>**/NonWrapTests.java</include>
                         <include>**/FaultyWebServiceTests.java</include> 
-
-                        
-                        <!-- Still Failing -->
-                        <!-- <include>**/ParallelAsyncTests.java</include> -->
+                        <include>**/ParallelAsyncTests.java</include>
                     </includes>
                     <systemProperties>
                         <property>
