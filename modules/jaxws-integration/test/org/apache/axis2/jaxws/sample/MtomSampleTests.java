@@ -60,7 +60,7 @@ public class MtomSampleTests extends AbstractTestCase {
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
-    public void _testSendImageAttachmentAPI11() throws Exception {
+    public void testSendImageAttachmentAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -104,7 +104,7 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
      */
-    public void _testSendImageAttachmentProperty11() throws Exception {
+    public void testSendImageAttachmentProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -145,7 +145,7 @@ public class MtomSampleTests extends AbstractTestCase {
      * Enable attachment optimization using both the SOAP11 binding
      * property for MTOM and the Binding API
      */
-    public void _testSendImageAttachmentAPIProperty11() throws Exception {
+    public void testSendImageAttachmentAPIProperty11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -194,7 +194,6 @@ public class MtomSampleTests extends AbstractTestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
-/*
     public void testSendImageAttachmentProperty12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -238,7 +237,6 @@ public class MtomSampleTests extends AbstractTestCase {
         
 
 	}
-  */
     
     /*
      * Enable attachment optimization using both the SOAP12 binding API
@@ -287,6 +285,8 @@ public class MtomSampleTests extends AbstractTestCase {
             SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
             fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
         } catch (Exception e) {
+            System.out.println(e.getClass());
+            System.out.println(e.toString());
             assertNotNull(e);
         }
         /*

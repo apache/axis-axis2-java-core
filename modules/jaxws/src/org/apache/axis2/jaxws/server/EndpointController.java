@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
+import org.apache.axis2.jaxws.server.endpoint.Utils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
@@ -192,16 +193,6 @@ public class EndpointController {
     
     protected boolean handleRequest(EndpointInvocationContext eic) throws AxisFault, WebServiceException {
         
-
-
-        //Not needed since this is already handled when eic reaches this level
-        //if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
-        //    Protocol protocol = request.getMessage().getProtocol();
-        //    MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
-        //    eic.setResponseMessageContext(faultContext);
-        //    return false;
-        //}
-
         MessageContext responseMsgContext = null;
 
         try {
@@ -212,6 +203,15 @@ public class EndpointController {
             Class serviceEndpoint = getServiceImplementation(request);
             EndpointDescription endpointDesc = getEndpointDescription(request);
             request.setEndpointDescription(endpointDesc);
+            
+            // Need to make sure the protocol (envelope ns)  of the request matches the binding
+            // expected by the service description
+            if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
+                Protocol protocol = request.getMessage().getProtocol();
+                MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
+                eic.setResponseMessageContext(faultContext);
+                return false;
+            }
             
             //  TODO: review: make sure the handlers are set on the InvocationContext
             //  This implementation of the JAXWS runtime does not use Endpoint, which

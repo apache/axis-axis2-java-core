@@ -34,6 +34,7 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 @WebService(serviceName="MtomSampleService",
 			endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
@@ -48,7 +49,7 @@ public class MtomSampleService implements MtomSample {
         ImageDepot output = (new ObjectFactory()).createImageDepot();
         Image image = null;
         try {
-            ByteArrayInputStream stream = (ByteArrayInputStream) data.getContent();
+            InputStream stream = (InputStream) data.getContent();
             image = ImageIO.read(stream);
             
             DataSource imageDS = new DataSourceImpl("image/jpeg", "test.jpg", image);
