@@ -391,30 +391,34 @@ public class SimpleMailListener implements Runnable, TransportListener {
                                                     String messageID) throws AxisFault{
         Hashtable mappingTable = (Hashtable) configurationContext.
                 getProperty(org.apache.axis2.transport.mail.Constants.MAPPING_TABLE);
-
-        if(mappingTable!=null&&messageID!=null){
-            String messageConetextId= (String) mappingTable.get(messageID);
-            if(messageConetextId!=null){
-                OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
-                if(opContext!=null && !opContext.isComplete()){
-                    AxisOperation axisOp = opContext.getAxisOperation();
-                    //TODO need to handle fault case as well ,
-                    //TODO  need to check whether the message contains fault , if so we need to get the fault message
-                    AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                    msgContext.setOperationContext(opContext);
-                    msgContext.setAxisMessage(inMessage);
-                    opContext.addMessageContext(msgContext);
-                    msgContext.setServiceContext(opContext.getServiceContext());
+        synchronized (mappingTable) {
+            if (mappingTable != null && messageID != null) {
+                String messageConetextId = (String) mappingTable.get(messageID);
+                if (messageConetextId != null) {
+                    OperationContext opContext = configurationContext.getOperationContext(messageConetextId);
+                    if (opContext != null && !opContext.isComplete()) {
+                        AxisOperation axisOp = opContext.getAxisOperation();
+                        //TODO need to handle fault case as well ,
+                        //TODO  need to check whether the message contains fault , if so we need to get the fault message
+                        AxisMessage inMessage = axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                        msgContext.setOperationContext(opContext);
+                        msgContext.setAxisMessage(inMessage);
+                        opContext.addMessageContext(msgContext);
+                        msgContext.setServiceContext(opContext.getServiceContext());
+                    }
                 }
             }
         }
-        Hashtable callBackTable = (Hashtable) configurationContext.getProperty(
-                org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE);
-        if(messageID!=null&&callBackTable!=null){
-            SynchronousMailListener listener = (SynchronousMailListener) callBackTable.get(messageID);
-            if(listener!=null){
-                listener.setInMessageContext(msgContext);
-                return false;
+
+        Hashtable callBackTable =
+                (Hashtable) configurationContext.getProperty(org.apache.axis2.transport.mail.Constants.CALLBACK_TABLE);
+        synchronized (callBackTable) {
+            if (messageID != null && callBackTable != null) {
+                SynchronousMailListener listener = (SynchronousMailListener) callBackTable.get(messageID);
+                if (listener != null) {
+                    listener.setInMessageContext(msgContext);
+                    return false;
+                }
             }
         }
         return true;
