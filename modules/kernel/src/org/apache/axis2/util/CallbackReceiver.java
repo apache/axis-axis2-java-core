@@ -50,14 +50,30 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore = new ConcurrentHashMap();
     }
 
-    public void addCallback(String MsgID, Callback callback) {
-        callbackStore.put(MsgID, callback);
-		if (log.isDebugEnabled()) log.debug("CallbackReceiver: add callback " + MsgID + ", " + callback + " ," + this);
+    public void addCallback(String msgID, Callback callback) throws AxisFault {
+    	putIfAbsent(msgID, callback);
     }
 
-    public void addCallback(String msgID, AxisCallback callback) {
-        callbackStore.put(msgID, callback);
-		if (log.isDebugEnabled()) log.debug("CallbackReceiver: add callback " + msgID + ", " + callback + " ," + this);
+    public void addCallback(String msgID, AxisCallback callback) throws AxisFault {
+    	putIfAbsent(msgID, callback);
+    }
+    
+    /**
+     * Inserts the specified key, value into the callback map. It throws an
+     * exception if the message id was a duplicate.
+     * 
+     * @param msgID The message id.
+     * @param callback The callback object.
+     * @throws AxisFault If the message id was a duplicate.
+     */
+    private final void putIfAbsent(String msgID, Object callback) throws AxisFault {
+    	if (callbackStore.putIfAbsent(msgID, callback) == null) {
+    		if (log.isDebugEnabled()) {
+                log.debug("CallbackReceiver: add callback " + msgID + ", " + callback + " ," + this);
+            }
+    	} else {
+    		throw new AxisFault("The Callback for MessageID " + msgID + " is a duplicate");
+    	}
     }
 
     public Object lookupCallback(String msgID) {
