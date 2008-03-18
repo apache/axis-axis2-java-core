@@ -25,10 +25,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Author: amila
- * Date: Jul 21, 2007
- */
 public class JavaTypeToConstructorMap {
 
     private static Map javaTypeToConstructorMap;

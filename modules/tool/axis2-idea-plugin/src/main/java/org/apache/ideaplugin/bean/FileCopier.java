@@ -25,11 +25,6 @@ import org.apache.tools.ant.types.FileSet;
 
 import java.io.File;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 23, 2005
- * Time: 6:15:54 PM
- */
 public class FileCopier extends Copy {
     public FileCopier() {
         this.setProject(new Project());

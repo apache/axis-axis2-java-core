@@ -19,7 +19,6 @@
 
 package org.apache.axis2.rpc;
 
-/** Author: Deepal Jayasinghe Date: Oct 12, 2005 Time: 12:03:55 PM */
 public class AddressBean {
     private String town;
     private int number;

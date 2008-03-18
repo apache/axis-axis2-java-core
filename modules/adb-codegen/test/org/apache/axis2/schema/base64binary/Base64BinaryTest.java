@@ -34,10 +34,6 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 
-/**
- * Author: amila
- * Date: May 19, 2007
- */
 public class Base64BinaryTest extends TestCase {
 
     public void testBase64Binary(){

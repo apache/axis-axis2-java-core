@@ -25,11 +25,6 @@ import javax.swing.table.AbstractTableModel;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 22, 2005
- * Time: 11:57:24 AM
- */
 public class ArchiveTableModel extends AbstractTableModel {
 
     final String[] columnNames = {"Operation Name", "Return Value", "Parameters ", "Select"};

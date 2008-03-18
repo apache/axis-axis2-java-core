@@ -19,10 +19,6 @@
 
 package org.apache.axis2.rmi.databind.dto;
 
-/**
- * Author: amila
- * Date: Jul 28, 2007
- */
 public class TestClass8 {
 
     private Integer[] param1;

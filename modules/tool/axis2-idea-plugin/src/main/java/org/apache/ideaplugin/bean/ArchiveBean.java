@@ -24,11 +24,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 17, 2005
- * Time: 11:40:40 PM
- */
 public class ArchiveBean {
 
     private boolean singleService = false;

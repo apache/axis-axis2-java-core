@@ -42,10 +42,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
-/**
- * Author: amila
- * Date: Jun 24, 2007
- */
 public class BasicServiceTest extends TestCase {
 
     public void testPopulateMetaData(){

@@ -19,11 +19,6 @@
 
 package org.apache.ideaplugin.bean;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 21, 2005
- * Time: 11:36:02 PM
- */
 public class OperationObj {
 
     private String OpName;

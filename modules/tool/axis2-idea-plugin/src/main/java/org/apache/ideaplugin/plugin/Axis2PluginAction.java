@@ -30,11 +30,6 @@ import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Sep 24, 2005
- * Time: 10:22:08 AM
- */
 public class Axis2PluginAction extends AnAction {
 
     private ImageIcon myIcon;

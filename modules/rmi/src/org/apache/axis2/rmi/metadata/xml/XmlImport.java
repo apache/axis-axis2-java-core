@@ -19,10 +19,6 @@
 
 package org.apache.axis2.rmi.metadata.xml;
 
-/**
- * Author: amila
- * Date: Jun 24, 2007
- */
 public class XmlImport {
 
     /**
