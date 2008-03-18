@@ -766,7 +766,7 @@ public class ConfigurationContext extends AbstractContext {
     private void deleteTempFiles(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
+            for (int i = 0; children != null && i < children.length; i++) {
                 deleteTempFiles(new File(dir, children[i]));
             }
         }
