@@ -1746,6 +1746,11 @@ class OperationDescriptionImpl
             answer = (returnTypeName.contains(Response.class.getName()) ||
                     returnTypeName.contains(Future.class.getName()));
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Method = " + methodName);
+            log.debug("Return Type = " + returnTypeName);
+            log.debug("Is client async = " + answer);
+        }
         return answer;
     }
 

@@ -1254,8 +1254,8 @@
                         <include>**/NonWrapTests.java</include>
                         <include>**/FaultyWebServiceTests.java</include> 
 
-                        <!--    These tests are currently failing    -->
-                        <!--          <include>**/ParallelAsyncTests.java</include> -->
+                        
+                        <include>**/ParallelAsyncTests.java</include>
                     </includes>
                     <systemProperties>
                         <property>
