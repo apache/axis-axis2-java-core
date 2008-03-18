@@ -54,4 +54,5 @@
     </operation>
     <phase name="NewPhase" before="Dispatch" after="Security" flow="InFlow"/>
     <phase name="NewPhase" before="Dispatch"  flow="InFaultFlow"/>
+    <phase name="Security" flow="InFlow"/> <!-- Make sure duplicates are OK -->
 </module>

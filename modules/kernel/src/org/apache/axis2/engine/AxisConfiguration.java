@@ -1203,17 +1203,21 @@ public class AxisConfiguration extends AxisDescription {
                 throw AxisFault.makeFault(e);
             }
         }
-        Phase phase = new Phase();
-        phase.setName(d.getName());
-        d.setTarget(phase);
 
         try {
             ec.deploy(d);
+
+            if (d.getTarget() == null) {
+                Phase phase = new Phase();
+                phase.setName(d.getName());
+                d.setTarget(phase);
+            }
+
             ec.rebuild();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
-        
+
         phaseList = ec.getChain();
 
         return phaseList;
