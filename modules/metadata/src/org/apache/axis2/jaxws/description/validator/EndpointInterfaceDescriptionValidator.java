@@ -74,7 +74,9 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
             if (wsdlOperationList.size() != dispatchableOpDescArray.length) {
                 addValidationFailure(this, "The number of operations in the WSDL " +
                         "portType does not match the number of methods in the SEI or " +
-                        "Web service implementation class.");
+                        "Web service implementation class.  " +
+                        "wsdl operations = [" + toString(wsdlOperationList) +"] " +
+                        "dispatch operations = [" + toString(dispatchableOpDescArray) +"]");
                 return INVALID;
             }
 
@@ -82,7 +84,9 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
             if (!checkOperationsMatchMethods(wsdlOperationList, dispatchableOpDescArray)) {
                 addValidationFailure(this, "The operation names in the WSDL portType " +
                         "do not match the method names in the SEI or Web service i" +
-                        "mplementation class.");
+                        "mplementation class.  " +
+                        "wsdl operations = [" + toString(wsdlOperationList) +"] " +
+                        "dispatch operations = [" + toString(dispatchableOpDescArray) +"]");
                 return INVALID;
             }
         }
@@ -119,5 +123,26 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
     private boolean validateSEIvsImplementation() {
         // REVIEW: This level of validation is currently being done by the DBC Composite validation
         return VALID;
+    }
+    
+    private static String toString(List wsdlOperationList) {
+        String result = "";
+        Iterator wsdlOpIter = wsdlOperationList.iterator();
+        while (wsdlOpIter.hasNext()) {
+            Object obj = wsdlOpIter.next();
+            if (obj instanceof Operation) {
+                Operation operation = (Operation)obj;
+                result += operation.getName() + " ";
+            }
+        }
+        return result;
+    }
+    
+    private static String toString(OperationDescription[] wsdlOpDescs) {
+        String result = "";
+        for (int i= 0; i<wsdlOpDescs.length; i++) {
+            result += wsdlOpDescs[i].getOperationName() + " ";
+        }
+        return result;
     }
 }
