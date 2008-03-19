@@ -667,10 +667,10 @@ class EndpointDescriptionImpl
             if (log.isDebugEnabled()) {
                 log.debug("WebServiceProvider without WSDL encountered");
             }
-            // REVIEW: Currently this is only supported for HTTP Bindings; SOAPBindings
-            //     for providers currently require that there be WSDL.
             String bindingType = getBindingType();
-            if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+            if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)||
+                    SOAPBinding.SOAP11HTTP_BINDING.equals(bindingType)||
+                    SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType)) {
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(composite, this);
             }
         }

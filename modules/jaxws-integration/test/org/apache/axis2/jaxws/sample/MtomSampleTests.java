@@ -194,7 +194,7 @@ public class MtomSampleTests extends AbstractTestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
-    public void _testSendImageAttachmentProperty12() throws Exception {
+    public void testSendImageAttachmentProperty12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         
@@ -245,7 +245,7 @@ public class MtomSampleTests extends AbstractTestCase {
      * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
      * 
      */
-    public void _testSendImageAttachmentAPI12() throws Exception {
+    public void testSendImageAttachmentAPI12() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
         

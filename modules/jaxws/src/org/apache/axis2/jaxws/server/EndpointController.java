@@ -204,14 +204,14 @@ public class EndpointController {
             EndpointDescription endpointDesc = getEndpointDescription(request);
             request.setEndpointDescription(endpointDesc);
             
-//            // Need to make sure the protocol (envelope ns)  of the request matches the binding
-//            // expected by the service description
-//            if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
-//                Protocol protocol = request.getMessage().getProtocol();
-//                MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
-//                eic.setResponseMessageContext(faultContext);
-//                return false;
-//            }
+            // Need to make sure the protocol (envelope ns)  of the request matches the binding
+            // expected by the service description
+            if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
+                Protocol protocol = request.getMessage().getProtocol();
+                MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
+                eic.setResponseMessageContext(faultContext);
+                return false;
+            }
             
             //  TODO: review: make sure the handlers are set on the InvocationContext
             //  This implementation of the JAXWS runtime does not use Endpoint, which

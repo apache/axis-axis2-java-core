@@ -24,10 +24,11 @@ import org.apache.axis2.jaxws.TestLogger;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.http.HTTPBinding;
 
 @WebServiceProvider(serviceName="StringMessageProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class StringMessageProvider implements Provider<String> {
     private static String responseGood = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>request processed</message></provider></soapenv:Body></soapenv:Envelope>";
     private static String responseBad  = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><provider><message>ERROR:null request received</message><provider></soapenv:Body></soapenv:Envelope>";

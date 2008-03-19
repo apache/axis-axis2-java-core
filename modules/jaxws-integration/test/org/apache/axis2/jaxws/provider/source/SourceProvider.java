@@ -34,13 +34,14 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.http.HTTPBinding;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 
 @WebServiceProvider(serviceName="SourceProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class SourceProvider implements Provider<Source> {
     
     // Same logic as StringProvider

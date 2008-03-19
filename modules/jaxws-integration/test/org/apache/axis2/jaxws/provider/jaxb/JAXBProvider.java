@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.http.HTTPBinding;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,7 +42,7 @@ import java.io.ByteArrayOutputStream;
  *
  */
 @WebServiceProvider(serviceName="JAXBProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class JAXBProvider implements Provider<Source> {
     
     /**

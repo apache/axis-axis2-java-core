@@ -30,13 +30,14 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.http.HTTPBinding;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 
 @WebServiceProvider(serviceName="SourceMessageProviderService")
-@BindingType(HTTPBinding.HTTP_BINDING)
+@BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 public class SourceMessageProvider implements Provider<Source> {
     String responseAsString = new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>some response</return_str></ns2:ReturnType></soapenv:Body></soapenv:Envelope>");
     public Source invoke(Source source) {
