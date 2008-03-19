@@ -126,10 +126,10 @@ public class HandlerInvokerUtils {
              */
             HandlerChainProcessor.convertToFaultMessage(mepMessageCtx, re, proto);
             if (mepMessageCtx.getRequestMessageContext() != null) {
-                mepMessageCtx.getRequestMessageContext().setCausedByException(new AxisFault("", re));
+                mepMessageCtx.getRequestMessageContext().setCausedByException(new AxisFault(re.getMessage(), re));
             }
             if (mepMessageCtx.getResponseMessageContext() != null) {
-                mepMessageCtx.getResponseMessageContext().setCausedByException(new AxisFault("", re));
+                mepMessageCtx.getResponseMessageContext().setCausedByException(new AxisFault(re.getMessage(), re));
             }
             return false;
         }
