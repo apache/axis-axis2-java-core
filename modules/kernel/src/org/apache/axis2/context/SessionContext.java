@@ -38,6 +38,7 @@ import java.io.ObjectOutput;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * All the engine components are stateless across the executions and all the states should be kept in the
@@ -71,8 +72,8 @@ public class SessionContext extends AbstractContext
 
 
     // TODO: investigate whether these collections need to be saved
-    private transient HashMap serviceContextMap = new HashMap();
-    private transient HashMap serviceGroupContextMap = new HashMap();
+    private transient Map serviceContextMap = new HashMap();
+    private transient Map serviceGroupContextMap = new HashMap();
 
     private String cookieID;
 
@@ -287,6 +288,8 @@ public class SessionContext extends AbstractContext
         // done
         //---------------------------------------------------------
 
+        serviceContextMap = new HashMap();
+        serviceGroupContextMap = new HashMap();
     }
 
     public ConfigurationContext getRootContext() {
