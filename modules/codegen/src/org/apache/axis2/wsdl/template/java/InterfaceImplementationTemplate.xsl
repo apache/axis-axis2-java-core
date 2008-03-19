@@ -119,20 +119,9 @@
     private void populateFaults(){
          <xsl:for-each select="method">
            <xsl:for-each select="fault/param">
-              faultExceptionNameMap.put( new javax.xml.namespace.QName(
-                 "<xsl:value-of select="@namespace"/>",
-                 "<xsl:value-of select="@localname"/>"),
-                 "<xsl:value-of select="@name"/>"
-               );
-              faultExceptionClassNameMap.put(new javax.xml.namespace.QName(
-                "<xsl:value-of select="@namespace"/>",
-                "<xsl:value-of select="@localname"/>"),
-                "<xsl:value-of select="@name"/>");
-               faultMessageMap.put( new javax.xml.namespace.QName(
-                 "<xsl:value-of select="@namespace"/>",
-                 "<xsl:value-of select="@localname"/>"),
-                 "<xsl:value-of select="@instantiatableType"/>"
-               );
+              faultExceptionNameMap.put( new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@localname"/>"),"<xsl:value-of select="@name"/>");
+              faultExceptionClassNameMap.put(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@localname"/>"),"<xsl:value-of select="@name"/>");
+              faultMessageMap.put( new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>","<xsl:value-of select="@localname"/>"),"<xsl:value-of select="@instantiatableType"/>");
            </xsl:for-each>
         </xsl:for-each>
 
