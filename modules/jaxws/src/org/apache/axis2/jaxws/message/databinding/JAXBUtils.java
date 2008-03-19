@@ -155,7 +155,59 @@ public class JAXBUtils {
 
         // Get the innerMap 
         Map<String, JAXBContextValue> innerMap = null;
-        if(cacheKey != null) {
+        innerMap = getInnerMap(cacheKey, cl);
+        if (innerMap == null) {
+        	synchronized(jaxbMap) {
+        		innerMap = getInnerMap(cacheKey, cl);
+        		if(innerMap==null) {
+        			adjustPoolSize(jaxbMap);
+        			innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
+        			jaxbMap.put(cl, innerMap);
+        		}
+        	}
+        }
+
+        if (contextPackages == null) {
+            contextPackages = new TreeSet<String>();
+        }
+
+        JAXBContextValue contextValue = innerMap.get(key);
+        if (contextValue == null) {
+        	synchronized (innerMap) {
+        		contextValue = innerMap.get(key);
+        		if(contextValue==null) {
+        			adjustPoolSize(innerMap);
+        			
+        			// Create a copy of the contextPackages.  This new TreeSet will
+        			// contain only the valid contextPackages.
+        			// Note: The original contextPackage set is accessed by multiple 
+        			// threads and should not be altered.
+        			
+        			TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
+        			contextValue = createJAXBContextValue(validContextPackages, cl);
+        			
+        			// Put the new context in the map keyed by both the original and valid list of packages
+        			String validPackagesKey = validContextPackages.toString();
+        			innerMap.put(key, contextValue);
+        			innerMap.put(validPackagesKey, contextValue);
+        			if (log.isDebugEnabled()) {
+        				log.debug("JAXBContext [created] for " + key);
+        				log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
+        			}
+        		}
+			}
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("JAXBContext [from pool] for " + key);
+            }
+        }
+        constructionType.value = contextValue.constructionType;
+        return contextValue.jaxbContext;
+    }
+
+	private static Map<String, JAXBContextValue> getInnerMap(ClassLoader cacheKey, ClassLoader cl) {
+		Map<String, JAXBContextValue> innerMap;
+		if(cacheKey != null) {
             if(log.isDebugEnabled()) {
                 log.debug("Using supplied classloader to retrieve JAXBContext: " + 
                         cacheKey);
@@ -168,45 +220,8 @@ public class JAXBUtils {
             }
             innerMap = jaxbMap.get(cl);
         }
-        if (innerMap == null) {
-            adjustPoolSize(jaxbMap);
-            innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
-            jaxbMap.put(cl, innerMap);
-        }
-
-        if (contextPackages == null) {
-            contextPackages = new TreeSet<String>();
-        }
-
-        JAXBContextValue contextValue = innerMap.get(key);
-        if (contextValue == null) {
-            adjustPoolSize(innerMap);
-
-            // Create a copy of the contextPackages.  This new TreeSet will
-            // contain only the valid contextPackages.
-            // Note: The original contextPackage set is accessed by multiple 
-            // threads and should not be altered.
-            
-            TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
-            contextValue = createJAXBContextValue(validContextPackages, cl);
-            
-            // Put the new context in the map keyed by both the original and valid list of packages
-            String validPackagesKey = validContextPackages.toString();
-            innerMap.put(key, contextValue);
-            innerMap.put(validPackagesKey, contextValue);
-            if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [created] for " + key);
-                log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
-            }
-
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [from pool] for " + key);
-            }
-        }
-        constructionType.value = contextValue.constructionType;
-        return contextValue.jaxbContext;
-    }
+		return innerMap;
+	}
 
     /**
      * Create a JAXBContext using the contextPackages
@@ -405,6 +420,7 @@ public class JAXBUtils {
             log.debug("Unmarshaller placed back into pool");
         }
         if (ENABLE_UNMARSHALL_POOLING) {
+        	unmarshaller.setAttachmentUnmarshaller(null);
             upool.put(context, unmarshaller);
         }
     }
