@@ -225,7 +225,7 @@ class ArtifactProcessor {
      */
     private static String getPackageName(String className) {
         int index = className.lastIndexOf(".");
-        if (index == 0) {
+        if (index <= 0) {
             return "";
         } else {
             return className.substring(0, index);
@@ -238,7 +238,7 @@ class ArtifactProcessor {
      */
     private static String getSimpleClassName(String className) {
         int index = className.lastIndexOf(".");
-        if (index == 0) {
+        if (index <= 0) {
             return className;
         } else {
             return className.substring(index + 1);
