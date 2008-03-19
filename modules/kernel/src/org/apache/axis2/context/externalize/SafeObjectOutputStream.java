@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A SafeObjectOutputStream provides extra mechanisms to ensure that 
@@ -75,7 +76,7 @@ public class SafeObjectOutputStream implements ObjectOutput,
     // an NotSerializableException
     // note that the Hashtable is synchronized by Java so we shouldn't need to 
     // do extra control over access to the table
-    public static Hashtable notSerializableList = new Hashtable();
+    public static final Hashtable notSerializableList = new Hashtable();
     
     /**
      * Add the SafeOutputStream if necessary.
@@ -248,15 +249,11 @@ public class SafeObjectOutputStream implements ObjectOutput,
             return false;
         } else {
             out.writeBoolean(ACTIVE_OBJECT);
-            // TODO Change to entry set to avoid second lookup
-            Iterator it = map.keySet().iterator();
-
+            Iterator it = map.entrySet().iterator();
             while (it.hasNext()) {
-                Object key = it.next();
-                Object value = map.get(key);
-                writePair(key, false, value, false);
-            }
-            // Empty object indicates end of list
+            	final Map.Entry entry = (Entry) it.next();
+            	writePair(entry.getKey(), false, entry.getValue(), false);
+            }            // Empty object indicates end of list
             out.writeBoolean(EMPTY_OBJECT);
         }
         return true;
@@ -708,7 +705,7 @@ public class SafeObjectOutputStream implements ObjectOutput,
      * MyBAOS is a ByteArrayOutputStream with a few additions.
      *
      */
-    class MyBAOS extends ByteArrayOutputStream {
+    static class MyBAOS extends ByteArrayOutputStream {
         /**
          * Return direct access to the buffer without creating a copy of the byte[]
          * @return buf
@@ -730,12 +727,12 @@ public class SafeObjectOutputStream implements ObjectOutput,
      * MyOOS is an ObjectOutputStream with a few performant additions.
      *
      */
-    class MyOOS extends ObjectOutputStream {
+    static class MyOOS extends ObjectOutputStream {
         MyBAOS baos;
         int dataOffset;
         MyOOS(MyBAOS baos) throws IOException {
             super(baos);
-            flush();
+            super.flush();
             this.baos = baos;
             
             // Capture the data offset 

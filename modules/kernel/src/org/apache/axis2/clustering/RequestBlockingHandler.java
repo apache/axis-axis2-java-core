@@ -66,7 +66,7 @@ public class RequestBlockingHandler extends AbstractHandler {
             // Allow only NodeManager service commit requests to pass through. Block all others
             AxisService axisService = msgContext.getAxisService();
             if (!axisService.getName().equals(ClusteringConstants.NODE_MANAGER_SERVICE)) {
-                if (!msgContext.getAxisOperation().getName().equals("commit")) {
+                if (!msgContext.getAxisOperation().getName().getLocalPart().equals("commit")) {
                     throw new AxisFault("System is being reinitialized. " +
                                         "Please try again in a few seconds.");
                 } else {

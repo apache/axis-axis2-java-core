@@ -56,7 +56,7 @@ public class ObjectInputStreamWithCL extends java.io.ObjectInputStream
 
     /** The class resolver */
 
-    protected static ClassResolver resolver;
+    protected ClassResolver resolver;
     static
     {
         primClasses.put("boolean", boolean.class);
