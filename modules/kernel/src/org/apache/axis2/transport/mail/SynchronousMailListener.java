@@ -90,9 +90,7 @@ public class SynchronousMailListener {
                     inMessageContext.getProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE));
             msgCtx.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
             msgCtx.setEnvelope(inMessageContext.getEnvelope());
-            if (!operationContext.isComplete()) {
-                operationContext.addMessageContext(msgCtx);
-            }
+
         }
         this.inMessageContext = inMessageContext;
         log.info(" SynchronousMailListener found the required message.");
