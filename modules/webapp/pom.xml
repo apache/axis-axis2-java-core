@@ -1326,6 +1326,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${version}</finalName>
