@@ -101,12 +101,18 @@ public class JAXBCustomBuilder implements CustomBuilder {
         // Don't unmarshall SOAPFaults or anything else in the SOAP 
         // namespace.
         // Don't unmarshall elements that are unqualified
-        if (namespace == null || namespace.length() == 0 ||
+        if (localPart == null || namespace == null || namespace.length() == 0 ||
             SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE.equals(namespace) ||
             SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(namespace)) {
             return false;
         }
-        return true;
+       
+        // Don't unmarshal if this looks like encrypted data
+        if (localPart.equals("EncryptedData")) {
+            return false;
+        }
         
+        return true;
+                
     }
 }
