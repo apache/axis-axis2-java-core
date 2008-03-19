@@ -209,6 +209,7 @@ public class AxisEngine {
             }
         }
         catch (AxisFault e) {
+            log.error(e.getMessage(), e);
             msgContext.setFailureReason(e);
             flowComplete(msgContext);
             throw e;
