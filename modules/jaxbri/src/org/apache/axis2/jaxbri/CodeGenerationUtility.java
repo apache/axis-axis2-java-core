@@ -122,7 +122,8 @@ public class CodeGenerationUtility {
                     XmlSchema key = null;
                     for (Iterator iter = schemaToInputSourceMap.keySet().iterator();iter.hasNext();) {
                         key = (XmlSchema) iter.next();
-                        if (key.getTargetNamespace().equals(publicId)) {
+                        String nsp = key.getTargetNamespace();
+                        if (nsp != null && nsp.equals(publicId)) {
 
                             // when returning the input stream we have to always return a new
                             // input stream.
