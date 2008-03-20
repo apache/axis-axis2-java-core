@@ -22,6 +22,7 @@ package org.apache.axis2.transport;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.CachedFileDataSource;
+import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
@@ -36,6 +37,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.ApplicationXMLFormatter;
@@ -479,7 +481,8 @@ public class TransportUtils {
            }
            
        	Attachments attachments = msgContext.getAttachmentMap();
-           if (attachments != null && BuilderUtil.isAttachmentsCacheEnabled(msgContext)) {
+       	LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
+           if (attachments != null) {
                String [] keys = attachments.getAllContentIDs(); 
                if (keys != null) {
                	String key = null;
@@ -493,13 +496,33 @@ public class TransportUtils {
                            	file = ((CachedFileDataSource)dataSource).getFile();
                            	if (log.isDebugEnabled()) {
                                    log.debug("Delete cache attachment file: "+file.getName());
-                               }
-                           	file.delete();
+                            }
+                           	if(lcm!=null){
+                                if(log.isDebugEnabled()){
+                                    log.debug("deleting file using lifecyclemanager");
+                                }
+                                lcm.delete(file);
+                            }else{
+                                file.delete();
+                            }
                            }
                        }
                        catch (Exception e) {
+                    	   if (log.isDebugEnabled()) {
+                               log.debug("Delete cache attachment file failed"+ e.getMessage());
+                           }
+
                            if (file != null) {
-                               file.deleteOnExit();                            
+                               if(lcm!=null){
+                                   try{                        			   
+                                       lcm.deleteOnExit(file);
+                                   }catch(Exception ex){
+                                       file.deleteOnExit();
+                                   }
+                               }
+                               else{
+                                   file.deleteOnExit();
+                               }
                            }
                        }
                    }
