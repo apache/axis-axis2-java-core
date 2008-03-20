@@ -28,7 +28,6 @@ import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
@@ -229,13 +228,12 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
-        String wsdlLocation = ((ServiceDescriptionWSDL) endpointDesc.getServiceDescription()).getWSDLLocation();
         
         if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
             throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlLocation, addressingNamespace);
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, null, addressingNamespace);
         
         try {
         	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
