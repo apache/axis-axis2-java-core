@@ -300,6 +300,10 @@ public class WSDLDefinitionWrapper implements Definition {
 
         return wrapperImpl.getUnwrappedDefinition();
     }
+    
+    public int getMemoryLimitType() {
+        return this.reduceWSDLMemoryType;
+    }
 
 
     //-------------------------------------------------------------------------

@@ -65,11 +65,6 @@ import java.util.Map;
  * with a lower memory footprint.  This is useful for certain
  * environments.
  *
- * This class makes the decision on which implementation to use
- * to reduce memory footprint.  This allows other implementations
- * to be used for specific environments without adding lots of extra
- * overhead to every environment.
- *
  */
 public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
 

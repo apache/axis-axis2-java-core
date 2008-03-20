@@ -23,6 +23,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -50,6 +51,7 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -68,6 +70,10 @@ import java.util.jar.JarFile;
  * This class provides support for processing a WSDL4J definition
  * with a lower memory footprint.  This is useful for certain
  * environments.
+ * 
+ * The Type and Documentation objects consume the most space
+ * in many scenarios.  This implementation reloads these objects
+ * when then they are requested.
  */
 public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
@@ -85,9 +91,22 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     private URL wsdlURL = null;
     private String wsdlExplicitURI = null;
     private String wsdlDocumentBaseURI = null;
+    
+    
+    // The wsdlDefinition always has the Types and DocumentElement
+    // purged from it.
+    // If USE_WEAK_REFERENCES is true, then we keep a weak reference
+    // to these objects.
+    // If USE_WEAK_REFERENCES is false, then a loadDefinition is always
+    // performed to get the Type or DocumentationElement
+    
+    private static boolean USE_WEAK_REFERENCES = true;
+    private transient WeakReference weakTypes = null;
+    private transient WeakReference weakDocElement = null;
 
     /**
      * Constructor
+     * The WSDL Defintion object is owned by the WSDLWrapperReloadImpl object.
      * 
      * @param def    The WSDL Definition
      */
@@ -102,6 +121,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
     /**
      * Constructor
+     * The WSDL Defintion object is owned by the WSDLWrapperReloadImpl object.
      * 
      * @param def    The WSDL Definition
      * @param wURL   The URL for the wsdl
@@ -147,11 +167,8 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                     wsdlExplicitURI = getExplicitURI(wsdlURL);
                 }
 
-                // remove the types section
-                def.setTypes(null);
-
-                // remove the dom section
-                def.setDocumentationElement(null);
+                // Release the Types and DocumentationElement Resources
+                releaseResources();
 
             } catch (Exception e) {
                 if (isDebugEnabled) {
@@ -174,22 +191,128 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     //-------------------------------------------------------------------------
 
     /*
-     * Releases objects to reduce memory footprint.
+     * Releases Type and DocumentElement Resources
      */
     public void releaseResources() {
         if (wsdlDefinition != null) {
-            wsdlDefinition.setTypes(null);
-            wsdlDefinition.setDocumentationElement(null);
+            Types types = wsdlDefinition.getTypes();
+            if (types != null) {
+                wsdlDefinition.setTypes(null);
+            }
+            this.setCachedTypes(types);
+            
+            Element element = wsdlDefinition.getDocumentationElement();
+            if (element != null) {
+                wsdlDefinition.setDocumentationElement(null);
+            }
+            this.setCachedDocElement(element);
+            
+        }
+    }
+    
+    /**
+     * Store the cached type.  Since this is a weak reference,
+     * the gc may remove it.
+     * @param types
+     */
+    private void setCachedTypes(Types types) {
+        if (USE_WEAK_REFERENCES) {
+            if (weakTypes == null || weakTypes.get() == null) {
+                if (types != null) {
+                    weakTypes = new WeakReference(types);
+                } else {
+                    // The wsdl has no types
+                    weakTypes = new WeakReference(Boolean.FALSE);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get the cached type.  Since this is a weak reference,
+     * the gc may remove it.
+     * @return types
+     */
+    private Types getCachedTypes() {
+        if (USE_WEAK_REFERENCES) {
+            if (weakTypes == null || weakTypes.get() == null) {
+                return null;
+            } else if (weakTypes.get().equals(Boolean.FALSE)) {
+                // The wsdl has no types
+                return null;
+            } else {
+                return (Types) weakTypes.get();
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    private boolean hasCachedTypes() {
+        if (USE_WEAK_REFERENCES) {
+            return (weakTypes != null && weakTypes.get() != null);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Store the cached document element.  Since this is a weak reference,
+     * the gc may remove it.
+     * @param e Element
+     */
+    private void setCachedDocElement(Element e) {
+        if (USE_WEAK_REFERENCES) {
+            if (weakDocElement == null || weakDocElement.get() == null) {
+                if (e != null) {
+                    weakDocElement = new WeakReference(e);
+                } else {
+                    // The wsdl has no document element
+                    weakDocElement = new WeakReference(Boolean.FALSE);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get the cached type.  Since this is a weak reference,
+     * the gc may remove it.
+     * @return types
+     */
+    private Element getCachedDocElement() {
+        if (USE_WEAK_REFERENCES) {
+            if (weakDocElement == null || weakDocElement.get() == null) {
+                return null;
+            } else if (weakDocElement.get().equals(Boolean.FALSE)) {
+                // The wsdl has no document element
+                return null;
+            } else {
+                return (Element) weakDocElement.get();
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    private boolean hasCachedDocElement() {
+        if (USE_WEAK_REFERENCES) {
+            return (weakDocElement != null && weakDocElement.get() != null);
+        } else {
+            return false;
         }
     }
 
 
     /*
-     * Returns the WSDL4J Definition object that is being wrapped
+     * Returns a full, reloaded,WSDL4J Definition object.
+     * This avoids the memory saving capabilities of this wrapper.
+     * The caller must not save the returned defintion.
+     * @return Defintion
      */
     public Definition getUnwrappedDefinition() {
         Definition def;
         if (wsdlDefinition == null) {
+            // If no definiotn, load one
             try {
                 def = loadDefinition();
             } catch (Exception e) {
@@ -202,21 +325,30 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                 def = null;
             }
         } else if (wsdlDefinition instanceof WSDLWrapperBasicImpl) {
+            // If wrapping another wrapper, then delegate
             def = ((WSDLWrapperBasicImpl) wsdlDefinition).getUnwrappedDefinition();
         } else {
-        	// we should reinflate the WSDL when this method is called
-        	try {
-        		def = loadDefinition();
-        		if(def == null) {
-        			def = wsdlDefinition;
-        		}
-        	}
-        	catch (Exception e) {
+            // The question is whether a new WSDLDefinition should be loaded and 
+            // returned or whether the existing definition (w/o the Type 
+            // and DocumentElement) should be returned.
+            // 
+            // The answer is to reload the WSDLDefinition and provide the new
+            // one without affecting the existing WSDLDefintion that is stored.
+            // The onus is on the caller to free this new WSDLDefinition and 
+            // not hold onto it.  If the calller wants memory saving 
+            // capabilities, then the caller should be using this wrapper directly.
+            try {
+                def = loadDefinition();
+                if(def == null) {
+                    def = wsdlDefinition;
+                }
+            }
+            catch (Exception e) {
                 // unable to load the definition
                 if (isDebugEnabled) {
                     log.debug(myClassName
-                            + ".getUnwrappedDefinition(): error trying to load Definition    ["
-                            + e.getClass().getName() + "]  error [" + e.getMessage() + "] ", e);
+                              + ".getUnwrappedDefinition(): error trying to load Definition    ["
+                              + e.getClass().getName() + "]  error [" + e.getMessage() + "] ", e);
                 }
                 def = wsdlDefinition;
             }
@@ -457,7 +589,21 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
 
     public Types getTypes() {
-
+        if (isDebugEnabled) {
+            log.debug(myClassName + ".getTypes() call stack =" + JavaUtils.callStackToString());
+        }
+        // See if we have a weak reference to the Type
+        
+        if (hasCachedTypes()) {
+            Types t = getCachedTypes();
+            if (isDebugEnabled) {
+                log.debug(myClassName + ".getTypes() from weak reference [" + t
+                            + "]");
+            }
+            return t;
+        }
+        
+        
         // reload the wsdl definition object
         // TODO: what about any changes that have been made to the definition?
 
@@ -473,6 +619,8 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
         if (def != null) {
             Types t = def.getTypes();
+            setCachedTypes(t);
+            setCachedDocElement(def.getDocumentationElement());
 
             if (isDebugEnabled) {
                 log.debug(myClassName + ".getTypes() from reloaded wsdl Definition returning [" + t
@@ -762,6 +910,22 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
     public org.w3c.dom.Element getDocumentationElement() {
 
+        if (isDebugEnabled) {
+            log.debug(myClassName + ".getDocumentationElement() call stack =" + 
+                      JavaUtils.callStackToString());
+        }
+        
+        // See if we have a weak reference to the DocumentElement
+        if (hasCachedDocElement()) {
+            Element e = getCachedDocElement();
+
+            if (log.isDebugEnabled()) {
+                log.debug(myClassName
+                          + ".getDocumentationElement() from weak reference ");
+            }
+            return e;
+        }    
+        
         // reload the wsdl definition object
         // TODO: what about any online changes that have been made to the definition?
 
@@ -782,6 +946,8 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
         if (def != null) {
             org.w3c.dom.Element docElement = def.getDocumentationElement();
+            setCachedDocElement(docElement);
+            setCachedTypes(def.getTypes());
 
             if (isDebugEnabled) {
                 if (docElement != null) {
@@ -1191,6 +1357,13 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         return url;
     }
 
+    /**
+     * Load and Return a Definition object.
+     * (The caller will determine if the Definition object should have 
+     * its resources freed or not)
+     * @return Definition
+     * @throws WSDLException
+     */
     private Definition loadDefinition() throws WSDLException {
 
         Definition def = null;
@@ -1207,16 +1380,19 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                 if (isDebugEnabled) {
                     log.debug(myClassName + ".loadDefinition(): "
                             + "Exception thrown from AccessController: " + e);
+                    log.debug("Call Stack = " + JavaUtils.callStackToString());
                 }
                 WSDLException we = new WSDLException("WSDLWrapperReloadImpl : ", e.getMessage(), e);
                 throw we;
             }
         }
 
+        // Loading the wsdl is expensive.  Dump the callstack.. so that we 
+        // support can look at the trace and determine if this class is being used incorrectly.
         if (isDebugEnabled) {
             log.debug(myClassName + ".loadDefinition():  returning Definition [" + def + "]");
+            log.debug("Call Stack = " + JavaUtils.callStackToString());
         }
-
         return def;
     }
 
@@ -1299,7 +1475,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         } catch (PrivilegedActionException e) {
             throw (WSDLException) e.getException();
         }
-		// prevent system out from occurring
+	// prevent system out from occurring
         reader.setFeature(com.ibm.wsdl.Constants.FEATURE_VERBOSE, false);
         return reader;
     }

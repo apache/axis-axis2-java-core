@@ -879,7 +879,9 @@ class EndpointDescriptionImpl
             // Note that the axis service builder takes only the localpart of the port qname.
             // TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
 
-            Definition def = getServiceDescriptionImpl().getWSDLWrapper().getUnwrappedDefinition();
+            
+            // Use getDefinition() so that we have the advantages of the memory features.
+            Definition def = getServiceDescriptionImpl().getWSDLWrapper().getDefinition();
 
             WSDL11ToAxisServiceBuilder serviceBuilder =
                     new WSDL11ToAxisServiceBuilder(def,
@@ -939,12 +941,16 @@ class EndpointDescriptionImpl
                     WSDLDefinitionWrapper wrapper = 
                         (WSDLDefinitionWrapper)  wsdlWrapperParam.getValue();
                     
-                    Definition wsdlDef = wrapper.getUnwrappedDefinition();
-                    
-                    WSDLDefinitionWrapper wrapper2 = 
+                    // If only the basic wrapper is being used, upgrade to the
+                    // RELOAD wrapper
+                    if (wrapper.getMemoryLimitType() == 0) {
+                        Definition wsdlDef = wrapper.getUnwrappedDefinition();
+
+                        WSDLDefinitionWrapper wrapper2 = 
                             new WSDLDefinitionWrapper(wsdlDef, true, 2);
-                    
-                    wsdlWrapperParam.setValue(wrapper2);
+
+                        wsdlWrapperParam.setValue(wrapper2);
+                    }
                 }
             }
             axisService.setName(createAxisServiceName());
