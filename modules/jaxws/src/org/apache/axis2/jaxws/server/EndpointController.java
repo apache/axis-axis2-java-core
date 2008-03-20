@@ -320,15 +320,18 @@ public class EndpointController {
         } finally {
         	// at this point, we are done with handler instances on the server; call @PreDestroy on all of them
             HandlerLifecycleManager hlm = createHandlerlifecycleManager();
-            for (Iterator it = eic.getHandlers().iterator(); it.hasNext();) {
-				try {
-					Handler handler = (Handler) it.next();
-					hlm.destroyHandlerInstance(request, handler);
-				} catch (Exception e) {
-					// TODO: can we ignore this?
-					throw ExceptionFactory.makeWebServiceException(e);
-				}
-			}
+            List<Handler> list = eic.getHandlers();
+            if(list != null) {
+                for (Iterator it = list.iterator(); it.hasNext();) {
+                    try {
+                        Handler handler = (Handler) it.next();
+                        hlm.destroyHandlerInstance(request, handler);
+                    } catch (Exception e) {
+                        // TODO: can we ignore this?
+                        throw ExceptionFactory.makeWebServiceException(e);
+                    }
+                }
+            }
             responseReady(eic);
             restoreRequestMessage(request);
         }
