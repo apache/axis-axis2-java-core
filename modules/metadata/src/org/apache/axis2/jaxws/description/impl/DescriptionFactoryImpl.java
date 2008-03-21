@@ -60,8 +60,6 @@ import java.util.Map;
  */
 public class DescriptionFactoryImpl {
     private static final Log log = LogFactory.getLog(DescriptionFactoryImpl.class);
-    private static ClientConfigurationFactory clientConfigFactory =
-            ClientConfigurationFactory.newInstance();
     private static Map<DescriptionKey, ServiceDescription> cache =
             new Hashtable<DescriptionKey, ServiceDescription>();
 
@@ -395,11 +393,7 @@ public class DescriptionFactoryImpl {
     }
 
     public static ClientConfigurationFactory getClientConfigurationFactory() {
-
-        if (clientConfigFactory == null) {
-            clientConfigFactory = ClientConfigurationFactory.newInstance();
-        }
-        return clientConfigFactory;
+        return ClientConfigurationFactory.newInstance();
     }
 
     /**

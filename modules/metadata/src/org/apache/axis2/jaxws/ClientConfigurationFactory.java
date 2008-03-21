@@ -40,6 +40,8 @@ public class ClientConfigurationFactory {
     
     private static final Log log = LogFactory.getLog(ClientConfigurationFactory.class);
     private ConfigurationContext configContext = null;
+    private String repoPath = null;
+    private String axisConfigPath = null;
 
     /** Returns a ClientConfigurationFactory object. */
     public static ClientConfigurationFactory newInstance() {
@@ -60,6 +62,17 @@ public class ClientConfigurationFactory {
     }
 
     /**
+     * Create a ConfigurationContext from the specified repository and axis2.xml 
+     * 
+     * @param configurator
+     */
+    public ClientConfigurationFactory(String repoPath,
+            String axisConfigPath) {
+        this.repoPath = repoPath;
+        this.axisConfigPath = axisConfigPath;
+    }
+
+    /**
      * Default constructor
      */
     public ClientConfigurationFactory() {
@@ -76,9 +89,14 @@ public class ClientConfigurationFactory {
             return configContext;
         }
         
-        // Get the system properties for axis2.xml and the repository.
-        String repoPath = getProperty_doPriv(Constants.AXIS2_REPO_PATH);
-        String axisConfigPath = getProperty_doPriv(Constants.AXIS2_CONFIG_PATH);
+        if(repoPath == null)  {
+            // Get the system properties for the repository.
+            repoPath = getProperty_doPriv(Constants.AXIS2_REPO_PATH);
+        }
+        if(axisConfigPath == null) {
+            // Get the system properties for axis2.xml 
+            axisConfigPath = getProperty_doPriv(Constants.AXIS2_CONFIG_PATH);
+        }
         if (log.isDebugEnabled()) {
             log.debug("Axis2 repository path : " + repoPath);
             log.debug("Axis2 Config path : " + axisConfigPath);
