@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.samples.ping.PingStringInput;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import java.util.concurrent.Future;
+import java.net.URL;
 
 /**
  * SampleClient
@@ -188,34 +189,34 @@ public class SampleClient {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT12;
                     }
-                    buildEcho12(uriString + urlSuffix, message);
+                    buildEcho12(uriString + urlSuffix, null, message);
                 } else if (servtype.equalsIgnoreCase("async")) {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT12;
                     }
-                    buildAsync12(uriString + urlSuffix, message, timeout, wireasync);
+                    buildAsync12(uriString + urlSuffix, null, message, timeout, wireasync);
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT12;
                     }
-                    buildPing12(uriString + urlSuffix, message);
+                    buildPing12(uriString + urlSuffix, null, message);
                 }
             } else {
                 if (servtype.equalsIgnoreCase("echo")) {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT;
                     }
-                    buildEcho(uriString + urlSuffix, message);
+                    buildEcho(uriString + urlSuffix, null, message);
                 } else if (servtype.equalsIgnoreCase("async")) {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT;
                     }
-                    buildAsync(uriString + urlSuffix, message, timeout, wireasync);
+                    buildAsync(uriString + urlSuffix, null, message, timeout, wireasync);
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT;
                     }
-                    buildPing(uriString + urlSuffix, message);
+                    buildPing(uriString + urlSuffix, null, message);
                 }
             }
         }
@@ -229,9 +230,9 @@ public class SampleClient {
      * @param input       The message string
      * @return Boolean true if the ping works
      */
-    public boolean buildPing(String endpointURL, String input) {
+    public boolean buildPing(String endpointURL, URL wsdlURL, String input) {
         try {
-            PingServicePortProxy ping = new PingServicePortProxy(null, new QName("http://org/apache/axis2/jaxws/samples/ping/", "PingService"));
+            PingServicePortProxy ping = new PingServicePortProxy(wsdlURL);
             ping._getDescriptor().setEndpoint(endpointURL);
             System.out.println(">> CLIENT: SEI Ping to " + endpointURL);
 
@@ -269,10 +270,10 @@ public class SampleClient {
      * @param input       The message string
      * @return String from the service
      */
-    public String buildEcho(String endpointURL, String input) {
+    public String buildEcho(String endpointURL, URL wsdlURL, String input) {
         String response = "ERROR!:";
         try {
-            EchoServicePortProxy echo = new EchoServicePortProxy(null, new QName("http://org/apache/axis2/jaxws/samples/echo/", "EchoService"));
+            EchoServicePortProxy echo = new EchoServicePortProxy(wsdlURL);
             echo._getDescriptor().setEndpoint(endpointURL);
 
             // Configure SOAPAction properties
@@ -313,10 +314,10 @@ public class SampleClient {
      * @param wireasync   true to use Async on the wire
      * @return String from the service
      */
-    public String buildAsync(String endpointURL, String input, int waiting, Boolean wireasync) {
+    public String buildAsync(String endpointURL, URL wsdlURL, String input, int waiting, Boolean wireasync) {
         String response = "ERROR!:";
         try {
-            EchoServicePortProxy echo = new EchoServicePortProxy(null, new QName("http://org/apache/axis2/jaxws/samples/echo/", "EchoService"));
+            EchoServicePortProxy echo = new EchoServicePortProxy(wsdlURL);
             echo._getDescriptor().setEndpoint(endpointURL);
 
             // Configure SOAPAction properties
@@ -381,9 +382,9 @@ public class SampleClient {
      * @param input       The message string
      * @return Boolean true if the ping works
      */
-    public boolean buildPing12(String endpointURL, String input) {
+    public boolean buildPing12(String endpointURL, URL wsdlURL, String input) {
         try {
-            PingService12PortProxy ping = new PingService12PortProxy();
+            PingService12PortProxy ping = new PingService12PortProxy(wsdlURL);
             ping._getDescriptor().setEndpoint(endpointURL);
             System.out.println(">> CLIENT: SEI Ping to " + endpointURL);
 
@@ -411,10 +412,10 @@ public class SampleClient {
      * @param input       The message string
      * @return String from the service
      */
-    public String buildEcho12(String endpointURL, String input) {
+    public String buildEcho12(String endpointURL, URL wsdlURL, String input) {
         String response = "ERROR!:";
         try {
-            EchoService12PortProxy echo = new EchoService12PortProxy();
+            EchoService12PortProxy echo = new EchoService12PortProxy(wsdlURL);
             echo._getDescriptor().setEndpoint(endpointURL);
 
             // Build the input object
@@ -447,10 +448,10 @@ public class SampleClient {
      * @param wireasync   true to use Async on the wire
      * @return String from the service
      */
-    public String buildAsync12(String endpointURL, String input, int waiting, Boolean wireasync) {
+    public String buildAsync12(String endpointURL, URL wsdlURL, String input, int waiting, Boolean wireasync) {
         String response = "ERROR!:";
         try {
-            EchoService12PortProxy echo = new EchoService12PortProxy();
+            EchoService12PortProxy echo = new EchoService12PortProxy(wsdlURL);
             echo._getDescriptor().setEndpoint(endpointURL);
 
             // Configure over-the-wire async if specified

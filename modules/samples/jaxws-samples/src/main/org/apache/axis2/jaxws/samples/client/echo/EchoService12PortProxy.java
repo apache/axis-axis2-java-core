@@ -92,6 +92,10 @@ public class EchoService12PortProxy {
         _descriptor = new Descriptor();
     }
 
+    public EchoService12PortProxy(URL wsdlLocation) {
+        _descriptor = new Descriptor(wsdlLocation, new QName("http://org/apache/axis2/jaxws/samples/echo/", "EchoService12"));
+    }
+
     public EchoService12PortProxy(URL wsdlLocation, QName serviceName) {
         _descriptor = new Descriptor(wsdlLocation, serviceName);
     }

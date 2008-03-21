@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * EchoPingSampleServlet main entry point for JSP servlet
@@ -119,15 +121,15 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
                 System.out.println(">> SERVLET: Request index: " + (index + 1));
                 if (0 == soapString.length()) {
                     if (svc.equalsIgnoreCase(("Async"))) {
-                        result += client.buildAsync(uriString + ECHO_CONTEXT, msgString,
+                        result += client.buildAsync(uriString + ECHO_CONTEXT, getWSDLURL("/WEB-INF/wsdl/Echo.wsdl"), msgString,
                                 TIMEOUT, false);
                     } else if (svc.equalsIgnoreCase(("AsyncWire"))) {
-                        result += client.buildAsync(uriString + ECHO_CONTEXT, msgString,
+                        result += client.buildAsync(uriString + ECHO_CONTEXT, getWSDLURL("/WEB-INF/wsdl/Echo.wsdl"), msgString,
                                 TIMEOUT, true);
                     } else if (svc.equalsIgnoreCase("Echo")) {
-                        result += client.buildEcho(uriString + ECHO_CONTEXT, msgString);
+                        result += client.buildEcho(uriString + ECHO_CONTEXT, getWSDLURL("/WEB-INF/wsdl/Echo.wsdl"), msgString);
                     } else {
-                        if (client.buildPing(uriString + PING_CONTEXT, msgString)) {
+                        if (client.buildPing(uriString + PING_CONTEXT, getWSDLURL("/WEB-INF/wsdl/Ping.wsdl"), msgString)) {
                             result += PING_RESPONSE_GOOD;
                         } else {
                             result += PING_RESPONSE_BAD;
@@ -136,15 +138,15 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
                 } else  // SOAP1.2
                 {
                     if (svc.equalsIgnoreCase(("Async"))) {
-                        result += client.buildAsync12(uriString + ECHO_CONTEXT12, msgString,
+                        result += client.buildAsync12(uriString + ECHO_CONTEXT12, getWSDLURL("/WEB-INF/wsdl/Echo12.wsdl"), msgString,
                                 TIMEOUT, false);
                     } else if (svc.equalsIgnoreCase(("AsyncWire"))) {
-                        result += client.buildAsync12(uriString + ECHO_CONTEXT12, msgString,
+                        result += client.buildAsync12(uriString + ECHO_CONTEXT12, getWSDLURL("/WEB-INF/wsdl/Echo12.wsdl"), msgString,
                                 TIMEOUT, true);
                     } else if (svc.equalsIgnoreCase("Echo")) {
-                        result += client.buildEcho12(uriString + ECHO_CONTEXT12, msgString);
+                        result += client.buildEcho12(uriString + ECHO_CONTEXT12, getWSDLURL("/WEB-INF/wsdl/Echo12.wsdl"), msgString);
                     } else {
-                        if (client.buildPing12(uriString + PING_CONTEXT12, msgString)) {
+                        if (client.buildPing12(uriString + PING_CONTEXT12, getWSDLURL("/WEB-INF/wsdl/Ping12.wsdl"), msgString)) {
                             result += PING_RESPONSE_GOOD;
                         } else {
                             result += PING_RESPONSE_BAD;
@@ -171,4 +173,7 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
                 + "\n");
     }
 
+    private URL getWSDLURL(String file) throws MalformedURLException {
+        return getServletConfig().getServletContext().getResource(file);
+    }
 }

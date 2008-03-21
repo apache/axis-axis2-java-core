@@ -88,6 +88,10 @@ public class PingService12PortProxy {
         _descriptor = new Descriptor();
     }
 
+    public PingService12PortProxy(URL wsdlLocation) {
+        _descriptor = new Descriptor(wsdlLocation, new QName("http://org/apache/axis2/jaxws/samples/ping/", "PingService12"));
+    }
+
     public PingService12PortProxy(URL wsdlLocation, QName serviceName) {
         _descriptor = new Descriptor(wsdlLocation, serviceName);
     }
