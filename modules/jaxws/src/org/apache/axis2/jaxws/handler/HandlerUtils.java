@@ -19,10 +19,12 @@
 
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -38,6 +40,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 /*
@@ -47,8 +50,8 @@ public class HandlerUtils {
     private static Log log = LogFactory.getLog(HandlerUtils.class);
 
     /**
-     * IregisterHandlerHeaders will invoke getHeaders on SOAPHandlers and register these headers
-     * with AxisService as Understood headers.
+     * registerHandlerHeaders will invoke getHeaders on SOAPHandlers and return a List of headers
+     * that are Understood by the handlers.
      * @param msgContext
      * @param handlers
      */
@@ -85,10 +88,21 @@ public class HandlerUtils {
     /**
      * checkMustUnderstand will validate headers that where delegated by Axis Engine
      * to MessageReceiver for mustUnderstand check.
-     * @param msgContext
-     * @throws AxisFault
+     * 
+     * Note that there is other JAX-WS related mustUnderstand checking occuring elsewhere:
+     * @see org.apache.axis2.jaxws.dispatchers.MustUnderstandValidationDispatcher 
+     * @see org.apache.axis2.jaxws.dispatchers.MustUnderstandChecker 
+     * 
+     * @param msgContext Contains the SOAPEnvelope and optionally a list of headers not 
+     *    understood by the AxisEngine
+     * @param understood A list of header QNames understood by JAX-WS, for example those understood
+     *   by associated application handlers. Can be null.
+     * @param additionalRoles An instance of RolePlayer for any addtional roles played by JAX-WS
+     *   for example, roles configured for associated handlers.  Can be null.
+     * 
+     * @throws AxisFault if any headers marked mustUndersand are not understood.
      */
-    public static void checkMustUnderstand(MessageContext msgContext, List<QName> understood)throws AxisFault{
+    public static void checkMustUnderstand(MessageContext msgContext, List<QName> understood, List<String> additionalRoles) throws AxisFault {
         if (msgContext == null || !msgContext.isHeaderPresent()) {
             return;
         }
@@ -102,12 +116,36 @@ public class HandlerUtils {
         }
  
         List<QName> unprocessed = (List)msgContext.getProperty(Constants.UNPROCESSED_HEADER_QNAMES);
+
+        // Add to the unprocessed header list any headers that are unprocssed and mustUnderstand
+        // for addtional roles, for example those played by associated JAXWS handlers
+        if (additionalRoles != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Adding any mustUnderstand headers based on additonal SOAP roles: " + additionalRoles);
+            }
+            HandlerRolePlayer handlerRolePlayer = new HandlerRolePlayer(additionalRoles);
+            Iterator headerBlocks = envelope.getHeader().getHeadersToProcess(handlerRolePlayer);
+            while (headerBlocks.hasNext()) {
+                SOAPHeaderBlock shb = (SOAPHeaderBlock) headerBlocks.next();
+                if (unprocessed == null) {
+                    unprocessed = new ArrayList<QName>();
+                }
+                if (!shb.isProcessed() && shb.getMustUnderstand()) {
+                    unprocessed.add(shb.getQName());
+                    if (log.isDebugEnabled()) {
+                        log.debug("Added header to unprocessed list: " + shb.getQName());
+                    }
+                }
+            }
+        }
+        
         if(unprocessed == null || unprocessed.size() == 0){
             if(log.isDebugEnabled()){
                 log.debug("UNPROCESSED_HEADER_QNAMES not found.");
             }
             return;
         }
+        
         //lets go thru each header only if @HandlerChain is present
         if(!canUnderstand(msgContext)){
             QName[] qNames = unprocessed.toArray(new QName[0]);
@@ -186,3 +224,17 @@ public class HandlerUtils {
 
     }
 }
+class HandlerRolePlayer implements RolePlayer {
+    List<String> roles = new ArrayList<String>();
+
+    HandlerRolePlayer(List<String> additionalRoles) {
+        roles.addAll(additionalRoles);
+    }
+    public List getRoles() {
+        return roles;
+    }
+    public boolean isUltimateDestination() {
+        return false;
+    }
+}
+

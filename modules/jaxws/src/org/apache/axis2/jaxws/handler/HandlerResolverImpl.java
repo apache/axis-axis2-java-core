@@ -119,6 +119,11 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         return handlers;
     }
 
+    public List<String> getRoles(PortInfo portInfo) {
+        List<String> handlerRoles = new ArrayList();
+        resolveHandlers(portInfo, handlerRoles);
+        return handlerRoles;
+    }
     /*
       * The list of handlers (rather, list of class names) is already
       * available per port.  Ports are stored under the ServiceDelegate
@@ -129,6 +134,9 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
 	 * and returning it.  We do not sort here.
       */
     private ArrayList<Class> resolveHandlers(PortInfo portinfo) throws WebServiceException {
+        return resolveHandlers(portinfo, null);
+    }
+    private ArrayList<Class> resolveHandlers(PortInfo portinfo, List<String> handlerRoles) throws WebServiceException {
         /*
 
             A sample XML file for the handler-chains:
@@ -146,6 +154,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     <jws:handler>
                         <jws:handler-name>MyHandler</jws:handler-name>
                         <jws:handler-class>org.apache.axis2.jaxws.MyHandler</jws:handler-class>
+                        <jws:soap-role>http://org/apache/axis2/jaxws/MyRole</jws:soap-role>
                     </jws:handler>
                 </jws:handler-chain>
                 <jws:handler-chain>
@@ -281,6 +290,22 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
                             .getMessage("handlerChainErr2", aClass.getName()));
+                }
+                // If a role was specified, add it to the roles played
+                if (handlerRoles != null) {
+                    List<org.apache.axis2.jaxws.description.xml.handler.String> soapRolesList = 
+                        handlerType.getSoapRole();
+                    Iterator<org.apache.axis2.jaxws.description.xml.handler.String> 
+                        soapRolesIterator = soapRolesList.iterator();
+                    while (soapRolesIterator.hasNext()) {
+                        org.apache.axis2.jaxws.description.xml.handler.String soapRoleElement =
+                            soapRolesIterator.next();
+                        String addSoapRole = soapRoleElement.getValue();
+                        handlerRoles.add(addSoapRole);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Adding soap role " + addSoapRole);
+                        }
+                    }
                 }
             }
         }

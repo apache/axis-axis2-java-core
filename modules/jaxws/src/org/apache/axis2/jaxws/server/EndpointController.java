@@ -56,6 +56,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.PortInfo;
+
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -224,11 +226,15 @@ public class EndpointController {
             //  
             //  Since we're on the server, and there apparently is no Binding object
             //  anywhere to be found...
+            List<String> handlerRoles = null;
             if (eic.getHandlers() == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("No handlers found on the InvocationContext, initializing handler list.");
                 }
-                eic.setHandlers(new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo()));
+                HandlerResolverImpl hri = new HandlerResolverImpl(endpointDesc.getServiceDescription());
+                PortInfo portInfo = endpointDesc.getPortInfo();
+                eic.setHandlers(hri.getHandlerChain(portInfo));
+                handlerRoles = hri.getRoles(portInfo);
             }
             //Lets Initialize the understood QName here, add only the headers that the handler 
             //injects when we invoke the getHeader().
@@ -247,7 +253,7 @@ public class EndpointController {
             saveRequestMessage(request);
             //As per section 10.2.1 of JAXWS Specification, perform a mustUnderstand processing before
             //invoking inbound handlers.
-            HandlerUtils.checkMustUnderstand(request.getAxisMessageContext(), understood);
+            HandlerUtils.checkMustUnderstand(request.getAxisMessageContext(), understood, handlerRoles);
 
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements. See the NOTICE file
@@ -17,14 +18,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
-	<jws:handler-chain name="demo">
+	<jws:handler-chain name="RoleBasedMustUnderstandHandlerChain">
 		<jws:handler>
-			<jws:handler-class>
-				org.apache.axis2.jaxws.handler.header.DemoHandler
-			</jws:handler-class>
-			<jws:soap-role>http://DemoHandler/Role</jws:soap-role>
+			<jws:handler-class>org.apache.axis2.jaxws.handler.RoleBasedMustUnderstandHandler</jws:handler-class>
+			<jws:soap-role>http://org/apache/axis2/jaxws/handler/AddedRole</jws:soap-role>
+			<jws:soap-role>http://org/apache/axis2/jaxws/handler/AddedRole2</jws:soap-role>
 		</jws:handler>
-	</jws:handler-chain>	
+	</jws:handler-chain>
 </jws:handler-chains>
+
