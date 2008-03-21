@@ -109,7 +109,15 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         // See if the metadata from creating the service indicates that MTOM should be enabled
         if (binding instanceof SOAPBinding) {
+            // MTOM can be enabled either at the ServiceDescription level (via the WSDL binding type) or
+            // at the EndpointDescription level via the binding type used to create a Dispatch.
             boolean enableMTOMFromMetadata = endpointDesc.getServiceDescription().isMTOMEnabled(serviceDelegate);
+            if (!enableMTOMFromMetadata) {
+                String bindingType = endpointDesc.getClientBindingID();
+                enableMTOMFromMetadata = (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) || 
+                                          bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING));
+            }
+            
             if (enableMTOMFromMetadata) {
                 ((SOAPBinding) binding).setMTOMEnabled(true);
             }
