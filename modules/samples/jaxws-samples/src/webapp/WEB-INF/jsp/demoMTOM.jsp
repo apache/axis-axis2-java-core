@@ -25,6 +25,19 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>JAX-WS Web Services MTOM Sample</title>
+    <script language="JavaScript" type="text/javascript">
+        <!--
+        function checkform(form)
+        {
+            if (form.filedef.value == "") {
+                alert("Please enter a Source Filename");
+                form.filedef.focus();
+                return false;
+            }
+            return true;
+        }
+        //-->
+    </script>
 </head>
 <body>
 <P align="center"><B><FONT size="+2">JAX-WS Web Services MTOM Sample
@@ -32,7 +45,7 @@
 
 <H3><B> <U>Message Options</U></B></H3>
 
-<FORM name="mtomdemo" method="POST" action="/jaxws-samples/demoMTOM" enctype="multipart/form-data">
+<FORM name="mtomdemo" method="POST" action="/jaxws-samples/demoMTOM" onsubmit="return checkform(this);" enctype="multipart/form-data">
     <TABLE border="0" cellpadding="0" cellspacing="1">
         <TBODY>
             <TR>
