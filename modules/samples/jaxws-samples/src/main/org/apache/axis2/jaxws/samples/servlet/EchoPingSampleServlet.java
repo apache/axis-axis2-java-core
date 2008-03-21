@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.samples.servlet;
 
 import org.apache.axis2.jaxws.samples.client.SampleClient;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -48,6 +50,7 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
     private String uriString = "";
     private String soapString = "";
     private int count = 1;
+    private ClientConfigurationFactory factory = null;
 
     public EchoPingSampleServlet() {
         super();
@@ -68,6 +71,12 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
      */
     private void processRequest(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        
+        if(factory == null) {
+            String path = getServletConfig().getServletContext().getRealPath("/WEB-INF/axis2.xml");
+            factory = new ClientConfigurationFactory(null, path);
+            MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, factory);
+        }
 
         ServletContext context = getServletContext();
         String msgString = req.getParameter("msgstring");
