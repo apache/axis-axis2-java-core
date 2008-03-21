@@ -83,8 +83,10 @@ public class WSDL4JWrapper implements WSDLWrapper {
     private String wsdlExplicitURL;
     private ConfigurationContext configContext;
     private JAXWSCatalogManager catalogManager = null;
-    private boolean limitMemory = false;
-    private int memoryType = 0;
+    
+    // By default, use a reload strategy for the WSDLWrapper
+    private boolean limitMemory = true;
+    private int memoryType = 2;
     
    /**
     * Constructor
