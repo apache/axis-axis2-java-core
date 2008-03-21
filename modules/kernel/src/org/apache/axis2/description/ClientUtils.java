@@ -27,6 +27,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,6 +37,8 @@ import java.net.URISyntaxException;
  * Utility methods for various clients to use.
  */
 public class ClientUtils {
+
+    private static final Log log = LogFactory.getLog(ClientUtils.class);
 
     public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
                                                                          EndpointReference epr,
@@ -47,21 +51,25 @@ public class ClientUtils {
             if (transport != null) {
                 TransportOutDescription transportOut = ac.getTransportOut(transport);
                 if (transportOut == null) {
+                    log.error("No Tranport Sender found for : " + transport);
                     throw new AxisFault("No Tranport Sender found for : " + transport);
                 } else {
                     return ac.getTransportOut(transport);
                 }
             } else {
+                log.error(Messages.getMessage("cannotInferTransport", transportURI));
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
             }
         } else {
             if (msgctx.getOptions().getTransportOut() != null) {
                 if (msgctx.getOptions().getTransportOut().getSender() == null) {
+                    log.error(Messages.getMessage("Incomplete transport sender: missing sender!"));
                     throw new AxisFault("Incomplete transport sender: missing sender!");
                 }
                 return msgctx.getOptions().getTransportOut();
             }
             if (epr == null || (epr.getAddress() == null)) {
+                log.error(Messages.getMessage("cannotInferTransportNoAddr"));
                 throw new AxisFault(Messages.getMessage("cannotInferTransportNoAddr"));
             }
             String uri = epr.getAddress();
@@ -70,6 +78,7 @@ public class ClientUtils {
             if (transport != null) {
                 return ac.getTransportOut(transport);
             } else {
+                log.error(Messages.getMessage("cannotInferTransport", uri));
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", uri));
             }
         }
@@ -105,6 +114,8 @@ public class ClientUtils {
                 if (transportIn == null) {
                     // TODO : User should not be mandated to give an IN transport. If it is not given, we should
                     // ask from the ListenerManager to give any available transport for this client.
+                    log.error(Messages.getMessage("unknownTransport",
+                                                            listenerTransportProtocol));
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                                                             listenerTransportProtocol));
                 }
@@ -114,10 +125,12 @@ public class ClientUtils {
             }
             if (msgCtxt.getAxisService() != null) {
                 if (!msgCtxt.isEngaged(Constants.MODULE_ADDRESSING)) {
+                    log.error(Messages.getMessage("2channelNeedAddressing"));
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
                 }
             } else {
                 if (!ac.isEngaged(Constants.MODULE_ADDRESSING)) {
+                    log.error(Messages.getMessage("2channelNeedAddressing"));
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
                 }
             }
