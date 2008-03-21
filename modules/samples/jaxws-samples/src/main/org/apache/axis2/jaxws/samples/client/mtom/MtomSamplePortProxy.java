@@ -43,6 +43,11 @@ public class MtomSamplePortProxy {
             initCommon();
         }
 
+        public Descriptor(URL wsdlLocation) {
+            _service = new MtomSampleService(wsdlLocation, new QName("http://org/apache/axis2/jaxws/samples/mtom/", "MtomSampleService"));
+            initCommon();
+        }
+
         public Descriptor(URL wsdlLocation, QName serviceName) {
             _service = new MtomSampleService(wsdlLocation, serviceName);
             initCommon();
@@ -88,6 +93,10 @@ public class MtomSamplePortProxy {
 
     public MtomSamplePortProxy() {
         _descriptor = new Descriptor();
+    }
+
+    public MtomSamplePortProxy(URL wsdlLocation) {
+        _descriptor = new Descriptor(wsdlLocation);
     }
 
     public MtomSamplePortProxy(URL wsdlLocation, QName serviceName) {

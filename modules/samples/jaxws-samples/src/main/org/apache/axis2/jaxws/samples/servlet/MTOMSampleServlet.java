@@ -175,7 +175,7 @@ public class MTOMSampleServlet extends javax.servlet.http.HttpServlet implements
                 if (svc.equals("Dispatch")) {
                     result = client.testMtomWithDispatch(result);
                 } else {
-                    result = client.testMtomWithProxy(result);
+                    result = client.testMtomWithProxy(result, getServletConfig().getServletContext().getResource("/WEB-INF/wsdl/ImageDepot12.wsdl"));
                 }
             }
             catch (Exception e) {

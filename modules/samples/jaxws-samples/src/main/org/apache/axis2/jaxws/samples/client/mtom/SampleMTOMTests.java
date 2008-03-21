@@ -35,6 +35,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URL;
 
 /**
  * A sample client that uses MTOM to send an image using both the JAX-WS
@@ -70,7 +71,7 @@ public class SampleMTOMTests {
             tests.testMtomWithDispatch(null);
         }
         if (tests.tryProxy) {
-            tests.testMtomWithProxy(null);
+            tests.testMtomWithProxy(null, null);
         }
     }
 
@@ -297,7 +298,7 @@ public class SampleMTOMTests {
      * @return String - the input string or null
      * @throws Exception
      */
-    public String testMtomWithProxy(String result) throws Exception {
+    public String testMtomWithProxy(String result, URL url) throws Exception {
         ImageDepot response;
         System.out.println(">>---------------------------------------");
         System.out.println(">>MTOM Proxy Test");
@@ -318,7 +319,7 @@ public class SampleMTOMTests {
         try {
             if (soap12) {
                 // Use the generated proxy
-                MtomSample12PortProxy proxy = new MtomSample12PortProxy();
+                MtomSample12PortProxy proxy = new MtomSample12PortProxy(url);
                 proxy._getDescriptor().setEndpoint(uriString + urlSuffix);
 
                 // Enable MTOM
@@ -331,7 +332,7 @@ public class SampleMTOMTests {
             } else {
                 // SOAP 1.1 Create the service
                 //				 Use the generated proxy
-                MtomSamplePortProxy proxy = new MtomSamplePortProxy();
+                MtomSamplePortProxy proxy = new MtomSamplePortProxy(url);
                 proxy._getDescriptor().setEndpoint(uriString + urlSuffix);
 
                 // Enable MTOM

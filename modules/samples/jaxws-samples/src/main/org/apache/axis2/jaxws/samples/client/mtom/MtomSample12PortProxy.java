@@ -90,6 +90,10 @@ public class MtomSample12PortProxy {
         _descriptor = new Descriptor();
     }
 
+    public MtomSample12PortProxy(URL wsdlLocation) {
+        _descriptor = new Descriptor(wsdlLocation, new QName("http://org/apache/axis2/jaxws/samples/mtom/", "MtomSampleService12"));
+    }
+    
     public MtomSample12PortProxy(URL wsdlLocation, QName serviceName) {
         _descriptor = new Descriptor(wsdlLocation, serviceName);
     }
