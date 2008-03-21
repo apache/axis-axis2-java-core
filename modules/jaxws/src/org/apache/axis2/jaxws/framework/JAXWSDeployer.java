@@ -84,14 +84,15 @@ public class JAXWSDeployer implements Deployer {
         String dir = DeploymentEngine.getWebLocationString();
         if (dir != null) {
             File file = new File(dir + "/WEB-INF/classes/");
-            if (!file.isDirectory())
+            URL repository = axisConfig.getRepository();
+            if (!file.isDirectory() || repository == null)
                 return;
             ArrayList classList = getClassesInWebInfDirectory(file);
             ClassLoader threadClassLoader = null;
             try {
                 threadClassLoader = Thread.currentThread().getContextClassLoader();
                 ArrayList urls = new ArrayList();
-                urls.add(axisConfig.getRepository());
+                urls.add(repository);
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
                     urls.add(new File(webLocation).toURL());
