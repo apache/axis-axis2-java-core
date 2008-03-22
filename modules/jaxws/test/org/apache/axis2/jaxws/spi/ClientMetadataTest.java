@@ -1067,14 +1067,14 @@ public class ClientMetadataTest extends TestCase {
         originalFactory = null;
     }
     static void resetClientConfigFactory() {
-        Field field;
-        try {
-            field = DescriptionFactoryImpl.class.getDeclaredField("clientConfigFactory");
-            field.setAccessible(true);
-            field.set(null, null);
-        } catch (Exception e) {
-            throw new UnsupportedOperationException("Unable to reset client config factory; caught " + e);
-        }
+//        Field field;
+//        try {
+//            field = DescriptionFactoryImpl.class.getDeclaredField("clientConfigFactory");
+//            field.setAccessible(true);
+//            field.set(null, null);
+//        } catch (Exception e) {
+//            throw new UnsupportedOperationException("Unable to reset client config factory; caught " + e);
+//        }
     }
     
 }
