@@ -77,10 +77,10 @@ public class DescriptionFactoryImplTests extends TestCase {
         QName uniqueQName1 = new QName(namespaceURI, localPart + "_testClearCache1");
         QName uniqueQName2 = new QName(namespaceURI, localPart + "_testClearCache2");
   
-        // the ClientConfigFactory instance is stored DescriptionFactoryImpl clientConfigFactory 
-        // field and for this test we need to clear it, so that a custom version of 
-        // ClientConfigurationFactory can be used.
-        resetClientConfigFactory();
+//        // the ClientConfigFactory instance is stored DescriptionFactoryImpl clientConfigFactory 
+//        // field and for this test we need to clear it, so that a custom version of 
+//        // ClientConfigurationFactory can be used.
+//        resetClientConfigFactory();
         
         // install caching factory        
         ClientConfigurationFactory oldFactory = 
@@ -134,7 +134,7 @@ public class DescriptionFactoryImplTests extends TestCase {
             // restore old factory by updating the registry THEN clearing the cached factory
             // so it is retrieved from the table again.
             MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, oldFactory);
-            resetClientConfigFactory();
+//            resetClientConfigFactory();
         }                          
     }
     
