@@ -28,6 +28,8 @@ import org.apache.xml.resolver.CatalogManager;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.logging.Logger;
 
 /**
@@ -117,16 +119,16 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
 
     private String determineFileName() {
 
-    	ClassLoader classLoader = findClassLoader();
-    	// try web app WEB-INF first
-    	URL url = classLoader.getResource(DEFAULT_CATALOG_WEB);
-    	if (url != null) {
-    		return url.toString();
-    	}
-    	// have not returned -- perhaps we're in an EJB?
-    	url = classLoader.getResource(DEFAULT_CATALOG_EJB);
-    	return url == null? null: url.toString();
-    	
+        ClassLoader classLoader = findClassLoader();
+        // try web app WEB-INF first
+        URL url = classLoader.getResource(DEFAULT_CATALOG_WEB);
+        if (url != null) {
+            return url.toString();
+        }
+        // have not returned -- perhaps we're in an EJB?
+        url = classLoader.getResource(DEFAULT_CATALOG_EJB);
+        return url == null? null: url.toString();
+
     }
     
     /**
@@ -135,41 +137,50 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
      * This method returns an instance of the underlying catalog class.
      */
     public Catalog getPrivateCatalog() {
-        Catalog catalog = staticCatalog;
-        boolean useStatic = super.getUseStaticCatalog();
+        try {
+            final CatalogManager cm = this;
+            Catalog catalog = 
+                (Catalog) AccessController.
+                doPrivileged(new PrivilegedExceptionAction() {
+                    public Object run() throws Exception {
+                        Catalog catalog = staticCatalog;
+                        boolean useStatic = cm.getUseStaticCatalog();
 
-        if (catalog == null || !useStatic) {
-            try {
-  	            String catalogClassName = getCatalogClassName();
-  	            if (catalogClassName == null) {
-  	                catalog = new Catalog();
-  	            } else {
-  	                try {
-  	                    catalog = (Catalog) Class.forName(catalogClassName).newInstance();
-  	                } catch (ClassNotFoundException cnfe) {
-  	                    debug.message(1,"Catalog class named '"
-  			                          + catalogClassName
-  			                          + "' could not be found. Using default.");
-  	                    catalog = new Catalog();
-  	                } catch (ClassCastException cnfe) {
-  	                    debug.message(1,"Class named '"
-  			                          + catalogClassName
-  			                          + "' is not a Catalog. Using default.");
-  	                    catalog = new Catalog();
-  	                }
-  	            }
+                        if (catalog == null || !useStatic) {
 
-  	            catalog.setCatalogManager(this);
-  	            catalog.setupReaders();
-  	            catalog.loadSystemCatalogs();
-            } catch (Exception ex) {
-  	            ex.printStackTrace();
-            }
+                            String catalogClassName = getCatalogClassName();
+                            if (catalogClassName == null) {
+                                catalog = new Catalog();
+                            } else {
+                                try {
+                                    catalog = (Catalog) Class.forName(catalogClassName).newInstance();
+                                } catch (ClassNotFoundException cnfe) {
+                                    debug.message(1,"Catalog class named '"
+                                                  + catalogClassName
+                                                  + "' could not be found. Using default.");
+                                    catalog = new Catalog();
+                                } catch (ClassCastException cnfe) {
+                                    debug.message(1,"Class named '"
+                                                  + catalogClassName
+                                                  + "' is not a Catalog. Using default.");
+                                    catalog = new Catalog();
+                                }
+                            }
 
-  	        staticCatalog = catalog;
+                            catalog.setCatalogManager(cm);
+                            catalog.setupReaders();
+                            catalog.loadSystemCatalogs();
+                        }
+                        return catalog;
+                    }});
+            staticCatalog = catalog;
+            return catalog;
+        } catch (PrivilegedActionException pae) {
+            // The Catch and swallow
+            debug.message(1,"getPrivateCatatalog failed.  " +
+                        "Processing continues " + pae.getException());
         }
-
-        return catalog;
+        return null;
     }
     
     /**
@@ -192,25 +203,29 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
      *                            host JDK
      */
     private static ClassLoader findClassLoader() {
-		// REVIEW need a doPriv block?
 
-		Method m = null;
+        try {
+            ClassLoader cl = 
+                (ClassLoader) AccessController.
+                doPrivileged(new PrivilegedExceptionAction() {
+                    public Object run() throws Exception {
+                        Method m = null;
 
-		try {
-
-			m = Thread.class.getMethod("getContextClassLoader", (Class[]) null);
-		} catch (NoSuchMethodException e) {
-			// Assume that we are running JDK 1.1, use the current ClassLoader
-			// TODO print debug statement about assuming JDK 1.1
-			return OASISCatalogManager.class.getClassLoader();
-		}
-		try {
-			return (ClassLoader) m.invoke(Thread.currentThread(),
-					(Object[]) null);
-		} catch (Exception x) {
-			throw ExceptionFactory.makeWebServiceException(x);
-		}
-
-	}
+                        try {
+                            m = Thread.class.getMethod("getContextClassLoader", (Class[]) null);
+                        } catch (NoSuchMethodException e) {
+                            // Assume that we are running JDK 1.1, use the current ClassLoader
+                            // TODO print debug statement about assuming JDK 1.1
+                            return OASISCatalogManager.class.getClassLoader();
+                        }
+                        return (ClassLoader) m.invoke(Thread.currentThread(),
+                                                      (Object[]) null);
+                    }}
+                );
+            return cl;
+        } catch (PrivilegedActionException pae) {
+            throw ExceptionFactory.makeWebServiceException(pae.getException());
+        }
+    }
    
 }
