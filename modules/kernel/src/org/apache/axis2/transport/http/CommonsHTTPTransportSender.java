@@ -174,7 +174,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     if (parameterValue != null && JavaUtils.isTrueExplicitly(parameterValue)) {
                         //Check whether user has already overridden this.
                         Object propertyValue = msgContext.getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
-                        if (propertyValue == null | !JavaUtils.isFalseExplicitly(propertyValue)) {
+                        if (propertyValue == null || !JavaUtils.isFalseExplicitly(propertyValue)) {
                             msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
                                     Boolean.TRUE);
                         }
