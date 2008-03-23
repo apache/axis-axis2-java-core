@@ -43,8 +43,6 @@ public class DeploymentClassLoader extends URLClassLoader {
     // List of jar files inside the jars in the original url
     private List embedded_jars;
 
-    private HashMap loadedClass = new HashMap();
-
     /**
      * DeploymentClassLoader is extended from URLClassLoader. The constructor
      * does not override the super constructor, but takes in an addition list of

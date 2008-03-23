@@ -1061,9 +1061,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             throws AxisFault {
         try {
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(serviceFile, null);
-            DeploymentClassLoader classLoader = new DeploymentClassLoader(new URL[]{serviceFile.toURL()},
-                                                                          new ArrayList(),
-                                                                          Thread.currentThread().getContextClassLoader());
+            DeploymentClassLoader classLoader = Utils.createClassLoader(serviceFile);
             currentDeploymentFile.setClassLoader(classLoader);
             AxisServiceGroup serviceGroup = new AxisServiceGroup();
             serviceGroup.setServiceGroupClassLoader(classLoader);
@@ -1087,7 +1085,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException(e);
         }
     }
-
 
     public File getServicesDir() {
         return servicesDir;

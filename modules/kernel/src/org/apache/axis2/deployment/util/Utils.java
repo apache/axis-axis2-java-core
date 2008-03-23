@@ -741,7 +741,13 @@ public class Utils {
         excludeList.add("shutDown");
     }
 
-	public static ClassLoader createClassLoader(ArrayList urls,
+    public static DeploymentClassLoader createClassLoader(File serviceFile) throws MalformedURLException {
+        return createDeploymentClassLoader(new URL[]{serviceFile.toURL()},
+                Thread.currentThread().getContextClassLoader(),
+                new ArrayList());
+    }
+
+    public static ClassLoader createClassLoader(ArrayList urls,
 			ClassLoader serviceClassLoader, boolean extractJars, File tmpDir) {
 		URL url = (URL) urls.get(0);
 		if (extractJars) {
@@ -750,9 +756,8 @@ public class Utils {
 				urls.remove(0);
 				urls.addAll(0, Arrays.asList(urls1));
 				URL[] urls2 = (URL[]) urls.toArray(new URL[urls.size()]);
-				return new DeploymentClassLoader(urls2, null,
-						serviceClassLoader);
-			} catch (Exception e) {
+                return createDeploymentClassLoader(urls2, serviceClassLoader, null);
+            } catch (Exception e) {
 				log
 						.warn("Exception extracting jars into temporary directory : "
 								+ e.getMessage()
@@ -762,9 +767,8 @@ public class Utils {
 		}
 		List embedded_jars = Utils.findLibJars(url);
 		URL[] urls2 = (URL[]) urls.toArray(new URL[urls.size()]);
-		return new DeploymentClassLoader(urls2, embedded_jars,
-				serviceClassLoader);
-	}
+        return createDeploymentClassLoader(urls2, serviceClassLoader, embedded_jars);
+    }
 
 	public static File toFile(URL url) throws UnsupportedEncodingException {
 	    String path = URLDecoder.decode(url.getPath(), defaultEncoding);
