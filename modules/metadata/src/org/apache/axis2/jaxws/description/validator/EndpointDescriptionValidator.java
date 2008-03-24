@@ -59,6 +59,10 @@ public class EndpointDescriptionValidator extends Validator {
             if (!validateWSDLBindingType()) {
                 return INVALID;
             }
+            
+            if (!validateRespectBinding()) {
+                return INVALID;
+            }
         }
 
         if (!validateEndpointInterface()) {
@@ -180,6 +184,29 @@ public class EndpointDescriptionValidator extends Validator {
             }
         }
         return VALID;
+    }
+    
+    /*
+     * If the @RespectBinding annotation is present, then we must also have a WSDL 
+     */
+    private boolean validateRespectBinding() {
+        // If a WSDL with a valid <wsdl:port> was present, then the WSDL is considered
+        // fully specified.  Without that, the @RespectBinding annotation is invalid.
+        if (endpointDesc.respectBinding()) {
+            String wsdlLocation = null;
+            if (!endpointDesc.isProviderBased()) {
+                wsdlLocation = endpointDescJava.getAnnoWebServiceWSDLLocation();
+            }
+            else {
+                wsdlLocation = endpointDescJava.getAnnoWebServiceProvider().wsdlLocation();
+            }
+            
+            if (wsdlLocation == null || wsdlLocation.length() == 0) {
+                addValidationFailure(this, "Annotation @RespectBinding requires that a WSDL file be specified.");    
+                return Validator.INVALID;
+            }
+        }        
+        return Validator.VALID;
     }
     
     private static String bindingHumanReadableDescription(String ns) {

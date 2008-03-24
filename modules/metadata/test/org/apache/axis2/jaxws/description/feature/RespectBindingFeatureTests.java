@@ -23,30 +23,74 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RespectBinding;
 
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RespectBindingFeatureTests extends TestCase {
 
     private static final String ns = "http://jaxws.axis2.apache.org/metadata/feature/respectbinding";
     
+    private static final String serviceName = "EchoMessageService";
+    private static final String portTypeName = "EchoMessagePortType";
+    
+    
     private static final String plainServicePortName = "PlainServicePort";
     private static final String disabledServicePortName = "DisabledServicePort";
+    private static final String defaultServicePortName = "DefaultServicePort";
+    
+    private static final String wsdlLocation = "test-resources/wsdl/RespectBinding.wsdl";
 
-    public void testDefaultConfig() {
-        ServiceDescription sd = DescriptionFactory.createServiceDescription(PlainService.class);
+    /*
+     * RespectBinding should be disabled because a WSDL file was not included.
+     */
+
+    public void testPlain() throws Exception {
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(PlainService.class);
+        HashMap<String, DescriptionBuilderComposite> map = converter.produceDBC();
         
-        EndpointDescription ed = sd.getEndpointDescription(new QName(ns, plainServicePortName));
-        assertTrue("The EndpointDescription should not be null.", ed != null);
-
-        boolean respect = ed.respectBinding();
-        assertTrue("Strict binding support should be ENABLED.", respect);
+        DescriptionBuilderComposite composite = map.get(PlainService.class.getName());
+        
+        URL wsdlUrl = new URL("file:./" + wsdlLocation);
+        WSDL4JWrapper wrapper = new WSDL4JWrapper(wsdlUrl, false, 0);
+        
+        composite.setwsdlURL(wsdlUrl);
+        composite.setWsdlDefinition(wrapper.getDefinition());
+        
+        List<ServiceDescription> sdList = null;
+        try {
+            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        }
+        catch (Exception e) {
+            // An exception is expected.
+        }
+        
+        assertTrue("The ServiceDescriptions should not have been built.", sdList == null);
     }
     
-    public void testRespectBindingDisabled() {
-        ServiceDescription sd = DescriptionFactory.createServiceDescription(DisabledService.class);
+    public void testRespectBindingDisabled() throws Exception {
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(DisabledService.class);
+        HashMap<String, DescriptionBuilderComposite> map = converter.produceDBC();
+        
+        DescriptionBuilderComposite composite = map.get(DisabledService.class.getName());
+        
+        URL wsdlUrl = new URL("file:./" + wsdlLocation);
+        WSDL4JWrapper wrapper = new WSDL4JWrapper(wsdlUrl, false, 0);
+        
+        composite.setwsdlURL(wsdlUrl);
+        composite.setWsdlDefinition(wrapper.getDefinition());
+        
+        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        ServiceDescription sd = sdList.get(0);
         
         EndpointDescription ed = sd.getEndpointDescription(new QName(ns, disabledServicePortName));
         assertTrue("The EndpointDescription should not be null.", ed != null);
@@ -55,19 +99,57 @@ public class RespectBindingFeatureTests extends TestCase {
         assertFalse("Strict binding support should be DISABLED.", respect);
     }
     
+    public void testRespectBindingDefault() throws Exception {
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(DefaultService.class);
+        HashMap<String, DescriptionBuilderComposite> map = converter.produceDBC();
+        
+        DescriptionBuilderComposite composite = map.get(DefaultService.class.getName());
+        
+        URL wsdlUrl = new URL("file:./" + wsdlLocation);
+        WSDL4JWrapper wrapper = new WSDL4JWrapper(wsdlUrl, false, 0);
+        
+        composite.setwsdlURL(wsdlUrl);
+        composite.setWsdlDefinition(wrapper.getDefinition());
+        
+        List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        ServiceDescription sd = sdList.get(0);
+        
+        EndpointDescription ed = sd.getEndpointDescription(new QName(ns, defaultServicePortName));
+        assertTrue("The EndpointDescription should not be null.", ed != null);
+
+        boolean respect = ed.respectBinding();
+        assertTrue("Strict binding support should be ENABLED.", respect);
+    }
+    
     @WebService(targetNamespace=ns, portName=plainServicePortName)
     @RespectBinding
     class PlainService {
-        public double getQuote(String symbol) {
-            return 101.01;
+        public String echo(String input) {
+            return "";
         }
     }
     
-    @WebService(targetNamespace=ns, portName=disabledServicePortName)
+    @WebService(targetNamespace=ns, 
+        serviceName=serviceName,
+        portName=defaultServicePortName, 
+        name=portTypeName, 
+        wsdlLocation=wsdlLocation)
+    @RespectBinding
+    class DefaultService {
+        public String echo(String input) {
+            return "";
+        }
+    }
+    
+    @WebService(targetNamespace=ns,
+        serviceName=serviceName,
+        portName=disabledServicePortName,
+        name=portTypeName,
+        wsdlLocation=wsdlLocation)
     @RespectBinding(enabled=false)
     class DisabledService {
-        public double getQuote(String symbol) {
-            return 101.01;
+        public String echo(String input) {
+            return "";
         }
     }
 }

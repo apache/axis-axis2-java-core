@@ -63,8 +63,6 @@ public class JavaClassToDBCConverter {
     
     static {
         annotationProcessors = new HashMap<Class, Object>();
-        
-        
     }
     
     public JavaClassToDBCConverter(Class serviceClass) {
@@ -83,6 +81,10 @@ public class JavaClassToDBCConverter {
      * @return - <code>DescriptionBuilderComposite</code>
      */
     public HashMap<String, DescriptionBuilderComposite> produceDBC() {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating DescriptionBuilderComposite map from Java Class.");
+        }
+        
         HashMap<String, DescriptionBuilderComposite> dbcMap = new HashMap<String,
                 DescriptionBuilderComposite>();
         for (int i = 0; i < classes.size(); i++) {
