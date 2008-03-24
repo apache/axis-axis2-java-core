@@ -278,6 +278,18 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setExcludeProperties(commandLineOption.getOptionValue());
         }
 
+        commandLineOption = loadOption(WSDL2JavaConstants.SKELTON_INTERFACE_NAME_OPTION,
+                WSDL2JavaConstants.SKELTON_INTERFACE_NAME_OPTION_LONG, optionMap);
+        if (commandLineOption != null){
+            config.setSkeltonInterfaceName(commandLineOption.getOptionValue());
+        }
+
+        commandLineOption = loadOption(WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION,
+                WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION_LONG, optionMap);
+        if (commandLineOption != null){
+            config.setSkeltonClassName(commandLineOption.getOptionValue());
+        }
+
         // setting the overrid and all ports options
         config.setAllPorts(loadOption(WSDL2JavaConstants.All_PORTS_OPTION,
                                       WSDL2JavaConstants.All_PORTS_OPTION_LONG,

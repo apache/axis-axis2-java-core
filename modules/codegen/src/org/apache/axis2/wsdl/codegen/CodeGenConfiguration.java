@@ -592,4 +592,23 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.excludeProperties = excludeProperties;
     }
 
+    private String skeltonInterfaceName;
+    private String skeltonClassName;
+
+    public String getSkeltonInterfaceName() {
+        return skeltonInterfaceName;
+    }
+
+    public void setSkeltonInterfaceName(String skeltonInterfaceName) {
+        this.skeltonInterfaceName = skeltonInterfaceName;
+    }
+
+    public String getSkeltonClassName() {
+        return skeltonClassName;
+    }
+
+    public void setSkeltonClassName(String skeltonClassName) {
+        this.skeltonClassName = skeltonClassName;
+    }
+
 }

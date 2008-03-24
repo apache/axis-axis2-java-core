@@ -94,6 +94,10 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
                     WSDL2JavaConstants.HTTP_PROXY_PORT_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.EXCLUDE_PAKAGES_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.EXCLUDE_PAKAGES_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.SKELTON_INTERFACE_NAME_OPTION.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.SKELTON_INTERFACE_NAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     XMLBeansExtension.XSDCONFIG_OPTION.equalsIgnoreCase(optionType) ||
                     XMLBeansExtension.XSDCONFIG_OPTION_LONG.equalsIgnoreCase(optionType)
             );

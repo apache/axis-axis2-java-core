@@ -1540,13 +1540,27 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         rootElement);
             }
         } else {
-            addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
-            if (isServerSideInterface) {
-                addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
-                        rootElement);
+            if (this.codeGenConfiguration.getSkeltonClassName() != null){
+                addAttribute(doc, "skeletonname", this.codeGenConfiguration.getSkeltonClassName(), rootElement);
             } else {
-                addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
+                addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX, rootElement);
+            }
+            if (isServerSideInterface) {
+                if (this.codeGenConfiguration.getSkeltonInterfaceName() != null){
+                    addAttribute(doc, "skeletonInterfaceName", this.codeGenConfiguration.getSkeltonInterfaceName(),
                         rootElement);
+                } else {
+                    addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX,
+                        rootElement);
+                }
+            } else {
+                if (this.codeGenConfiguration.getSkeltonClassName() != null){
+                    addAttribute(doc, "skeletonInterfaceName", this.codeGenConfiguration.getSkeltonClassName(),
+                        rootElement);
+                } else {
+                    addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX,
+                        rootElement);
+                }
             }
         }
 
@@ -1971,7 +1985,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return rootElement;
     }
 
-    protected void      writeSkeleton() throws Exception {
+    protected void writeSkeleton() throws Exception {
         Document skeletonModel =
                 createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
@@ -2020,6 +2034,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     makeJavaClassName(axisService.getBindingName()) +
                             SKELETON_CLASS_SUFFIX_BACK,
                     rootElement);
+        } else if (this.codeGenConfiguration.getSkeltonClassName() != null){
+            addAttribute(doc, "name", this.codeGenConfiguration.getSkeltonClassName(), rootElement);
         } else {
             addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         }
@@ -2033,6 +2049,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
                 addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(
                         axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK,
+                        rootElement);
+            } else if (this.codeGenConfiguration.getSkeltonInterfaceName() != null){
+                addAttribute(doc, "skeletonInterfaceName", this.codeGenConfiguration.getSkeltonInterfaceName(),
                         rootElement);
             } else {
                 addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
@@ -2069,6 +2088,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
             addAttribute(doc, "name", makeJavaClassName(axisService.getEndpointName()) +
                     SKELETON_INTERFACE_SUFFIX_BACK, rootElement);
+        } else if (this.codeGenConfiguration.getSkeltonInterfaceName() != null){
+            addAttribute(doc, "name", this.codeGenConfiguration.getSkeltonInterfaceName() , rootElement);
         } else {
             addAttribute(doc, "name", serviceName + SKELETON_INTERFACE_SUFFIX, rootElement);
         }
