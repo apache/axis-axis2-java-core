@@ -37,10 +37,14 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
+
 import java.awt.*;
 import java.io.File;
 
@@ -50,6 +54,8 @@ public class MtomSampleTests extends AbstractTestCase {
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
+    
+    private static boolean CHECK_VERSIONMISMATCH = false;
     
     public static Test suite() {
         return getTestSetup(new TestSuite(MtomSampleTests.class));
@@ -230,6 +236,20 @@ public class MtomSampleTests extends AbstractTestCase {
             fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
         } catch (Exception e) {
             assertNotNull(e);
+            if (CHECK_VERSIONMISMATCH) {
+                assertTrue("Expected SOAPFaultException, but received: "+ e.getClass(),
+                           e instanceof SOAPFaultException);
+                SOAPFaultException sfe = (SOAPFaultException) e;
+
+                SOAPFault fault = sfe.getFault();
+
+                assertTrue("SOAPFault is null ",
+                           fault != null);
+                QName faultCode = sfe.getFault().getFaultCodeAsQName();
+
+                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+                           SOAPConstants.SOAP_VERSIONMISMATCH_FAULT.equals(faultCode));
+            }
         }
         
         //assertNotNull(response);
@@ -285,9 +305,21 @@ public class MtomSampleTests extends AbstractTestCase {
             SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
             fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
         } catch (Exception e) {
-            System.out.println(e.getClass());
-            System.out.println(e.toString());
             assertNotNull(e);
+            if (CHECK_VERSIONMISMATCH) {
+                assertTrue("Expected SOAPFaultException, but received: "+ e.getClass(),
+                           e instanceof SOAPFaultException);
+                SOAPFaultException sfe = (SOAPFaultException) e;
+
+                SOAPFault fault = sfe.getFault();
+
+                assertTrue("SOAPFault is null ",
+                           fault != null);
+                QName faultCode = sfe.getFault().getFaultCodeAsQName();
+
+                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+                           SOAPConstants.SOAP_VERSIONMISMATCH_FAULT.equals(faultCode));
+            }
         }
         /*
         assertNotNull(response);
