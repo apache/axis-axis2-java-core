@@ -82,6 +82,10 @@ public interface CommandLineOptionConstants {
         String HTTP_PROXY_PORT_OPTION_LONG = "http-proxy-port";
         String EXCLUDE_PAKAGES_OPTION = "ep";
         String EXCLUDE_PAKAGES_OPTION_LONG = "exclude-packages";
+        String SKELTON_INTERFACE_NAME_OPTION = "sin";
+        String SKELTON_INTERFACE_NAME_OPTION_LONG = "skelton-interface-name";
+        String SKELTON_CLASS_NAME_OPTION = "scn";
+        String SKELTON_CLASS_NAME_OPTION_LONG = "skelton-class-name";
 
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";

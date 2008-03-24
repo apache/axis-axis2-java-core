@@ -120,8 +120,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
         List faultList = new ArrayList();
         Iterator iterator = this.commandLineOptions.values().iterator();
         while (iterator.hasNext()) {
-            CommandLineOption commandLineOption = ((CommandLineOption) (iterator
-                    .next()));
+            CommandLineOption commandLineOption = ((CommandLineOption) (iterator.next()));
             if (validator.isInvalid(commandLineOption)) {
                 faultList.add(commandLineOption);
             }
