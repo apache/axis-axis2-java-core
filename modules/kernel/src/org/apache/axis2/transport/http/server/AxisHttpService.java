@@ -65,8 +65,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * This class is an extension of the defaulf HTTP service responsible for
- * maintaining and polulating the {@link MessageContext} for incoming Axis
+ * This class is an extension of the default HTTP service responsible for
+ * maintaining and populating the {@link MessageContext} for incoming Axis
  * requests.
  */
 public class AxisHttpService {
@@ -283,7 +283,7 @@ public class AxisHttpService {
             // Socket is unreliable. 
             throw ex;
         } catch (HttpException ex) {
-            // HTTP protocol violation. Transport is unrelaible
+            // HTTP protocol violation. Transport is unreliable
             throw ex;
         } catch (Throwable e) {
 
