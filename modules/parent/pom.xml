@@ -129,6 +129,7 @@
         <maven.archiver.version>2.2</maven.archiver.version>
         <maven.artifact.version>2.0.8</maven.artifact.version>
         <maven.assembly.version>2.2-beta-1</maven.assembly.version>
+        <maven.plugin.version>2.3</maven.plugin.version>
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
         <maven.war.version>2.0.2</maven.war.version>
@@ -1174,6 +1175,11 @@
                     <source>1.4</source>
                     <target>1.4</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${maven.plugin.version}</version>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>

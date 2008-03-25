@@ -33,7 +33,7 @@
     <description>
         A Maven 2 plugin for creating WSDL files from Java source.
     </description>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>

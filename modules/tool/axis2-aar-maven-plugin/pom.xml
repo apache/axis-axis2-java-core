@@ -29,7 +29,7 @@
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-aar-maven-plugin</artifactId>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
     <name>Apache Axis2 - tool - AAR Maven Plugin</name>
     <description>
         A Maven 2 plugin for creating Axis 2 service archives (aar files)
