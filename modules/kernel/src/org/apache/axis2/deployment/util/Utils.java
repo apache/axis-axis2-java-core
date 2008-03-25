@@ -132,7 +132,7 @@ public class Utils {
         }
     }
 
-	public static void loadHandler(ClassLoader loader1, HandlerDescription desc)
+	public static boolean loadHandler(ClassLoader loader1, HandlerDescription desc)
 			throws DeploymentException {
 		String handlername = desc.getClassName();
 		Handler handler;
@@ -168,11 +168,16 @@ public class Utils {
 			handler.init(desc);
 			desc.setHandler(handler);
 		} catch (ClassNotFoundException e) {
-			throw new DeploymentException(e);
-		} catch (Exception e) {
+            if(handlername.indexOf("jaxws")>0){
+                log.warn("[JAXWS] - unable to load " + handlername);
+                return false;
+            }
+            throw new DeploymentException(e);
+        } catch (Exception e) {
 			throw new DeploymentException(e);
 		}
-	}
+        return true;
+    }
 	
 	public static URL[] getURLsForAllJars(URL url, File tmpDir) {
         FileInputStream fin = null;

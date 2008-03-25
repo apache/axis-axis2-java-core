@@ -504,12 +504,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
 
                 handler.getRules().setPhaseName(phaseName);
-                Utils.loadHandler(axisConfig.getSystemClassLoader(), handler);
-
-                try {
-                    phase.addHandler(handler);
-                } catch (PhaseException e) {
-                    throw new DeploymentException(e);
+                if(Utils.loadHandler(axisConfig.getSystemClassLoader(), handler)){
+                    try {
+                        phase.addHandler(handler);
+                    } catch (PhaseException e) {
+                        throw new DeploymentException(e);
+                    }
                 }
             }
 
