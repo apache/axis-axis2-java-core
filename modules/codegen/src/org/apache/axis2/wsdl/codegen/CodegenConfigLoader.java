@@ -49,13 +49,13 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         config.setOutputLocation(outputLocationFile);
 
         //check and create the directories
-        if (outputLocationFile.exists()) {
-            if (outputLocationFile.isFile()) {
+        if (outputLocationFile.exists()) {//$NON-SEC-2
+            if (outputLocationFile.isFile()) {//$NON-SEC-2
                 throw new RuntimeException(
                         CodegenMessages.getMessage("options.notADirectoryException"));
             }
         } else {
-            outputLocationFile.mkdirs();
+            outputLocationFile.mkdirs();//$NON-SEC-2
         }
 
         config.setServerSide(loadOption(WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
@@ -197,8 +197,8 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                 } else {
                     // Try loading the properties from the file specified
                     try {
-                        Properties p = new Properties();
-                        p.load(new FileInputStream(value));
+                        Properties p = new Properties();//$NON-SEC-3
+                        p.load(new FileInputStream(value));//$NON-SEC-2//$NON-SEC-3
                         config.setUri2PackageNameMap(p);
                     } catch (IOException e) {
                         throw new RuntimeException(
@@ -264,12 +264,12 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         //setting http proxy host and http proxy port
         commandLineOption = loadOption(null, WSDL2JavaConstants.HTTP_PROXY_HOST_OPTION_LONG, optionMap);
         if (commandLineOption != null) {
-            System.setProperty("http.proxyHost", commandLineOption.getOptionValue());
+            System.setProperty("http.proxyHost", commandLineOption.getOptionValue());//$NON-SEC-2
         }
 
         commandLineOption = loadOption(null, WSDL2JavaConstants.HTTP_PROXY_PORT_OPTION_LONG, optionMap);
         if (commandLineOption != null) {
-            System.setProperty("http.proxyPort", commandLineOption.getOptionValue());
+            System.setProperty("http.proxyPort", commandLineOption.getOptionValue());//$NON-SEC-2
         }
 
         commandLineOption = loadOption(WSDL2JavaConstants.EXCLUDE_PAKAGES_OPTION,

@@ -44,6 +44,7 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisMessage;
@@ -75,8 +76,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 public class BuilderUtil {
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
@@ -233,10 +238,22 @@ public class BuilderUtil {
      * @param charSetEncoding
      * @throws java.io.IOException
      */
-    public static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
-        PushbackInputStream is2 = getPushbackInputStream(is);
-        String encoding = getCharSetEncoding(is2, charSetEncoding);
-        return new BufferedReader(new InputStreamReader(is2, encoding));
+    public static Reader getReader(final InputStream is, final String charSetEncoding) throws IOException {
+        final PushbackInputStream is2 = getPushbackInputStream(is);
+        final String encoding = getCharSetEncoding(is2, charSetEncoding);
+        InputStreamReader inputStreamReader = null;
+        try {
+            inputStreamReader = (InputStreamReader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws UnsupportedEncodingException {
+                            return new InputStreamReader(is2, encoding);
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw (UnsupportedEncodingException) e.getException();
+        }
+        return new BufferedReader(inputStreamReader);
     }
 
     /**

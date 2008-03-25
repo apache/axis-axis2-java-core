@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -54,6 +55,9 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 /**
  * The TransportSender for JMS
@@ -157,9 +161,20 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 String replyToJNDIName = (String) msgContext.getProperty(JMSConstants.REPLY_PARAM);
                 if (replyToJNDIName != null && replyToJNDIName.length() > 0) {
                     Context context = null;
-                    Hashtable props = JMSUtils.getProperties(targetAddress);
+                    final Hashtable props = JMSUtils.getProperties(targetAddress);
                     try {
-                        context = new InitialContext(props);
+                        try {
+                            context = (Context) AccessController.doPrivileged(
+                                    new PrivilegedExceptionAction() {
+                                        public Object run() throws NamingException{
+                                            return new InitialContext(props);
+                                        }
+                                    }
+                            )
+                                    ;
+                        } catch (PrivilegedActionException e) {
+                            throw (NamingException) e.getException();
+                        }
                     } catch (NamingException e) {
                         handleException("Could not get the initial context", e);
                     }

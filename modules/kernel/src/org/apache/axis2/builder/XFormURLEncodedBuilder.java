@@ -26,6 +26,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisBinding;
@@ -44,6 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 
 public class XFormURLEncodedBuilder implements Builder {
@@ -123,8 +127,8 @@ public class XFormURLEncodedBuilder implements Builder {
     protected void extractParametersFromRequest(MultipleEntryHashMap parameterMap,
                                                 String query,
                                                 String queryParamSeparator,
-                                                String charsetEncoding,
-                                                InputStream inputStream)
+                                                final String charsetEncoding,
+                                                final InputStream inputStream)
             throws AxisFault {
 
         if (query != null && !"".equals(query)) {
@@ -144,7 +148,18 @@ public class XFormURLEncodedBuilder implements Builder {
         if (inputStream != null) {
             try {
                 InputStreamReader inputStreamReader =
-                        new InputStreamReader(inputStream, charsetEncoding);
+                        null;
+                try {
+                    inputStreamReader = (InputStreamReader) AccessController.doPrivileged(
+                            new PrivilegedExceptionAction() {
+                                public Object run() throws UnsupportedEncodingException {
+                                    return new InputStreamReader(inputStream, charsetEncoding);
+                                }
+                            }
+                    );
+                } catch (PrivilegedActionException e) {
+                    throw (UnsupportedEncodingException) e.getException();
+                }
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 while (true) {
                     String line = bufferedReader.readLine();

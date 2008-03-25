@@ -43,7 +43,7 @@ public class WSDL2Code {
         for (int i = 2; i <= 45; i++) {
             System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
         }
-        System.exit(0);
+        System.exit(0);//$NON-SEC-2
     }
 
 

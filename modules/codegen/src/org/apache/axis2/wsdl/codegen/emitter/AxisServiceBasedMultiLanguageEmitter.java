@@ -568,7 +568,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         antBuildWriter.setDatabindingFramework(codeGenConfiguration.getDatabindingType());
         antBuildWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(skeletonModel, antBuildWriter);
-        codeGenConfiguration.addXmlFileName(antBuildWriter.getOutputFile().getAbsolutePath());
+        codeGenConfiguration.addXmlFileName(antBuildWriter.getOutputFile().getAbsolutePath());//$NON-SEC-3
     }
 
     /**
@@ -1911,7 +1911,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         this.codeGenConfiguration.getOutputLanguage());
         serviceXmlWriter.setOverride(codeGenConfiguration.isOverride());
         writeFile(serviceXMLModel, serviceXmlWriter);
-        codeGenConfiguration.addXmlFileName(serviceXmlWriter.getOutputFile().getAbsolutePath());
+        codeGenConfiguration.addXmlFileName(serviceXmlWriter.getOutputFile().getAbsolutePath());//$NON-SEC-3
 
     }
 
@@ -2537,8 +2537,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             outputDir = new File(outputDir, dir2);
         }
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs();
+        if (!outputDir.exists()) {//$NON-SEC-3
+            outputDir.mkdirs();//$NON-SEC-2
         }
 
 

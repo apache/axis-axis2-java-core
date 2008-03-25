@@ -101,7 +101,7 @@ public class Utils {
                                                         QName opName)
             throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.setClassLoader(getContextClassLoader_DoPriv());
 
         AxisOperation axisOp = new InOnlyAxisOperation(opName);
 
@@ -114,6 +114,16 @@ public class Utils {
         return service;
     }
 
+    private static ClassLoader getContextClassLoader_DoPriv() {
+        return (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                }
+        );
+    }
+
 
     public static AxisService createSimpleService(QName serviceName,
                                                   MessageReceiver messageReceiver, String className,
@@ -121,7 +131,7 @@ public class Utils {
             throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.setClassLoader(getContextClassLoader_DoPriv());
         service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
@@ -142,7 +152,7 @@ public class Utils {
             throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.setClassLoader(getContextClassLoader_DoPriv());
         service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new OutInAxisOperation(opName);
@@ -230,18 +240,37 @@ public class Utils {
 
     public static ConfigurationContext getNewConfigurationContext(String repositry)
             throws Exception {
-        File file = new File(repositry);
-        if (!file.exists()) {
+        final File file = new File(repositry);
+        boolean exists = exists(file);
+        if (!exists) {
             throw new Exception("repository directory " + file.getAbsolutePath()
                                 + " does not exists");
         }
         File axis2xml = new File(file, "axis.xml");
         String axis2xmlString = null;
-        if (axis2xml.exists()) {
+        if (exists(axis2xml)) {
             axis2xmlString = axis2xml.getName();
         }
+        String path = (String) org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return file.getAbsolutePath();
+                    }
+                }
+        );
         return ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(file.getAbsolutePath(), axis2xmlString);
+                .createConfigurationContextFromFileSystem(path, axis2xmlString);
+    }
+
+    private static boolean exists(final File file) {
+        Boolean exists = (Boolean) org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(file.exists());
+                    }
+                }
+        );
+        return exists.booleanValue();
     }
 
     public static String getParameterValue(Parameter param) {

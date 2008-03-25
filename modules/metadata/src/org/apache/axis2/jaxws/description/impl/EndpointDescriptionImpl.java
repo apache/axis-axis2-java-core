@@ -218,7 +218,14 @@ class EndpointDescriptionImpl
         composite = new DescriptionBuilderComposite();
         composite.setSparseComposite(sparseCompositeKey, sparseComposite);
         composite.setCorrespondingClass(theClass);
-        composite.setClassLoader(this.getClass().getClassLoader());
+        ClassLoader loader = (ClassLoader) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return this.getClass().getClassLoader();
+                    }
+                }
+        );
+        composite.setClassLoader(loader);
         composite.setIsServiceProvider(false);
 
         webServiceAnnotation = composite.getWebServiceAnnot();
@@ -544,7 +551,14 @@ class EndpointDescriptionImpl
         composite.setIsServiceProvider(true);
         this.portQName = portName;
         composite.setCorrespondingClass(theClass);
-        composite.setClassLoader(this.getClass().getClassLoader());
+        ClassLoader loader = (ClassLoader) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return this.getClass().getClassLoader();
+                    }
+                }
+        );
+        composite.setClassLoader(loader);
         this.axisService = axisService;
 
         addToAxisService();
@@ -1398,8 +1412,14 @@ class EndpointDescriptionImpl
 
                 // REVIEW: This is using the classloader for EndpointDescriptionImpl; is that OK?
                 ClassLoader classLoader = (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) ?
-                        composite.getClassLoader() : 
-                            this.getClass().getClassLoader();
+                        composite.getClassLoader() :
+                        (ClassLoader) AccessController.doPrivileged(
+                                new PrivilegedAction() {
+                                    public Object run() {
+                                        return this.getClass().getClassLoader();
+                                    }
+                                }
+                        );
 
                 InputStream is = DescriptionUtils.openHandlerConfigStream(
                         handlerFileName,
@@ -1409,8 +1429,15 @@ class EndpointDescriptionImpl
                 if(is == null) {
                     log.warn("Unable to load handlers from file: " + handlerFileName);                    
                 } else {
+                    ClassLoader classLoader1 = (ClassLoader) AccessController.doPrivileged(
+                            new PrivilegedAction() {
+                                public Object run() {
+                                    return this.getClass().getClassLoader();
+                                }
+                            }
+                    );
                     handlerChainsType =
-                        DescriptionUtils.loadHandlerChains(is, this.getClass().getClassLoader());
+                        DescriptionUtils.loadHandlerChains(is, classLoader1);
                 }
             }
         }

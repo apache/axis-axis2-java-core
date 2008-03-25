@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.lifecycle;
 
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,6 +29,9 @@ import javax.annotation.PreDestroy;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 public abstract class BaseLifecycleManager {
     
@@ -75,13 +79,17 @@ public abstract class BaseLifecycleManager {
         }
     }
 
-    protected void invokeMethod(Method m, Object[] params) throws LifecycleException {
+    protected void invokeMethod(final Method m, final Object[] params) throws LifecycleException {
         try {
-            m.invoke(instance, params);
-        } catch (InvocationTargetException e) {
-            throw new LifecycleException(e);
-        } catch (IllegalAccessException e) {
-            throw new LifecycleException(e);
+            AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws InvocationTargetException, IllegalAccessException {
+                            return m.invoke(instance, params);
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw new LifecycleException(e.getException());
         }
     }
 
@@ -91,8 +99,14 @@ public abstract class BaseLifecycleManager {
 
         //return Method with @PostConstruct Annotation.
         if (instance != null) {
-            Class endpointClazz = instance.getClass();
-            Method[] methods = endpointClazz.getMethods();
+            final Class endpointClazz = instance.getClass();
+            Method[] methods = (Method[]) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return endpointClazz.getMethods();
+                        }
+                    }
+            );
 
             for (Method method : methods) {
                 if (isPostConstruct(method)) {
@@ -108,8 +122,14 @@ public abstract class BaseLifecycleManager {
         // Plus the super class methods are not being considered 
         //return Method with @PreDestroy Annotation
         if (instance != null) {
-            Class endpointClazz = instance.getClass();
-            Method[] methods = endpointClazz.getMethods();
+            final Class endpointClazz = instance.getClass();
+            Method[] methods = (Method[]) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return endpointClazz.getMethods();
+                        }
+                    }
+            );
 
             for (Method method : methods) {
                 if (isPreDestroy(method)) {
@@ -120,16 +140,28 @@ public abstract class BaseLifecycleManager {
         return null;
     }
 
-    protected boolean isPostConstruct(Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
+    protected boolean isPostConstruct(final Method method) {
+        Annotation[] annotations = (Annotation[]) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return method.getDeclaredAnnotations();
+                    }
+                }
+        );
         for (Annotation annotation : annotations) {
             return PostConstruct.class.isAssignableFrom(annotation.annotationType());
         }
         return false;
     }
 
-    protected boolean isPreDestroy(Method method) {
-        Annotation[] annotations = method.getDeclaredAnnotations();
+    protected boolean isPreDestroy(final Method method) {
+        Annotation[] annotations = (Annotation[]) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return method.getDeclaredAnnotations();
+                    }
+                }
+        );
         for (Annotation annotation : annotations) {
             return PreDestroy.class.isAssignableFrom(annotation.annotationType());
         }

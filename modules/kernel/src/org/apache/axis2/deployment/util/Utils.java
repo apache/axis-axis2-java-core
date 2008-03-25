@@ -74,14 +74,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -108,32 +112,39 @@ public class Utils {
 
 		for (int j = 0; j < count; j++) {
 			HandlerDescription handlermd = flow.getHandler(j);
-			Class handlerClass;
 			Handler handler;
 
-			handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
+			final Class handlerClass = getHandlerClass(handlermd.getClassName(), clsLoader);
 
-			try {
-				handler = (Handler) handlerClass.newInstance();
-				handler.init(handlermd);
-				handlermd.setHandler(handler);
-			} catch (InstantiationException e) {
-				throw AxisFault.makeFault(e);
-			} catch (IllegalAccessException e) {
-				throw AxisFault.makeFault(e);
-			}
-		}
-	}
+            try {
+                handler = (Handler) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws InstantiationException, IllegalAccessException {
+                                return handlerClass.newInstance();
+                            }
+                        }
+                );
+                handler.init(handlermd);
+                handlermd.setHandler(handler);
+            } catch (PrivilegedActionException e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
+    }
 
 	public static void loadHandler(ClassLoader loader1, HandlerDescription desc)
 			throws DeploymentException {
 		String handlername = desc.getClassName();
 		Handler handler;
-		Class handlerClass;
-
 		try {
-			handlerClass = Loader.loadClass(loader1, handlername);
-            Package aPackage = handlerClass.getPackage();
+			final Class handlerClass = Loader.loadClass(loader1, handlername);
+            Package aPackage = (Package) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return handlerClass.getPackage();
+                        }
+                    }
+            );
             if (aPackage != null && aPackage.getName().equals(
 					"org.apache.axis2.engine")) {
 				String name = handlerClass.getName();
@@ -147,7 +158,13 @@ public class Utils {
 									+ "and replace with the same class in org.apache.axis2.dispatchers package");
 				}
 			}
-			handler = (Handler) handlerClass.newInstance();
+			handler = (Handler) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws InstantiationException, IllegalAccessException {
+                            return handlerClass.newInstance();
+                        }
+                    }
+            );
 			handler.init(desc);
 			desc.setHandler(handler);
 		} catch (ClassNotFoundException e) {
@@ -169,9 +186,15 @@ public class Utils {
             if (index != -1) {
                 fileName = fileName.substring(index + 1);
             }
-            File f = createTempFile(fileName, in, tmpDir);
+            final File f = createTempFile(fileName, in, tmpDir);
             
-            fin = new FileInputStream(f);
+            fin = (FileInputStream) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws FileNotFoundException {
+                            return new FileInputStream(f);
+                        }
+                    }
+            );
             array.add(f.toURL());
             zin = new ZipInputStream(fin);
 
@@ -186,8 +209,8 @@ public class Utils {
                 if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
                         && entryName.toLowerCase().endsWith(".jar")) {
                     String suffix = entryName.substring(4);
-                    f = createTempFile(suffix, zin, tmpDir);
-                    array.add(f.toURL());
+                    File f2 = createTempFile(suffix, zin, tmpDir);
+                    array.add(f2.toURL());
                 }
             }
             return (URL[]) array.toArray(new URL[array.size()]);
@@ -218,26 +241,86 @@ public class Utils {
         }
 	}
 	
-	public static File createTempFile(String suffix, InputStream in, File tmpDir) throws IOException {
+	public static File createTempFile(final String suffix, InputStream in, final File tmpDir) throws IOException {
         byte data[] = new byte[2048];
         int count;
         File f;
         if (tmpDir == null) {
-            if (!new File(System.getProperty("java.io.tmpdir"), "_axis2").exists()) {
-                if (! new File(System.getProperty("java.io.tmpdir"), "_axis2").mkdirs()) {
+            String directory = (String) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return System.getProperty("java.io.tmpdir");
+                        }
+                    }
+            );
+            final File tempFile = new File(directory, "_axis2");
+            Boolean exists = (Boolean) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return new Boolean(tempFile.exists());
+                        }
+                    }
+            );
+            if (!exists.booleanValue()) {
+                Boolean mkdirs = (Boolean) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedAction() {
+                            public Object run() {
+                                return new Boolean(tempFile.mkdirs());
+                            }
+                        }
+                );
+                if (!mkdirs.booleanValue()) {
                     throw new IOException("Unable to create the directory");
                 }
             }
-            File tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
-            f = File.createTempFile("axis2", suffix, tempFile);
+            try {
+                f = (File) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws IOException {
+                                return File.createTempFile("axis2", suffix, tempFile);
+                            }
+                        }
+                );
+            } catch (PrivilegedActionException e) {
+                throw (IOException) e.getException();
+            }
         } else {
-            f = File.createTempFile("axis2", suffix, tmpDir);
+            try {
+                f = (File) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws IOException {
+                                return File.createTempFile("axis2", suffix, tmpDir);
+                            }
+                        }
+                );
+            } catch (PrivilegedActionException e) {
+                throw (IOException) e.getException();
+            }
         }
         if (log.isDebugEnabled()) {
-            log.debug("Created temporary file : " + f.getAbsolutePath());
+            log.debug("Created temporary file : " + f.getAbsolutePath());//$NON-SEC-4
         }
-        f.deleteOnExit();
-        FileOutputStream out = new FileOutputStream(f);
+        final File f2 = f;
+        org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        f2.deleteOnExit();
+                        return null;
+                    }
+                }
+        );
+        FileOutputStream out = null;
+        try {
+            out = (FileOutputStream) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws FileNotFoundException {
+                            return new FileOutputStream(f2);
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw (FileNotFoundException) e.getException();
+        }
         while ((count = in.read(data, 0, 2048)) != -1) {
             out.write(data, 0, count);
         }
@@ -271,28 +354,10 @@ public class Utils {
 
             // lower case directory name
             File libfiles = new File(file, "lib");
-            if (libfiles.exists()) {
-                urls.add(libfiles.toURL());
-                File jarfiles[] = libfiles.listFiles();
-                for (int i = 0; i < jarfiles.length; i++) {
-                    File jarfile = jarfiles[i];
-                    if (jarfile.getName().endsWith(".jar")) {
-                        urls.add(jarfile.toURL());
-                    }
-                }
-            } else {
+            if (!addFiles(urls, libfiles)) {
                 // upper case directory name
                 libfiles = new File(file, "Lib");
-                if (libfiles.exists()) {
-                    urls.add(libfiles.toURL());
-                    File jarfiles[] = libfiles.listFiles();
-                    for (int i = 0; i < jarfiles.length; i++) {
-                        File jarfile = jarfiles[i];
-                        if (jarfile.getName().endsWith(".jar")) {
-                            urls.add(jarfile.toURL());
-                        }
-                    }
-                }
+                addFiles(urls, libfiles);
             }
 
             final URL urllist[] = new URL[urls.size()];
@@ -311,7 +376,34 @@ public class Utils {
         }
     }
 
-	private static Class getHandlerClass(String className, ClassLoader loader1)
+    private static boolean addFiles(ArrayList urls, final File libfiles) throws MalformedURLException {
+        Boolean exists = (Boolean) org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(libfiles.exists());
+                    }
+                }
+        );
+        if (exists.booleanValue()) {
+            urls.add(libfiles.toURL());
+            File jarfiles[] = (File[]) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return libfiles.listFiles();
+                        }
+                    }
+            );
+            for (int i = 0; i < jarfiles.length; i++) {
+                File jarfile = jarfiles[i];
+                if (jarfile.getName().endsWith(".jar")) {
+                    urls.add(jarfile.toURL());
+                }
+            }
+        }
+        return exists.booleanValue();
+    }
+
+    private static Class getHandlerClass(String className, ClassLoader loader1)
 			throws AxisFault {
 		Class handlerClass;
 
@@ -340,7 +432,7 @@ public class Utils {
 	 * @throws Exception
 	 *             if a problem occurs
 	 */
-	public static void fillAxisService(AxisService axisService,
+	public static void fillAxisService(final AxisService axisService,
 			AxisConfiguration axisConfig, ArrayList excludeOperations,
 			ArrayList nonRpcMethods) throws Exception {
 		String serviceClass;
@@ -358,24 +450,35 @@ public class Utils {
 					.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
 			if (implInfoParam != null) {
 				String className = ((String) implInfoParam.getValue()).trim();
-				Class serviceObjectMaker = Loader.loadClass(serviceClassLoader,
+				final Class serviceObjectMaker = Loader.loadClass(serviceClassLoader,
 						className);
 				if (serviceObjectMaker.getModifiers() != Modifier.PUBLIC) {
 					throw new AxisFault("Service class " + className
 							+ " must have public as access Modifier");
 				}
 
-				// Find static getServiceObject() method, call it if there
-				Method method = serviceObjectMaker.getMethod(
-						"getServiceObject", new Class[] { AxisService.class });
-				Object obj = null;
+                // Find static getServiceObject() method, call it if there
+                final Method method = (Method) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws NoSuchMethodException {
+                                return serviceObjectMaker.getMethod(
+                                        "getServiceObject", new Class[]{AxisService.class});
+                            }
+                        }
+                );
+                Object obj = null;
 				if (method != null) {
-					obj = method.invoke(serviceObjectMaker.newInstance(),
-							new Object[] { axisService });
-				}
+                    obj = org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedExceptionAction() {
+                                public Object run() throws InstantiationException, IllegalAccessException, InvocationTargetException {
+                                    return method.invoke(serviceObjectMaker.newInstance(),
+                                            new Object[]{axisService});
+                                }
+                            }
+                    );
+                }
 				if (obj == null) {
-					log
-							.warn("ServiceObjectSupplier implmentation Object could not be found");
+					log.warn("ServiceObjectSupplier implmentation Object could not be found");
 					throw new DeploymentException(
 							"ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
 				}
@@ -524,15 +627,27 @@ public class Utils {
 			AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
 			ArchiveReader archiveReader = new ArchiveReader();
 			PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
-			ClassLoader moduleClassLoader = module.getModuleClassLoader();
+			final ClassLoader moduleClassLoader = module.getModuleClassLoader();
 			ArrayList services = new ArrayList();
-			InputStream in = moduleClassLoader
-					.getResourceAsStream("aars/aars.list");
+			final InputStream in = (InputStream) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return moduleClassLoader.getResourceAsStream("aars/aars.list");
+                        }
+                    }
+            );
 			if (in != null) {
 				BufferedReader input;
 				try {
-					input = new BufferedReader(new InputStreamReader(in));
-					String line;
+                    input = new BufferedReader((InputStreamReader) org.apache.axis2.java.security.AccessController.doPrivileged(
+                                    new PrivilegedAction() {
+                                        public Object run() {
+                                            return new InputStreamReader(in);
+                                        }
+                                    }
+                                )
+                            );
+                    String line;
 					while ((line = input.readLine()) != null) {
 						line = line.trim();
 						if (line.length() > 0 && line.charAt(0) != '#') {
@@ -546,13 +661,19 @@ public class Utils {
 			}
 			if (services.size() > 0) {
 				for (int i = 0; i < services.size(); i++) {
-					String servicename = (String) services.get(i);
+					final String servicename = (String) services.get(i);
 					if (servicename == null || "".equals(servicename)) {
 						continue;
 					}
-					InputStream fin = moduleClassLoader
-							.getResourceAsStream("aars/" + servicename);
-					if (fin == null) {
+                    InputStream fin = (InputStream) org.apache.axis2.java.security.AccessController.doPrivileged(
+                            new PrivilegedAction() {
+                                public Object run() {
+                                    return moduleClassLoader
+                                            .getResourceAsStream("aars/" + servicename);
+                                }
+                            }
+                    );
+                    if (fin == null) {
 						throw new AxisFault("No service archive found : "
 								+ servicename);
 					}
@@ -742,8 +863,15 @@ public class Utils {
     }
 
     public static DeploymentClassLoader createClassLoader(File serviceFile) throws MalformedURLException {
+        ClassLoader contextClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                }
+        );
         return createDeploymentClassLoader(new URL[]{serviceFile.toURL()},
-                Thread.currentThread().getContextClassLoader(),
+                contextClassLoader,
                 new ArrayList());
     }
 

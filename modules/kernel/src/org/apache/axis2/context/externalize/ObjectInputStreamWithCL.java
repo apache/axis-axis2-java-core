@@ -26,6 +26,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.util.HashMap;
 
 /**
@@ -185,15 +187,35 @@ public class ObjectInputStreamWithCL extends java.io.ObjectInputStream
     // NOTE: Looking up current classloader is only a tactical solution,
     // and could be deprecated in future.
     // 
-    private java.lang.Class loadClass(String name, ClassLoader loader) throws ClassNotFoundException
+    private java.lang.Class loadClass(final String name, final ClassLoader loader) throws ClassNotFoundException
     {
         try
         {
-            return Class.forName(name, true, loader);
+            try {
+                return (Class) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws ClassNotFoundException {
+                                return Class.forName(name, true, loader);
+                            }
+                        }
+                );
+            } catch (PrivilegedActionException e) {
+                throw (ClassNotFoundException) e.getException();
+            }
         }
         catch (ClassNotFoundException cnf)
         {
-            return Class.forName(name);
+            try {
+                return (Class) org.apache.axis2.java.security.AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws ClassNotFoundException {
+                                return Class.forName(name);
+                            }
+                        }
+                );
+            } catch (PrivilegedActionException e) {
+                throw (ClassNotFoundException) e.getException();
+            }
         }
     }
 
@@ -210,7 +232,7 @@ public class ObjectInputStreamWithCL extends java.io.ObjectInputStream
 
         Class nonPublicClass = null;
 
-        Class[] classes = new Class[interfaces.length];
+        final Class[] classes = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++)
         {
             classes[i] = resolveClass(interfaces[i]);
@@ -239,14 +261,20 @@ public class ObjectInputStreamWithCL extends java.io.ObjectInputStream
         // Call getClassLoader() on either the non-public class (if any) or the
         // first class.
         proxyClass = nonPublicClass != null ? nonPublicClass : classes[0];
-        ClassLoader loader = (ClassLoader) AccessController.doPrivileged(proxyClassLoaderAction);
+        final ClassLoader loader = (ClassLoader) AccessController.doPrivileged(proxyClassLoaderAction);
 
         // "If Proxy.getProxyClass throws an IllegalArgumentException,
         // resolveProxyClass will throw a ClassNotFoundException containing the
         // IllegalArgumentException."
         try
         {
-            return Proxy.getProxyClass(loader, classes);
+            return (Class) org.apache.axis2.java.security.AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return Proxy.getProxyClass(loader, classes);
+                        }
+                    }
+            );
         }
         catch (IllegalArgumentException ex)
         {

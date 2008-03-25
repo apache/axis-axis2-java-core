@@ -24,6 +24,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
@@ -49,6 +50,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.security.PrivilegedAction;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy
@@ -758,19 +760,46 @@ public class ConfigurationContext extends AbstractContext {
         File tempFile = (File) axisConfiguration.getParameterValue(
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
         if (tempFile == null) {
-            tempFile = new File(System.getProperty("java.io.tmpdir"), "_axis2");
+            String property = (String) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return System.getProperty("java.io.tmpdir");
+                        }
+                    }
+            );
+            tempFile = new File(property, "_axis2");
         }
         deleteTempFiles(tempFile);
     }
 
-    private void deleteTempFiles(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
+    private void deleteTempFiles(final File dir) {
+        Boolean isDir = (Boolean) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(dir.isDirectory());
+                    }
+                }
+        );
+        if (isDir.booleanValue()) {
+            String[] children = (String[]) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return dir.list();
+                        }
+                    }
+            );
             for (int i = 0; children != null && i < children.length; i++) {
                 deleteTempFiles(new File(dir, children[i]));
             }
         }
-        dir.delete();
+        AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        dir.delete();
+                        return null;
+                    }
+                }
+        );
     }
 
     /**

@@ -29,6 +29,7 @@ import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceProviderAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 import org.apache.axis2.jaxws.util.ClassLoaderUtils;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,10 +46,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 public class JavaClassToDBCConverter {
     private static final Log log = LogFactory.getLog(JavaClassToDBCConverter.class);
@@ -91,8 +97,26 @@ public class JavaClassToDBCConverter {
             buildDBC(dbcMap, classes.get(i));
             if (seiClassName != null && !seiClassName.equals("")) {
                 try {
+                    final ClassLoader contextClassLoader = (ClassLoader) AccessController.doPrivileged(
+                            new PrivilegedAction() {
+                                public Object run() {
+                                    return Thread.currentThread().getContextClassLoader();
+                                }
+                            }
+                    );
                     Class seiClass =
-                            Thread.currentThread().getContextClassLoader().loadClass(seiClassName);
+                            null;
+                    try {
+                        seiClass = (Class) AccessController.doPrivileged(
+                                new PrivilegedExceptionAction() {
+                                    public Object run() throws ClassNotFoundException {
+                                        return contextClassLoader.loadClass(seiClassName);
+                                    }
+                                }
+                        );
+                    } catch (PrivilegedActionException e) {
+                        throw (ClassNotFoundException) e.getException();
+                    }
                     buildDBC(dbcMap, seiClass);
                     
                     // Also try to see if the SEI has any super interfaces  
@@ -133,17 +157,38 @@ public class JavaClassToDBCConverter {
         composite.setClassName(serviceClass.getName());
         setInterfaces(composite);
         setTypeTargettedAnnotations(composite);
-        if (serviceClass.getFields().length > 0) {
+        Field[] fields = (Field[]) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return serviceClass.getFields();
+                    }
+                }
+        );
+        if (fields.length > 0) {
             JavaFieldsToFDCConverter fieldConverter = new JavaFieldsToFDCConverter(
-                    serviceClass.getFields());
+                    fields);
             List<FieldDescriptionComposite> fdcList = fieldConverter.convertFields();
             ConverterUtils.attachFieldDescriptionComposites(composite, fdcList);
         }
         if (serviceClass.getMethods().length > 0) {
             // Inherited methods and constructors for superclasses will be in a seperate DBC for
             // the superclass.  We only need the ones actually declared in this class.
+            Method[] methods = (Method[]) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return serviceClass.getDeclaredMethods();
+                        }
+                    }
+            );
+            Constructor[] declaredConstructors = (Constructor[]) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return serviceClass.getDeclaredConstructors();
+                        }
+                    }
+            );
             JavaMethodsToMDCConverter methodConverter = new JavaMethodsToMDCConverter(
-                    serviceClass.getDeclaredMethods(), serviceClass.getDeclaredConstructors(),
+                    methods, declaredConstructors,
                     serviceClass.getName());
             List<MethodDescriptionComposite> mdcList = methodConverter.convertMethods();
             ConverterUtils.attachMethodDescriptionComposites(composite, mdcList);
@@ -157,7 +202,13 @@ public class JavaClassToDBCConverter {
      * @param composite <code>DescriptionBuilderComposite</code>
      */
     private void setInterfaces(DescriptionBuilderComposite composite) {
-        Type[] interfaces = serviceClass.getGenericInterfaces();
+        Type[] interfaces = (Type[]) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return serviceClass.getGenericInterfaces();
+                    }
+                }
+        );
         List<String> interfaceList = interfaces.length > 0 ? new ArrayList<String>()
                 : null;
         for (int i = 0; i < interfaces.length; i++) {
@@ -406,8 +457,14 @@ public class JavaClassToDBCConverter {
      * to the list of classes for which a DBC needs to be built.
      * @param rootClass
      */
-    private void establishExceptionClasses(Class rootClass) {
-        Method[] methods = rootClass.getMethods();
+    private void establishExceptionClasses(final Class rootClass) {
+        Method[] methods = (Method[]) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return rootClass.getMethods();
+                    }
+                }
+        );
         for (Method method : methods) {
             Class[] exceptionClasses = method.getExceptionTypes();
             if (exceptionClasses.length > 0) {
