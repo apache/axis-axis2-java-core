@@ -279,13 +279,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/rmi/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-rmi-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../../modules/corba/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -355,8 +348,6 @@
 				<include>wsdl/**/*</include>
 				<include>yahoojsonsearch/**/*</include>
 				<include>yahoorestsearch/**/*</include>            
-				<include>rmi/**/*</include>
-                                <include>advanced-rmi/**/*</include>                                
             </includes>
             <excludes>
                 <exclude>**/*.iml</exclude>
