@@ -675,6 +675,13 @@ class EndpointDescriptionImpl
                             getServiceDescriptionImpl().getDBCMap().get(seiClassName),
                             false,
                             this);
+                    
+                    // after this is constructed, we need to update the @WebService.name 
+                    // attribute on the axisService instance
+                    if(axisService != null) {
+                        updateWebServiceNameParameter(((EndpointInterfaceDescriptionImpl) 
+                                endpointInterfaceDescription).getAnnoWebServiceName(), axisService); 
+                    }
                 }
             }
         } else {
@@ -1058,6 +1065,13 @@ class EndpointDescriptionImpl
                                     getServiceDescriptionImpl().getDBCMap().get(seiClassName),
                                     false,
                                     this);
+                            
+                            // after this is constructed, we need to update the @WebService.name 
+                            // attribute on the axisService instance
+                            if(axisService != null) {
+                                updateWebServiceNameParameter(((EndpointInterfaceDescriptionImpl) 
+                                        endpointInterfaceDescription).getAnnoWebServiceName(), axisService); 
+                            }
                         }
 
                     } else {
@@ -2064,6 +2078,34 @@ class EndpointDescriptionImpl
         }
 
         return cl;
+    }
+    
+    /**
+     * This will update or set the parameter on the AxisService that represents the
+     * value of the @WebService.name attribute. This is needed since the @WebService.name
+     * value may not be known until the EndpointInterfaceDescription is created for
+     * the explicitly defined SEI.
+     */
+    void updateWebServiceNameParameter(String newName, AxisService service) {
+        if(log.isDebugEnabled()) {
+            log.debug("Setting @WebService.name value on the " + service.getName() + 
+                      " AxisService to: " + newName);
+        }
+        Parameter param = service.getParameter(MDQConstants.WSDL_PORTTYPE_NAME);
+        if(param != null) {
+            param.setValue(newName);
+        }
+        else {
+            param = new Parameter();
+            param.setName(MDQConstants.WSDL_PORTTYPE_NAME);
+            param.setValue(newName);
+            try {
+              service.addParameter(param);  
+            }
+            catch (AxisFault e) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);
+            }
+        }
     }
 }
 
