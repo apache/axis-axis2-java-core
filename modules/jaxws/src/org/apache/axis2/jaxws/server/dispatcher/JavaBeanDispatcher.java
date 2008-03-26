@@ -308,15 +308,19 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         response.setMessage(m);
         
         // Enable MTOM for the response if necessary.
-        EndpointDescription epDesc = request.getEndpointDescription();
+        // (MTOM is not enabled it this operation has SWA parameters
+        
+        if (m.isDoingSWA()) {
+            EndpointDescription epDesc = request.getEndpointDescription();
 
-        String bindingType = epDesc.getBindingType();
-        if (bindingType != null) {
-            if (BindingUtils.isMTOMBinding(bindingType)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("MTOM enabled for the response message.");
+            String bindingType = epDesc.getBindingType();
+            if (bindingType != null) {
+                if (BindingUtils.isMTOMBinding(bindingType)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("MTOM enabled for the response message.");
+                    }
+                    m.setMTOMEnabled(true);
                 }
-                m.setMTOMEnabled(true);
             }
         }
         

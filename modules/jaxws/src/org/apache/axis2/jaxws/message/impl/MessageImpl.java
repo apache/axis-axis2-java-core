@@ -498,7 +498,8 @@ public class MessageImpl implements Message {
      * @return true if the binding for this message indicates mtom
      */
     public boolean isMTOMEnabled() {
-        return mtomEnabled;
+        // If the message has SWA attachments, this "wins" over the mtom setting.
+        return mtomEnabled && !doingSWA;
     }
     
     /**

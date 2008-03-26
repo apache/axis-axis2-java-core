@@ -395,6 +395,12 @@
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
                                 </java>
+                                <echo>Generating java from swamtomservice.wsdl</echo>
+                                <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl"/>
+                                </java>
                             </tasks>
                         </configuration>
                         <goals>
@@ -621,6 +627,21 @@
                                         />
                                 <delete dir="target/test-classes/servicejars/SOAP12Service"/>
 
+
+                               <copy toDir="target/test-classes/servicejars/SWAMTOMService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/swamtom/server/**"/>
+                                        <exclude name="org/apache/axis2/jaxws/swamtom/server/META-INF/services.xml"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/swamtom/server">
+                                        <include name="META-INF/**"/>
+                                        <exclude name="META-INF/services.xml"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="target/test-classes/servicejars/SWAMTOMService.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/SWAMTOMService"/>
+                                <delete dir="target/test-classes/servicejars/SWAMTOMService"/>
                                 <!-- ================================================================ -->
                                 <!--- Proxy endpoint Service Samples -->
                                 <!-- ================================================================ -->
@@ -1187,7 +1208,6 @@
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
                     <includes>
 
-                        <!-- Possibly non-server tests -->
                         <include>**/MultiRedirectionCatalogTest.java</include>
                         <include>**/DispatchSoapActionTest.java</include>
                         <include>**/ProxySoapActionTest.java</include>
@@ -1196,8 +1216,6 @@
                         <include>**/ProxyMTOMFeatureTest.java</include>
                         <include>**/SOAP12DispatchTest.java</include>
                         <include>**/JAXBContextTest.java</include>
-
-                        <!-- Possible server tests -->
                         <include>**/StringProviderTests.java</include>
                         <include>**/SOAPFaultProviderTests.java</include>
                         <include>**/StringMessageProviderTests.java</include>
@@ -1254,6 +1272,7 @@
                         <include>**/NonWrapTests.java</include>
                         <include>**/FaultyWebServiceTests.java</include> 
                         <include>**/ParallelAsyncTests.java</include>
+                        <include>**/SWAMTOMTests.java</include>
                     </includes>
                     <systemProperties>
                         <property>
