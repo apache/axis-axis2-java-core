@@ -75,8 +75,8 @@ public class ProxyDocLitWrappedService
      *     returns DocLitWrappedProxy
      */
     @WebEndpoint(name = "ProxyDocLitWrappedPort")
-    public DocLitWrappedProxy getProxyDocLitWrappedPort() {
-        return (DocLitWrappedProxy)super.getPort(new QName("http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedPort"), DocLitWrappedProxy.class);
+    public DocLitWrappedProxy getDocLitWrappedProxyImplPort() {
+        return (DocLitWrappedProxy)super.getPort(new QName("http://doclitwrapped.proxy.test.org", "DocLitWrappedProxyImplPort"), DocLitWrappedProxy.class);
     }
 
 }
