@@ -151,7 +151,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
                 word = word + "_";
             }
             // 8c: prepend _ if first character cannot be the first character of a java identifier
-            if (!Character.isJavaIdentifierPart(word.charAt(0))) {
+            if (!Character.isJavaIdentifierStart(word.charAt(0))) {
                 word = "_" + word;
             }
 
