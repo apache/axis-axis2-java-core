@@ -85,9 +85,108 @@ public class HandlerTests extends AbstractTestCase {
                 System.out.println("----------------------------------");
         }catch(SOAPFaultException e){       	
             e.printStackTrace();
+            assertTrue(e.toString().indexOf("Must Understand check failed for header soap : {http://demo/}badHeader") != -1);
             System.out.println("MustUnderstand failed as exptected");
             System.out.println("----------------------------------");
                 
         }       
     }
+    
+    /**
+     * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in 
+     * doesn't cause a NotUnderstood fault if the header QName is one that the handler understands.
+     */
+    public void testSoapRoleActedIn() {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        Object res = null;
+        //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
+        String soapMessage = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myheader soap:actor=\"http://DemoHandler/Role\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
+        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        QName name = new QName("http://demo/", "DemoService");
+        QName portName = new QName("http://demo/", "DemoServicePort");
+        try {
+            //Create Service
+            Service s = Service.create(name);
+            assertNotNull(s);
+            //add port
+            s.addPort(portName, null, url);
+            
+            //Create Dispatch
+            Dispatch<String> dispatch = s.createDispatch(portName, String.class, Service.Mode.MESSAGE);
+            assertNotNull(dispatch);
+            res = dispatch.invoke(soapMessage);
+            assertNotNull(res);
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail("Caught unexpected exception " + e);
+        }       
+    }
+    
+    /**
+     * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in 
+     * doesn't cause a NotUnderstood fault if the header QName is one that the handler understands.
+     */
+    public void testSoapRoleNotActedIn() {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        Object res = null;
+        //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
+        String soapMessage = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myheader soap:actor=\"http://DemoHandler/NotActedIn\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
+        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        QName name = new QName("http://demo/", "DemoService");
+        QName portName = new QName("http://demo/", "DemoServicePort");
+        try {
+            //Create Service
+            Service s = Service.create(name);
+            assertNotNull(s);
+            //add port
+            s.addPort(portName, null, url);
+            
+            //Create Dispatch
+            Dispatch<String> dispatch = s.createDispatch(portName, String.class, Service.Mode.MESSAGE);
+            assertNotNull(dispatch);
+            res = dispatch.invoke(soapMessage);
+            assertNotNull(res);
+            System.out.println("----------------------------------");
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail("Caught unexpected exception " + e);
+        }       
+    }
+
+    /**
+     * Test that a mustUnderstand header with a specific SOAP role that the endpoint is acting in
+     * which has a mustUnderstand header that will not be processed by the handler 
+     * causes a fault.
+     */
+    public void testSoapRoleActedInNotUnderstoodFault() {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        Object res = null;
+        //Add myHeader to SOAPMessage that will be injected by handler.getHeader().
+        String soapMessage = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:demo=\"http://demo/\"><soap:Header> <demo:myNOTUNDERSTOODheader soap:actor=\"http://DemoHandler/Role\" soap:mustUnderstand=\"1\"/></soap:Header><soap:Body><demo:echo><arg0>test</arg0></demo:echo></soap:Body></soap:Envelope>";
+        String url = "http://localhost:6060/axis2/services/DemoService.DemoServicePort";
+        QName name = new QName("http://demo/", "DemoService");
+        QName portName = new QName("http://demo/", "DemoServicePort");
+        try {
+            //Create Service
+            Service s = Service.create(name);
+            assertNotNull(s);
+            //add port
+            s.addPort(portName, null, url);
+            
+            //Create Dispatch
+            Dispatch<String> dispatch = s.createDispatch(portName, String.class, Service.Mode.MESSAGE);
+            assertNotNull(dispatch);
+            res = dispatch.invoke(soapMessage);
+            fail("Did not received expected notUnderstood fault");
+        } catch(Exception e) {
+            e.printStackTrace();
+            assertTrue(e.toString().indexOf("Must Understand check failed for header soap : {http://demo/}myNOTUNDERSTOODheader") != -1);
+            System.out.println("----------------------------------");
+        }       
+    }
+
 }
