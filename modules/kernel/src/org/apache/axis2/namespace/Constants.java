@@ -121,7 +121,7 @@ public class Constants {
             "http://schemas.xmlsoap.org/wsdl/";
 
     public static final String NS_URI_WSDL20 =
-            "http://www.w3.org/2004/03/wsdl";
+            "http://www.w3.org/ns/wsdl";
 
     //
     // WSDL extensions for SOAP in DIME
