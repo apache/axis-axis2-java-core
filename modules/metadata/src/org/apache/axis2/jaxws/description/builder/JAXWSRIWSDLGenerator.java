@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description.builder;
 import com.sun.tools.ws.spi.WSToolsObjectFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
 import org.apache.axis2.description.AxisService;
@@ -56,6 +57,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -123,22 +125,21 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         Parameter servletConfigParam = axisConfiguration
                 .getParameter(HTTPConstants.HTTP_SERVLETCONFIG);
 
-        if (servletConfigParam == null) {
-            throw new WebServiceException("Axis2 Can't find ServletConfigParameter");
-        }
-        Object obj = servletConfigParam.getValue();
-        ServletContext servletContext;
         String webBase = null;
-
-        if (obj instanceof ServletConfig) {
-            ServletConfig servletConfig = (ServletConfig) obj;
-            servletContext = servletConfig.getServletContext();
-            webBase = servletContext.getRealPath("/WEB-INF");
-        } else {
-            throw new WebServiceException("Axis2 Can't find ServletConfig");
+        if (servletConfigParam != null) {
+            Object obj = servletConfigParam.getValue();
+            ServletContext servletContext;
+    
+            if (obj instanceof ServletConfig) {
+                ServletConfig servletConfig = (ServletConfig) obj;
+                servletContext = servletConfig.getServletContext();
+                webBase = servletContext.getRealPath("/WEB-INF");
+            } 
         }
 
-        this.classPath = getDefaultClasspath(webBase);
+        if(classPath == null) {
+            this.classPath = getDefaultClasspath(webBase);
+        }
         if (log.isDebugEnabled()) {
             log.debug("For implementation class " + className +
                     " WsGen classpath: " +
@@ -456,7 +457,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
      * @param msgContext
      * @return default classpath
      */
-    public static String getDefaultClasspath(String webBase) {
+    public String getDefaultClasspath(String webBase) {
         HashSet classpath = new HashSet();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         fillClassPath(cl, classpath);
@@ -479,6 +480,17 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
                 }
             } catch (Exception e) {
                 // Oh well.  No big deal.
+            }
+        }
+        
+        URL serviceArchive = axisService.getFileName();
+        if(serviceArchive != null) {
+            try {
+                classpath.add(Utils.toFile(serviceArchive).getCanonicalPath());
+            } catch (UnsupportedEncodingException e) {
+                log.error(e.getMessage(), e);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
             }
         }
 

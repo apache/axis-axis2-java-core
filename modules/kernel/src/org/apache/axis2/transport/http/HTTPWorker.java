@@ -44,6 +44,8 @@ import org.apache.ws.commons.schema.XmlSchema;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -203,6 +205,26 @@ public class HTTPWorker implements Worker {
                             outstream.flush();
                             return;
                         } else {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            int ret = service.printXSD(baos, schemaName);
+                            if(ret>0) {
+                                baos.flush();
+                                instream = new ByteArrayInputStream(baos.toByteArray());
+                                response.setStatus(HttpStatus.SC_OK);
+                                response.setContentType("text/xml");
+                                OutputStream outstream = response.getOutputStream();
+                                boolean checkLength = true;
+                                int length = Integer.MAX_VALUE;
+                                int nextValue = instream.read();
+                                if (checkLength) length--;
+                                while (-1 != nextValue && length >= 0) {
+                                    outstream.write(nextValue);
+                                    nextValue = instream.read();
+                                    if (checkLength) length--;
+                                }
+                                outstream.flush();
+                                return;
+                            }
                             // no schema available by that name  - send 404
                             response.sendError(HttpStatus.SC_NOT_FOUND, "Schema Not Found!");
                             return;
