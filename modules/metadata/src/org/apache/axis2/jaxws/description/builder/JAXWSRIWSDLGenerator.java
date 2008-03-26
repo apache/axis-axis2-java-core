@@ -19,12 +19,11 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import com.sun.tools.ws.spi.WSToolsObjectFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.dataretrieval.SchemaSupplier;
 import org.apache.axis2.dataretrieval.WSDLSupplier;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -58,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -157,10 +157,20 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             }
 
             createOutputDirectory(localOutputDirectory);
-            WSToolsObjectFactory factory = WSToolsObjectFactory.newInstance();
+            Class clazz;
+            try {
+                // Try the one in JDK16
+                clazz = Class.forName("com.sun.tools.internal.ws.spi.WSToolsObjectFactory");
+            } catch (Throwable t){
+                // Look for the RI
+                clazz = Class.forName("com.sun.tools.ws.spi.WSToolsObjectFactory");
+            }
+            Method m1 = clazz.getMethod("newInstance", new Class[]{});
+            Object factory = m1.invoke(new Object[]{});
             String[] arguments = getWsGenArguments(className, bindingType, localOutputDirectory);
             OutputStream os = new ByteArrayOutputStream();
-            factory.wsgen(os, arguments);
+            Method m2 = clazz.getMethod("wsgen", new Class[]{OutputStream.class, String[].class});
+            m2.invoke(factory, os, arguments);
             os.close();
             wsdlDefMap = readInWSDL(localOutputDirectory);
             if (wsdlDefMap.isEmpty()) {
