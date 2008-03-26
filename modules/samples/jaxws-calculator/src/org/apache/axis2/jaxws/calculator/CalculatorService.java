@@ -22,9 +22,11 @@ import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 
-@WebService(serviceName = "Calculator",
+@WebService(serviceName = "CalculatorService",
             endpointInterface = "org.apache.axis2.jaxws.calculator.Calculator",
-            targetNamespace = "http://calculator.jaxws.axis2.apache.org")
+            portName = "Calculator",
+            targetNamespace = "http://calculator.jaxws.axis2.apache.org",
+            wsdlLocation="META-INF/CalculatorService.wsdl")
 public class CalculatorService implements Calculator {
 
     @Resource

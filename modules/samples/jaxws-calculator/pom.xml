@@ -22,11 +22,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2.samples</groupId>
     <artifactId>jaxws-calculator</artifactId>
-    <packaging>aar</packaging>
+    <packaging>jar</packaging>
     <version>SNAPSHOT</version>
     <name>JAXWS Calculator Service</name>
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <resources>
+          <resource>
+            <directory>resources</directory>
+          </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -34,17 +39,6 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.axis2</groupId>
-                <artifactId>axis2-aar-maven-plugin</artifactId>
-                <version>SNAPSHOT</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <servicesXmlFile>resources/META-INF/services.xml</servicesXmlFile>
-                    <wsdlFile>resources/META-INF/CalculatorService.wsdl</wsdlFile>
-                    <includeDependencies>false</includeDependencies>
                 </configuration>
             </plugin>
         </plugins>

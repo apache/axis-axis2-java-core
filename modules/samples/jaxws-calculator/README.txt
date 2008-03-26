@@ -5,32 +5,28 @@ Introduction
 ============
 
 This is an example JAXWS Web service. It shows how to expose the methods of a class as a JAXWS Web
-service using Aixs2.
+service using Axis2.
 
 
 Building the Service
 ====================
 
-To build the sample service, type: mvn clan install
+To build the sample service, type: mvn clean install
 
-This will build the jaxws-calculator.aar in the target directory and copy it to the
-<AXIS2_HOME>/repository/services directory.
+This will build the jaxws-calculator.jar in the target directory and copy it to the
+<AXIS2_HOME>/repository/servicejars directory (create that directory if it's not yet created)
 
 You can start the Axis2 server by running either axis2server.bat (on Windows) or axis2server.sh
 (on Linux)that are located in <AXIS2_HOME>/bin directory.
 
 The WSDL for this service should be viewable at:
 
-http://<yourhost>:<yourport>/axis2/services/CalculatorService?wsdl
-(e.g. http://localhost:8080/axis2/services/CalculatorService?wsdl)
+http://<yourhost>:<yourport>/axis2/services/CalculatorService.Calculator?wsdl
+(e.g. http://localhost:8080/axis2/services/CalculatorService.Calculator?wsdl)
 
 
 Running the Client
 ==================
-
-Rest like invocation, 
-Open the browser and invoke the service 
-EX : http://localhost:8080/axis2/services/CalculatorService/add?value1=1&value2=34
 
 generate the client stubs pointing to the wsdl and invoke the service with appropriate client
 
