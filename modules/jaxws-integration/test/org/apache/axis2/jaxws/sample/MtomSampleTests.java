@@ -55,7 +55,7 @@ public class MtomSampleTests extends AbstractTestCase {
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
-    private static boolean CHECK_VERSIONMISMATCH = false;
+    private static boolean CHECK_VERSIONMISMATCH = true;
     
     public static Test suite() {
         return getTestSetup(new TestSuite(MtomSampleTests.class));
@@ -247,8 +247,9 @@ public class MtomSampleTests extends AbstractTestCase {
                            fault != null);
                 QName faultCode = sfe.getFault().getFaultCodeAsQName();
 
-                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
-                           SOAPConstants.SOAP_VERSIONMISMATCH_FAULT.equals(faultCode));
+              assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+            		  new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
+
             }
         }
         
@@ -318,7 +319,8 @@ public class MtomSampleTests extends AbstractTestCase {
                 QName faultCode = sfe.getFault().getFaultCodeAsQName();
 
                 assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
-                           SOAPConstants.SOAP_VERSIONMISMATCH_FAULT.equals(faultCode));
+              		  new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
+
             }
         }
         /*
