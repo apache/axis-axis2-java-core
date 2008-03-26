@@ -161,11 +161,7 @@ public class CodeGenerationUtility {
                         String pkg = (String)nsMap.get(namespace);
                         registerNamespace(sc, namespace, pkg);
                     }
-                } else {
-                    String namespace = key.getTargetNamespace();
-                    String pkg = extractNamespace(key);
-                    registerNamespace(sc, namespace, pkg);
-                }
+                } 
 
                 sc.setEntityResolver(resolver);
 
