@@ -78,7 +78,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               is a server not found case). Expected to throw a
 	 *               EE/WSE/UnknownHostException
 	 */
-	public void _testAsyncPolling_asyncMEP_UnknwonHost() throws Exception {
+	public void testAsyncPolling_asyncMEP_UnknwonHost() throws Exception {
 		
         AsyncPort port = getPort();
 		
@@ -107,7 +107,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               configured against an endpoint which does not exist (this
 	 *               is a 404-Not Found case). Expected to throw a EE/WSE
 	 */
-	public void _testAsyncPolling_asyncMEP_404NotFound() throws Exception {
+	public void testAsyncPolling_asyncMEP_404NotFound() throws Exception {
 		
 		AsyncPort port = getPort();
 		Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
@@ -141,7 +141,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               will throw a WSE which should result in a
 	 *               EE/SOAPFaultException
 	 */
-	public void _testAsyncPolling_asyncMEP_WebServiceException() throws Exception {
+	public void testAsyncPolling_asyncMEP_WebServiceException() throws Exception {
 		
 		AsyncPort port = getPort();
 		Response<ThrowExceptionResponse> resp = port
@@ -165,7 +165,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               will throw a wsdl:fault which should result in a
 	 *               EE/SimpleFault
 	 */
-	public void _testAsyncPolling_asyncMEP_WsdlFault() throws Exception{
+	public void testAsyncPolling_asyncMEP_WsdlFault() throws Exception{
 		
 		AsyncPort port = getPort();
 		Response<ThrowExceptionResponse> resp = port
@@ -192,7 +192,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               is a server not found case). Expected to throw a
 	 *               EE/WSE/UnknownHostException
 	 */
-	public void _testAsyncCallback_asyncMEP_UnknownHost() throws Exception {
+	public void testAsyncCallback_asyncMEP_UnknownHost() throws Exception {
 
 		AsyncPort port = getPort();
 		Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
@@ -225,7 +225,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               is a 404 Not Found case). Expected to throw a
 	 *               EE/WSE/UnknownHostException
 	 */
-	public void _testAsyncCallback_asyncMEP_404NotFound() throws Exception {
+	public void testAsyncCallback_asyncMEP_404NotFound() throws Exception {
 		
 		AsyncPort port = getPort();
 		Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
@@ -292,7 +292,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase { //com.ibm.
 	 *               will throw a wsdl:fault which should result in a
 	 *               EE/SimpleFault
 	 */
-	public void _testAsyncCallback_asyncMEP_WsdlFault() throws Exception{
+	public void testAsyncCallback_asyncMEP_WsdlFault() throws Exception{
 		
 		AsyncPort port = getPort();
 		CallbackHandler<ThrowExceptionResponse> handler = new CallbackHandler<ThrowExceptionResponse>();
