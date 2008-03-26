@@ -480,7 +480,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
                     WSDLSource wsdlSource = reader.createWSDLSource();
                     wsdlSource.setSource(document.getDocumentElement());
-                    wsdlSource.setBaseURI(new URI(getBaseUri()));
+                    if (getBaseUri() != null && !"".equals(getBaseUri())) {
+                        wsdlSource.setBaseURI(new URI(getBaseUri()));
+                    }
                     description = reader.readWSDL(wsdlSource);
                     descriptionElement = description.toElement();
                 } else {
