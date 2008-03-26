@@ -556,6 +556,22 @@
                                         />
                                 <delete dir="target/test-classes/servicejars/SoapMessageProviderService"/>
 
+                                <copy toDir="target/test-classes/servicejars/SoapMessageCheckMTOMProviderService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/provider/soapmsgcheckmtom/**"/>
+                                        <exclude name="org/apache/axis2/jaxws/provider/soapmsgcheckmtom/META-INF/services.xml"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/provider/soapmsgcheckmtom">
+                                        <include name="META-INF/**"/>
+                                        <exclude name="META-INF/services.xml"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="target/test-classes/servicejars/SoapMessageCheckMTOMProviderService.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/SoapMessageCheckMTOMProviderService"
+                                        />
+                                <delete dir="target/test-classes/servicejars/SoapMessageCheckMTOMProviderService"/>
+                                
                                 <copy toDir="target/test-classes/servicejars/SoapMessageMUProviderService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/provider/soapmsgmu/**"/>
@@ -1207,7 +1223,6 @@
                     <!-- Enable the next 2 lines if you want to attach a debugger
                     <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
                     <includes>
-
                         <include>**/MultiRedirectionCatalogTest.java</include>
                         <include>**/DispatchSoapActionTest.java</include>
                         <include>**/ProxySoapActionTest.java</include>
@@ -1222,7 +1237,7 @@
                         <include>**/SourceProviderTests.java</include>
                         <include>**/SourceMessageProviderTests.java</include>
                         <include>**/SoapMessageMUProviderTests.java</include>
-                        <include>**/JAXBProviderTests.java</include>
+                        
                         <include>**/ProxyTests.java</include>
                         <include>**/ProxyNonWrappedTests.java</include>
                         <include>**/RPCProxyTests.java</include>
@@ -1233,6 +1248,7 @@
                         <include>**/BasicAuthSecurityTests.java</include>
                         <include>**/AddressBookTests.java</include>
                         <include>**/MtomSampleTests.java</include>
+                        <include>**/JAXBProviderTests.java</include>
                         <include>**/BareTests.java</include>
 
                         <include>**/AddNumbersHandlerTests.java</include>

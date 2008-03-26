@@ -42,6 +42,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -106,6 +107,48 @@ public class MtomSampleTests extends AbstractTestCase {
         assertNotNull(response.getOutput().getImageData());
     }
     
+    /*
+     * Enable attachment Optimization through the MTOMFeature
+     * Using SOAP11
+     */
+    public void testSendImageFeature11() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom21 = new MTOMFeature();
+
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        
+        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+    }
     /*
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
@@ -247,8 +290,9 @@ public class MtomSampleTests extends AbstractTestCase {
                            fault != null);
                 QName faultCode = sfe.getFault().getFaultCodeAsQName();
 
-              assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
-            		  new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
+
+                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+                           new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
 
             }
         }
@@ -317,6 +361,7 @@ public class MtomSampleTests extends AbstractTestCase {
                 assertTrue("SOAPFault is null ",
                            fault != null);
                 QName faultCode = sfe.getFault().getFaultCodeAsQName();
+
 
                 assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
               		  new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));

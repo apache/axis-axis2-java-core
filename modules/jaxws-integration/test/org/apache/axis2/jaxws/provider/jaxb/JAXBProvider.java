@@ -51,6 +51,7 @@ public class JAXBProvider implements Provider<Source> {
      * @return
      */
     public Source invoke(Source obj) {
+        System.out.println(">> JAXB Provider Service: Request received.");
         TestLogger.logger.debug(">> JAXB Provider Service: Request received.\n");
         SendImage siRequest = null;
         SendImageResponse siResponse = null;

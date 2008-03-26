@@ -37,6 +37,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.soap.MTOMFeature;
+import javax.xml.ws.soap.SOAPBinding;
+
 import java.awt.*;
 import java.io.File;
 
@@ -65,6 +68,10 @@ public class JAXBProviderTests extends ProviderTestCase {
 
     String endpointUrl = "http://localhost:6060/axis2/services/JAXBProviderService.JAXBProviderPort";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
+    
+    String PROVIDER_ENDPOINT_URL = "http://localhost:6060/axis2/services/SoapMessageCheckMTOMProviderService.SoapMessageCheckMTOMProviderPort";
+    private QName PROVIDER_SERVICE_NAME = new QName("http://soapmsgcheckmtom.provider.jaxws.axis2.apache.org", "SoapMessageCheckMTOMProviderService");
+
     DataSource stringDS, imageDS;
     
     public JAXBProviderTests() {
@@ -146,6 +153,10 @@ public class JAXBProviderTests extends ProviderTestCase {
         Dispatch<Object> dispatch = svc
                 .createDispatch(portName, jbc, Service.Mode.PAYLOAD);
         
+        // Enable attachment optimization
+        SOAPBinding binding = (SOAPBinding) dispatch.getBinding();
+        binding.setMTOMEnabled(true);
+        
         //Create a request bean with imagedepot bean as value
         ObjectFactory factory = new ObjectFactory();
         SendImage request = factory.createSendImage();
@@ -156,5 +167,82 @@ public class JAXBProviderTests extends ProviderTestCase {
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
 
         TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+    }
+    
+    /**
+     * This test dispatches to the SOAPMessage CheckMTOM endpoint
+     * which verifies that an attachment was sent (versus inline)
+     * @throws Exception
+     */
+    public void testMTOMAttachmentImageProvider_API() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        Service svc = Service.create(PROVIDER_SERVICE_NAME);
+        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        
+        Dispatch<Object> dispatch = svc
+                .createDispatch(portName, jbc, Service.Mode.PAYLOAD);
+        
+        // Enable attachment optimization
+        SOAPBinding binding = (SOAPBinding) dispatch.getBinding();
+        binding.setMTOMEnabled(true);
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        SendImage request = factory.createSendImage();
+        request.setInput(imageDepot);
+        
+        // The provider service returns the same image back if successful
+        SendImage response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
+    }
+    
+    /**
+     * This test dispatches to the SOAPMessage CheckMTOM endpoint
+     * which verifies that an attachment was sent (versus inline)
+     * @throws Exception
+     */
+    public void testMTOMAttachmentImageProvider_MTOMFeature() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        Service svc = Service.create(PROVIDER_SERVICE_NAME);
+        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom = new MTOMFeature();
+        
+        Dispatch<Object> dispatch = svc
+                .createDispatch(portName, jbc, Service.Mode.PAYLOAD, mtom);
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        SendImage request = factory.createSendImage();
+        request.setInput(imageDepot);
+        
+        // The provider service returns the same image back if successful
+        SendImage response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
     }
 }
