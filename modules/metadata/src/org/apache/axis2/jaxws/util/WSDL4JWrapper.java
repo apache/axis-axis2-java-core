@@ -300,8 +300,14 @@ public class WSDL4JWrapper implements WSDLWrapper {
         });
     }
 
-    private URL getAbsoluteURL(ClassLoader classLoader, String filePath){
-        URL url = classLoader.getResource(filePath);
+    private URL getAbsoluteURL(final ClassLoader classLoader, final String filePath){
+        URL url = (URL) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return classLoader.getResource(filePath);
+                    }
+                }
+        );
         if(url == null) {
             if(log.isDebugEnabled()) {
                 log.debug("Could not get URL from classloader. Looking in a jar.");
@@ -329,7 +335,14 @@ public class WSDL4JWrapper implements WSDLWrapper {
                 break;
             }
             
-            root = root.getParent();
+            final ClassLoader current = root;
+            root = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return current.getParent();
+                        }
+                    }
+            );
             if (log.isDebugEnabled() && root != null) {
                 log.debug("Checking parent ClassLoader: " + root.getClass().getName());
             }

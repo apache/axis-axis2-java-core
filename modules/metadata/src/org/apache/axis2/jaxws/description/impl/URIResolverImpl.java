@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.resolver.URIResolver;
@@ -28,10 +29,14 @@ import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 /** This class is used to locate xml schemas that are imported by wsdl documents. */
 public class URIResolverImpl implements URIResolver {
@@ -224,7 +229,7 @@ public class URIResolverImpl implements URIResolver {
 
         try {
             streamURL = new URL(uri);
-            is = streamURL.openStream();
+            is = openStream_doPriv(streamURL);
         } catch (Throwable t) {
             //Exception handling not needed
         }
@@ -233,7 +238,7 @@ public class URIResolverImpl implements URIResolver {
             try {
                 pathURI = new URI(uri);
                 streamURL = pathURI.toURL();
-                is = streamURL.openStream();
+                is = openStream_doPriv(streamURL);
             } catch (Throwable t) {
                 //Exception handling not needed
             }
@@ -241,14 +246,34 @@ public class URIResolverImpl implements URIResolver {
 
         if (is == null) {
             try {
-                File file = new File(uri);
-                streamURL = file.toURL();
-                is = streamURL.openStream();
+                final File file = new File(uri);
+                streamURL = (URL) AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() throws MalformedURLException {
+                                return file.toURL();
+                            }
+                        }
+                );
+                is = openStream_doPriv(streamURL);
             } catch (Throwable t) {
                 //Exception handling not needed
             }
         }
         return is;
+    }
+
+    private InputStream openStream_doPriv(final URL streamURL) throws IOException {
+        try {
+            return (InputStream) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws IOException {
+                            return streamURL.openStream();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw (IOException) e.getException();
+        }
     }
 
     private String constructPath(URL baseURL, URI resolvedURI) {
