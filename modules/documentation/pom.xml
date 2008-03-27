@@ -202,6 +202,41 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-impl-dom</artifactId>
+            <version>${woden.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime</groupId>
+            <artifactId>smack</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -237,7 +272,8 @@
                                 <mkdir dir="${basedir}/target/apidocs"/>
                                 <javadoc packagenames="org.apache.axis2.*"
                                          destdir="${basedir}/target/apidocs"
-                                         classpathref="maven.runtime.classpath"
+                                         classpathref="maven.compile.classpath"
+                                         maxmemory="128m"
                                          author="true"
                                          version="true"
                                          use="true"
@@ -302,10 +338,6 @@
                                         <include name="javax/**"/>
                                     </packageset>
                                     <packageset dir="../../modules/jws-api/src" defaultexcludes="yes">
-                                        <include name="org/apache/axis2/**"/>
-                                        <include name="javax/**"/>
-                                    </packageset>
-                                    <packageset dir="../../modules/kernel/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
