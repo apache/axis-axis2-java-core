@@ -50,6 +50,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -97,14 +98,16 @@ class EndpointInterfaceDescriptionImpl
 
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
-        
-        if (!operation.isJAXWSAsyncClientMethod()) {
-        	List<OperationDescription> operations = dispatchableOperations.get(operation.getName());
-        	if(operations==null) {
-        		operations = new ArrayList<OperationDescription>();
-        		dispatchableOperations.put(operation.getName(), operations);
-        	}
-        	operations.add(operation);
+        // Don't put JAXWS client async methods OR excluded methods into the
+        // dispatchable operations list.
+        if (!operation.isJAXWSAsyncClientMethod()
+            && !operation.isExcluded()) {
+            List<OperationDescription> operations = dispatchableOperations.get(operation.getName());
+            if(operations == null) {
+                operations = new ArrayList<OperationDescription>();
+                dispatchableOperations.put(operation.getName(), operations);
+            }
+            operations.add(operation);
         }
     }
 
@@ -504,18 +507,15 @@ class EndpointInterfaceDescriptionImpl
      */
     public OperationDescription[] getDispatchableOperations() {
         OperationDescription[] returnOperations = null;
-        OperationDescription[] allMatchingOperations = getOperations();
-        if (allMatchingOperations != null && allMatchingOperations.length > 0) {
-            ArrayList<OperationDescription> dispatchableOperations = new ArrayList<OperationDescription>();
-            for (OperationDescription operation : allMatchingOperations) {
-                if (!operation.isJAXWSAsyncClientMethod()) {
-                    dispatchableOperations.add(operation);
-                }
-            }
-            
-            if (dispatchableOperations.size() > 0) {
-                returnOperations = dispatchableOperations.toArray(new OperationDescription[0]);
-            }
+        Collection<List<OperationDescription>> dispatchableValues = dispatchableOperations.values();
+        Iterator<List<OperationDescription>> iteratorValues = dispatchableValues.iterator();
+        ArrayList<OperationDescription> allDispatchableOperations = new ArrayList<OperationDescription>();
+        while (iteratorValues.hasNext()) {
+            List<OperationDescription> opDescList = iteratorValues.next();
+            allDispatchableOperations.addAll(opDescList);
+        }
+        if (allDispatchableOperations.size() > 0) {
+            returnOperations = allDispatchableOperations.toArray(new OperationDescription[allDispatchableOperations.size()]);
         }
         return returnOperations;
     }

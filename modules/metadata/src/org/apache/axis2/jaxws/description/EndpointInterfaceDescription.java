@@ -79,8 +79,11 @@ public interface EndpointInterfaceDescription {
 
     /**
      * Returns all the dispatchable operations matching the operation QName.  A dispatchable
-     * operation is one that is NOT a JAX-WS client-side async method invocation.  That is, method
-     * signatures of the follogin forms are filtered out of this list: javax.xml.ws.Response<T>
+     * operation is one that is NOT a JAX-WS client-side async method invocation and does NOT
+     * carry an @WebMethod(exclude=true) annotation.
+     * 
+     * JAX-WS client-side async methods which have signatures of the following forms are 
+     * filtered out of this list: javax.xml.ws.Response<T>
      * method(...) java.util.concurrent.Future<?> method(..., javax.xml.ws.AsyncHandler<T>)
      * <p/>
      * These methods are filtered because a common use case is to use the same SEI on both the

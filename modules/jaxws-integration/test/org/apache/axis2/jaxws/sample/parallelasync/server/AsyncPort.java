@@ -264,12 +264,8 @@ public interface AsyncPort {
      * @return
      *     returns java.lang.String
      */
-    /*  TODO
-     * This should work...but for some reason exclude is not being picked up correctly.
-     *
     @WebMethod(exclude=true)
     public String customAsync(
         String request);
-        */
 
 }
