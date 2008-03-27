@@ -21,8 +21,8 @@ You can start the Axis2 server by running either axis2server.bat (on Windows) or
 
 The WSDL for this service should be viewable at:
 
-http://<yourhost>:<yourport>/axis2/services/CalculatorService.Calculator?wsdl
-(e.g. http://localhost:8080/axis2/services/CalculatorService.Calculator?wsdl)
+http://<yourhost>:<yourport>/axis2/services/CalculatorService.CalculatorServicePort?wsdl
+(http://localhost:8080/axis2/services/CalculatorService.CalculatorServicePort?wsdl)
 
 
 Running the Client
