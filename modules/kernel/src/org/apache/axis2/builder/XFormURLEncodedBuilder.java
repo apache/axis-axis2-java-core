@@ -94,12 +94,7 @@ public class XFormURLEncodedBuilder implements Builder {
             throw new AxisFault("Cannot create DocumentElement without destination EPR");
         }
 
-        String requestURL = null;
-        try {
-            requestURL = URIEncoderDecoder.decode(endpointReference.getAddress());
-        } catch (UnsupportedEncodingException e) {
-            throw AxisFault.makeFault(e);
-        }
+        String requestURL = endpointReference.getAddress();
         try {
             requestURL = extractParametersUsingHttpLocation(templatedPath, parameterMap,
                                                             requestURL,
@@ -137,9 +132,16 @@ public class XFormURLEncodedBuilder implements Builder {
             for (int i = 0; i < parts.length; i++) {
                 int separator = parts[i].indexOf("=");
                 if (separator > 0) {
+                    String value = parts[i].substring(separator + 1);
+                    try {
+                        value = URIEncoderDecoder.decode(value);
+                    } catch (UnsupportedEncodingException e) {
+                        throw AxisFault.makeFault(e);
+                    }
+
                     parameterMap
                             .put(parts[i].substring(0, separator),
-                                 parts[i].substring(separator + 1));
+                                 value);
                 }
             }
 
@@ -314,7 +316,12 @@ public class XFormURLEncodedBuilder implements Builder {
 
     private void addParameterToMap(MultipleEntryHashMap parameterMap, String paramName,
                                    String paramValue)
-            throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException, AxisFault {
+        try {
+            paramValue = URIEncoderDecoder.decode(paramValue);
+        } catch (UnsupportedEncodingException e) {
+            throw AxisFault.makeFault(e);
+        }
         if (paramName.startsWith(WSDL2Constants.TEMPLATE_ENCODE_ESCAPING_CHARACTER)) {
             parameterMap.put(paramName.substring(1), paramValue);
         } else {
@@ -336,4 +343,3 @@ public class XFormURLEncodedBuilder implements Builder {
         }
     }
 }
-
