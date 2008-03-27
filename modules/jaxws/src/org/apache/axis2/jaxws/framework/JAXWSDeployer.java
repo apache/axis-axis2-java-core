@@ -270,7 +270,7 @@ public class JAXWSDeployer implements Deployer {
         Class pojoClass = Loader.loadClass(classLoader, className);
         AxisService axisService;
         try {
-            axisService = DescriptionFactory.createAxisService(pojoClass);
+            axisService = DescriptionFactory.createAxisService(pojoClass, configCtx);
         } catch (Throwable t) {
             log.info("Exception creating Axis Service : " + t.getCause(), t);
             return null;

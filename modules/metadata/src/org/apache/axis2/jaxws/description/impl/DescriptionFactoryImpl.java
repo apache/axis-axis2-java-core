@@ -213,12 +213,17 @@ public class DescriptionFactoryImpl {
 
     /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class) */
     public static ServiceDescription createServiceDescription(Class serviceImplClass) {
+        return createServiceDescription(serviceImplClass, null);
+    }
+
+    /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class) */
+    public static ServiceDescription createServiceDescription(Class serviceImplClass, ConfigurationContext configContext) {
         ServiceDescription serviceDesc = null;
 
         if (serviceImplClass != null) {
             JavaClassToDBCConverter converter = new JavaClassToDBCConverter(serviceImplClass);
             HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
-            List<ServiceDescription> serviceDescList = createServiceDescriptionFromDBCMap(dbcMap, null);
+            List<ServiceDescription> serviceDescList = createServiceDescriptionFromDBCMap(dbcMap, configContext);
             if (serviceDescList != null && serviceDescList.size() > 0) {
                 serviceDesc = serviceDescList.get(0);
                 if (log.isDebugEnabled()) {
@@ -234,7 +239,6 @@ public class DescriptionFactoryImpl {
         }
         return serviceDesc;
     }
-
 
     /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap) */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(

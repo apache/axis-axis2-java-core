@@ -260,6 +260,9 @@ public class JAXBUtils {
             String p = it.next();
             // Don't consider java and javax packages
             // REVIEW: We might have to refine this
+            if (p.startsWith("javax.xml.ws.wsaddressing")) {
+                continue;
+            }
             if (p.startsWith("java.") ||
                     p.startsWith("javax.")) {
                 it.remove();
