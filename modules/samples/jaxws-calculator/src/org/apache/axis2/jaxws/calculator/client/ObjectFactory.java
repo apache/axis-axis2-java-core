@@ -18,7 +18,7 @@
 */
 package org.apache.axis2.jaxws.calculator.client;
 
-import org.apache.axis2.jaxws.calculator.GetTicketResponse;
+import org.apache.axis2.jaxws.calculator.client.GetTicketResponse;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
