@@ -160,6 +160,10 @@ public interface EndpointDescription {
      * Signals whether or not MTOM has been turned on for the endpoint 
      * based on the annotation configuration.
      * 
+     * Both the @MTOM and @BindingType are inspected.  The @MTOM
+     * annotation is inspected first.  If the @MTOM
+     * annotation is not present, then the @BindingType is inspected.
+     * 
      * @return a boolean value 
      */
     public boolean isMTOMEnabled();

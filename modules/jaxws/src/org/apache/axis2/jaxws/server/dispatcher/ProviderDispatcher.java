@@ -259,12 +259,9 @@ public class ProviderDispatcher extends JavaDispatcher {
         Message message = request.getMessage();
         if (message != null) {
             
-            // Enable MTOM if indicated by the binding
-            String bindingType = endpointDesc.getBindingType();
-            if (bindingType != null) {
-            	if (BindingUtils.isMTOMBinding(bindingType)) {
-            		message.setMTOMEnabled(true);
-            	}
+            // Enable MTOM if indicated
+            if (endpointDesc.isMTOMEnabled()) {
+                message.setMTOMEnabled(true);
             }
 
             // Save off the protocol info so we can use it when creating the response message.
@@ -340,13 +337,11 @@ public class ProviderDispatcher extends JavaDispatcher {
         
         MessageContext response = null;
         try {
-            // Enable MTOM if indicated by the binding
-            String bindingType = endpointDesc.getBindingType();
-            if (bindingType != null) {
-            	if (BindingUtils.isMTOMBinding(bindingType)) {
-                	m.setMTOMEnabled(true);
-            	}
+            // Enable MTOM if indicated 
+            if (endpointDesc.isMTOMEnabled()) {
+                m.setMTOMEnabled(true);
             }
+            
 
             response = MessageContextUtils.createResponseMessageContext(request);
             response.setMessage(m);
@@ -619,12 +614,8 @@ public class ProviderDispatcher extends JavaDispatcher {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
 
         endpointDesc = mc.getEndpointDescription();
-        String bindingType = endpointDesc.getBindingType();
-
-        if (bindingType != null) {
-            if (BindingUtils.isMTOMBinding(bindingType)) {
-                mc.getMessage().setMTOMEnabled(true);
-            }
+        if (endpointDesc.isMTOMEnabled()) {
+            mc.getMessage().setMTOMEnabled(true);
         }
 
         //Set SOAP Operation Related properties in SOAPMessageContext.

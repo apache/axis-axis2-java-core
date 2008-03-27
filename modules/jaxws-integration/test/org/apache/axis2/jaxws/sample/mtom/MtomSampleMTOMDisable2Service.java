@@ -38,13 +38,18 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+/**
+ * The binding indicates MTOM, but @MTOM indicates enabled=false
+ * Thus no MTOM.
+ */
 @WebService(serviceName="MtomSampleService",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
 @BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-public class MtomSampleService implements MtomSample {
+@MTOM(enabled=false)
+public class MtomSampleMTOMDisable2Service implements MtomSample {
 
     public ImageDepot sendImage(ImageDepot input) {
-        TestLogger.logger.debug("MtomSampleService [new sendImage request received]");
+        TestLogger.logger.debug("MtomSampleMTOMDisable2Service [new sendImage request received]");
         DataHandler data = input.getImageData();
 
         TestLogger.logger.debug("[contentType] " + data.getContentType());

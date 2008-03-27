@@ -216,12 +216,10 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         mc.setOperationDescription(Utils.getOperationDescription(mc));
         endpointDesc = mc.getEndpointDescription();
-        String bindingType = endpointDesc.getBindingType();
-        if (bindingType != null) {
-            if (BindingUtils.isMTOMBinding(bindingType)) {
-        		mc.getMessage().setMTOMEnabled(true);
-            }
+        if (endpointDesc.isMTOMEnabled()) {
+            mc.getMessage().setMTOMEnabled(true);
         }
+      
         
         //Set SOAP Operation Related properties in SOAPMessageContext.
         ContextUtils.addWSDLProperties(mc);
@@ -309,19 +307,22 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         // Enable MTOM for the response if necessary.
         // (MTOM is not enabled it this operation has SWA parameters
-        
-        if (m.isDoingSWA()) {
-            EndpointDescription epDesc = request.getEndpointDescription();
-
-            String bindingType = epDesc.getBindingType();
-            if (bindingType != null) {
-                if (BindingUtils.isMTOMBinding(bindingType)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("MTOM enabled for the response message.");
-                    }
-                    m.setMTOMEnabled(true);
-                }
+           
+        EndpointDescription epDesc = request.getEndpointDescription();
+        String bindingType = epDesc.getBindingType();
+        boolean isMTOMBinding = epDesc.isMTOMEnabled();
+        boolean isDoingSWA = m.isDoingSWA();
+        if (log.isDebugEnabled()) {
+            log.debug("EndpointDescription = " + epDesc.toString());
+            log.debug("BindingType = " + bindingType);
+            log.debug("isMTOMBinding = " + isMTOMBinding);
+            log.debug("isDoingSWA = " + isDoingSWA);
+        }
+        if (!m.isDoingSWA() && isMTOMBinding) {
+            if (log.isDebugEnabled()) {
+                log.debug("MTOM enabled for the response message.");
             }
+            m.setMTOMEnabled(true);
         }
         
         return response;

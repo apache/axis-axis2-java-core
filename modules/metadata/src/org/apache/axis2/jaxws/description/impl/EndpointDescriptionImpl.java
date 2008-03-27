@@ -70,6 +70,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.MTOM;
+import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -183,6 +185,9 @@ class EndpointDescriptionImpl
     private ServerFramework framework = new ServerFramework();
     
     private Map<String, Object> properties;
+    
+    // Remembers if this endpoint description is MTOMEnabled
+    private Boolean isMTOMEnabledCache = null;
 
     
     /**
@@ -1503,15 +1508,34 @@ class EndpointDescriptionImpl
      * @see org.apache.axis2.jaxws.description.EndpointDescription#isMTOMEnabled()
      */
     public boolean isMTOMEnabled() {
-        if (axisService != null) {
-            // We should cache this call here so we don't have to make
-            // it on every pass through.
-            Parameter enableMTOM = axisService.getParameter(Configuration.ENABLE_MTOM);
-            if (enableMTOM != null) {
-                return (Boolean) enableMTOM.getValue();
-            }
+        if (isMTOMEnabledCache != null) {
+            return isMTOMEnabledCache.booleanValue();
         }
         
+        // isMTOMEnabled is a combination of the @BindingType and the @MTOM setting.
+        MTOM mtomAnnotation =
+                (MTOM) getAnnoFeature(MTOMFeature.ID);
+        
+        // If the @MTOM annotation is set, it wins
+        if (mtomAnnotation != null) {
+            isMTOMEnabledCache = Boolean.valueOf(mtomAnnotation.enabled());
+            return isMTOMEnabledCache.booleanValue();
+        }
+        
+        // Else look at the bindingType
+        String bindingType = getBindingType();
+        isMTOMEnabledCache = Boolean.valueOf(isMTOMBinding(bindingType));
+        return isMTOMEnabledCache.booleanValue();
+    }
+    
+    private static boolean isMTOMBinding(String url) {
+        if (url != null && 
+               (url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                       url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
+                       url.equals(MDQConstants.SOAP11JMS_MTOM_BINDING) ||
+                       url.equals(MDQConstants.SOAP12JMS_MTOM_BINDING))) {
+            return true;
+        }
         return false;
     }
     

@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.attachments;
 
+import org.apache.axis2.datasource.jaxb.JAXBAttachmentUnmarshallerMonitor;
 import org.apache.axis2.jaxws.message.Message;
 
 import javax.activation.DataHandler;
@@ -42,7 +43,11 @@ public class JAXBAttachmentUnmarshaller extends org.apache.axis2.datasource.jaxb
         
         // Get the attachment from the message using the cid
         if (message != null) {
-            return message.getDataHandler(cid);
+            DataHandler dh = message.getDataHandler(cid);
+            if (dh != null) {
+                JAXBAttachmentUnmarshallerMonitor.addBlobCID(cid);
+            }
+            return dh;
         } 
         return null;
     }

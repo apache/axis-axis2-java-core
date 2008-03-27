@@ -38,13 +38,17 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+/**
+ * Endpoint with MTOM enabled
+ */
 @WebService(serviceName="MtomSampleService",
 	    endpointInterface="org.apache.axis2.jaxws.sample.mtom.MtomSample")
-@BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
-public class MtomSampleService implements MtomSample {
+//@BindingType(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+@MTOM(enabled=true)
+public class MtomSampleMTOMEnableService implements MtomSample {
 
     public ImageDepot sendImage(ImageDepot input) {
-        TestLogger.logger.debug("MtomSampleService [new sendImage request received]");
+        TestLogger.logger.debug("MtomSampleMTOMEnableService [new sendImage request received]");
         DataHandler data = input.getImageData();
 
         TestLogger.logger.debug("[contentType] " + data.getContentType());

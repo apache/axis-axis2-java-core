@@ -29,7 +29,7 @@ import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
-@WebService(name = "MtomSample", 
+@WebService(name = "MtomSample",
             targetNamespace = "http://org/apache/axis2/jaxws/sample/mtom", 
             wsdlLocation = "META-INF/ImageDepot.wsdl")
 public interface MtomSample {

@@ -22,6 +22,8 @@ package org.apache.axis2.jaxws.sample;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axis2.datasource.jaxb.JAXBAttachmentUnmarshallerMonitor;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
@@ -46,14 +48,26 @@ import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
+import java.util.List;
 
 public class MtomSampleTests extends AbstractTestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
     private static final String URL_ENDPOINT = "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleServicePort";
+    
+    private static final String URL_ENDPOINT_MTOMDISABLE = 
+        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDisableServicePort";
+    private static final String URL_ENDPOINT_MTOMDISABLE2 = 
+        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDisable2ServicePort";
+    private static final String URL_ENDPOINT_MTOMENABLE = 
+        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMEnableServicePort";
+    private static final String URL_ENDPOINT_MTOMDEFAULT = 
+        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDefaultServicePort";
+    
+    
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
     private static boolean CHECK_VERSIONMISMATCH = true;
@@ -143,12 +157,257 @@ public class MtomSampleTests extends AbstractTestCase {
         service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
         
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
         
-        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
         
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
+        
+        
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
     }
+    
+    /*
+     * Enable attachment Optimization but call an endpoint with @MTOM(enable=false)
+     */
+    public void testSendImage_MTOMDisable() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom21 = new MTOMFeature();
+
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDISABLE);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
+    }
+    
+    /*
+     * Enable attachment Optimization but call an endpoint with @MTOM(enable=false)
+     * which should override the MTOM BindingType
+     */
+    public void testSendImage_MTOMDisable2() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom21 = new MTOMFeature();
+
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDISABLE2);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
+    }
+    
+    /*
+     * Enable attachment Optimization but call an endpoint with @MTOM(enable=true)
+     */
+    public void testSendImage_MTOMEnable() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom21 = new MTOMFeature();
+
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMENABLE);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
+    }
+    
+    /*
+     * Enable attachment Optimization but call an endpoint with @MTOM
+     */
+    public void testSendImage_MTOMDefault() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        MTOMFeature mtom21 = new MTOMFeature();
+
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMDEFAULT);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
+    }
+    
     /*
      * Enable attachment optimization using the SOAP11 binding
      * property for MTOM.
