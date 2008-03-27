@@ -904,6 +904,8 @@ public class ConfigurationContext extends AbstractContext {
                     String s = (String) toBeRemovedList.get(i);
                     serviceGroupContextMap.remove(s);
                 }
+            }  else {
+                 applicationSessionServiceGroupContexts.remove(serviceGroup.getServiceGroupName());
             }
         }
     }
