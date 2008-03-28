@@ -221,10 +221,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         Set bindings = new HashSet();
         Map endpointMap = axisService.getEndpoints();
         if (endpointMap != null && endpointMap.size() > 0) {
-            String[] eprs = axisService.getEPRs();
-            if (eprs == null) {
-                eprs = new String[]{serviceName};
-            }
+
             OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
             Iterator iterator = endpointMap.values().iterator();
             while (iterator.hasNext()) {
@@ -252,30 +249,27 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                         continue;
                     }
                 }
-                
-                bindings.add(axisBinding);
-                for (int i = 0; i < eprs.length; i++) {
-                    String epr = eprs[i];
-                    OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp, epr);
-                    boolean endpointAlreadyAdded = false;
-                    Iterator endpointsAdded = serviceElement.getChildren();
-                    while (endpointsAdded.hasNext()) {
-                        OMElement endpoint = (OMElement) endpointsAdded.next();
-                        // Checking whether a endpoint with the same binding and address exists.
-                        if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME))
-                                .getAttributeValue().equals(endpointElement.getAttribute(
-                                new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
-                                && endpoint
-                                .getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS))
-                                .getAttributeValue().equals(endpointElement.getAttribute(
-                                new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
-                            endpointAlreadyAdded = true;
-                        }
 
+                bindings.add(axisBinding);
+                OMElement endpointElement = axisEndpoint.toWSDL20(wsdl, tns, whttp);
+                boolean endpointAlreadyAdded = false;
+                Iterator endpointsAdded = serviceElement.getChildren();
+                while (endpointsAdded.hasNext()) {
+                    OMElement endpoint = (OMElement) endpointsAdded.next();
+                    // Checking whether a endpoint with the same binding and address exists.
+                    if (endpoint.getAttribute(new QName(WSDL2Constants.BINDING_LOCAL_NAME))
+                            .getAttributeValue().equals(endpointElement.getAttribute(
+                            new QName(WSDL2Constants.BINDING_LOCAL_NAME)).getAttributeValue())
+                            && endpoint
+                            .getAttribute(new QName(WSDL2Constants.ATTRIBUTE_ADDRESS))
+                            .getAttributeValue().equals(endpointElement.getAttribute(
+                            new QName(WSDL2Constants.ATTRIBUTE_ADDRESS)).getAttributeValue())) {
+                        endpointAlreadyAdded = true;
                     }
-                    if (!endpointAlreadyAdded) {
-                        serviceElement.addChild(endpointElement);
-                    }
+
+                }
+                if (!endpointAlreadyAdded) {
+                    serviceElement.addChild(endpointElement);
                 }
             }
             Iterator iter = bindings.iterator();

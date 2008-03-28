@@ -128,19 +128,8 @@ public class AxisEndpoint extends AxisDescription {
 				"axisMessage.isEngaged() is not supported");
 	}
 
-	public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
-			OMNamespace whttp, String epr) {
+    public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace whttp) {
 		String property;
-		String name;
-		if (epr.startsWith("https://")) {
-			// The reason to do this is to have camel case
-			String endpointName = this.getName();
-			name = WSDL2Constants.DEFAULT_HTTPS_PREFIX
-					+ endpointName.substring(0, 1).toUpperCase()
-					+ endpointName.substring(1);
-		} else {
-			name = this.getName();
-		}
 		OMFactory omFactory = OMAbstractFactory.getOMFactory();
 		OMElement endpointElement = omFactory.createOMElement(
 				WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
@@ -150,7 +139,7 @@ public class AxisEndpoint extends AxisDescription {
 				WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":"
 						+ getBinding().getName().getLocalPart()));
 		endpointElement.addAttribute(omFactory.createOMAttribute(
-				WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
+				WSDL2Constants.ATTRIBUTE_ADDRESS, null, getEndpointURL()));
 		Object authenticationScheme = this.options
 				.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
 		if (authenticationScheme != null) {
