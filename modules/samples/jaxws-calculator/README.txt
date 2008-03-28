@@ -39,3 +39,6 @@ Improvements
 Make this sample run possible with ant 
 
 
+**** WARNING ****
+Please Remove xalan jar from <AXIS2_HOME>/ before you start axis2 server. If you are using this
+sample inside a WAR, please remove xalan jar from WEB-INF/lib
