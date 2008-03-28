@@ -121,7 +121,6 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         }
         
         public Object call() throws Exception {
-        	if (true) throw new RuntimeException("MIKE - this should do it");
             try {
                 if (log.isDebugEnabled()) {
                     log.debug("Invoking target endpoint via the async worker.");
