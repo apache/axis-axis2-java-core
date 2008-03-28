@@ -188,8 +188,9 @@ public class JAXBDSContext {
     }
     
     public ClassLoader getClassLoader() {
-        if (getMessageContext() != null) {
-            return (ClassLoader) getMessageContext().getProperty(Constants.CACHE_CLASSLOADER);
+        MessageContext context = getMessageContext();
+        if (context != null) {
+            return (ClassLoader) context.getProperty(Constants.CACHE_CLASSLOADER);
         }
         return null;
     }
