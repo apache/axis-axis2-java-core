@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.server;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
@@ -55,18 +56,34 @@ import javax.xml.ws.WebServiceException;
  * The JAXWSMessageReceiver is the entry point, from the server's perspective, to the JAX-WS code.
  * This will be called by the Axis Engine and is the end of the chain from an Axis2 perspective.
  */
-public class JAXWSMessageReceiver implements MessageReceiver {
+public class JAXWSMessageReceiver extends AbstractMessageReceiver implements MessageReceiver {
 
     private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
 
     private static String PARAM_SERVICE_CLASS = "ServiceClass";
     public static String PARAM_BINDING = "Binding";
 
+    protected void invokeBusinessLogic(org.apache.axis2.context.MessageContext messageCtx) throws AxisFault {
+        // DUMMY.
+    }
+
+    public void receive(org.apache.axis2.context.MessageContext messageCtx)
+            throws AxisFault {
+        ThreadContextDescriptor tc = setThreadContext(messageCtx);
+        try {
+            receiveInternal(messageCtx);    
+        } finally {
+            restoreThreadContext(tc);
+        }
+    }
+    
     /**
      * We should have already determined which AxisService we're targetting at this point.  So now,
      * just get the service implementation and invoke the appropriate method.
+     * @param axisRequestMsgCtx
+     * @throws org.apache.axis2.AxisFault
      */
-    public void receive(org.apache.axis2.context.MessageContext axisRequestMsgCtx)
+    public void receiveInternal(org.apache.axis2.context.MessageContext axisRequestMsgCtx)
             throws AxisFault {
         AxisFault faultToReturn = null;
 
@@ -96,6 +113,9 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                 ServiceDescription serviceDesc =
                         DescriptionFactory.createServiceDescriptionFromServiceImpl(
                                 clazz, service);
+                if (service.getParameter(org.apache.axis2.Constants.SERVICE_TCCL) != null) {
+                    service.addParameter(new Parameter(org.apache.axis2.Constants.SERVICE_TCCL, org.apache.axis2.Constants.TCCL_COMPOSITE));
+                }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(
                         Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
