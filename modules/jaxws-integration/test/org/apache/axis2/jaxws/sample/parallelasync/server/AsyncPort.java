@@ -264,8 +264,10 @@ public interface AsyncPort {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(exclude=true)
-    public String customAsync(
-        String request);
+// TODO: This causes validation failures when using the Sun JDK.
+// https://issues.apache.org/jira/browse/AXIS2-3679
+//    @WebMethod(exclude=true)
+//    public String customAsync(
+//        String request);
 
 }
