@@ -44,7 +44,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public abstract class AddressingInHandlerTestBase extends TestCase {
-    private Log log = LogFactory.getLog(getClass());
+    private static Log log = LogFactory.getLog(AddressingInHandlerTestBase.class);
     AddressingInHandler inHandler;
     String addressingNamespace;
     TestUtil testUtil = new TestUtil();

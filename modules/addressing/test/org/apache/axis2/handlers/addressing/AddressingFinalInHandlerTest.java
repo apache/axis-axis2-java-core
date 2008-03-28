@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
 
-    private Log log = LogFactory.getLog(getClass());
+    private static Log log = LogFactory.getLog(AddressingFinalInHandlerTest.class);
 
     /** @param testName  */
     public AddressingFinalInHandlerTest(String testName) {

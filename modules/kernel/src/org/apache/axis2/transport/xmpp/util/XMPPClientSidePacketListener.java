@@ -31,7 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public class XMPPClientSidePacketListener implements PacketListener {
-	private Log log = LogFactory.getLog(XMPPClientSidePacketListener.class);
+	private static Log log = LogFactory.getLog(XMPPClientSidePacketListener.class);
 	private MessageContext messageContext = null;
 	private boolean responseReceived;
 

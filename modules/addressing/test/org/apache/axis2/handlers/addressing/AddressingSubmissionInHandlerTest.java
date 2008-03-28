@@ -32,7 +32,7 @@ import java.util.List;
 
 public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBase {
 
-    private Log log = LogFactory.getLog(getClass());
+    private static Log log = LogFactory.getLog(AddressingSubmissionInHandlerTest.class);
 
     /** @param testName  */
     public AddressingSubmissionInHandlerTest(String testName) {

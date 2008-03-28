@@ -33,7 +33,7 @@ import org.jivesoftware.smack.filter.ToContainsFilter;
 import java.util.HashMap;
 
 public class XMPPConnectionFactory {
-	private Log log = LogFactory.getLog(XMPPConnectionFactory.class);
+	private static Log log = LogFactory.getLog(XMPPConnectionFactory.class);
 	private XMPPConnection xmppConnection = null;
 	private PacketFilter packetFilter = null;
 	private HashMap xmppConnections = new HashMap();

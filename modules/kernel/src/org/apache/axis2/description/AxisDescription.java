@@ -69,7 +69,7 @@ public abstract class AxisDescription implements ParameterInclude,
 	private OMNode documentation;
 
 	// creating a logger instance
-	private Log log = LogFactory.getLog(this.getClass());
+	private static Log log = LogFactory.getLog(AxisDescription.class);
 
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();

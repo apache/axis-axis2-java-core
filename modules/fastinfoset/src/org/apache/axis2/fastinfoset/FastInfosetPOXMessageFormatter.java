@@ -44,7 +44,7 @@ import java.util.Iterator;
 
 public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 
-	private Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);
+	private static Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);
 	
 	/**
 	 * Plain Fast Infoset message formatter doesn't need to handle SOAP. Hence do nothing.

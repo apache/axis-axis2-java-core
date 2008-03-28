@@ -56,7 +56,7 @@ import java.util.concurrent.Future;
 public abstract class BaseDispatch<T> extends BindingProvider
         implements javax.xml.ws.Dispatch {
 
-    private Log log = LogFactory.getLog(BaseDispatch.class);
+    private static Log log = LogFactory.getLog(BaseDispatch.class);
 
     protected InvocationController ic;
 

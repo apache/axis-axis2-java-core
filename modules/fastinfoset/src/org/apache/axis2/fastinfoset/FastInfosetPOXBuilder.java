@@ -39,7 +39,7 @@ import java.io.InputStream;
 
 public class FastInfosetPOXBuilder implements Builder {
 
-	private Log logger = LogFactory.getLog(FastInfosetBuilder.class);
+	private static Log logger = LogFactory.getLog(FastInfosetBuilder.class);
 	
 	/**
 	 * Returns a OMElement handler to the document element of the Fast Infoset message.

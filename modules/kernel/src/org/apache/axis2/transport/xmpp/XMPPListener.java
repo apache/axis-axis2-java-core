@@ -47,7 +47,7 @@ import java.util.Map;
 
 
 public class XMPPListener implements TransportListener {
-    private Log log = null;
+    private static Log log = LogFactory.getLog(XMPPListener.class);
     private ConfigurationContext configurationContext = null;
     private String replyTo = "";
 
@@ -65,7 +65,6 @@ public class XMPPListener implements TransportListener {
 
     
     public XMPPListener() {
-    	log = LogFactory.getLog(XMPPListener.class);
 	}
 
 	/**

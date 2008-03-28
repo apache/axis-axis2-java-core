@@ -36,7 +36,7 @@ import java.io.ObjectOutputStream;
 
 public class ChannelSender implements MessageSender {
 
-    private Log log = LogFactory.getLog(ChannelSender.class);
+    private static Log log = LogFactory.getLog(ChannelSender.class);
     private Channel channel;
     private boolean synchronizeAllMembers;
     private MembershipManager membershipManager;
