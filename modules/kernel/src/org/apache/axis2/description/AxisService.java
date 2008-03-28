@@ -1159,11 +1159,10 @@ public class AxisService extends AxisDescription {
 			attribute = nodeMap.item(i);
 			if (attribute.getNodeName().equals("schemaLocation")) {
 				attributeValue = attribute.getNodeValue();
-				if (attributeValue.indexOf("://") == -1) {
-					attribute
-							.setNodeValue(this.name + "?xsd=" + attributeValue);
-				}
-			}
+                if (attributeValue.indexOf("://") == -1 && attributeValue.indexOf("?xsd=") == -1) {
+                    attribute.setNodeValue(this.name + "?xsd=" + attributeValue);
+                }
+            }
 		}
 	}
 
@@ -1278,7 +1277,8 @@ public class AxisService extends AxisDescription {
 			try {
 				Definition definition = supplier.getWSDL(this);
 				if (definition != null) {
-					printDefinitionObject(getWSDLDefinition(definition, null),
+                    changeImportAndIncludeLocations(definition);
+                    printDefinitionObject(getWSDLDefinition(definition, null),
 							out, requestIP);
 				}
 			} catch (Exception e) {
