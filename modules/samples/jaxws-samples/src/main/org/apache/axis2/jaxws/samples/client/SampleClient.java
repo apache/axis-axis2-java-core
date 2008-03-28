@@ -27,6 +27,12 @@ import org.apache.axis2.jaxws.samples.echo.EchoStringInput;
 import org.apache.axis2.jaxws.samples.echo.EchoStringResponse;
 import org.apache.axis2.jaxws.samples.ping.ObjectFactory;
 import org.apache.axis2.jaxws.samples.ping.PingStringInput;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.FileSystemConfigurator;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -44,7 +50,7 @@ public class SampleClient {
     private static final int SLEEPER = 2;     // Poll delay for async
     private String urlHost = "localhost";
     private String urlPort = "8080";
-    private static final String CONTEXT_BASE = "/jaxws-samples/services";
+    private static final String CONTEXT_BASE = "/jaxws-samples/services/";
     private static final String PING_CONTEXT = CONTEXT_BASE + "PingService.PingServicePort";
     private static final String ECHO_CONTEXT = CONTEXT_BASE + "EchoService.EchoServicePort";
     private static final String PING_CONTEXT12 = CONTEXT_BASE + "PingService12.PingService12Port";
@@ -194,7 +200,10 @@ public class SampleClient {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT12;
                     }
+
+                    ClientConfigurationFactory factory = initConfigurationFactory();
                     buildAsync12(uriString + urlSuffix, null, message, timeout, wireasync);
+                    destroyConfigurationFactory(factory);
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT12;
@@ -211,7 +220,9 @@ public class SampleClient {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT;
                     }
+                    ClientConfigurationFactory factory = initConfigurationFactory();
                     buildAsync(uriString + urlSuffix, null, message, timeout, wireasync);
+                    destroyConfigurationFactory(factory);
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT;
@@ -219,6 +230,30 @@ public class SampleClient {
                     buildPing(uriString + urlSuffix, null, message);
                 }
             }
+        }
+    }
+
+    private ClientConfigurationFactory initConfigurationFactory() {
+        String axis2xml = System.getProperty("org.apache.axis2.jaxws.config.path");
+        if (axis2xml == null) {
+            throw new RuntimeException("Please set org.apache.axis2.jaxws.config.path system property to a valid axis2.xml file (with addressing module enabled)");
+        }
+        ClientConfigurationFactory factory = null;
+        try {
+            FileSystemConfigurator configurator = new FileSystemConfigurator(null, axis2xml);
+            factory = new ClientConfigurationFactory(configurator);
+            MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, factory);
+        } catch (AxisFault axisFault) {
+            throw new RuntimeException(axisFault);
+        }
+        return factory;
+    }
+
+    private void destroyConfigurationFactory(ClientConfigurationFactory factory) {
+        try {
+            factory.getClientConfigurationContext().terminate();
+        } catch (AxisFault axisFault) {
+            throw new RuntimeException(axisFault);
         }
     }
 
