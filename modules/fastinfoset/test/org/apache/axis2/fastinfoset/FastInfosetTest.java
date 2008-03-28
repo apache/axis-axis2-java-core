@@ -35,10 +35,6 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.rmi.RemoteException;
 
-/**
- * @author Sanjaya Karunasena (sanjayak@yahoo.com)
- * @date Feb 16, 2007
- */
 public class FastInfosetTest extends TestCase {
 
 	private static SimpleHTTPServer server;

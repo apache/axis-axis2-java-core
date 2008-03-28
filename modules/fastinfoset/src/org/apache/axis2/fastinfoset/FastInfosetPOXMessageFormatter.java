@@ -37,11 +37,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 
-/**
- * @author Sanjaya Karunasena (sanjayak@yahoo.com)
- * @date May 19, 2007
- */
-
 public class FastInfosetPOXMessageFormatter implements MessageFormatter {
 
 	private static Log logger = LogFactory.getLog(FastInfosetMessageFormatter.class);

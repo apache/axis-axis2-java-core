@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.handler.HandlerPostInvoker;
  * HandlerPostInvokerFactory is used to create a HandlerPostInvoker
  * implementation class that will be called just after each
  * JAXWS handler.handleMessage invocation.
- * @author rott
  */
 public interface HandlerPostInvokerFactory {
 

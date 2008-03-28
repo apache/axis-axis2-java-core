@@ -27,8 +27,6 @@ import org.apache.axis2.jaxws.handler.impl.HandlerPreInvokerImpl;
  * HandlerPreInvokerFactoryImpl - the default implementation
  * of HandlerPreInvokerFactory.  An instance of this class should
  * be registered with the FactoryRegistry.
- * 
- * @author rott
  */
 public class HandlerPreInvokerFactoryImpl implements HandlerPreInvokerFactory {
 

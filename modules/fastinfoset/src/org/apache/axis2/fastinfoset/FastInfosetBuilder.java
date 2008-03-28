@@ -32,10 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
-/**
- * @author Sanjaya Karunasena (sanjayak@yahoo.com)
- * @date Feb 06, 2007
- */
 public class FastInfosetBuilder implements Builder {
 
 	private static  Log logger = LogFactory.getLog(FastInfosetBuilder.class);

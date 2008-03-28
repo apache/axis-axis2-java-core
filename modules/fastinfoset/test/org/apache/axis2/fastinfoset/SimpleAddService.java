@@ -19,10 +19,6 @@
 
 package org.apache.axis2.fastinfoset;
 
-/**
- * @author Sanjaya Karunasena (sanjayak@yahoo.com)
- * @date Feb 16, 2007
- */
 public class SimpleAddService {
 	
 	public int addInts(int val1, int val2) {

@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.handler.HandlerPreInvoker;
  * HandlerPreInvokerFactory is used to create a HandlerPreInvoker
  * implementation class that will be called just prior to each
  * JAXWS handler.handleMessage invocation.
- * @author rott
  */
 public interface HandlerPreInvokerFactory {
 	

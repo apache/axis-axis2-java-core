@@ -63,7 +63,6 @@ import java.util.Set;
  *
  */
 
-/** @author scheu */
 class LegacyExceptionUtil {
 
     private static Log log = LogFactory.getLog(LegacyExceptionUtil.class);

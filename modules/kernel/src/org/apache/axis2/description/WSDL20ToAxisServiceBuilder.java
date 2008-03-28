@@ -955,7 +955,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processInterface(Interface serviceInterface)
             throws AxisFault {
 
-        // TODO @author Chathura copy the policy elements
+        // TODO copy the policy elements
         // copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
         // axisService, PORT_TYPE);
 

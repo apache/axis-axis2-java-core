@@ -198,9 +198,6 @@ public class ApplicationContextMigratorUtil {
      * ApplicationPropertyMapReader only sets the scope if a migrator calls "get" on this map or
      * iterates over the entrySet, which may occur explicitly in the migrator, or implicitly when
      * this map is the source for a call such as otherMap.putAll(Map source).
-     *
-     * @author rott
-     *
      */
     private static class ApplicationPropertyMapReader extends HashMap<String, Object> {
 
@@ -342,9 +339,6 @@ public class ApplicationContextMigratorUtil {
      * fully correct.  For example, if a migrator calls size, we cannot simply return
      * userMap.size().  Rather, we would have to count only the APPLICATION scoped properties
      * and return those.
-     * 
-     * @author rott
-     *
      */
     private static class ApplicationPropertyMapWriter extends HashMap<String, Object> {
 

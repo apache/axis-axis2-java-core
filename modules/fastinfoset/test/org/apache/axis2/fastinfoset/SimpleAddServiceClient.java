@@ -36,10 +36,6 @@ import org.apache.axis2.fastinfoset.SimpleAddServiceStub.AddStringsResponse;
 
 import java.rmi.RemoteException;
 
-/**
- * @author Sanjaya Karunasena (sanjayak@yahoo.com)
- * @date Feb 16, 2007
- */
 public class SimpleAddServiceClient {
 	
 	private SimpleAddServiceStub serviceStub;

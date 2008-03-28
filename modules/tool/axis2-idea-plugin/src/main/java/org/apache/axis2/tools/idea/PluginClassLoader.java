@@ -30,11 +30,6 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 22, 2005
- * Time: 2:25:59 PM
- */
 public class PluginClassLoader extends URLClassLoader {
 
     //urls which gives to create the classLoader

@@ -27,8 +27,6 @@ import org.apache.axis2.jaxws.handler.impl.HandlerPostInvokerImpl;
  * HandlerPostInvokerFactoryImpl - the default implementation
  * of HandlerPostInvokerFactory.  An instance of this class should
  * be registered with the FactoryRegistry.
- * 
- * @author rott
  */
 public class HandlerPostInvokerFactoryImpl implements HandlerPostInvokerFactory {
 

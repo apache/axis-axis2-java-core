@@ -34,10 +34,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-/**
- * @author : Eran Chinthaka (echintha@cs.indiana.edu)
- * @Date : May 11, 2007
- */
 public class FastInfosetInputOutputTest extends XMLTestCase {
 
     /**

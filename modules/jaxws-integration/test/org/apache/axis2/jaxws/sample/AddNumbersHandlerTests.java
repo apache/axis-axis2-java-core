@@ -57,10 +57,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-/**
- * @author rott
- *
- */
 public class AddNumbersHandlerTests extends AbstractTestCase {
 	
     String axisEndpoint = "http://localhost:6060/axis2/services/AddNumbersHandlerService.AddNumbersHandlerPortTypeImplPort";

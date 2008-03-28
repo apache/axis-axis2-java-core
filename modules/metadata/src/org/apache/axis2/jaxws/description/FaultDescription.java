@@ -45,7 +45,6 @@ package org.apache.axis2.jaxws.description;
  *  </pre>       
  */
 
-/** @author scheu */
 public interface FaultDescription {
     public OperationDescription getOperationDescription();
 

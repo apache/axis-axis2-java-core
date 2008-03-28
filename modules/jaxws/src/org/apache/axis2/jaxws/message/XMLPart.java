@@ -55,7 +55,6 @@ import java.util.List;
  * 
  */
 
-/** @author scheu */
 public interface XMLPart {
 
     /**

@@ -32,11 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 20, 2005
- * Time: 3:35:47 PM
- */
 public class FirstPanel extends WizardPanel {
 
     private JLabel lblWSDL;

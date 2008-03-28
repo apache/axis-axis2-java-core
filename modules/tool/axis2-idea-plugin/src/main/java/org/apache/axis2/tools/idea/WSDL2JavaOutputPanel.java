@@ -33,11 +33,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-/**
- * Author : Deepal Jayasinghe
- * Date: Jul 22, 2005
- * Time: 12:52:31 PM
- */
 public class WSDL2JavaOutputPanel extends WizardPanel {
 
     private JTextField txtoutput;

@@ -51,8 +51,6 @@ import java.io.IOException;
 /**
  * Factory used to configure and create the various instances required in http transports.
  * Either configure this class in axis2.xml, or in code via the setters, or subclass it and specialize some factory methods to gain more control.
- *
- * @author Chuck Williams
  */
 public class HttpFactory {
 

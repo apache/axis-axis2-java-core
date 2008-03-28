@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author rott
- * 
  * BaseMessageContext is the base class for the two handler message contexts:
  * SoapMessageContext and LogicalMessageContext.  It delegates everything up to
  * the MEPContext, which itself delegates to the requestMC or responseMC, as

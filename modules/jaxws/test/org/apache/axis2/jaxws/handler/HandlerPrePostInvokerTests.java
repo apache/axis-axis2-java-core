@@ -39,9 +39,6 @@ import java.util.Set;
 /**
  * HandlerPrePostInvokerTests verifies that the mechanisms for finding the implementation classes to 
  * call before and after handler.handleMessage work, and that the calls are actually made.  Simple as that.
- * 
- * @author rott
- *
  */
 public class HandlerPrePostInvokerTests extends TestCase {
 

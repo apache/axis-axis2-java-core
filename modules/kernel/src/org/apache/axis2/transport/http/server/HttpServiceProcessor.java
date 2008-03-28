@@ -34,8 +34,6 @@ import java.net.SocketTimeoutException;
 
 /**
  * I/O processor intended to process requests and fill in responses.
- * 
- * @author Chuck Williams
  */
 public class HttpServiceProcessor implements IOProcessor {
 

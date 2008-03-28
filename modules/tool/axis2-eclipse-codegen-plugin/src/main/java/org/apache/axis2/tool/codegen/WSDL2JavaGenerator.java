@@ -190,8 +190,7 @@ public class WSDL2JavaGenerator {
 				url = new URL(wsdlURI);	
 			}
 
-			//FIXME @author soi - 
-		    // This quick fix assume that the wsdlURI points to a wsdl 1.1 version.
+	    // This quick fix assume that the wsdlURI points to a wsdl 1.1 version.
 			// A better fix should be to determine which builder to use based on the wsdl version. 
 			// The current implementation of the wsdl builder classes did not allow for this. I will suggest
 			// that the determination of which builder to use should be done in the builder classes, preferably
