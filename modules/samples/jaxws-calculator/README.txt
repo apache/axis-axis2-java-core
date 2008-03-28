@@ -28,7 +28,12 @@ http://<yourhost>:<yourport>/axis2/services/CalculatorService.CalculatorServiceP
 Running the Client
 ==================
 
-generate the client stubs pointing to the wsdl and invoke the service with appropriate client
+1. Set up a CLASSPATH with the following 
+- all the jars in <AXIS2_HOME/lib>
+- the jaxws-calculator-SNAPSHOT-client.jar under the target directory
+- addressing mar in <AXIS2_HOME/repository/modules>
+
+2. Run the client using say "java -classpath %CLASSPATH% org.apache.axis2.jaxws.calculator.client.AddSEIClient 3 33"
 
 Help
 ====
