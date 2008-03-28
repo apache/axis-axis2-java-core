@@ -236,12 +236,12 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, null, addressingNamespace);
         
         try {
-        	EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
+            EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
             jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("endpointRefCreationError"), e);
         }
 
         return clazz.cast(jaxwsEPR);

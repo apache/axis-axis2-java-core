@@ -134,10 +134,10 @@ public abstract class InvocationControllerImpl implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException("ICErr1");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
         }
         if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException("ICErr2");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
         }
 
         MessageContext request = ic.getRequestMessageContext();

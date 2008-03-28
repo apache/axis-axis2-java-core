@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.addressing;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -82,9 +83,9 @@ public final class SubmissionEndpointReferenceBuilder {
      * been updated as specified.
      */
     public SubmissionEndpointReferenceBuilder endpointName(QName endpointName) {
-        //TODO NLS enable
         if (this.serviceName == null) {
-            throw new IllegalStateException("The endpoint qname cannot be set before the service qname.");
+            throw new IllegalStateException(Messages.getMessage("endpointQNameSetError", 
+                                                                endpointName.toString()));
         }
         
         this.endpointName = endpointName;
@@ -113,9 +114,8 @@ public final class SubmissionEndpointReferenceBuilder {
      * been updated as specified.
      */
     public SubmissionEndpointReferenceBuilder referenceProperty(Element referenceProperty) {
-        //TODO NLS enable
         if (referenceProperty == null) {
-            throw new IllegalArgumentException("A reference property cannot be null.");
+            throw new IllegalArgumentException(Messages.getMessage("referencePropertyNullErr"));
         }
         
         if (this.referenceParameters == null) {
@@ -134,9 +134,8 @@ public final class SubmissionEndpointReferenceBuilder {
      * been updated as specified.
      */
     public SubmissionEndpointReferenceBuilder referenceParameter(Element referenceParameter) {
-        //TODO NLS enable
         if (referenceParameter == null) {
-            throw new IllegalArgumentException("A reference parameter cannot be null.");
+            throw new IllegalArgumentException(Messages.getMessage("referenceParameterNullErr"));
         }
         
         if (this.referenceParameters == null) {
@@ -184,8 +183,8 @@ public final class SubmissionEndpointReferenceBuilder {
                 (SubmissionEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+            throw ExceptionFactory.makeWebServiceException(
+                Messages.getMessage("endpointRefConstructionFailure2", e.toString()));
         }
         
         return submissionEPR;

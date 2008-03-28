@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,10 +62,11 @@ public class ServerFramework {
     }
     
     public void addAnnotation(Annotation annotation) {
-        //TODO NLS enable.
-        if (!isValid(annotation))
-            throw ExceptionFactory.makeWebServiceException("Invalid or unsupported WebServiceFeature annotation, " + annotation);
-        
+        if (!isValid(annotation)) {
+            throw ExceptionFactory.
+                makeWebServiceException(Messages.getMessage("invalidWSAnnotation", 
+                                                            annotation.toString()));
+        }
         WebServiceFeatureAnnotation wsfAnnotation = getWebServiceFeatureAnnotation(annotation);
 
         annotationMap.put(wsfAnnotation.id(), annotation);

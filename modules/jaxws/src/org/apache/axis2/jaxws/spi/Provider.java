@@ -84,8 +84,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
                 (W3CEndpointReference) EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("referenceParameterConstructionErr"),
+                                    e);
         }
         
         return w3cEPR;
@@ -94,8 +95,8 @@ public class Provider extends javax.xml.ws.spi.Provider {
     @Override
     public <T> T getPort(EndpointReference jaxwsEPR, Class<T> sei, WebServiceFeature... features) {
         if (jaxwsEPR == null) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("The endpoint reference cannot be null.");
+            throw ExceptionFactory.
+                makeWebServiceException(Messages.getMessage("dispatchNoEndpointReference2"));
         }
         
         if (sei == null) {
@@ -111,8 +112,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
             addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
+                                                          e.toString()));
         }
         
         org.apache.axis2.jaxws.spi.ServiceDelegate serviceDelegate = null;
@@ -133,8 +135,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
             	new org.apache.axis2.jaxws.spi.ServiceDelegate(wsdlLocationURL, serviceName.getName(), Service.class);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("An error occured updating the endpoint", e);
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointUpdateError"), e);
         }
 
         return serviceDelegate.getPort(axis2EPR, addressingNamespace, sei, features);
@@ -148,8 +149,9 @@ public class Provider extends javax.xml.ws.spi.Provider {
             jaxwsEPR = EndpointReferenceUtils.convertFromSource(eprInfoset);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("endpointRefCreationError"),
+                                      e);
         }
         
         return jaxwsEPR;

@@ -269,16 +269,18 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                 epr = EndpointReferenceUtils.createAxis2EndpointReference(address, service, port, wsdlLocation, addressingNamespace);
             }
             else if (!addressingNamespace.equals(binding.getAddressingNamespace())) {
-                //TODO NLS enable
-                throw ExceptionFactory.makeWebServiceException("BindingProvider has been cofigured for namespace " +
-                        binding.getAddressingNamespace() + ", but a request has been made for namespace " + addressingNamespace);
+                throw ExceptionFactory.
+                   makeWebServiceException(Messages.getMessage("bindingProviderErr1",
+                                                               binding.getAddressingNamespace(),
+                                                               addressingNamespace));
             }
 
             jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(epr, addressingNamespace);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+            throw ExceptionFactory.
+                makeWebServiceException(Messages.getMessage("endpointRefConstructionFailure3", 
+                                                            e.toString()));
         }
         
         return clazz.cast(jaxwsEPR);

@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
@@ -77,17 +78,21 @@ public class AddressingConfigurator implements ClientConfigurator {
             }
             else if (w3cAddressingEnabled) {
                 //Enable only 2005/08 addressing
-                if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
-                
+                if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+                    throw ExceptionFactory.makeWebServiceException(
+                              Messages.getMessage("FeatureNamespaceNotSupported", 
+                                                  addressingNamespace));
+                }
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
             else if (submissionAddressingEnabled) {
                 //Enable only 2004/08 addressing
-                if (Final.WSA_NAMESPACE.equals(addressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
-                
+                if (Final.WSA_NAMESPACE.equals(addressingNamespace)) {
+                    throw ExceptionFactory.makeWebServiceException(
+                        Messages.getMessage("FeatureNamespaceNotSupported", 
+                                           addressingNamespace));
+                }
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -102,9 +107,11 @@ public class AddressingConfigurator implements ClientConfigurator {
 
             if (w3cAddressingEnabled) {
                 //Enable 2005/08 addressing
-                if (Submission.WSA_NAMESPACE.equals(addressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
-                
+                if (Submission.WSA_NAMESPACE.equals(addressingNamespace)) {
+                    throw ExceptionFactory.makeWebServiceException(
+                                Messages.getMessage("FeatureNamespaceNotSupported", 
+                                                    addressingNamespace));
+                }
                 addressingNamespace = Final.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -119,9 +126,11 @@ public class AddressingConfigurator implements ClientConfigurator {
             
             if (submissionAddressingEnabled) {
                 //Enable 2004/08 addressing
-                if (Final.WSA_NAMESPACE.equals(addressingNamespace))
-                    throw ExceptionFactory.makeWebServiceException("The feature does not match the specified endpoint reference.");
-                
+                if (Final.WSA_NAMESPACE.equals(addressingNamespace)) {
+                    throw ExceptionFactory.makeWebServiceException(
+                              Messages.getMessage("FeatureNamespaceNotSupported", 
+                                                  addressingNamespace));
+                }
                 addressingNamespace = Submission.WSA_NAMESPACE;
                 disableAddressing = Boolean.FALSE;
             }
@@ -132,7 +141,8 @@ public class AddressingConfigurator implements ClientConfigurator {
         }
         else {
             //If neither were specified then this configurator should never run.
-            throw ExceptionFactory.makeWebServiceException("Both WS-Addressing features were unspecified.");
+            throw ExceptionFactory.makeWebServiceException(
+                  Messages.getMessage("NoWSAddressingFeatures"));
         }
         
         if (!disableAddressing) {
@@ -144,12 +154,14 @@ public class AddressingConfigurator implements ClientConfigurator {
                 
                 ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
                 AxisConfiguration axisConfig = sd.getAxisConfigContext().getAxisConfiguration();
-                if (!axisConfig.isEngaged(Constants.MODULE_ADDRESSING))
+                if (!axisConfig.isEngaged(Constants.MODULE_ADDRESSING)) {
                     axisConfig.engageModule(Constants.MODULE_ADDRESSING);
+                }
             }
             catch (Exception e) {
-                //TODO NLS enable.
-                throw ExceptionFactory.makeWebServiceException("Unable to engage the addressing module.", e);
+                throw ExceptionFactory.
+                    makeWebServiceException(
+                       Messages.getMessage("AddressingEngagementError", e.toString()));
             }
         }
 

@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.addressing.util.EndpointContextMap;
 import org.apache.axis2.jaxws.addressing.util.EndpointContextMapManager;
 import org.apache.axis2.jaxws.addressing.util.EndpointKey;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -85,18 +86,19 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
         EndpointReference axis2EPR = null;
         
         if (address != null) {
-            //TODO NLS enable.
-        	if (serviceName == null && portName != null)
-                throw new IllegalStateException("Cannot create an endpoint reference because the service name is null, and the port name is not null.");
-        		
+            if (serviceName == null && portName != null) {
+                throw new IllegalStateException(
+                    Messages.getMessage("axisEndpointReferenceFactoryErr", 
+                                        portName.toString()));
+            }
             axis2EPR = createEndpointReference(address);
         }
         else if (serviceName != null && portName != null) {
             axis2EPR = createEndpointReference(serviceName, portName);
         }
         else {
-            //TODO NLS enable.
-            throw new IllegalStateException("Cannot create an endpoint reference because the address, service name, and/or port name are null.");
+            throw new IllegalStateException(
+                 Messages.getMessage("axisEndpointReferenceFactoryErr2"));
         }
         
         //TODO If no service name and port name are specified, but the wsdl location is
@@ -113,42 +115,45 @@ public class Axis2EndpointReferenceFactoryImpl implements Axis2EndpointReference
             	// This is a temporary usage, so use a memory sensitive wrapper
                 WSDLWrapper wrapper = new WSDL4JWrapper(wsdlURL, true, 2);
             	
-            	if (serviceName != null) {
-            		//TODO NLS
-            		if (wrapper.getService(serviceName) == null)
-            			throw new IllegalStateException("The specified service name does not exist in the WSDL from the specified location.");
-                	
-                	if (portName != null) {
-                		String[] ports = wrapper.getPorts(serviceName);
-                		String portLocalName = portName.getLocalPart();
-                		boolean found = false;
-                		
-                		if (ports != null) {
-                			for (String port : ports) {
-                				if (port.equals(portLocalName)) {
-                					found = true;
-                					break;
-                				}
-                			}
-                		}
-                		
-                		//TODO NLS enable
-                		if (!found)
-                			throw new IllegalStateException("The specified port name does not exist in the specified WSDL service.");
+                if (serviceName != null) {
+                    if (wrapper.getService(serviceName) == null) {
+                        throw new IllegalStateException(
+                            Messages.getMessage("MissingServiceName", 
+                                                serviceName.toString(), 
+                                                wsdlDocumentLocation));
+                    }
+                    if (portName != null) {
+                        String[] ports = wrapper.getPorts(serviceName);
+                        String portLocalName = portName.getLocalPart();
+                        boolean found = false;
 
+                        if (ports != null) {
+                            for (String port : ports) {
+                                if (port.equals(portLocalName)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!found) {
+                            throw new IllegalStateException(
+                                         Messages.getMessage("MissingPortName", 
+                                                             portName.toString(), 
+                                                             wsdlDocumentLocation)); 
+                        }
                         EndpointReferenceUtils.addLocation(axis2EPR, portName.getNamespaceURI(), wsdlDocumentLocation, addressingNamespace);
                     }
-            	}
+                }
             }
         }
         catch (IllegalStateException ise) {
         	throw ise;
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("A problem occured during the creation of an endpoint reference. See the nested exception for details.", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("endpointRefCreationError"), e);
         }
-        
         return axis2EPR;
     }
 }

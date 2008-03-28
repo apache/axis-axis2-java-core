@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,8 +40,9 @@ public class SingleThreadedExecutor implements Executor {
         }
         
         if (command == null) {
-            throw ExceptionFactory.makeWebServiceException("The Runnable command provided " +
-                        "was null.  A non-null instance is required.");
+            throw ExceptionFactory.makeWebServiceException(
+                      Messages.getMessage("singleThreadedExecutorErr1"));
+                                                           
         }
         
         command.run();

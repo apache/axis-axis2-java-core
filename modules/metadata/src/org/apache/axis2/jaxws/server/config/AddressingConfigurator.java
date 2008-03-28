@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
@@ -122,7 +123,8 @@ public class AddressingConfigurator implements ServerConfigurator {
     	}
     	else {
             //If neither were specified then this configurator should never run.
-            throw ExceptionFactory.makeWebServiceException("Both WS-Addressing annotations were unspecified.");
+            throw ExceptionFactory.makeWebServiceException(
+                 Messages.getMessage("NoWSAddressingFeatures"));
     	}
     	
     	try {
@@ -140,8 +142,8 @@ public class AddressingConfigurator implements ServerConfigurator {
     		}
     	}
     	catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unable to engage the addressing module.", e);    		
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("AddressingEngagementError", e.toString()));
     	}
     }
 

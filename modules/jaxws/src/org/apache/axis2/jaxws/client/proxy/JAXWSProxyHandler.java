@@ -217,8 +217,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         controller = icf.getInvocationController();
         
         if (controller == null) {
-            // TODO NLS enable.
-            throw new WebServiceException("An InvocationController was not found.");
+            throw new WebServiceException(Messages.getMessage("missingInvocationController"));
         }
         
         // Check if the call is OneWay, Async or Sync

@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
 import org.apache.axis2.jaxws.feature.ClientFramework;
 import org.apache.axis2.jaxws.handler.HandlerResolverImpl;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ClientConfiguratorRegistry;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
@@ -117,22 +118,29 @@ public abstract class BindingImpl implements Binding {
     }
     
     public void setAddressingNamespace(String addressingNamespace) {
-        if (addressingNamespace != null)
-            throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        if (addressingNamespace != null) {
+            throw new UnsupportedOperationException(
+                Messages.getMessage("bindingMethodNotSupported", 
+                                    "setAddressingNamespace", 
+                                    bindingId)); 
+        }
     }
 
     public void setAxis2EndpointReference(EndpointReference epr) {
-        if (epr != null)
-            throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        if (epr != null) {
+            throw new UnsupportedOperationException(
+                Messages.getMessage("bindingMethodNotSupported", "setAxis2EndpointReference", 
+                                    bindingId));
+        }
     }
 
     public String getAddressingNamespace() {
-        //TODO NLS enable
-        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        throw new UnsupportedOperationException(
+           Messages.getMessage("bindingMethodNotSupported", "getAddressingNamespace", bindingId));
     }
 
     public EndpointReference getAxis2EndpointReference() {
-        //TODO NLS enable
-        throw new UnsupportedOperationException("This method is not supported for the current binding, " + bindingId);   
+        throw new UnsupportedOperationException(
+           Messages.getMessage("bindingMethodNotSupported", "getAxis2EndpointReference", bindingId)); 
     }
 }

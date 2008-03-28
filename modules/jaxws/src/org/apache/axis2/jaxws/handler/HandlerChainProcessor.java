@@ -242,13 +242,11 @@ public class HandlerChainProcessor {
                     callCloseHandlers(newStart_inclusive, newEnd, newDirection);
                 } catch (RuntimeException re) {
                     callCloseHandlers(newStart_inclusive, newEnd, newDirection);
-                    // TODO: NLS log and throw
                     throw re;
                 }
             } else if (result == OTHER_EXCEPTION) {
                 callCloseHandlers(newStart_inclusive, newEnd, newDirection);
                 // savedException initialized in HandlerChainProcessor.handleMessage
-                // TODO: NLS log and throw
                 throw savedException;
             }
         } else { // everything was successful OR finished processing handlers

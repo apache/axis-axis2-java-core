@@ -69,7 +69,7 @@ public class SoapMessageContext extends BaseMessageContext implements
             if(log.isDebugEnabled()){
                 log.debug("Invalid QName, QName cannot be null");
             }
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(""));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("soapMessageContextErr1"));
         }
         if(jaxbcontext == null){
             if(log.isDebugEnabled()){

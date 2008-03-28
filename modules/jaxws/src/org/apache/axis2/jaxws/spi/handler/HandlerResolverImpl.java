@@ -110,13 +110,12 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     handler = createHandlerInstance(loadClass(portHandler));
                 } catch (Exception e) {
                     // TODO: should we just ignore this problem?
-                    // TODO: NLS log and throw
                     throw ExceptionFactory.makeWebServiceException(e);
                 }
                 
-                //TODO NLS
-                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug("Successfully instantiated the class: " + handler.getClass());
+                }
                 
                 // 9.2.1.2 sort them by Logical, then SOAP
                 if (LogicalHandler.class.isAssignableFrom(handler.getClass()))
@@ -125,12 +124,10 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     // instanceof ProtocolHandler
                     handlers.add((SOAPHandler) handler);
                 else if (Handler.class.isAssignableFrom(handler.getClass())) {
-                    // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
                             .getMessage("handlerChainErr1", handler
                                     .getClass().getName()));
                 } else {
-                    // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
                             .getMessage("handlerChainErr2", handler
                                     .getClass().getName()));
@@ -144,9 +141,9 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
     //Create an instance of the handler class and perform appropriate lifecycle activities
     //to it.
     private Handler createHandlerInstance(Class handlerClass) throws LifecycleException {
-        //TODO NLS
         if (handlerClass == null) {
-            throw ExceptionFactory.makeWebServiceException("Handler class must be passed");
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("createHandlerInstanceErr"));
         }
         
         //Resource injection not supported.

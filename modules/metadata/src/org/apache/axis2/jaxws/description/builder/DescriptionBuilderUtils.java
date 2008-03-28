@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -328,8 +329,7 @@ class DescriptionBuilderUtils {
             //rather than just Exception.
             catch (Throwable ex) {
                 throw ExceptionFactory.makeWebServiceException(
-                        "DescriptionBuilderUtils: Class not found for parameter: "
-                                + classToLoad + " using classloader: " + classLoader);
+                        Messages.getMessage("DBUClassNotFound", classToLoad, classLoader.toString()));
             }
         } else {
             //Use the thread context class loader to load the class.
@@ -346,8 +346,7 @@ class DescriptionBuilderUtils {
                 //does not extend Exception
                 catch (Throwable ex2) {
                     throw ExceptionFactory.makeWebServiceException(
-                            "DescriptionBuilderUtils: Class not found using default classloader for parameter: " +
-                                    classToLoad);
+                            Messages.getMessage("DBUClassNotFound2", classToLoad));
                 }
             }
         }

@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.client.config;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
@@ -41,9 +42,10 @@ public class RespectBindingConfigurator implements ClientConfigurator {
         RespectBindingFeature respectBindingFeature =
             (RespectBindingFeature) bnd.getFeature(RespectBindingFeature.ID);
         
-        if (respectBindingFeature == null)
-            throw ExceptionFactory.makeWebServiceException("The respect binding features was unspecified.");
-        
+        if (respectBindingFeature == null) {
+            throw ExceptionFactory.makeWebServiceException(
+                 Messages.getMessage("respectBindingNotSpecified"));
+        }
         if (respectBindingFeature.isEnabled()) {
             //TODO Implementation required.
         }

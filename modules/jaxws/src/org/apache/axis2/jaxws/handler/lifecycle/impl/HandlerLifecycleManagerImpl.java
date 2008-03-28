@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManager;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.injection.ResourceInjectionException;
 import org.apache.axis2.jaxws.lifecycle.BaseLifecycleManager;
 import org.apache.axis2.jaxws.lifecycle.LifecycleException;
@@ -35,7 +36,8 @@ public class HandlerLifecycleManagerImpl extends BaseLifecycleManager implements
         
     public Handler createHandlerInstance(MessageContext mc, Class handlerClass) throws LifecycleException, ResourceInjectionException {
         if (handlerClass == null) {
-            throw ExceptionFactory.makeWebServiceException("Handler class must be passed");
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("createHandlerInstanceErr"));
         }
         
         ServiceDescription serviceDesc = mc.getEndpointDescription().getServiceDescription();        
@@ -68,7 +70,8 @@ public class HandlerLifecycleManagerImpl extends BaseLifecycleManager implements
      */
     public void destroyHandlerInstance(MessageContext mc, Handler handler) throws LifecycleException, ResourceInjectionException {
         if (handler == null) {
-            throw ExceptionFactory.makeWebServiceException("Handler class must be passed");
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("destroyHandlerInstanceErr"));
         }
         
         this.instance = handler;

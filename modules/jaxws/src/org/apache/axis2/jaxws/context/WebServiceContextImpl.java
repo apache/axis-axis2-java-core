@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.context;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
@@ -114,13 +115,13 @@ public class WebServiceContextImpl implements WebServiceContext {
                 jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(axis2EPR, addressingNamespace);
             }
             catch (Exception e) {
-                //TODO NLS enable.
-                throw ExceptionFactory.makeWebServiceException("Error creating endpoint reference", e);
+                throw ExceptionFactory.makeWebServiceException(
+                       Messages.getMessage("endpointRefConstructionFailure3", e.toString()));
             }
         }
         else {
-            //TODO NLS enable.
-            throw new IllegalStateException("Message context not available.");        	
+            throw new IllegalStateException(
+                      Messages.getMessage("webServiceContextErr1"));
         }
         
         return clazz.cast(jaxwsEPR);

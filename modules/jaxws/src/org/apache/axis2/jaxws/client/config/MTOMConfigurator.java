@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.feature.ClientConfigurator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
@@ -54,9 +55,10 @@ public class MTOMConfigurator implements ClientConfigurator {
         //Disable MTOM.
         requestMsg.setMTOMEnabled(false);
                 
-        //TODO NLS enable.
-        if (mtomFeature == null)
-            throw ExceptionFactory.makeWebServiceException("The MTOM features was unspecified.");
+        if (mtomFeature == null) {
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("mtomFeatureErr"));
+        }
 
         //Enable MTOM if specified.
         if (mtomFeature.isEnabled()) {
@@ -85,8 +87,8 @@ public class MTOMConfigurator implements ClientConfigurator {
             	            size += is.available();
             	        }
             	        catch (Exception e) {
-            	            // TODO NLS enable.
-            	            throw ExceptionFactory.makeWebServiceException("Unable to determine the size of the attachment(s).", e);
+            	            throw ExceptionFactory.
+                              makeWebServiceException(Messages.getMessage("mtomAttachErr"), e);
                     	}
                     	finally {
                     	    try {

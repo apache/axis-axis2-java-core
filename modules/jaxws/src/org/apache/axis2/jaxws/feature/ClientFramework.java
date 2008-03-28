@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.feature;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 
 import javax.xml.ws.WebServiceFeature;
@@ -51,10 +52,10 @@ public class ClientFramework {
     }
     
     public void addFeature(WebServiceFeature feature) {
-        //TODO NLS enable.
-        if (!isValid(feature))
-            throw ExceptionFactory.makeWebServiceException("Invalid or unsupported WebServiceFeature " + feature.getID());
-        
+        if (!isValid(feature)) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("invalidWSFeature",
+                        feature.getID()));
+        }
         featureMap.put(feature.getID(), feature);
     }
     

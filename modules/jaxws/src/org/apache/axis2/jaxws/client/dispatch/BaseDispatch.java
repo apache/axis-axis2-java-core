@@ -75,8 +75,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         ic = icf.getInvocationController();
         
         if (ic == null) {
-            // TODO NLS enable.
-            throw new WebServiceException("An InvocationController instance was not found.");
+            throw new WebServiceException(Messages.getMessage("missingInvocationController"));
         }
     }
 

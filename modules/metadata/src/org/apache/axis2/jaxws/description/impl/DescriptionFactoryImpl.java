@@ -325,9 +325,8 @@ public class DescriptionFactoryImpl {
         boolean isEndpointValid = endpointValidator.validate();
         
         if (!isEndpointValid) {
-            String msg = "The Endpoint description validation failed to validate due to the following errors: \n" +
-            endpointValidator.toString();
-            
+            String msg = Messages.getMessage("endpointDescriptionValidationErrors",
+                                             endpointValidator.toString());
             throw ExceptionFactory.makeWebServiceException(msg);
         }
         if (log.isDebugEnabled()) {
@@ -380,17 +379,21 @@ public class DescriptionFactoryImpl {
             
             //We need to throw an exception if the service name in the EPR metadata does not
             //match the service name associated with the JAX-WS service instance.
-            if (serviceName.getName() != null && !serviceQName.equals(serviceName.getName()))
-                throw ExceptionFactory.makeWebServiceException("The service name of the endpoint reference does not match the service name of the service client.");
-            
+            if (serviceName.getName() != null && !serviceQName.equals(serviceName.getName())) {
+                throw ExceptionFactory.makeWebServiceException(
+                       Messages.getMessage("serviceNameMismatch", 
+                                           serviceName.getName().toString(), 
+                                           serviceQName.toString()));
+            }
             //If a port name is available from the EPR metadata then use that, otherwise
             //leave it to the runtime to find a suitable port, based on WSDL/annotations.
-            if (serviceName.getEndpointName() != null)
+            if (serviceName.getEndpointName() != null) {
                 portQName = new QName(serviceQName.getNamespaceURI(), serviceName.getEndpointName());
+            }
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("An error occured updating the endpoint", e);
+            throw ExceptionFactory.makeWebServiceException(
+                 Messages.getMessage("updateEndpointError", e.getMessage()));
         }
         
         return updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);

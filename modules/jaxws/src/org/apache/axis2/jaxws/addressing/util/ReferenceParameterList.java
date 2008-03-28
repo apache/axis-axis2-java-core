@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -104,8 +105,9 @@ public class ReferenceParameterList extends AbstractList<Element> {
                         list.add(element);
                     }
                     catch (Exception e) {
-                        //TODO NLS enable.
-                        throw ExceptionFactory.makeWebServiceException("A problem occured during the building of the reference parameter list. See the nested exception for details.", e);
+                        throw ExceptionFactory.
+                          makeWebServiceException(Messages.getMessage("referenceParameterConstructionErr"),
+                                                  e);
                     }
                     
                     if (log.isTraceEnabled()) {

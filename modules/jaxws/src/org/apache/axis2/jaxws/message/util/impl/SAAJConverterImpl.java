@@ -504,9 +504,6 @@ public class SAAJConverterImpl implements SAAJConverter {
     }
 
     private void _unexpectedEvent(String event) throws WebServiceException {
-        // Review We need NLS for this message, but this code will probably
-        // be added to JAX-WS.  So for now we there is no NLS.
-        // TODO NLS
         throw ExceptionFactory
                 .makeWebServiceException(Messages.getMessage("SAAJConverterErr2", event));
     }

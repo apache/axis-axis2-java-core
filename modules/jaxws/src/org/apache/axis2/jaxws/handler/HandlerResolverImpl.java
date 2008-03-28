@@ -108,12 +108,11 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                 handlers.add(hlm.createHandlerInstance(ctx, aClass));
             } catch (Exception e) {
                 // TODO: should we just ignore this problem?
-                // TODO: NLS log and throw
                 throw ExceptionFactory.makeWebServiceException(e);
             }
-            //TODO NLS
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("Successfully instantiated the class: " + aClass);
+            }
 
         }
         return handlers;
@@ -272,7 +271,6 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     aClass = loadClass(portHandler);
                 } catch (Exception e) {
                     // TODO: should we just ignore this problem?
-                    // TODO: NLS log and throw
                     throw ExceptionFactory.makeWebServiceException(e);
                 }
 
@@ -283,11 +281,9 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
                     // instanceof ProtocolHandler
                     handlers.add(aClass);
                 else if (Handler.class.isAssignableFrom(aClass)) {
-                    // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
                             .getMessage("handlerChainErr1", aClass.getName()));
                 } else {
-                    // TODO: NLS better error message
                     throw ExceptionFactory.makeWebServiceException(Messages
                             .getMessage("handlerChainErr2", aClass.getName()));
                 }

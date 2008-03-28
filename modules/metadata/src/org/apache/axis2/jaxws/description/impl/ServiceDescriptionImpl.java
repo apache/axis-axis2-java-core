@@ -366,7 +366,7 @@ class ServiceDescriptionImpl
      */
 
     EndpointDescription updateEndpointDescription(Class sei, 
-    											  QName portQName,
+                                                  QName portQName,
                                                   DescriptionFactory.UpdateType updateType,
                                                   DescriptionBuilderComposite composite,
                                                   Object serviceDelegateKey) {
@@ -412,13 +412,14 @@ class ServiceDescriptionImpl
                     // are not created for dynamic ports.  It would be an error to later do a getPort against a dynamic port (per the JAX-WS spec)
                     // If we can't add the dynamic port under a specific service delegate, that is an error
 
-                	if (serviceDelegateKey == null) {
-                        throw ExceptionFactory.makeWebServiceException("ServiceDelegate is null for AddPort");
+                    if (serviceDelegateKey == null) {
+                        throw ExceptionFactory.makeWebServiceException(
+                                 Messages.getMessage("serviceDescriptionImplAddPortErr"));
                     }
-                	
-                	endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
-               
-            		addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
+
+                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
+
+                    addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
 
                 } else {
                     // All error chJeck above passed, the EndpointDescription already exists and needs no updating
@@ -1495,16 +1496,18 @@ class ServiceDescriptionImpl
                 String implParamType = implPDCList.get(paramNumber).getParameterType();
                 if (!seiParamType.equals(implParamType)) {
                     parametersMatch = false;
-                    failingMessage = "Validation error: SEI and implementation parameters do not match.  Parameter number "
-                        + paramNumber
-                        + " on the SEI is "
-                        + seiParamType
-                        + "; on the implementation it is "
-                        + implParamType
-                        + "; Implementation class: "
-                        + composite.getClassName()
-                        + "; Method name: "
-                        + seiMDC.getMethodName() + "; Endpoint Interface: " + className;
+                    String[] inserts = new String[] {
+                            String.valueOf(paramNumber), 
+                            seiParamType,
+                            implParamType,
+                            composite.getClassName(),
+                            seiMDC.getMethodName(),
+                            className
+                    };
+                    
+                    failingMessage = Messages.getMessage("serviceDescriptionImplValidationErr",
+                                                         inserts);
+                                                         
                     break;
                 }
             }

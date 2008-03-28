@@ -24,6 +24,7 @@ import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -141,11 +142,8 @@ public class EndpointDescriptionValidator extends Validator {
             String annotationInsert = "[" + bindingHumanReadableDescription(bindingType) + "]" +
                 "namespace = {" + bindingType +"}";
             
-            // TODO NLS
-            String message = "There is a mismatch between the wsdl and annotation information.  " +
-                "Please make sure both use the same binding namespace.  " +
-                "The wsdl =" + wsdlInsert + ".  " +
-                "The annotation = " + annotationInsert + ".";
+            String message = Messages.getMessage("endpointDescriptionValidation", 
+                                              wsdlInsert, annotationInsert);
             addValidationFailure(this, message);
             
             isBindingValid = false;

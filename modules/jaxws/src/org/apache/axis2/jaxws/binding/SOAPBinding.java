@@ -204,20 +204,11 @@ public class SOAPBinding extends BindingImpl implements javax.xml.ws.soap.SOAPBi
                 returnSet.add(SOAPConstants.URI_SOAP_1_2_ROLE_NEXT);
             }
             
-//        } else if (SOAPBinding.SOAP11HTTP_BINDING.equals(bindingId)
-//                || SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(bindingId)) {
         } else {
             if (returnSet.isEmpty() || !returnSet.contains(SOAPConstants.URI_SOAP_ACTOR_NEXT)) {
                 returnSet.add(SOAPConstants.URI_SOAP_ACTOR_NEXT);
             }
         }
-//        else {
-//            // Invalid binding
-//            // TODO: RAS / NLS
-//            if (log.isDebugEnabled()) {
-//                log.debug("Invalid binding type set on the binding: " + bindingId);
-//            }
-//        }
         return returnSet;
     }
 

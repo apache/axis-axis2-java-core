@@ -336,8 +336,7 @@ public class DescriptionUtils {
 
         } catch (Exception e) {
             throw ExceptionFactory
-                    .makeWebServiceException(
-                            "DescriptionUtils: loadHandlerList: thrown when attempting to unmarshall JAXB content");
+                    .makeWebServiceException(Messages.getMessage("loadHandlerChainErr", e.getMessage()));
         }       
     }
     

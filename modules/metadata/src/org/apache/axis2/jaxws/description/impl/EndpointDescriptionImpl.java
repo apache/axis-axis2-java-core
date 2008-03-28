@@ -245,7 +245,7 @@ class EndpointDescriptionImpl
         // At this point, there must be a port QName set, either as passed in, or determined from the WSDL and/or annotations.
         // If not, that is an error.
         if (this.portQName == null) {
-        	String msg = Messages.getMessage("endpointDescriptionErr1",theClass.getName(),parent.getClass().getName());
+            String msg = Messages.getMessage("endpointDescriptionErr1",theClass.getName(),parent.getClass().getName());
             throw ExceptionFactory.makeWebServiceException(msg);
         }
 
@@ -263,7 +263,7 @@ class EndpointDescriptionImpl
             getServiceDescriptionImpl().getClientConfigurationFactory()
                     .completeAxis2Configuration(axisService);
         } catch (Exception e) {
-        	String msg = Messages.getMessage("endpointDescriptionErr2",e.getClass().getName(),parent.getClass().getName());
+            String msg = Messages.getMessage("endpointDescriptionErr2",e.getClass().getName(),parent.getClass().getName());
             throw ExceptionFactory.makeWebServiceException(msg, e);
         }
     }

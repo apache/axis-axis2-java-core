@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.util;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
@@ -140,12 +141,17 @@ public abstract class BaseWSDLLocator {
                 lastestImportURI = importPath;
             }
         } catch (IOException ex) {
-            throw ExceptionFactory.makeWebServiceException("An error occurred while attempting "
-                    + " to resolve the " + relativeLocation + " WSDL file: " + ex.toString());
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("WSDLRelativeErr1", 
+                                        relativeLocation, 
+                                        parentLocation, 
+                                        ex.toString()));
         }
         if(is == null){
-            throw ExceptionFactory.makeWebServiceException("The " + relativeLocation + 
-                    " WSDL file could not be located.");
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("WSDLRelativeErr2", 
+                                        relativeLocation, 
+                                        parentLocation));
         }
         if(log.isDebugEnabled()){
             log.debug("Loaded file: " + relativeLocation);

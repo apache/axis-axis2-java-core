@@ -454,7 +454,6 @@ public class AxisInvocationController extends InvocationControllerImpl {
             OperationClient client = sc.createClient(operation);
             return client;
         } catch (AxisFault e) {
-            //TODO: NLS and ExceptionFactory
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }

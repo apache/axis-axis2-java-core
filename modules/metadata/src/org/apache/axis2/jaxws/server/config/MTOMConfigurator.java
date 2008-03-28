@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,11 +53,12 @@ public class MTOMConfigurator implements ServerConfigurator {
     	//Disable MTOM
     	Parameter enableMTOM = new Parameter(Constants.Configuration.ENABLE_MTOM, Boolean.FALSE);
     	Parameter threshold = new Parameter(Constants.Configuration.MTOM_THRESHOLD, 0);
+      
+        if (mtomAnnoation == null) {
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("mtomAnnotationErr"));
+        }
         
-    	//TODO NLS enable.
-        if (mtomAnnoation == null)
-            throw ExceptionFactory.makeWebServiceException("The MTOM annotation was unspecified.");
-    	
         //Enable MTOM.
     	if (mtomAnnoation.enabled()) {
             if (log.isDebugEnabled()) {
@@ -78,8 +80,8 @@ public class MTOMConfigurator implements ServerConfigurator {
             service.addParameter(threshold);
     	}
     	catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unable to enable MTOM.", e);    		
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("mtomEnableErr"), 
+                                                           e);    		
     	}
     }    
 

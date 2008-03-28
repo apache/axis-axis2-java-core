@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.addressing;
 
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -112,8 +113,7 @@ public class SubmissionEndpointReference extends EndpointReference {
                });
         }
         catch (Exception e) {
-            //TODO NLS enable
-            throw new WebServiceException("JAXBContext creation failed.", e);
+            throw new WebServiceException(Messages.getMessage("jaxbContextFailure", e.toString()));
         }
     }
 
@@ -137,16 +137,15 @@ public class SubmissionEndpointReference extends EndpointReference {
             otherAttributes.putAll(subEPR.otherAttributes);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw new WebServiceException("Unable to create Submission endpoint reference.", e);
+            throw new WebServiceException(Messages.getMessage("endpointRefConstructionFailure2", 
+                                                              e.toString()));
         }        
     }
     
     @Override
     public void writeTo(Result result) {
         if (result == null) {
-            //TODO NLS enable
-            throw new IllegalArgumentException("Null is not allowed.");
+            throw new IllegalArgumentException(Messages.getMessage("endpointReferenceWriteError1"));
         }
         
         try {
@@ -155,8 +154,8 @@ public class SubmissionEndpointReference extends EndpointReference {
             m.marshal(this, result);
         }
         catch (Exception e) {
-            //TODO NLS enable
-            throw new WebServiceException("writeTo failure.", e);
+            throw new WebServiceException(Messages.getMessage("endpointReferenceWriteError1", 
+                                                              e.toString()));
         }
     }
     

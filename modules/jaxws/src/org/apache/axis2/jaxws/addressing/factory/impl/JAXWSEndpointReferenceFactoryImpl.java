@@ -25,6 +25,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.factory.JAXWSEndpointReferenceFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -63,8 +64,8 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
                  });
         }
         catch (Exception e) {
-            //TODO NLS enable
-            throw new WebServiceException("JAXBContext creation failed.", e);
+            throw new WebServiceException(Messages.getMessage("jaxbContextFailure", 
+                                                              e.toString()));
         }
     }
     
@@ -84,12 +85,14 @@ public class JAXWSEndpointReferenceFactoryImpl implements JAXWSEndpointReference
     public <T extends EndpointReference> String getAddressingNamespace(Class<T> clazz) {
         String addressingNamespace = null;
         
-        if (W3CEndpointReference.class.isAssignableFrom(clazz))
+        if (W3CEndpointReference.class.isAssignableFrom(clazz)) {
             addressingNamespace = Final.WSA_NAMESPACE;
-        else if (SubmissionEndpointReference.class.isAssignableFrom(clazz))
+        } else if (SubmissionEndpointReference.class.isAssignableFrom(clazz)) {
             addressingNamespace = Submission.WSA_NAMESPACE;
-        else //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unknown class type: " + clazz);
+        } else  {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("unknownClassType", 
+                                                           clazz.toString()));
+        }
         
         return addressingNamespace;
     }

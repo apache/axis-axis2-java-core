@@ -267,9 +267,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     @Override
     public <T> Dispatch<T> createDispatch(EndpointReference jaxwsEPR, Class<T> type, Mode mode, WebServiceFeature... features) {
         if (jaxwsEPR == null) {
-            //TODO NLS enable.
             throw ExceptionFactory
-                    .makeWebServiceException("The endpoint reference cannot be null.");
+                    .makeWebServiceException(Messages.getMessage("dispatchNoEndpointReference"));
         }
         if (!isValidDispatchType(type)) {
             throw ExceptionFactory
@@ -284,8 +283,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+            throw ExceptionFactory.
+               makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
+                                                           e.toString()));
         }
         
         EndpointDescription endpointDesc =
@@ -294,8 +294,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                                                   DescriptionFactory.UpdateType.CREATE_DISPATCH,
                                                   this);
         if (endpointDesc == null) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
+            throw ExceptionFactory.makeWebServiceException(
+                   Messages.getMessage("endpointDescriptionConstructionFailure", 
+                    jaxwsEPR.toString())); 
         }
 
         XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc, axis2EPR, addressingNamespace, features);
@@ -317,9 +318,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     @Override
     public Dispatch<Object> createDispatch(EndpointReference jaxwsEPR, JAXBContext context, Mode mode, WebServiceFeature... features) {
         if (jaxwsEPR == null) {
-            //TODO NLS enable.
             throw ExceptionFactory
-                    .makeWebServiceException("The endpoint reference cannot be null.");
+                    .makeWebServiceException(Messages.getMessage("dispatchNoEndpointReference"));
         }
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
@@ -330,8 +330,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+            throw ExceptionFactory.
+                makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
+                                                            e.toString()));
         }
         
         EndpointDescription endpointDesc =
@@ -340,8 +341,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                                                   DescriptionFactory.UpdateType.CREATE_DISPATCH,
                                                   this);
         if (endpointDesc == null) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Unable to generate an endpoint description for endpoint reference " + jaxwsEPR);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("endpointDescriptionConstructionFailure", 
+                                      jaxwsEPR.toString())); 
         }
 
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc, axis2EPR, addressingNamespace, features);
@@ -472,8 +474,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         if (jaxwsEPR == null) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("The endpoint reference cannot be null.");
+            throw ExceptionFactory.
+               makeWebServiceException(Messages.getMessage("dispatchNoEndpointReference2"));
         }
         
         if (sei == null) {
@@ -489,8 +491,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             addressingNamespace = EndpointReferenceUtils.convertToAxis2(axis2EPR, jaxwsEPR);
         }
         catch (Exception e) {
-            //TODO NLS enable.
-            throw ExceptionFactory.makeWebServiceException("Invalid endpoint reference.", e);
+            throw ExceptionFactory.
+              makeWebServiceException(Messages.getMessage("invalidEndpointReference", 
+                                                          e.toString()));
         }
         
         return getPort(axis2EPR, addressingNamespace, sei, features);
@@ -677,9 +680,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         if (endpointDesc == null) {
-            // TODO: NLS
             throw ExceptionFactory.makeWebServiceException(
-                    "Unable to getPort for epr " + axis2EPR);
+                    Messages.getMessage("serviceDelegateNoPort", axis2EPR.toString()));
+                                                           
         }
 
         String[] interfacesNames = 
@@ -698,8 +701,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             try {
                 interfaces = loadClasses(classLoader, interfacesNames);
             } catch (ClassNotFoundException e2) {
-                // TODO: NLS
-                throw ExceptionFactory.makeWebServiceException("Unable to load proxy classes", e2);
+                throw ExceptionFactory.makeWebServiceException(
+                     Messages.getMessage("serviceDelegateProxyError", e2.getMessage()));
             }
         }
 
