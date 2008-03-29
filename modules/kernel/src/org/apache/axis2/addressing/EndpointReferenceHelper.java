@@ -340,12 +340,8 @@ public class EndpointReferenceHelper {
                     OMElement element = (OMElement) iterator.next();
                     epr.addReferenceParameter(element);
                 }
-            }else if (!isFinalAddressingNamespace &&
-                    map.get(AddressingConstants.Submission.MEX_METADATA).equals(qname)) {
-            	epr.addMetaData(eprChildElement);
-            	
-            }	else {
-            	epr.addExtensibleElement(eprChildElement);
+            } else {
+                epr.addExtensibleElement(eprChildElement);
             }
         }
 
@@ -548,7 +544,5 @@ public class EndpointReferenceHelper {
         submissionQNames.put(AddressingConstants.Submission.EPR_REFERENCE_PROPERTIES, new QName(
                 AddressingConstants.Submission.WSA_NAMESPACE,
                 AddressingConstants.Submission.EPR_REFERENCE_PROPERTIES));
-        submissionQNames.put(AddressingConstants.Submission.MEX_METADATA, new QName(
-                AddressingConstants.Submission.MEX_NS_URL, AddressingConstants.Submission.MEX_METADATA));
     }
 }

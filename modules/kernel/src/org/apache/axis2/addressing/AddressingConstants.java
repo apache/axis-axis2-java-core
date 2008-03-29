@@ -221,9 +221,6 @@ public interface AddressingConstants {
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/fault";
         static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "PortName";
         static final String WSA_INTERFACE_NAME = "PortType";
-        
-        static final String MEX_NS_URL = "http://schemas.xmlsoap.org/ws/2004/09/mex";
-        static final String MEX_METADATA = "Metadata";
 
         // fault information
         static final String FAULT_INVALID_HEADER = "InvalidMessageInformationHeader";

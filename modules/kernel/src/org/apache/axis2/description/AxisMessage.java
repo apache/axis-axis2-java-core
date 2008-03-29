@@ -21,11 +21,8 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaImport;
@@ -62,10 +59,6 @@ public class AxisMessage extends AxisDescription {
 
     //To chcek whether the message is wrapped or unwrapped
     private boolean wrapped = true;
-    
-    private Policy effectivePolicy = null;
-    
-	private boolean policyCalculated = false;
 
     public String getMessagePartName() {
 		return messagePartName;
@@ -238,46 +231,4 @@ public class AxisMessage extends AxisDescription {
     public void setWrapped(boolean wrapped) {
         this.wrapped = wrapped;
     }
-    
-	public Policy getEffectivePolicy() {
-		if (effectivePolicy == null && !policyCalculated) {
-			effectivePolicy = calculateEffectivePolicy();
-			policyCalculated = true;
-		}
-		return effectivePolicy;
-	}
-
-	public Policy calculateEffectivePolicy() {
-		PolicySubject policySubject = null;
-		ArrayList policyList = new ArrayList();
-
-		// AxisBindingMessage
-		policySubject = getPolicySubject();
-		policyList.addAll(policySubject.getAttachPolicyComponents());
-		
-		// AxisOperation
-		AxisOperation axisOperation = getAxisOperation();
-		if (axisOperation != null) {
-			policyList.addAll(axisOperation.getPolicySubject()
-					.getAttachPolicyComponents());
-		}
-
-		// AxisService
-		AxisService axisService = (axisOperation == null) ? null
-				: axisOperation.getAxisService();
-		if (axisService != null) {
-			policyList.addAll(axisService.getPolicySubject()
-					.getAttachPolicyComponents());
-		}
-
-		// AxisConfiguration
-		AxisConfiguration axisConfiguration = (axisService == null) ? null
-				: axisService.getAxisConfiguration();
-		if (axisConfiguration != null) {
-			policyList.addAll(axisConfiguration.getPolicySubject()
-					.getAttachPolicyComponents());
-		}
-
-		return PolicyUtil.getMergedPolicy(policyList, axisService);
-	}
 }

@@ -48,9 +48,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -301,7 +298,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 					.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
 			if (policyElements != null && policyElements.hasNext()) {
-				processPolicyElements(policyElements, service.getPolicySubject());
+				processPolicyElements(PolicyInclude.AXIS_SERVICE_POLICY,
+						policyElements, service.getPolicyInclude());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
@@ -310,7 +308,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 							TAG_POLICY_REF));
 
 			if (policyRefElements != null && policyRefElements.hasNext()) {
-				processPolicyRefElements(policyRefElements, service.getPolicySubject());
+				processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
+						policyRefElements, service.getPolicyInclude());
 			}
 
 			// processing service scope
@@ -424,8 +423,6 @@ public class ServiceBuilder extends DescriptionBuilder {
 			}
 
 			processEndpoints(service);
-			processPolicyAttachments(service_element, service);
-			
 
 		} catch (AxisFault axisFault) {
 			throw new DeploymentException(axisFault);
@@ -630,7 +627,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 					.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
 			if (policyElements != null) {
-				processPolicyElements(policyElements, message.getPolicySubject());
+				processPolicyElements(PolicyInclude.AXIS_MESSAGE_POLICY,
+						policyElements, message.getPolicyInclude());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
@@ -639,7 +637,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 							TAG_POLICY_REF));
 
 			if (policyRefElements != null) {
-				processPolicyRefElements(policyRefElements, message.getPolicySubject());
+				processPolicyRefElements(PolicyInclude.AXIS_MESSAGE_POLICY,
+						policyRefElements, message.getPolicyInclude());
 			}
 
 			processParameters(parameters, message, operation);
@@ -790,7 +789,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 					POLICY_NS_URI, TAG_POLICY));
 
 			if (policyElements != null && policyElements.hasNext()) {
-				processPolicyElements(policyElements, op_descrip.getPolicySubject());
+				processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY,
+						policyElements, op_descrip.getPolicyInclude());
 			}
 
 			// processing <wsp:PolicyReference> .. </..> elements
@@ -799,7 +799,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 							TAG_POLICY_REF));
 
 			if (policyRefElements != null && policyRefElements.hasNext()) {
-				processPolicyRefElements(policyRefElements, op_descrip.getPolicySubject());
+				processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY,
+						policyRefElements, op_descrip.getPolicyInclude());
 			}
 
 			// Operation Parameters
@@ -912,16 +913,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 	private void processEndpoints(AxisService axisService) throws AxisFault {
 		String endpointName = axisService.getEndpointName();
 		if (endpointName == null || endpointName.length() == 0) {
-			Utils.addEndpointsToService(axisService, service.getAxisConfiguration());
-		}
-	}
-	
-	private void processPolicyAttachments(OMElement serviceElement, AxisService service) throws DeploymentException {
-		Iterator attachmentElements = serviceElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_ATTACHMENT));
-		try {
-			Utils.processPolicyAttachments(attachmentElements, service);
-		} catch (Exception e) {
-			throw new DeploymentException(e);
+			Utils.addEndpointsToService(axisService);
 		}
 	}
 

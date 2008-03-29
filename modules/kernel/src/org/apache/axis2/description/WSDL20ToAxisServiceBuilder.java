@@ -96,7 +96,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -385,7 +384,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private AxisEndpoint processEndpoint(Endpoint endpoint, Interface serviceInterface) throws AxisFault {
         AxisEndpoint axisEndpoint = new AxisEndpoint();
         axisEndpoint.setName(endpoint.getName().toString());
-        setEndpointURL(axisEndpoint, endpoint.getAddress().toString());
+        axisEndpoint.setEndpointURL(endpoint.getAddress().toString());
         Binding binding = endpoint.getBinding();
         AxisBinding axisBinding = null;
         if (processedBindings.containsKey(binding.getName())) {
@@ -1280,15 +1279,5 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (!"".equals(documentation)) {
             axisDescription.setDocumentation(documentation);
         }
-    }
-    
-    private void setEndpointURL(AxisEndpoint axisEndpoint, String endpointURL) {
-    	axisEndpoint.setEndpointURL(endpointURL);
-    	try {
-    		URL url = new URL(endpointURL);
-    		axisEndpoint.setTransportInDescription(url.getProtocol());
-    	} catch (Exception e) {
-//    		log.debug("", e);
-		}    	
     }
 }

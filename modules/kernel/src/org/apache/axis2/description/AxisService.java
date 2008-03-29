@@ -2239,7 +2239,7 @@ public class AxisService extends AxisDescription {
 		String endpointName = axisService.getEndpointName();
 		if ((endpointName == null || endpointName.length() == 0)
 				&& axisService.getAxisConfiguration() != null) {
-			Utils.addEndpointsToService(axisService, axisService.getAxisConfiguration());
+			Utils.addEndpointsToService(axisService);
 		}
 
 		return axisService;

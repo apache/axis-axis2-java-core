@@ -71,9 +71,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String MESSAGE_SCOPE = "message";
 
     public static final String AXIS_BINDING_OPERATION = "AxisBindingOperation";
-    
-    public static final String AXIS_BINDING_MESSAGE = "AxisBindingMessage";
-
 
     /**
      * To chenge the conetext path from axis2/service to something else

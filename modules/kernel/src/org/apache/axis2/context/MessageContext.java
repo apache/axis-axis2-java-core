@@ -26,7 +26,6 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -37,7 +36,6 @@ import org.apache.axis2.context.externalize.MessageExternalizeUtils;
 import org.apache.axis2.context.externalize.SafeObjectInputStream;
 import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.context.externalize.SafeSerializable;
-import org.apache.axis2.description.AxisBindingMessage;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -1541,19 +1539,16 @@ public class MessageContext extends AbstractContext
         if (LoggingControl.debugLoggingAllowed) {
             checkActivateWarning("getEffectivePolicy");
         }
-        
-        AxisBindingMessage bindingMessage = 
-        	(AxisBindingMessage) getProperty(Constants.AXIS_BINDING_MESSAGE);
-        
-        if (bindingMessage != null) {
-        	return bindingMessage.getEffectivePolicy();
-        } else {
-        	if (axisMessage != null) {
-        		return axisMessage.getEffectivePolicy();        		
-        	} else {
-        		return null;
-        	}
+        if (axisMessage != null) {
+            return axisMessage.getPolicyInclude().getEffectivePolicy();
         }
+        if (axisOperation != null) {
+            return axisOperation.getPolicyInclude().getEffectivePolicy();
+        }
+        if (axisService != null) {
+            return axisService.getPolicyInclude().getEffectivePolicy();
+        }
+        return configurationContext.getAxisConfiguration().getPolicyInclude().getEffectivePolicy();
     }
 
 

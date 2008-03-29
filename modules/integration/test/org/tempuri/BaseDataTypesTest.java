@@ -41,10 +41,7 @@ public class BaseDataTypesTest extends XMLTestCase {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             Java2WSDLBuilder builder = new Java2WSDLBuilder(out, BaseDataTypes.class.getName(), BaseDataTypes.class.getClassLoader());
             builder.generateWSDL();
-            out.flush();
-            
             FileReader control = new FileReader(wsdlLocation);
-            
             StringReader test = new StringReader(new String(out.toByteArray()));
             Diff myDiff = new Diff(XMLUnit.buildDocument(XMLUnit.getControlParser(), control), 
 		               XMLUnit.buildDocument(XMLUnit.getControlParser(), test), 

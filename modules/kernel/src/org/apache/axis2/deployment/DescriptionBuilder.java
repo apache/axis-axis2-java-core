@@ -33,7 +33,6 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.PolicySubject;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
@@ -632,21 +631,23 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
     }
 
-    protected void processPolicyElements(Iterator policyElements,
-                                         PolicySubject policySubject) {
+    protected void processPolicyElements(int type, Iterator policyElements,
+                                         PolicyInclude policyInclude) {
         while (policyElements.hasNext()) {
             Policy p = PolicyEngine
                     .getPolicy((OMElement) policyElements.next());
-            policySubject.attachPolicy(p);
+            policyInclude.addPolicyElement(type, p);
         }
     }
 
-    protected void processPolicyRefElements(Iterator policyRefElements,
-                                            PolicySubject policySubject) {
+    protected void processPolicyRefElements(int type,
+                                            Iterator policyRefElements,
+                                            PolicyInclude policyInclude) {
+
         while (policyRefElements.hasNext()) {
             PolicyReference policyReference = PolicyEngine
                     .getPolicyReference((OMElement) policyRefElements.next());
-            policySubject.attachPolicyReference(policyReference);
+            policyInclude.addPolicyRefElement(type, policyReference);
         }
     }
 
