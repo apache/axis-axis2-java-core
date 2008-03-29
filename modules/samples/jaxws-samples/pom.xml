@@ -240,10 +240,17 @@
                     <webResources>
                         <!-- Need a better war to add the MAR -->
                         <resource>
-                            <directory>${basedir}/../../addressing/target</directory>
+                            <directory>${basedir}</directory>
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
-                                <include>addressing*.mar</include>
+                                <include>../../addressing/target/addressing*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>../../repository/addressing*.mar</include>
                             </includes>
                         </resource>
                     </webResources>
