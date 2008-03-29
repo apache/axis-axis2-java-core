@@ -37,6 +37,7 @@ import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -569,7 +570,10 @@ public class MessageContextBuilder {
 
         Object faultNode = context.getProperty(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME);
         if (faultNode != null) {
-            fault.getNode().setText((String) faultNode);
+            SOAPFaultNode soapFaultNode = fault.getNode();
+            if(soapFaultNode != null) {
+                soapFaultNode.setText((String) faultNode);
+            }
         } else if (axisFault != null) {
             if (axisFault.getFaultNodeElement() != null) {
                 fault.setNode(axisFault.getFaultNodeElement());
