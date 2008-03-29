@@ -332,6 +332,7 @@
 				<include>jaxws-calculator/**/*</include>
 				<include>jaxws-samples/**/*</include>
 				<include>java_first_jaxws/**/*</include>
+				<include>jaxws-interop/**/*</include>
 				<include>mtom/**/*</include>
 				<include>pojo/**/*</include>
 				<include>pojoguide/**/*</include>
