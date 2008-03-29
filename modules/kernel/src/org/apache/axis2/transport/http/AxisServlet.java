@@ -730,19 +730,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
-            log.debug("Acking one-way request");
-            response.setContentType("text/xml; charset="
-                    + msgContext
-                    .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
-
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            try {
-                response.flushBuffer();
-            }
-            catch (IOException e) {
-                throw new AxisFault("Error sending acknowledgement", e);
-            }
-
             status = RequestResponseTransportStatus.ACKED;
             responseReadySignal.countDown();
         }
