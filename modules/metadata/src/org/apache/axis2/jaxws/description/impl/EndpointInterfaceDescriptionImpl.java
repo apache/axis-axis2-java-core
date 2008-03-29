@@ -63,7 +63,7 @@ class EndpointInterfaceDescriptionImpl
     private EndpointDescriptionImpl parentEndpointDescription;
     private ArrayList<OperationDescription> operationDescriptions =
             new ArrayList<OperationDescription>();
-    private Map<QName, List<OperationDescription>> dispatchableOperations = new HashMap<QName, List<OperationDescription>>();
+    private Map<QName, List<OperationDescription>> dispatchableOperations;
     private DescriptionBuilderComposite dbc;
 
     //Logging setup
@@ -96,19 +96,15 @@ class EndpointInterfaceDescriptionImpl
     public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
             javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 
+    /**
+     * Add the operationDescription to the list of operations.  Note that we can not create the
+     * list of dispatchable operations at this points.
+     * @see #initializeDispatchableOperationsList()
+     * 
+     * @param operation The operation description to add to this endpoint interface
+     */
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
-        // Don't put JAXWS client async methods OR excluded methods into the
-        // dispatchable operations list.
-        if (!operation.isJAXWSAsyncClientMethod()
-            && !operation.isExcluded()) {
-            List<OperationDescription> operations = dispatchableOperations.get(operation.getName());
-            if(operations == null) {
-                operations = new ArrayList<OperationDescription>();
-                dispatchableOperations.put(operation.getName(), operations);
-            }
-            operations.add(operation);
-        }
     }
 
     /**
@@ -495,6 +491,14 @@ class EndpointInterfaceDescriptionImpl
     public OperationDescription[] getDispatchableOperation(QName operationQName) {
     	//FIXME:OperationDescriptionImpl creates operation qname with empty namespace. Thus using localname
     	//to read dispachable operation.
+        // REVIEW: Can this be synced at a more granular level?  Can't sync on dispatchableOperations because
+        //         it may be null, but also the initialization must finish before next thread sees 
+        //         dispatachableOperations != null
+        synchronized(this) {
+            if (dispatchableOperations == null) {
+                initializeDispatchableOperationsList();
+            }
+        }
     	QName key = new QName("",operationQName.getLocalPart());
     	List<OperationDescription> operations = dispatchableOperations.get(key);
     	if(operations!=null){
@@ -507,6 +511,11 @@ class EndpointInterfaceDescriptionImpl
      */
     public OperationDescription[] getDispatchableOperations() {
         OperationDescription[] returnOperations = null;
+
+        if (dispatchableOperations == null) {
+            initializeDispatchableOperationsList();
+        }
+        
         Collection<List<OperationDescription>> dispatchableValues = dispatchableOperations.values();
         Iterator<List<OperationDescription>> iteratorValues = dispatchableValues.iterator();
         ArrayList<OperationDescription> allDispatchableOperations = new ArrayList<OperationDescription>();
@@ -518,6 +527,34 @@ class EndpointInterfaceDescriptionImpl
             returnOperations = allDispatchableOperations.toArray(new OperationDescription[allDispatchableOperations.size()]);
         }
         return returnOperations;
+    }
+
+    /**
+     * Create the list of dispatchable operations from the list of all the operations.  A 
+     * dispatchable operation is one that can be invoked on the endpoint, so it DOES NOT include:
+     * - JAXWS Client Async methods
+     * - Methods that have been excluded via WebMethod.exclude annotation
+     *
+     * Note: We have to create the list of dispatchable operations in a lazy way; we can't
+     * create it as the operations are added via addOperations() because on the client
+     * that list is built in two parts; first using AxisOperations from the WSDL, which will
+     * not have any annotation information (such as WebMethod.exclude).  That list will then
+     *  be updated with SEI information, which is the point annotation information becomes
+     *  available.
+     */
+    private void initializeDispatchableOperationsList() {
+        dispatchableOperations = new HashMap<QName, List<OperationDescription>>();
+        OperationDescription[] opDescs = getOperations();
+        for (OperationDescription opDesc : opDescs) {
+          if (!opDesc.isJAXWSAsyncClientMethod() && !opDesc.isExcluded()) {
+              List<OperationDescription> dispatchableOperationsWithName = dispatchableOperations.get(opDesc.getName());
+              if(dispatchableOperationsWithName == null) {
+                  dispatchableOperationsWithName = new ArrayList<OperationDescription>();
+                  dispatchableOperations.put(opDesc.getName(), dispatchableOperationsWithName);
+              }
+              dispatchableOperationsWithName.add(opDesc);
+          }
+        }
     }
 
     /**

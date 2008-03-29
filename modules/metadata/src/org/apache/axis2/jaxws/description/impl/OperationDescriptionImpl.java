@@ -812,6 +812,17 @@ class OperationDescriptionImpl
     // ANNOTATION: WebMethod
     // =====================================
     public WebMethod getAnnoWebMethod() {
+        if (webMethodAnnotation == null) {
+            if (isDBC() && methodComposite != null) {
+                webMethodAnnotation = methodComposite.getWebMethodAnnot();
+            } else if (!isDBC() && seiMethod != null) {
+                webMethodAnnotation = (WebMethod) getAnnotation(seiMethod, WebMethod.class);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get WebMethod annotation");
+                }
+            }
+        }
         return webMethodAnnotation;
     }
 
@@ -1565,11 +1576,9 @@ class OperationDescriptionImpl
     // ANNOTATION: OneWay
     // ===========================================
     public Oneway getAnnoOneway() {
-        //TODO: Shouldn't really do it this way...if there is not Oneway annotation, 
-        //      we will always be calling the methods to try to retrieve it, since
-        //      it will always be null, should consider relying on 'isOneWay'
-
         if (onewayAnnotation == null) {
+            // Get the onew-way annotation from either the method composite (server-side)
+            // or from the SEI method (client-side).  
             if (isDBC() && methodComposite != null) {
                 if (methodComposite.isOneWay()) {
                     onewayAnnotation = OneWayAnnot.createOneWayAnnotImpl();
