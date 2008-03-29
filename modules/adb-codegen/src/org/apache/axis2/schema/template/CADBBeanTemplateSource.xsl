@@ -4207,10 +4207,10 @@
                    <xsl:if test="@isarray">
                          }
                      }
+                   </xsl:if>
                      <!-- This two should be freed after the loop for array-->
                      AXIS2_FREE(env->allocator,start_input_str);
                      AXIS2_FREE(env->allocator,end_input_str);
-                   </xsl:if>
                  } <!-- else for non nillable -->
 
                  <xsl:if test="$choice">
