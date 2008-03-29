@@ -62,6 +62,7 @@ public class SampleClient {
     private Boolean wireasync = true;
     private Boolean soap12 = false;
     private int count = 1;
+    private ClientConfigurationFactory clientConfigurationFactory = null;
 
     /**
      * main()
@@ -201,9 +202,13 @@ public class SampleClient {
                         urlSuffix = ECHO_CONTEXT12;
                     }
 
-                    ClientConfigurationFactory factory = initConfigurationFactory();
-                    buildAsync12(uriString + urlSuffix, null, message, timeout, wireasync);
-                    destroyConfigurationFactory(factory);
+                    if (clientConfigurationFactory == null) {
+                        ClientConfigurationFactory factory = initConfigurationFactory();
+                        buildAsync12(uriString + urlSuffix, null, message, timeout, wireasync);
+                        destroyConfigurationFactory(factory);
+                    } else {
+                        buildAsync12(uriString + urlSuffix, null, message, timeout, wireasync);
+                    }
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT12;
@@ -220,9 +225,13 @@ public class SampleClient {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = ECHO_CONTEXT;
                     }
-                    ClientConfigurationFactory factory = initConfigurationFactory();
-                    buildAsync(uriString + urlSuffix, null, message, timeout, wireasync);
-                    destroyConfigurationFactory(factory);
+                    if (clientConfigurationFactory == null) {
+                        ClientConfigurationFactory factory = initConfigurationFactory();
+                        buildAsync(uriString + urlSuffix, null, message, timeout, wireasync);
+                        destroyConfigurationFactory(factory);
+                    } else {
+                        buildAsync(uriString + urlSuffix, null, message, timeout, wireasync);
+                    }
                 } else {
                     if (0 == urlSuffix.length()) {
                         urlSuffix = PING_CONTEXT;
@@ -538,5 +547,8 @@ public class SampleClient {
         return response;
     }
 
+    public void setClientConfigurationFactory(ClientConfigurationFactory clientConfigurationFactory) {
+        this.clientConfigurationFactory = clientConfigurationFactory;
+    }
 }
 	

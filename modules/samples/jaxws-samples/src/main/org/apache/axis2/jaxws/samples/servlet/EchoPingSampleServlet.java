@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.samples.servlet;
 import org.apache.axis2.jaxws.samples.client.SampleClient;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
+import org.apache.axis2.deployment.FileSystemConfigurator;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -74,7 +75,8 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
         
         if(factory == null) {
             String path = getServletConfig().getServletContext().getRealPath("/WEB-INF/axis2.xml");
-            factory = new ClientConfigurationFactory(null, path);
+            FileSystemConfigurator configurator = new FileSystemConfigurator(null, path);
+            factory = new ClientConfigurationFactory(configurator);
             MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, factory);
         }
 
@@ -123,6 +125,7 @@ public class EchoPingSampleServlet extends HttpServlet implements Servlet {
 
             // Now call the service
             SampleClient client = new SampleClient();
+            client.setClientConfigurationFactory(factory);
             System.out.println(">> SERVLET: Request count = " + count);
 
             // Loop on the count
