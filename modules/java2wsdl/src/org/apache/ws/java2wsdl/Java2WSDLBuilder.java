@@ -256,7 +256,6 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 					+ (serviceName == null ? Java2WSDLUtils
 							.getSimpleClassName(className) : serviceName);
 		}
-		// axisService.setEPRs(new String[]{uri});
 		setServiceEPR(axisService, uri);
 		axisConfig.addService(axisService);
 

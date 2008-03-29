@@ -291,6 +291,7 @@ public class AxisConfiguration extends AxisDescription {
         axisServiceGroup.setParent(this);
         axisServiceGroup.addService(service);
         addServiceGroup(axisServiceGroup);
+        processEndpoints(service, service.getAxisConfiguration());
     }
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
@@ -1222,4 +1223,13 @@ public class AxisConfiguration extends AxisDescription {
 
         return phaseList;
     }
+    
+    private void processEndpoints(AxisService axisService,
+    		AxisConfiguration axisConfiguration) throws AxisFault {
+		String endpointName = axisService.getEndpointName();
+		if (endpointName == null || endpointName.length() == 0) {
+			org.apache.axis2.deployment.util.Utils.addEndpointsToService(
+					axisService, axisConfiguration);
+		}
+	}
 }

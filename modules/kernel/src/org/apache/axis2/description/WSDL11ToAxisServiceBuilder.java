@@ -96,6 +96,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -2296,21 +2297,18 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Address) {
                 SOAP12Address soapAddress = (SOAP12Address) wsdl4jExtensibilityElement;
                 if (description instanceof AxisEndpoint) {
-                    ((AxisEndpoint) description)
-                            .setEndpointURL(soapAddress.getLocationURI());
+                	setEndpointURL((AxisEndpoint) description, soapAddress.getLocationURI());
                 }
 
             } else if (wsdl4jExtensibilityElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jExtensibilityElement;
                 if (description instanceof AxisEndpoint) {
-                    ((AxisEndpoint) description)
-                            .setEndpointURL(soapAddress.getLocationURI());
+                	setEndpointURL((AxisEndpoint) description, soapAddress.getLocationURI());
                 }
             } else if (wsdl4jExtensibilityElement instanceof HTTPAddress) {
                 HTTPAddress httpAddress = (HTTPAddress) wsdl4jExtensibilityElement;
                 if (description instanceof AxisEndpoint) {
-                    ((AxisEndpoint) description)
-                            .setEndpointURL(httpAddress.getLocationURI());
+                	setEndpointURL((AxisEndpoint) description, httpAddress.getLocationURI());
                 }
 
             } else if (wsdl4jExtensibilityElement instanceof Schema) {
@@ -2841,6 +2839,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
             }
         }
+    }
+    
+    private void setEndpointURL(AxisEndpoint axisEndpoint, String endpointURL) throws AxisFault {
+    	axisEndpoint.setEndpointURL(endpointURL);
+    	try {
+    		URL url = new URL(endpointURL);
+    		axisEndpoint.setTransportInDescription(url.getProtocol());
+    	} catch (Exception e) {
+//    		log.debug("",e);
+		}    	
     }
 
 

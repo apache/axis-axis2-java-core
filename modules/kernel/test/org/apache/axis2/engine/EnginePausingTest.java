@@ -123,6 +123,7 @@ public class EnginePausingTest extends TestCase {
         AxisBinding binding = new AxisBinding();
         AxisBindingOperation bindingOp = new AxisBindingOperation();
 
+        bindingOp.setName(axisOp.getName());
         bindingOp.setAxisOperation(axisOp);
         binding.addChild(bindingOp);
         endpoint.setBinding(binding);

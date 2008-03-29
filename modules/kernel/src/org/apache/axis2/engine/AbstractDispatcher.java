@@ -119,7 +119,13 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                     AxisBindingOperation axisBindingOperation =
                             (AxisBindingOperation) axisEndpoint.getBinding()
                                     .getChild(axisOperation.getName());
+                    msgctx
+					.setProperty(
+							Constants.AXIS_BINDING_MESSAGE,
+							axisBindingOperation
+									.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                     msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+
                 }
 
             }

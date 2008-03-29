@@ -154,8 +154,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                                                                    TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_POLICY, policyElements,
-                                      axisConfig.getPolicyInclude());
+                processPolicyElements(policyElements,
+                                      axisConfig.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
@@ -163,8 +163,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                                                                                       TAG_POLICY_REF));
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_POLICY, policyElements,
-                                         axisConfig.getPolicyInclude());
+                processPolicyRefElements(policyElements,
+                                         axisConfig.getPolicySubject());
             }
 
             //to process default module versions

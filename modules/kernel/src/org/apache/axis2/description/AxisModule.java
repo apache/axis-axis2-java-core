@@ -83,6 +83,7 @@ public class AxisModule implements ParameterInclude {
     public static final String VERSION_SNAPSHOT = "SNAPSHOT";
     public static final String MODULE_SERVICE = "moduleService";
 
+    private PolicySubject policySubject = new PolicySubject();
 
     /**
      * Constructor ModuleDescription.
@@ -261,6 +262,10 @@ public class AxisModule implements ParameterInclude {
             policyInclude = new PolicyInclude();
         }
         return policyInclude;
+    }
+    
+    public PolicySubject getPolicySubject() {
+    	return policySubject;
     }
 
     public String getModuleDescription() {
