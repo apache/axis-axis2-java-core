@@ -512,10 +512,14 @@ class EndpointInterfaceDescriptionImpl
     public OperationDescription[] getDispatchableOperations() {
         OperationDescription[] returnOperations = null;
 
-        if (dispatchableOperations == null) {
-            initializeDispatchableOperationsList();
+        // REVIEW: Can this be synced at a more granular level?  Can't sync on dispatchableOperations because
+        //         it may be null, but also the initialization must finish before next thread sees 
+        //         dispatachableOperations != null
+        synchronized(this) {
+            if (dispatchableOperations == null) {
+                initializeDispatchableOperationsList();
+            }
         }
-        
         Collection<List<OperationDescription>> dispatchableValues = dispatchableOperations.values();
         Iterator<List<OperationDescription>> iteratorValues = dispatchableValues.iterator();
         ArrayList<OperationDescription> allDispatchableOperations = new ArrayList<OperationDescription>();
