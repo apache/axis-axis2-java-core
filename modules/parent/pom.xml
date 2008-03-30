@@ -369,6 +369,12 @@
             <organization>Computer Associates</organization>
         </developer>
         <developer>
+            <name>Nandana Mihindukulasooriya</name>
+            <id>nandana</id>
+            <email>nandana AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
             <name>Nikhil Thaker</name>
             <organization>IBM</organization>
         </developer>
