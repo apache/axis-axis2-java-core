@@ -253,8 +253,9 @@ public class SchemaCompiler {
                 //mapper namespace
                 for (int i = 0; nsp == null && i < schemalist.size(); i++) {
                     nsp = ((XmlSchema) schemalist.get(i)).getTargetNamespace();
-                    if (nsp != null)
+                    if ((nsp != null) && !nsp.equals("")){
                         break;
+                    }
                     XmlSchema[] schemas = SchemaUtil.getAllSchemas((XmlSchema) schemalist.get(i));
                     for (int j = 0; schemas != null && j < schemas.length; j++) {
                         nsp = schemas[j].getTargetNamespace();
