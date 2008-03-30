@@ -23,15 +23,14 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Action;
-import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
+
 @WebService(name = "Calculator", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
 @XmlSeeAlso({
-        W3CEndpointReference.class
+        ObjectFactory.class
         })
 public interface Calculator {
 
@@ -49,19 +48,18 @@ public interface Calculator {
      * @param value1
      * @param value2
      * @return returns int
-     * @throws AddNumbersException
+     * @throws AddNumbersException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "http://calculator.jaxws.axis2.apache.org")
     @RequestWrapper(localName = "add", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.Add")
     @ResponseWrapper(localName = "addResponse", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.AddResponse")
-    @Action(input = "http://calculator.jaxws.axis2.apache.org/add", output = "http://calculator.jaxws.axis2.apache.org/addResponse",
-            fault = {@FaultAction(className = AddNumbersException.class, value = "http://calculator.jaxws.axis2.apache.org/addFault")})
     public int add(
             @WebParam(name = "value1", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
             int value1,
             @WebParam(name = "value2", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
             int value2)
-            throws AddNumbersException;
+            throws AddNumbersException_Exception
+            ;
 
 }

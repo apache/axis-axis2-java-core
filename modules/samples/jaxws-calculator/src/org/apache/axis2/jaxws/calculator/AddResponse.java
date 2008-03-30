@@ -21,29 +21,47 @@ package org.apache.axis2.jaxws.calculator;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "addResponse", namespace = "http://calculator.jaxws.axis2.apache.org")
+
+/**
+ * <p>Java class for addResponse complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType name="addResponse">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "addResponse", namespace = "http://calculator.jaxws.axis2.apache.org")
+@XmlType(name = "addResponse", propOrder = {
+        "_return"
+        })
 public class AddResponse {
 
-    @XmlElement(name = "return", namespace = "http://calculator.jaxws.axis2.apache.org")
-    private int _return;
+    @XmlElement(name = "return")
+    protected int _return;
 
     /**
-     * @return returns int
+     * Gets the value of the return property.
      */
     public int getReturn() {
-        return this._return;
+        return _return;
     }
 
     /**
-     * @param _return the value for the _return property
+     * Sets the value of the return property.
      */
-    public void setReturn(int _return) {
-        this._return = _return;
+    public void setReturn(int value) {
+        this._return = value;
     }
 
 }

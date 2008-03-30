@@ -73,16 +73,20 @@ public class CalculatorService implements Calculator {
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.calculator.Calculator#add(int, int)
      */
-    public int add(int value1, int value2) throws AddNumbersException {
+    public int add(int value1, int value2) throws AddNumbersException_Exception {
         List list = (List) getContext().getMessageContext().get(MessageContext.REFERENCE_PARAMETERS);
 
-        if (list.isEmpty())
-            throw new AddNumbersException("No ticket found.");
-
+        if (list.isEmpty()) {
+            AddNumbersException faultInfo = new AddNumbersException();
+            faultInfo.setMessage("No ticket found.");
+            throw new AddNumbersException_Exception(faultInfo.getMessage(), faultInfo);
+        }
         Element element = (Element) list.get(0);
 
         if (!"123456789".equals(element.getTextContent())) {
-            throw new AddNumbersException("Invalid ticket: " + element.getTextContent());
+            AddNumbersException faultInfo = new AddNumbersException();
+            faultInfo.setMessage("Invalid ticket: " + element.getTextContent());
+            throw new AddNumbersException_Exception(faultInfo.getMessage(), faultInfo);
         }
 
         System.out.println("value1: " + value1 + " value2: " + value2);

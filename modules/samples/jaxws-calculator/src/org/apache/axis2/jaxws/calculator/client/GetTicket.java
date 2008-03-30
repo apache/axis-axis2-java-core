@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getTicket", namespace = "http://calculator.jaxws.axis2.apache.org")
+@XmlType(name = "getTicket")
 public class GetTicket {
 
 

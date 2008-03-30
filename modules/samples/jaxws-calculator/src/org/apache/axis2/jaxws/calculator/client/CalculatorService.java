@@ -25,12 +25,15 @@ import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
-@WebServiceClient(name = "CalculatorService", targetNamespace = "http://calculator.jaxws.axis2.apache.org", wsdlLocation = "http://localhost:8080/axis2/services/CalculatorService.CalculatorServicePort?wsdl")
+
+@WebServiceClient(name = "CalculatorService", targetNamespace = "http://calculator.jaxws.axis2.apache.org", wsdlLocation = "file:/C:/Apache/axis2/modules/samples/jaxws-calculator/resources/META-INF/CalculatorService.wsdl")
 public class CalculatorService
         extends Service {
 
     private final static URL CALCULATORSERVICE_WSDL_LOCATION;
+    private final static Logger logger = Logger.getLogger(org.apache.axis2.jaxws.calculator.client.CalculatorService.class.getName());
 
     static {
         URL url = null;
@@ -55,7 +58,7 @@ public class CalculatorService
      */
     @WebEndpoint(name = "CalculatorServicePort")
     public Calculator getCalculatorServicePort() {
-        return (Calculator) super.getPort(new QName("http://calculator.jaxws.axis2.apache.org", "CalculatorServicePort"), Calculator.class);
+        return super.getPort(new QName("http://calculator.jaxws.axis2.apache.org", "CalculatorServicePort"), Calculator.class);
     }
 
     /**
@@ -64,7 +67,7 @@ public class CalculatorService
      */
     @WebEndpoint(name = "CalculatorServicePort")
     public Calculator getCalculatorServicePort(WebServiceFeature... features) {
-        return (Calculator) super.getPort(new QName("http://calculator.jaxws.axis2.apache.org", "CalculatorServicePort"), Calculator.class, features);
+        return super.getPort(new QName("http://calculator.jaxws.axis2.apache.org", "CalculatorServicePort"), Calculator.class, features);
     }
 
 }

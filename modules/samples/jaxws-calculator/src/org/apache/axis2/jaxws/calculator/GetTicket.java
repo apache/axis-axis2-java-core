@@ -20,12 +20,27 @@ package org.apache.axis2.jaxws.calculator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "getTicket", namespace = "http://calculator.jaxws.axis2.apache.org")
+
+/**
+ * <p>Java class for getTicket complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType name="getTicket">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getTicket", namespace = "http://calculator.jaxws.axis2.apache.org")
+@XmlType(name = "getTicket")
 public class GetTicket {
 
 

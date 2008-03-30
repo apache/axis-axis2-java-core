@@ -18,33 +18,56 @@
 */
 package org.apache.axis2.jaxws.calculator;
 
-import javax.xml.ws.WebFault;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-@WebFault(name = "AddNumbersException",
-        targetNamespace = "http://calculator.jaxws.axis2.apache.org",
-        faultBean = "org.apache.axis2.jaxws.calculator.AddNumbersExceptionBean")
-public class AddNumbersException extends Exception {
 
-    private static final long serialVersionUID = 6719645838690386947L;
+/**
+ * <p>Java class for AddNumbersException complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType name="AddNumbersException">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="message" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "AddNumbersException", propOrder = {
+        "message"
+        })
+public class AddNumbersException {
 
-    public AddNumbersException() {
-        super();
-        // TODO Auto-generated constructor stub
+    @XmlElement(namespace = "")
+    protected String message;
+
+    /**
+     * Gets the value of the message property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+    public String getMessage() {
+        return message;
     }
 
-    public AddNumbersException(String message, Throwable cause) {
-        super(message, cause);
-        // TODO Auto-generated constructor stub
-    }
-
-    public AddNumbersException(String message) {
-        super(message);
-        // TODO Auto-generated constructor stub
-    }
-
-    public AddNumbersException(Throwable cause) {
-        super(cause);
-        // TODO Auto-generated constructor stub
+    /**
+     * Sets the value of the message property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+    public void setMessage(String value) {
+        this.message = value;
     }
 
 }

@@ -27,7 +27,11 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
+
 @WebService(name = "Calculator", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
+@XmlSeeAlso({
+        ObjectFactory.class
+        })
 public interface Calculator {
 
 
@@ -36,8 +40,8 @@ public interface Calculator {
      */
     @WebMethod
     @WebResult(targetNamespace = "http://calculator.jaxws.axis2.apache.org")
-    @RequestWrapper(localName = "getTicket", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.GetTicket")
-    @ResponseWrapper(localName = "getTicketResponse", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.GetTicketResponse")
+    @RequestWrapper(localName = "getTicket", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.client.GetTicket")
+    @ResponseWrapper(localName = "getTicketResponse", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.client.GetTicketResponse")
     public W3CEndpointReference getTicket();
 
     /**
@@ -48,8 +52,8 @@ public interface Calculator {
      */
     @WebMethod
     @WebResult(targetNamespace = "http://calculator.jaxws.axis2.apache.org")
-    @RequestWrapper(localName = "add", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.Add")
-    @ResponseWrapper(localName = "addResponse", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.AddResponse")
+    @RequestWrapper(localName = "add", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.client.Add")
+    @ResponseWrapper(localName = "addResponse", targetNamespace = "http://calculator.jaxws.axis2.apache.org", className = "org.apache.axis2.jaxws.calculator.client.AddResponse")
     public int add(
             @WebParam(name = "value1", targetNamespace = "http://calculator.jaxws.axis2.apache.org")
             int value1,

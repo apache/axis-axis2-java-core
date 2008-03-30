@@ -20,49 +20,63 @@ package org.apache.axis2.jaxws.calculator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "add", namespace = "http://calculator.jaxws.axis2.apache.org")
+
+/**
+ * <p>Java class for add complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType name="add">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="value1" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="value2" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "add", namespace = "http://calculator.jaxws.axis2.apache.org", propOrder = {
+@XmlType(name = "add", propOrder = {
         "value1",
         "value2"
         })
 public class Add {
 
-    @XmlElement(name = "value1", namespace = "http://calculator.jaxws.axis2.apache.org")
-    private int value1;
-    @XmlElement(name = "value2", namespace = "http://calculator.jaxws.axis2.apache.org")
-    private int value2;
+    protected int value1;
+    protected int value2;
 
     /**
-     * @return returns int
+     * Gets the value of the value1 property.
      */
     public int getValue1() {
-        return this.value1;
+        return value1;
     }
 
     /**
-     * @param value1 the value for the value1 property
+     * Sets the value of the value1 property.
      */
-    public void setValue1(int value1) {
-        this.value1 = value1;
+    public void setValue1(int value) {
+        this.value1 = value;
     }
 
     /**
-     * @return returns int
+     * Gets the value of the value2 property.
      */
     public int getValue2() {
-        return this.value2;
+        return value2;
     }
 
     /**
-     * @param value2 the value for the value2 property
+     * Sets the value of the value2 property.
      */
-    public void setValue2(int value2) {
-        this.value2 = value2;
+    public void setValue2(int value) {
+        this.value2 = value;
     }
 
 }

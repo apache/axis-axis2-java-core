@@ -21,30 +21,54 @@ package org.apache.axis2.jaxws.calculator;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-@XmlRootElement(name = "getTicketResponse", namespace = "http://calculator.jaxws.axis2.apache.org")
+
+/**
+ * <p>Java class for getTicketResponse complex type.
+ * <p/>
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p/>
+ * <pre>
+ * &lt;complexType name="getTicketResponse">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="return" type="{http://www.w3.org/2005/08/addressing}EndpointReferenceType" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getTicketResponse", namespace = "http://calculator.jaxws.axis2.apache.org")
+@XmlType(name = "getTicketResponse", propOrder = {
+        "_return"
+        })
 public class GetTicketResponse {
 
-    @XmlElement(name = "return", namespace = "http://calculator.jaxws.axis2.apache.org")
-    private W3CEndpointReference _return;
+    @XmlElement(name = "return")
+    protected W3CEndpointReference _return;
 
     /**
-     * @return returns W3CEndpointReference
+     * Gets the value of the return property.
+     *
+     * @return possible object is
+     *         {@link W3CEndpointReference }
      */
     public W3CEndpointReference getReturn() {
-        return this._return;
+        return _return;
     }
 
     /**
-     * @param _return the value for the _return property
+     * Sets the value of the return property.
+     *
+     * @param value allowed object is
+     *              {@link W3CEndpointReference }
      */
-    public void setReturn(W3CEndpointReference _return) {
-        this._return = _return;
+    public void setReturn(W3CEndpointReference value) {
+        this._return = value;
     }
 
 }

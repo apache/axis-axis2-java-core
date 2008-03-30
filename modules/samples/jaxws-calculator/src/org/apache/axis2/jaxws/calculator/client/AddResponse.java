@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "addResponse", namespace = "http://calculator.jaxws.axis2.apache.org", propOrder = {
+@XmlType(name = "addResponse", propOrder = {
         "_return"
         })
 public class AddResponse {

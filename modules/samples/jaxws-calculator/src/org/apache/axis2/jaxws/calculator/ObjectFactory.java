@@ -18,13 +18,16 @@
 */
 package org.apache.axis2.jaxws.calculator;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
+import javax.xml.namespace.QName;
 
 
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the org.apache.axis2.jaxws.calculator package.
+ * generated in the org.apache.axis2.jaxws.calculator.client package.
  * <p>An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
  * for XML content. The Java representation of XML
@@ -37,9 +40,14 @@ import javax.xml.bind.annotation.XmlRegistry;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _GetTicket_QNAME = new QName("http://calculator.jaxws.axis2.apache.org", "getTicket");
+    private final static QName _Add_QNAME = new QName("http://calculator.jaxws.axis2.apache.org", "add");
+    private final static QName _AddResponse_QNAME = new QName("http://calculator.jaxws.axis2.apache.org", "addResponse");
+    private final static QName _GetTicketResponse_QNAME = new QName("http://calculator.jaxws.axis2.apache.org", "getTicketResponse");
+    private final static QName _AddNumbersException_QNAME = new QName("http://calculator.jaxws.axis2.apache.org", "AddNumbersException");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.axis2.jaxws.calculator
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.apache.axis2.jaxws.calculator.client
      */
     public ObjectFactory() {
     }
@@ -58,4 +66,66 @@ public class ObjectFactory {
         return new AddResponse();
     }
 
+    /**
+     * Create an instance of {@link AddNumbersException }
+     */
+    public AddNumbersException createAddNumbersException() {
+        return new AddNumbersException();
+    }
+
+    /**
+     * Create an instance of {@link GetTicket }
+     */
+    public GetTicket createGetTicket() {
+        return new GetTicket();
+    }
+
+    /**
+     * Create an instance of {@link GetTicketResponse }
+     */
+    public GetTicketResponse createGetTicketResponse() {
+        return new GetTicketResponse();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetTicket }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://calculator.jaxws.axis2.apache.org", name = "getTicket")
+    public JAXBElement<GetTicket> createGetTicket(GetTicket value) {
+        return new JAXBElement<GetTicket>(_GetTicket_QNAME, GetTicket.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Add }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://calculator.jaxws.axis2.apache.org", name = "add")
+    public JAXBElement<Add> createAdd(Add value) {
+        return new JAXBElement<Add>(_Add_QNAME, Add.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddResponse }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://calculator.jaxws.axis2.apache.org", name = "addResponse")
+    public JAXBElement<AddResponse> createAddResponse(AddResponse value) {
+        return new JAXBElement<AddResponse>(_AddResponse_QNAME, AddResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetTicketResponse }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://calculator.jaxws.axis2.apache.org", name = "getTicketResponse")
+    public JAXBElement<GetTicketResponse> createGetTicketResponse(GetTicketResponse value) {
+        return new JAXBElement<GetTicketResponse>(_GetTicketResponse_QNAME, GetTicketResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddNumbersException }{@code >}}
+     */
+    @XmlElementDecl(namespace = "http://calculator.jaxws.axis2.apache.org", name = "AddNumbersException")
+    public JAXBElement<AddNumbersException> createAddNumbersException(AddNumbersException value) {
+        return new JAXBElement<AddNumbersException>(_AddNumbersException_QNAME, AddNumbersException.class, null, value);
+    }
+
 }
+
