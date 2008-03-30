@@ -247,7 +247,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         this.mapper = mapper;
     }
 
-    private Object getBindingPropertyFromOperation(String name, QName qName) {
+    protected Object getBindingPropertyFromOperation(String name, QName qName) {
 
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
         AxisBindingOperation axisBindingOperation = null;
@@ -272,7 +272,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return property;
     }
 
-    private Policy getBindingPolicyFromMessage(AxisBindingOperation axisBindingOperation,
+    protected Policy getBindingPolicyFromMessage(AxisBindingOperation axisBindingOperation,
                                                String key) {
         AxisBindingMessage axisBindingMessage = null;
 
@@ -290,7 +290,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return null;
     }
 
-    private Object getBindingPropertyFromMessage(String name, QName qName, String key) {
+    protected Object getBindingPropertyFromMessage(String name, QName qName, String key) {
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
@@ -324,7 +324,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return property;
     }
 
-    private Object getBindingPropertyFromMessageFault(String name, QName qName, String key) {
+    protected Object getBindingPropertyFromMessageFault(String name, QName qName, String key) {
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
@@ -907,7 +907,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param faultMessagesToMep
      */
 
-    private void addFaultMessages(List operationFaultMessages, Set faultMessagesToMep) {
+    protected void addFaultMessages(List operationFaultMessages, Set faultMessagesToMep) {
 
         AxisMessage faultMessage;
         for (Iterator iter = operationFaultMessages.iterator(); iter.hasNext();) {
@@ -3272,7 +3272,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 parameterElementList.add(param);
             }
         }
-
         return parameterElementList;
     }
 

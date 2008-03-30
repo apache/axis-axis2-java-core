@@ -26,7 +26,12 @@ import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.CBuildScriptWriter;
@@ -726,6 +731,179 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         return outputDir;
     }
 
+    /**
+     * @param doc
+     * @param parameters
+     * @param location
+     */
+    protected List getParameterElementList(Document doc, List parameters, String location) {
+        List parameterElementList = new ArrayList();
+
+        if ((parameters != null) && !parameters.isEmpty()) {
+            int count = parameters.size();
+
+            for (int i = 0; i < count; i++) {
+                Element param = doc.createElement("param");
+                SOAPHeaderMessage header = (SOAPHeaderMessage) parameters.get(i);
+                QName name = header.getElement();
+
+                addAttribute(doc, "name", this.mapper.getParameterName(name), param);
+
+                String typeMapping = this.mapper.getTypeMappingName(name);
+                String typeMappingStr = (typeMapping == null)
+                        ? ""
+                        : typeMapping;
+
+                addAttribute(doc, "type", typeMappingStr, param);
+                addAttribute(doc, "location", location, param);
+                if (header.isMustUnderstand()) {
+                    addAttribute(doc, "mustUnderstand", "true", param);
+                }
+
+                if (name != null) {
+                    Element qNameElement = doc.createElement("qname");
+                    addAttribute(doc, "nsuri", name.getNamespaceURI(), qNameElement);
+                    addAttribute(doc, "localname", name.getLocalPart(), qNameElement);
+                    param.appendChild(qNameElement);
+                }
+                parameterElementList.add(param);
+
+                // the new trick to identify adb types
+                boolean isOurs = true;
+
+                if (typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
+                        !typeMappingStr.equals(C_DEFAULT_TYPE)) {
+                    addAttribute(doc, "ours", "yes", param);
+                    isOurs = true;
+                } else {
+                    isOurs = false;
+                }
+
+                if (isOurs) {
+                    typeMappingStr = C_OUR_TYPE_PREFIX + typeMappingStr + C_OUR_TYPE_SUFFIX;
+                }
+
+                addAttribute(doc, "axis2-type", typeMappingStr, param);
+
+            }
+        }
+        return parameterElementList;
+    }
+
+    /**
+     * Finds the output element.
+     *
+     * @param doc
+     * @param bindingOperation
+     * @param headerParameterQNameList
+     */
+    protected Element getOutputElement(Document doc,
+                                       AxisBindingOperation bindingOperation,
+                                       List headerParameterQNameList) {
+        AxisOperation operation = bindingOperation.getAxisOperation();
+        Element outputElt = doc.createElement("output");
+        String mep = operation.getMessageExchangePattern();
+
+
+        if (WSDLUtil.isOutputPresentForMEP(mep)) {
+
+            Element param = getOutputParamElement(doc, operation);
+
+            if (param != null) {
+                outputElt.appendChild(param);
+            }
+
+            List outputElementList = getParameterElementList(doc, headerParameterQNameList,
+                    WSDLConstants.SOAP_HEADER);
+            outputElementList.addAll(getParameterElementListForHttpHeader(doc,
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WHTTP_HEADER,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT),
+                    WSDLConstants.HTTP_HEADER));
+
+            for (int i = 0; i < outputElementList.size(); i++) {
+                outputElt.appendChild((Element) outputElementList.get(i));
+            }
+
+            /*
+            * Setting the effective policy for the output message.
+            */
+            Policy policy = getBindingPolicyFromMessage(bindingOperation,
+                    WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            outputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
+            }
+        }
+        return outputElt;
+    }
+
+    /**
+     * Get the input element
+     *
+     * @param doc
+     * @param bindingOperation
+     * @param headerParameterQNameList
+     * @return DOM element
+     */
+    protected Element getInputElement(Document doc,
+                                      AxisBindingOperation bindingOperation,
+                                      List headerParameterQNameList) {
+        AxisOperation operation = bindingOperation.getAxisOperation();
+        Element inputElt = doc.createElement("input");
+        String mep = operation.getMessageExchangePattern();
+
+        if (WSDLUtil.isInputPresentForMEP(mep)) {
+
+            Element[] param = getInputParamElement(doc, operation);
+            for (int i = 0; i < param.length; i++) {
+                inputElt.appendChild(param[i]);
+            }
+
+            List parameterElementList = getParameterElementList(doc, headerParameterQNameList,
+                    WSDLConstants.SOAP_HEADER);
+            parameterElementList.addAll(getParameterElementListForHttpHeader(doc,
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WHTTP_HEADER,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_IN),
+                    WSDLConstants.HTTP_HEADER));
+            parameterElementList.addAll(getParameterElementListForSOAPModules(doc,
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WSOAP_MODULE,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_IN)));
+
+            for (int i = 0; i < parameterElementList.size(); i++) {
+                inputElt.appendChild((Element) parameterElementList.get(i));
+            }
+
+            /*
+            * Setting the effective policy of input message
+            */
+            Policy policy = getBindingPolicyFromMessage(bindingOperation,
+                    WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+
+            if (policy != null) {
+                try {
+                    addAttribute(doc, "policy",
+                            PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
+                            inputElt);
+                } catch (Exception ex) {
+                    throw new RuntimeException("can't serialize the policy ..");
+                }
+            }
+
+        }
+        return inputElt;
+    }
 
 }
 
