@@ -197,6 +197,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             replaceHeaders = replace;
             includeOptionalHeaders = includeOptional;
             addressingRole = role;
+            
+            if(!isFinalAddressingNamespace && mc.getTo() == null){
+            	mc.setTo(new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL));
+            }
         }
 
         public void writeHeaders() throws AxisFault {
