@@ -181,7 +181,12 @@ public class JAXWSDeployer implements Deployer {
         ArrayList axisServiceList = new ArrayList();
         for (int i = 0, size = classList.size(); i < size; i++) {
             String className = (String) classList.get(i);
-            Class pojoClass = Loader.loadClass(classLoader, className);
+            Class pojoClass;
+            try {
+                pojoClass = Loader.loadClass(classLoader, className);
+            } catch (Exception e){
+                continue;
+            }
             WebService wsAnnotation = (WebService) pojoClass.getAnnotation(WebService.class);
             WebServiceProvider wspAnnotation = null;
             if (wsAnnotation == null) {
