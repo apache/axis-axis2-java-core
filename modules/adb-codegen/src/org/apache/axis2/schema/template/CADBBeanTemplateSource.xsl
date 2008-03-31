@@ -1623,6 +1623,8 @@
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
                                   {
+                                     current_node =axiom_node_get_next_sibling(current_node, env);
+                                     is_early_node_valid = AXIS2_FALSE;
                                      continue;
                                   }
                                   <xsl:if test="not(@any)">
@@ -2110,6 +2112,9 @@
                                {
                                   if(axiom_node_get_node_type(current_node, env) != AXIOM_ELEMENT)
                                   {
+                                     <xsl:if test="@any">
+                                     current_node = axiom_node_get_next_sibling(current_node, env);
+                                     </xsl:if>
                                      continue;
                                   }
                                   <xsl:if test="not(@any)">
