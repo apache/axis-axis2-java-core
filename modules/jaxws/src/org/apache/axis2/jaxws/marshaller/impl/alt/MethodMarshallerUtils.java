@@ -761,7 +761,7 @@ public class MethodMarshallerUtils {
                 Block[] detailBlocks = new Block[1];
                 detailBlocks[0] = factory.createFrom(faultBeanObject, context, faultBeanQName);
 
-                if (log.isErrorEnabled()) {
+                if (log.isDebugEnabled()) {
                     log.debug("Create the xmlFault for the Service Exception");
                 }
                 // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
