@@ -52,6 +52,18 @@ public interface EndpointDescriptionWSDL {
     /**
      * Returns the namespace for the specific wsdl:binding extensibility element. Typically, this is
      * the <soap:binding> element that defines either a SOAP 1.1 or a SOAP 1.2 binding.
+     * 
+     * IMPORTANT NOTE: The value returned is converted from the WSDL Binding type (which is the
+     * namespace on the assocaited binding extensibility element) to the corresponding value
+     * for the SOAPBinding annotation.  For example, the following SOAP12 WSDL
+     *     ...
+     *     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+     *     ...  
+     *     <wsdl:binding ...>
+     *       <soap12:binding ...>
+     * 
+     * Would return the value javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING which is
+     *     "http://www.w3.org/2003/05/soap/bindings/HTTP/"
      *
      * @return String constants defined in javax.xml.ws.soap.SOAPBinding
      */

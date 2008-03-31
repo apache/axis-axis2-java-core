@@ -26,8 +26,11 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
+
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
@@ -51,6 +54,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.soap.SOAPBinding;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -524,5 +529,66 @@ public class DescriptionUtils {
                 log.warn(Messages.getMessage("regHandlerHeadersErr",axisService.getName(),e.getMessage()));
             }
         }  
+    }
+    
+    /**
+     * Given a binding type value based on a JAXWS anntation, return the corresponding WSDL
+     * binding type.  The JAXWS annotation values understood are those returned by
+     * mapBindingTypeWsdltoAnnotation.
+     * 
+     * @see #mapBindingTypeWsdlToAnnotation(String, String)
+     * 
+     * @param annotationBindingType The binding type as represented by a JAXWS annotation value
+     * @return The binding type as represented by a WSDL binding extension namespace value
+     */
+    public static String mapBindingTypeAnnotationToWsdl(String annotationBindingType) {
+        String wsdlBindingType = null;
+        
+        if (SOAPBinding.SOAP11HTTP_BINDING.equals(annotationBindingType)
+                || MDQConstants.SOAP11JMS_BINDING.equals(annotationBindingType)) {
+            wsdlBindingType = EndpointDescriptionWSDL.SOAP11_WSDL_BINDING;
+        } else if (SOAPBinding.SOAP12HTTP_BINDING.equals(annotationBindingType)
+                || MDQConstants.SOAP12JMS_BINDING.equals(annotationBindingType)) {
+            wsdlBindingType = EndpointDescriptionWSDL.SOAP12_WSDL_BINDING;
+        } else if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(annotationBindingType)) {
+            wsdlBindingType = EndpointDescriptionWSDL.HTTP_WSDL_BINDING;
+        }
+        
+        return wsdlBindingType;
+    }
+    
+    /**
+     * Given a binding type value based on WSDL, return the corresponding JAXWS annotation value.
+     * The WSDL binding type values are based on the namespace of the binding extension element.
+     * The JAXWS annotation values correspond to the values to the HTTPBinding and SOAPBinding
+     * annotations.  Additionally, proprietary values for JMS bindings are supported.  The JAXWS
+     * binding type annotation values returned could be from SOAPBinding or HTTPBinding.
+     * 
+     * @param wsdlBindingType The binding type as represnted by the WSDL binding extension namespace
+     * @param soapTransport The WSDL transport.  Used to determine if a JMS binding type should
+     * be returned
+     * @return The binding represented by a JAXWS Binding Type Annotation value from either 
+     * SOAPBinding or HTTPBinding.
+     */
+    public static String mapBindingTypeWsdlToAnnotation(String wsdlBindingType, String soapTransport) {
+        String soapBindingType = null;
+        if (EndpointDescriptionWSDL.SOAP11_WSDL_BINDING.equals(wsdlBindingType)) {
+            if (MDQConstants.SOAP11JMS_BINDING.equals(soapTransport)) {
+                soapBindingType =  MDQConstants.SOAP11JMS_BINDING;
+            } else {
+                //REVIEW: We are making the assumption that if not JMS, then HTTP
+                soapBindingType = SOAPBinding.SOAP11HTTP_BINDING;
+            } 
+        } else if (EndpointDescriptionWSDL.SOAP12_WSDL_BINDING.equals(wsdlBindingType)) {
+            if (MDQConstants.SOAP12JMS_BINDING.equals(soapTransport)) {
+                soapBindingType =  MDQConstants.SOAP12JMS_BINDING;
+            } else {
+                //REVIEW: We are making the assumption that if not JMS, then HTTP
+                soapBindingType = SOAPBinding.SOAP12HTTP_BINDING;
+            } 
+        } else if (EndpointDescriptionWSDL.HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
+            soapBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
+        }
+        return soapBindingType;
     }
 }

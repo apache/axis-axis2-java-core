@@ -24,6 +24,7 @@ import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.impl.DescriptionUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.wsdl.Port;
@@ -78,8 +79,14 @@ public class EndpointDescriptionValidator extends Validator {
         //Get the binding type from the annotation
         String bindingType = endpointDesc.getBindingType();
         
-        //The wsdl binding type that we now receive has been previously mapped to the expected
-        //SOAP and HTTP bindings. So, there is now limited validation to perform
+        // The wsdl binding type that we now receive has been previously mapped to the expected
+        // SOAP and HTTP bindings. So, there is now limited validation to perform.
+        // 
+        // IMPORTANT NOTE: The value returned is NOT the WSDL Binding Type value; it has been
+        //    normalized to be the value corresponding to the JAXWS BindingType annotations.
+        //    That means when we log this value below we need to un-normalize it so the value
+        //    is one that actuall appears in the WSDL.  This isn't an issue for SOAP11 because
+        //    the values are the same; but it IS an issue for SOAP12.
         String wsdlBindingType = endpointDescWSDL.getWSDLBindingType();
         if (bindingType == null) {
             // I don't think this can happen; the Description layer should provide a default
@@ -110,7 +117,8 @@ public class EndpointDescriptionValidator extends Validator {
         else if (!SOAPBinding.SOAP11HTTP_BINDING.equals(wsdlBindingType)
                 && !SOAPBinding.SOAP12HTTP_BINDING.equals(wsdlBindingType)
                 && !javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(wsdlBindingType)) {
-            addValidationFailure(this, "Invalid wsdl binding value specified: " + wsdlBindingType);
+            addValidationFailure(this, "Invalid wsdl binding value specified: " 
+                                 + DescriptionUtils.mapBindingTypeAnnotationToWsdl(wsdlBindingType));
             isBindingValid = false;
         }
         // Validate that the WSDL and annotations values indicate the same type of binding
@@ -138,7 +146,7 @@ public class EndpointDescriptionValidator extends Validator {
             
             // Mismatched bindings 
             String wsdlInsert = "[" + bindingHumanReadableDescription(wsdlBindingType) + "]" +
-                "namespace = {" + wsdlBindingType +"}";
+                "namespace = {" + DescriptionUtils.mapBindingTypeAnnotationToWsdl(wsdlBindingType) +"}";
             String annotationInsert = "[" + bindingHumanReadableDescription(bindingType) + "]" +
                 "namespace = {" + bindingType +"}";
             

@@ -1683,25 +1683,13 @@ class EndpointDescriptionImpl
             }
 
             // We need to convert the wsdl-based SOAP and HTTP namespace into the expected Binding Type for 
-            //HTTP or SOAPBindings with the appropriate transport (HTTP, JMS, etc.)
-
-            if (SOAP11_WSDL_BINDING.equals(wsdlBindingType)) {
-                if (MDQConstants.SOAP11JMS_BINDING.equals(soapTransport)) {
-                    wsdlBindingType =  MDQConstants.SOAP11JMS_BINDING;
-                } else {
-                    //REVIEW: We are making the assumption that if not JMS, then HTTP
-                    wsdlBindingType = SOAPBinding.SOAP11HTTP_BINDING;
-                } 
-            } else if (SOAP12_WSDL_BINDING.equals(wsdlBindingType)) {
-                if (MDQConstants.SOAP12JMS_BINDING.equals(soapTransport)) {
-                    wsdlBindingType =  MDQConstants.SOAP12JMS_BINDING;
-                } else {
-                    //REVIEW: We are making the assumption that if not JMS, then HTTP
-                    wsdlBindingType = SOAPBinding.SOAP12HTTP_BINDING;
-                } 
-            } else if (HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
-                wsdlBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
-            }
+            // HTTP or SOAPBindings with the appropriate transport (HTTP, JMS, etc.)
+            //
+            // Note that what we're actually returning is the WSDL binding type value conveted
+            // to the corresponding SOAPBinding or HTTPBinding value.  We are overwite the 
+            // wsdlBindingType with that converted JAXWS annotation binding type value and
+            // return it.
+            wsdlBindingType = DescriptionUtils.mapBindingTypeWsdlToAnnotation(wsdlBindingType, soapTransport);
         }
         return wsdlBindingType;
     }
