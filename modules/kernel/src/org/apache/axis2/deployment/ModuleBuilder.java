@@ -147,8 +147,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                     moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_MODULE_POLICY, policyElements,
-                                      module.getPolicyInclude());
+                processPolicyElements(policyElements, module.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
@@ -156,8 +155,7 @@ public class ModuleBuilder extends DescriptionBuilder {
                     moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null && policyElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_MODULE_POLICY, policyRefElements,
-                                         module.getPolicyInclude());
+                processPolicyRefElements(policyRefElements, module.getPolicySubject());
             }
 
             // process INFLOW
@@ -297,14 +295,14 @@ public class ModuleBuilder extends DescriptionBuilder {
             Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
+                processPolicyElements(policyElements, op_descrip.getPolicySubject());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyRefElements, module.getPolicyInclude());
+                processPolicyRefElements(policyRefElements, module.getPolicySubject());
             }
 
             // setting Operation phase

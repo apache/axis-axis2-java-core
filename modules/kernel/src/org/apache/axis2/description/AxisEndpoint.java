@@ -181,20 +181,40 @@ public class AxisEndpoint extends AxisDescription {
 							.getTransportIn(transportInDescName);
 					TransportListener listener = in.getReceiver();
 					String ip = HttpUtils.getIpAddress(axisConfiguration);
+					// we should pass [serviceName].[endpointName] instead of
+					// [endpointName]
+					String sDOTe = serviceName + "." + name;
 					EndpointReference[] eprsForService = listener
-							.getEPRsForService(serviceName, ip);
+							.getEPRsForService(sDOTe, ip);
 					// we consider only the first address return by the listener
 					if (eprsForService != null && eprsForService.length > 0) {
 						return eprsForService[0].getAddress();
 					}
 				} catch (SocketException e) {
-					logger.warn("", e);
+					logger.warn(e.getMessage(), e);
 				} catch (AxisFault e) {
-					logger.warn("", e);
+					logger.warn(e.getMessage(), e);
 				}
 			}
 		}
-		
+
 		return null;
+	}
+
+	public boolean isActive() {
+		if (transportInDescName != null && parent != null) {
+			AxisConfiguration axisConfiguration = getAxisConfiguration();
+			if (axisConfiguration != null) {
+				AxisService service = (AxisService) parent;
+				if (service.isEnableAllTransports()) {
+					return axisConfiguration.getTransportsIn().containsKey(
+							transportInDescName);
+				} else {
+					return service.getExposedTransports().contains(
+							transportInDescName);
+				}
+			}
+		}
+		return false;
 	}
 }

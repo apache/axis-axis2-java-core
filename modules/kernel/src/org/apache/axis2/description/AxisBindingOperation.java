@@ -103,7 +103,7 @@ public class AxisBindingOperation extends AxisDescription {
 	}
 
 	public Object getKey() {
-		return null;
+		return name;
 	}
 
 	public void engageModule(AxisModule axisModule) throws AxisFault {

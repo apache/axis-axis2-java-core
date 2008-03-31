@@ -24,7 +24,10 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -63,11 +66,29 @@ public class PolicySubject {
 		attachedPolicyComponents.put(reference.getURI(), reference); 
 	}
 	
+	public void attachPolicyComponents(List policyComponents) {
+		for (Iterator iterator = policyComponents.iterator(); iterator.hasNext();) {
+			attachPolicyComponent((PolicyComponent) iterator.next());
+		}
+	}
+	
+	public void attachPolicyComponent(PolicyComponent policyComponent) {
+		if (policyComponent instanceof Policy) {
+			attachPolicy((Policy) policyComponent);
+		} else if (policyComponent instanceof PolicyReference) {
+			attachPolicyReference((PolicyReference) policyComponent);
+		} else {
+			throw new IllegalArgumentException("Invalid top level policy component type");
+		}
+		
+	}
 	public void attachPolicyComponent(String key, PolicyComponent policyComponent) {
 		attachedPolicyComponents.put(key, policyComponent);
 	}
 	
-	public Set getAttachPolicyComponents() {
-		return attachedPolicyComponents.entrySet();
+	
+	
+	public Collection getAttachPolicyComponents() {
+		return attachedPolicyComponents.values();
 	}
 }

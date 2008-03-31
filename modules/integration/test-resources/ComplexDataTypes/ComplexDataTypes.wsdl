@@ -19,7 +19,7 @@
   ~ under the License.
   -->
 
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns="http://complex.tempuri.org" xmlns:ax21="http://data.complex.tempuri.org/xsd" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax23="http://arrays.data.complex.tempuri.org/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" targetNamespace="http://complex.tempuri.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:ax23="http://arrays.data.complex.tempuri.org/xsd" xmlns:ax21="http://data.complex.tempuri.org/xsd" xmlns:ns="http://complex.tempuri.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://complex.tempuri.org">
     <wsdl:types>
         <xs:schema xmlns:ax25="http://data.complex.tempuri.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://arrays.data.complex.tempuri.org/xsd">
             <xs:import namespace="http://data.complex.tempuri.org/xsd"/>
@@ -30,7 +30,7 @@
             </xs:complexType>
             <xs:complexType name="ArrayOfPerson">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="person" nillable="true" type="ax25:Person"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="person" nillable="true" type="ax21:Person"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="ArrayOfArrayOfstring">
@@ -649,191 +649,11 @@
             </xs:complexType>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="retObjectRequest">
-        <wsdl:part name="parameters" element="ns:retObject"/>
-    </wsdl:message>
-    <wsdl:message name="retObjectResponse">
-        <wsdl:part name="parameters" element="ns:retObjectResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArray1DSNRequest">
-        <wsdl:part name="parameters" element="ns:retArray1DSN"/>
-    </wsdl:message>
-    <wsdl:message name="retArray1DSNResponse">
-        <wsdl:part name="parameters" element="ns:retArray1DSNResponse"/>
-    </wsdl:message>
     <wsdl:message name="retUShortRequest">
         <wsdl:part name="parameters" element="ns:retUShort"/>
     </wsdl:message>
     <wsdl:message name="retUShortResponse">
         <wsdl:part name="parameters" element="ns:retUShortResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retByteRequest">
-        <wsdl:part name="parameters" element="ns:retByte"/>
-    </wsdl:message>
-    <wsdl:message name="retByteResponse">
-        <wsdl:part name="parameters" element="ns:retByteResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retSingleRequest">
-        <wsdl:part name="parameters" element="ns:retSingle"/>
-    </wsdl:message>
-    <wsdl:message name="retSingleResponse">
-        <wsdl:part name="parameters" element="ns:retSingleResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayInt1DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayInt1D"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayInt1DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayInt1DResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retGuidRequest">
-        <wsdl:part name="parameters" element="ns:retGuid"/>
-    </wsdl:message>
-    <wsdl:message name="retGuidResponse">
-        <wsdl:part name="parameters" element="ns:retGuidResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retUriRequest">
-        <wsdl:part name="parameters" element="ns:retUri"/>
-    </wsdl:message>
-    <wsdl:message name="retUriResponse">
-        <wsdl:part name="parameters" element="ns:retUriResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retEnumIntRequest">
-        <wsdl:part name="parameters" element="ns:retEnumInt"/>
-    </wsdl:message>
-    <wsdl:message name="retEnumIntResponse">
-        <wsdl:part name="parameters" element="ns:retEnumIntResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retIntRequest">
-        <wsdl:part name="parameters" element="ns:retInt"/>
-    </wsdl:message>
-    <wsdl:message name="retIntResponse">
-        <wsdl:part name="parameters" element="ns:retIntResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retByteArrayRequest">
-        <wsdl:part name="parameters" element="ns:retByteArray"/>
-    </wsdl:message>
-    <wsdl:message name="retByteArrayResponse">
-        <wsdl:part name="parameters" element="ns:retByteArrayResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retDoubleRequest">
-        <wsdl:part name="parameters" element="ns:retDouble"/>
-    </wsdl:message>
-    <wsdl:message name="retDoubleResponse">
-        <wsdl:part name="parameters" element="ns:retDoubleResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retStringRequest">
-        <wsdl:part name="parameters" element="ns:retString"/>
-    </wsdl:message>
-    <wsdl:message name="retStringResponse">
-        <wsdl:part name="parameters" element="ns:retStringResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retStructS1Request">
-        <wsdl:part name="parameters" element="ns:retStructS1"/>
-    </wsdl:message>
-    <wsdl:message name="retStructS1Response">
-        <wsdl:part name="parameters" element="ns:retStructS1Response"/>
-    </wsdl:message>
-    <wsdl:message name="retDerivedClass2Request">
-        <wsdl:part name="parameters" element="ns:retDerivedClass2"/>
-    </wsdl:message>
-    <wsdl:message name="retDerivedClass2Response">
-        <wsdl:part name="parameters" element="ns:retDerivedClass2Response"/>
-    </wsdl:message>
-    <wsdl:message name="retCharRequest">
-        <wsdl:part name="parameters" element="ns:retChar"/>
-    </wsdl:message>
-    <wsdl:message name="retCharResponse">
-        <wsdl:part name="parameters" element="ns:retCharResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retShortRequest">
-        <wsdl:part name="parameters" element="ns:retShort"/>
-    </wsdl:message>
-    <wsdl:message name="retShortResponse">
-        <wsdl:part name="parameters" element="ns:retShortResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayString1DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayString1D"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayString1DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayString1DResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retDerivedClassRequest">
-        <wsdl:part name="parameters" element="ns:retDerivedClass"/>
-    </wsdl:message>
-    <wsdl:message name="retDerivedClassResponse">
-        <wsdl:part name="parameters" element="ns:retDerivedClassResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retDateTimeRequest">
-        <wsdl:part name="parameters" element="ns:retDateTime"/>
-    </wsdl:message>
-    <wsdl:message name="retDateTimeResponse">
-        <wsdl:part name="parameters" element="ns:retDateTimeResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayAnyType1DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayAnyType1D"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayAnyType1DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayAnyType1DResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retStringsRequest">
-        <wsdl:part name="parameters" element="ns:retStrings"/>
-    </wsdl:message>
-    <wsdl:message name="retStringsResponse">
-        <wsdl:part name="parameters" element="ns:retStringsResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retIntsRequest">
-        <wsdl:part name="parameters" element="ns:retInts"/>
-    </wsdl:message>
-    <wsdl:message name="retIntsResponse">
-        <wsdl:part name="parameters" element="ns:retIntsResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayDateTime1DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayDateTime1D"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayDateTime1DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayDateTime1DResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retBoolRequest">
-        <wsdl:part name="parameters" element="ns:retBool"/>
-    </wsdl:message>
-    <wsdl:message name="retBoolResponse">
-        <wsdl:part name="parameters" element="ns:retBoolResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayDecimal1DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayDecimal1D"/>
-    </wsdl:message>
-    <wsdl:message name="retArrayDecimal1DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayDecimal1DResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retDecimalRequest">
-        <wsdl:part name="parameters" element="ns:retDecimal"/>
-    </wsdl:message>
-    <wsdl:message name="retDecimalResponse">
-        <wsdl:part name="parameters" element="ns:retDecimalResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retULongRequest">
-        <wsdl:part name="parameters" element="ns:retULong"/>
-    </wsdl:message>
-    <wsdl:message name="retULongResponse">
-        <wsdl:part name="parameters" element="ns:retULongResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retStructSNRequest">
-        <wsdl:part name="parameters" element="ns:retStructSN"/>
-    </wsdl:message>
-    <wsdl:message name="retStructSNResponse">
-        <wsdl:part name="parameters" element="ns:retStructSNResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retEnumStringRequest">
-        <wsdl:part name="parameters" element="ns:retEnumString"/>
-    </wsdl:message>
-    <wsdl:message name="retEnumStringResponse">
-        <wsdl:part name="parameters" element="ns:retEnumStringResponse"/>
-    </wsdl:message>
-    <wsdl:message name="retStructSNSASRequest">
-        <wsdl:part name="parameters" element="ns:retStructSNSAS"/>
-    </wsdl:message>
-    <wsdl:message name="retStructSNSASResponse">
-        <wsdl:part name="parameters" element="ns:retStructSNSASResponse"/>
     </wsdl:message>
     <wsdl:message name="retSByteRequest">
         <wsdl:part name="parameters" element="ns:retSByte"/>
@@ -841,17 +661,137 @@
     <wsdl:message name="retSByteResponse">
         <wsdl:part name="parameters" element="ns:retSByteResponse"/>
     </wsdl:message>
-    <wsdl:message name="retArrayString2DRequest">
-        <wsdl:part name="parameters" element="ns:retArrayString2D"/>
+    <wsdl:message name="retArrayString1DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayString1D"/>
     </wsdl:message>
-    <wsdl:message name="retArrayString2DResponse">
-        <wsdl:part name="parameters" element="ns:retArrayString2DResponse"/>
+    <wsdl:message name="retArrayString1DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayString1DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retStringRequest">
+        <wsdl:part name="parameters" element="ns:retString"/>
+    </wsdl:message>
+    <wsdl:message name="retStringResponse">
+        <wsdl:part name="parameters" element="ns:retStringResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retCharRequest">
+        <wsdl:part name="parameters" element="ns:retChar"/>
+    </wsdl:message>
+    <wsdl:message name="retCharResponse">
+        <wsdl:part name="parameters" element="ns:retCharResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayInt1DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayInt1D"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayInt1DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayInt1DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retUriRequest">
+        <wsdl:part name="parameters" element="ns:retUri"/>
+    </wsdl:message>
+    <wsdl:message name="retUriResponse">
+        <wsdl:part name="parameters" element="ns:retUriResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retGuidRequest">
+        <wsdl:part name="parameters" element="ns:retGuid"/>
+    </wsdl:message>
+    <wsdl:message name="retGuidResponse">
+        <wsdl:part name="parameters" element="ns:retGuidResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retIntRequest">
+        <wsdl:part name="parameters" element="ns:retInt"/>
+    </wsdl:message>
+    <wsdl:message name="retIntResponse">
+        <wsdl:part name="parameters" element="ns:retIntResponse"/>
     </wsdl:message>
     <wsdl:message name="retFloatRequest">
         <wsdl:part name="parameters" element="ns:retFloat"/>
     </wsdl:message>
     <wsdl:message name="retFloatResponse">
         <wsdl:part name="parameters" element="ns:retFloatResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retEnumStringRequest">
+        <wsdl:part name="parameters" element="ns:retEnumString"/>
+    </wsdl:message>
+    <wsdl:message name="retEnumStringResponse">
+        <wsdl:part name="parameters" element="ns:retEnumStringResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retIntsRequest">
+        <wsdl:part name="parameters" element="ns:retInts"/>
+    </wsdl:message>
+    <wsdl:message name="retIntsResponse">
+        <wsdl:part name="parameters" element="ns:retIntsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retObjectRequest">
+        <wsdl:part name="parameters" element="ns:retObject"/>
+    </wsdl:message>
+    <wsdl:message name="retObjectResponse">
+        <wsdl:part name="parameters" element="ns:retObjectResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayAnyType1DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayAnyType1D"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayAnyType1DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayAnyType1DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retBoolRequest">
+        <wsdl:part name="parameters" element="ns:retBool"/>
+    </wsdl:message>
+    <wsdl:message name="retBoolResponse">
+        <wsdl:part name="parameters" element="ns:retBoolResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retDerivedClass2Request">
+        <wsdl:part name="parameters" element="ns:retDerivedClass2"/>
+    </wsdl:message>
+    <wsdl:message name="retDerivedClass2Response">
+        <wsdl:part name="parameters" element="ns:retDerivedClass2Response"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayDateTime1DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayDateTime1D"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayDateTime1DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayDateTime1DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retShortRequest">
+        <wsdl:part name="parameters" element="ns:retShort"/>
+    </wsdl:message>
+    <wsdl:message name="retShortResponse">
+        <wsdl:part name="parameters" element="ns:retShortResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayDecimal1DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayDecimal1D"/>
+    </wsdl:message>
+    <wsdl:message name="retArrayDecimal1DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayDecimal1DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retULongRequest">
+        <wsdl:part name="parameters" element="ns:retULong"/>
+    </wsdl:message>
+    <wsdl:message name="retULongResponse">
+        <wsdl:part name="parameters" element="ns:retULongResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retDerivedClassRequest">
+        <wsdl:part name="parameters" element="ns:retDerivedClass"/>
+    </wsdl:message>
+    <wsdl:message name="retDerivedClassResponse">
+        <wsdl:part name="parameters" element="ns:retDerivedClassResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retStructS1Request">
+        <wsdl:part name="parameters" element="ns:retStructS1"/>
+    </wsdl:message>
+    <wsdl:message name="retStructS1Response">
+        <wsdl:part name="parameters" element="ns:retStructS1Response"/>
+    </wsdl:message>
+    <wsdl:message name="retByteArrayRequest">
+        <wsdl:part name="parameters" element="ns:retByteArray"/>
+    </wsdl:message>
+    <wsdl:message name="retByteArrayResponse">
+        <wsdl:part name="parameters" element="ns:retByteArrayResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retByteRequest">
+        <wsdl:part name="parameters" element="ns:retByte"/>
+    </wsdl:message>
+    <wsdl:message name="retByteResponse">
+        <wsdl:part name="parameters" element="ns:retByteResponse"/>
     </wsdl:message>
     <wsdl:message name="retQNameRequest">
         <wsdl:part name="parameters" element="ns:retQName"/>
@@ -865,11 +805,35 @@
     <wsdl:message name="retUIntResponse">
         <wsdl:part name="parameters" element="ns:retUIntResponse"/>
     </wsdl:message>
-    <wsdl:message name="retLongRequest">
-        <wsdl:part name="parameters" element="ns:retLong"/>
+    <wsdl:message name="retArrayString2DRequest">
+        <wsdl:part name="parameters" element="ns:retArrayString2D"/>
     </wsdl:message>
-    <wsdl:message name="retLongResponse">
-        <wsdl:part name="parameters" element="ns:retLongResponse"/>
+    <wsdl:message name="retArrayString2DResponse">
+        <wsdl:part name="parameters" element="ns:retArrayString2DResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retDoubleRequest">
+        <wsdl:part name="parameters" element="ns:retDouble"/>
+    </wsdl:message>
+    <wsdl:message name="retDoubleResponse">
+        <wsdl:part name="parameters" element="ns:retDoubleResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retEnumIntRequest">
+        <wsdl:part name="parameters" element="ns:retEnumInt"/>
+    </wsdl:message>
+    <wsdl:message name="retEnumIntResponse">
+        <wsdl:part name="parameters" element="ns:retEnumIntResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retDecimalRequest">
+        <wsdl:part name="parameters" element="ns:retDecimal"/>
+    </wsdl:message>
+    <wsdl:message name="retDecimalResponse">
+        <wsdl:part name="parameters" element="ns:retDecimalResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retDateTimeRequest">
+        <wsdl:part name="parameters" element="ns:retDateTime"/>
+    </wsdl:message>
+    <wsdl:message name="retDateTimeResponse">
+        <wsdl:part name="parameters" element="ns:retDateTimeResponse"/>
     </wsdl:message>
     <wsdl:message name="retStructSNSARequest">
         <wsdl:part name="parameters" element="ns:retStructSNSA"/>
@@ -877,142 +841,138 @@
     <wsdl:message name="retStructSNSAResponse">
         <wsdl:part name="parameters" element="ns:retStructSNSAResponse"/>
     </wsdl:message>
+    <wsdl:message name="retStringsRequest">
+        <wsdl:part name="parameters" element="ns:retStrings"/>
+    </wsdl:message>
+    <wsdl:message name="retStringsResponse">
+        <wsdl:part name="parameters" element="ns:retStringsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retStructSNRequest">
+        <wsdl:part name="parameters" element="ns:retStructSN"/>
+    </wsdl:message>
+    <wsdl:message name="retStructSNResponse">
+        <wsdl:part name="parameters" element="ns:retStructSNResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retArray1DSNRequest">
+        <wsdl:part name="parameters" element="ns:retArray1DSN"/>
+    </wsdl:message>
+    <wsdl:message name="retArray1DSNResponse">
+        <wsdl:part name="parameters" element="ns:retArray1DSNResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retLongRequest">
+        <wsdl:part name="parameters" element="ns:retLong"/>
+    </wsdl:message>
+    <wsdl:message name="retLongResponse">
+        <wsdl:part name="parameters" element="ns:retLongResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retStructSNSASRequest">
+        <wsdl:part name="parameters" element="ns:retStructSNSAS"/>
+    </wsdl:message>
+    <wsdl:message name="retStructSNSASResponse">
+        <wsdl:part name="parameters" element="ns:retStructSNSASResponse"/>
+    </wsdl:message>
+    <wsdl:message name="retSingleRequest">
+        <wsdl:part name="parameters" element="ns:retSingle"/>
+    </wsdl:message>
+    <wsdl:message name="retSingleResponse">
+        <wsdl:part name="parameters" element="ns:retSingleResponse"/>
+    </wsdl:message>
     <wsdl:portType name="ComplexDataTypesPortType">
-        <wsdl:operation name="retObject">
-            <wsdl:input message="ns:retObjectRequest" wsaw:Action="urn:retObject"/>
-            <wsdl:output message="ns:retObjectResponse" wsaw:Action="urn:retObjectResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArray1DSN">
-            <wsdl:input message="ns:retArray1DSNRequest" wsaw:Action="urn:retArray1DSN"/>
-            <wsdl:output message="ns:retArray1DSNResponse" wsaw:Action="urn:retArray1DSNResponse"/>
-        </wsdl:operation>
         <wsdl:operation name="retUShort">
             <wsdl:input message="ns:retUShortRequest" wsaw:Action="urn:retUShort"/>
             <wsdl:output message="ns:retUShortResponse" wsaw:Action="urn:retUShortResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retByte">
-            <wsdl:input message="ns:retByteRequest" wsaw:Action="urn:retByte"/>
-            <wsdl:output message="ns:retByteResponse" wsaw:Action="urn:retByteResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retSingle">
-            <wsdl:input message="ns:retSingleRequest" wsaw:Action="urn:retSingle"/>
-            <wsdl:output message="ns:retSingleResponse" wsaw:Action="urn:retSingleResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayInt1D">
-            <wsdl:input message="ns:retArrayInt1DRequest" wsaw:Action="urn:retArrayInt1D"/>
-            <wsdl:output message="ns:retArrayInt1DResponse" wsaw:Action="urn:retArrayInt1DResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retGuid">
-            <wsdl:input message="ns:retGuidRequest" wsaw:Action="urn:retGuid"/>
-            <wsdl:output message="ns:retGuidResponse" wsaw:Action="urn:retGuidResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retUri">
-            <wsdl:input message="ns:retUriRequest" wsaw:Action="urn:retUri"/>
-            <wsdl:output message="ns:retUriResponse" wsaw:Action="urn:retUriResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumInt">
-            <wsdl:input message="ns:retEnumIntRequest" wsaw:Action="urn:retEnumInt"/>
-            <wsdl:output message="ns:retEnumIntResponse" wsaw:Action="urn:retEnumIntResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retInt">
-            <wsdl:input message="ns:retIntRequest" wsaw:Action="urn:retInt"/>
-            <wsdl:output message="ns:retIntResponse" wsaw:Action="urn:retIntResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retByteArray">
-            <wsdl:input message="ns:retByteArrayRequest" wsaw:Action="urn:retByteArray"/>
-            <wsdl:output message="ns:retByteArrayResponse" wsaw:Action="urn:retByteArrayResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retDouble">
-            <wsdl:input message="ns:retDoubleRequest" wsaw:Action="urn:retDouble"/>
-            <wsdl:output message="ns:retDoubleResponse" wsaw:Action="urn:retDoubleResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retString">
-            <wsdl:input message="ns:retStringRequest" wsaw:Action="urn:retString"/>
-            <wsdl:output message="ns:retStringResponse" wsaw:Action="urn:retStringResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retStructS1">
-            <wsdl:input message="ns:retStructS1Request" wsaw:Action="urn:retStructS1"/>
-            <wsdl:output message="ns:retStructS1Response" wsaw:Action="urn:retStructS1Response"/>
-        </wsdl:operation>
-        <wsdl:operation name="retDerivedClass2">
-            <wsdl:input message="ns:retDerivedClass2Request" wsaw:Action="urn:retDerivedClass2"/>
-            <wsdl:output message="ns:retDerivedClass2Response" wsaw:Action="urn:retDerivedClass2Response"/>
-        </wsdl:operation>
-        <wsdl:operation name="retChar">
-            <wsdl:input message="ns:retCharRequest" wsaw:Action="urn:retChar"/>
-            <wsdl:output message="ns:retCharResponse" wsaw:Action="urn:retCharResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retShort">
-            <wsdl:input message="ns:retShortRequest" wsaw:Action="urn:retShort"/>
-            <wsdl:output message="ns:retShortResponse" wsaw:Action="urn:retShortResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayString1D">
-            <wsdl:input message="ns:retArrayString1DRequest" wsaw:Action="urn:retArrayString1D"/>
-            <wsdl:output message="ns:retArrayString1DResponse" wsaw:Action="urn:retArrayString1DResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retDerivedClass">
-            <wsdl:input message="ns:retDerivedClassRequest" wsaw:Action="urn:retDerivedClass"/>
-            <wsdl:output message="ns:retDerivedClassResponse" wsaw:Action="urn:retDerivedClassResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retDateTime">
-            <wsdl:input message="ns:retDateTimeRequest" wsaw:Action="urn:retDateTime"/>
-            <wsdl:output message="ns:retDateTimeResponse" wsaw:Action="urn:retDateTimeResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayAnyType1D">
-            <wsdl:input message="ns:retArrayAnyType1DRequest" wsaw:Action="urn:retArrayAnyType1D"/>
-            <wsdl:output message="ns:retArrayAnyType1DResponse" wsaw:Action="urn:retArrayAnyType1DResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retStrings">
-            <wsdl:input message="ns:retStringsRequest" wsaw:Action="urn:retStrings"/>
-            <wsdl:output message="ns:retStringsResponse" wsaw:Action="urn:retStringsResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retInts">
-            <wsdl:input message="ns:retIntsRequest" wsaw:Action="urn:retInts"/>
-            <wsdl:output message="ns:retIntsResponse" wsaw:Action="urn:retIntsResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayDateTime1D">
-            <wsdl:input message="ns:retArrayDateTime1DRequest" wsaw:Action="urn:retArrayDateTime1D"/>
-            <wsdl:output message="ns:retArrayDateTime1DResponse" wsaw:Action="urn:retArrayDateTime1DResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retBool">
-            <wsdl:input message="ns:retBoolRequest" wsaw:Action="urn:retBool"/>
-            <wsdl:output message="ns:retBoolResponse" wsaw:Action="urn:retBoolResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayDecimal1D">
-            <wsdl:input message="ns:retArrayDecimal1DRequest" wsaw:Action="urn:retArrayDecimal1D"/>
-            <wsdl:output message="ns:retArrayDecimal1DResponse" wsaw:Action="urn:retArrayDecimal1DResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retDecimal">
-            <wsdl:input message="ns:retDecimalRequest" wsaw:Action="urn:retDecimal"/>
-            <wsdl:output message="ns:retDecimalResponse" wsaw:Action="urn:retDecimalResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retULong">
-            <wsdl:input message="ns:retULongRequest" wsaw:Action="urn:retULong"/>
-            <wsdl:output message="ns:retULongResponse" wsaw:Action="urn:retULongResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSN">
-            <wsdl:input message="ns:retStructSNRequest" wsaw:Action="urn:retStructSN"/>
-            <wsdl:output message="ns:retStructSNResponse" wsaw:Action="urn:retStructSNResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumString">
-            <wsdl:input message="ns:retEnumStringRequest" wsaw:Action="urn:retEnumString"/>
-            <wsdl:output message="ns:retEnumStringResponse" wsaw:Action="urn:retEnumStringResponse"/>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSNSAS">
-            <wsdl:input message="ns:retStructSNSASRequest" wsaw:Action="urn:retStructSNSAS"/>
-            <wsdl:output message="ns:retStructSNSASResponse" wsaw:Action="urn:retStructSNSASResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retSByte">
             <wsdl:input message="ns:retSByteRequest" wsaw:Action="urn:retSByte"/>
             <wsdl:output message="ns:retSByteResponse" wsaw:Action="urn:retSByteResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="retArrayString2D">
-            <wsdl:input message="ns:retArrayString2DRequest" wsaw:Action="urn:retArrayString2D"/>
-            <wsdl:output message="ns:retArrayString2DResponse" wsaw:Action="urn:retArrayString2DResponse"/>
+        <wsdl:operation name="retArrayString1D">
+            <wsdl:input message="ns:retArrayString1DRequest" wsaw:Action="urn:retArrayString1D"/>
+            <wsdl:output message="ns:retArrayString1DResponse" wsaw:Action="urn:retArrayString1DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retString">
+            <wsdl:input message="ns:retStringRequest" wsaw:Action="urn:retString"/>
+            <wsdl:output message="ns:retStringResponse" wsaw:Action="urn:retStringResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retChar">
+            <wsdl:input message="ns:retCharRequest" wsaw:Action="urn:retChar"/>
+            <wsdl:output message="ns:retCharResponse" wsaw:Action="urn:retCharResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayInt1D">
+            <wsdl:input message="ns:retArrayInt1DRequest" wsaw:Action="urn:retArrayInt1D"/>
+            <wsdl:output message="ns:retArrayInt1DResponse" wsaw:Action="urn:retArrayInt1DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retUri">
+            <wsdl:input message="ns:retUriRequest" wsaw:Action="urn:retUri"/>
+            <wsdl:output message="ns:retUriResponse" wsaw:Action="urn:retUriResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retGuid">
+            <wsdl:input message="ns:retGuidRequest" wsaw:Action="urn:retGuid"/>
+            <wsdl:output message="ns:retGuidResponse" wsaw:Action="urn:retGuidResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retInt">
+            <wsdl:input message="ns:retIntRequest" wsaw:Action="urn:retInt"/>
+            <wsdl:output message="ns:retIntResponse" wsaw:Action="urn:retIntResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
             <wsdl:input message="ns:retFloatRequest" wsaw:Action="urn:retFloat"/>
             <wsdl:output message="ns:retFloatResponse" wsaw:Action="urn:retFloatResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumString">
+            <wsdl:input message="ns:retEnumStringRequest" wsaw:Action="urn:retEnumString"/>
+            <wsdl:output message="ns:retEnumStringResponse" wsaw:Action="urn:retEnumStringResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retInts">
+            <wsdl:input message="ns:retIntsRequest" wsaw:Action="urn:retInts"/>
+            <wsdl:output message="ns:retIntsResponse" wsaw:Action="urn:retIntsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retObject">
+            <wsdl:input message="ns:retObjectRequest" wsaw:Action="urn:retObject"/>
+            <wsdl:output message="ns:retObjectResponse" wsaw:Action="urn:retObjectResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayAnyType1D">
+            <wsdl:input message="ns:retArrayAnyType1DRequest" wsaw:Action="urn:retArrayAnyType1D"/>
+            <wsdl:output message="ns:retArrayAnyType1DResponse" wsaw:Action="urn:retArrayAnyType1DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retBool">
+            <wsdl:input message="ns:retBoolRequest" wsaw:Action="urn:retBool"/>
+            <wsdl:output message="ns:retBoolResponse" wsaw:Action="urn:retBoolResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass2">
+            <wsdl:input message="ns:retDerivedClass2Request" wsaw:Action="urn:retDerivedClass2"/>
+            <wsdl:output message="ns:retDerivedClass2Response" wsaw:Action="urn:retDerivedClass2Response"/>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDateTime1D">
+            <wsdl:input message="ns:retArrayDateTime1DRequest" wsaw:Action="urn:retArrayDateTime1D"/>
+            <wsdl:output message="ns:retArrayDateTime1DResponse" wsaw:Action="urn:retArrayDateTime1DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retShort">
+            <wsdl:input message="ns:retShortRequest" wsaw:Action="urn:retShort"/>
+            <wsdl:output message="ns:retShortResponse" wsaw:Action="urn:retShortResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDecimal1D">
+            <wsdl:input message="ns:retArrayDecimal1DRequest" wsaw:Action="urn:retArrayDecimal1D"/>
+            <wsdl:output message="ns:retArrayDecimal1DResponse" wsaw:Action="urn:retArrayDecimal1DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retULong">
+            <wsdl:input message="ns:retULongRequest" wsaw:Action="urn:retULong"/>
+            <wsdl:output message="ns:retULongResponse" wsaw:Action="urn:retULongResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass">
+            <wsdl:input message="ns:retDerivedClassRequest" wsaw:Action="urn:retDerivedClass"/>
+            <wsdl:output message="ns:retDerivedClassResponse" wsaw:Action="urn:retDerivedClassResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retStructS1">
+            <wsdl:input message="ns:retStructS1Request" wsaw:Action="urn:retStructS1"/>
+            <wsdl:output message="ns:retStructS1Response" wsaw:Action="urn:retStructS1Response"/>
+        </wsdl:operation>
+        <wsdl:operation name="retByteArray">
+            <wsdl:input message="ns:retByteArrayRequest" wsaw:Action="urn:retByteArray"/>
+            <wsdl:output message="ns:retByteArrayResponse" wsaw:Action="urn:retByteArrayResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retByte">
+            <wsdl:input message="ns:retByteRequest" wsaw:Action="urn:retByte"/>
+            <wsdl:output message="ns:retByteResponse" wsaw:Action="urn:retByteResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retQName">
             <wsdl:input message="ns:retQNameRequest" wsaw:Action="urn:retQName"/>
@@ -1022,28 +982,59 @@
             <wsdl:input message="ns:retUIntRequest" wsaw:Action="urn:retUInt"/>
             <wsdl:output message="ns:retUIntResponse" wsaw:Action="urn:retUIntResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="retLong">
-            <wsdl:input message="ns:retLongRequest" wsaw:Action="urn:retLong"/>
-            <wsdl:output message="ns:retLongResponse" wsaw:Action="urn:retLongResponse"/>
+        <wsdl:operation name="retArrayString2D">
+            <wsdl:input message="ns:retArrayString2DRequest" wsaw:Action="urn:retArrayString2D"/>
+            <wsdl:output message="ns:retArrayString2DResponse" wsaw:Action="urn:retArrayString2DResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retDouble">
+            <wsdl:input message="ns:retDoubleRequest" wsaw:Action="urn:retDouble"/>
+            <wsdl:output message="ns:retDoubleResponse" wsaw:Action="urn:retDoubleResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumInt">
+            <wsdl:input message="ns:retEnumIntRequest" wsaw:Action="urn:retEnumInt"/>
+            <wsdl:output message="ns:retEnumIntResponse" wsaw:Action="urn:retEnumIntResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retDecimal">
+            <wsdl:input message="ns:retDecimalRequest" wsaw:Action="urn:retDecimal"/>
+            <wsdl:output message="ns:retDecimalResponse" wsaw:Action="urn:retDecimalResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retDateTime">
+            <wsdl:input message="ns:retDateTimeRequest" wsaw:Action="urn:retDateTime"/>
+            <wsdl:output message="ns:retDateTimeResponse" wsaw:Action="urn:retDateTimeResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retStructSNSA">
             <wsdl:input message="ns:retStructSNSARequest" wsaw:Action="urn:retStructSNSA"/>
             <wsdl:output message="ns:retStructSNSAResponse" wsaw:Action="urn:retStructSNSAResponse"/>
         </wsdl:operation>
-    </wsdl:portType>
-    <wsdl:binding name="ComplexDataTypesHttpSoap11Binding" type="ns:ComplexDataTypesPortType">
-        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="retObject">
-            <soap:operation soapAction="urn:retObject" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
+        <wsdl:operation name="retStrings">
+            <wsdl:input message="ns:retStringsRequest" wsaw:Action="urn:retStrings"/>
+            <wsdl:output message="ns:retStringsResponse" wsaw:Action="urn:retStringsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retStructSN">
+            <wsdl:input message="ns:retStructSNRequest" wsaw:Action="urn:retStructSN"/>
+            <wsdl:output message="ns:retStructSNResponse" wsaw:Action="urn:retStructSNResponse"/>
         </wsdl:operation>
         <wsdl:operation name="retArray1DSN">
-            <soap:operation soapAction="urn:retArray1DSN" style="document"/>
+            <wsdl:input message="ns:retArray1DSNRequest" wsaw:Action="urn:retArray1DSN"/>
+            <wsdl:output message="ns:retArray1DSNResponse" wsaw:Action="urn:retArray1DSNResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retLong">
+            <wsdl:input message="ns:retLongRequest" wsaw:Action="urn:retLong"/>
+            <wsdl:output message="ns:retLongResponse" wsaw:Action="urn:retLongResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retStructSNSAS">
+            <wsdl:input message="ns:retStructSNSASRequest" wsaw:Action="urn:retStructSNSAS"/>
+            <wsdl:output message="ns:retStructSNSASResponse" wsaw:Action="urn:retStructSNSASResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="retSingle">
+            <wsdl:input message="ns:retSingleRequest" wsaw:Action="urn:retSingle"/>
+            <wsdl:output message="ns:retSingleResponse" wsaw:Action="urn:retSingleResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ComplexDataTypesSoap11Binding" type="ns:ComplexDataTypesPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="retSByte">
+            <soap:operation soapAction="urn:retSByte" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1060,125 +1051,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retByte">
-            <soap:operation soapAction="urn:retByte" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSingle">
-            <soap:operation soapAction="urn:retSingle" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayInt1D">
-            <soap:operation soapAction="urn:retArrayInt1D" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retGuid">
-            <soap:operation soapAction="urn:retGuid" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retUri">
-            <soap:operation soapAction="urn:retUri" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumInt">
-            <soap:operation soapAction="urn:retEnumInt" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retInt">
-            <soap:operation soapAction="urn:retInt" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retByteArray">
-            <soap:operation soapAction="urn:retByteArray" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDouble">
-            <soap:operation soapAction="urn:retDouble" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="retString">
             <soap:operation soapAction="urn:retString" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructS1">
-            <soap:operation soapAction="urn:retStructS1" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDerivedClass2">
-            <soap:operation soapAction="urn:retDerivedClass2" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retChar">
-            <soap:operation soapAction="urn:retChar" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retShort">
-            <soap:operation soapAction="urn:retShort" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1195,8 +1069,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDerivedClass">
-            <soap:operation soapAction="urn:retDerivedClass" style="document"/>
+        <wsdl:operation name="retChar">
+            <soap:operation soapAction="urn:retChar" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1204,8 +1078,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDateTime">
-            <soap:operation soapAction="urn:retDateTime" style="document"/>
+        <wsdl:operation name="retArrayInt1D">
+            <soap:operation soapAction="urn:retArrayInt1D" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1213,17 +1087,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayAnyType1D">
-            <soap:operation soapAction="urn:retArrayAnyType1D" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStrings">
-            <soap:operation soapAction="urn:retStrings" style="document"/>
+        <wsdl:operation name="retUri">
+            <soap:operation soapAction="urn:retUri" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1240,8 +1105,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDateTime1D">
-            <soap:operation soapAction="urn:retArrayDateTime1D" style="document"/>
+        <wsdl:operation name="retObject">
+            <soap:operation soapAction="urn:retObject" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1249,8 +1114,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retBool">
-            <soap:operation soapAction="urn:retBool" style="document"/>
+        <wsdl:operation name="retInt">
+            <soap:operation soapAction="urn:retInt" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1258,71 +1123,8 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDecimal1D">
-            <soap:operation soapAction="urn:retArrayDecimal1D" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDecimal">
-            <soap:operation soapAction="urn:retDecimal" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retULong">
-            <soap:operation soapAction="urn:retULong" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSN">
-            <soap:operation soapAction="urn:retStructSN" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumString">
-            <soap:operation soapAction="urn:retEnumString" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSNSAS">
-            <soap:operation soapAction="urn:retStructSNSAS" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSByte">
-            <soap:operation soapAction="urn:retSByte" style="document"/>
-            <wsdl:input>
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayString2D">
-            <soap:operation soapAction="urn:retArrayString2D" style="document"/>
+        <wsdl:operation name="retGuid">
+            <soap:operation soapAction="urn:retGuid" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1339,8 +1141,116 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="retArrayAnyType1D">
+            <soap:operation soapAction="urn:retArrayAnyType1D" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumString">
+            <soap:operation soapAction="urn:retEnumString" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retBool">
+            <soap:operation soapAction="urn:retBool" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass2">
+            <soap:operation soapAction="urn:retDerivedClass2" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDateTime1D">
+            <soap:operation soapAction="urn:retArrayDateTime1D" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDecimal1D">
+            <soap:operation soapAction="urn:retArrayDecimal1D" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retShort">
+            <soap:operation soapAction="urn:retShort" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass">
+            <soap:operation soapAction="urn:retDerivedClass" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByteArray">
+            <soap:operation soapAction="urn:retByteArray" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructS1">
+            <soap:operation soapAction="urn:retStructS1" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retULong">
+            <soap:operation soapAction="urn:retULong" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="retQName">
             <soap:operation soapAction="urn:retQName" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByte">
+            <soap:operation soapAction="urn:retByte" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1357,8 +1267,44 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retLong">
-            <soap:operation soapAction="urn:retLong" style="document"/>
+        <wsdl:operation name="retDouble">
+            <soap:operation soapAction="urn:retDouble" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayString2D">
+            <soap:operation soapAction="urn:retArrayString2D" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumInt">
+            <soap:operation soapAction="urn:retEnumInt" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDecimal">
+            <soap:operation soapAction="urn:retDecimal" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDateTime">
+            <soap:operation soapAction="urn:retDateTime" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -1375,20 +1321,65 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-    </wsdl:binding>
-    <wsdl:binding name="ComplexDataTypesHttpSoap12Binding" type="ns:ComplexDataTypesPortType">
-        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="retObject">
-            <soap12:operation soapAction="urn:retObject" style="document"/>
+        <wsdl:operation name="retStructSN">
+            <soap:operation soapAction="urn:retStructSN" style="document"/>
             <wsdl:input>
-                <soap12:body use="literal"/>
+                <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:output>
-                <soap12:body use="literal"/>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStrings">
+            <soap:operation soapAction="urn:retStrings" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retLong">
+            <soap:operation soapAction="urn:retLong" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retArray1DSN">
-            <soap12:operation soapAction="urn:retArray1DSN" style="document"/>
+            <soap:operation soapAction="urn:retArray1DSN" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructSNSAS">
+            <soap:operation soapAction="urn:retStructSNSAS" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retSingle">
+            <soap:operation soapAction="urn:retSingle" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ComplexDataTypesSoap12Binding" type="ns:ComplexDataTypesPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="retSByte">
+            <soap12:operation soapAction="urn:retSByte" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1405,125 +1396,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retByte">
-            <soap12:operation soapAction="urn:retByte" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSingle">
-            <soap12:operation soapAction="urn:retSingle" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayInt1D">
-            <soap12:operation soapAction="urn:retArrayInt1D" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retGuid">
-            <soap12:operation soapAction="urn:retGuid" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retUri">
-            <soap12:operation soapAction="urn:retUri" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumInt">
-            <soap12:operation soapAction="urn:retEnumInt" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retInt">
-            <soap12:operation soapAction="urn:retInt" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retByteArray">
-            <soap12:operation soapAction="urn:retByteArray" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDouble">
-            <soap12:operation soapAction="urn:retDouble" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="retString">
             <soap12:operation soapAction="urn:retString" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructS1">
-            <soap12:operation soapAction="urn:retStructS1" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDerivedClass2">
-            <soap12:operation soapAction="urn:retDerivedClass2" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retChar">
-            <soap12:operation soapAction="urn:retChar" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retShort">
-            <soap12:operation soapAction="urn:retShort" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1540,8 +1414,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDerivedClass">
-            <soap12:operation soapAction="urn:retDerivedClass" style="document"/>
+        <wsdl:operation name="retChar">
+            <soap12:operation soapAction="urn:retChar" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1549,8 +1423,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDateTime">
-            <soap12:operation soapAction="urn:retDateTime" style="document"/>
+        <wsdl:operation name="retArrayInt1D">
+            <soap12:operation soapAction="urn:retArrayInt1D" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1558,17 +1432,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayAnyType1D">
-            <soap12:operation soapAction="urn:retArrayAnyType1D" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStrings">
-            <soap12:operation soapAction="urn:retStrings" style="document"/>
+        <wsdl:operation name="retUri">
+            <soap12:operation soapAction="urn:retUri" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1585,8 +1450,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDateTime1D">
-            <soap12:operation soapAction="urn:retArrayDateTime1D" style="document"/>
+        <wsdl:operation name="retObject">
+            <soap12:operation soapAction="urn:retObject" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1594,8 +1459,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retBool">
-            <soap12:operation soapAction="urn:retBool" style="document"/>
+        <wsdl:operation name="retInt">
+            <soap12:operation soapAction="urn:retInt" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1603,71 +1468,8 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDecimal1D">
-            <soap12:operation soapAction="urn:retArrayDecimal1D" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDecimal">
-            <soap12:operation soapAction="urn:retDecimal" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retULong">
-            <soap12:operation soapAction="urn:retULong" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSN">
-            <soap12:operation soapAction="urn:retStructSN" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumString">
-            <soap12:operation soapAction="urn:retEnumString" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSNSAS">
-            <soap12:operation soapAction="urn:retStructSNSAS" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSByte">
-            <soap12:operation soapAction="urn:retSByte" style="document"/>
-            <wsdl:input>
-                <soap12:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayString2D">
-            <soap12:operation soapAction="urn:retArrayString2D" style="document"/>
+        <wsdl:operation name="retGuid">
+            <soap12:operation soapAction="urn:retGuid" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1684,8 +1486,116 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="retArrayAnyType1D">
+            <soap12:operation soapAction="urn:retArrayAnyType1D" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumString">
+            <soap12:operation soapAction="urn:retEnumString" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retBool">
+            <soap12:operation soapAction="urn:retBool" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass2">
+            <soap12:operation soapAction="urn:retDerivedClass2" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDateTime1D">
+            <soap12:operation soapAction="urn:retArrayDateTime1D" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDecimal1D">
+            <soap12:operation soapAction="urn:retArrayDecimal1D" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retShort">
+            <soap12:operation soapAction="urn:retShort" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass">
+            <soap12:operation soapAction="urn:retDerivedClass" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByteArray">
+            <soap12:operation soapAction="urn:retByteArray" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructS1">
+            <soap12:operation soapAction="urn:retStructS1" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retULong">
+            <soap12:operation soapAction="urn:retULong" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="retQName">
             <soap12:operation soapAction="urn:retQName" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByte">
+            <soap12:operation soapAction="urn:retByte" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1702,8 +1612,44 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retLong">
-            <soap12:operation soapAction="urn:retLong" style="document"/>
+        <wsdl:operation name="retDouble">
+            <soap12:operation soapAction="urn:retDouble" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayString2D">
+            <soap12:operation soapAction="urn:retArrayString2D" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumInt">
+            <soap12:operation soapAction="urn:retEnumInt" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDecimal">
+            <soap12:operation soapAction="urn:retDecimal" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDateTime">
+            <soap12:operation soapAction="urn:retDateTime" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -1720,25 +1666,70 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-    </wsdl:binding>
-    <wsdl:binding name="ComplexDataTypesHttpBinding" type="ns:ComplexDataTypesPortType">
-        <http:binding verb="POST"/>
-        <wsdl:operation name="retObject">
-            <http:operation location="ComplexDataTypes/retObject"/>
+        <wsdl:operation name="retStructSN">
+            <soap12:operation soapAction="urn:retStructSN" style="document"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retObject"/>
+                <soap12:body use="literal"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retObject"/>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStrings">
+            <soap12:operation soapAction="urn:retStrings" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retLong">
+            <soap12:operation soapAction="urn:retLong" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retArray1DSN">
-            <http:operation location="ComplexDataTypes/retArray1DSN"/>
+            <soap12:operation soapAction="urn:retArray1DSN" style="document"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retArray1DSN"/>
+                <soap12:body use="literal"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retArray1DSN"/>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructSNSAS">
+            <soap12:operation soapAction="urn:retStructSNSAS" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retSingle">
+            <soap12:operation soapAction="urn:retSingle" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ComplexDataTypesHttpBinding" type="ns:ComplexDataTypesPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="retSByte">
+            <http:operation location="ComplexDataTypes/retSByte"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retSByte"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retSByte"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUShort">
@@ -1750,87 +1741,6 @@
                 <mime:content type="text/xml" part="retUShort"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retByte">
-            <http:operation location="ComplexDataTypes/retByte"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retByte"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retByte"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSingle">
-            <http:operation location="ComplexDataTypes/retSingle"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retSingle"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retSingle"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayInt1D">
-            <http:operation location="ComplexDataTypes/retArrayInt1D"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retArrayInt1D"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retArrayInt1D"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retGuid">
-            <http:operation location="ComplexDataTypes/retGuid"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retGuid"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retGuid"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retUri">
-            <http:operation location="ComplexDataTypes/retUri"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retUri"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retUri"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumInt">
-            <http:operation location="ComplexDataTypes/retEnumInt"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retEnumInt"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retEnumInt"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retInt">
-            <http:operation location="ComplexDataTypes/retInt"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retInt"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retInt"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retByteArray">
-            <http:operation location="ComplexDataTypes/retByteArray"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retByteArray"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retByteArray"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDouble">
-            <http:operation location="ComplexDataTypes/retDouble"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retDouble"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retDouble"/>
-            </wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="retString">
             <http:operation location="ComplexDataTypes/retString"/>
             <wsdl:input>
@@ -1838,42 +1748,6 @@
             </wsdl:input>
             <wsdl:output>
                 <mime:content type="text/xml" part="retString"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructS1">
-            <http:operation location="ComplexDataTypes/retStructS1"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retStructS1"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retStructS1"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDerivedClass2">
-            <http:operation location="ComplexDataTypes/retDerivedClass2"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retDerivedClass2"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retDerivedClass2"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retChar">
-            <http:operation location="ComplexDataTypes/retChar"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retChar"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retChar"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retShort">
-            <http:operation location="ComplexDataTypes/retShort"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retShort"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retShort"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retArrayString1D">
@@ -1885,40 +1759,31 @@
                 <mime:content type="text/xml" part="retArrayString1D"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDerivedClass">
-            <http:operation location="ComplexDataTypes/retDerivedClass"/>
+        <wsdl:operation name="retChar">
+            <http:operation location="ComplexDataTypes/retChar"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retDerivedClass"/>
+                <mime:content type="text/xml" part="retChar"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retDerivedClass"/>
+                <mime:content type="text/xml" part="retChar"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retDateTime">
-            <http:operation location="ComplexDataTypes/retDateTime"/>
+        <wsdl:operation name="retArrayInt1D">
+            <http:operation location="ComplexDataTypes/retArrayInt1D"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retDateTime"/>
+                <mime:content type="text/xml" part="retArrayInt1D"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retDateTime"/>
+                <mime:content type="text/xml" part="retArrayInt1D"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayAnyType1D">
-            <http:operation location="ComplexDataTypes/retArrayAnyType1D"/>
+        <wsdl:operation name="retUri">
+            <http:operation location="ComplexDataTypes/retUri"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retArrayAnyType1D"/>
+                <mime:content type="text/xml" part="retUri"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retArrayAnyType1D"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStrings">
-            <http:operation location="ComplexDataTypes/retStrings"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retStrings"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retStrings"/>
+                <mime:content type="text/xml" part="retUri"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retInts">
@@ -1930,94 +1795,31 @@
                 <mime:content type="text/xml" part="retInts"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDateTime1D">
-            <http:operation location="ComplexDataTypes/retArrayDateTime1D"/>
+        <wsdl:operation name="retObject">
+            <http:operation location="ComplexDataTypes/retObject"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retArrayDateTime1D"/>
+                <mime:content type="text/xml" part="retObject"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retArrayDateTime1D"/>
+                <mime:content type="text/xml" part="retObject"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retBool">
-            <http:operation location="ComplexDataTypes/retBool"/>
+        <wsdl:operation name="retInt">
+            <http:operation location="ComplexDataTypes/retInt"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retBool"/>
+                <mime:content type="text/xml" part="retInt"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retBool"/>
+                <mime:content type="text/xml" part="retInt"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retArrayDecimal1D">
-            <http:operation location="ComplexDataTypes/retArrayDecimal1D"/>
+        <wsdl:operation name="retGuid">
+            <http:operation location="ComplexDataTypes/retGuid"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retArrayDecimal1D"/>
+                <mime:content type="text/xml" part="retGuid"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retArrayDecimal1D"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retDecimal">
-            <http:operation location="ComplexDataTypes/retDecimal"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retDecimal"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retDecimal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retULong">
-            <http:operation location="ComplexDataTypes/retULong"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retULong"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retULong"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSN">
-            <http:operation location="ComplexDataTypes/retStructSN"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retStructSN"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retStructSN"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retEnumString">
-            <http:operation location="ComplexDataTypes/retEnumString"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retEnumString"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retEnumString"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retStructSNSAS">
-            <http:operation location="ComplexDataTypes/retStructSNSAS"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retStructSNSAS"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retStructSNSAS"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retSByte">
-            <http:operation location="ComplexDataTypes/retSByte"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retSByte"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retSByte"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="retArrayString2D">
-            <http:operation location="ComplexDataTypes/retArrayString2D"/>
-            <wsdl:input>
-                <mime:content type="text/xml" part="retArrayString2D"/>
-            </wsdl:input>
-            <wsdl:output>
-                <mime:content type="text/xml" part="retArrayString2D"/>
+                <mime:content type="text/xml" part="retGuid"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retFloat">
@@ -2029,6 +1831,105 @@
                 <mime:content type="text/xml" part="retFloat"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="retArrayAnyType1D">
+            <http:operation location="ComplexDataTypes/retArrayAnyType1D"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retArrayAnyType1D"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retArrayAnyType1D"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumString">
+            <http:operation location="ComplexDataTypes/retEnumString"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retEnumString"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retEnumString"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retBool">
+            <http:operation location="ComplexDataTypes/retBool"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retBool"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retBool"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass2">
+            <http:operation location="ComplexDataTypes/retDerivedClass2"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retDerivedClass2"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retDerivedClass2"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDateTime1D">
+            <http:operation location="ComplexDataTypes/retArrayDateTime1D"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retArrayDateTime1D"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retArrayDateTime1D"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayDecimal1D">
+            <http:operation location="ComplexDataTypes/retArrayDecimal1D"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retArrayDecimal1D"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retArrayDecimal1D"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retShort">
+            <http:operation location="ComplexDataTypes/retShort"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retShort"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retShort"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDerivedClass">
+            <http:operation location="ComplexDataTypes/retDerivedClass"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retDerivedClass"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retDerivedClass"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByteArray">
+            <http:operation location="ComplexDataTypes/retByteArray"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retByteArray"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retByteArray"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructS1">
+            <http:operation location="ComplexDataTypes/retStructS1"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retStructS1"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retStructS1"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retULong">
+            <http:operation location="ComplexDataTypes/retULong"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retULong"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retULong"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="retQName">
             <http:operation location="ComplexDataTypes/retQName"/>
             <wsdl:input>
@@ -2036,6 +1937,15 @@
             </wsdl:input>
             <wsdl:output>
                 <mime:content type="text/xml" part="retQName"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retByte">
+            <http:operation location="ComplexDataTypes/retByte"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retByte"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retByte"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retUInt">
@@ -2047,13 +1957,49 @@
                 <mime:content type="text/xml" part="retUInt"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="retLong">
-            <http:operation location="ComplexDataTypes/retLong"/>
+        <wsdl:operation name="retDouble">
+            <http:operation location="ComplexDataTypes/retDouble"/>
             <wsdl:input>
-                <mime:content type="text/xml" part="retLong"/>
+                <mime:content type="text/xml" part="retDouble"/>
             </wsdl:input>
             <wsdl:output>
-                <mime:content type="text/xml" part="retLong"/>
+                <mime:content type="text/xml" part="retDouble"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArrayString2D">
+            <http:operation location="ComplexDataTypes/retArrayString2D"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retArrayString2D"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retArrayString2D"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retEnumInt">
+            <http:operation location="ComplexDataTypes/retEnumInt"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retEnumInt"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retEnumInt"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDecimal">
+            <http:operation location="ComplexDataTypes/retDecimal"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retDecimal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retDecimal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retDateTime">
+            <http:operation location="ComplexDataTypes/retDateTime"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retDateTime"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retDateTime"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="retStructSNSA">
@@ -2065,12 +2011,66 @@
                 <mime:content type="text/xml" part="retStructSNSA"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="retStructSN">
+            <http:operation location="ComplexDataTypes/retStructSN"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retStructSN"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retStructSN"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStrings">
+            <http:operation location="ComplexDataTypes/retStrings"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retStrings"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retStrings"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retLong">
+            <http:operation location="ComplexDataTypes/retLong"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retLong"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retLong"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retArray1DSN">
+            <http:operation location="ComplexDataTypes/retArray1DSN"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retArray1DSN"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retArray1DSN"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retStructSNSAS">
+            <http:operation location="ComplexDataTypes/retStructSNSAS"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retStructSNSAS"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retStructSNSAS"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="retSingle">
+            <http:operation location="ComplexDataTypes/retSingle"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="retSingle"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="retSingle"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="ComplexDataTypes">
-        <wsdl:port name="ComplexDataTypesHttpSoap11Endpoint" binding="ns:ComplexDataTypesHttpSoap11Binding">
+        <wsdl:port name="ComplexDataTypesHttpSoap11Endpoint" binding="ns:ComplexDataTypesSoap11Binding">
             <soap:address location="http://localhost:8080/axis2/services/ComplexDataTypes"/>
         </wsdl:port>
-        <wsdl:port name="ComplexDataTypesHttpSoap12Endpoint" binding="ns:ComplexDataTypesHttpSoap12Binding">
+        <wsdl:port name="ComplexDataTypesHttpSoap12Endpoint" binding="ns:ComplexDataTypesSoap12Binding">
             <soap12:address location="http://localhost:8080/axis2/services/ComplexDataTypes"/>
         </wsdl:port>
         <wsdl:port name="ComplexDataTypesHttpEndpoint" binding="ns:ComplexDataTypesHttpBinding">
