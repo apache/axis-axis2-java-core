@@ -115,32 +115,31 @@ public class DocLitWrapImpl implements DocLitWrap {
             }
         }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#invoke(java.lang.String)
-	 */
-	public String invoke(String invokeStr) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-    public HeaderResponse header(Header payload, Holder<HeaderPart0> header0, HeaderPart1 header1){
-    	
-    	HeaderPart0 hpo= (HeaderPart0)header0.value;
-    	hpo = new HeaderPart0();
-    	hpo.setHeaderType("Header Type from Endpoint implementation");
-    	header0.value = hpo;
-    	//hpo.setHeaderType("");
-    	HeaderResponse response = new HeaderResponse();
-    	response.setOut(1000);
-    	return response;
-    }
+        /* (non-Javadoc)
+         * @see org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap#invoke(java.lang.String)
+         */
+        public String invoke(String invokeStr) {
+            return invokeStr;
+        }
 
-    public String echoStringWSGEN1(String headerValue) {
-        return headerValue;
-    }
-    
-    public String echoStringWSGEN2(String data) {
-        return data;
-    }
+        public HeaderResponse header(Header payload, Holder<HeaderPart0> header0, HeaderPart1 header1){
+
+            HeaderPart0 hpo= (HeaderPart0)header0.value;
+            hpo = new HeaderPart0();
+            hpo.setHeaderType("Header Type from Endpoint implementation");
+            header0.value = hpo;
+            //hpo.setHeaderType("");
+            HeaderResponse response = new HeaderResponse();
+            response.setOut(1000);
+            return response;
+        }
+
+        public String echoStringWSGEN1(String headerValue) {
+            return headerValue;
+        }
+
+        public String echoStringWSGEN2(String data) {
+            return data;
+        }
 
 }

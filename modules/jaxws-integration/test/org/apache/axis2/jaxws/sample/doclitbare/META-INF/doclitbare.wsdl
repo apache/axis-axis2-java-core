@@ -75,6 +75,14 @@
 
 	<wsdl:message name="NoParam" />
 
+    <wsdl:message name="echoStringIn">
+		<wsdl:part name="echoStringIn" element="tns:String" />
+	</wsdl:message>
+	
+	<wsdl:message name="echoStringOut">
+		<wsdl:part name="echoStringOut" element="tns:String" />
+	</wsdl:message>
+	
 	<wsdl:message name="SingleParam">
 		<wsdl:part name="allByMyself" element="tns:String" />
 	</wsdl:message>
@@ -103,6 +111,11 @@
 		
 		<wsdl:operation name="oneWay">
 			<wsdl:input message="tns:SingleParam" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="echoString">
+			<wsdl:input message="tns:echoStringIn" />
+			<wsdl:output message="tns:echoStringOut" />
 		</wsdl:operation>		
 		
 		<wsdl:operation name="twoWaySimple">
@@ -133,6 +146,15 @@
 				<soap:body use="literal"  />
 			</wsdl:input>
 		</wsdl:operation>
+		
+		<wsdl:operation name="echoString">
+		    <wsdl:input>
+				<soap:body use="literal"  />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"  />
+			</wsdl:output>
+		</wsdl:operation>	
 		
 		<wsdl:operation name="twoWaySimple">
 			<wsdl:input>

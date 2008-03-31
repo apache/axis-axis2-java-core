@@ -42,6 +42,9 @@ public class WrapTests extends AbstractTestCase {
 
     String axisEndpoint = "http://localhost:6060/axis2/services/DocLitWrapService.DocLitWrapImplPort";
 	
+    // String containing some characters that require XML encoding
+    private static String XMLCHARS = "<<<3>>>3>>>3";
+    
     public static Test suite() {
         return getTestSetup(new TestSuite(WrapTests.class));
     }
@@ -152,6 +155,25 @@ public class WrapTests extends AbstractTestCase {
         }
 
         /**
+         * This is a test of a doc/lit echo test
+         */
+        public void testEchoString() {
+            TestLogger.logger.debug("------------------------------");
+            TestLogger.logger.debug("Test : " + getName());
+            try{
+                String request = "hello world";
+
+                DocLitWrap proxy = getProxy();
+                String response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
+                TestLogger.logger.debug("------------------------------");
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
+        /**
          * This is a test of a doc/lit method that passes the 
          * request in a header.  This can only be reproduced via
          * annotations and WSGEN.  WSImport will not allow this.
@@ -194,6 +216,67 @@ public class WrapTests extends AbstractTestCase {
             }
         }
         
+        /**
+         * This is a test of a doc/lit echo test with xml chars.
+         */
+        public void testEchoString_xmlchars() {
+            TestLogger.logger.debug("------------------------------");
+            TestLogger.logger.debug("Test : " + getName());
+            try{
+                String request = XMLCHARS;
+
+                DocLitWrap proxy = getProxy();
+                String response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
+                TestLogger.logger.debug("------------------------------");
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
+        /**
+         * This is a test of a doc/lit method that passes the 
+         * request in a header.  This can only be reproduced via
+         * annotations and WSGEN.  WSImport will not allow this.
+         */
+        public void testEchoStringWSGEN1_xmlchars() {
+            TestLogger.logger.debug("------------------------------");
+            TestLogger.logger.debug("Test : " + getName());
+            try{
+                String request = XMLCHARS;
+
+                DocLitWrap proxy = getProxy();
+                String response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
+                TestLogger.logger.debug("------------------------------");
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            }
+        }
+
+        /**
+         * This is a test of a doc/lit method that passes the 
+         * response in a header.  This can only be reproduced via
+         * annotations and WSGEN.  WSImport will not allow this.
+         */
+
+        public void testEchoStringWSGEN2_xmlchars() {
+            TestLogger.logger.debug("------------------------------");
+            TestLogger.logger.debug("Test : " + getName());
+            try{
+                String request = XMLCHARS;
+
+                DocLitWrap proxy = getProxy();
+                String response = proxy.echoStringWSGEN2(request);
+                assertTrue(response.equals(request));
+                TestLogger.logger.debug("------------------------------");
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            }
+        }
         /**
          * Test to validate whether a JAXBCustomBuilder is plugged in
          * on the server.

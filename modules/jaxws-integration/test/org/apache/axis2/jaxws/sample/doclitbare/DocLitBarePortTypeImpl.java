@@ -27,7 +27,9 @@ import org.apache.axis2.jaxws.sample.doclitbare.sei.FaultBeanWithWrapper;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.SimpleFault;
 import org.test.sample.doclitbare.Composite;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
@@ -51,6 +53,12 @@ public class DocLitBarePortTypeImpl implements DocLitBarePortType {
 		// TODO Auto-generated method stub
 		String retValue = "Running One way call with String input" + allByMyself;
 	}
+        
+         
+	public String echoString(String echoStringIn) {
+	    return echoStringIn;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType#twoWaySimple(int)

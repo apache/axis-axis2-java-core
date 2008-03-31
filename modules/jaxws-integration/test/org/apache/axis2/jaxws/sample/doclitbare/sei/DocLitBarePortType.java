@@ -61,6 +61,13 @@ public interface DocLitBarePortType {
         @WebParam(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "allByMyself")
         String allByMyself);
 
+    
+    @WebMethod
+    @WebResult(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "echoStringIn")
+    public String echoString(
+        @WebParam(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "echoStringOut")
+        String echoStringIn);
+    
     /**
      * 
      * @param allByMyself
