@@ -3715,8 +3715,7 @@
                             start_input_str = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof(axis2_char_t) *
                                         (5 + axutil_strlen(p_prefix) + 
                                          axutil_strlen("<xsl:value-of select="$propertyName"/>") + 
-                                         axutil_strlen(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"1\"") + 
-                                         ADB_DEFAULT_DIGIT_LIMIT)); 
+                                         axutil_strlen(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"1\""))); 
                                         <!-- axutil_strlen("<:/>") + 1 = 5 -->
                             
                             sprintf(start_input_str, "&lt;%s%s<xsl:value-of select="$propertyName"/> xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"1\"/&gt;",
@@ -3747,11 +3746,12 @@
                    {
                      start_input_str = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof(axis2_char_t) *
                                  (4 + axutil_strlen(p_prefix) + 
-                                  axutil_strlen("<xsl:value-of select="$propertyName"/>") + 
-                                  ADB_DEFAULT_DIGIT_LIMIT* 2)); 
+                                  axutil_strlen("<xsl:value-of select="$propertyName"/>"))); 
                                  <!-- axutil_strlen("<:>") + 1 = 4 -->
+                                 /* axutil_strlen("&lt;:&gt;") + 1 = 4 */
                      end_input_str = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof(axis2_char_t) *
-                                 (5 + ADB_DEFAULT_DIGIT_LIMIT + axutil_strlen("<xsl:value-of select="$propertyName"/>")));
+                                 (5 + axutil_strlen(p_prefix) + axutil_strlen("<xsl:value-of select="$propertyName"/>")));
+                                  /* axutil_strlen("&lt;/:&gt;") + 1 = 5 */
                                   <!-- axutil_strlen("</:>") + 1 = 5 -->
                      
 
