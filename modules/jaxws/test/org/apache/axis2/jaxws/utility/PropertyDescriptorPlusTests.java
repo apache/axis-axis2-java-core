@@ -37,7 +37,15 @@ public class PropertyDescriptorPlusTests extends TestCase {
         assertEquals(descriptors.length, 2);
 
         QName qName = new QName("", "args0");
-        PropertyDescriptorPlus plus = new PropertyDescriptorPlus(descriptors[0], qName);
+        PropertyDescriptor propertyDescriptor = null;
+        for (int i = 0; i < descriptors.length; i++) {
+            if(descriptors[i].getName().equals("arg0")){
+                propertyDescriptor = descriptors[i];
+                break;
+            }
+        }
+        assertNotNull(propertyDescriptor);
+        PropertyDescriptorPlus plus = new PropertyDescriptorPlus(propertyDescriptor, qName);
         byte[] testValue = {0xd, 0xe, 0xa, 0xd, 0xb, 0xe, 0xe, 0xf};
         plus.set(object, testValue);
 
