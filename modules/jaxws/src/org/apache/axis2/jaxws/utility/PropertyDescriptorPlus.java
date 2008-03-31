@@ -25,6 +25,8 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.bind.JAXBElement;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +50,7 @@ import java.util.Collection;
  */
 public class PropertyDescriptorPlus {
     PropertyDescriptor descriptor;
-    String xmlName = null;
+    QName xmlName = null;
     
     private static Log log = LogFactory.getLog(PropertyDescriptorPlus.class);
     private static final boolean DEBUG_ENABLED = log.isDebugEnabled();
@@ -60,17 +62,34 @@ public class PropertyDescriptorPlus {
      * @param descriptor
      * @see XMLRootElementUtil.createPropertyDescriptorMap
      */
-    PropertyDescriptorPlus(PropertyDescriptor descriptor, String xmlName) {
+    PropertyDescriptorPlus(PropertyDescriptor descriptor, QName xmlName) {
         super();
         this.descriptor = descriptor;
         this.xmlName = xmlName;
     }
 
-    /** @return xmlname */
-    public String getXmlName() {
-        return xmlName;
+    /**
+     * Package protected constructor.  Only created by XMLRootElementUtil.createPropertyDescriptorMap
+     *
+     * @param propertyName
+     * @param descriptor
+     * @see XMLRootElementUtil.createPropertyDescriptorMap
+     */
+    PropertyDescriptorPlus(PropertyDescriptor descriptor, String xmlName) {
+        super();
+        this.descriptor = descriptor;
+        this.xmlName = new QName("", xmlName);
     }
 
+    /** @return xmlname */
+    public String getXmlName() {
+        return xmlName.getLocalPart();
+    }
+
+    public QName getXmlQName() {
+        return xmlName;
+    }
+    
     /** @return property type */
     public Class getPropertyType() {
         return descriptor.getPropertyType();
@@ -115,7 +134,11 @@ public class PropertyDescriptorPlus {
             if(method == null){
                 throw new RuntimeException(Messages.getMessage("pDescrErr2",targetBean.getClass().getName()));
             }
-            return method.invoke(targetBean, null);
+            Object ret = method.invoke(targetBean, null);
+            if (method.getReturnType() == JAXBElement.class) {
+                ret = ((JAXBElement) ret).getValue();
+            }
+            return ret;
     }
 
     /**
@@ -149,6 +172,12 @@ public class PropertyDescriptorPlus {
             } else if (writeMethod == null) {
                 // Set for List<T>
                 setList(targetBean, propValue);
+            } else if (descriptor.getPropertyType() == JAXBElement.class) {
+                if (propValue != null) {
+                    Class clazz = propValue.getClass();
+                    JAXBElement element = new JAXBElement(xmlName, clazz, propValue);
+                    setAtomic(targetBean, element, writeMethod);
+                }
             } else {
                 // Normal case
                 setAtomic(targetBean, propValue, writeMethod);
