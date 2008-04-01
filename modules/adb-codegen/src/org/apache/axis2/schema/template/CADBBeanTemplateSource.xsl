@@ -854,8 +854,57 @@
                    <xsl:otherwise><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
+              <xsl:variable name="parentPropertyInstanceName"><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:variable>
               <xsl:choose>
                 <xsl:when test="@attribute">
+                <!-- here we have two options, either it can be axiom_attribute_t* which happens in anyAttribute case -->
+                <xsl:choose>
+                <xsl:when test="$nativePropertyType='axiom_attribute_t*' and @isarray">
+                  parent_attri = NULL;
+                  attrib_text = NULL;
+                  if(attribute_hash)
+                  {
+                       axutil_hash_index_t *hi;
+                       void *val;
+                       const void *key;
+                       axis2_char_t *dup_key;
+
+
+                       char *seperator = NULL;
+                       axis2_char_t *uri = NULL;
+                       axiom_namespace_t *namespace = NULL;
+
+                       axiom_attribute_t *new_attrib = NULL;
+
+                       for (hi = axutil_hash_first(attribute_hash, env); hi; hi = axutil_hash_next(env, hi)) 
+                       {
+                           axutil_hash_this(hi, &amp;key, NULL, &amp;val);
+                          
+                           dup_key = axutil_strdup(env, key);
+                           seperator = strstr(dup_key, "|");
+                          
+                           uri = NULL;
+                           if(seperator) /* this means the attribute is qualified with a namespace */
+                           {
+                             *seperator = '\0';
+                             seperator ++; /* represent the namespace */
+                             uri = seperator;
+                           }
+
+                           namespace  = axiom_namespace_create(env, uri, NULL);
+                           parent_attri = (axiom_attribute_t*)val;
+                           attrib_text = axiom_attribute_get_value(parent_attri, env);
+
+                           new_attrib = axiom_attribute_create(env, dup_key, attrib_text, namespace);
+
+
+                           <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                          env, new_attrib);
+                           AXIS2_FREE(env->allocator, dup_key);
+                       }
+                  }
+                </xsl:when>
+                <xsl:otherwise>
                 <!-- Just waiting for fix the axiom_element_get_attribute 
                   <xsl:choose>
                     <xsl:when test="@nsuri and @nsuri != ''">
@@ -1059,6 +1108,8 @@
                         </xsl:otherwise>
                       </xsl:choose>
                     }
+                  </xsl:otherwise>
+                  </xsl:choose>
                 </xsl:when>
                 <xsl:when test="$simple"></xsl:when> <!-- just to avoid preceeding code to be parsed in a simple type -->
                 <xsl:otherwise> <!-- when it is an element not(@attribute) -->
@@ -3026,8 +3077,8 @@
                 axis2_bool_t ns_already_defined;
             <xsl:for-each select="property/@isarray">
              <xsl:if test="position()=1">
-               int64_t i = 0;
-               int64_t count = 0;
+               int i = 0;
+               int count = 0;
                void *element = NULL;
              </xsl:if>
             </xsl:for-each>
@@ -3156,10 +3207,55 @@
               <xsl:variable name="qualifiedPropertyName">
                 <xsl:value-of select="namespacePrefix"/><xsl:value-of select="$propertyName"/>
               </xsl:variable>
-
+              <xsl:variable name="parentPropertyInstanceName"><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:variable>
                 <xsl:if test="@attribute">
-                  if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/>)
-                  {
+                if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/>)
+                {
+                <xsl:choose>
+                <xsl:when test="$nativePropertyType='axiom_attribute_t*' and @isarray"><!-- for anyAttribute -->
+                    for( i = 0; i &lt; axutil_array_list_size(<xsl:value-of select="$parentPropertyInstanceName"/>, env); i ++)
+                    {
+                        axiom_attribute_t *the_attrib = NULL;
+                        axiom_attribute_t *dup_attrib = NULL;
+                        axis2_char_t *uri = NULL;
+                        axis2_char_t *p_prefix = NULL;
+                        axutil_qname_t *qname = NULL;
+                        axis2_char_t *value = NULL;
+                        axis2_char_t *local_name = NULL;
+
+                        the_attrib = axutil_array_list_get(<xsl:value-of select="$parentPropertyInstanceName"/>, env, i);
+                        qname = axiom_attribute_get_qname(the_attrib, env);
+                        uri = axutil_qname_get_uri(qname, env);
+                        value = axiom_attribute_get_value(the_attrib, env);
+                        local_name = axutil_qname_get_localpart(qname, env);
+
+                        p_prefix = NULL;
+                        if(uri) /* means we have to go for a prefix */
+                        {
+                            if(!(p_prefix = (axis2_char_t*)axutil_hash_get(namespaces, uri, AXIS2_HASH_KEY_STRING)))
+                            {
+                                p_prefix = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof (axis2_char_t) * ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT);
+                                sprintf(p_prefix, "n%d", (*next_ns_index)++);
+                                axutil_hash_set(namespaces, uri, AXIS2_HASH_KEY_STRING, p_prefix);
+                                axiom_element_declare_namespace_assume_param_ownership(parent_element, env, axiom_namespace_create (env,
+                                                         uri,
+                                                         p_prefix));
+                                 
+                            }
+
+                        }
+
+                        text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * 
+                                                         (5  + ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
+                                                          axutil_strlen(local_name) + 
+                                                             axutil_strlen(value)));
+                        sprintf(text_value, " %s%s%s=\"%s\"", p_prefix?p_prefix:"", (p_prefix &amp;&amp; axutil_strcmp(p_prefix, ""))?":":"",
+                                             local_name, value);
+                        axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+                        AXIS2_FREE(env-> allocator, text_value);
+                    }
+                </xsl:when>
+                <xsl:otherwise>
                     <xsl:choose>
                       <xsl:when test="@nsuri and @nsuri != ''">
                         if(!(p_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "<xsl:value-of select="@nsuri"/>", AXIS2_HASH_KEY_STRING)))
@@ -3404,13 +3500,17 @@
                            text_value = NULL;
                         </xsl:otherwise>
                       </xsl:choose>
+                     </xsl:otherwise> <!-- whether this is an anyAttribute or not -->
+                    </xsl:choose>
                    }
                    <xsl:if test="not(@optional)">
+                   <xsl:if test="not($nativePropertyType='axiom_attribute_t*' and @isarray)"><!-- for anyAttribute -->
                    else
                    {
                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Nil value found in non-optional attribute <xsl:value-of select="$propertyName"/>");
                       return NULL;
                    }
+                   </xsl:if>
                    </xsl:if>
                 </xsl:if> <!-- if for attribute, -->
             </xsl:for-each>
@@ -3474,6 +3574,7 @@
                    <xsl:otherwise><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
+              <xsl:variable name="parentPropertyInstanceName"><xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/></xsl:variable>
 
               <xsl:choose>
                 <xsl:when test="@attribute">
@@ -3482,6 +3583,52 @@
                     {
                        if(<xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/>)
                        {
+                       <xsl:choose>
+                       <xsl:when test="$nativePropertyType='axiom_attribute_t*' and @isarray"><!-- for anyAttribute -->
+                        for( i = 0; i &lt; axutil_array_list_size(<xsl:value-of select="$parentPropertyInstanceName"/>, env); i ++)
+                        {
+                            axiom_attribute_t *the_attrib = NULL;
+                            axiom_attribute_t *dup_attrib = NULL;
+                            axis2_char_t *uri = NULL;
+                            axis2_char_t *p_prefix = NULL;
+                            axutil_qname_t *qname = NULL;
+                            axis2_char_t *value = NULL;
+                            axis2_char_t *local_name = NULL;
+                            axiom_namespace_t *ns1 = NULL;
+
+                            the_attrib = axutil_array_list_get(<xsl:value-of select="$parentPropertyInstanceName"/>, env, i);
+                            qname = axiom_attribute_get_qname(the_attrib, env);
+                            uri = axutil_qname_get_uri(qname, env);
+                            value = axiom_attribute_get_value(the_attrib, env);
+                            local_name = axutil_qname_get_localpart(qname, env);
+
+                            p_prefix = NULL;
+                            if(uri) /* means we have to go for a prefix */
+                            {
+                                if(!(p_prefix = (axis2_char_t*)axutil_hash_get(namespaces, uri, AXIS2_HASH_KEY_STRING)))
+                                {
+                                    p_prefix = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof (axis2_char_t) * ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT);
+                                    sprintf(p_prefix, "n%d", (*next_ns_index)++);
+                                    axutil_hash_set(namespaces, uri, AXIS2_HASH_KEY_STRING, p_prefix);
+                                    axiom_element_declare_namespace_assume_param_ownership(parent_element, env, axiom_namespace_create (env,
+                                                             uri,
+                                                             p_prefix));
+                                     
+                                }
+
+                            }
+
+                            ns1 = axiom_namespace_create (env,
+                                                uri,
+                                                p_prefix);
+
+                            dup_attrib = axiom_attribute_create (env, local_name, value, ns1);
+                            <!-- TODO: parent here can be data_source node, not element node should be fixed -->
+                            axiom_element_add_attribute (parent_element, env, dup_attrib, parent);
+
+                        }
+                       </xsl:when>
+                       <xsl:otherwise>
                        <xsl:choose>
                          <xsl:when test="@nsuri and @nsuri != ''">
                            if(!(p_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "<xsl:value-of select="@nsuri"/>", AXIS2_HASH_KEY_STRING)))
@@ -3669,14 +3816,18 @@
                            parent_element = NULL;
                            text_attri = NULL;
                         </xsl:otherwise>
-                      </xsl:choose>
+                        </xsl:choose>
+                       </xsl:otherwise>
+                       </xsl:choose>
                       }
                       <xsl:if test="not(@optional)">
+                      <xsl:if test="not($nativePropertyType='axiom_attribute_t*' and @isarray)"><!-- for anyAttribute -->
                       else
                       {
                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Nil value found in non-optional attribute <xsl:value-of select="$propertyName"/>");
                          return NULL;
                       }
+                      </xsl:if> 
                       </xsl:if> 
                   }<!-- End bracket for if(parent_tag_closed)-->
                 </xsl:when>
