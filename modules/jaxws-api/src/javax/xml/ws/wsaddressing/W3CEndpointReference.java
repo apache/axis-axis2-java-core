@@ -63,25 +63,19 @@ import java.util.Map;
  * 
  */
 @XmlRootElement(name = "EndpointReference", namespace = W3CEndpointReference.NS)
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EndpointReferenceType", namespace = W3CEndpointReference.NS, propOrder = {
-    "address",
-    "referenceParameters",
-    "metadata",
-    "any"
-})
+@XmlType(name = "EndpointReferenceType", namespace = W3CEndpointReference.NS)
 public final class W3CEndpointReference extends EndpointReference {
     protected static final String NS = "http://www.w3.org/2005/08/addressing";
-    protected static JAXBContext jaxbContext;
+    private static JAXBContext jaxbContext;
     
     @XmlElement(name = "Address", namespace = NS, required = true)
-    protected AttributedURIType address;
+    private AttributedURIType address;
     @XmlElement(name = "ReferenceParameters", namespace = NS)
-    protected ReferenceParametersType referenceParameters;
+    private ReferenceParametersType referenceParameters;
     @XmlElement(name = "Metadata", namespace = NS)
-    protected MetadataType metadata;
+    private MetadataType metadata;
     @XmlAnyElement(lax = true)
-    protected List<Object> any;
+    private List<Object> any;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
     
