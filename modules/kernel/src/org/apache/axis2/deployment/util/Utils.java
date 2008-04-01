@@ -1487,11 +1487,13 @@ public class Utils {
 				.hasNext();) {
 			AxisMessage axisFaultMessage = (AxisMessage) iterator2.next();
 			AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
-			axisBindingFaultMessage.setFault(true);
+            axisBindingFaultMessage.setName(axisFaultMessage.getName());
+            axisBindingFaultMessage.setFault(true);
 			axisBindingFaultMessage.setAxisMessage(axisFaultMessage);
 			axisBindingFaultMessage.setParent(axisBindingOperation);
 			axisBindingOperation.addFault(axisBindingFaultMessage);
-		}
+            axisBinding.addFault(axisBindingFaultMessage);
+        }
 
 		axisBindingOperation.setAxisOperation(axisOperation);
 		axisBindingOperation.setParent(axisBinding);
