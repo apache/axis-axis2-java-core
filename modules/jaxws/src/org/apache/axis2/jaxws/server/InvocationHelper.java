@@ -107,6 +107,10 @@ public class InvocationHelper {
      */
     public static Throwable determineMappedException(Throwable t, MessageContext context) {
         EndpointInvocationContext eic = (EndpointInvocationContext)context.getInvocationContext();
+        if (eic == null) {
+            eic = new EndpointInvocationContextImpl();
+            eic.setRequestMessageContext(context);
+        }
         eic.setInvocationListeners((List<InvocationListener>)context.getProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST));
         return determineMappedException(t, eic);
     }
