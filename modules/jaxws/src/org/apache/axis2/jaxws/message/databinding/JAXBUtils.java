@@ -162,8 +162,10 @@ public class JAXBUtils {
         		if(innerMap==null) {
         			adjustPoolSize(jaxbMap);
         			innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
-        			jaxbMap.put(cl, innerMap);
-        		}
+                    if(cacheKey != null) {
+                        jaxbMap.put(cacheKey, innerMap);
+                    }
+                }
         	}
         }
 
@@ -185,8 +187,14 @@ public class JAXBUtils {
         			
         			TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
         			contextValue = createJAXBContextValue(validContextPackages, cl);
-        			
-        			// Put the new context in the map keyed by both the original and valid list of packages
+                    
+                    // If we don't get all the classes, try the cached classloader 
+                    if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
+                        validContextPackages = new TreeSet<String>(contextPackages);
+                        contextValue = createJAXBContextValue(validContextPackages, cacheKey);
+                    }
+
+                    // Put the new context in the map keyed by both the original and valid list of packages
         			String validPackagesKey = validContextPackages.toString();
         			innerMap.put(key, contextValue);
         			innerMap.put(validPackagesKey, contextValue);

@@ -20,7 +20,6 @@
 package org.apache.axis2.jaxws.server;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
@@ -56,34 +55,20 @@ import javax.xml.ws.WebServiceException;
  * The JAXWSMessageReceiver is the entry point, from the server's perspective, to the JAX-WS code.
  * This will be called by the Axis Engine and is the end of the chain from an Axis2 perspective.
  */
-public class JAXWSMessageReceiver extends AbstractMessageReceiver implements MessageReceiver {
+public class JAXWSMessageReceiver implements MessageReceiver {
 
     private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
 
     private static String PARAM_SERVICE_CLASS = "ServiceClass";
     public static String PARAM_BINDING = "Binding";
 
-    protected void invokeBusinessLogic(org.apache.axis2.context.MessageContext messageCtx) throws AxisFault {
-        // DUMMY.
-    }
-
-    public void receive(org.apache.axis2.context.MessageContext messageCtx)
-            throws AxisFault {
-        ThreadContextDescriptor tc = setThreadContext(messageCtx);
-        try {
-            receiveInternal(messageCtx);    
-        } finally {
-            restoreThreadContext(tc);
-        }
-    }
-    
     /**
      * We should have already determined which AxisService we're targetting at this point.  So now,
      * just get the service implementation and invoke the appropriate method.
      * @param axisRequestMsgCtx
      * @throws org.apache.axis2.AxisFault
      */
-    public void receiveInternal(org.apache.axis2.context.MessageContext axisRequestMsgCtx)
+    public void receive(org.apache.axis2.context.MessageContext axisRequestMsgCtx)
             throws AxisFault {
         AxisFault faultToReturn = null;
 
@@ -113,9 +98,8 @@ public class JAXWSMessageReceiver extends AbstractMessageReceiver implements Mes
                 ServiceDescription serviceDesc =
                         DescriptionFactory.createServiceDescriptionFromServiceImpl(
                                 clazz, service);
-                if (service.getParameter(org.apache.axis2.Constants.SERVICE_TCCL) != null) {
-                    service.addParameter(new Parameter(org.apache.axis2.Constants.SERVICE_TCCL, org.apache.axis2.Constants.TCCL_COMPOSITE));
-                }
+                service.addParameter(new Parameter(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER, 
+                        service.getClassLoader()));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(
                         Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
@@ -141,7 +125,11 @@ public class JAXWSMessageReceiver extends AbstractMessageReceiver implements Mes
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
             requestMsgCtx.setServer(true);
             requestMsgCtx.setMEPContext(new MEPContext(requestMsgCtx));
-            
+            ClassLoader loader = getCachedClassLoader(axisRequestMsgCtx);
+            if (loader != null) {
+                requestMsgCtx.setProperty(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER,
+                        loader);
+            }
             // The adapters need to be installed on the new request Message Context
             AttachmentsAdapter.install(requestMsgCtx);
             TransportHeadersAdapter.install(requestMsgCtx);
@@ -187,7 +175,10 @@ public class JAXWSMessageReceiver extends AbstractMessageReceiver implements Mes
                 MessageContext responseMsgCtx = eic.getResponseMessageContext();
                 org.apache.axis2.context.MessageContext axisResponseMsgCtx =
                         responseMsgCtx.getAxisMessageContext();
-
+                if (loader != null) {
+                    responseMsgCtx.setProperty(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER,
+                            loader);
+                }
                 MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
                                                         axisResponseMsgCtx);
 
@@ -269,4 +260,7 @@ public class JAXWSMessageReceiver extends AbstractMessageReceiver implements Mes
         eic.setInvocationListenerFactories(InvocationListenerRegistry.getFactories());
     }
 
+    public ClassLoader getCachedClassLoader(org.apache.axis2.context.MessageContext msgContext) {
+        return (ClassLoader) msgContext.getAxisService().getParameterValue(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER);
+    }
 }
