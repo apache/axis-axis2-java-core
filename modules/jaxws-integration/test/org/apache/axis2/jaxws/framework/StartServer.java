@@ -28,6 +28,15 @@ public class StartServer extends TestCase {
         super(name);
     }
     
+    /*
+     * users may pass in their own repositoryDir path and path to custom configuration file.
+     * Passing 'null' for either param will use the default
+     */
+    public void testStartServer(String repositoryDir, String axis2xml) {
+        SimpleServer server = new SimpleServer(repositoryDir, axis2xml);
+        server.start();
+    }
+    
     public void testStartServer() {
         SimpleServer server = new SimpleServer();
         server.start();

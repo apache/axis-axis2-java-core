@@ -106,9 +106,7 @@ public class InvocationHelper {
      * so it will return this exception. Otherwise, null is returned.
      */
     public static Throwable determineMappedException(Throwable t, MessageContext context) {
-        Throwable returnThrowable = null;
-        EndpointInvocationContext eic = new EndpointInvocationContextImpl();
-        eic.setRequestMessageContext(context);
+        EndpointInvocationContext eic = (EndpointInvocationContext)context.getInvocationContext();
         eic.setInvocationListeners((List<InvocationListener>)context.getProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST));
         return determineMappedException(t, eic);
     }

@@ -33,6 +33,26 @@ public class AbstractTestCase extends TestCase {
     static {
         BasicConfigurator.configure();
     }
+    
+    /*
+     * users may pass in their own repositoryDir path and path to custom configuration file.
+     * Passing 'null' for either param will use the default
+     */
+    protected static Test getTestSetup(Test test, final String repositoryDir, final String axis2xml) {
+        return new TestSetup(test) {
+            public void setUp() throws Exception {
+                TestLogger.logger.debug("Starting the server for: " +this.getClass().getName());
+                StartServer startServer = new StartServer("server1");
+                startServer.testStartServer(repositoryDir, axis2xml);
+            }
+
+            public void tearDown() throws Exception {
+                TestLogger.logger.debug("Stopping the server for: " +this.getClass().getName());
+                StopServer stopServer = new StopServer("server1");
+                stopServer.testStopServer();
+            }
+        };
+    }
 
     protected static Test getTestSetup(Test test) {
         return new TestSetup(test) {

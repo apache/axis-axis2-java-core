@@ -31,17 +31,29 @@ import org.apache.log4j.BasicConfigurator;
 public class SimpleServer {
 
     private static SimpleHTTPServer server;
-    private String repositoryDir;
+    private String repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository");
+    private String axis2xml = System.getProperty("axis2.config");
     private int port = 6060;
+
+    public SimpleServer() {}
+    
+    /*
+     * users may pass in their own repositoryDir path and path to custom configuration file.
+     * Passing 'null' for either param will use the default
+     */
+    public SimpleServer(String repositoryDir, String axis2xml) {
+        if (repositoryDir != null) {
+            this.repositoryDir = repositoryDir;
+        }
+        if (axis2xml != null) {
+            this.axis2xml = axis2xml;
+        }
+    }
     
     public void init() {
-        repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository");
-//        repositoryDir = "target/test-classes"; 
         TestLogger.logger.debug(">> repositoryDir = " + repositoryDir);
-        
-        String axis2xml = System.getProperty("axis2.config");
         TestLogger.logger.debug(">> axis2.xml     = " + axis2xml);
-        
+
         try {
             ConfigurationContext config = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
                     repositoryDir, axis2xml);

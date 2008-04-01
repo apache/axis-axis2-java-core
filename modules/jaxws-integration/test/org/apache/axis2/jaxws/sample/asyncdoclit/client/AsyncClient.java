@@ -30,9 +30,7 @@ public class AsyncClient {
     private static final String DOCLITWR_ASYNC_ENDPOINT =
         "http://localhost:6060/axis2/services/AsyncService2.DocLitWrappedPortImplPort";
 
-	public static final String ASYNC_MEP_PROPERTY = "com.ibm.websphere.webservices.use.async.mep";
-
-	private static final int max_isasleep_check = 20000;
+	private static final int max_isasleep_check = 30;
 	
 	/**
 	 * Auxiliary method used for doiing isAsleep checks. Will perform isAsleep

@@ -164,6 +164,7 @@ public class JAXWSServerTests extends TestCase {
         // test the signature of determineMappedException that takes a MessageContext
         controller = new EndpointController();
         request = new MessageContext();
+        eic.setRequestMessageContext(request);
         List<InvocationListener> invocationListeners = new ArrayList<InvocationListener>();
         invocationListeners.add(new TestInvocationListener());
         request.setProperty(org.apache.axis2.jaxws.spi.Constants.INVOCATION_LISTENER_LIST, 
