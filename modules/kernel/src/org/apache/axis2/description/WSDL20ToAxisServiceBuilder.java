@@ -33,7 +33,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.woden.WSDLException;
-import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
 import org.apache.woden.XMLElement;
@@ -153,7 +152,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             fullPath = file.getAbsolutePath();
         }
         setBaseUri(fullPath);
-        Description description = readInTheWSDLFile(fullPath);
+        Description description;
+        try {
+            description = readInTheWSDLFile(fullPath);
+        } catch (AxisFault axisFault) {
+            throw new WSDLException("ERROR", "Exception occured while reading WSDL 2.0 doc", axisFault);
+        }
 
         DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
@@ -196,7 +200,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * sets a custom WSDL locator
      *
-     * @param customResolver
+     * @param customResolver - A custom Resolver that can resolve imports and includes
      */
     public void setCustomWSDLResolver(URIResolver customResolver) {
         this.customWSDLResolver = customResolver;
@@ -391,7 +395,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         axisEndpoint.setName(endpoint.getName().toString());
         setEndpointURL(axisEndpoint, endpoint.getAddress().toString());
         Binding binding = endpoint.getBinding();
-        AxisBinding axisBinding = null;
+        AxisBinding axisBinding;
         if (processedBindings.containsKey(binding.getName())) {
             axisBinding = (AxisBinding) processedBindings.get(binding.getName());
         } else {
@@ -410,7 +414,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private void processSOAPBindingEndpointExtensions(Endpoint endpoint, AxisEndpoint axisEndpoint) throws AxisFault {
-        SOAPEndpointExtensions soapEndpointExtensions = null;
+        SOAPEndpointExtensions soapEndpointExtensions;
         try {
             soapEndpointExtensions = (SOAPEndpointExtensions) endpoint
                     .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_SOAP));
@@ -427,7 +431,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private void processHTTPBindingEndpointExtensions(Endpoint endpoint, AxisEndpoint axisEndpoint) throws AxisFault {
-        HTTPEndpointExtensions httpEndpointExtensions = null;
+        HTTPEndpointExtensions httpEndpointExtensions;
         try {
             httpEndpointExtensions = (HTTPEndpointExtensions) endpoint
                     .getComponentExtensionContext(new URI(WSDL2Constants.URI_WSDL2_HTTP));
@@ -1153,41 +1157,41 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private Description readInTheWSDLFile(String wsdlURI) throws WSDLException {
+    private Description readInTheWSDLFile(String wsdlURI) throws WSDLException, AxisFault {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                 .newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder;
-        Document document = null;
+        Document document;
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(wsdlURI);
         } catch (ParserConfigurationException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         } catch (SAXException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         }
         return readInTheWSDLFile(document);
     }
 
-    private Description readInTheWSDLFile(InputStream inputStream) throws WSDLException {
+    private Description readInTheWSDLFile(InputStream inputStream) throws WSDLException, AxisFault {
 
        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                 .newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder;
-        Document document = null;
+        Document document;
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(inputStream);
         } catch (ParserConfigurationException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         } catch (IOException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         } catch (SAXException e) {
-            AxisFault.makeFault(e);
+            throw AxisFault.makeFault(e);
         }
         return readInTheWSDLFile(document);
     }
