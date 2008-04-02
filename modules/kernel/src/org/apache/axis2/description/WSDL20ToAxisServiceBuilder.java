@@ -88,12 +88,15 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -149,6 +152,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             File file = new File(wsdlUri);
             fullPath = file.getAbsolutePath();
         }
+        setBaseUri(fullPath);
         Description description = readInTheWSDLFile(fullPath);
 
         DescriptionElement descriptionElement = description.toElement();
@@ -466,25 +470,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     description = readInTheWSDLFile(wsdlURI);
                     descriptionElement = description.toElement();
                 } else if (in != null) {
-
-                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-                            .newInstance();
-                    documentBuilderFactory.setNamespaceAware(true);
-                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                    Document document = documentBuilder.parse(in);
-
-                    WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
-                    if (customWSDLResolver != null) {
-                        reader.setURIResolver(customWSDLResolver);
-                    }
-                    // This turns on WSDL validation which is set off by default.
-                    reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
-                    WSDLSource wsdlSource = reader.createWSDLSource();
-                    wsdlSource.setSource(document.getDocumentElement());
-                    if (getBaseUri() != null && !"".equals(getBaseUri())) {
-                        wsdlSource.setBaseURI(new URI(getBaseUri()));
-                    }
-                    description = reader.readWSDL(wsdlSource);
+                    description = readInTheWSDLFile(in);
                     descriptionElement = description.toElement();
                 } else {
                     throw new AxisFault("No resources found to read the wsdl");
@@ -1168,20 +1154,65 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     private Description readInTheWSDLFile(String wsdlURI) throws WSDLException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                .newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder documentBuilder;
+        Document document = null;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            document = documentBuilder.parse(wsdlURI);
+        } catch (ParserConfigurationException e) {
+            AxisFault.makeFault(e);
+        } catch (IOException e) {
+            AxisFault.makeFault(e);
+        } catch (SAXException e) {
+            AxisFault.makeFault(e);
+        }
+        return readInTheWSDLFile(document);
+    }
 
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    private Description readInTheWSDLFile(InputStream inputStream) throws WSDLException {
+
+       DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                .newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder documentBuilder;
+        Document document = null;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            document = documentBuilder.parse(inputStream);
+        } catch (ParserConfigurationException e) {
+            AxisFault.makeFault(e);
+        } catch (IOException e) {
+            AxisFault.makeFault(e);
+        } catch (SAXException e) {
+            AxisFault.makeFault(e);
+        }
+        return readInTheWSDLFile(document);
+    }
+
+    private Description readInTheWSDLFile(Document document) throws WSDLException {
+        WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
         if (customWSDLResolver != null) {
             reader.setURIResolver(customWSDLResolver);
         }
         // This turns on WSDL validation which is set off by default.
         reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
-        
-//      Log when and from where the WSDL is loaded.
+        WSDLSource wsdlSource = reader.createWSDLSource();
+        wsdlSource.setSource(document.getDocumentElement());
+        if (getBaseUri() != null && !"".equals(getBaseUri())) {
+            try {
+                wsdlSource.setBaseURI(new URI(getBaseUri()));
+            } catch (URISyntaxException e) {
+                AxisFault.makeFault(e);
+            }
+        }
         if (log.isDebugEnabled()) {
             log.debug("Reading 2.0 WSDL with wsdl uri = " + wsdlURI);
             log.debug("  the stack at this point is: " + stackToString());
         }
-        return reader.readWSDL(wsdlURI);
+        return reader.readWSDL(wsdlSource);
     }
 
     /**
