@@ -24,8 +24,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -48,6 +46,7 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -402,10 +401,15 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             }
         }
 
-        private void processToEPR() {
+        private void processToEPR() throws AxisFault {
             EndpointReference epr = messageContextOptions.getTo();
             if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, false)) {
-                processToEPRReferenceInformation(epr.getAllReferenceParameters());
+                try {
+                    processToEPRReferenceInformation(epr.getAllReferenceParameters());
+                }
+                catch (Exception e) {
+                    throw new AxisFault(AddressingMessages.getMessage("referenceParameterError"), e);
+                }
                 String address = epr.getAddress();
                 if (address != null && address.length()!=0) {
                     if (!includeOptionalHeaders && isFinalAddressingNamespace &&
@@ -474,7 +478,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                                                      new QName(addressingNamespace,
                                                                                headerName, prefix),
                                                                      addressingNamespace);
-            addRoleToHeader(soapHeaderBlock);
+            addRoleToHeader((SOAPHeaderBlock) soapHeaderBlock);
             header.addChild(soapHeaderBlock);
         }
 
@@ -485,7 +489,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          * @param parent               is the element to which the referenceparameters should be
          *                             attached
          */
-        private void processToEPRReferenceInformation(Map referenceInformation) {
+        private void processToEPRReferenceInformation(Map referenceInformation) throws Exception {
             if (referenceInformation != null) {
                 if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                     log.trace("processToEPRReferenceInformation: " + referenceInformation);
@@ -493,7 +497,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
+                    SOAPHeaderBlock newElement = XMLUtils.toSOAPHeaderBlock(omElement, factory);
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
@@ -516,7 +520,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             			Iterator iterator = referenceparameters.iterator();
             			while (iterator.hasNext()) {
             				OMElement omElement = (OMElement)iterator.next();
-            				OMElement newElement = ElementHelper.importOMElement(omElement, header.getOMFactory());
+                            SOAPHeaderBlock newElement = XMLUtils.toSOAPHeaderBlock(omElement, factory);
             				if (isFinalAddressingNamespace) {
             					newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
             							Final.WSA_TYPE_ATTRIBUTE_VALUE,
@@ -607,21 +611,11 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             }
         }
         
-        private void addRoleToHeader(OMElement header){
+        private void addRoleToHeader(SOAPHeaderBlock header){
         	if(addressingRole == null || addressingRole.length()==0){
         		return;
         	}
-        	if(header instanceof SOAPHeaderBlock){
-        		((SOAPHeaderBlock)header).setRole(addressingRole);
-        	}else{
-        		if(messageContext.isSOAP11()){
-        			OMAttribute roleAttr = factory.createOMAttribute(SOAP11Constants.ATTR_ACTOR, envelope.getNamespace(), addressingRole);
-        			header.addAttribute(roleAttr);
-        		}else{
-        			OMAttribute roleAttr = factory.createOMAttribute(SOAP12Constants.SOAP_ROLE, envelope.getNamespace(), addressingRole);
-        			header.addAttribute(roleAttr);
-        		}
-        	}
+        	header.setRole(addressingRole);
         }
     }
 }
