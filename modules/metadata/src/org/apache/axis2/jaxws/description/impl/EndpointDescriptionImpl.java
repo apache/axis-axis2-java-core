@@ -1925,7 +1925,7 @@ class EndpointDescriptionImpl
                     implName = (String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS);
                 }
                 wsdlComposite =
-                        dbc.getCustomWsdlGenerator().generateWsdl(implName, getBindingType());
+                        dbc.getCustomWsdlGenerator().generateWsdl(implName, this);
 
                 if (wsdlComposite != null) {
                     wsdlComposite.setWsdlFileName(

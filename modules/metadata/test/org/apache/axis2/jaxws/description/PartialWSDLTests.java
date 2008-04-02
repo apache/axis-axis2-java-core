@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -211,7 +212,7 @@ class WSDLGeneratorImpl implements WsdlGenerator {
         this.def = def;
     }
 
-    public WsdlComposite generateWsdl(String implClass, String bindingType)
+    public WsdlComposite generateWsdl(String implClass, EndpointDescription endpointDesc)
             throws WebServiceException {
         // Need WSDL generation code
         WsdlComposite composite = new WsdlComposite();

@@ -21,8 +21,11 @@ package org.apache.axis2.jaxws.description.builder;
 
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.jaxws.description.EndpointDescription;
+
 public interface WsdlGenerator {
 
-    public WsdlComposite generateWsdl(String implClass, String bindingType)
+    public WsdlComposite generateWsdl(String implClass, EndpointDescription endpointDesc)
             throws WebServiceException;
+    
 }
