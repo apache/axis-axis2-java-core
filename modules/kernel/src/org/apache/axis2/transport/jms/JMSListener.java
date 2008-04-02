@@ -102,6 +102,8 @@ public class JMSListener implements TransportListener {
      * The Axis2 Configuration context
      */
     private ConfigurationContext configCtx = null;
+    
+    private ExecutorService workerPool;
 
     /**
      * This is the TransportListener initialization method invoked by Axis2
@@ -299,7 +301,7 @@ public class JMSListener implements TransportListener {
      */
     public void start() throws AxisFault {
         // create thread pool of workers
-        ExecutorService workerPool = new ThreadPoolExecutor(
+        workerPool = new ThreadPoolExecutor(
                 1,
                 WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
                 new LinkedBlockingQueue(),
@@ -329,6 +331,9 @@ public class JMSListener implements TransportListener {
         Iterator iter = connectionFactories.values().iterator();
         while (iter.hasNext()) {
             ((JMSConnectionFactory) iter.next()).stop();
+        }
+        if (workerPool != null) {
+            workerPool.shutdown();
         }
     }
 
