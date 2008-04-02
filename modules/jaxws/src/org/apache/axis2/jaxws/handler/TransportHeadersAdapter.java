@@ -226,15 +226,20 @@ public class TransportHeadersAdapter implements Map {
     }
 
     public Collection values() {
-        Map tempMap = new HashMap<String, List<String>>();
-        tempMap.putAll(this);
-        return tempMap.values();
+        return copy().values();
     }
 
     public Set entrySet() {
+        return copy().entrySet();
+    }
+    
+    private Map copy() {
         Map tempMap = new HashMap<String, List<String>>();
-        tempMap.putAll(this);
-        return tempMap.entrySet();
+        for (Object key : keySet()) {
+            List<String> value = (List<String>)get(key);
+            tempMap.put(key, value);
+        }
+        return tempMap;
     }
     
     public String toString() {
