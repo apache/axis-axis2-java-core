@@ -149,6 +149,7 @@ public class JAXBUtils {
                 log.debug(pkg);
             }
         }
+        JAXBUtilsMonitor.addPackageKey(key);
         
          // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = getContextClassLoader();

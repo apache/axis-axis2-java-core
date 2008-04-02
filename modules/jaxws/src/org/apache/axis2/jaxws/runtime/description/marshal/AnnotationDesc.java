@@ -31,4 +31,8 @@ public interface AnnotationDesc {
     /** @return @XmlRootElement namespace or default namespace (null if !hasXmlRootElement) */
     public String getXmlRootElementNamespace();
 
+    /**
+     * @return @XmlSeeAlso classes or null
+     */
+    public Class[] getXmlSeeAlsoClasses();
 }

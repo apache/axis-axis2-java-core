@@ -27,6 +27,7 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
@@ -39,6 +40,7 @@ import java.util.List;
  * 
  */
 @WebService(name = "GorillaInterface", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw")
+@XmlSeeAlso(org.test.stock2.GetPrice.class)  // Test see also processing
 public interface GorillaInterface {
 
 

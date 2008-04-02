@@ -19,19 +19,27 @@
 
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.namespace.QName;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.security.PrivilegedAction;
+
 /**
- *
+ * Common annotation information for a class. This is setup once
+ * so that and stored in the AnnotationDesc so that it is easily accessible.
  */
 class AnnotationDescImpl implements AnnotationDesc {
 
     private boolean _hasXmlRootElement = false;
     private String _XmlRootElementName = null;
     private String _XmlRootElementNamespace = null;
+    private Class[] _XmlSeeAlsoClasses = null;
 
     private AnnotationDescImpl() {
         super();
@@ -52,14 +60,22 @@ class AnnotationDescImpl implements AnnotationDesc {
     static AnnotationDesc create(Class cls) {
         AnnotationDescImpl aDesc = new AnnotationDescImpl();
 
-        QName qName = XMLRootElementUtil.getXmlRootElementQName(cls);
-        if (qName == null) {
-            return aDesc;
+        // XMLSeeAlso is part of JAXB 2.1.2.  
+        // The assumption is that this is a prereq for JAXWS 2.1; thus
+        // we can safely reference this class
+        XmlSeeAlso xmlSeeAlso = (XmlSeeAlso)
+            getAnnotation(cls, XmlSeeAlso.class);
+        
+        if (xmlSeeAlso != null) {
+            aDesc._XmlSeeAlsoClasses = xmlSeeAlso.value();
         }
-        aDesc._hasXmlRootElement = true;
-        aDesc._XmlRootElementName = qName.getLocalPart();
-        aDesc._XmlRootElementNamespace = qName.getNamespaceURI();
-
+        
+        QName qName = XMLRootElementUtil.getXmlRootElementQName(cls);
+        if (qName != null) {
+            aDesc._hasXmlRootElement = true;
+            aDesc._XmlRootElementName = qName.getLocalPart();
+            aDesc._XmlRootElementNamespace = qName.getNamespaceURI();
+        }
         return aDesc;
     }
 
@@ -77,7 +93,31 @@ class AnnotationDescImpl implements AnnotationDesc {
             string.append("      @XMLRootElement name      = " + this.getXmlRootElementName());
         }
 
+        if (this._XmlSeeAlsoClasses != null) {
+            for (int i=0; i<_XmlSeeAlsoClasses.length; i++) {
+                string.append(newline);
+                string.append("      @XMLSeeAlso class = " + this._XmlSeeAlsoClasses[i].getName());
+            }
+        }
 
         return string.toString();
+    }
+
+    public Class[] getXmlSeeAlsoClasses() {
+        return _XmlSeeAlsoClasses;
+    }
+    
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
     }
 }

@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtilsMonitor;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
 
 import javax.xml.namespace.QName;
@@ -113,6 +114,42 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Test whether the @XmlSeeAlso that was added to the SEI
+     * is used to construct the JAXBContext
+     */
+    public void testXmlSeeAlso() throws Exception {
+        try{
+            // Set up the JAXBUtils monitor
+            JAXBUtilsMonitor.setMonitoring(true);
+            JAXBUtilsMonitor.clear();
+            
+            GorillaInterface proxy = getProxy();
+            String request = "Hello World";
+           
+            String response = proxy.echoString(request);
+            assertTrue(response != null);
+            assertEquals(response, request);
+            
+            // Now query the monitor
+            List<String> keys = JAXBUtilsMonitor.getPackageKeys();
+            assertTrue(keys != null && keys.size() > 0);
+            for (int i=0; i<keys.size(); i++) {
+                String observedKey = keys.get(i);
+                TestLogger.logger.debug("Observed Key =" + observedKey);
+                // Check for one of the expected (referenced) packages
+                assertTrue(observedKey.contains("org.apache.axis2.jaxws.proxy.gorilla_dlw.data"));
+                // Check for the package referenced only by an @XmlSeeAlso
+                assertTrue(observedKey.contains("org.test.stock2"));
+            }
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        } finally {
+            JAXBUtilsMonitor.setMonitoring(false);
         }
     }
     

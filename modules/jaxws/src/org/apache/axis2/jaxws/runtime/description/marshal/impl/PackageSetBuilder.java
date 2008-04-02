@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -152,32 +154,46 @@ public class PackageSetBuilder {
      */
     private static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc,
                                                               MarshalServiceRuntimeDescription msrd) {
+        
+        TreeSet<String> set = new TreeSet<String>();
+        String implClassName = getServiceImplClassName(endpointDesc);
+        if (implClassName != null) {
+            Class clz = loadClass(implClassName);
+            if (clz != null) {
+                addXmlSeeAlsoPackages(clz, msrd, set);
+            }
+        }
         EndpointInterfaceDescription endpointInterfaceDesc =
                 endpointDesc.getEndpointInterfaceDescription();
-        if (endpointInterfaceDesc == null) {
-            return new TreeSet<String>();
-        } else {
-            return getPackagesFromAnnotations(endpointInterfaceDesc, msrd);
+        if (endpointInterfaceDesc != null) {
+            getPackagesFromAnnotations(endpointInterfaceDesc, set, msrd);
         }
+        return set;
     }
 
     /**
      * @param endpointInterfaceDescription EndpointInterfaceDescription
-     * @return Set of Packages
+     * @param Set of Packages
+     * @param msrd
      */
-    private static TreeSet<String> getPackagesFromAnnotations(
+    private static void getPackagesFromAnnotations(
             EndpointInterfaceDescription endpointInterfaceDesc,
+            TreeSet<String> set,
             MarshalServiceRuntimeDescription msrd) {
-        TreeSet<String> set = new TreeSet<String>();
+        
         OperationDescription[] opDescs = endpointInterfaceDesc.getDispatchableOperations();
 
-        // Build a set of packages from all of the opertions
+        // Inspect the @XmlSeeAlso classes on the interface
+        addXmlSeeAlsoPackages(endpointInterfaceDesc.getSEIClass(), msrd, set);
+        
+        
+        // Build a set of packages from all of the operations
         if (opDescs != null) {
             for (int i = 0; i < opDescs.length; i++) {
                 getPackagesFromAnnotations(opDescs[i], set, msrd);
             }
         }
-        return set;
+        return;
     }
 
     /**
@@ -266,19 +282,19 @@ public class PackageSetBuilder {
 
         FaultBeanDesc faultBeanDesc = msrd.getFaultBeanDesc(faultDesc);
         if(faultBeanDesc == null){
-        	if(log.isDebugEnabled()){
-        		log.debug("faultBeanDesc from MarshallServiceRuntimeDescription is null");
-        	}
-        	//NO FaultBeanDesc found nothing we can do.
-        	return;
+            if(log.isDebugEnabled()){
+                log.debug("faultBeanDesc from MarshallServiceRuntimeDescription is null");
+            }
+            //NO FaultBeanDesc found nothing we can do.
+            return;
         }
         String faultBeanName = faultBeanDesc.getFaultBeanClassName();
         if(faultBeanName == null){
-        	if(log.isDebugEnabled()){
-        		log.debug("FaultBeanName is null");
-        	}
-        	//We cannot load the faultBeanName
-        	return;
+            if(log.isDebugEnabled()){
+                log.debug("FaultBeanName is null");
+            }
+            //We cannot load the faultBeanName
+            return;
         }
         Class faultBean = loadClass(faultBeanName);
         if (faultBean != null) {
@@ -312,6 +328,7 @@ public class PackageSetBuilder {
             if (pkg != null) {
                 set.add(pkg);
             }
+            addXmlSeeAlsoPackages(tClass, msrd, set);
         }
 
         // Set the package for the element
@@ -333,6 +350,7 @@ public class PackageSetBuilder {
                 if (pkg != null) {
                     set.add(pkg);
                 }
+                addXmlSeeAlsoPackages(tClass, msrd, set);
             }
         }
     }
@@ -405,6 +423,34 @@ public class PackageSetBuilder {
         return pkg;
     }
 
+    private static void addXmlSeeAlsoPackages(Class clz, 
+                                              MarshalServiceRuntimeDescription msrd, 
+                                              TreeSet<String> set) {
+        if (clz != null) {
+            AnnotationDesc aDesc = msrd.getAnnotationDesc(clz);
+            if (aDesc != null) {
+                Class[] seeAlso = aDesc.getXmlSeeAlsoClasses();
+                if (seeAlso != null) {
+                    for (int i=0; i<seeAlso.length; i++) {
+                        String pkg =
+                            (seeAlso[i] == null) ? null : 
+                                (seeAlso[i].getPackage() == null) ? "" : 
+                                    seeAlso[i].getPackage().getName();
+                        if (pkg != null) {
+                            set.add(pkg);
+                        }
+                    }
+                }
+            }
+            
+            Class[] interfaces = clz.getInterfaces();
+            if (interfaces != null) {
+                for (int i=0; i<interfaces.length; i++) {
+                    addXmlSeeAlsoPackages(interfaces[i], msrd, set);
+                }
+            }
+        }
+    }
     /**
      * Loads the class
      *
@@ -520,5 +566,25 @@ public class PackageSetBuilder {
         }
 
         return cl;
+    }
+    /**
+     * Get the Serivce Impl Class by looking at the AxisService
+     * @param endpointDescription
+     * @return class name or null
+     */
+    static private String getServiceImplClassName(EndpointDescription endpointDescription) {
+        String result = null;
+        if (endpointDescription != null) {
+            AxisService as = endpointDescription.getAxisService();
+            if (as != null) {
+                Parameter param = as.getParameter(org.apache.axis2.Constants.SERVICE_CLASS);
+
+                // If there was no implementation class, we should not go any further
+                if (param != null) {
+                    result = ((String)param.getValue()).trim();
+                }
+            }
+        }
+        return result;
     }
 }

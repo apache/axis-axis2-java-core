@@ -19,16 +19,21 @@
 
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -79,8 +84,15 @@ public class AnnotationBuilder {
      * @param map
      */
     private static void getAnnotationDescs(EndpointDescription endpointDesc,
-                                           ArtifactProcessor ap, Map<String,
-            AnnotationDesc> map) {
+                                           ArtifactProcessor ap, 
+                                           Map<String, AnnotationDesc> map) {
+        String implClassName = getServiceImplClassName(endpointDesc);
+        if (implClassName != null) {
+            Class clz = loadClass(implClassName);
+            if (clz != null) {
+                addAnnotation(clz, map);
+            }
+        }
         EndpointInterfaceDescription endpointInterfaceDesc =
                 endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
@@ -97,6 +109,11 @@ public class AnnotationBuilder {
     private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc,
                                            ArtifactProcessor ap,
                                            Map<String, AnnotationDesc> map) {
+        Class clz = endpointInterfaceDesc.getSEIClass();
+        if (clz != null) {
+            addAnnotation(clz, map);
+        }
+        
         // Don't dig into the async operations
         OperationDescription[] opDescs = endpointInterfaceDesc.getDispatchableOperations();
 
@@ -235,6 +252,16 @@ public class AnnotationBuilder {
                     map.put(class2.getCanonicalName(), desc2);
                 }
             }
+            
+            // Inspect the interfaces.  This is done to pick up other
+            // @XmlSeeAlso usages.
+            Class[] interfaces = cls.getInterfaces();
+            if (interfaces != null) {
+                for (int i=0; i<interfaces.length; i++) {
+                    addAnnotation(interfaces[i], map);
+                }
+            }
+            
         }
     }
 
@@ -317,5 +344,26 @@ public class AnnotationBuilder {
         }
 
         return cl;
+    }
+    
+    /**
+     * Get the Serivce Impl Class by looking at the AxisService
+     * @param endpointDescription
+     * @return class name or null
+     */
+    static private String getServiceImplClassName(EndpointDescription endpointDescription) {
+        String result = null;
+        if (endpointDescription != null) {
+            AxisService as = endpointDescription.getAxisService();
+            if (as != null) {
+                Parameter param = as.getParameter(org.apache.axis2.Constants.SERVICE_CLASS);
+
+                // If there was no implementation class, we should not go any further
+                if (param != null) {
+                    result = ((String)param.getValue()).trim();
+                }
+            }
+        }
+        return result;
     }
 }
