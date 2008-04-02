@@ -554,6 +554,9 @@ public class XMLUtils {
     }
     
     public static SOAPHeaderBlock toSOAPHeaderBlock(OMElement omElement, SOAPFactory factory) throws Exception {
+        if (omElement instanceof SOAPHeaderBlock)
+            return (SOAPHeaderBlock) omElement;
+        
         QName name = omElement.getQName();
         String localName = name.getLocalPart();
         OMNamespace namespace = factory.createOMNamespace(name.getNamespaceURI(), name.getPrefix());
