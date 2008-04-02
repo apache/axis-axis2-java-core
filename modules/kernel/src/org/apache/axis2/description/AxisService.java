@@ -1116,15 +1116,13 @@ public class AxisService extends AxisDescription {
 	 */
 	private void changeImportAndIncludeLocations(Definition definition) {
 
-
 		// adjust the schema locations in types section
 		Types types = definition.getTypes();
 		if (types != null) {
 			List extensibilityElements = types.getExtensibilityElements();
 			Object extensibilityElement = null;
 			Schema schema = null;
-			for (Iterator iter = extensibilityElements.iterator(); iter
-					.hasNext();) {
+			for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
 				extensibilityElement = iter.next();
 				if (extensibilityElement instanceof Schema) {
 					schema = (Schema) extensibilityElement;
@@ -1132,6 +1130,23 @@ public class AxisService extends AxisDescription {
 				}
 			}
 		}
+		
+		Iterator iter = definition.getImports().values().iterator();
+		Vector values = null;
+		Import wsdlImport = null;
+		String originalImprotString = null;
+		for (; iter.hasNext();) {
+		    values = (Vector) iter.next();
+		    for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
+		        wsdlImport = (Import) valuesIter.next();
+		        originalImprotString = wsdlImport.getLocationURI();
+		        if (originalImprotString.indexOf("://") == -1){
+		            wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
+		        }
+		        changeImportAndIncludeLocations(wsdlImport.getDefinition());
+		    }
+		}
+	
 	}
 
 	/**
@@ -1151,6 +1166,29 @@ public class AxisService extends AxisDescription {
 		}
 	}
 
+	private void updateSchemaLocation(XmlSchema schema) {
+	    XmlSchemaObjectCollection includes = schema.getIncludes();
+	    for (int j = 0; j < includes.getCount(); j++) {
+	        Object item = includes.getItem(j);
+	        if (item instanceof XmlSchemaExternal) {
+	            XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
+	            XmlSchema s = xmlSchemaExternal.getSchema();
+	            updateSchemaLocation(s, xmlSchemaExternal);
+	        }
+	    }
+	}
+	   
+	private void updateSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal) {
+	    if (s != null) {
+	        String schemaLocation = xmlSchemaExternal.getSchemaLocation();
+
+	        if (schemaLocation.indexOf("://") == -1 && schemaLocation.indexOf("?xsd=") == -1) {	            
+	            String newscheamlocation = this.name + "?xsd=" + schemaLocation;
+	            xmlSchemaExternal.setSchemaLocation(newscheamlocation);                               
+	        }
+	    }
+	}
+	   
 	private void processImport(Node importNode) {
 		NamedNodeMap nodeMap = importNode.getAttributes();
 		Node attribute;
@@ -1185,6 +1223,7 @@ public class AxisService extends AxisDescription {
 		if (supplier != null) {
 			XmlSchema schema = supplier.getSchema(this, xsd);
 			if (schema != null) {
+			    updateSchemaLocation(schema);
 				schema.write(new OutputStreamWriter(out, "UTF8"));
 				out.flush();
 				out.close();
@@ -1277,7 +1316,6 @@ public class AxisService extends AxisDescription {
 			try {
 				Definition definition = supplier.getWSDL(this);
 				if (definition != null) {
-                    changeImportAndIncludeLocations(definition);
                     printDefinitionObject(getWSDLDefinition(definition, null),
 							out, requestIP);
 				}
@@ -2460,7 +2498,7 @@ public class AxisService extends AxisDescription {
 		}
 
 	}
-
+		
 	/**
 	 * Adjusts a given schema location
 	 * 
