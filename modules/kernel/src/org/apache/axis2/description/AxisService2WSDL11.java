@@ -45,7 +45,6 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
 import org.apache.neethi.PolicyRegistry;
-import org.apache.woden.wsdl20.Endpoint;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
@@ -58,8 +57,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 public class AxisService2WSDL11 implements Java2WSDLConstants {
 
