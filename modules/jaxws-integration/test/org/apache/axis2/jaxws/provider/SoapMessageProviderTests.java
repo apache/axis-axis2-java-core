@@ -407,6 +407,23 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         
     }
     /**
+     * This is a negative test to insure that we don't allow creation of a dispatch with
+     * type Soap using Payload mode
+     */
+    public void testInvalidTypeWithMode(){
+        try{       
+            Service svc = Service.create(serviceName);
+            svc.addPort(portName, null, endpointUrl);
+            Dispatch<SOAPMessage> dispatch = 
+            	svc.createDispatch(portName, SOAPMessage.class, Service.Mode.PAYLOAD);
+            fail("Did not catch exception for invalid Dispatch with Payload Mode");
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * @return
      * @throws Exception
      */

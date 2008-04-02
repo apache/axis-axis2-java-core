@@ -270,9 +270,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("dispatchNoEndpointReference"));
         }
+        
         if (!isValidDispatchType(type)) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
+        }
+        
+        if (!isValidDispatchTypeWithMode(type, mode)) {
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("dispatchInvalidTypeWithMode"));
         }
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
@@ -369,9 +375,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("createDispatchFail0"));
         }
+        
         if (!isValidDispatchType(type)) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
+        }
+
+        if (!isValidDispatchTypeWithMode(type, mode)) {
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("dispatchInvalidTypeWithMode"));
         }
 
         EndpointDescription endpointDesc =
@@ -745,6 +757,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                 clazz == Source.class ||
                 clazz == DataSource.class ||
                 clazz == SOAPMessage.class);
+    }
+
+    private boolean isValidDispatchTypeWithMode(Class clazz, Mode mode) {
+
+    	if (clazz != null && !(clazz == SOAPMessage.class && mode.equals(Service.Mode.PAYLOAD))) {
+    			return true;
+    	} else {
+    		return false;
+    	}
+  
     }
 
     /** @return ClassLoader */
