@@ -775,11 +775,13 @@ public class AxisConfiguration extends AxisDescription {
      * @return AxisService
      */
     public AxisService getServiceForActivation(String serviceName) {
-        AxisService axisService = (AxisService) allServices.get(serviceName);
+        AxisService axisService = null;
+        axisService = (AxisService) allServices.get(serviceName);
         if (axisService != null) {
             return axisService;
         } else {
-            return null;
+            axisService = (AxisService) allEndpoints.get(serviceName);
+            return axisService;
         }
     }
 
