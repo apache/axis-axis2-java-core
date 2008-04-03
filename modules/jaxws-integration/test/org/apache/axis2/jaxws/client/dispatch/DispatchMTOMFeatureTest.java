@@ -126,16 +126,11 @@ public class DispatchMTOMFeatureTest extends InterceptableClientTestCase {
         InvocationContext ic = testController.getInvocationContext();
         MessageContext request = ic.getRequestMessageContext();
         
-        assertFalse("MTOM should not be enabled.  The threshold was not exceeded.", request.getMessage().isMTOMEnabled());
-    }
-    
-    /*
-     * Test the configuration of the threshold for MTOM when an attachment is specified.
-     * In this case, MTOM should be enabled on the Message if the attachment specified is
-     * larger than the threshold.
-     */
-    public void testMTOMFeatureThresholdWithAttachment() {
-        
+        // A Threshold indicates that MTOM should be enabled.
+        // The decision about whether the attachment is inlined is made on a per attachment
+        // basis in Axiom...and cannot be tested in unit test that does not send the message
+        // to the server.
+        assertTrue("MTOM should be enabled.", request.getMessage().isMTOMEnabled());
     }
     
     /*

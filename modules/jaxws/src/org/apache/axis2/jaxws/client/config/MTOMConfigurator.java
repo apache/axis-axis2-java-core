@@ -65,14 +65,19 @@ public class MTOMConfigurator implements ClientConfigurator {
             int threshold = mtomFeature.getThreshold();
             List<String> attachmentIDs = requestMsg.getAttachmentIDs();
             
-            // If a threshold wasn't configured, enable MTOM for all cases.
+            // Enable MTOM
+            requestMsg.setMTOMEnabled(true);
+            
+            
             if (threshold <= 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Enabling MTOM with no threshold.");
-                }
-                requestMsg.setMTOMEnabled(true);
+                }             
             }
             else if (attachmentIDs != null) {
+                // REVIEW This processing will be moved to axiom.
+                // DISABLING FOR NOW
+                /*
             	long size = 0L;
             	
             	for (String attachmentID : attachmentIDs) {
@@ -102,8 +107,10 @@ public class MTOMConfigurator implements ClientConfigurator {
             	    }
             	}
             	
-            	if (size > threshold)
+            	if (size > threshold) {
             	    requestMsg.setMTOMEnabled(true);
+                }
+                */
             }
         }
         else {

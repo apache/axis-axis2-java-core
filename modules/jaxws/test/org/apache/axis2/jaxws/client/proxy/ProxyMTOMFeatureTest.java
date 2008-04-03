@@ -116,16 +116,11 @@ public class ProxyMTOMFeatureTest extends InterceptableClientTestCase {
         MessageContext request = ic.getRequestMessageContext();
         
         assertTrue("Request should not be null.", request != null);
-        assertTrue("MTOM should NOT be abled on the Message, the threshold was not met.", !request.getMessage().isMTOMEnabled());
-    }
-    
-    /*
-     * Test the configuration of the threshold for MTOM when an attachment is specified.
-     * In this case, MTOM should be enabled on the Message if the attachment specified is
-     * larger than the threshold.
-     */
-    public void testMTOMFeatureThresholdWithAttachment() {
-        
+        // A Threshold indicates that MTOM should be enabled.
+        // The decision about whether the attachment is inlined is made on a per attachment
+        // basis in Axiom...and cannot be tested in unit test that does not send the message
+        // to the server.
+        assertTrue("MTOM should be enabled.", request.getMessage().isMTOMEnabled());
     }
     
     @WebService()

@@ -245,4 +245,43 @@ public class JAXBProviderTests extends ProviderTestCase {
 
         assertTrue(response != null);
     }
+    
+    /**
+     * This test dispatches to the SOAPMessage CheckMTOM endpoint
+     * which verifies that an attachment was sent (versus inline)
+     * @throws Exception
+     */
+    public void testMTOMAttachmentImageProvider_MTOMFeatureThreshhold() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        Service svc = Service.create(PROVIDER_SERVICE_NAME);
+        svc.addPort(portName, null, PROVIDER_ENDPOINT_URL);
+        
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        // Make sure MTOMFeature with a small threshhold (1) works correctly
+        // by sending an optimized MTOM message.
+        MTOMFeature mtom = new MTOMFeature(1);
+        
+        Dispatch<Object> dispatch = svc
+                .createDispatch(portName, jbc, Service.Mode.PAYLOAD, mtom);
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        SendImage request = factory.createSendImage();
+        request.setInput(imageDepot);
+        
+        // The provider service returns the same image back if successful
+        SendImage response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
+    }
 }
