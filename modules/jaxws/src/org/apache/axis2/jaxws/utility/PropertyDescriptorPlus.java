@@ -185,7 +185,7 @@ public class PropertyDescriptorPlus {
         } catch (RuntimeException e) {
             
             if (DEBUG_ENABLED) {
-                String propClass = (propValue == null) ? "null" : propValue.getClass().getName();
+                String propClass = propValue.getClass().getName();
                 log.debug("An exception occurred while attempting to set a property on " +
                           targetBean.getClass().getName());
                 log.debug("The setter method is " + writeMethod );

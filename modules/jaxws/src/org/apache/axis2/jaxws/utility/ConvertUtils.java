@@ -273,7 +273,7 @@ public class ConvertUtils {
         }
 
         if (arg == null) {
-            return arg;
+            return null;
         }
 
         // The arg may be an array or List 
