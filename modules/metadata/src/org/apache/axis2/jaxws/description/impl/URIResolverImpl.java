@@ -41,15 +41,15 @@ import java.security.PrivilegedActionException;
 /** This class is used to locate xml schemas that are imported by wsdl documents. */
 public class URIResolverImpl implements URIResolver {
 
-    private final String HTTP_PROTOCOL = "http";
+    private static final String HTTP_PROTOCOL = "http";
 
-    private final String HTTPS_PROTOCOL = "https";
+    private static final String HTTPS_PROTOCOL = "https";
 
-    private final String FILE_PROTOCOL = "file";
+    private static final String FILE_PROTOCOL = "file";
 
-    private final String JAR_PROTOCOL = "jar";
+    private static final String JAR_PROTOCOL = "jar";
     
-    private final String BUNDLE_RESOURCE_PROTOCOL = "bundleresource";
+    private static final String BUNDLE_RESOURCE_PROTOCOL = "bundleresource";
 
     private ClassLoader classLoader;
     
