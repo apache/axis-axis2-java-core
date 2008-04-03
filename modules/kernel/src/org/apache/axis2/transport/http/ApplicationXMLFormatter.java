@@ -184,12 +184,6 @@ public class ApplicationXMLFormatter implements MessageFormatter {
             contentType += "; charset=" + encoding;
         }
 
-        // if soap action is there (can be there is soap response MEP is used) add it.
-        if ((soapAction != null)
-                && !"".equals(soapAction.trim())
-                && !"\"\"".equals(soapAction.trim())) {
-            contentType = contentType;
-        }
         if (log.isDebugEnabled()) {
             log.debug("contentType returned =" + contentType);
         }
