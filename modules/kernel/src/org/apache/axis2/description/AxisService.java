@@ -1343,10 +1343,6 @@ public class AxisService extends AxisDescription {
 		printWSDL(out, null);
 	}
 
-	private void setPortAddress(Definition definition) throws AxisFault {
-		setPortAddress(definition, null);
-	}
-
 	private void setPortAddress(Definition definition, String requestIP)
 			throws AxisFault {
 		Iterator serviceItr = definition.getServices().values().iterator();
