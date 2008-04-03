@@ -2067,11 +2067,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                    "and use the type attribute.");
             } else {
                 // The presense of an element means that a wrapper xsd element is not needed.
-                if (isOutMessage) {
-                    boe.setWrappedOutput(false);
-                } else {
-                    boe.setWrappedOutput(false);
-                }
+                boe.setWrappedOutput(false);
                 if (log.isDebugEnabled()) {
                     log.debug("The binding operation " + bindingOperationName + 
                               " references message part " +
