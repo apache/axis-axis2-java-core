@@ -329,30 +329,6 @@ public class XMLFaultUtils {
     }
 
 
-    private static Block[] getDetailBlocks(SOAPFault soapFault) throws WebServiceException {
-        try {
-            Block[] blocks = null;
-            SOAPFaultDetail detail = soapFault.getDetail();
-            if (detail != null) {
-                // Create a block for each element
-                OMBlockFactory bf =
-                        (OMBlockFactory)FactoryRegistry.getFactory(OMBlockFactory.class);
-                ArrayList<Block> list = new ArrayList<Block>();
-                Iterator it = detail.getChildElements();
-                while (it.hasNext()) {
-                    OMElement om = (OMElement)it.next();
-                    Block b = bf.createFrom(om, null, om.getQName());
-                    list.add(b);
-                }
-                blocks = new Block[list.size()];
-                blocks = list.toArray(blocks);
-            }
-            return blocks;
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-
     private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault)
             throws WebServiceException {
         try {
