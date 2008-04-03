@@ -194,10 +194,6 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
-
     /**
      * Searches for a ServiceGroupContext in the map with given id as the key.
      * <pre>
