@@ -469,7 +469,7 @@ public class EndpointController {
 
         Boolean value = (Boolean)
                 requestMsgContext.getAxisMessageContext().getProperty(Constants.SAVE_REQUEST_MSG);
-        if (value != null && value == Boolean.TRUE) {
+        if (value != null && value.booleanValue()) {
             // REVIEW: This does not properly account for attachments.
             Message m = requestMsgContext.getMessage();
             String savedMsg = m.getAsOMElement().toString();
@@ -487,7 +487,7 @@ public class EndpointController {
 
         Boolean value = (Boolean)
                 requestMsgContext.getAxisMessageContext().getProperty(Constants.SAVE_REQUEST_MSG);
-        if (value != null && value == Boolean.TRUE) {
+        if (value != null && value.booleanValue()) {
             // REVIEW: This does not properly account for attachments.
             String savedMsg = (String)requestMsgContext.getAxisMessageContext()
                     .getProperty(Constants.SAVED_REQUEST_MSG_TEXT);
