@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
@@ -276,8 +277,11 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
             }
 
             jaxwsEPR = EndpointReferenceUtils.convertFromAxis2(epr, addressingNamespace);
-        }
-        catch (Exception e) {
+        } catch (UnsupportedOperationException e) {
+            throw e;
+        } catch (WebServiceException e) {
+            throw e;
+        } catch (Exception e) {
             throw ExceptionFactory.
                 makeWebServiceException(Messages.getMessage("endpointRefConstructionFailure3", 
                                                             e.toString()));
