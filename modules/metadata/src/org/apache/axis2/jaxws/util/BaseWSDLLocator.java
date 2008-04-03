@@ -225,7 +225,7 @@ public abstract class BaseWSDLLocator {
     */
     private static final char WSDL_PATH_SEPERATOR_CHAR = '/';
     private static final String WSDL_PATH_SEPERATOR =
-        (new Character(WSDL_PATH_SEPERATOR_CHAR)).toString();
+        (Character.valueOf(WSDL_PATH_SEPERATOR_CHAR)).toString();
 
     protected String normalizePath(String parentLocation, String relativeLocation) {
         if (log.isDebugEnabled()) {

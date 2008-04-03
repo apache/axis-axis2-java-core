@@ -51,7 +51,7 @@ public class SafeObjectInputStream implements ObjectInput, ObjectStreamConstants
     
     // A buffer is used when Object is persisted as bytes
     private byte[] buffer = null;
-    private final int BUFFER_MIN_SIZE = 4096;
+    private static final int BUFFER_MIN_SIZE = 4096;
     
     /**
      * Add the SafeObjectInputStream if necessary

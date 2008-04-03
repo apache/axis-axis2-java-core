@@ -220,7 +220,7 @@ public class XSDListUtils {
         if (componentType == char.class) {
             Character ch = null;
             if (value != null && value.length() > 0) {
-                ch = new Character(value.charAt(0));
+                ch = Character.valueOf(value.charAt(0));
             }
             return ch;
         }

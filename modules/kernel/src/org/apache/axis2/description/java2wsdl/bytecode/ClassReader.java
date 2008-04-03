@@ -48,17 +48,17 @@ import java.util.Map;
 public class ClassReader extends ByteArrayInputStream {
     // constants values that appear in java class files,
     // from jvm spec 2nd ed, section 4.4, pp 103
-    private final int CONSTANT_Class = 7;
-    private final int CONSTANT_Fieldref = 9;
-    private final int CONSTANT_Methodref = 10;
-    private final int CONSTANT_InterfaceMethodref = 11;
-    private final int CONSTANT_String = 8;
-    private final int CONSTANT_Integer = 3;
-    private final int CONSTANT_Float = 4;
-    private final int CONSTANT_Long = 5;
-    private final int CONSTANT_Double = 6;
-    private final int CONSTANT_NameAndType = 12;
-    private final int CONSTANT_Utf8 = 1;
+    private static final int CONSTANT_Class = 7;
+    private static final int CONSTANT_Fieldref = 9;
+    private static final int CONSTANT_Methodref = 10;
+    private static final int CONSTANT_InterfaceMethodref = 11;
+    private static final int CONSTANT_String = 8;
+    private static final int CONSTANT_Integer = 3;
+    private static final int CONSTANT_Float = 4;
+    private static final int CONSTANT_Long = 5;
+    private static final int CONSTANT_Double = 6;
+    private static final int CONSTANT_NameAndType = 12;
+    private static final int CONSTANT_Utf8 = 1;
     /**
      * the constant pool.  constant pool indices in the class file
      * directly index into this array.  The value stored in this array

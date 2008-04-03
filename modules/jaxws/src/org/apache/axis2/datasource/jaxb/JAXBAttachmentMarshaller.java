@@ -47,7 +47,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
 
     private MessageContext msgContext;
     private XMLStreamWriter writer;
-    private final String APPLICATION_OCTET = "application/octet-stream";
+    private static final String APPLICATION_OCTET = "application/octet-stream";
     
     /**
      * Construct the JAXBAttachmentMarshaller that has access to the MessageContext
