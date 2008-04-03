@@ -102,7 +102,8 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         
         // check whether someone has explicitly set which addressing namespace to expect.
         Iterator iterator = null;
-        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        Parameter namespaceParam = msgContext.getParameter(WS_ADDRESSING_VERSION);
+        String namespace = Utils.getParameterValue(namespaceParam);
         
         if (namespace == null) {
             namespace = Final.WSA_NAMESPACE;
