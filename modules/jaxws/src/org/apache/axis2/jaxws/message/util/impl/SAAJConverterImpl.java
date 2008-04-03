@@ -298,10 +298,12 @@ public class SAAJConverterImpl implements SAAJConverter {
                     case XMLStreamReader.ATTRIBUTE: {
                         String eventName = "ATTRIBUTE";
                         this._unexpectedEvent(eventName);
+                        break;
                     }
                     case XMLStreamReader.NAMESPACE: {
                         String eventName = "NAMESPACE";
                         this._unexpectedEvent(eventName);
+                        break;
                     }
                     case XMLStreamReader.END_ELEMENT: {
                         if (parent instanceof SOAPEnvelope) {
