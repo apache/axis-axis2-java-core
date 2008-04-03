@@ -192,7 +192,7 @@ class ServiceDescriptionImpl
             if (log.isDebugEnabled()) {
                 log.debug("Wsdl location overriden by sparse composite; overriden value: " + this.wsdlURL);
             }
-            this.wsdlURL = sparseCompositeWsdlURL == null ? null : sparseCompositeWsdlURL.toString();
+            this.wsdlURL = sparseCompositeWsdlURL.toString();
         } else {
             this.wsdlURL = wsdlURL == null ? null : wsdlURL.toString();
         }
