@@ -354,7 +354,7 @@ public class HandlerChainProcessor {
             // RuntimeException and ProtocolException
             if(log.isDebugEnabled()) {
                log.debug("An exception was thrown during the handleMessage() invocation");
-               log.debug("Exception: " + re.getClass().getName() + ":" +re.getMessage());
+               log.debug("Exception: ", re);
             }
             
             savedException = re;
