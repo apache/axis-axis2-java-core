@@ -1140,7 +1140,7 @@ public class AxisService extends AxisDescription {
 		    for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
 		        wsdlImport = (Import) valuesIter.next();
 		        originalImprotString = wsdlImport.getLocationURI();
-		        if (originalImprotString.indexOf("://") == -1){
+		        if (originalImprotString.indexOf("://") == -1 && originalImprotString.indexOf("?wsdl=") == -1){
 		            wsdlImport.setLocationURI(this.name + "?wsdl=" + originalImprotString);
 		        }
 		        changeImportAndIncludeLocations(wsdlImport.getDefinition());
@@ -1316,6 +1316,7 @@ public class AxisService extends AxisDescription {
 			try {
 				Definition definition = supplier.getWSDL(this);
 				if (definition != null) {
+				    changeImportAndIncludeLocations(definition);
                     printDefinitionObject(getWSDLDefinition(definition, null),
 							out, requestIP);
 				}
