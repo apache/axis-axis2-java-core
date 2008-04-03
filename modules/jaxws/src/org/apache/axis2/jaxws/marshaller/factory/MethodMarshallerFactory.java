@@ -103,18 +103,10 @@ public class MethodMarshallerFactory {
                                                  ClassLoader cl) {
 
         MethodMarshaller marshaller = null;
-        if (isClient) {
-            if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
-                marshaller = createDocLitMethodMarshaller(op, isClient, cl);
-            } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
-                marshaller = createRPCLitMethodMarshaller(isClient);
-            }
-        } else { // SERVER
-            if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
-                marshaller = createDocLitMethodMarshaller(op, isClient, cl);
-            } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
-                marshaller = createRPCLitMethodMarshaller(isClient);
-            }
+        if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
+            marshaller = createDocLitMethodMarshaller(op, isClient, cl);
+        } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
+            marshaller = createRPCLitMethodMarshaller(isClient);
         }
         return marshaller;
     }
