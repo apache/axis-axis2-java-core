@@ -38,6 +38,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
 import javax.xml.ws.EndpointReference;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import java.io.IOException;
 import java.net.URI;
@@ -53,6 +54,9 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     private EndpointDescription endpointDesc;
     private Binding binding;
     private SimpleHttpServer server;
+    private List<Source> metadata;
+    private Map<String, Object> properties;
+    private Executor executor;
 
     public EndpointImpl(Object o) {
         implementor = o;
@@ -90,7 +94,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     * @see javax.xml.ws.Endpoint#getMetadata()
     */
     public List<Source> getMetadata() {
-        return null;
+        return this.metadata;
     }
 
     /*
@@ -98,7 +102,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     * @see javax.xml.ws.Endpoint#setMetadata(java.util.List)
     */
     public void setMetadata(List<Source> list) {
-        return;
+        this.metadata = list;
     }
 
     /*
@@ -106,7 +110,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     * @see javax.xml.ws.Endpoint#getProperties()
     */
     public Map<String, Object> getProperties() {
-        return null;
+        return this.properties;
     }
 
     /*
@@ -114,7 +118,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
     * @see javax.xml.ws.Endpoint#setProperties(java.util.Map)
     */
     public void setProperties(Map<String, Object> properties) {
-        return;
+        this.properties = properties;
     }
 
     /*
@@ -130,7 +134,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#getExecutor()
      */
     public Executor getExecutor() {
-        return null;
+        return this.executor;
     }
 
     /*
@@ -204,7 +208,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#setExecutor(java.util.concurrent.Executor)
      */
     public void setExecutor(Executor executor) {
-
+        this.executor = executor;
     }
 
     /*
@@ -223,14 +227,19 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     @Override
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        if (!isPublished()) {
+            throw new WebServiceException("Endpoint is not published");
+        }
+        
+        if (!BindingUtils.isSOAPBinding(binding.getBindingID())) {
+            throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
+        }
+        
         EndpointReference jaxwsEPR = null;
         String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
-        
-        if (!BindingUtils.isSOAPBinding(binding.getBindingID()))
-            throw new UnsupportedOperationException("This method is unsupported for the binding: " + binding.getBindingID());
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
         	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, null, addressingNamespace);
