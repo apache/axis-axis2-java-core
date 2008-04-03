@@ -46,7 +46,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -497,7 +496,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
                     OMElement omElement = (OMElement)iterator.next();
-                    SOAPHeaderBlock newElement = XMLUtils.toSOAPHeaderBlock(omElement, factory);
+                    SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
                     if (isFinalAddressingNamespace) {
                         newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
                                                Final.WSA_TYPE_ATTRIBUTE_VALUE,
@@ -520,7 +519,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             			Iterator iterator = referenceparameters.iterator();
             			while (iterator.hasNext()) {
             				OMElement omElement = (OMElement)iterator.next();
-                            SOAPHeaderBlock newElement = XMLUtils.toSOAPHeaderBlock(omElement, factory);
+                            SOAPHeaderBlock newElement = ElementHelper.toSOAPHeaderBlock(omElement, factory);
             				if (isFinalAddressingNamespace) {
             					newElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
             							Final.WSA_TYPE_ATTRIBUTE_VALUE,

@@ -23,14 +23,10 @@ import com.ibm.wsdl.Constants;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.ds.ByteArrayDataSource;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -551,21 +547,6 @@ public class XMLUtils {
             builder.close();
         }
         return omElement;
-    }
-    
-    public static SOAPHeaderBlock toSOAPHeaderBlock(OMElement omElement, SOAPFactory factory) throws Exception {
-        if (omElement instanceof SOAPHeaderBlock)
-            return (SOAPHeaderBlock) omElement;
-        
-        QName name = omElement.getQName();
-        String localName = name.getLocalPart();
-        OMNamespace namespace = factory.createOMNamespace(name.getNamespaceURI(), name.getPrefix());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        omElement.serialize(baos);
-        ByteArrayDataSource bads = new ByteArrayDataSource(baos.toByteArray(), "utf-8");
-        SOAPHeaderBlock block = factory.createSOAPHeaderBlock(localName, namespace, bads);
-        
-        return block;
     }
 
 
