@@ -64,6 +64,7 @@ Guide</a></li>
 Administrator's Guide</a></li>
 <li><a href="Axis2ArchitectureGuide.html" target=
 "mainFrame">Architecture Guide</a></li>
+<li><a href="jaxws-guide.html" target="mainFrame">JAXWS Guide</a></li>
 <li><a href="pojoguide.html" target="mainFrame">POJO Guide</a></li>
 <li><a href="spring.html" target="mainFrame">Spring Guide</a></li>
 <li><a href="modules.html" target="mainFrame">ModulesGuide</a></li>
