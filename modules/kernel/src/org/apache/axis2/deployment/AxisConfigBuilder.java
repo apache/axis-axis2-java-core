@@ -291,6 +291,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     Class clazz = Loader.loadClass(className);
                     ThreadContextMigrator migrator = (ThreadContextMigrator) clazz.newInstance();
                     ThreadContextMigratorUtil.addThreadContextMigrator(axisConfig, listId, migrator);
+                } catch (UnsupportedClassVersionError e){
+                    log.info("Disabled - " + className + " - " + e.getMessage());
                 } catch (Exception e) {
                     if (log.isTraceEnabled()) {
                         log.trace(
@@ -372,6 +374,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             try {
                 Class deployerClass = Loader.loadClass(deployerClassName);
                 deployer = (Deployer) deployerClass.newInstance();
+            } catch (UnsupportedClassVersionError ex) {
+                log.info("Disabled - " + deployerClassName + " - " + ex.getMessage());
+                continue;
             } catch (Exception e) {
                 log.info("Unable to instantiate deployer " + deployerClassName);
                 log.debug(e.getMessage(), e);
@@ -504,12 +509,16 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 HandlerDescription handler = processHandler(omElement, axisConfig, phaseName);
 
                 handler.getRules().setPhaseName(phaseName);
-                if(Utils.loadHandler(axisConfig.getSystemClassLoader(), handler)){
-                    try {
-                        phase.addHandler(handler);
-                    } catch (PhaseException e) {
-                        throw new DeploymentException(e);
+                try {
+                    if (Utils.loadHandler(axisConfig.getSystemClassLoader(), handler)) {
+                        try {
+                            phase.addHandler(handler);
+                        } catch (PhaseException e) {
+                            throw new DeploymentException(e);
+                        }
                     }
+                } catch (UnsupportedClassVersionError e) {
+                    log.info("Disabled - " + handler + " - " + e.getMessage());
                 }
             }
 

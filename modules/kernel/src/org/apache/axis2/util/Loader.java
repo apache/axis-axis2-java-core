@@ -221,7 +221,7 @@ public class Loader {
                 }
             }
         } catch (UnsupportedClassVersionError e) {
-            log.error(e.getMessage(), e);
+            log.debug(e);
             throw e;
         } catch (Throwable e) {
             log.debug(e);
@@ -250,7 +250,7 @@ public class Loader {
                 }
             }
         } catch (UnsupportedClassVersionError e) {
-            log.error(e.getMessage(), e);
+            log.debug(e);
             throw e;
         } catch (Throwable e) {
             log.debug(e);

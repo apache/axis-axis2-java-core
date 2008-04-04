@@ -172,7 +172,9 @@ public class Utils {
 					});
 			handler.init(desc);
 			desc.setHandler(handler);
-		} catch (ClassNotFoundException e) {
+        } catch (UnsupportedClassVersionError e) {
+            throw e;
+        } catch (ClassNotFoundException e) {
 			if (handlername.indexOf("jaxws") > 0) {
 				log.warn("[JAXWS] - unable to load " + handlername);
 				return false;
