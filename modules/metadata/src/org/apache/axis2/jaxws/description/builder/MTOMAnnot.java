@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 
 public class MTOMAnnot implements MTOM {
 
-    private boolean enabled;
+    private boolean enabled = true;
     private int threshold;
     
     public boolean enabled() {

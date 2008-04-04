@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 
 public class RespectBindingAnnot implements RespectBinding {
 
-    private boolean enabled;
+    private boolean enabled = true;
     
     public boolean enabled() {
         return enabled;

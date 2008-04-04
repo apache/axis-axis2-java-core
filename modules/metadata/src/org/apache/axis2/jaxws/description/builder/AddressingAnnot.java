@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 
 public class AddressingAnnot implements Addressing {
 
-    private boolean enabled;
+    private boolean enabled = true;
     private boolean required;
     
     public boolean enabled() {
