@@ -57,6 +57,7 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.XMLPrettyPrinter;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -261,6 +262,8 @@ public class AxisService extends AxisDescription {
 	private String soapNsUri;
 	private String endpointName;
 	private String endpointURL;
+    
+    private List importedNamespaces;
 
 	private boolean clientSide = false;
 
@@ -376,7 +379,6 @@ public class AxisService extends AxisDescription {
 		objectSupplier = new DefaultObjectSupplier();
 		dataLocators = new HashMap();
 		dataLocatorClassNames = new HashMap();
-
 	}
 
 	/**
@@ -1594,15 +1596,51 @@ public class AxisService extends AxisDescription {
 	 * @return Returns AxisOperation.
 	 */
 	public AxisOperation getOperation(QName operationName) {
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+            log.debug("Get operation for " + operationName);
+                
 		AxisOperation axisOperation = (AxisOperation) getChild(operationName);
-		if (axisOperation == null) {
+		
+        if (axisOperation == null) {
 			axisOperation = (AxisOperation) getChild(new QName(
 					getTargetNamespace(), operationName.getLocalPart()));
+            
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                log.debug("Target namespace: " + getTargetNamespace());
 		}
+        
 		if (axisOperation == null) {
 			axisOperation = (AxisOperation) operationsAliasesMap
 					.get(operationName.getLocalPart());
+            
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                log.debug("Operations aliases map: " + operationsAliasesMap);
 		}
+        
+        //The operation may be associated with a namespace other than the
+        //target namespace, e.g. if the operation is from an imported wsdl.
+        if (axisOperation == null) {            
+            List namespaces = getImportedNamespaces();
+            
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+                log.debug("Imported namespaces: " + namespaces);
+
+            if (namespaces != null) {
+                Iterator iterator = namespaces.iterator();
+                
+                while (iterator.hasNext()) {
+                    String namespace = (String) iterator.next();
+                    axisOperation = (AxisOperation) getChild(new QName(
+                            namespace, operationName.getLocalPart()));
+                    
+                    if (axisOperation != null)
+                        break;
+                }
+            }
+        }
+
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
+            log.debug("Found axis operation:  " + axisOperation);
 
 		return axisOperation;
 	}
@@ -2314,7 +2352,25 @@ public class AxisService extends AxisDescription {
 	public Map getNamespaceMap() {
 		return namespaceMap;
 	}
+    
+    /**
+     * Get the namespaces associated with imported WSDLs
+     * 
+     * @return a <code>List</code> of namespace URIs (String)
+     */
+    public List getImportedNamespaces() {
+        return importedNamespaces;
+    }
 
+    /**
+     * Set the namespaces associated with imported WSDLs
+     * 
+     * @param importedNamespaces
+     */
+    public void setImportedNamespaces(List importedNamespaces) {
+        this.importedNamespaces = importedNamespaces;
+    }
+    
     /**
      * @deprecated please use setNamespaceMap
      * @param nameSpacesMap
