@@ -1,0 +1,51 @@
+package org.apache.axis2.jaxws.addressbook;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service;
+
+import java.util.Map;
+
+public class AddressBookClient {
+    private static String NAMESPACE = "http://addressbook.jaxws.axis2.apache.org";
+    private static QName QNAME_SERVICE = new QName(NAMESPACE, "service");
+    private static QName QNAME_PORT = new QName(NAMESPACE, "port");
+    private static String ENDPOINT_URL = "http://localhost:8080/axis2/services/AddressBookImplService.AddressBookImplPort";
+
+    private static String ADD_ENTRY_BODY_CONTENTS = 
+        "<ns1:addEntry xmlns:ns1=\"http://addressbook.jaxws.axis2.apache.org\">" + 
+          "<ns1:firstName xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myFirstName</ns1:firstName>" + 
+          "<ns1:lastName xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myLastName</ns1:lastName>" + 
+          "<ns1:phone xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myPhone</ns1:phone>" + 
+          "<ns1:street xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myStreet</ns1:street>" + 
+          "<ns1:city xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myCity</ns1:city>" + 
+          "<ns1:state xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myState</ns1:state>" + 
+        "</ns1:addEntry>";
+    
+    private static String FIND_BODY_CONTENTS = 
+        "<ns1:findByLastName xmlns:ns1=\"http://addressbook.jaxws.axis2.apache.org\">" +
+          "<ns1:lastName xmlns=\"http://addressbook.jaxws.axis2.apache.org\">myLastName</ns1:lastName>" +        
+        "</ns1:findByLastName>";
+    
+    public static void main(String[] args) {
+        try {
+        Service svc = Service.create(QNAME_SERVICE);
+        svc.addPort(QNAME_PORT, null, ENDPOINT_URL);
+        Dispatch<String> dispatch = svc.createDispatch(QNAME_PORT, 
+                String.class, Service.Mode.PAYLOAD);
+            
+        // Invoke the Dispatch
+        System.out.println(">> Invoking sync Dispatch for AddEntry");
+        String response = dispatch.invoke(ADD_ENTRY_BODY_CONTENTS);
+        System.out.println("Add Entry (void) Response: " + response);
+        
+        System.out.println(">> Invoking Dispatch for findByLastName");
+        String response2 = dispatch.invoke(FIND_BODY_CONTENTS);
+        System.out.println("Find response: " + response2);
+        } catch (Exception e) {
+            System.out.println("Caught exception: " + e);
+            e.printStackTrace();
+        }
+    }
+}
