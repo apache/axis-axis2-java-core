@@ -1,6 +1,11 @@
 package org.apache.axis2.jaxws.addressbook;
 
-// NOTE: This Service Endpoint Interface (SEI) is NOT CURRENTLY USED in this example
+/**
+ * The JAX-WS Service Endpoint Interface (SEI).  
+ * 
+ * NOTE: The SEI is NOT USED in this example.  The service implementation publishing all public
+ *       methods as an implicit SEI. 
+ */
 
 public interface AddressBook {
     

@@ -7,6 +7,9 @@ import javax.xml.ws.Service;
 
 import java.util.Map;
 
+/**
+ * Simple JAX-WS Dispatch client for the address book service implementation.
+ */
 public class AddressBookClient {
     private static String NAMESPACE = "http://addressbook.jaxws.axis2.apache.org";
     private static QName QNAME_SERVICE = new QName(NAMESPACE, "service");
@@ -30,19 +33,25 @@ public class AddressBookClient {
     
     public static void main(String[] args) {
         try {
-        Service svc = Service.create(QNAME_SERVICE);
-        svc.addPort(QNAME_PORT, null, ENDPOINT_URL);
-        Dispatch<String> dispatch = svc.createDispatch(QNAME_PORT, 
-                String.class, Service.Mode.PAYLOAD);
+            System.out.println("AddressBookClient ...");
             
-        // Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch for AddEntry");
-        String response = dispatch.invoke(ADD_ENTRY_BODY_CONTENTS);
-        System.out.println("Add Entry (void) Response: " + response);
-        
-        System.out.println(">> Invoking Dispatch for findByLastName");
-        String response2 = dispatch.invoke(FIND_BODY_CONTENTS);
-        System.out.println("Find response: " + response2);
+            Service svc = Service.create(QNAME_SERVICE);
+            svc.addPort(QNAME_PORT, null, ENDPOINT_URL);
+
+            // A Dispatch<String> client sends the request and receives the response as 
+            // Strings.  Since it is PAYLOAD mode, the client will provide the SOAP body to be 
+            // sent; the SOAP envelope and any required SOAP headers will be added by JAX-WS.
+            Dispatch<String> dispatch = svc.createDispatch(QNAME_PORT, 
+                    String.class, Service.Mode.PAYLOAD);
+                
+            // Invoke the Dispatch
+            System.out.println(">> Invoking sync Dispatch for AddEntry");
+            String response = dispatch.invoke(ADD_ENTRY_BODY_CONTENTS);
+            System.out.println("Add Entry response: " + response);
+            
+            System.out.println(">> Invoking Dispatch for findByLastName");
+            String response2 = dispatch.invoke(FIND_BODY_CONTENTS);
+            System.out.println("Find response: " + response2);
         } catch (Exception e) {
             System.out.println("Caught exception: " + e);
             e.printStackTrace();
