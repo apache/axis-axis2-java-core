@@ -1,4 +1,4 @@
-Axis2 JAX-WS start-from-java (also known as bottoms-up) sample.
+Axis2 JAX-WS sample that uses JAXB artifacts created from a simple schema.
 
    1. Given a simple schema, generate the JAXB artifacts using xjc.
    2. With the generated JAXB beans in hand, write the service implementation 
@@ -16,7 +16,7 @@ The directory structure and environment setup in this example is as follows.  Yo
 the example directories based on your environment.
 - Axis2 binary distribution: AXIS2_HOME=C:\temp\Axis2\axis2-SNAPSHOT
 - Java5 JDK: JAVA_HOME=c:\java\java5 
-- This example source is in: C:\blddir\eclipse\axis2\jaxws-bottoms-up 
+- This example source is in: C:\blddir\eclipse\axis2\jaxws-addressbook 
 
 Note that JAVA_HOME is assumed to be on PATH.
 
@@ -82,7 +82,7 @@ Step 4: Run the Dispatch client against the service implementation deployed in t
 (a) First compile the generated JAXB artifacts, the service implementation, and the dispatch client.
 Note that if you are using Eclipse, this step will not be necessary; Eclipse will have compiled the
 classes into the 'bin' directory.
-javac -Djava.ext.dirs=C:\temp\Axis2\axis2-SNAPSHOT\lib;C:\java\java5\jre\lib\ext -classpath C:\blddir\eclipse\axis2\jaxws-bottoms-up\bin *.java
+javac -Djava.ext.dirs=C:\temp\Axis2\axis2-SNAPSHOT\lib;C:\java\java5\jre\lib\ext -classpath C:\blddir\eclipse\axis2\jaxws-addressbook\bin *.java
 
 (b) Then create a JAR file containg the service implementation and copy it to 
 the axis2 repository/servicejars directory.  This will cause it to be deployed when the axis2 
@@ -102,7 +102,7 @@ You should see a message such as:
 [INFO] Deploying JAXWS annotated class org.apache.axis2.jaxws.addressbook.AddressBookImpl as a service - AddressBookImplService.AddressBookImplPort
 
 (d) From another window with the environment setup, run the Dispatch client:
-java -Djava.ext.dirs=C:\temp\Axis2\axis2-SNAPSHOT\lib;C:\java\java5\jre\lib\ext -cp C:\blddir\eclipse\axis2\jaxws-bottoms-up\bin org.apache.axis2.jaxws.addressbook.AddressBookClient.class 
+java -Djava.ext.dirs=C:\temp\Axis2\axis2-SNAPSHOT\lib;C:\java\java5\jre\lib\ext -cp C:\blddir\eclipse\axis2\jaxws-addressbook\bin org.apache.axis2.jaxws.addressbook.AddressBookClient.class 
 
 Thoughts on improvmenets
 ========================
