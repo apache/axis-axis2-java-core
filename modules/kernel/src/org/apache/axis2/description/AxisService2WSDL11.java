@@ -1147,7 +1147,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			OMElement wsdlElement) throws Exception {
 		PolicySubject policySubject = axisDescription.getPolicySubject();
 		Collection attachPolicyComponents = policySubject
-				.getAttachPolicyComponents();
+				.getAttachedPolicyComponents();
 
 		for (Iterator iterator = attachPolicyComponents.iterator(); iterator
 				.hasNext();) {
@@ -1205,7 +1205,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		PolicySubject policySubject = axisDescription.getPolicySubject();
 		ArrayList policyURIs = new ArrayList();
 
-		for (Iterator iterator = policySubject.getAttachPolicyComponents()
+		for (Iterator iterator = policySubject.getAttachedPolicyComponents()
 				.iterator(); iterator.hasNext();) {
 			Object policyElement = iterator.next();
 			String key;

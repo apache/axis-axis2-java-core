@@ -75,6 +75,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -2719,7 +2721,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             * Setting the effective policy of input message
             */
             Policy policy = getBindingPolicyFromMessage(bindingOperation,
-                    WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
             if (policy != null) {
                 try {
@@ -2792,7 +2794,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             * Setting the effective policy for the output message.
             */
             Policy policy = getBindingPolicyFromMessage(bindingOperation,
-                    WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                    WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
             if (policy != null) {
                 try {

@@ -19,20 +19,22 @@
 
 package org.apache.axis2.description;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 public class PolicySubject {
+
+	private boolean updated = false;
+
 	private HashMap attachedPolicyComponents = new HashMap();
-	
+
 	public void attachPolicy(Policy policy) {
 		String key = policy.getName();
 		if (key == null) {
@@ -44,34 +46,79 @@ public class PolicySubject {
 		}
 		attachPolicyComponent(key, policy);
 	}
-	
+
 	public void attachPolicyReference(PolicyReference reference) {
-		attachedPolicyComponents.put(reference.getURI(), reference); 
+		attachedPolicyComponents.put(reference.getURI(), reference);
 	}
-	
+
 	public void attachPolicyComponents(List policyComponents) {
-		for (Iterator iterator = policyComponents.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = policyComponents.iterator(); iterator
+				.hasNext();) {
 			attachPolicyComponent((PolicyComponent) iterator.next());
 		}
 	}
-	
+
 	public void attachPolicyComponent(PolicyComponent policyComponent) {
 		if (policyComponent instanceof Policy) {
 			attachPolicy((Policy) policyComponent);
 		} else if (policyComponent instanceof PolicyReference) {
 			attachPolicyReference((PolicyReference) policyComponent);
 		} else {
-			throw new IllegalArgumentException("Invalid top level policy component type");
+			throw new IllegalArgumentException(
+					"Invalid top level policy component type");
 		}
-		
+
 	}
-	public void attachPolicyComponent(String key, PolicyComponent policyComponent) {
+
+	public void attachPolicyComponent(String key,
+			PolicyComponent policyComponent) {
 		attachedPolicyComponents.put(key, policyComponent);
+		if (!isUpdated()) {
+			setUpdated(true);
+		}
 	}
-	
-	
-	
-	public Collection getAttachPolicyComponents() {
+
+	public PolicyComponent getAttachedPolicyComponent(String key) {
+		return (PolicyComponent) attachedPolicyComponents.get(key);
+
+	}
+
+	public Collection getAttachedPolicyComponents() {
 		return attachedPolicyComponents.values();
+	}
+
+	public boolean isUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(boolean updated) {
+		this.updated = updated;
+	}
+
+	public void updatePolicy(Policy policy) {
+		String key = (policy.getName() != null) ? policy.getName() : policy
+				.getId();
+		if (key == null) {
+			throw new IllegalArgumentException(
+					"policy doesn't have a name or an id ");
+		}
+		attachedPolicyComponents.put(key, policy);
+		if (!isUpdated()) {
+			setUpdated(true);
+		}
+	}
+
+	public void detachPolicyComponent(String key) {
+		attachedPolicyComponents.remove(key);
+		if (!isUpdated()) {
+			setUpdated(true);
+		}
+	}
+
+	public void clear() {
+		attachedPolicyComponents.clear();
+		if (!isUpdated()) {
+			setUpdated(true);
+		}
 	}
 }

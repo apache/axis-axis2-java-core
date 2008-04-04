@@ -28,6 +28,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,38 +56,81 @@ public class ExternalPolicySerializer {
                     .createXMLStreamWriter(os);
             policy = (Policy) policy.normalize(false);
 
-            String prefix = writer.getPrefix(Constants.ATTR_WSP);
-            String wsuPrefix = writer.getPrefix(Constants.URI_WSU_NS);
+            String wspPrefix = writer.getPrefix(Constants.URI_POLICY_NS);
 
-            if (prefix == null) {
-                prefix = Constants.ATTR_WSP;
-                writer.setPrefix(prefix, Constants.URI_POLICY_NS);
-            }
+			if (wspPrefix == null) {
+				wspPrefix = Constants.ATTR_WSP;
+				writer.setPrefix(wspPrefix, Constants.URI_POLICY_NS);
+			}
 
-            if (wsuPrefix == null) {
-                // TODO move this 'wsu' value to Neethi2 constants
-                wsuPrefix = "wsu";
-                writer.setPrefix(wsuPrefix, Constants.URI_WSU_NS);
-            }
+			String wsuPrefix = writer.getPrefix(Constants.URI_WSU_NS);
+			if (wsuPrefix == null) {
+				wsuPrefix = Constants.ATTR_WSU;
+				writer.setPrefix(wsuPrefix, Constants.URI_WSU_NS);
+			}
 
-            // write <wsp:Policy tag
+			writer.writeStartElement(wspPrefix, Constants.ELEM_POLICY,
+					Constants.URI_POLICY_NS);
 
-            writer.writeStartElement(prefix, Constants.ELEM_POLICY,
-                                     Constants.URI_POLICY_NS);
-            // write xmlns:wsp=".."
-            writer.writeNamespace(prefix, Constants.URI_POLICY_NS);
+			QName key;
 
-            String name = policy.getName();
-            if (name != null) {
-                // write Name=".."
-                writer.writeAttribute(Constants.ATTR_NAME, name);
-            }
+			String prefix = null;
+			String namespaceURI = null;
+			String localName = null;
 
-            String id = policy.getId();
-            if (id != null) {
-                // write wsu:Id=".."
-                writer.writeAttribute(Constants.ATTR_ID, id);
-            }
+			HashMap prefix2ns = new HashMap();
+
+			for (Iterator iterator = policy.getAttributes().keySet().iterator(); iterator
+					.hasNext();) {
+
+				key = (QName) iterator.next();
+				localName = key.getLocalPart();
+
+				namespaceURI = key.getNamespaceURI();
+				namespaceURI = (namespaceURI == null || namespaceURI.length() == 0) ? null
+						: namespaceURI;
+
+				if (namespaceURI != null) {
+
+					String writerPrefix = writer.getPrefix(namespaceURI);
+					writerPrefix = (writerPrefix == null || writerPrefix
+							.length() == 0) ? null : writerPrefix;
+
+					if (writerPrefix == null) {
+						prefix = key.getPrefix();
+						prefix = (prefix == null || prefix.length() == 0) ? null
+								: prefix;
+
+					} else {
+						prefix = writerPrefix;
+					}
+
+					if (prefix != null) {
+						writer.writeAttribute(prefix, namespaceURI, localName,
+								policy.getAttribute(key));
+						prefix2ns.put(prefix, key.getNamespaceURI());
+
+					} else {
+						writer.writeAttribute(namespaceURI, localName, policy
+								.getAttribute(key));
+					}
+
+				} else {
+					writer.writeAttribute(localName, policy.getAttribute(key));
+				}
+
+			}
+
+			// writes xmlns:wsp=".."
+			writer.writeNamespace(wspPrefix, Constants.URI_POLICY_NS);
+
+			String prefiX;
+
+			for (Iterator iterator = prefix2ns.keySet().iterator(); iterator
+					.hasNext();) {
+				prefiX = (String) iterator.next();
+				writer.writeNamespace(prefiX, (String) prefix2ns.get(prefiX));
+			}
 
             writer.writeStartElement(Constants.ATTR_WSP,
                                      Constants.ELEM_EXACTLYONE, Constants.URI_POLICY_NS);

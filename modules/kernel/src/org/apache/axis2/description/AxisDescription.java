@@ -31,6 +31,8 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
@@ -216,16 +218,30 @@ public abstract class AxisDescription implements ParameterInclude,
 		return parent;
 	}
 
+	/**
+	 * @see org.apache.axis2.description.AxisDescription#setPolicyInclude(PolicyInclude)
+	 * @deprecated As of release 1.4, if you want to access the policy cache of
+	 *             a particular AxisDescription object use
+	 *             {@line #getPolicySubject()} instead.
+	 * 
+	 * @param policyInclude
+	 */
 	public void setPolicyInclude(PolicyInclude policyInclude) {
 		this.policyInclude = policyInclude;
 	}
 
+
+	/**
+	 * @see org.apache.axis2.description.AxisDescription#getPolicySubject()
+	 * @deprecated As of release 1.4, replaced by {@link #getPolicySubject()}
+	 */
 	public PolicyInclude getPolicyInclude() {
 		if (policyInclude == null) {
 			policyInclude = new PolicyInclude(this);
 		}
 		return policyInclude;
 	}
+
 
     // NOTE - These are NOT typesafe!
     public void addChild(AxisDescription child) {
@@ -281,75 +297,16 @@ public abstract class AxisDescription implements ParameterInclude,
 	 *             that effective policy.
 	 */
 	public void applyPolicy(Policy policy) throws AxisFault {
-		AxisConfiguration configuration = getAxisConfiguration();
-
-		if (configuration == null) {
-			// FIXME return or throw an Exception?
-			return;
-		}
-
 		// sets AxisDescription policy
-		getPolicyInclude().setPolicy(policy);
+		getPolicySubject().clear();
+		getPolicySubject().attachPolicy(policy);
 
 		/*
-		 * now we should take the effective one .. it is necessary since
-		 * AxisDescription.applyPolicy(..) doesn't override policies at the
-		 * Upper levels.
+		 * now we try to engage appropriate modules based on the merged policy
+		 * of axis description object and the corresponding axis binding
+		 * description object.
 		 */
-		Policy effPolicy = getPolicyInclude().getEffectivePolicy();
-
-		/*
-		 * for the moment we consider policies with only one alternative. If the
-		 * policy contains multiple alternatives only the first alternative will
-		 * be considered.
-		 */
-		Iterator iterator = effPolicy.getAlternatives();
-		if (!iterator.hasNext()) {
-			throw new AxisFault(
-					"Policy doesn't contain any policy alternatives");
-		}
-
-		List assertionList = (List) iterator.next();
-
-		Assertion assertion;
-		String namespaceURI;
-
-		List moduleList;
-
-		List namespaceList = new ArrayList();
-		List modulesToEngage = new ArrayList();
-
-		for (Iterator assertions = assertionList.iterator(); assertions
-				.hasNext();) {
-			assertion = (Assertion) assertions.next();
-			namespaceURI = assertion.getName().getNamespaceURI();
-
-			moduleList = configuration
-					.getModulesForPolicyNamesapce(namespaceURI);
-
-			if (moduleList == null) {
-				log.debug("can't find any module to process "
-						+ assertion.getName() + " type assertions");
-				continue;
-			}
-
-			if (!canSupportAssertion(assertion, moduleList)) {
-				throw new AxisFault("atleast one module can't support "
-						+ assertion.getName());
-			}
-
-			if (!namespaceList.contains(namespaceURI)) {
-				namespaceList.add(namespaceURI);
-				modulesToEngage.addAll(moduleList);
-			}
-		}
-
-		/*
-		 * FIXME We need to disengage any modules that are already engaged *but*
-		 * has nothing to do with the policy to apply
-		 */
-
-		engageModulesToAxisDescription(modulesToEngage, this);
+		applyPolicy();
 	}
 
 	/**
@@ -359,75 +316,18 @@ public abstract class AxisDescription implements ParameterInclude,
 	 *             an error occurred applying the policy
 	 */
 	public void applyPolicy() throws AxisFault {
-
 		AxisConfiguration configuration = getAxisConfiguration();
 		if (configuration == null) {
-			return; // CHECKME: May be we need to throw an Exception ??
+			return;
 		}
 
-		Policy effPolicy = getApplicablePolicy(this);
-
-		if (effPolicy != null) {
-
-			/*
-			 * for the moment we consider policies with only one alternative. If
-			 * the policy contains multiple alternatives only the first
-			 * alternative will be considered.
-			 */
-			Iterator iterator = effPolicy.getAlternatives();
-			if (!iterator.hasNext()) {
-				throw new AxisFault(
-						"Policy doesn't contain any policy alternatives");
-			}
-
-			List assertionList = (List) iterator.next();
-
-			Assertion assertion;
-			String namespaceURI;
-
-			List moduleList;
-
-			List namespaceList = new ArrayList();
-			List modulesToEngage = new ArrayList();
-
-			for (Iterator assertions = assertionList.iterator(); assertions
-					.hasNext();) {
-				assertion = (Assertion) assertions.next();
-				namespaceURI = assertion.getName().getNamespaceURI();
-
-				moduleList = configuration
-						.getModulesForPolicyNamesapce(namespaceURI);
-
-				if (moduleList == null) {
-					log.debug("can't find any module to process "
-							+ assertion.getName() + " type assertions");
-					continue;
-				}
-
-				if (!canSupportAssertion(assertion, moduleList)) {
-					throw new AxisFault("atleast one module can't support "
-							+ assertion.getName());
-				}
-
-				if (!namespaceList.contains(namespaceURI)) {
-					namespaceList.add(namespaceURI);
-					modulesToEngage.addAll(moduleList);
-				}
-			}
-
-			/*
-			 * FIXME We need to disengage any modules that are already engaged
-			 * *but* has nothing to do with the policy to apply
-			 */
-
-			engageModulesToAxisDescription(modulesToEngage, this);
-
+		Policy applicablePolicy = getApplicablePolicy(this);
+		if (applicablePolicy != null) {
+			engageModulesForPolicy(this, applicablePolicy, configuration);
 		}
-
-		AxisDescription child;
 
 		for (Iterator children = getChildren(); children.hasNext();) {
-			child = (AxisDescription) children.next();
+			AxisDescription child = (AxisDescription) children.next();
 			child.applyPolicy();
 		}
 	}
@@ -451,6 +351,57 @@ public abstract class AxisDescription implements ParameterInclude,
 		}
 
 		return true;
+	}
+	
+	private void engageModulesForPolicy(AxisDescription axisDescription,
+			Policy policy, AxisConfiguration axisConfiguration)
+			throws AxisFault {
+		/*
+		 * for the moment we consider policies with only one alternative. If the
+		 * policy contains multiple alternatives only the first alternative will
+		 * be considered.
+		 */
+		Iterator iterator = policy.getAlternatives();
+		if (!iterator.hasNext()) {
+			throw new AxisFault(
+					"Policy doesn't contain any policy alternatives");
+		}
+
+		List assertionList = (List) iterator.next();
+
+		Assertion assertion;
+		String namespaceURI;
+
+		List moduleList;
+
+		List namespaceList = new ArrayList();
+		List modulesToEngage = new ArrayList();
+
+		for (Iterator assertions = assertionList.iterator(); assertions
+				.hasNext();) {
+			assertion = (Assertion) assertions.next();
+			namespaceURI = assertion.getName().getNamespaceURI();
+
+			moduleList = axisConfiguration
+					.getModulesForPolicyNamesapce(namespaceURI);
+
+			if (moduleList == null) {
+				log.debug("can't find any module to process "
+						+ assertion.getName() + " type assertions");
+				continue;
+			}
+
+			if (!canSupportAssertion(assertion, moduleList)) {
+				throw new AxisFault("atleast one module can't support "
+						+ assertion.getName());
+			}
+
+			if (!namespaceList.contains(namespaceURI)) {
+				namespaceList.add(namespaceURI);
+				modulesToEngage.addAll(moduleList);
+			}
+		}
+		engageModulesToAxisDescription(modulesToEngage, this);
 	}
 
 	private void engageModulesToAxisDescription(List moduleList,
@@ -590,56 +541,48 @@ public abstract class AxisDescription implements ParameterInclude,
 	}
 
 	private Policy getApplicablePolicy(AxisDescription axisDescription) {
+		if (axisDescription instanceof AxisMessage) {
+			AxisMessage axisMessage = (AxisMessage) axisDescription;
+			AxisOperation axisOperation = axisMessage.getAxisOperation();
+			if (axisOperation != null) {
+				AxisService axisService = (AxisService) axisOperation
+						.getAxisService();
+				if (axisService != null) {
+					if (axisService.getEndpointName() != null) {
+						AxisEndpoint axisEndpoint = axisService
+								.getEndpoint(axisService.getEndpointName());
+						if (axisEndpoint != null) {
+							AxisBinding axisBinding = axisEndpoint.getBinding();
+							AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding
+									.getChild(axisOperation.getName());
+							String direction = axisMessage.getDirection();
+							AxisBindingMessage axisBindingMessage = null;
+							if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
+									.equals(direction)
+									&& WSDLUtil
+											.isInputPresentForMEP(axisOperation
+													.getMessageExchangePattern())) {
+								axisBindingMessage = (AxisBindingMessage) axisBindingOperation
+										.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+								return axisBindingMessage.getEffectivePolicy();
+								
+							} else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT
+									.equals(direction)
+									&& WSDLUtil
+											.isOutputPresentForMEP(axisOperation
+													.getMessageExchangePattern())) {
+								axisBindingMessage = (AxisBindingMessage) axisBindingOperation
+										.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+								return axisBindingMessage.getEffectivePolicy();
+							}
+						}
 
-		if (axisDescription instanceof AxisOperation) {
-			AxisOperation operation = (AxisOperation) axisDescription;
-			AxisService service = operation.getAxisService();
-
-			if (service != null) {
-
-				AxisEndpoint axisEndpoint = service.getEndpoint(service
-						.getEndpointName());
-
-				AxisBinding axisBinding = null;
-
-				if (axisEndpoint != null) {
-					axisBinding = axisEndpoint.getBinding();
-				}
-
-				AxisBindingOperation axisBindingOperation = null;
-
-				if (axisBinding != null) {
-					axisBindingOperation = (AxisBindingOperation) axisBinding
-							.getChild(operation.getName());
-				}
-
-				if (axisBindingOperation != null) {
-					return axisBindingOperation.getEffectivePolicy();
+					}
 				}
 			}
-
-			return operation.getPolicyInclude().getEffectivePolicy();
-
-		} else if (axisDescription instanceof AxisService) {
-			AxisService service = (AxisService) axisDescription;
-
-			AxisEndpoint axisEndpoint = service.getEndpoint(service
-					.getEndpointName());
-			AxisBinding axisBinding = null;
-
-			if (axisEndpoint != null) {
-				axisBinding = axisEndpoint.getBinding();
-			}
-
-			if (axisBinding != null) {
-				return axisBinding.getEffectivePolicy();
-			}
-
-			return service.getPolicyInclude().getEffectivePolicy();
-
-		} else {
-			return axisDescription.getPolicyInclude().getEffectivePolicy();
+			return ((AxisMessage) axisDescription).getEffectivePolicy();
 		}
+		return null;
 	}
 
 	public PolicySubject getPolicySubject() {

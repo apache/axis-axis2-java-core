@@ -291,7 +291,7 @@ public class AxisConfiguration extends AxisDescription {
         axisServiceGroup.setParent(this);
         axisServiceGroup.addService(service);
         addServiceGroup(axisServiceGroup);
-        processEndpoints(service, service.getAxisConfiguration());
+//        processEndpoints(service, service.getAxisConfiguration());
     }
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
@@ -326,6 +326,7 @@ public class AxisConfiguration extends AxisDescription {
         ArrayList servicesIAdded = new ArrayList();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
+            processEndpoints(axisService, axisService.getAxisConfiguration());
 
             Map endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();

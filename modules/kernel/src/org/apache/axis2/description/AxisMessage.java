@@ -240,9 +240,12 @@ public class AxisMessage extends AxisDescription {
     }
     
 	public Policy getEffectivePolicy() {
-		if (effectivePolicy == null && !policyCalculated) {
+		if (getPolicySubject().isUpdated()) {
 			effectivePolicy = calculateEffectivePolicy();
-			policyCalculated = true;
+		} else {
+			if (effectivePolicy == null && !policyCalculated) {
+				effectivePolicy = calculateEffectivePolicy();
+			}
 		}
 		return effectivePolicy;
 	}
@@ -253,13 +256,13 @@ public class AxisMessage extends AxisDescription {
 
 		// AxisMessage
 		policySubject = getPolicySubject();
-		policyList.addAll(policySubject.getAttachPolicyComponents());
-		
+		policyList.addAll(policySubject.getAttachedPolicyComponents());
+
 		// AxisOperation
 		AxisOperation axisOperation = getAxisOperation();
 		if (axisOperation != null) {
 			policyList.addAll(axisOperation.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisService
@@ -267,7 +270,7 @@ public class AxisMessage extends AxisDescription {
 				: axisOperation.getAxisService();
 		if (axisService != null) {
 			policyList.addAll(axisService.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisConfiguration
@@ -275,9 +278,42 @@ public class AxisMessage extends AxisDescription {
 				: axisService.getAxisConfiguration();
 		if (axisConfiguration != null) {
 			policyList.addAll(axisConfiguration.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
-		return PolicyUtil.getMergedPolicy(policyList, axisService);
+		Policy result = PolicyUtil.getMergedPolicy(policyList, axisService);
+		policyCalculated = true;
+		return result;
+	}
+	
+	public boolean isPolicyUpdated() {
+		// AxisMessage
+		PolicySubject policySubject = getPolicySubject();
+		if (policySubject.isUpdated()) {
+			return true;
+		}
+
+		// AxisOperation
+		AxisOperation axisOperation = getAxisOperation();
+		if (axisOperation != null
+				&& axisOperation.getPolicySubject().isUpdated()) {
+			return true;
+		}
+
+		// AxisService
+		AxisService axisService = (axisOperation == null) ? null
+				: axisOperation.getAxisService();
+		if (axisService != null && axisService.getPolicySubject().isUpdated()) {
+			return true;
+		}
+
+		// AxisConfiguration
+		AxisConfiguration axisConfiguration = (axisService == null) ? null
+				: axisService.getAxisConfiguration();
+		if (axisConfiguration != null
+				&& axisConfiguration.getPolicySubject().isUpdated()) {
+			return true;
+		}
+		return false;
 	}
 }

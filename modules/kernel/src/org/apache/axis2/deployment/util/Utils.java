@@ -1476,7 +1476,7 @@ public class Utils {
 			axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
 			axisBindingOutMessage.setAxisMessage(axisOutMessage);
 
-			axisBindingOutMessage.setParent(axisOutMessage);
+			axisBindingOutMessage.setParent(axisBindingOperation);
 			axisBindingOperation.addChild(
 					WSDLConstants.MESSAGE_LABEL_OUT_VALUE,
 					axisBindingOutMessage);

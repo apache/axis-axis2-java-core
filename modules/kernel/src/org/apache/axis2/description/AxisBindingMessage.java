@@ -19,6 +19,10 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -30,10 +34,6 @@ import org.apache.axis2.util.WSDL20Util;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -230,13 +230,13 @@ public class AxisBindingMessage extends AxisDescription {
 
 		// AxisBindingMessage
 		policySubject = getPolicySubject();
-		policyList.addAll(policySubject.getAttachPolicyComponents());
+		policyList.addAll(policySubject.getAttachedPolicyComponents());
 
 		// AxisBindingOperation policies
 		AxisBindingOperation axisBindingOperation = getAxisBindingOperation();
 		if (axisBindingOperation != null) {
 			policyList.addAll(axisBindingOperation.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisBinding
@@ -244,7 +244,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisBindingOperation.getAxisBinding();
 		if (axisBinding != null) {
 			policyList.addAll(axisBinding.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisEndpoint
@@ -252,13 +252,13 @@ public class AxisBindingMessage extends AxisDescription {
 				.getAxisEndpoint();
 		if (axisEndpoint != null) {
 			policyList.addAll(axisEndpoint.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisMessage
 		if (axisMessage != null) {
 			policyList.addAll(axisMessage.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisOperation
@@ -266,7 +266,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisMessage.getAxisOperation();
 		if (axisOperation != null) {
 			policyList.addAll(axisOperation.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisService
@@ -274,7 +274,7 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisOperation.getAxisService();
 		if (axisService != null) {
 			policyList.addAll(axisService.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		// AxisConfiguration
@@ -282,10 +282,9 @@ public class AxisBindingMessage extends AxisDescription {
 				: axisService.getAxisConfiguration();
 		if (axisConfiguration != null) {
 			policyList.addAll(axisConfiguration.getPolicySubject()
-					.getAttachPolicyComponents());
+					.getAttachedPolicyComponents());
 		}
 
 		return PolicyUtil.getMergedPolicy(policyList, axisService);
 	}
-
 }
