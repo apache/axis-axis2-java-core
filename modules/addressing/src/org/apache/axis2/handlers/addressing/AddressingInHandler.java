@@ -100,10 +100,16 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         	configuration = conf;
         }
         
-        // check whether someone has explicitly set which addressing namespace to expect.
+        // check whether another handler has explicitly set which addressing namespace to expect.
         Iterator iterator = null;
-        Parameter namespaceParam = msgContext.getParameter(WS_ADDRESSING_VERSION);
-        String namespace = Utils.getParameterValue(namespaceParam);
+        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        
+        // check whether the service is configured to use a particular version of WS-Addressing,
+        // e.g. via JAX-WS annotations.
+        if (namespace == null) {
+            Parameter namespaceParam = msgContext.getParameter(WS_ADDRESSING_VERSION);
+            namespace = Utils.getParameterValue(namespaceParam);
+        }
         
         if (namespace == null) {
             namespace = Final.WSA_NAMESPACE;
