@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -240,6 +241,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
         private void processMessageID() {
             String messageID = messageContextOptions.getMessageId();
+            
+            //Check whether we want to force a message id to be sent.
+            if (messageID == null && includeOptionalHeaders) {
+                messageID = UUIDGenerator.getUUID();
+                messageContextOptions.setMessageId(messageID);
+            }
+            
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
             	ArrayList attributes = (ArrayList)messageContext.getLocalProperty(
