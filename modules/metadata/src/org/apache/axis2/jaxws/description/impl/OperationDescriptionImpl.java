@@ -596,7 +596,8 @@ class OperationDescriptionImpl
             }
             if (axisMessage != null) {
                 QName elementQName = axisMessage.getElementQName();
-                if (!DescriptionUtils.isEmpty(elementQName)) {
+                if (!DescriptionUtils.isEmpty(elementQName) && 
+                    axisService.getOperationByMessageElementQName(elementQName) == null) {
                     axisService.addMessageElementQNameToOperationMapping(elementQName,
                             newAxisOperation);
                 }
