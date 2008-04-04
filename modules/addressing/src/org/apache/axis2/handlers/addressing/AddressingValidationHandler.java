@@ -25,6 +25,7 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -76,14 +77,18 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
      */
     private void checkUsingAddressing(MessageContext msgContext)
             throws AxisFault {
-        if (msgContext.getAxisService() == null) {
+    	AxisDescription ad = msgContext.getAxisService();
+        if (ad == null) {
             if (log.isTraceEnabled()) {
                 log.trace("checkUsingAddressing: axisService null, cannot check UsingAddressing");
             }
             return;
         }
+        if(msgContext.getAxisOperation()!=null){
+        	ad = msgContext.getAxisOperation();
+        }
         String addressingFlag =
-            AddressingHelper.getAddressingRequirementParemeterValue(msgContext.getAxisService());
+            AddressingHelper.getAddressingRequirementParemeterValue(ad);
         if (log.isTraceEnabled()) {
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
         }
