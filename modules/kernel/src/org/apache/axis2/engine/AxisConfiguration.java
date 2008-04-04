@@ -1228,8 +1228,8 @@ public class AxisConfiguration extends AxisDescription {
     
     private void processEndpoints(AxisService axisService,
     		AxisConfiguration axisConfiguration) throws AxisFault {
-		String endpointName = axisService.getEndpointName();
-		if (endpointName == null || endpointName.length() == 0) {
+        Map enspoints = axisService.getEndpoints();
+        if (enspoints == null || enspoints.size() == 0) {
 			org.apache.axis2.deployment.util.Utils.addEndpointsToService(
 					axisService, axisConfiguration);
 		}
