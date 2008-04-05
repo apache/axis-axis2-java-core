@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.util;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.PrivilegedAction;
 
 
 /**
@@ -99,7 +101,9 @@ public class CatalogURIResolver implements URIResolver {
             try
             {
                 File baseFile = new File(baseUri);
-                if (baseFile.exists()) baseUri = baseFile.toURI().toString();
+                
+                
+                if (fileExists(baseFile)) baseUri = baseFile.toURI().toString();
                 
                 String ref = new URI(baseUri).resolve(new URI(schemaLocation)).toString();
 
@@ -206,4 +210,29 @@ public class CatalogURIResolver implements URIResolver {
 
         return new URL("file", "", path);
     }    // getFileURL
+    
+    
+    private Boolean fileExists (final File file) {
+        Boolean exists = (Boolean) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(file.exists());
+                    }
+                }
+        );
+        return exists;
+    }
+    
+    private Boolean fileIsDirectory(final File file) {
+        Boolean isDir = (Boolean) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(file.isDirectory());
+                    }
+                }
+        );
+        return isDir;
+    }
+
+
 }

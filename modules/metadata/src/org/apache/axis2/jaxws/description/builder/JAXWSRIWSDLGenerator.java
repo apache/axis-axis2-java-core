@@ -536,7 +536,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     private static void addPath(HashSet classpath, String s) {
         String path = s.replace(((File.separatorChar == '/') ? '\\' : '/'), File.separatorChar).trim();
         File file = new File(path);
-        if (file.exists()) {
+        if (fileExists(file)) {
             path = file.getAbsolutePath();
             classpath.add(path);
         }
@@ -654,4 +654,16 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             return (name.endsWith(".jar") || name.endsWith(".zip"));
         }
     }
+    
+    static private Boolean fileExists (final File file) {
+        Boolean exists = (Boolean) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(file.exists());
+                    }
+                }
+        );
+        return exists;
+    }
+    
 }
