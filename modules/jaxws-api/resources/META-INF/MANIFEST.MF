@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: dims
+Created-By: 1.5.0_15 (Sun Microsystems Inc.)
+Import-Package: javax.xml.bind;resolution:=optional,javax.xml.bind.ann
+ otation;resolution:=optional,javax.xml.namespace;resolution:=optional
+ ,javax.xml.soap;resolution:=optional,javax.xml.transform;resolution:=
+ optional,javax.xml.transform.stream;resolution:=optional,javax.xml.ws
+ ;resolution:=optional,javax.xml.ws.handler;resolution:=optional,javax
+ .xml.ws.handler.soap;resolution:=optional,javax.xml.ws.http;resolutio
+ n:=optional,javax.xml.ws.soap;resolution:=optional,javax.xml.ws.spi;r
+ esolution:=optional,javax.xml.ws.wsaddressing;resolution:=optional,or
+ g.w3c.dom;resolution:=optional
+Bnd-LastModified: 1207329697015
+Export-Package: javax.xml.ws.soap;uses:="javax.xml.soap,javax.xml.ws.s
+ pi,javax.xml.ws",javax.xml.ws.handler;uses:="javax.xml.namespace,java
+ x.xml.ws",javax.xml.ws.http;uses:="javax.xml.ws",javax.xml.ws.handler
+ .soap;uses:="javax.xml.ws.handler,javax.xml.soap,javax.xml.namespace,
+ javax.xml.bind",javax.xml.ws.spi;uses:="javax.xml.ws.handler,javax.xm
+ l.namespace,javax.xml.transform,javax.xml.ws.wsaddressing,javax.xml.w
+ s,javax.xml.bind",javax.xml.ws.wsaddressing;uses:="javax.xml.namespac
+ e,javax.xml.ws.spi,org.w3c.dom,javax.xml.ws,javax.xml.bind,javax.xml.
+ bind.annotation,javax.xml.transform",javax.xml.ws;uses:="javax.xml.ws
+ .handler,javax.xml.namespace,org.w3c.dom,javax.xml.bind.annotation,ja
+ vax.xml.transform,javax.xml.ws.spi,javax.xml.transform.stream,javax.x
+ ml.bind"
+Bundle-Version: 0
+Build-Jdk: 1.5.0_15
+Originally-Created-By: Apache Maven
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: axis2-jaxws-api-SNAPSHOT
+Tool: Bnd-0.0.236
+

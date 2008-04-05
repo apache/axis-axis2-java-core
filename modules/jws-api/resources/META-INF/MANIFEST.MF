@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: dims
+Created-By: 1.5.0_15 (Sun Microsystems Inc.)
+Import-Package: javax.jws;resolution:=optional,javax.jws.soap;resoluti
+ on:=optional
+Bnd-LastModified: 1207329780921
+Export-Package: javax.jws.soap,javax.jws
+Bundle-Version: 0
+Build-Jdk: 1.5.0_15
+Originally-Created-By: Apache Maven
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: axis2-jws-api-SNAPSHOT
+Tool: Bnd-0.0.236
+

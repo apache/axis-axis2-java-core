@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: dims
+Created-By: 1.5.0_15 (Sun Microsystems Inc.)
+Import-Package: javax.activation;resolution:=optional,javax.xml.namesp
+ ace;resolution:=optional,javax.xml.soap;resolution:=optional,javax.xm
+ l.transform;resolution:=optional,javax.xml.transform.dom;resolution:=
+ optional,org.w3c.dom;resolution:=optional
+Bnd-LastModified: 1207329880593
+Export-Package: javax.xml.soap;uses:="javax.xml.transform.dom,javax.xm
+ l.namespace,javax.activation,org.w3c.dom,javax.xml.transform",javax.x
+ ml.namespace
+Bundle-Version: 0
+Build-Jdk: 1.5.0_15
+Originally-Created-By: Apache Maven
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: axis2-saaj-api-SNAPSHOT
+Tool: Bnd-0.0.236
+
