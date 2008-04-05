@@ -1,51 +1,42 @@
 Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
-Built-By: dims
-Created-By: 1.5.0_15 (Sun Microsystems Inc.)
-Import-Package: javax.activation;resolution:=optional,javax.xml.namesp
- ace;resolution:=optional,javax.xml.parsers;resolution:=optional,javax
- .xml.soap;resolution:=optional,javax.xml.stream;resolution:=optional,
- javax.xml.transform;resolution:=optional,javax.xml.transform.dom;reso
- lution:=optional,javax.xml.transform.stream;resolution:=optional,org.
- apache.axiom.attachments;resolution:=optional,org.apache.axiom.om;res
- olution:=optional,org.apache.axiom.om.impl;resolution:=optional,org.a
- pache.axiom.om.impl.dom;resolution:=optional,org.apache.axiom.om.impl
- .dom.factory;resolution:=optional,org.apache.axiom.om.impl.llom;resol
- ution:=optional,org.apache.axiom.om.util;resolution:=optional,org.apa
- che.axiom.soap;resolution:=optional,org.apache.axiom.soap.impl.builde
- r;resolution:=optional,org.apache.axiom.soap.impl.dom;resolution:=opt
- ional,org.apache.axiom.soap.impl.dom.soap11;resolution:=optional,org.
- apache.axiom.soap.impl.dom.soap12;resolution:=optional,org.apache.axi
- s2;resolution:=optional,org.apache.axis2.addressing;resolution:=optio
- nal,org.apache.axis2.builder;resolution:=optional,org.apache.axis2.cl
- ient;resolution:=optional,org.apache.axis2.context;resolution:=option
- al,org.apache.axis2.description;resolution:=optional,org.apache.axis2
- .engine;resolution:=optional,org.apache.axis2.handlers;resolution:=op
- tional,org.apache.axis2.saaj;resolution:=optional,org.apache.axis2.sa
- aj.util;resolution:=optional,org.apache.commons.logging;resolution:=o
- ptional,org.w3c.dom;resolution:=optional
-Bnd-LastModified: 1207330005312
-Export-Package: org.apache.axis2.saaj.util;uses:="org.apache.axis2.des
- cription,org.apache.axis2.engine,org.apache.axis2.context,org.apache.
- axiom.soap.impl.builder,javax.activation,org.w3c.dom,org.apache.axis2
- .handlers,org.apache.axis2,org.apache.axiom.om.impl.dom,org.apache.ax
- iom.soap.impl.dom,org.apache.axiom.soap,javax.xml.parsers,org.apache.
- axiom.om,javax.xml.stream",org.apache.axis2.saaj;uses:="org.apache.ax
- iom.om.impl,org.apache.axis2.context,org.apache.axis2.engine,org.apac
- he.axiom.soap.impl.builder,javax.xml.namespace,org.apache.axis2.addre
- ssing,org.apache.axiom.om.impl.dom.factory,org.apache.axiom.om.impl.l
- lom,org.apache.axiom.soap.impl.dom.soap12,javax.xml.transform,org.apa
- che.axiom.soap.impl.dom,org.apache.axis2.saaj.util,org.apache.axis2.c
- lient,javax.xml.parsers,org.apache.axiom.om,javax.xml.transform.strea
- m,javax.xml.stream,org.apache.axiom.om.util,javax.activation,org.w3c.
- dom,org.apache.commons.logging,org.apache.axiom.om.impl.dom,org.apach
- e.axis2,org.apache.axis2.builder,javax.xml.transform.dom,javax.xml.so
- ap,org.apache.axiom.soap,org.apache.axiom.attachments,org.apache.axio
- m.soap.impl.dom.soap11"
-Bundle-Version: 0
-Build-Jdk: 1.5.0_15
-Originally-Created-By: Apache Maven
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Import-Package: 
+ javax.activation,
+ javax.xml.namespace,
+ javax.xml.parsers,
+ javax.xml.soap,
+ javax.xml.stream,
+ javax.xml.transform,
+ javax.xml.transform.dom,
+ javax.xml.transform.stream,
+ org.apache.axiom.attachments,
+ org.apache.axiom.om,
+ org.apache.axiom.om.impl,
+ org.apache.axiom.om.impl.dom,
+ org.apache.axiom.om.impl.dom.factory,
+ org.apache.axiom.om.impl.llom,
+ org.apache.axiom.om.util,
+ org.apache.axiom.soap,
+ org.apache.axiom.soap.impl.builder,
+ org.apache.axiom.soap.impl.dom,
+ org.apache.axiom.soap.impl.dom.soap11,
+ org.apache.axiom.soap.impl.dom.soap12,
+ org.apache.axis2,
+ org.apache.axis2.addressing,
+ org.apache.axis2.builder,
+ org.apache.axis2.client,
+ org.apache.axis2.context,
+ org.apache.axis2.description,
+ org.apache.axis2.engine,
+ org.apache.axis2.handlers,
+ org.apache.commons.logging,
+ org.w3c.dom
+Export-Package: 
+ org.apache.axis2.saaj,
+ org.apache.axis2.saaj.util
+Bundle-Version: 1.4
+Bundle-Name: Axis2 SAAJ
+Bundle-DocURL: http://www.apache.org/
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: axis2-saaj-SNAPSHOT
-Tool: Bnd-0.0.236
-
+Bundle-Vendor: Apache Software Foundation
+Bundle-SymbolicName: org.apache.axis2.saaj
