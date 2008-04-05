@@ -39,6 +39,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.handler.SOAPHeadersAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
@@ -212,6 +213,7 @@ public class MessageUtils {
         if (message.getMessageContext() != null) {
             AttachmentsAdapter.install(message.getMessageContext());
             TransportHeadersAdapter.install(message.getMessageContext());
+            SOAPHeadersAdapter.install(message.getMessageContext());
         }
         
         if (message.isDoingSWA()) {

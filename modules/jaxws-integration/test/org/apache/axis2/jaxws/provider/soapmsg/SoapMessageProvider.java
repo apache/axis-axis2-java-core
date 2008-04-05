@@ -32,6 +32,8 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -71,6 +73,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     public static String XML_REQUEST              = "xml request";
     public static String XML_RESPONSE             = "xml response";
     public static String XML_EMPTYBODY_REQUEST    = "xml empty body request";
+    public static String XML_CHECKHEADERS_REQUEST = "xml check headers request";
+    public static String XML_CHECKHEADERS_RESPONSE= "xml check headers response";
     public static String XML_ATTACHMENT_REQUEST   = "xml and attachment request";
     public static String XML_ATTACHMENT_RESPONSE  = "xml and attachment response";
     public static String XML_MTOM_REQUEST         = "xml and mtom request";
@@ -96,6 +100,10 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         "</return_str>" + 
         SoapMessageProvider.SWAREF_REF +
         "</ns2:ReturnType>";     
+    private String CHECKHEADERS_RETURN = "<ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>" + 
+        SoapMessageProvider.XML_CHECKHEADERS_RESPONSE +
+        "</return_str>" + 
+        "</ns2:ReturnType>";     
     
     public static String TEXT_XML_ATTACHMENT = "<myAttachment>Hello World</myAttachment>";
     public static String ID = "helloWorld123";
@@ -107,7 +115,14 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         "cid:" + ID +
         "</data>";
     
+    public static final QName FOO_HEADER_QNAME = new QName("http://sample1", "foo", "pre1");
+    public static final QName BAR_HEADER_QNAME = new QName("http://sample2", "bar", "pre2");
+    public static final QName BAT_HEADER_QNAME = new QName("http://sample3", "bat", "pre3");
     
+    public static final String FOO_HEADER_CONTENT = "foo content";
+    public static final String BAR_HEADER_CONTENT1 = "bar content1";
+    public static final String BAR_HEADER_CONTENT2 = "bar content2";
+    public static final String BAT_HEADER_CONTENT = "bat content";
     
     public SOAPMessage invoke(SOAPMessage soapMessage) throws SOAPFaultException {
         TestLogger.logger.debug(">> SoapMessageProvider: Request received.");
@@ -130,6 +145,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
                 response = getXMLResponse(soapMessage, discElement);
             } else if (XML_EMPTYBODY_REQUEST.equals(text)) {
                 response = getXMLEmptyBodyResponse(soapMessage, discElement);
+            } else if (XML_CHECKHEADERS_REQUEST.equals(text)) {
+                response = getXMLCheckHeadersResponse(soapMessage, discElement);
             } else if (XML_ATTACHMENT_REQUEST.equals(text)) {
                 response = getXMLAttachmentResponse(soapMessage, discElement);
             } else if (XML_MTOM_REQUEST.equals(text)) {
@@ -230,6 +247,59 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         MessageFactory factory = MessageFactory.newInstance();
         response = factory.createMessage();
      
+        return response;
+    }
+    
+    /**
+     * Get the response for an XML check headers request
+     * @param request
+     * @param dataElement
+     * @return SOAPMessage
+     */
+    private SOAPMessage getXMLCheckHeadersResponse(SOAPMessage request, 
+                                                   SOAPElement dataElement) throws Exception {
+        SOAPMessage response;
+        
+        // Additional assertion checks
+        assertTrue(countAttachments(request) == 0);
+        
+        // Check for specific headers
+        SOAPHeader sh = request.getSOAPHeader();
+        assertTrue(sh != null);
+        
+        SOAPHeaderElement she = (SOAPHeaderElement)
+            sh.getChildElements(FOO_HEADER_QNAME).next();
+        assertTrue(she != null);
+        assertTrue(she instanceof SOAPHeaderElement);
+        String text = she.getValue();
+        assertTrue(FOO_HEADER_CONTENT.equals(text));
+        
+        Iterator it = sh.getChildElements(BAR_HEADER_QNAME);
+        she = (SOAPHeaderElement) it.next();
+        assertTrue(she != null);
+        assertTrue(she instanceof SOAPHeaderElement);
+        text = she.getValue();
+        assertTrue(BAR_HEADER_CONTENT1.equals(text));
+        she = (SOAPHeaderElement) it.next();
+        assertTrue(she != null);
+        assertTrue(she instanceof SOAPHeaderElement);
+        text = she.getValue();
+        assertTrue(BAR_HEADER_CONTENT2.equals(text));
+        
+        assertTrue(!sh.getChildElements(BAT_HEADER_QNAME).hasNext());
+   
+        
+        // Build the Response
+        MessageFactory factory = MessageFactory.newInstance();
+        String responseXML = responseMsgStart + CHECKHEADERS_RETURN + responseMsgEnd;
+        response = factory.createMessage(null, new ByteArrayInputStream(responseXML.getBytes()));
+        response.getSOAPHeader().addHeaderElement(BAR_HEADER_QNAME).
+            addTextNode(BAR_HEADER_CONTENT1);
+        response.getSOAPHeader().addHeaderElement(BAR_HEADER_QNAME).
+            addTextNode(BAR_HEADER_CONTENT2);
+        response.getSOAPHeader().addHeaderElement(BAT_HEADER_QNAME).
+            addTextNode(BAT_HEADER_CONTENT);
+        
         return response;
     }
     

@@ -45,12 +45,16 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
+
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -535,7 +539,54 @@ public abstract class XMLPartBase implements XMLPart {
         return block;
     }
     
-    
+    public Set<QName> getHeaderQNames() {
+        try {
+            switch (contentType) {
+                case OM: {
+                    HashSet<QName> qnames = new HashSet<QName>();
+                    OMElement om = this.getAsOMElement();
+                    if (om instanceof org.apache.axiom.soap.SOAPEnvelope) {
+                        org.apache.axiom.soap.SOAPEnvelope se =
+                            (org.apache.axiom.soap.SOAPEnvelope) om;
+                        org.apache.axiom.soap.SOAPHeader header = se.getHeader();
+                        if (header != null) {
+                            Iterator it = header.getChildElements(); 
+                            while (it != null && it.hasNext()) {
+                                Object node = it.next();
+                                if (node instanceof OMElement) {
+                                    qnames.add(((OMElement) node).getQName());
+                                }
+                            }
+                        }
+                    }
+                    return qnames;
+                }
+                case SOAPENVELOPE: {
+                    HashSet<QName> qnames = new HashSet<QName>();
+                    SOAPEnvelope se = this.getContentAsSOAPEnvelope();
+                    if (se != null) {
+                        SOAPHeader header = se.getHeader();
+                        if (header != null) {
+                            Iterator it = header.getChildElements(); 
+                            while (it != null && it.hasNext()) {
+                                Object node = it.next();
+                                if (node instanceof SOAPElement) {
+                                    qnames.add(((SOAPElement) node).getElementQName());
+                                }
+                            }
+                        }
+                    }
+                    return qnames;
+                }
+                case SPINE:
+                    return getContentAsXMLSpine().getHeaderQNames();
+                default:
+                    return null;
+            }
+        } catch (SOAPException se) {
+            throw ExceptionFactory.makeWebServiceException(se);
+        }
+    }
 
     public List<Block> getHeaderBlocks(String namespace, String localPart, 
                                       Object context, BlockFactory blockFactory, 
@@ -602,6 +653,12 @@ public abstract class XMLPartBase implements XMLPart {
             throws WebServiceException {
         block.setParent(getParent());
         getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
+    }
+    
+    public void appendHeaderBlock(String namespace, String localPart, Block block)
+    throws WebServiceException {
+        block.setParent(getParent());
+        getContentAsXMLSpine().appendHeaderBlock(namespace, localPart, block);
     }
 
     /*

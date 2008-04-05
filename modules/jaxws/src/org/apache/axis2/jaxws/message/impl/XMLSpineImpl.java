@@ -61,8 +61,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * XMLSpineImpl
@@ -462,6 +464,21 @@ class XMLSpineImpl implements XMLSpine {
         return blocks;
     }
 
+    public Set<QName> getHeaderQNames() {
+        HashSet<QName> qnames = new HashSet<QName>();
+        SOAPHeader header = root.getHeader();
+        if (header != null) {
+            Iterator it = header.getChildElements(); 
+            while (it != null && it.hasNext()) {
+                Object node = it.next();
+                if (node instanceof OMElement) {
+                    qnames.add(((OMElement) node).getQName());
+                }
+            }
+        }
+        return qnames;
+    }
+    
     public void setHeaderBlock(String namespace, String localPart, Block block)
             throws WebServiceException {
         block.setParent(getParent());
@@ -479,12 +496,25 @@ class XMLSpineImpl implements XMLSpine {
             om.detach();
         }
     }
+    
+    public void appendHeaderBlock(String namespace, String localPart, Block block)
+    throws WebServiceException {
+        block.setParent(getParent());
+        OMNamespace ns = soapFactory.createOMNamespace(namespace, null);
+        OMElement newOM =
+            _createOMElementFromBlock(localPart, ns, block, soapFactory, true);
+        if (root.getHeader() == null) {
+            soapFactory.createSOAPHeader(root);
+        }
+        root.getHeader().addChild(newOM);
+    }
 
 
     public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
         OMElement om = this._getChildOMElement(root.getHeader(), namespace, localPart);
-        if (om != null) {
+        while (om != null) {
             om.detach();
+            om = this._getChildOMElement(root.getHeader(), namespace, localPart);
         }
     }
 

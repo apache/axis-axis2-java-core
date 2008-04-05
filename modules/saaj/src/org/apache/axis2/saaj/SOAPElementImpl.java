@@ -860,4 +860,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public NamedNodeMap getAttributes() {
         return element.getAttributes();
     }
+    
+    public String toString() {
+        return element.toString();
+    }
 }

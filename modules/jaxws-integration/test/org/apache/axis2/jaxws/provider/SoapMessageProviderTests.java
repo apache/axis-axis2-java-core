@@ -22,6 +22,8 @@ package org.apache.axis2.jaxws.provider;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
 
@@ -33,14 +35,20 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.Binding;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
@@ -64,6 +72,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     private String EMPTYBODY_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_EMPTYBODY_REQUEST +
         "</invoke_str></ns2:invokeOp>";
+    private String CHECKHEADERS_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        SoapMessageProvider.XML_CHECKHEADERS_REQUEST +
+        "</invoke_str></ns2:invokeOp>";
     private String ATTACHMENT_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_ATTACHMENT_REQUEST +
         "</invoke_str></ns2:invokeOp>";
@@ -78,11 +89,11 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         SoapMessageProvider.SWAREF_REF +
         "</ns2:invokeOp>";   
     private String XML_FAULT_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
-    SoapMessageProvider.XML_FAULT_REQUEST +
-    "</invoke_str></ns2:invokeOp>";
+        SoapMessageProvider.XML_FAULT_REQUEST +
+        "</invoke_str></ns2:invokeOp>";
     private String XML_WSE_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
-    SoapMessageProvider.XML_WSE_REQUEST +
-    "</invoke_str></ns2:invokeOp>";
+        SoapMessageProvider.XML_WSE_REQUEST +
+        "</invoke_str></ns2:invokeOp>";
                 
     public static Test suite() {
         return getTestSetup(new TestSuite(SoapMessageProviderTests.class));
@@ -92,10 +103,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data to the web service.  
      * Receives a response containing just xml data.
      */
-    
-    // TODO: test disabled due to XMLDispatch.createMessageFromValue failing to copy
-    // mime header to request.  Server sample has an assert that checks for it, and fails.
-    public void testProviderSourceXMLOnly(){
+    public void testProviderSOAPMessageXMLOnly(){
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -110,7 +118,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             request.setContentDescription(SoapMessageProvider.XML_REQUEST);
             
             // Dispatch
-            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
         	SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
@@ -124,7 +132,6 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-            response.writeTo(System.out);
         	
         }catch(Exception e){
         	e.printStackTrace();
@@ -137,7 +144,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data to the web service.  
      * Receives a response containing an empty body
      */
-    public void testProviderSourceXMLEmptyBody(){
+    public void testProviderSOAPMessageXMLEmptyBody(){
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -152,7 +159,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             request.setContentDescription(SoapMessageProvider.XML_EMPTYBODY_REQUEST);
             
             // Dispatch
-            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
             
             // Check assertions
@@ -164,7 +171,6 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-            response.writeTo(System.out);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -177,7 +183,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a Fault
      */
-    public void testProviderSOAPFault() throws Exception {
+    public void testProviderSOAPMessageSOAPFault() throws Exception {
              
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -193,7 +199,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             try {
                 // Dispatch
-                TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+                TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
                 SOAPMessage response = dispatch.invoke(request);
                 assertTrue("Expected failure", false);
             } catch (SOAPFaultException e) {
@@ -216,7 +222,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a generic WebServicesException
      */
-    public void testProviderWebServiceException() throws Exception {
+    public void testProviderSOAPMessageWebServiceException() throws Exception {
              
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -232,7 +238,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             try {
                 // Dispatch
-                TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+                TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
                 SOAPMessage response = dispatch.invoke(request);
                 assertTrue("Expected failure", false);
             } catch (SOAPFaultException e) {
@@ -248,7 +254,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Receives a response containing xml data and the same raw attachments.
      */
     
-    public void testProviderSourceRawAttachment(){
+    public void testProviderSOAPMessageRawAttachment(){
         // Raw Attachments are attachments that are not referenced in the xml with MTOM or SWARef.
         // Currently there is no support in Axis 2 for these kinds of attachments.
         // The belief is that most customers will use MTOM.  Some legacy customers will use SWARef.
@@ -267,12 +273,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-
-            TestLogger.logger.debug("Request Message:");
-            request.writeTo(System.out);
             
             // Dispatch
-            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -290,7 +293,6 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-            response.writeTo(System.out);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -303,7 +305,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing xml data and mtom attachment.  
      * Receives a response containing xml data and the mtom attachment.
      */
-    public void testProviderSourceMTOM(){
+    public void testProviderSOAPMessageMTOM(){
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -323,12 +325,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-
-            TestLogger.logger.debug("Request Message:");
-            request.writeTo(System.out);
             
             // Dispatch
-            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -346,7 +345,6 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-            response.writeTo(System.out);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -359,7 +357,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
      * Sends an SOAPMessage containing xml data and a swaref attachment to the web service.  
      * Receives a response containing xml data and the swaref attachment attachment.
      */
-    public void testProviderSourceSWARef(){
+    public void testProviderSOAPMessageSWARef(){
         try{       
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
@@ -374,12 +372,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart ap = request.createAttachmentPart(SoapMessageProvider.TEXT_XML_ATTACHMENT, "text/xml");
             ap.setContentId(SoapMessageProvider.ID);
             request.addAttachmentPart(ap);
-
-            TestLogger.logger.debug("Request Message:");
-            request.writeTo(System.out);
             
             // Dispatch
-            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
 
             // Check assertions and get the data element
@@ -398,7 +393,6 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-            response.writeTo(System.out);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -422,6 +416,148 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Sends an String payload containing only xml data to the Provider<SOAPMessage>
+     * The header information is sent using a jaxws.request.soap.header Map  
+     * Receives a response containing xml data
+     */
+    public void testProviderSOAPMessage_RequestHeaders(){
+        try{       
+            // Create the dispatch
+            Dispatch<String> dispatch = createStringDispatch();
+             
+            // Create the String Payload
+            String request = CHECKHEADERS_INVOKE;
+            MessageFactory factory = MessageFactory.newInstance();
+            
+            // Create the request headers
+            Map<String, Object> requestContext = dispatch.getRequestContext();
+            Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
+            
+            SOAPFactory sf = SOAPFactory.newInstance();
+            SOAPElement e = sf.createElement(SoapMessageProvider.FOO_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.FOO_HEADER_CONTENT);
+            String fooHeader = e.toString();
+            TestLogger.logger.debug("Foo Header:" + fooHeader);
+            List<String> list = new ArrayList<String>();
+            list.add(fooHeader);
+            requestHeaders.put(SoapMessageProvider.FOO_HEADER_QNAME, list);
+            
+            list = new ArrayList<String>();
+            e = sf.createElement(SoapMessageProvider.BAR_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.BAR_HEADER_CONTENT1);
+            String barHeader = e.toString();
+            
+            TestLogger.logger.debug("Bar Header:" + barHeader);
+            list.add(barHeader);
+            e = sf.createElement(SoapMessageProvider.BAR_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.BAR_HEADER_CONTENT2);
+            barHeader = e.toString();
+            
+            TestLogger.logger.debug("Bar Header:" + barHeader);
+            list.add(barHeader);
+            
+            
+            requestHeaders.put(SoapMessageProvider.BAR_HEADER_QNAME, list);
+            requestContext.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
+            
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            String response = dispatch.invoke(request);
+            
+            // Check assertions and get the data element
+            assertTrue(response.contains(SoapMessageProvider.XML_CHECKHEADERS_RESPONSE));
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response + "]");
+                
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+        
+    }
+    
+    /**
+     * Sends an String payload containing only xml data to the Provider<SOAPMessage>
+     * The header information is sent using a jaxws.request.soap.header Map  
+     * Receives a response containing xml data
+     */
+    public void testProviderSOAPMessage_RequestAndResponseHeaders(){
+        try{       
+            // Create the dispatch
+            Dispatch<String> dispatch = createStringDispatch();
+             
+            // Create the String Payload
+            String request = CHECKHEADERS_INVOKE;
+            MessageFactory factory = MessageFactory.newInstance();
+            
+            // Create the request headers
+            Map<String, Object> requestContext = dispatch.getRequestContext();
+            Map<QName, List<String>> requestHeaders = new HashMap<QName, List<String>>();
+            
+            SOAPFactory sf = SOAPFactory.newInstance();
+            SOAPElement e = sf.createElement(SoapMessageProvider.FOO_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.FOO_HEADER_CONTENT);
+            String fooHeader = e.toString();
+            TestLogger.logger.debug("Foo Header:" + fooHeader);
+            List<String> list = new ArrayList<String>();
+            list.add(fooHeader);
+            requestHeaders.put(SoapMessageProvider.FOO_HEADER_QNAME, list);
+            
+            list = new ArrayList<String>();
+            e = sf.createElement(SoapMessageProvider.BAR_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.BAR_HEADER_CONTENT1);
+            String barHeader = e.toString();
+            
+            TestLogger.logger.debug("Bar Header:" + barHeader);
+            list.add(barHeader);
+            e = sf.createElement(SoapMessageProvider.BAR_HEADER_QNAME);
+            e.addTextNode(SoapMessageProvider.BAR_HEADER_CONTENT2);
+            barHeader = e.toString();
+            
+            TestLogger.logger.debug("Bar Header:" + barHeader);
+            list.add(barHeader);
+            
+            requestHeaders.put(SoapMessageProvider.BAR_HEADER_QNAME, list);
+            requestContext.put(Constants.JAXWS_OUTBOUND_SOAP_HEADERS, requestHeaders);
+            
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            String response = dispatch.invoke(request);
+            
+            // Check assertions and get the data element
+            assertTrue(response.contains(SoapMessageProvider.XML_CHECKHEADERS_RESPONSE));
+            
+            // Check outbound headers
+            Map<String, Object> responseContext = dispatch.getResponseContext();
+            assertTrue(responseContext != null);
+            Map<QName, List<String>> responseHeaders = (Map<QName, List<String>>) 
+                responseContext.get(Constants.JAXWS_INBOUND_SOAP_HEADERS);
+            assertTrue(responseHeaders != null);
+            assertTrue(responseHeaders.size() >= 2);
+            List<String> batHeaders = responseHeaders.get(SoapMessageProvider.BAT_HEADER_QNAME);
+            assertTrue(batHeaders != null && batHeaders.size() == 1);
+            assertTrue(batHeaders.get(0).contains(SoapMessageProvider.BAT_HEADER_CONTENT));
+            List<String> barHeaders =responseHeaders.get(SoapMessageProvider.BAR_HEADER_QNAME);
+            assertTrue(barHeaders != null &&  barHeaders.size() == 2);
+            assertTrue(barHeaders.get(0).contains(SoapMessageProvider.BAR_HEADER_CONTENT1));
+            assertTrue(barHeaders.get(1).contains(SoapMessageProvider.BAR_HEADER_CONTENT2));
+            
+            // There should be no foo header in the response
+            List<String> fooHeaders = responseHeaders.get(SoapMessageProvider.FOO_HEADER_QNAME);
+            assertTrue(fooHeaders == null);
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response + "]");
+                
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+        
+    }
 
     /**
      * @return
@@ -434,6 +570,20 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         svc.addPort(portName,null, endpointUrl);
         Dispatch<SOAPMessage> dispatch = 
         	svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
+        return dispatch;
+    }
+    
+    /**
+     * @return
+     * @throws Exception
+     */
+    private Dispatch<String> createStringDispatch() throws Exception {
+        
+        
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName,null, endpointUrl);
+        Dispatch<String> dispatch = 
+                svc.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         return dispatch;
     }
     

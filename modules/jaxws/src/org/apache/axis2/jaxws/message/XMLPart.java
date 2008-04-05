@@ -31,6 +31,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -301,8 +302,9 @@ public interface XMLPart {
             throws WebServiceException;
 
     /**
-     * appendHeaderBlock Append the block to the list of header blocks. The Message owns the block.
-     * You must use the getHeaderBlock method to access it.
+     * setHeaderBlock 
+     * replaces the first existing header block with this new block.  If there is no
+     * existing header block, one is added to the end of the headers
      *
      * @param namespace
      * @param localPart
@@ -311,9 +313,28 @@ public interface XMLPart {
      */
     public void setHeaderBlock(String namespace, String localPart, Block block)
             throws WebServiceException;
+    
+    /**
+     * appendHeaderBlock 
+     * Append the block to the list of header blocks. The Message owns the block.
+     * You must use the getHeaderBlock method to access it.
+     *
+     * @param namespace
+     * @param localPart
+     * @param block
+     * @throws WebServiceException
+     */
+    public void appendHeaderBlock(String namespace, String localPart, Block block)
+            throws WebServiceException;
 
     /**
-     * removePayload Removes the indicated block
+     * @return QNames of headers
+     */
+    public Set<QName> getHeaderQNames();
+    
+    /**
+     * removeHeaderBlock
+     * Removes all header blocks with this namespace/localpart
      *
      * @param namespace
      * @param localPart

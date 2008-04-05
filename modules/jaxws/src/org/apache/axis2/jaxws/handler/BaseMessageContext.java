@@ -50,6 +50,7 @@ public class BaseMessageContext implements javax.xml.ws.handler.MessageContext {
         // MessageContext Attachments implementation.
         AttachmentsAdapter.install(messageCtx);
         TransportHeadersAdapter.install(messageCtx);
+        SOAPHeadersAdapter.install(messageCtx);
     }
 
     /* (non-Javadoc)

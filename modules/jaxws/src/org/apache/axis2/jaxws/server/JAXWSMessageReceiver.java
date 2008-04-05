@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.MEPContext;
+import org.apache.axis2.jaxws.handler.SOAPHeadersAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
@@ -133,6 +134,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
             // The adapters need to be installed on the new request Message Context
             AttachmentsAdapter.install(requestMsgCtx);
             TransportHeadersAdapter.install(requestMsgCtx);
+            SOAPHeadersAdapter.install(requestMsgCtx);
             
             Binding binding = (Binding)axisRequestMsgCtx.getProperty(PARAM_BINDING);
             EndpointInvocationContext eic = InvocationContextFactory.createEndpointInvocationContext(binding);

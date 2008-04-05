@@ -26,4 +26,9 @@ package org.apache.axis2.jaxws;
 public interface Constants {
     public static final String ENDPOINT_CONTEXT_MAP =
         "org.apache.axis2.jaxws.addressing.util.EndpointContextMap";
+    
+    public static final String JAXWS_OUTBOUND_SOAP_HEADERS  = 
+        org.apache.axis2.Constants.JAXWS_OUTBOUND_SOAP_HEADERS;
+    public static final String JAXWS_INBOUND_SOAP_HEADERS   = 
+        org.apache.axis2.Constants.JAXWS_INBOUND_SOAP_HEADERS;
 }

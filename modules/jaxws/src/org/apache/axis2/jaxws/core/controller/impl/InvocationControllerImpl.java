@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.SOAPHeadersAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.Constants;
@@ -104,6 +105,7 @@ public abstract class InvocationControllerImpl implements InvocationController {
             // Invoke inbound handlers.
             TransportHeadersAdapter.install(response);
             AttachmentsAdapter.install(response);
+            SOAPHeadersAdapter.install(response);
             HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
                                                       ic.getHandlers(),
                                                       HandlerChainProcessor.MEP.RESPONSE,

@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
+import org.apache.axis2.jaxws.handler.SOAPHeadersAdapter;
 import org.apache.axis2.jaxws.handler.TransportHeadersAdapter;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
@@ -303,6 +304,7 @@ public abstract class AsyncResponse implements Response {
             // Install the adapters and invoke inbound handlers.
             TransportHeadersAdapter.install(response);
             AttachmentsAdapter.install(response);
+            SOAPHeadersAdapter.install(response);
             HandlerInvokerUtils.invokeInboundHandlers(response.getMEPContext(),
                                                       response.getInvocationContext().getHandlers(),
                                                       HandlerChainProcessor.MEP.RESPONSE,

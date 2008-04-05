@@ -274,6 +274,10 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String UNPROCESSED_HEADER_QNAMES = "unprocessedHeaderQNames";
 
+    // Keys to access JAXWS Request and Response SOAP Headers
+    public static final String JAXWS_OUTBOUND_SOAP_HEADERS  = "jaxws.binding.soap.headers.outbound";
+    public static final String JAXWS_INBOUND_SOAP_HEADERS = "jaxws.binding.soap.headers.inbound";
+    
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";

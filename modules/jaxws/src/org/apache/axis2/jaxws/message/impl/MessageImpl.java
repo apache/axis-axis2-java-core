@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * MessageImpl
@@ -460,6 +461,11 @@ public class MessageImpl implements Message {
         xmlPart.setHeaderBlock(namespace, localPart, block);
     }
     
+    public void appendHeaderBlock(String namespace, String localPart, Block block) 
+    throws WebServiceException {
+        xmlPart.appendHeaderBlock(namespace, localPart, block);
+    }
+    
     public String traceString(String indent) {
         return xmlPart.traceString(indent);
     }
@@ -634,8 +640,12 @@ public class MessageImpl implements Message {
     
     public void close() {
         if (xmlPart != null) {
-              xmlPart.close();
+            xmlPart.close();
         }
-     }
+    }
+
+    public Set<QName> getHeaderQNames() {
+        return (xmlPart == null) ? null : xmlPart.getHeaderQNames();     
+    }
 
 }
