@@ -224,7 +224,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             string.append(newline);
             string.append("Name: " + getName());
             string.append(newline);
-            string.append("Namespace: " + getName());
+            string.append("Namespace: " + getTargetNamespace());
             string.append(newline);
             string.append("FaultBean: " + getFaultBean());
             string.append(newline);
