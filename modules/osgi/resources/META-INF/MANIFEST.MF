@@ -13,7 +13,8 @@ Import-Package:
  org.apache.axis2.transport.http,
  org.osgi.framework,
  org.osgi.service.http,
- org.osgi.service.log
+ org.osgi.service.log,
+ com.ctc.wstx.stax
 Export-Package: 
  org.apache.axis2.extensions.osgi.core.web,
  org.apache.axis2.extensions.osgi.core,
