@@ -907,14 +907,14 @@ class ServiceDescriptionImpl
         ClassLoader loader = composite.getClassLoader();
         URL url = null;
         if (loader != null) {
-            url = loader.getResource(wsdlLocation);
+            url = getResource(wsdlLocation, loader); 
         }
         
         // Try the context class loader
         if(url == null){
             ClassLoader classLoader = getContextClassLoader(null);
             if(classLoader != loader){
-                url = classLoader.getResource(wsdlLocation);
+                url = getResource(wsdlLocation, classLoader);
             }
         }
 
@@ -951,6 +951,16 @@ class ServiceDescriptionImpl
             }
         }
         return url;
+    }
+
+    private URL getResource(final String wsdlLocation, final ClassLoader loader) {
+        return (URL) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return loader.getResource(wsdlLocation);
+                    }
+                }
+        );
     }
 
     // TODO: Remove these and replace with appropraite get* methods for WSDL information

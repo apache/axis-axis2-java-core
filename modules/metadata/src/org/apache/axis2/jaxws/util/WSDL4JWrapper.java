@@ -372,7 +372,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
             if ("file".equals(url.getProtocol())) {
                 File f = new File(url.getPath());
                 // If file is not of type directory then its a jar file
-                if (f.exists() && !f.isDirectory()) {
+                if (isAFile(f)) { 
                     try {
                         JarFile jf = new JarFile(f);
                         Enumeration<JarEntry> entries = jf.entries();
@@ -409,6 +409,17 @@ public class WSDL4JWrapper implements WSDLWrapper {
         }
 
         return null;
+    }
+
+    private boolean isAFile(final File f) {
+        Boolean ret = (Boolean) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return new Boolean(f.exists() && !f.isDirectory());
+                    }
+                }
+        );
+        return ret.booleanValue();
     }
 
     private static WSDLReader getWSDLReader() throws WSDLException {

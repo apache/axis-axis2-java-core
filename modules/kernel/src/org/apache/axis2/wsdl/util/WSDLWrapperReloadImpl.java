@@ -1343,8 +1343,14 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     }
 
 
-    private URL getAbsoluteURL(ClassLoader classLoader, String filePath) throws WSDLException {
-        URL url = classLoader.getResource(filePath);
+    private URL getAbsoluteURL(final ClassLoader classLoader, final String filePath) throws WSDLException {
+        URL url = (URL) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return classLoader.getResource(filePath);
+                    }
+                }
+        );
         if (url == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not get URL from classloader. Looking in a jar.");
