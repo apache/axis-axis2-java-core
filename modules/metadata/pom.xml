@@ -98,6 +98,14 @@
         </resources>
         <plugins>
             <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <configuration>
+                <archive>  
+                  <manifestFile>resources/META-INF/MANIFEST.MF</manifestFile>
+                </archive> 
+              </configuration>
+            </plugin>  
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
