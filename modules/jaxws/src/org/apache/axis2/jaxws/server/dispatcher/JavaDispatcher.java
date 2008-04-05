@@ -19,8 +19,10 @@
 
 package org.apache.axis2.jaxws.server.dispatcher;
 
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.server.InvocationHelper;
@@ -235,4 +237,15 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         }
     }
 
+    protected static void setFaultResponseAction(Throwable exception, 
+                                                 MessageContext request,
+                                                 MessageContext response) {
+         AxisOperation operation = request.getOperationDescription().getAxisOperation();
+         if (operation != null) {
+             exception = ClassUtils.getRootCause(exception);        
+             String action = operation.getFaultAction(exception.getClass().getName());
+             response.getAxisMessageContext().setWSAAction(action);
+         }
+    }
+    
 }

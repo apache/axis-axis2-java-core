@@ -363,40 +363,7 @@ class OperationDescriptionImpl
         
         newAxisOperation.setOutputAction(outputAction);
 
-        //Set the FAULT ACTION
-        // Walk the fault information
-        FaultDescription[] faultDescs = getFaultDescriptions();
-        
-        if (faultDescs != null) {
-            for (FaultDescription faultDesc : faultDescs) {
-        
-                AxisMessage faultMessage = new AxisMessage();
-                String faultName = faultDesc.getName();
-                faultMessage.setName(faultName);
-                
-                String faultAction = 
-                        WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
-                                        portTypeName, 
-                                        operationName, 
-                                        faultMessage.getName());
-                
-                newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
-                newAxisOperation.setFaultMessages(faultMessage);
-            }
-        }
-        
-        //Override the actions based on any FaultAction annotations that are defined.
-        FaultAction[] faultActions = getFaultActions();
-        
-        if (faultActions != null) {
-            for (FaultAction faultAction : faultActions) {
-                String className = faultAction.className().getName();
-                FaultDescription faultDesc = resolveFaultByExceptionName(className);
-                if (faultDesc != null)  {
-                    newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
-                }
-            }
-        }
+        setFaultActions(newAxisOperation, operationName, targetNS, portTypeName);
 
         getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().
             getAxisService().addOperation(newAxisOperation);
@@ -483,40 +450,7 @@ class OperationDescriptionImpl
         newAxisOperation.setOutputAction(outputAction);
         
         //Set the FAULT ACTION
-        // Walk the fault information
-        FaultDescription[] faultDescs = getFaultDescriptions();
-        
-        //Generate fault actions according to the Default Action Pattern.
-        if (faultDescs != null) {
-            for (FaultDescription faultDesc : faultDescs) {
-        
-                AxisMessage faultMessage = new AxisMessage();
-                String faultName = faultDesc.getName();
-                faultMessage.setName(faultName);
-                
-                String faultAction = 
-                        WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
-                                        portTypeName, 
-                                        operationName, 
-                                        faultMessage.getName());
-                
-                newAxisOperation.addFaultAction(faultMessage.getName(), faultAction);
-                newAxisOperation.setFaultMessages(faultMessage);
-            }
-        }
-        
-        //Override the fault actions based on any FaultAction annotations that are defined.
-        FaultAction[] faultActions = getFaultActions();
-        
-        if (faultActions != null) {
-            for (FaultAction faultAction : faultActions) {
-                String className = faultAction.className().getName();
-                FaultDescription faultDesc = resolveFaultByExceptionName(className);
-                if (faultDesc != null)  {
-                    newAxisOperation.addFaultAction(faultDesc.getName(), faultAction.value());
-                }
-            }
-        }
+        setFaultActions(newAxisOperation, operationName, targetNS, portTypeName);
 
         // If this is a DOC/LIT/BARE operation, then set the QName of the input AxisMessage to the 
         // part for the first IN or IN/OUT non-header parameter.  If there are no parameters, then don't set
@@ -565,6 +499,46 @@ class OperationDescriptionImpl
             }
         }
         return newAxisOperation;
+    }
+
+    private void setFaultActions(AxisOperation newAxisOperation,
+                                 String operationName,
+                                 String targetNS,
+                                 String portTypeName) {
+        // Walk the fault information
+        FaultDescription[] faultDescs = getFaultDescriptions();
+        
+        //Generate fault actions according to the Default Action Pattern.
+        if (faultDescs != null) {
+            for (FaultDescription faultDesc : faultDescs) {
+        
+                AxisMessage faultMessage = new AxisMessage();
+                String faultName = faultDesc.getName();
+                faultMessage.setName(faultName);
+                
+                String faultAction = 
+                        WSDL11ActionHelper.getFaultActionFromStringInformation( targetNS, 
+                                        portTypeName, 
+                                        operationName, 
+                                        faultMessage.getName());
+                
+                newAxisOperation.addFaultAction(faultDesc.getExceptionClassName(),  faultAction);
+                newAxisOperation.setFaultMessages(faultMessage);
+            }
+        }
+        
+        //Override the fault actions based on any FaultAction annotations that are defined.
+        FaultAction[] faultActions = getFaultActions();
+        
+        if (faultActions != null) {
+            for (FaultAction faultAction : faultActions) {
+                String className = faultAction.className().getName();
+                FaultDescription faultDesc = resolveFaultByExceptionName(className);
+                if (faultDesc != null)  {
+                    newAxisOperation.addFaultAction(className, faultAction.value());
+                }
+            }
+        }
     }
 
     /**

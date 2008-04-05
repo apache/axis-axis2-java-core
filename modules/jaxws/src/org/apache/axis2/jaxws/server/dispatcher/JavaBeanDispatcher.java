@@ -357,6 +357,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         response.setCausedByException(axisFault);
         
+        setFaultResponseAction(t, request, response);
+        
         return response;
     }
     
