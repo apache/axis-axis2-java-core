@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.LinkedHashMap;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -75,7 +76,7 @@ public abstract class AxisOperation extends AxisDescription
 
     private ArrayList wsamappingList;
     private String outputAction;
-    private HashMap faultActions = new HashMap();
+    private LinkedHashMap faultActions = new LinkedHashMap();
 
     private String soapAction;
 
