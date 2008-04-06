@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-Activator: org.apache.axis2.extensions.osgi.Activator
+Import-Package: 
+ javax.servlet.http,
+ javax.servlet,
+ org.apache.axis2,
+ org.apache.axis2.deployment,
+ org.apache.axis2.deployment.util,
+ org.apache.axis2.description,
+ org.apache.axis2.engine,
+ org.apache.axis2.jaxws.framework,
+ org.apache.axis2.transport.http,
+ org.osgi.framework,
+ org.osgi.service.http,
+ org.osgi.service.log,
+ com.ctc.wstx.stax
+Export-Package: 
+ org.apache.axis2.extensions.osgi.core.web,
+ org.apache.axis2.extensions.osgi.core,
+ org.apache.axis2.extensions.osgi.util,
+ org.apache.axis2.extensions.osgi
+Bundle-Version: 1.4
+Bundle-Name: Axis2 OSGi Bundle
+Bundle-DocURL: http://www.apache.org/
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Apache Software Foundation
+Bundle-SymbolicName: org.apache.axis2.osgi
+
