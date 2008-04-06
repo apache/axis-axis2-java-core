@@ -132,7 +132,7 @@ public class CodeGenerationUtility {
                             returnInputSource = new InputSource(new StringReader(getSchemaAsString(key)));
                             InputSource existingInputSource = (InputSource) schemaToInputSourceMap.get(key);
                             returnInputSource.setSystemId(existingInputSource.getSystemId());
-                            returnInputSource.setSystemId(existingInputSource.getPublicId());
+                            returnInputSource.setPublicId(existingInputSource.getPublicId());
                             break;
                         }
                     }
