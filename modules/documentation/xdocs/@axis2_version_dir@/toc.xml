@@ -153,8 +153,6 @@ target="mainFrame">Java2WSDL Maven2 Plug-in</a></li>
 <li>25.7 <a href=
 "../tools/@axis2_version_dir@/maven-plugins/maven-wsdl2code-plugin.html"
 target="mainFrame">WSDL2Code Maven2 Plug-in</a></li>
-<li>25.8 <a href="../tools/previous.html" target="mainFrame">Tools
-Archive</a></li>
 </ul>
 </li>
 <li><a href="migration.html" target="mainFrame">Migration Guide

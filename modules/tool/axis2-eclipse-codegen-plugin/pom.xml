@@ -332,9 +332,9 @@
                                 <property name="plugin.help.file.name" value="help_toc.xml"/>
                                 <property name="codegen.resource.dir" value="../conf/codegen"/>
                                 <property name="codegen.help.resource.file"
-                                          value="../../../modules/documentation/xdocs/tools/1_3/eclipse/wsdl2java-plugin.html"/>
+                                          value="../../../modules/documentation/xdocs/tools/1_4/eclipse/wsdl2java-plugin.html"/>
                                 <property name="codegen.help.images.dir"
-                                          value="../../../modules/documentation/xdocs/tools/1_3/eclipse/images"/>
+                                          value="../../../modules/documentation/xdocs/tools/1_4/eclipse/images"/>
                                 <property name="axis2.lib.dir" value="../../../target/lib"/>
                                 <property name="codegen.resource.dir" value="../conf/codegen"/>
                                 <delete dir="./target/plugin/${codegen.plugin.version}"/>
