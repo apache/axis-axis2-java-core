@@ -326,7 +326,7 @@ class OperationDescriptionImpl
         String inputAction = getOutputAction();
 
         //If we still don't have an action then fall back to the Default Action Pattern.
-        if (inputAction == null) {
+        if (inputAction == null || inputAction.length() == 0) {
             inputAction =
                 WSDL11ActionHelper.getInputActionFromStringInformation( messageExchangePattern, 
                                                                         targetNS, 
@@ -352,7 +352,7 @@ class OperationDescriptionImpl
         String outputName = null;
         String outputAction = getInputAction();
 
-        if (outputAction == null) {
+        if (outputAction == null || outputAction.length() == 0) {
             outputAction =
                 WSDL11ActionHelper.getOutputActionFromStringInformation( messageExchangePattern, 
                                                                          targetNS, 
@@ -412,7 +412,7 @@ class OperationDescriptionImpl
         String inputAction = getInputAction();
         
         //If we don't have an action then fall back to the Default Action Pattern.
-        if (inputAction == null) {
+        if (inputAction == null || inputAction.length() == 0) {
             inputAction =
                 WSDL11ActionHelper.getInputActionFromStringInformation(messageExchangePattern, 
                                                                        targetNS, 
@@ -438,7 +438,7 @@ class OperationDescriptionImpl
         String outputAction = getOutputAction();
         
         //If we don't have an action then fall back to the Default Action Pattern.
-        if (outputAction == null) {
+        if (outputAction == null || outputAction.length() == 0) {
             outputAction =
                 WSDL11ActionHelper.getOutputActionFromStringInformation(messageExchangePattern,
                                                                         targetNS, 
