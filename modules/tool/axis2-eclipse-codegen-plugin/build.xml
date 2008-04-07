@@ -45,7 +45,7 @@
     <property name="plugin.project.file.name" value=".project"></property>
     <property name="plugin.classpath.file.name" value=".classpath"></property>
     <property name="plugin.help.file.name" value="help_toc.xml"></property>
-    <property name="tool_docs_version" value="1_3"></property>
+    <property name="tool_docs_version" value="1_4"></property>
 
     <property name="codegen.resource.dir" value="../conf/codegen"></property>
     <property name="codegen.help.resource.file" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/wsdl2java-plugin.html"></property>

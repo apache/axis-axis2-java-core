@@ -31,7 +31,7 @@ media="all" />
 <!-- Introduction Para -->
 <h1>Axis2 Clustering Support</h1>
 <p>Are you interested in improving Scalability and High Availability of your Web Services?</p>
-<p>Axis2 1.3 provides experimental clustering support to add <b><i>Scalability, Failover and High Availability</i></b> to your Web Services.
+<p>Axis2 1.4 provides experimental clustering support to add <b><i>Scalability, Failover and High Availability</i></b> to your Web Services.
 This guide will explain the extent of clustering support and it's the current limitations.
 It also highlights the recommended approaches using examples.</p>
 <p>Axis2 clustering support can be used in several scenarios.
