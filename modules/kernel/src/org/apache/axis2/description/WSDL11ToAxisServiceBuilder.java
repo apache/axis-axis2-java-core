@@ -2340,10 +2340,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     axisBindingOperation
                             .setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapActionURI);
                     axisBindingOperation.getAxisOperation().setSoapAction(soapActionURI);
-                    if (isServerSide) {
-                        axisBindingOperation.getAxisOperation().setSoapAction(soapActionURI);                        
-                    }
-                    else {
+                    if (!isServerSide) {
                         axisBindingOperation.getAxisOperation().setOutputAction(soapActionURI);
                     }
 
@@ -2368,10 +2365,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 
                 if (soapAction != null && !soapAction.equals("")) {
                     axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
-                    if (isServerSide) {
-                        axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
-                    }
-                    else {
+                    axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
+                    if (!isServerSide) {
                         axisBindingOperation.getAxisOperation().setOutputAction(soapAction);
                     }
 
