@@ -20,6 +20,8 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -82,7 +84,7 @@ public class HandlerChainsParser {
                 } else if ("service-name-pattern".equals(name)) {
                     handler.setServiceNamePattern(processPatternElement(el));
                 } else if ("protocol-bindings".equals(name)) {
-                    handler.getProtocolBindings().add(processProtocolBindingsElement(el));
+                    handler.getProtocolBindings().addAll(processProtocolBindingsElement(el));
                 } else if ("handler".equals(name)) {
                     handler.getHandler().add(processHandlerElement(el));
                 }
@@ -91,8 +93,10 @@ public class HandlerChainsParser {
         return handler;
     }
     
-    private String processProtocolBindingsElement(Element el) {
-        return el.getTextContent().trim();
+    private List<String> processProtocolBindingsElement(Element el) {
+        String protocolBindingsString = el.getTextContent().trim();
+        String [] protocolBindings = protocolBindingsString.split("\\s+");
+        return Arrays.asList(protocolBindings);
     }
     
     private QName processPatternElement(Element el) throws Exception {
