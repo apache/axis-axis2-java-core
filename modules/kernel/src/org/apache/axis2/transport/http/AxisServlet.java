@@ -671,7 +671,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, response);
         try {
             ServletContext context = getServletContext();
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, context);
+            if(context != null) {
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, context);
+            }
         } catch (Exception e){
             log.debug(e.getMessage(), e);
         }
