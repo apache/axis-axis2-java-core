@@ -335,6 +335,7 @@
 				<include>java_first_jaxws/**/*</include>
 				<include>jaxws-interop/**/*</include>
 				<include>jaxws-dynamic/**/*</include>
+				<include>jaxws-version/**/*</include>
 				<include>mtom/**/*</include>
 				<include>pojo/**/*</include>
 				<include>pojoguide/**/*</include>
