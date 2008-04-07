@@ -330,15 +330,8 @@ public class DescriptionUtils {
     
     public static HandlerChainsType loadHandlerChains(InputStream is, ClassLoader classLoader) {
         try {
-            // All the classes we need should be part of this package
-            JAXBContext jc = JAXBContext
-                    .newInstance("org.apache.axis2.jaxws.description.xml.handler", classLoader);
-
-            Unmarshaller u = jc.createUnmarshaller();
-
-            JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
-            return (HandlerChainsType)o.getValue();
-
+            HandlerChainsParser parser = new HandlerChainsParser();
+            return parser.loadHandlerChains(is);
         } catch (Exception e) {
             throw ExceptionFactory
                     .makeWebServiceException(Messages.getMessage("loadHandlerChainErr", e.getMessage()));
