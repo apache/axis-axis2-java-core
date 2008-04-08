@@ -1112,10 +1112,12 @@ class EndpointDescriptionImpl
             OutOnlyAxisOperation outOnlyOperation =
                     new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP);
             axisService.addOperation(outOnlyOperation);
+            outOnlyOperation.setSoapAction(null);
 
             OutInAxisOperation outInOperation =
                     new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
             axisService.addOperation(outInOperation);
+            outInOperation.setSoapAction(null);
         }
     }
 
