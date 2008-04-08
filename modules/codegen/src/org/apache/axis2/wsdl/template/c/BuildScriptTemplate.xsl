@@ -35,7 +35,7 @@ gcc -g -shared -olib<xsl:value-of select="$servicename"/>.so -I $AXIS2C_HOME/inc
     -lpthread \
     -laxis2_http_sender \
     -laxis2_http_receiver \
-    -laxis2_libxml2 \
+    -lguththila \
     *.c <xsl:value-of select="@targetsourcelocation"/>/*.c
 </xsl:when>
 <xsl:otherwise>
@@ -47,7 +47,7 @@ gcc -g -shared -olib<xsl:value-of select="$servicename"/>.so -I $AXIS2C_HOME/inc
     -lpthread \
     -laxis2_http_sender \
     -laxis2_http_receiver \
-    -laxis2_libxml2 \
+    -lguththila \
     *.c 
 </xsl:otherwise>
 </xsl:choose>
