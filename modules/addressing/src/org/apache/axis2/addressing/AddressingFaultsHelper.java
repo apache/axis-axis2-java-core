@@ -355,7 +355,9 @@ public class AddressingFaultsHelper {
 
         faultInformation.put(faultInformationKey, faultInformationValue);
 
-        if (!messageContext.isSOAP11()) {
+        if (messageContext.isSOAP11()) {
+            faultcode = (faultSubcode != null) ? faultSubcode : faultcode;
+        } else {
             setFaultCode(messageContext, faultcode, faultSubcode);
         }
 
