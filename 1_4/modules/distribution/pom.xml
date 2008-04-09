@@ -330,7 +330,6 @@
                                 <mkdir dir="target/tmp-repository"/>
                                 <mkdir dir="target/tmp-repository/modules"/>
                                 <mkdir dir="target/tmp-repository/services"/>
-                                <mkdir dir="target/tmp-repository/rmiservices"/>
 
                                 <copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar"
                                       tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
