@@ -129,7 +129,6 @@
                 <module>modules/jaxws-integration</module>
                 <module>modules/clustering</module>
                 <module>modules/corba</module>
-                <module>modules/osgi</module>
             </modules>
             <build>
                 <plugins>
@@ -180,7 +179,6 @@
                 <module>modules/jaxws-integration</module>
                 <module>modules/clustering</module>
                 <module>modules/corba</module>
-                <module>modules/osgi</module>
             </modules>
             <build>
                 <plugins>
