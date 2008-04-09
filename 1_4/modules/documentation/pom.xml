@@ -128,7 +128,7 @@
         </dependency>
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
-            <artifactId>${stax.impl.artifactid}</artifactId>
+            <artifactId>${stax.impl.artifact}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
