@@ -1205,11 +1205,17 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);
         WSDLSource wsdlSource = reader.createWSDLSource();
         wsdlSource.setSource(document.getDocumentElement());
-        if (getBaseUri() != null && !"".equals(getBaseUri())) {
+        String uri = getBaseUri();
+        if (uri != null && !"".equals(uri)) {
             try {
-                wsdlSource.setBaseURI(new URI(getBaseUri()));
+                wsdlSource.setBaseURI(new URI(uri));
             } catch (URISyntaxException e) {
-                AxisFault.makeFault(e);
+                File f = new File(uri);
+                if(f.exists()) {
+                    wsdlSource.setBaseURI(f.toURI());
+                } else {
+                    log.error(e.toString(), e);
+                }
             }
         }
         if (log.isDebugEnabled()) {
