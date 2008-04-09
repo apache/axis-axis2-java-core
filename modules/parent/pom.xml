@@ -137,7 +137,7 @@
         <servlet.api.version>2.3</servlet.api.version>
         <spring.version>2.5.1</spring.version>
         <stax.api.version>1.0.1</stax.api.version>
-        <stax.impl.artifactid>wstx-asl</stax.impl.artifactid>
+        <stax.impl.artifact>wstx-asl</stax.impl.artifact>
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
         <stax.impl.version>3.2.4</stax.impl.version>
         <tomcat.version>6.0.14</tomcat.version>
@@ -690,7 +690,7 @@
             </dependency>
             <dependency>
                 <groupId>${stax.impl.groupid}</groupId>
-                <artifactId>${stax.impl.artifactid}</artifactId>
+                <artifactId>${stax.impl.artifact}</artifactId>
                 <version>${stax.impl.version}</version>
                 <exclusions>
                     <exclusion>
@@ -1016,7 +1016,7 @@
         <!-- Stax implementation class -->
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
-            <artifactId>${stax.impl.artifactid}</artifactId>
+            <artifactId>${stax.impl.artifact}</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
