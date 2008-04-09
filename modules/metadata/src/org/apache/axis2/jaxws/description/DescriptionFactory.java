@@ -368,24 +368,6 @@ public class DescriptionFactory {
     }
 
     /**
-     * DO NOT USE THIS METHOD FOR PRODUCTION CODE.  It has been deprecated and is only used to drive
-     * some testing.  Note that the AxisService and associated Axis description objects ARE NOT
-     * created or updated by this factory method.
-     *
-     * @param serviceImplClass A service implementation class with annotations
-     * @param axisService      A FULLY POPULATED AxisService including all of the underlying
-     *                         description objects such as AxisOperations.
-     * @return A ServiceDescription hierarchy constructed (via Java reflection) from the service
-     *         implementation class and tied via properties to the existing AxisService object.
-     * @deprecated Use {@link #createServiceDescriptionFromDBCMap(HashMap)}
-     */
-    public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass,
-                                                                             AxisService axisService) {
-        return DescriptionFactoryImpl
-                .createServiceDescriptionFromServiceImpl(serviceImplClass, axisService);
-    }
-
-    /**
      * Creates Client ConfigurationFactory used to create AxisConfiguration.
      *
      * @return A Client Configuration Factory's new instance. ClinetConfigurationFactory is

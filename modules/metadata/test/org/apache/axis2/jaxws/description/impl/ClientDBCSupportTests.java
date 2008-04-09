@@ -139,26 +139,6 @@ public class ClientDBCSupportTests extends TestCase {
     }
     
     /**
-     * The other path through MDQ that didn't use DBCs was creating the service impl hierachy 
-     * using reflection on the service impl class.  This is deprecated but it is used in the JAXWS
-     * open source tests (for now).  So, this validates we don't break those tests.
-     * 
-     * When the deprecated logic is removed, this test can also be removed.
-     */
-    public void testDeprecatedServiceImplConstruction() {
-        AxisService axisService = new AxisService();
-        ServiceDescription svcDesc = DescriptionFactory.
-            createServiceDescriptionFromServiceImpl(ClientDBCSupportEchoServiceImplWithSEI.class, axisService);
-        assertNotNull(svcDesc);
-        ServiceDescriptionImpl svcDescImpl = (ServiceDescriptionImpl) svcDesc;
-        DescriptionBuilderComposite svcDescComposite = svcDescImpl.getDescriptionBuilderComposite();
-        assertNotNull(svcDescComposite);
-        
-        // Since this is a server-side impl, there should be no class corresponding to the client-side
-        // Service class.
-        assertNull(svcDescComposite.getCorrespondingClass());
-    }
-    /**
      * Test the ability to set a prefered port on a service description via  a sparse composite.
      */
     public void testPreferredPort() {

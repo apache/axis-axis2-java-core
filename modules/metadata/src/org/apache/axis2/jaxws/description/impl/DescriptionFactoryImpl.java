@@ -195,22 +195,6 @@ public class DescriptionFactoryImpl {
         }
     }    
     
-    /**
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromServiceImpl(Class,
-     *      AxisService)
-     * @deprecated
-     */
-    public static ServiceDescription createServiceDescriptionFromServiceImpl(
-            Class serviceImplClass, AxisService axisService) {
-        ServiceDescription serviceDesc = new ServiceDescriptionImpl(serviceImplClass, axisService);
-        if (log.isDebugEnabled()) {
-            log.debug("Deprecated method used!  ServiceDescription created with Class: " +
-                    serviceImplClass + "; AxisService: " + axisService);
-            log.debug(serviceDesc.toString());
-        }
-        return serviceDesc;
-    }
-
     /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class) */
     public static ServiceDescription createServiceDescription(Class serviceImplClass) {
         return createServiceDescription(serviceImplClass, null);

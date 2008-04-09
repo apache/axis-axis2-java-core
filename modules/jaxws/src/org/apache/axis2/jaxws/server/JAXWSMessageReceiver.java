@@ -92,19 +92,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
         Parameter endpointDescParam =
                 service.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
         if (endpointDescParam == null) {
-            ClassLoader serviceClassLoader = service.getClassLoader();
-            String serviceClass = (String) svcClassParam.getValue();
-            try {
-                Class clazz = Class.forName(serviceClass, true, service.getClassLoader());
-                ServiceDescription serviceDesc =
-                        DescriptionFactory.createServiceDescriptionFromServiceImpl(
-                                clazz, service);
-                service.addParameter(new Parameter(org.apache.axis2.jaxws.spi.Constants.CACHE_CLASSLOADER, 
-                        service.getClassLoader()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(
-                        Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
-            }
+            throw new RuntimeException(Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
         }
         AxisOperation operation = axisRequestMsgCtx.getAxisOperation();
         String mep = operation.getMessageExchangePattern();
