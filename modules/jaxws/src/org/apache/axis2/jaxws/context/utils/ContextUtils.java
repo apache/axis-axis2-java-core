@@ -97,7 +97,11 @@ public class ContextUtils {
         //Lazily provide a list of available reference parameters.
         org.apache.axis2.context.MessageContext msgContext =
             jaxwsMessageContext.getAxisMessageContext();
-        SOAPHeader header = msgContext.getEnvelope().getHeader();
+        SOAPHeader header = null;
+        if (msgContext != null &&
+            msgContext.getEnvelope() != null) {
+            header = msgContext.getEnvelope().getHeader();
+        }
         List<Element> list = new ReferenceParameterList(header);
         
         soapMessageContext
