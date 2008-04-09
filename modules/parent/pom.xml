@@ -637,6 +637,12 @@
                 <groupId>org.jibx</groupId>
                 <artifactId>jibx-run</artifactId>
                 <version>${jibx.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
@@ -779,11 +785,23 @@
                 <groupId>org.apache.woden</groupId>
                 <artifactId>woden-api</artifactId>
                 <version>${woden.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.woden</groupId>
                 <artifactId>woden-impl-dom</artifactId>
                 <version>${woden.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
@@ -940,6 +958,10 @@
                 <artifactId>apache-activemq</artifactId>
                 <version>${activemq.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>stax</groupId>
                         <artifactId>stax-api</artifactId>
