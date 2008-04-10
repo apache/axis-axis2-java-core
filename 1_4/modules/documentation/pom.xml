@@ -269,7 +269,13 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-
+                                <copy toDir="target/site/@axis2_version_dir@">
+                                    <fileset dir="xdocs/@axis2_version_dir@">
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                    </fileset>
+                                </copy>
                                 <mkdir dir="${basedir}/target/apidocs"/>
                                 <javadoc packagenames="org.apache.axis2.*"
                                          destdir="${basedir}/target/apidocs"
