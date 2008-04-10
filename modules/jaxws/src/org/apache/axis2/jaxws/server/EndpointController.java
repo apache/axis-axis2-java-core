@@ -93,8 +93,9 @@ public class EndpointController {
         }
         
         MessageContext request = eic.getRequestMessageContext();
+        boolean good = true;
         try {
-            boolean good = handleRequest(eic);
+            good = handleRequest(eic);
 
             if (!good) {
                 return eic;
@@ -117,9 +118,13 @@ public class EndpointController {
             }
             throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
-            // Passed pivot point
-            request.getMessage().setPostPivot();
-            handleResponse(eic);    
+            if (good) {
+                // Passed pivot point
+                request.getMessage().setPostPivot();
+                handleResponse(eic);
+            } else {
+                destroyHandlers(eic, request);
+            }
         }
         
         return eic;
@@ -325,25 +330,29 @@ public class EndpointController {
             throw ExceptionFactory.makeWebServiceException(toBeThrown);
         } finally {
         	// at this point, we are done with handler instances on the server; call @PreDestroy on all of them
-            HandlerLifecycleManager hlm = createHandlerlifecycleManager();
-            List<Handler> list = eic.getHandlers();
-            if(list != null) {
-                for (Iterator it = list.iterator(); it.hasNext();) {
-                    try {
-                        Handler handler = (Handler) it.next();
-                        hlm.destroyHandlerInstance(request, handler);
-                    } catch (Exception e) {
-                        // TODO: can we ignore this?
-                        throw ExceptionFactory.makeWebServiceException(e);
-                    }
-                }
-            }
+            destroyHandlers(eic, request);
             responseReady(eic);
             restoreRequestMessage(request);
         }
         
         eic.setResponseMessageContext(response);
         return true;
+    }
+
+    private void destroyHandlers(EndpointInvocationContext eic, MessageContext request) {
+        HandlerLifecycleManager hlm = createHandlerlifecycleManager();
+        List<Handler> list = eic.getHandlers();
+        if(list != null) {
+            for (Iterator it = list.iterator(); it.hasNext();) {
+                try {
+                    Handler handler = (Handler) it.next();
+                    hlm.destroyHandlerInstance(request, handler);
+                } catch (Exception e) {
+                    // TODO: can we ignore this?
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+            }
+        }
     }
 
     /*
