@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-integration</artifactId>
@@ -227,17 +227,6 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-spring</artifactId>
-            <version>${version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-osgi</artifactId>
             <version>${version}</version>
             <exclusions>
                 <exclusion>
