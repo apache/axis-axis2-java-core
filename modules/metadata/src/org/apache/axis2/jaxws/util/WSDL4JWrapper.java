@@ -370,11 +370,17 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
         for (URL url : urlList) {
             if ("file".equals(url.getProtocol())) {
-                File f = new File(url.getPath());
+                final File f = new File(url.getPath());
                 // If file is not of type directory then its a jar file
                 if (isAFile(f)) { 
                     try {
-                        JarFile jf = new JarFile(f);
+                        JarFile jf = (JarFile) AccessController.doPrivileged(
+                                new PrivilegedExceptionAction() {
+                                    public Object run() throws IOException {
+                                        return new JarFile(f);
+                                    }
+                                }
+                        );
                         Enumeration<JarEntry> entries = jf.entries();
                         // read all entries in jar file and return the first
                         // wsdl file that matches
