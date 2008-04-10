@@ -39,16 +39,17 @@ import javax.xml.soap.SOAPMessage;
 
 public class SOAPMessageContextTests extends TestCase {
 
-	private final String INPUT = "sample input";
+	private final String INPUT_1 = "sample input";
+	private final String INPUT_2 = "sample input two";
 	
-    private SoapMessageContext createSampleContext() throws Exception {
+    private Message createMessage(String input) throws Exception {
         MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
         Message msg = factory.create(Protocol.soap11);
         
         // Create a jaxb object
         ObjectFactory objFactory = new ObjectFactory();
         EchoString echo = objFactory.createEchoString();
-        echo.setInput(INPUT);
+        echo.setInput(input);
         
         // Create the necessary JAXBContext
         JAXBContext jbc = JAXBContext.newInstance("test");
@@ -60,12 +61,16 @@ public class SOAPMessageContextTests extends TestCase {
         
         msg.setBodyBlock(block);
         
+        return msg;
+    }
+    
+    private SoapMessageContext createSampleContext() throws Exception {
+        Message msg = createMessage(INPUT_1);
         MessageContext mc = new MessageContext();
         mc.setMEPContext(new MEPContext(mc));
         mc.setMessage(msg);
         
         return MessageContextFactory.createSoapMessageContext(mc);
-
     }
     
     public void testGetAsSoapMessageObjectID() {
@@ -78,5 +83,31 @@ public class SOAPMessageContextTests extends TestCase {
     	} catch (Exception e) {
     		assertNull("should not get an exception in this test", e);
     	}
+    }
+    
+    public void testSoapMessageCaching() throws Exception {
+        Message msg1 = createMessage(INPUT_1);
+        Message msg2 = createMessage(INPUT_2);
+        
+        MessageContext mc = new MessageContext();
+        mc.setMessage(msg1);
+        SoapMessageContext soapCtx = MessageContextFactory.createSoapMessageContext(mc);
+        
+        SOAPMessage m1 = soapCtx.getMessage();
+        SOAPMessage m2 = soapCtx.getMessage();
+        
+        assertTrue("retrieval of message from SoapMessageContext twice in a row should result in same object", m1 == m2);
+        
+        // let's change underlying message as 
+        // HandlerChainProcessor.convertToFaultMessage() does
+        mc.setMessage(msg2);
+        
+        SOAPMessage m3 = soapCtx.getMessage();
+        SOAPMessage m4 = soapCtx.getMessage();
+        
+        assertTrue("retrieval of message from SoapMessageContext twice in a row should result in same object", m3 == m4);
+        
+        // Soap messages from before and after must be different!
+        assertTrue("retrieval of message from SoapMessageContext after message has changed in the underlying context", m1 != m3);  
     }
 }
