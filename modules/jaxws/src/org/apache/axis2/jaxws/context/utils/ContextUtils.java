@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -115,17 +116,16 @@ public class ContextUtils {
         
         // If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT,
-                               jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
-        soapMessageContext
+        ServletContext servletContext = 
+            (ServletContext)jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT);
+        if (servletContext != null) {
+            log.debug("Servlet Context Set");
+            soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT,
+                                   servletContext);
+            soapMessageContext
                 .setScope(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, Scope.APPLICATION);
-
-        if (log.isDebugEnabled()) {
-            if (jaxwsMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null) {
-                log.debug("Servlet Context Set");
-            } else {
-                log.debug("Servlet Context not found");
-            }
+        } else {
+            log.debug("Servlet Context not found");
         }
 
         HttpServletRequest req = (HttpServletRequest)jaxwsMessageContext
