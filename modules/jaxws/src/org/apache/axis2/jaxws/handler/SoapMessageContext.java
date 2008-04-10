@@ -54,7 +54,6 @@ public class SoapMessageContext extends BaseMessageContext implements
     private static final Log log = LogFactory.getLog(SoapMessageContext.class);
     
     // cache the message object after transformation --- see getMessage and setMessage methods
-    Message cachedMessage = null;
     SOAPMessage cachedSoapMessage = null;
     
     public SoapMessageContext(MessageContext messageCtx) {
@@ -128,11 +127,10 @@ public class SoapMessageContext extends BaseMessageContext implements
     }
 
     public SOAPMessage getMessage() {
-        Message msg = messageCtx.getMEPContext().getMessageObject();
-        if (msg != cachedMessage) {
-            cachedMessage = msg;
-            cachedSoapMessage = msg.getAsSOAPMessage();
-        } 
+    	if (cachedSoapMessage == null) {
+    		Message msg = messageCtx.getMEPContext().getMessageObject();
+    		cachedSoapMessage = msg.getAsSOAPMessage();
+    	}
         return cachedSoapMessage;
     }
 
@@ -168,7 +166,6 @@ public class SoapMessageContext extends BaseMessageContext implements
             Message msg =
                     ((MessageFactory) FactoryRegistry.getFactory(MessageFactory.class)).createFrom(soapmessage);
             messageCtx.getMEPContext().setMessage(msg);
-            cachedMessage = msg;
             cachedSoapMessage = soapmessage;
         } catch (XMLStreamException e) {
             // TODO log it, and throw something?

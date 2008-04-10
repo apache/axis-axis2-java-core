@@ -584,7 +584,7 @@ public class HandlerChainProcessorTests extends TestCase {
         } catch (ProtocolException pe) {
             e = pe;
         }
-        assertNull(e);
+        assertNotNull(e);
         // no handleFault calls
         assertEquals("S2m:S1m:L1m:L1c:S1c:S2c:", result);
     }
