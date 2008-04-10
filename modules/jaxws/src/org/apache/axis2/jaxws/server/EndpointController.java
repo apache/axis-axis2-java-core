@@ -93,8 +93,9 @@ public class EndpointController {
         }
         
         MessageContext request = eic.getRequestMessageContext();
+        boolean good = false;
         try {
-            boolean good = handleRequest(eic);
+            good = handleRequest(eic);
 
             if (!good) {
                 return eic;
@@ -119,7 +120,9 @@ public class EndpointController {
         } finally {
             // Passed pivot point
             request.getMessage().setPostPivot();
-            handleResponse(eic);    
+            if (good) {
+                handleResponse(eic);    
+            }
         }
         
         return eic;

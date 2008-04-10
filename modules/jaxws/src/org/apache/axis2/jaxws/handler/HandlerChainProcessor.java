@@ -265,6 +265,14 @@ public class HandlerChainProcessor {
                 // a request that requires no response is a one-way message
                 // and we should only close whomever got invoked
                 callCloseHandlers(newStart_inclusive, newEnd, newDirection);
+
+                // As according to the Sun "experts", exceptions raised by
+                // handlers in one way invocation are discarded. They 
+                // are NOT propagated to the user code.
+                if (savedException != null) {
+                    log.warn("Exception thrown by a handler in one way invocation", 
+                             savedException);
+                }
             }
             else {
                 // it's a response, so we can safely assume that 
@@ -275,12 +283,12 @@ public class HandlerChainProcessor {
                 } else {
                     callCloseHandlers(0, handlers.size() - 1, direction);
                 }
-            }
-            if (savedException != null) {
-                // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw 
-                // ProtocolException or any other runtime exception --> No 
-                // response" case.
-                throw savedException;
+                if (savedException != null) {
+                    // we have a saved exception, throw it (JAX-WS 9.3.2.1 "Throw 
+                    // ProtocolException or any other runtime exception --> No 
+                    // response" case.
+                    throw savedException;
+                }
             }
         }
     }
