@@ -215,13 +215,14 @@ participation.</p>
 "mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>". Make
 sure to prefix the subject of the mail with [Axis2].</p>
 <h2>Features of Axis2 Latest Version</h2>
-<p>Apache Axis2 Version 1.3 comes with performance improvements and
-a number bug fixes over the 1.2 release. Check out the complete list of
+<p>Apache Axis2 Version 1.4 comes with performance improvements and
+a number bug fixes over the 1.3 release. Check out the complete list of
 features below.</p>
 <h3>Programming Model</h3>
 <ul>
 <li>Improved, XML-centric client API including full WSDL and policy
 support</li>
+<li><a href="@axis2_version_dir@/jaxws-guide.html">Support for JAXWS-style services and clients</a></li>
 <li>Support for POJO and Spring services and clients</li>
 <li>Support for any message exchange pattern</li>
 <li>Synchronous and asynchronous calls</li>
@@ -237,9 +238,6 @@ services</li>
 <li>Support for querying a service's WSDL (using ?wsdl), schema
 (using ?xsd) and policies (using ?policy)</li>
 <li>WSDL 2.0</li>
-<li>POJO annotation (<a href=
-"http://jcp.org/en/jsr/detail?id=181">JSR 181</a>)</li>
-<li>JAX-WS intregration</li>
 <li>Custom Deployers</li>
 <li>Binary serialization (Fast Infoset)</li>
 <li>JSON support</li>
