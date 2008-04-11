@@ -19,18 +19,17 @@
 
 package org.apache.axis2.jaxws.sample;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.TestLogger;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler4;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
-import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
-import org.test.addnumbershandler.AddNumbersHandlerResponse;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
@@ -49,13 +48,20 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPFaultException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler2;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler4;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
+import org.test.addnumbershandler.AddNumbersHandlerResponse;
 
 public class AddNumbersHandlerTests extends AbstractTestCase {
 	
@@ -66,6 +72,8 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             File.separator+"test-resources"+File.separator+"xml";
         requestFile = new File(resourceDir+File.separator+"addnumberstest.xml");
     }
+    
+    private static final String filelogname = "AddNumbersHandlerTests.log";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(AddNumbersHandlerTests.class));
@@ -107,6 +115,26 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
             File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
             assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+
+            String log = readLogFile();
+            String expected_calls =
+                      "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                    + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                    + "AddNumbersProtocolHandler GET_HEADERS\n"
+                    + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersLogicalHandler CLOSE\n"
+                    + "AddNumbersLogicalHandler2 CLOSE\n"
+                    + "AddNumbersProtocolHandler2 CLOSE\n"
+                    + "AddNumbersProtocolHandler CLOSE\n"
+                    + "AddNumbersProtocolHandler PRE_DESTROY\n";
+            assertEquals(expected_calls, log);
             
             TestLogger.logger.debug("----------------------------------");
 		} catch(Exception e) {
@@ -147,7 +175,32 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             if (!resString.contains("<return>16</return>")) {
                 fail("Response string should contain <return>16</return>, but does not.  The resString was: \"" + resString + "\"");
             }
-
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                    + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                    + "AddNumbersProtocolHandler GET_HEADERS\n"
+                    + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                    + "AddNumbersLogicalHandler CLOSE\n"
+                    + "AddNumbersLogicalHandler2 CLOSE\n"
+                    + "AddNumbersProtocolHandler2 CLOSE\n"
+                    + "AddNumbersProtocolHandler CLOSE\n"
+                    + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                    + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                    + "AddNumbersClientProtocolHandler CLOSE\n"
+                    + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +230,32 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             if (!resString.contains("<return>16</return>")) {
                 fail("Response string should contain <return>16</return>, but does not.  The resString was: \"" + resString + "\"");
             }
-
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientProtocolHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,7 +286,9 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             List<Handler> list = p.getBinding().getHandlerChain();
             
             assertTrue("List should be empty.  We've not conformed to JAXWS 9.2.1.1.", list.isEmpty());
-
+            String log = readLogFile();
+            assertNull("log should be empty, since no handlers are in the list and we never called a service", log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
@@ -238,7 +318,23 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         } catch(Exception e) {
             e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
-            assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
+            assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 THROWING PROTOCOLEXCEPTION INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n";
+            assertEquals(expected_calls, log);
         }
         TestLogger.logger.debug("----------------------------------");
     }
@@ -291,6 +387,32 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
 
             assertEquals("With handler manipulation, total should be 4 less than a proper sumation.", 16, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientProtocolHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
@@ -324,6 +446,32 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
                          16,
                          total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientProtocolHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
@@ -364,6 +512,31 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             		"AddNumbersHandlerPortTypeImpl.addNumbersHandler method is " +
             		"correctly throwing this exception as part of testing");
             
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                + "AddNumbersClientProtocolHandler HANDLE_FAULT_INBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_FAULT_INBOUND\n"
+                + "AddNumbersClientProtocolHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
         }
         TestLogger.logger.debug("----------------------------------");
     }
@@ -393,12 +566,24 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             int total = proxy.addNumbersHandler(99,10);
             
             fail("Should have got an exception, but we didn't.");
-            TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
-            assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
+            assertEquals("I don't like the value 99", ((SOAPFaultException)e).getMessage());
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler4 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler3 HANDLE_FAULT_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler3 HANDLE_FAULT_INBOUND\n"
+                + "AddNumbersClientLogicalHandler3 RETURNING FALSE INBOUND\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler3 CLOSE\n"
+                + "AddNumbersClientLogicalHandler4 CLOSE\n";
+            assertEquals(expected_calls, log);
+            
         }
+        TestLogger.logger.debug("----------------------------------");
     }
 
     /**
@@ -440,12 +625,61 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             
             assertEquals("With handler manipulation, total should be 26.", 26, total);
             TestLogger.logger.debug("Total (after handler manipulation) = " + total);
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n"
+                + "AddNumbersProtocolHandler PRE_DESTROY\n"
+                + "AddNumbersClientProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersClientProtocolHandler CLOSE\n"
+                + "AddNumbersClientLogicalHandler2 CLOSE\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();
             fail(e.toString());
         }
     }
+    
+    public void testAddNumbersHandlerHandlerResolver() {
+        try {
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
+            List<Handler> handlers = service.getHandlerResolver()
+                    .getHandlerChain(null);
+            assertNotNull(
+                    "Default handlers list should not be null but empty.",
+                    handlers);
+            
+            String log = readLogFile();
+            assertNull("log should be null since we did not call any services", log);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        TestLogger.logger.debug("----------------------------------");
+    } 
     
     public void testOneWay() {
         try {
@@ -459,11 +693,26 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
             proxy.oneWayInt(11);
-            TestLogger.logger.debug("----------------------------------");
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+                + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+                + "AddNumbersProtocolHandler GET_HEADERS\n"
+                + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+                + "AddNumbersLogicalHandler CLOSE\n"
+                + "AddNumbersLogicalHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler2 CLOSE\n"
+                + "AddNumbersProtocolHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+
         } catch (Exception e) {
             e.printStackTrace();
             fail();
-        }       
+        }
+        TestLogger.logger.debug("----------------------------------");
     }
     
     public void testOneWayWithProtocolException() {
@@ -494,6 +743,12 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         } catch (Exception e) {
             e.printStackTrace();
             assertEquals(e.getMessage(), "I don't like the value 99");
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
+            
         }
         TestLogger.logger.debug("----------------------------------");
     }
@@ -526,6 +781,11 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         } catch (Exception e) {
             e.printStackTrace();
             assertEquals(e.getMessage(), "I don't like the value 999");
+            
+            String log = readLogFile();
+            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+            assertEquals(expected_calls, log);
         }
         TestLogger.logger.debug("----------------------------------");
     }
@@ -592,21 +852,31 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         return new StreamSource(fis);
     }
     
-    public void testAddNumbersHandlerHandlerResolver() {
-		try {
-			System.out.println("----------------------------------");
-			System.out.println("test: " + getName());
-			AddNumbersHandlerService service = new AddNumbersHandlerService(); // will give NPE:
-			List<Handler> handlers = service.getHandlerResolver()
-					.getHandlerChain(null);
-			assertNotNull(
-					"Default handlers list should not be null but empty.",
-					handlers);
-			System.out.println("----------------------------------");
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	} 
+    private String readLogFile() {
+        try {
+            FileReader fr = new FileReader(filelogname);
+            BufferedReader inputStream = new BufferedReader(fr);
+            String line = null;
+            String ret = null;
+            while ((line = inputStream.readLine()) != null) {
+                if (ret == null) {
+                    ret = "";
+                }
+                ret = ret.concat(line + "\n");
+            }
+            fr.close();
+            File file = new File(filelogname);
+            file.delete();  // yes, delete for each retrieval, which should only happen once per test
+            return ret;
+        } catch (FileNotFoundException fnfe) {
+            // it's possible the test does not actually call any handlers and therefore
+            // no file would have been written.  The test should account for this by
+            // assertNull on the return value from here
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            fail(ioe.getMessage());
+        }
+        return null;
+    }
 
 }

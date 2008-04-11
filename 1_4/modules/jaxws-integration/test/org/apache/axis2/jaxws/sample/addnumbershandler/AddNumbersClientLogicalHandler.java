@@ -55,16 +55,22 @@ import java.util.StringTokenizer;
 public class AddNumbersClientLogicalHandler 
 implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
+    HandlerTracker tracker = new HandlerTracker(AddNumbersClientLogicalHandler.class.getSimpleName());
+    
     public void close(MessageContext messagecontext) {
+        tracker.close();
     }
 
     public boolean handleFault(LogicalMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleFault(outbound);
         return true;
     }
 
     public boolean handleMessage(LogicalMessageContext messagecontext) {
         Boolean outbound = 
             (Boolean)messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleMessage(outbound);
         if (!outbound) {  // inbound response on the client
             
             // make sure standard property is available
@@ -97,7 +103,7 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
                 throw new RuntimeException("Property " + propKey + " was null");
             }
             if (!(map instanceof AttachmentsAdapter)) {
-                throw new RuntimeException("Expected AttachmentAddapter for Property " + 
+                throw new RuntimeException("Expected AttachmentAdapter for Property " + 
                                            propKey);
             }
             propKey = "AddNumbersClientProtocolHandlerOutboundHandlerScopedProperty";
@@ -158,7 +164,7 @@ implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
                 throw new RuntimeException("Property " + propKey + " was null");
             }
             if (!(map instanceof AttachmentsAdapter)) {
-                throw new RuntimeException("Expected AttachmentAddapter for Property " +
+                throw new RuntimeException("Expected AttachmentAdapter for Property " +
                                            propKey);
             }
         }

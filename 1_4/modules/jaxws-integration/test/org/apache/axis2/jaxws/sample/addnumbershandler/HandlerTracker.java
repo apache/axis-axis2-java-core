@@ -19,54 +19,75 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
-import javax.xml.ws.handler.MessageContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileWriter;
 
 public class HandlerTracker {
 
-    static Map<String, HandlerTracker> trackers = new HashMap<String, HandlerTracker>();
+    private static final String filelogname = "AddNumbersHandlerTests.log";
     
-    List<Methods> calledMethods = new ArrayList<Methods>();
+    private String classname;
     
-    enum Methods { CLOSE, GET_HEADERS, HANDLE_FAULT, HANDLE_MESSAGE };
+    private static final String CLOSE = "CLOSE";
+    private static final String GET_HEADERS = "GET_HEADERS";
+    private static final String HANDLE_FAULT_INBOUND = "HANDLE_FAULT_INBOUND";
+    private static final String HANDLE_MESSAGE_INBOUND = "HANDLE_MESSAGE_INBOUND";
+    private static final String HANDLE_FAULT_OUTBOUND = "HANDLE_FAULT_OUTBOUND";
+    private static final String HANDLE_MESSAGE_OUTBOUND = "HANDLE_MESSAGE_OUTBOUND";
+    private static final String POST_CONSTRUCT = "POST_CONSTRUCT";
+    private static final String PRE_DESTROY = "PRE_DESTROY";
     
-    public HandlerTracker(String name) {        
+    // should pass classname for "name"
+    public HandlerTracker(String name) {
+        classname = name;
     }
     
-    public void close(MessageContext context) {
-        calledMethods.add(Methods.CLOSE);
+    public void postConstruct() {
+        log_to_file(POST_CONSTRUCT);
+    }
+    
+    public void preDestroy() {
+        log_to_file(PRE_DESTROY);
+    }
+    
+    public void close() {
+        log_to_file(CLOSE);
     }
 
     public void getHeaders() {
-        calledMethods.add(Methods.GET_HEADERS);
+        log_to_file(GET_HEADERS);
     }
     
-    public void handleFault(MessageContext context) {
-        calledMethods.add(Methods.HANDLE_FAULT);
-    }
-
-    public void handleMessage(MessageContext context) {
-       calledMethods.add(Methods.HANDLE_MESSAGE);
-    }
-
-    public boolean isCalled(Methods method) {
-        return calledMethods.contains(method);
-    }
-    
-    public static HandlerTracker getHandlerTracker(Class clazz) {
-        HandlerTracker tracker = trackers.get(clazz.getName());
-        if (tracker == null) {
-            tracker = new HandlerTracker(clazz.getName());
-            trackers.put(clazz.getName(), tracker);                       
+    public void handleFault(boolean outbound) {
+        if (outbound) {
+            log_to_file(HANDLE_FAULT_OUTBOUND);
+        } else {
+            log_to_file(HANDLE_FAULT_INBOUND);
         }
-        return tracker;
+    }
+
+    public void handleMessage(boolean outbound) {
+        if (outbound) {
+            log_to_file(HANDLE_MESSAGE_OUTBOUND);
+        } else {
+            log_to_file(HANDLE_MESSAGE_INBOUND);
+        }
     }
     
-    public String toString() {
-        return this.calledMethods.toString();
+    public void log(String msg, boolean outbound) {
+        log_to_file(msg + " " + (outbound ? "OUTBOUND" : "INBOUND"));
+    }
+    
+    /*
+     * we have to open and close the file every time we write
+     * as other handler method calls may be interleaved with this one
+     */
+    private void log_to_file(String msg) {
+        try {
+            FileWriter fw = new FileWriter(filelogname, true);
+            fw.write(classname + " " + msg + "\n");
+            fw.close();
+        } catch (Exception e) {
+        }
     }
     
 }

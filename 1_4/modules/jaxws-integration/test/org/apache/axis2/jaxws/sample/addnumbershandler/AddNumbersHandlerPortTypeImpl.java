@@ -41,11 +41,7 @@ public class AddNumbersHandlerPortTypeImpl implements AddNumbersHandlerPortType 
 	 * @see org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType#addNumbersHandler(int, int)
 	 */
 	public int addNumbersHandler(int arg0, int arg1) throws AddNumbersHandlerFault_Exception {
-        
-	    HandlerTracker tracker = HandlerTracker.getHandlerTracker(AddNumbersProtocolHandler.class);
-	    if (!tracker.isCalled(HandlerTracker.Methods.HANDLE_MESSAGE)) {
-	        throw new RuntimeException("handleMessage() was not called on the handler");
-	    }
+
 	    /* FIXME: getHeaders() is currently not called
 	    if (!tracker.isCalled(HandlerTracker.Methods.GET_HEADERS)) {
 	        throw new RuntimeException("getHeaders() was not called on the handler");
