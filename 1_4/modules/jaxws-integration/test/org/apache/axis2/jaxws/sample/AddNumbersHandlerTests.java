@@ -296,7 +296,6 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         }
     }
 
-    // TODO: disabled until handler support is more complete
     public void testAddNumbersHandlerWithFault() {
         try{
             TestLogger.logger.debug("----------------------------------");
@@ -694,6 +693,13 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
                     axisEndpoint);
             proxy.oneWayInt(11);
             
+            // one-way invocations run in their own thread,
+            // and we can't tell here in the client when it
+            // has completed.  So, we need to wait long enough
+            // for the invocation to complete, so our log file
+            // is fully populated.
+            Thread.sleep(1000 * 5); // 5 seconds
+            
             String log = readLogFile();
             String expected_calls = "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
                 + "AddNumbersProtocolHandler2 GET_HEADERS\n"
@@ -743,6 +749,17 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         } catch (Exception e) {
             e.printStackTrace();
             assertEquals(e.getMessage(), "I don't like the value 99");
+
+            // one-way invocations run in their own thread,
+            // and we can't tell here in the client when it
+            // has completed.  So, we need to wait long enough
+            // for the invocation to complete, so our log file
+            // is fully populated.
+            try {
+                Thread.sleep(1000 * 5); // 5 seconds
+            } catch (InterruptedException ie) {
+                // nothing
+            }
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
@@ -781,7 +798,18 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         } catch (Exception e) {
             e.printStackTrace();
             assertEquals(e.getMessage(), "I don't like the value 999");
-            
+
+            // one-way invocations run in their own thread,
+            // and we can't tell here in the client when it
+            // has completed.  So, we need to wait long enough
+            // for the invocation to complete, so our log file
+            // is fully populated.
+            try {
+                Thread.sleep(1000 * 5); // 5 seconds
+            } catch (InterruptedException ie) {
+                // nothing
+            }
+
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
                 + "AddNumbersClientLogicalHandler CLOSE\n";
