@@ -38,18 +38,25 @@ import java.io.ByteArrayOutputStream;
 
 public class AddNumbersClientLogicalHandler3  implements javax.xml.ws.handler.LogicalHandler<LogicalMessageContext> {
 
+    HandlerTracker tracker = new HandlerTracker(AddNumbersClientLogicalHandler3.class.getSimpleName());
+    
     public void close(MessageContext messagecontext) {
-        // TODO Auto-generated method stub        
+        tracker.close();      
     }
 
     public boolean handleFault(LogicalMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleFault(outbound);
         // let's see if we can do this
         LogicalMessage lm = messagecontext.getMessage();
         String s = getStringFromSourcePayload(lm.getPayload());
+        tracker.log("RETURNING FALSE", outbound);
         return false;
     }
 
-    public boolean handleMessage(LogicalMessageContext mc) {
+    public boolean handleMessage(LogicalMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleFault(outbound);
         return true;
     }
     

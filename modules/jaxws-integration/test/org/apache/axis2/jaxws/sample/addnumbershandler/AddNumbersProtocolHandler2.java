@@ -19,25 +19,34 @@
 
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
+import java.util.Set;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
-import java.util.Set;
 
 public class AddNumbersProtocolHandler2 implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
+    HandlerTracker tracker = new HandlerTracker(AddNumbersProtocolHandler2.class.getSimpleName());
+    
     public void close(MessageContext messagecontext) {
+        tracker.close();
     }
 
     public Set<QName> getHeaders() {
+        tracker.getHeaders();
         return null;
     }
     
     public boolean handleFault(SOAPMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleFault(outbound);
         return true;
     }
 
     public boolean handleMessage(SOAPMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleMessage(outbound);
         return true;
     }
 

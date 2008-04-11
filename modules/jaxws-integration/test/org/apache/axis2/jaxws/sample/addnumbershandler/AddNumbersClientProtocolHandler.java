@@ -32,19 +32,26 @@ import java.util.Set;
 
 public class AddNumbersClientProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
+    HandlerTracker tracker = new HandlerTracker(AddNumbersClientProtocolHandler.class.getSimpleName());
+    
     public void close(MessageContext messagecontext) {
+        tracker.close();
     }
 
     public boolean handleFault(SOAPMessageContext messagecontext) {
+        Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleFault(outbound);
         return true;
     }
 
     public Set getHeaders() {
+        tracker.getHeaders();
         return null;
     }
 
     public boolean handleMessage(SOAPMessageContext messagecontext) {
         Boolean outbound = (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        tracker.handleMessage(outbound);
         if (outbound) {
 
             String appProp1 = "AddNumbersClientProtocolHandlerOutboundAppScopedProperty";

@@ -30,14 +30,15 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.Set;
 
 public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAPHandler<SOAPMessageContext> {
 
-    HandlerTracker tracker = HandlerTracker.getHandlerTracker(AddNumbersProtocolHandler.class);
+    HandlerTracker tracker = new HandlerTracker(AddNumbersProtocolHandler.class.getSimpleName());
     
     public void close(MessageContext messagecontext) {
-        tracker.close(messagecontext);
+        tracker.close();
     }
 
     public Set<QName> getHeaders() {
@@ -46,11 +47,12 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
     }
     
     public boolean handleFault(SOAPMessageContext messagecontext) {
-        tracker.handleFault(messagecontext);
+        tracker.handleFault((Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
         return true;
     }
 
     public boolean handleMessage(SOAPMessageContext messagecontext) {
+        tracker.handleMessage((Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
         // Ensure that the expected headers are present
         JAXBContext context;
         try {
@@ -82,14 +84,13 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
             e.printStackTrace();
             throw new WebServiceException(e);
         }
-
-
-        tracker.handleMessage(messagecontext);
+        
         return true;
     }
     
     @PreDestroy
     public void preDestroy() {
+        tracker.preDestroy();
     	try {
     		/*
     		 * since @PreDestroy methods are called just before the managed (server) side
