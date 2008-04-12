@@ -158,16 +158,16 @@ public class JAXBUtils {
         Map<String, JAXBContextValue> innerMap = null;
         innerMap = getInnerMap(cacheKey, cl);
         if (innerMap == null) {
-        	synchronized(jaxbMap) {
-        		innerMap = getInnerMap(cacheKey, cl);
-        		if(innerMap==null) {
-        			adjustPoolSize(jaxbMap);
-        			innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
-                    if(cacheKey != null) {
+            synchronized(jaxbMap) {
+                innerMap = getInnerMap(cacheKey, cl);
+                if(innerMap==null) {
+                    adjustPoolSize(jaxbMap);
+                    innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
+                    if (cacheKey != null) {
                         jaxbMap.put(cacheKey, innerMap);
                     }
                 }
-        	}
+            }
         }
 
         if (contextPackages == null) {
@@ -176,19 +176,19 @@ public class JAXBUtils {
 
         JAXBContextValue contextValue = innerMap.get(key);
         if (contextValue == null) {
-        	synchronized (innerMap) {
-        		contextValue = innerMap.get(key);
-        		if(contextValue==null) {
-        			adjustPoolSize(innerMap);
-        			
-        			// Create a copy of the contextPackages.  This new TreeSet will
-        			// contain only the valid contextPackages.
-        			// Note: The original contextPackage set is accessed by multiple 
-        			// threads and should not be altered.
-        			
-        			TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
-        			contextValue = createJAXBContextValue(validContextPackages, cl);
-                    
+            synchronized (innerMap) {
+                contextValue = innerMap.get(key);
+                if(contextValue==null) {
+                    adjustPoolSize(innerMap);
+
+                    // Create a copy of the contextPackages.  This new TreeSet will
+                    // contain only the valid contextPackages.
+                    // Note: The original contextPackage set is accessed by multiple 
+                    // threads and should not be altered.
+
+                    TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
+                    contextValue = createJAXBContextValue(validContextPackages, cl);
+
                     // If we don't get all the classes, try the cached classloader 
                     if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
                         validContextPackages = new TreeSet<String>(contextPackages);
@@ -196,15 +196,15 @@ public class JAXBUtils {
                     }
 
                     // Put the new context in the map keyed by both the original and valid list of packages
-        			String validPackagesKey = validContextPackages.toString();
-        			innerMap.put(key, contextValue);
-        			innerMap.put(validPackagesKey, contextValue);
-        			if (log.isDebugEnabled()) {
-        				log.debug("JAXBContext [created] for " + key);
-        				log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
-        			}
-        		}
-			}
+                    String validPackagesKey = validContextPackages.toString();
+                    innerMap.put(key, contextValue);
+                    innerMap.put(validPackagesKey, contextValue);
+                    if (log.isDebugEnabled()) {
+                        log.debug("JAXBContext [created] for " + key);
+                        log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
+                    }
+                }
+            }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("JAXBContext [from pool] for " + key);
@@ -214,23 +214,23 @@ public class JAXBUtils {
         return contextValue.jaxbContext;
     }
 
-	private static Map<String, JAXBContextValue> getInnerMap(ClassLoader cacheKey, ClassLoader cl) {
-		Map<String, JAXBContextValue> innerMap;
-		if(cacheKey != null) {
+    private static Map<String, JAXBContextValue> getInnerMap(ClassLoader cacheKey, ClassLoader cl) {
+        Map<String, JAXBContextValue> innerMap;
+        if(cacheKey != null) {
             if(log.isDebugEnabled()) {
                 log.debug("Using supplied classloader to retrieve JAXBContext: " + 
-                        cacheKey);
+                          cacheKey);
             }
             innerMap = jaxbMap.get(cacheKey);
         }else {
             if(log.isDebugEnabled()) {
                 log.debug("Using classloader from Thread to retrieve JAXBContext: " + 
-                        cl);
+                          cl);
             }
             innerMap = jaxbMap.get(cl);
         }
-		return innerMap;
-	}
+        return innerMap;
+    }
 
     /**
      * Create a JAXBContext using the contextPackages
@@ -245,10 +245,13 @@ public class JAXBUtils {
 
         JAXBContextValue contextValue = null;
         if (log.isDebugEnabled()) {
+            
             log.debug("Following packages are in this batch of getJAXBContext() :");
+            
             for (String pkg : contextPackages) {
                 log.debug(pkg);
             }
+            log.debug("This classloader will be used to construct the JAXBContext" + cl);
         }
         // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
         // PackageSetBuilder gets the packages names from various sources.
@@ -381,7 +384,7 @@ public class JAXBUtils {
             //Lets add all common array classes
             addCommonArrayClasses(fullList);
             Class[] classArray = fullList.toArray(new Class[0]);
-            JAXBContext context = JAXBContext_newInstance(classArray);
+            JAXBContext context = JAXBContext_newInstance(classArray, cl);
             if (context != null) {
                 contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
             }
@@ -635,7 +638,9 @@ public class JAXBUtils {
 
         try {
             // This will load classes from directory
-            classes.addAll(getClassesFromDirectory(pkg, cl));
+            List<Class> classesFromDir = getClassesFromDirectory(pkg, cl);
+            checkClasses(classesFromDir, pkg);
+            classes.addAll(classesFromDir);
         } catch (ClassNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("getClassesFromDirectory failed to get Classes");
@@ -648,7 +653,11 @@ public class JAXBUtils {
                 ClassFinderFactory cff =
                         (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
                 ClassFinder cf = cff.getClassFinder();
-                classes.addAll(cf.getClassesFromJarFile(pkg, cl));
+                
+                List<Class> classesFromJar = cf.getClassesFromJarFile(pkg, cl);
+                
+                checkClasses(classesFromJar, pkg);
+                classes.addAll(classesFromJar);
             }
         } catch (ClassNotFoundException e) {
             if (log.isDebugEnabled()) {
@@ -657,6 +666,32 @@ public class JAXBUtils {
         }
 
         return classes;
+    }
+    
+    /**
+     * @param list
+     * @param pkg
+     */
+    private static void checkClasses(List<Class> list, String pkg) {
+        // The installed classfinder or directory search may inadvertently add too many 
+        // classes.  This rountine is a 'double check' to make sure that the classes
+        // are acceptable.
+        for (int i=0; i<list.size();) {
+            Class cls = list.get(i);
+            if (!cls.isInterface() &&
+                ClassUtils.getDefaultPublicConstructor(cls) != null &&
+               !ClassUtils.isJAXWSClass(cls) &&
+               cls.getPackage().getName().equals(pkg)) {
+                i++; // Acceptable class
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing class " + cls + " from consideration because it is not in package " + pkg +
+                              " or is an interface or does not have a public constructor or is" +
+                              " a jaxws class");
+                }
+                list.remove(i);
+            }
+        }
     }
 
     private static ArrayList<Class> getClassesFromDirectory(String pkg, ClassLoader cl)
@@ -892,10 +927,12 @@ public class JAXBUtils {
      * Create JAXBContext from Class[]
      *
      * @param classArray
+     * @param cl ClassLoader that loaded the classes
      * @return
      * @throws Exception
      */
-    private static JAXBContext JAXBContext_newInstance(final Class[] classArray)
+    private static JAXBContext JAXBContext_newInstance(final Class[] classArray, 
+                                                       final ClassLoader cl)
             throws JAXBException {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
@@ -911,7 +948,17 @@ public class JAXBUtils {
             jaxbContext = (JAXBContext)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws JAXBException {
-                            return JAXBContext.newInstance(classArray);
+                            // Unlike the JAXBContext.newInstance(Class[]) method
+                            // does now accept a classloader.  To workaround this
+                            // issue, the classloader is temporarily changed to cl
+                            Thread currentThread = Thread.currentThread();
+                            ClassLoader savedClassLoader = currentThread.getContextClassLoader();
+                            try {
+                                currentThread.setContextClassLoader(cl);
+                                return JAXBContext.newInstance(classArray);
+                            } finally {
+                                currentThread.setContextClassLoader(savedClassLoader);
+                            }
                         }
                     }
             );
