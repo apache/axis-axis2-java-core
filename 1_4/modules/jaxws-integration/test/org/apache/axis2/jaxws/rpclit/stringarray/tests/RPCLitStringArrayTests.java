@@ -31,31 +31,53 @@ import java.util.Arrays;
 
 public class RPCLitStringArrayTests extends AbstractTestCase {
 
-	String axisEndpoint = "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoImplPort";
-
-	public static Test suite() {
+    public static Test suite() {
         return getTestSetup(new TestSuite(RPCLitStringArrayTests.class));
     }
 
-	public void testStringArrayType() {
+    public void testStringArrayType() throws Exception {
         System.out.println("------------------------------");
         System.out.println("Test : " + getName());
-        try {
             
-            RPCLitStringArrayService service = new RPCLitStringArrayService();
-            Echo portType = service.getEchoPort();
-			BindingProvider p = (BindingProvider) portType;
-	            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        RPCLitStringArrayService service = new RPCLitStringArrayService();
+        Echo portType = service.getEchoPort();
+        BindingProvider p = (BindingProvider) portType;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                                  "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoImplPort");
 
-            String[] strArray= {"str1", "str2", "str3"};
-            StringArray array = new StringArray();
-            array.getItem().addAll(Arrays.asList(strArray));
-            portType.echoStringArray(array);
+        String[] strArray= {"str1", "str2", "str3", "str4 5"};
+        StringArray array = new StringArray();
+        array.getItem().addAll(Arrays.asList(strArray));
+        StringArray result = portType.echoStringArray(array);
             
-            System.out.print("---------------------------------");
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
+        assertEquals(array.getItem().size(), result.getItem().size());
+        for (int i = 0; i < array.getItem().size(); i++) {
+            assertEquals(array.getItem().get(i), result.getItem().get(i));
         }
+
+        System.out.print("---------------------------------");
+    }
+
+    public void testStringArrayTypeNoSEI() throws Exception {
+        System.out.println("------------------------------");
+        System.out.println("Test : " + getName());
+            
+        RPCLitStringArrayService service = new RPCLitStringArrayService();
+        Echo portType = service.getEchoPort();
+        BindingProvider p = (BindingProvider) portType;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                                  "http://localhost:6060/axis2/services/RPCLitStringArrayService.EchoNoSEIPort");
+
+        String[] strArray= {"str1", "str2", "str3", "str4 5"};
+        StringArray array = new StringArray();
+        array.getItem().addAll(Arrays.asList(strArray));
+        StringArray result = portType.echoStringArray(array);
+            
+        assertEquals(array.getItem().size(), result.getItem().size());
+        for (int i = 0; i < array.getItem().size(); i++) {
+            assertEquals(array.getItem().get(i) + "return", result.getItem().get(i));
+        }
+
+        System.out.print("---------------------------------");
     }
 }

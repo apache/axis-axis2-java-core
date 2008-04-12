@@ -150,6 +150,53 @@ public class XSDListUtils {
         }
     }
 
+    public static Object fromStringArray(String[] items, Class type) throws Exception {
+        if (type.isArray()) {
+            Class componentType = type.getComponentType();
+            List list = new ArrayList();
+
+            for (String item : items) {
+                Object componentObject = getFromText(item, componentType);                
+                list.add(componentObject);
+            }
+    
+            Class arrayType = componentType;
+            if (componentType.isPrimitive()) {
+                Class boxedType = getBoxedType(componentType);
+                if (boxedType != null) {
+                    arrayType = boxedType;
+                }
+            }
+
+            Object array = Array.newInstance(arrayType, list.size());
+            return list.toArray((Object[])array);
+        } else {
+            throw new IllegalArgumentException(type.toString());
+        }
+    }
+    
+    public static String[] toStringArraay(Object container) throws Exception {
+        if (container != null && container.getClass().isArray()) {
+            int size = Array.getLength(container);        
+            String [] strArray = new String[size];
+            for (int i = 0; i < size; i++) {
+                Object component = Array.get(container, i);
+                strArray[i] = getAsText(component);
+            }
+            return strArray;    
+        } else if(container != null && List.class.isAssignableFrom(container.getClass())){   
+            List containerAsList = (List)container;
+            int size = containerAsList.size();
+            String [] strArray = new String[size];
+            for (int i = 0; i < size; i++) {
+                strArray[i] = getAsText(containerAsList.get(i));
+            }                
+            return strArray;    
+        } else {
+            throw new IllegalArgumentException(container.getClass().toString());
+        }
+    }
+    
     /**
      * @param obj
      * @return xml text for this object
