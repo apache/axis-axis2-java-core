@@ -27,12 +27,15 @@
     </xsl:template>
 
     <xsl:template match="interface">
+        <xsl:variable name="servicename">
+            <xsl:value-of select="translate(@servicename,':.-','___')"/>
+        </xsl:variable>
 
         <service>
-            <xsl:attribute name="name"><xsl:value-of select="@servicename"/></xsl:attribute>
+            <xsl:attribute name="name"><xsl:value-of select="$servicename"/></xsl:attribute>
 
             <parameter name="ServiceClass">
-                        <xsl:value-of select="@servicename"/>
+                        <xsl:value-of select="$servicename"/>
             </parameter>
             <description>
               <xsl:value-of select="@servicename"/> Service
