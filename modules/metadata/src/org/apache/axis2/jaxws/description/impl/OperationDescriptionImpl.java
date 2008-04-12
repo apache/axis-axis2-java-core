@@ -204,7 +204,7 @@ class OperationDescriptionImpl
         parentEndpointInterfaceDescription = parent;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
-		isListType = ConverterUtils.hasXmlListAnnotation(method.getAnnotations());
+		
         // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
         // Using a qualified name will cause breakage.
         // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
@@ -589,6 +589,7 @@ class OperationDescriptionImpl
                 getAnnotation(seiMethod, WebMethod.class);
             parameterDescriptions = createParameterDescriptions();
             faultDescriptions = createFaultDescriptions();
+            isListType = ConverterUtils.hasXmlListAnnotation(seiMethod.getAnnotations());
         }
         // Register understood headers on axisOperation
         registerMustUnderstandHeaders();

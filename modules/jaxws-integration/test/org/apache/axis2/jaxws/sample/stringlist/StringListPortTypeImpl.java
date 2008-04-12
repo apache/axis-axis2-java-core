@@ -31,7 +31,7 @@ public class StringListPortTypeImpl implements StringListPortType {
      */
     public String[] stringList(String[] parameters) {
         // TODO Auto-generated method stub
-        return new String[]{"str1", "str2", "str3"};
+        return parameters;
     }
 
 }

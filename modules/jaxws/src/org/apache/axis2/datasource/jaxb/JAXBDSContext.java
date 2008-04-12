@@ -395,49 +395,29 @@ public class JAXBDSContext {
                     // Unfortunately RPC is type based. Thus a
                     // declared type must be used to unmarshal the xml.
                     Object jaxb;
-
+                   
                     if (!isList) {
                         // case: We are not unmarshalling an xsd:list but an Array.
 
                         if (type.isArray()) {
                             // If the context is created using package
                             // we will not have common arrays or type array in the context
-                            // so let use a differet way to unmarshal this type
+                            // but there is not much we can do about it so seralize it as
+                            // usual
                             if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
-                                jaxb = unmarshalAsListOrArray(reader, u, type);
+                                jaxb = u.unmarshal(reader, type);
                             }
                             // list on client array on server, Can happen only in start from java
                             // case.
                             else if ((ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY)) {
-                                jaxb = unmarshalAsListOrArray(reader, u, type);
-                                /*
-                                 * Commenting out code...
-                                 * 
+
                                 // The type could be any Object or primitive
                                 // I will first unmarshall the xmldata to a String[]
                                 // Then use the unmarshalled jaxbElement to create
                                 // proper type Object Array.
                                 
-                                jaxb = u.unmarshal(reader, String[].class);
+                                jaxb = unmarshalArray(reader, u, type);
                                 
-                                
-                                Object typeObj = getTypeEnabledObject(jaxb);
-                                
-                                // Now convert String Array in to the required Type Array.
-                                if (getTypeEnabledObject(typeObj) instanceof String[]) {
-                                    String[] strArray = (String[]) typeObj;
-                                    String strTokens = new String();
-                                    for (String str : strArray) {
-                                        strTokens = strTokens + " " + str;
-                                    }
-                                   
-                                    QName qName =
-                                            XMLRootElementUtil.
-                                            getXmlRootElementQNameFromObject(jaxb);
-                                    Object obj = XSDListUtils.fromXSDListString(strTokens, type);
-                                    jaxb = new JAXBElement(qName, type, obj);
-                                }
-                                */
                             } else {
                                 
                                 jaxb = u.unmarshal(reader, type);
@@ -502,6 +482,26 @@ public class JAXBDSContext {
         });
     }
 
+    private static Object unmarshalArray(XMLStreamReader reader, Unmarshaller u, 
+                                         Class type)
+       throws Exception {
+
+        Object jaxb = u.unmarshal(reader, String[].class);
+                     
+        Object typeObj = getTypeEnabledObject(jaxb);
+        
+        // Now convert String Array in to the required Type Array.
+        if (typeObj instanceof String[]) {
+            String[] strArray = (String[]) typeObj;
+            Object obj = XSDListUtils.fromStringArray(strArray, type);
+            QName qName =
+                    XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
+            jaxb = new JAXBElement(qName, type, obj);
+        }
+        
+        return jaxb;
+    }
+   
     /**
      * convert the String into a list or array
      * @param <T>
@@ -593,7 +593,7 @@ public class JAXBDSContext {
                     // String instead. Then we get the correct wire format:
                     // <foo>1 2 3</foo>
                     Object jbo = b;
-                    if (isList || (type != null && type.isArray())) {
+                    if (isList) {
                         if (DEBUG_ENABLED) {
                             log.debug("marshalling type which is a List or Array");
                         }

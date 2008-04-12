@@ -43,8 +43,15 @@ public class StringListTests extends AbstractTestCase {
         StringListPortType portType =sls.getStringListPort();
         BindingProvider p =	(BindingProvider)portType;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-        String[] retString = portType.stringList(new String[]{"String1","String2","String3"});
+        String[] send = new String[]{"String1","String2","String3","String Space"};
+        // since the array is serilized as xsd:list the string with space will be converted
+        // to a new array element. so we send array.length of 3 but get back array.length of 5
+        String[] expected = new String[]{"String1","String2","String3","String","Space"};
+        String[] retString = portType.stringList(send);
         assertNotNull(retString);
-        assertTrue(retString.length == 3);
+        assertEquals(expected.length, retString.length);
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], retString[i]);
+        }
     }
 }
