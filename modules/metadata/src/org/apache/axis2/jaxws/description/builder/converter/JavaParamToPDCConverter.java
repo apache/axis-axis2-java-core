@@ -49,7 +49,8 @@ public class JavaParamToPDCConverter {
             pdc.setParameterType(fullType);
             pdc.setListOrder(i);
             attachWebParamAnnotation(pdc, i);
-            pdcList.add(pdc);
+            pdc.setIsListType(ConverterUtils.hasXmlListAnnotation(paramAnnotations[i]));
+            pdcList.add(pdc);            
         }
         return pdcList;
     }
