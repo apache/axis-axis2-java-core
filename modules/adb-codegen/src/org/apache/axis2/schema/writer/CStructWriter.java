@@ -91,6 +91,7 @@ public class CStructWriter implements BeanWriter {
     public static final String DEFAULT_ATTRIB_CLASS_NAME = "axiom_attribute_t*";
     public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axiom_attribute_t*";
 
+    public static final String DEFAULT_TYPE_NS = "http://www.w3.org/2001/XMLSchema";
 
 
     /**
@@ -653,8 +654,13 @@ public class CStructWriter implements BeanWriter {
                 }
             }
 
-            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name)) ||
+                    (metainf.getSchemaQNameForQName(name) == null ||
+                    !metainf.getSchemaQNameForQName(name).getNamespaceURI().equals(DEFAULT_TYPE_NS))
+                     && !CClassNameForElement.equals(DEFAULT_C_CLASS_NAME)
+                     && !CClassNameForElement.equals(DEFAULT_ATTRIB_CLASS_NAME)) {
                 XSLTUtils.addAttribute(model, "ours", "yes", property);
+
             }
 
             if (metainf.getAttributeStatusForQName(name)) {
@@ -753,14 +759,18 @@ public class CStructWriter implements BeanWriter {
                                              Element property,
                                              Map typeMap,
                                              Map groupTypeMap,
-                                             String javaClassNameForElement) {
+                                             String CClassNameForElement) {
             // add an attribute that says the type is default
             if (metainf.getDefaultStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "default", "yes", property);
             }
 
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name)) ||
-                groupTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                    groupTypeMap.containsKey(metainf.getSchemaQNameForQName(name)) ||
+                    (metainf.getSchemaQNameForQName(name) == null ||
+                    !metainf.getSchemaQNameForQName(name).getNamespaceURI().equals(DEFAULT_TYPE_NS))
+                     && !CClassNameForElement.equals(DEFAULT_C_CLASS_NAME)
+                     && !CClassNameForElement.equals(DEFAULT_ATTRIB_CLASS_NAME)) {
                 XSLTUtils.addAttribute(model, "ours", "yes", property);
             }
 
@@ -782,10 +792,10 @@ public class CStructWriter implements BeanWriter {
                 if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
                     shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
                 } else {
-                    shortTypeName = getShortTypeName(javaClassNameForElement);
+                    shortTypeName = getShortTypeName(CClassNameForElement);
                 }
             } else {
-                shortTypeName = getShortTypeName(javaClassNameForElement);
+                shortTypeName = getShortTypeName(CClassNameForElement);
             }
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
 
@@ -812,13 +822,13 @@ public class CStructWriter implements BeanWriter {
 
                 XSLTUtils.addAttribute(model, "array", "yes", property);
 
-                int endIndex = javaClassNameForElement.indexOf("[");
+                int endIndex = CClassNameForElement.indexOf("[");
                 if (endIndex >= 0) {
                     XSLTUtils.addAttribute(model, "arrayBaseType",
-                            javaClassNameForElement.substring(0, endIndex), property);
+                            CClassNameForElement.substring(0, endIndex), property);
                 } else {
                     XSLTUtils.addAttribute(model, "arrayBaseType",
-                            javaClassNameForElement, property);
+                            CClassNameForElement, property);
                 }
 
                 long maxOccurs = metainf.getMaxOccurs(name);
@@ -956,12 +966,12 @@ public class CStructWriter implements BeanWriter {
     /**
      * Test whether the given class name matches the default
      *
-     * @param javaClassNameForElement
+     * @param CClassNameForElement
      * @return bool
      */
-    private boolean isDefault(String javaClassNameForElement) {
-        return getDefaultClassName().equals(javaClassNameForElement) ||
-                getDefaultClassArrayName().equals(javaClassNameForElement);
+    private boolean isDefault(String CClassNameForElement) {
+        return getDefaultClassName().equals(CClassNameForElement) ||
+                getDefaultClassArrayName().equals(CClassNameForElement);
     }
 
 
