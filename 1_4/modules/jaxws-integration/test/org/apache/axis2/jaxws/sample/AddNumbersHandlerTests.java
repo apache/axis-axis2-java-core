@@ -716,12 +716,13 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
 
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            fail(e.getMessage());
         }
         TestLogger.logger.debug("----------------------------------");
     }
     
     public void testOneWayWithProtocolException() {
+        Exception exception = null;
         try {
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -745,32 +746,35 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             // value 99 will trigger exception from AddNumbersClientLogicalHandler
             proxy.oneWayInt(99);
-            fail("Should have got an exception, but did not.");
-        } catch (Exception e) {
+        } catch (Exception e) {            
             e.printStackTrace();
-            assertEquals(e.getMessage(), "I don't like the value 99");
-
-            // one-way invocations run in their own thread,
-            // and we can't tell here in the client when it
-            // has completed.  So, we need to wait long enough
-            // for the invocation to complete, so our log file
-            // is fully populated.
-            try {
-                Thread.sleep(1000 * 5); // 5 seconds
-            } catch (InterruptedException ie) {
-                // nothing
-            }
-            
-            String log = readLogFile();
-            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                + "AddNumbersClientLogicalHandler CLOSE\n";
-            assertEquals(expected_calls, log);
-            
+            exception = e;
         }
+        
+        // exceptions on one-way invocations are suppressed by default
+        assertNull(exception);
+            
+        // one-way invocations run in their own thread,
+        // and we can't tell here in the client when it
+        // has completed.  So, we need to wait long enough
+        // for the invocation to complete, so our log file
+        // is fully populated.
+        try {
+            Thread.sleep(1000 * 5); // 5 seconds
+        } catch (InterruptedException ie) {
+            // nothing
+        }
+            
+        String log = readLogFile();
+        String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+        assertEquals(expected_calls, log);
+                    
         TestLogger.logger.debug("----------------------------------");
     }
     
     public void testOneWayWithRuntimeException() {
+        Exception exception = null;
         try {
             TestLogger.logger.debug("----------------------------------");
             TestLogger.logger.debug("test: " + getName());
@@ -794,27 +798,30 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             // value 99 will trigger exception from AddNumbersClientLogicalHandler
             proxy.oneWayInt(999);
-            fail("Should have got an exception, but did not.");
         } catch (Exception e) {
             e.printStackTrace();
-            assertEquals(e.getMessage(), "I don't like the value 999");
-
-            // one-way invocations run in their own thread,
-            // and we can't tell here in the client when it
-            // has completed.  So, we need to wait long enough
-            // for the invocation to complete, so our log file
-            // is fully populated.
-            try {
-                Thread.sleep(1000 * 5); // 5 seconds
-            } catch (InterruptedException ie) {
-                // nothing
-            }
-
-            String log = readLogFile();
-            String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
-                + "AddNumbersClientLogicalHandler CLOSE\n";
-            assertEquals(expected_calls, log);
+            exception = e;
         }
+        
+        // exceptions on one-way invocations are suppressed by default
+        assertNull(exception);            
+            
+        // one-way invocations run in their own thread,
+        // and we can't tell here in the client when it
+        // has completed.  So, we need to wait long enough
+        // for the invocation to complete, so our log file
+        // is fully populated.
+        try {
+            Thread.sleep(1000 * 5); // 5 seconds
+        } catch (InterruptedException ie) {
+            // nothing
+        }
+            
+        String log = readLogFile();
+        String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"
+                + "AddNumbersClientLogicalHandler CLOSE\n";
+        assertEquals(expected_calls, log);
+        
         TestLogger.logger.debug("----------------------------------");
     }
 
@@ -880,6 +887,11 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
         return new StreamSource(fis);
     }
     
+    protected void setUp() {
+        File file = new File(filelogname);
+        file.delete();  // yes, delete for each retrieval, which should only happen once per test
+    }
+    
     private String readLogFile() {
         try {
             FileReader fr = new FileReader(filelogname);
@@ -893,8 +905,6 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
                 ret = ret.concat(line + "\n");
             }
             fr.close();
-            File file = new File(filelogname);
-            file.delete();  // yes, delete for each retrieval, which should only happen once per test
             return ret;
         } catch (FileNotFoundException fnfe) {
             // it's possible the test does not actually call any handlers and therefore
