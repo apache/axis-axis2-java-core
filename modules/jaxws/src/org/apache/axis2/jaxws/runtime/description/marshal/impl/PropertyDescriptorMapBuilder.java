@@ -91,7 +91,7 @@ public class PropertyDescriptorMapBuilder {
         EndpointInterfaceDescription endpointInterfaceDesc =
                 endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getPropertyDescMaps(endpointInterfaceDesc, ap, map);
+            getPropertyDescMaps(endpointDesc, endpointInterfaceDesc, ap, map);
         }
     }
 
@@ -101,7 +101,8 @@ public class PropertyDescriptorMapBuilder {
      * @param ap                    ArtifactProcessor which found the artifact classes
      * @param map
      */
-    private static void getPropertyDescMaps(EndpointInterfaceDescription endpointInterfaceDesc,
+    private static void getPropertyDescMaps(EndpointDescription endpointDesc,
+                                            EndpointInterfaceDescription endpointInterfaceDesc,
                                             ArtifactProcessor ap,
                                             Map<Class, Map<String, PropertyDescriptorPlus>> map) {
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
@@ -109,7 +110,7 @@ public class PropertyDescriptorMapBuilder {
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i = 0; i < opDescs.length; i++) {
-                getPropertyDescMaps(opDescs[i], ap, map);
+                getPropertyDescMaps(endpointDesc, opDescs[i], ap, map);
             }
         }
     }
@@ -119,7 +120,8 @@ public class PropertyDescriptorMapBuilder {
      * @param opDesc
      * @param map
      */
-    private static void getPropertyDescMaps(OperationDescription opDesc,
+    private static void getPropertyDescMaps(EndpointDescription endpointDesc,
+                                            OperationDescription opDesc,
                                             ArtifactProcessor ap,
                                             Map<Class, Map<String, PropertyDescriptorPlus>> map) {
 
@@ -127,18 +129,18 @@ public class PropertyDescriptorMapBuilder {
         FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
         if (faultDescs != null) {
             for (int i = 0; i < faultDescs.length; i++) {
-                getPropertyDescMaps(faultDescs[i], ap, map);
+                getPropertyDescMaps(endpointDesc, faultDescs[i], ap, map);
             }
         }
 
         // Also consider the request and response wrappers
         String wrapperName = ap.getRequestWrapperMap().get(opDesc);
         if (wrapperName != null) {
-            addPropertyDesc(wrapperName, map);
+            addPropertyDesc(endpointDesc, wrapperName, map);
         }
         wrapperName = ap.getResponseWrapperMap().get(opDesc);
         if (wrapperName != null) {
-            addPropertyDesc(wrapperName, map);
+            addPropertyDesc(endpointDesc, wrapperName, map);
         }
     }
 
@@ -146,7 +148,8 @@ public class PropertyDescriptorMapBuilder {
      * @param opDesc
      * @param map
      */
-    private static void getPropertyDescMaps(FaultDescription faultDesc,
+    private static void getPropertyDescMaps(EndpointDescription endpointDesc,
+                                            FaultDescription faultDesc,
                                             ArtifactProcessor ap,
                                             Map<Class, Map<String, PropertyDescriptorPlus>> map) {
         // TODO The property descriptors for legacy exceptions and the corresponding fault beans could be cached at this point.
@@ -173,17 +176,21 @@ public class PropertyDescriptorMapBuilder {
             String faultDescBeanName = faultBeanDesc.getFaultBeanClassName();
             Class faultDescBean = loadClass(faultDescBeanName);
             if (faultDescBean != null) {
-                addPropertyDesc(faultDescBeanName, map);
-                addPropertyDesc(faultDescExceptionName, map);
+                addPropertyDesc(endpointDesc, faultDescBeanName, map);
+                addPropertyDesc(endpointDesc, faultDescExceptionName, map);
             }
 
         }
     }
 
-    private static void addPropertyDesc(String clsName,
+    private static void addPropertyDesc(EndpointDescription endpointDesc, 
+                                        String clsName,
                                         Map<Class, Map<String, PropertyDescriptorPlus>> map) {
 
         Class cls = loadClass(clsName);
+        if (cls == null) {
+            cls = loadClass(clsName, endpointDesc.getAxisService().getClassLoader());
+        }
         if (cls == null) {
             return;
         }
@@ -214,6 +221,33 @@ public class PropertyDescriptorMapBuilder {
 
             return forName(className, true,
                            getContextClassLoader());
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+        } catch (Throwable e) {
+            // TODO Should the exception be swallowed ?
+            if (log.isDebugEnabled()) {
+                log.debug("PackageSetBuilder cannot load the following class:" + className);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Loads the class
+     *
+     * @param className
+     * @return Class (or null if the class cannot be loaded)
+     */
+    private static Class loadClass(String className, ClassLoader cl) {
+        // Don't make this public, its a security exposure
+        if (className == null || className.length() == 0) {
+            return null;
+        }
+        try {
+
+            return forName(className, true,
+                           cl);
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
             //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.

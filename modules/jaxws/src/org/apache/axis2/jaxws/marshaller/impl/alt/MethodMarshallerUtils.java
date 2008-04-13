@@ -969,7 +969,12 @@ public class MethodMarshallerUtils {
             JAXBBlockContext blockContext = new JAXBBlockContext(marshalDesc.getPackages());
 
             // Note that faultBean may not be a bean, it could be a primitive 
-            Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());
+            Class faultBeanFormalClass;
+            try {
+                faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());
+            } catch (ClassNotFoundException e){
+                faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName(), operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getAxisService().getClassLoader());
+            }
 
             // Use "by java type" marshalling if necessary
             if (blockContext.getConstructionType() != 
@@ -993,7 +998,12 @@ public class MethodMarshallerUtils {
             }
 
             // Construct the JAX-WS generated exception that holds the faultBeanObject
-            Class exceptionClass = loadClass(faultDesc.getExceptionClassName());
+            Class exceptionClass;
+            try {
+                exceptionClass = loadClass(faultDesc.getExceptionClassName());
+            } catch (ClassNotFoundException e){
+                exceptionClass = loadClass(faultDesc.getExceptionClassName(), operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getAxisService().getClassLoader());
+            }
             if (log.isErrorEnabled()) {
                 log.debug("Found FaultDescription.  The exception name is " +
                         exceptionClass.getName());
@@ -1082,12 +1092,27 @@ public class MethodMarshallerUtils {
     }
 
     /**
+     * Load the class
+     *
+     * @param className
+     * @return loaded class
+     * @throws ClassNotFoundException
+     */
+    static Class loadClass(String className, ClassLoader cl) throws ClassNotFoundException {
+        // Don't make this public, its a security exposure
+        Class cls = ClassUtils.getPrimitiveClass(className);
+        if (cls == null) {
+            cls = forName(className, true, cl);
+        }
+        return cls;
+    }
+    /**
      * Return the class for this name
      *
      * @return Class
      */
     private static Class forName(final String className, final boolean initialize,
-                                 final ClassLoader classLoader) {
+                                 final ClassLoader classLoader) throws ClassNotFoundException {
         // NOTE: This method must remain private because it uses AccessController
         Class cl = null;
         try {
@@ -1107,7 +1132,7 @@ public class MethodMarshallerUtils {
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
-            throw ExceptionFactory.makeWebServiceException(e.getException());
+            throw (ClassNotFoundException) e.getException();
         }
 
         return cl;

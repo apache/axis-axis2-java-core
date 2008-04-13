@@ -113,7 +113,11 @@ class LegacyExceptionUtil {
             Class faultBeanClass = null;
             if (faultBeanName != null && faultBeanName.length() > 0) {
                 try {
-                    faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName);
+                    try {
+                        faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName);
+                    } catch (ClassNotFoundException e){
+                        faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName, fd.getOperationDescription().getEndpointInterfaceDescription().getEndpointDescription().getAxisService().getClassLoader());
+                    }
                 } catch (Throwable throwable) {
                     if (log.isDebugEnabled()) {
                         log.debug("Cannot load fault bean class = " + faultBeanName +
