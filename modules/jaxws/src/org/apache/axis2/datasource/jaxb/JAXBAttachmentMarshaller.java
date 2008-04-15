@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -82,8 +83,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         if (log.isDebugEnabled()){ 
             log.debug("isXOPPackage returns " + value);
         }
-        return value;
-
+        return value;        
     }
 
     
@@ -109,7 +109,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
                       "{" + namespace + "}" + localPart);
         }
         
-        String cid;
+        String cid = null;
         
             try {
                 // Create MIME Body Part
@@ -119,9 +119,14 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
                 
                 //Create a data source for the MIME Body Part
                 MimePartDataSource mpds = new MimePartDataSource(mbp);
+                long dataLength =data.length;
+                Integer value = (Integer)msgContext.getProperty(Constants.Configuration.MTOM_THRESHOLD);
+                int optimizedThreshold = (value!=null)?value.intValue():0;
                 
-                DataHandler dataHandler = new DataHandler(mpds);
-                cid = addDataHandler(dataHandler);
+                if(optimizedThreshold==0 || dataLength > optimizedThreshold){
+                	DataHandler dataHandler = new DataHandler(mpds);
+                	cid = addDataHandler(dataHandler);
+                }
                 
                 // Add the content id to the mime body part
                 mbp.setHeader(HTTPConstants.HEADER_CONTENT_ID, cid);
@@ -173,10 +178,12 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
         // even if the attachment is SWAREF ?)
         if (writer instanceof MTOMXMLStreamWriter) {
             textNode = new OMTextImpl(dh, null);
-            cid = textNode.getContentID();
-            ((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
-            // Remember the attachment on the message.
-            addDataHandler(dh, cid);
+        	if(((MTOMXMLStreamWriter) writer).isOptimizedThreshold(textNode)){
+        		cid = textNode.getContentID();
+        		((MTOMXMLStreamWriter) writer).writeOptimized(textNode);
+        		// Remember the attachment on the message.
+        		addDataHandler(dh, cid);
+        	}        	
         }
         
         if (log.isDebugEnabled()){ 

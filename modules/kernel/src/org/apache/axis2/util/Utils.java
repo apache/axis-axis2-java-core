@@ -540,4 +540,21 @@ public class Utils {
             });
         }
     }
+    
+    public static int getMtomThreshold(MessageContext msgCtxt){
+    	Integer value = null;         
+        if(!msgCtxt.isServerSide()){                
+	        value = (Integer)msgCtxt.getProperty(Constants.Configuration.MTOM_THRESHOLD);	        
+        }else{
+        	Parameter param = msgCtxt.getParameter(Constants.Configuration.MTOM_THRESHOLD);
+        	if(param!=null){
+        		value = (Integer)param.getValue();       		        		
+        	}        	        	
+        }
+        int threshold = (value!=null)?value.intValue():0;
+        if(log.isDebugEnabled()){
+        	log.debug("MTOM optimized Threshold value ="+threshold);
+        }
+        return threshold;
+    }
 }
