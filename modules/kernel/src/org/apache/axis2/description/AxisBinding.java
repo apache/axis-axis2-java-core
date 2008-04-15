@@ -224,6 +224,8 @@ public class AxisBinding extends AxisDescription {
                                                                   nameSpaceMap, serviceName));
         }
         WSDLSerializationUtil.addWSDLDocumentationElement(this, bindingElement, omFactory, wsdl);
+        WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
+				bindingElement);
         return bindingElement;
     }
     
