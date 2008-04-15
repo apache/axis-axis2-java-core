@@ -231,6 +231,12 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 // https then we have two endpoints populated so we should serialize them instead
                 // of updating the endpoints.
                 AxisEndpoint axisEndpoint = (AxisEndpoint) iterator.next();
+                /*
+			    * Some transports might not be active at runtime.
+			    */
+                if (!axisEndpoint.isActive()) {
+                    continue;
+                }
                 AxisBinding axisBinding = axisEndpoint.getBinding();
                 String type = axisBinding.getType();
                 
