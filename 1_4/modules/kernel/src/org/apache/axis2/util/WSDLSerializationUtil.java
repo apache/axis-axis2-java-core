@@ -29,15 +29,26 @@ import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicySubject;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
+import org.apache.neethi.PolicyReference;
+
+import sun.security.krb5.internal.crypto.Des;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -484,4 +495,73 @@ public class WSDLSerializationUtil {
             omElement.addChild(documentation);
         }
     }
+    
+    public static void addPoliciesAsExtensibleElement(
+			AxisDescription description, OMElement descriptionElement) {
+		PolicySubject policySubject = description.getPolicySubject();
+		Collection attachPolicyComponents = policySubject
+				.getAttachedPolicyComponents();
+		ArrayList policies = new ArrayList();
+
+		for (Iterator iterator = attachPolicyComponents.iterator(); iterator
+				.hasNext();) {
+			Object policyElement = iterator.next();
+
+			if (policyElement instanceof Policy) {
+				policies.add(policyElement);
+
+			} else if (policyElement instanceof PolicyReference) {
+				String key = ((PolicyReference) policyElement).getURI();
+
+				if (key.startsWith("#")) {
+					key = key.substring(key.indexOf("#") + 1);
+				}
+				AxisService service = getAxisService(description);
+				PolicyLocator locator = new PolicyLocator(service);
+				Policy p = locator.lookup(key);
+
+				if (p == null) {
+					throw new RuntimeException("Policy not found for uri : "
+							+ key);
+				}
+				policies.add(p);
+			}
+		}
+
+		ExternalPolicySerializer filter = null;
+		if (!policies.isEmpty()) {
+			filter = new ExternalPolicySerializer();
+			AxisConfiguration axisConfiguration = description
+					.getAxisConfiguration();
+			if (axisConfiguration != null) {
+				filter.setAssertionsToFilter(axisConfiguration
+						.getLocalPolicyAssertions());
+			}
+		}
+
+		for (Iterator iterator = policies.iterator(); iterator.hasNext();) {
+			Policy policy = (Policy) iterator.next();
+			OMElement policyElement;
+			try {
+				policyElement = PolicyUtil.getPolicyComponentAsOMElement(
+						policy, filter);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
+			OMNode firstChild = descriptionElement.getFirstOMChild();
+			if (firstChild != null) {
+				firstChild.insertSiblingBefore(policyElement);
+			} else {
+				descriptionElement.addChild(policyElement);
+			}
+		}
+	}
+
+	private static AxisService getAxisService(AxisDescription description) {
+		if (description == null || description instanceof AxisService) {
+			return (AxisService) description;
+		} else {
+			return getAxisService(description);
+		}
+	}
 }

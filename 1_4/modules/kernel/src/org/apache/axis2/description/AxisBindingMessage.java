@@ -209,6 +209,8 @@ public class AxisBindingMessage extends AxisDescription {
 		}
 		WSDLSerializationUtil.addWSDLDocumentationElement(this,
 				bindingMessageElement, omFactory, wsdl);
+		WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
+				bindingMessageElement);
 		return bindingMessageElement;
 	}
 

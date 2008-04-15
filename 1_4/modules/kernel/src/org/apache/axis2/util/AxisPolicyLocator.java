@@ -29,8 +29,10 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.PolicySubject;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyRegistry;
 
 public class AxisPolicyLocator implements PolicyRegistry {
@@ -58,13 +60,28 @@ public class AxisPolicyLocator implements PolicyRegistry {
             return null;
         }
         
-        PolicyInclude policyInclude = subject.getPolicyInclude();
-        PolicyRegistry policyRegistry = policyInclude.getPolicyRegistry();
-        Policy policy = policyRegistry.lookup(key);
+        Policy policy = null;
         
-        if (policy != null) {
-            return policy;
-        }
+        PolicySubject policySubject = subject.getPolicySubject();
+		PolicyComponent attachedPolicyComponent = policySubject
+				.getAttachedPolicyComponent(key);
+
+		if (attachedPolicyComponent != null
+				&& attachedPolicyComponent instanceof Policy) {
+			policy = (Policy) attachedPolicyComponent;
+			if (policy != null) {
+				return policy;
+			}
+		}
+		
+        
+		if (subject instanceof AxisService) {
+			policy = ((AxisService) subject).lookupPolicy(key);
+			if (policy != null) {
+				return policy;
+			}
+		}
+		
         
         short type = getType(subject);
         
@@ -121,6 +138,10 @@ public class AxisPolicyLocator implements PolicyRegistry {
             return ((AxisBinding) thisLevel).getAxisEndpoint();
         case AXIS_ENDPOINT:
             return ((AxisEndpoint) thisLevel).getAxisService();
+        case AXIS_MESSAGE:
+        	return ((AxisMessage) thisLevel).getAxisOperation();
+        case AXIS_OPERATION:
+        	return ((AxisOperation) thisLevel).getAxisService();
         case AXIS_SERVICE:
             return ((AxisService) thisLevel).getAxisServiceGroup();
         case AXIS_SERVICE_GROUP:
