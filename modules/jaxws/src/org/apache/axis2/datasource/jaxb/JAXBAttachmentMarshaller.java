@@ -120,9 +120,12 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
                 //Create a data source for the MIME Body Part
                 MimePartDataSource mpds = new MimePartDataSource(mbp);
                 long dataLength =data.length;
-                Integer value = (Integer)msgContext.getProperty(Constants.Configuration.MTOM_THRESHOLD);
-                int optimizedThreshold = (value!=null)?value.intValue():0;
-                
+                Integer value = null;
+                if (msgContext != null) {
+                    value = (Integer) msgContext.getProperty(Constants.Configuration.MTOM_THRESHOLD);
+                }
+                int optimizedThreshold = (value != null) ? value.intValue() : 0;
+
                 if(optimizedThreshold==0 || dataLength > optimizedThreshold){
                 	DataHandler dataHandler = new DataHandler(mpds);
                 	cid = addDataHandler(dataHandler);
