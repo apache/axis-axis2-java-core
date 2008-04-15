@@ -31,10 +31,17 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.PolicyLocator;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
+import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -45,15 +52,19 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,6 +75,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
     private String[] eprs = null;
     private OMNamespace wsaw;
 
+    private HashMap policiesInDescription = new HashMap();
+    private ExternalPolicySerializer filter = null;
+    
     public AxisService2WSDL20(AxisService service) {
         this.axisService = service;
         this.serviceName = service.getName();
@@ -84,6 +98,16 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         Map nameSpacesMap = axisService.getNamespaceMap();
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMNamespace wsdl;
+        
+        //
+        filter = new ExternalPolicySerializer();
+		AxisConfiguration axisConfiguration = axisService
+				.getAxisConfiguration();
+		if (axisConfiguration != null) {
+			filter.setAssertionsToFilter(axisConfiguration
+					.getLocalPolicyAssertions());
+		}
+		//
 
         if (nameSpacesMap != null && nameSpacesMap.containsValue(WSDL2Constants.WSDL_NAMESPACE)) {
             wsdl = omFactory
@@ -275,18 +299,20 @@ public class AxisService2WSDL20 implements WSDL2Constants {
 
                 }
                 if (!endpointAlreadyAdded) {
+//                	addPolicyAsExtensibleElement(axisEndpoint, endpointElement);
                     serviceElement.addChild(endpointElement);
                 }
             }
             Iterator iter = bindings.iterator();
             while (iter.hasNext()) {
                 AxisBinding binding = (AxisBinding) iter.next();
+                OMElement bindingElement = binding.toWSDL20(wsdl, tns, wsoap, whttp,
+                        interfaceName,
+                        axisService.getNamespaceMap(),
+                        AddressingHelper.getAddressingRequirementParemeterValue(axisService),
+                        serviceName,wsaw);
                 descriptionElement
-                        .addChild(binding.toWSDL20(wsdl, tns, wsoap, whttp,
-                                                   interfaceName,
-                                                   axisService.getNamespaceMap(),
-                                                   AddressingHelper.getAddressingRequirementParemeterValue(axisService),
-                                                   serviceName,wsaw));
+                        .addChild(bindingElement);
             }
 
             descriptionElement.addChild(serviceElement);
@@ -313,6 +339,9 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                                            disableSOAP12, eprs,
                                                                           serviceName));
         }
+        
+        ArrayList policies = new ArrayList(policiesInDescription.values());
+        addPoliciesToDescriptionElement(policies, descriptionElement);
 
         return descriptionElement;
     }
@@ -326,14 +355,19 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @param fac The active OMFactory
      * @param interfaceName The name of the interface
      * @return The generated interface element
+     * @throws FactoryConfigurationError 
+     * @throws XMLStreamException 
      */
     private OMElement getInterfaceElement(OMNamespace wsdl, OMNamespace tns, OMNamespace wsdlx,
                                           OMNamespace wrpc, OMFactory fac, String interfaceName)
-            throws URISyntaxException, AxisFault {
+            throws URISyntaxException, AxisFault, XMLStreamException, FactoryConfigurationError {
 
         OMElement interfaceElement = fac.createOMElement(WSDL2Constants.INTERFACE_LOCAL_NAME, wsdl);
         interfaceElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null,
                                                             interfaceName));
+        
+        addPolicyAsExtensibleElement(axisService, interfaceElement);
+        
         Iterator iterator = axisService.getOperations();
         ArrayList interfaceOperations = new ArrayList();
         ArrayList interfaceFaults = new ArrayList();
@@ -402,13 +436,15 @@ public class AxisService2WSDL20 implements WSDL2Constants {
      * @param tns the target namespace
      * @param wsdlx the WSDL extentions namespace (WSDL 2.0)
      * @return the generated &lt;operation&gt; element
+     * @throws FactoryConfigurationError 
+     * @throws XMLStreamException 
      */
     public OMElement generateInterfaceOperationElement(AxisOperation axisOperation,
                                                        OMNamespace wsdl,
                                                        OMNamespace tns,
                                                        OMNamespace wsdlx,
                                                        OMNamespace wrpc) throws
-            URISyntaxException, AxisFault {
+            URISyntaxException, AxisFault, XMLStreamException, FactoryConfigurationError {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMElement axisOperationElement =
                 omFactory.createOMElement(WSDL2Constants.OPERATION_LOCAL_NAME, wsdl);
@@ -418,6 +454,8 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                                                                       null,
                                                                       axisOperation
                                                                               .getName().getLocalPart()));
+        addPolicyAsExtensibleElement(axisOperation, axisOperationElement);
+        
         URI[] opStyle = (URI[]) axisOperation.getParameterValue(WSDL2Constants.OPERATION_STYLE);
         if (opStyle == null) {
             opStyle = checkStyle(axisOperation);
@@ -699,4 +737,78 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         }
         return in + out + inOut;
     }
+    
+	private void addPolicyAsExtensibleElement(AxisDescription axisDescription,
+			OMElement descriptionElement) throws XMLStreamException,
+			FactoryConfigurationError, AxisFault {
+		PolicySubject policySubject = axisDescription.getPolicySubject();
+		Collection attachPolicyComponents = policySubject
+				.getAttachedPolicyComponents();
+
+		for (Iterator iterator = attachPolicyComponents.iterator(); iterator
+				.hasNext();) {
+			Object policyElement = iterator.next();
+
+			if (policyElement instanceof Policy) {
+				PolicyReference policyReference = PolicyUtil
+						.createPolicyReference((Policy) policyElement);
+				OMElement policyRefElement = PolicyUtil
+						.getPolicyComponentAsOMElement(
+								(PolicyComponent) policyReference, filter);
+
+				OMNode firstChildElem = descriptionElement.getFirstElement();
+				if (firstChildElem == null) {
+					descriptionElement.addChild(policyRefElement);
+				} else {
+					firstChildElem.insertSiblingBefore(policyRefElement);
+				}
+				String key = ((PolicyReference) policyReference).getURI();
+				if (key.startsWith("#")) {
+					key = key.substring(key.indexOf("#") + 1);
+				}
+				policiesInDescription.put(key, (Policy) policyElement);
+
+			} else if (policyElement instanceof PolicyReference) {
+				OMElement child = PolicyUtil
+						.getPolicyComponentAsOMElement((PolicyComponent) policyElement);
+				OMElement firstChildElem = descriptionElement.getFirstElement();
+
+				if (firstChildElem == null) {
+					descriptionElement.addChild(child);
+				} else {
+					firstChildElem.insertSiblingBefore(child);
+				}
+
+				String key = ((PolicyReference) policyElement).getURI();
+				if (key.startsWith("#")) {
+					key = key.substring(key.indexOf("#") + 1);
+				}
+
+				PolicyLocator locator = new PolicyLocator(axisService);
+				Policy p = locator.lookup(key);
+
+				if (p == null) {
+					throw new AxisFault("Policy not found for uri : " + key);
+				}
+				policiesInDescription.put(key, p);
+			}
+		}
+	}
+	
+	private void addPoliciesToDescriptionElement(List policies,
+			OMElement descriptionElement) throws XMLStreamException,
+			FactoryConfigurationError {
+
+		for (int i = 0; i < policies.size(); i++) {
+			Policy policy = (Policy) policies.get(i);
+			OMElement policyElement = PolicyUtil.getPolicyComponentAsOMElement(
+					policy, filter);
+			OMNode firstChild = descriptionElement.getFirstOMChild();
+			if (firstChild != null) {
+				firstChild.insertSiblingBefore(policyElement);
+			} else {
+				descriptionElement.addChild(policyElement);
+			}
+		}
+	}
 }

@@ -228,7 +228,7 @@ public class AxisBindingOperation extends AxisDescription {
 					WSDL2Constants.ATTRIBUTE_QUERY_PARAMETER_SEPERATOR, whttp,
 					property));
 		}
-
+		
 		// Add the input element
 		AxisBindingMessage inMessage = (AxisBindingMessage) this
 				.getChild(WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
@@ -258,6 +258,8 @@ public class AxisBindingOperation extends AxisDescription {
 		}
 		WSDLSerializationUtil.addWSDLDocumentationElement(this,
 				bindingOpElement, omFactory, wsdl);
+		WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
+				bindingOpElement);
 		return bindingOpElement;
 	}
 

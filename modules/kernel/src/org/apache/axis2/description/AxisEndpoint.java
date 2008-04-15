@@ -156,6 +156,8 @@ public class AxisEndpoint extends AxisDescription {
 		}
 		WSDLSerializationUtil.addWSDLDocumentationElement(this,
 				endpointElement, omFactory, wsdl);
+		WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
+				endpointElement);
 		return endpointElement;
 	}
 
