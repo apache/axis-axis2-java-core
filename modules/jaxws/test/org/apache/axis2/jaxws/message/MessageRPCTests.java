@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.headers.ConfigBody;
 import org.apache.axis2.jaxws.message.headers.ConfigHeader;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.test.stock1.ObjectFactory;
@@ -250,12 +251,12 @@ public class MessageRPCTests extends TestCase {
     }
     
     public void testJAXBInflow_soap11() throws Exception {
-		_testJAXBInflow(sampleEnvelope11);
-	}
-	public void testJAXBInflow_soap12() throws Exception {
-		_testJAXBInflow(sampleEnvelope12);
-	}
-	public void _testJAXBInflow(String sampleJAXBEnvelope) throws Exception {
+        _testJAXBInflow(sampleEnvelope11);
+    }
+    public void testJAXBInflow_soap12() throws Exception {
+        _testJAXBInflow(sampleEnvelope12);
+    }
+    public void _testJAXBInflow(String sampleJAXBEnvelope) throws Exception {
         // Create a SOAP OM out of the sample incoming XML.  This
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
@@ -314,8 +315,7 @@ public class MessageRPCTests extends TestCase {
         assertTrue(obj.getPrice().equals("100"));
     }
     
-    // FIXME: This test fails, checking it in so that Rich can take a look
-    public void _testJAXBHeader() throws Exception {
+    public void testJAXBHeader() throws Exception {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                 "\t<soapenv:Header>\n" +
@@ -327,9 +327,11 @@ public class MessageRPCTests extends TestCase {
                 "\t\t</ns2:ConfigHeader3>\n" +
                 "\t</soapenv:Header>\n" +
                 "\t<soapenv:Body>\n" +
-                "\t\t<rpcOp:echoItResponse xmlns:rpcOp=\"http://headers.message.jaxws.axis2.apache.org/W2JRLR2738TestService.wsdl\">\n" +
-                "\t\t\t<result xmlns:ns2=\"http://headers.message.jaxws.axis2.apache.org/types4\">Got it</result>\n" +
-                "\t\t</rpcOp:echoItResponse>\n" +
+                "\t\t<rpcOp:ConfigResponse xmlns:rpcOp=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t<rpcParam:ConfigBody xmlns:rpcParam=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t\t<message>Got it</message>\n" +
+                "\t\t</rpcParam:ConfigBody>\n" +
+                "\t\t</rpcParam:ConfigResponse>\n" +
                 "\t</soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 
@@ -384,7 +386,9 @@ public class MessageRPCTests extends TestCase {
         
         Block block2 = m.getBodyBlock(context, bf);
         Object b2 = block2.getBusinessObject(true);
-        
-        assertTrue(b2 instanceof String);
+        if (b2 instanceof JAXBElement) {
+            b2 = ((JAXBElement) b2).getValue();
+        }
+        assertTrue(b2 instanceof ConfigBody);
     }
 }

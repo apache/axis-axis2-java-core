@@ -31,6 +31,7 @@ public class ObjectFactory {
     private final static QName _ConfigHeader1_QNAME = new QName("http://headers.message.jaxws.axis2.apache.org/types4", "ConfigHeader1");
     private final static QName _ConfigHeader3_QNAME = new QName("http://headers.message.jaxws.axis2.apache.org/types4", "ConfigHeader3");
     private final static QName _ConfigHeader2_QNAME = new QName("http://headers.message.jaxws.axis2.apache.org/types4", "ConfigHeader2");
+    private final static QName _ConfigBody_QNAME = new QName("http://headers.message.jaxws.axis2.apache.org/types4", "ConfigBody");
 
     public ObjectFactory() {
     }
@@ -42,7 +43,24 @@ public class ObjectFactory {
     public ConfigHeader createConfigHeader() {
         return new ConfigHeader();
     }
+    
+    /**
+     * Create an instance of {@link ConfigHeader }
+     * 
+     */
+    public ConfigBody createConfigBody() {
+        return new ConfigBody();
+    }
 
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ConfigBody }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://headers.message.jaxws.axis2.apache.org/types4", name = "ConfigBody")
+    public JAXBElement<ConfigBody> createConfigBody(ConfigBody value) {
+        return new JAXBElement<ConfigBody>(_ConfigBody_QNAME, ConfigBody.class, null, value);
+    }
+    
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ConfigHeader }{@code >}}
      * 
