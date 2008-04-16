@@ -64,4 +64,19 @@
             </sequence>
         </complexType>
     </element>
+
+    <element name="authInfo" >
+		<simpleType>
+			<restriction base="string"/>
+		</simpleType>
+	</element>
+
+    <complexType name="discard_transferToken">
+		<sequence>
+			<element ref="tns:authInfo" minOccurs="0"/>
+            <element name="param1" type="string"/>
+		</sequence>
+	</complexType>
+
+    <element name="TestSimpleReference" type="tns:discard_transferToken"/>
 </schema>
