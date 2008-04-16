@@ -5,7 +5,7 @@ public class Util {
         Class[] declaredClasse = clazz.getDeclaredClasses();
         for (int i = 0; i < declaredClasse.length; i++) {
             Class aClass = declaredClasse[i];
-            if(aClass != null && aClass.getCanonicalName().endsWith("Factory")){
+            if(aClass != null && aClass.getName().endsWith("Factory")){
                 return aClass;
             }
         }
