@@ -22,6 +22,7 @@ package org.apache.axis2.schema.populate.derived;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.populate.Util;
 import org.custommonkey.xmlunit.XMLTestCase;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -45,14 +46,7 @@ public abstract class AbstractDerivedPopulater extends XMLTestCase {
     protected Object process(String testString,String className) throws Exception{
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(testString.getBytes()));
         Class clazz = Class.forName(className);
-        Class[] declaredClasse = clazz.getDeclaredClasses();
-        Class innerClazz = null;
-        for (int i = 0; i < declaredClasse.length; i++) {
-            Class aClass = declaredClasse[i];
-            if(aClass != null && aClass.getCanonicalName().endsWith("Factory")){
-				innerClazz = aClass;
-            }
-        }
+        Class innerClazz = Util.getFactory(clazz);
         Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
         assertNotNull(obj);
