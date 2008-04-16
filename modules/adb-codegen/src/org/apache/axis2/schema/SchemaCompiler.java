@@ -704,7 +704,8 @@ public class SchemaCompiler {
             }
 
             // here what we want is to set the schema type name for the element
-            if (referencedElement.getSchemaTypeName() != null){
+            if ((referencedElement.getSchemaType() != null)
+                    && (referencedElement.getSchemaType().getQName() != null)){
                 // i.e this element refers to an complex type name
                 if (!this.processedElementRefMap.containsKey(referencedElement.getQName())) {
                     if (this.baseSchemaTypeMap.containsKey(referencedElement.getSchemaTypeName())) {
