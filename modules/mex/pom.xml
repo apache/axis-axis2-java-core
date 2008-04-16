@@ -87,22 +87,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>install-jar</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>${basedir}/target/mex-${version}.jar</file>
-                            <groupId>org.apache.axis2</groupId>
-                            <artifactId>mex</artifactId>
-                            <version>${version}</version>
-                            <packaging>jar</packaging>
-                        </configuration>
-                    </execution>
+                  <execution>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>jar</goal>
+                    </goals>
+                    <configuration>
+                      <classifier>impl</classifier>
+                    </configuration>
+                  </execution>
                 </executions>
             </plugin>
             <plugin>
