@@ -46,8 +46,13 @@ public abstract class AbstractDerivedPopulater extends XMLTestCase {
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(testString.getBytes()));
         Class clazz = Class.forName(className);
         Class[] declaredClasse = clazz.getDeclaredClasses();
-        //ideally this should be 1
-        Class innerClazz = declaredClasse[0];
+        Class innerClazz = null;
+        for (int i = 0; i < declaredClasse.length; i++) {
+            Class aClass = declaredClasse[i];
+            if(aClass != null && aClass.getCanonicalName().endsWith("Factory")){
+				innerClazz = aClass;
+            }
+        }
         Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
         assertNotNull(obj);
