@@ -309,7 +309,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                         // Create an Attachment object with the signature value
                         Attachment attachment = new Attachment(returnObject, 
                                                                returnType, 
-                                                               attachmentDesc);  
+                                                               attachmentDesc,
+                                                               operationDesc.getResultPartName());
                         m.addDataHandler(attachment.getDataHandler(), 
                                          attachment.getContentID());
                         m.setDoingSWA(true);

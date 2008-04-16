@@ -62,6 +62,7 @@ class Attachment {
     AttachmentDescription aDesc = null;
     Object sigValue = null;
     Class sigClass = null;
+    String partName = null;
 
     /**
      * Constructor used to set Attachment from wire unmarshalling
@@ -81,10 +82,11 @@ class Attachment {
      * @param sigValue
      * @param sigClass
      */
-    public Attachment(Object sigValue, Class sigClass, AttachmentDescription aDesc) {
+    public Attachment(Object sigValue, Class sigClass, AttachmentDescription aDesc, String partName) {
         this.sigValue = sigValue;
         this.sigClass = sigClass;
         this.aDesc = aDesc;
+        this.partName = partName;
     }
 
 
@@ -104,6 +106,11 @@ class Attachment {
     public String getContentID() {
         if (cid == null) {
             cid = UUIDGenerator.getUUID();
+            // Per spec, use the partName in the content-id
+            // http://www.ws-i.org/Profiles/AttachmentsProfile-1.0.html#Value-space_of_Content-Id_Header
+            if (partName != null) {
+                cid = partName + "=" + cid;
+            }
         }
         return cid;
     }

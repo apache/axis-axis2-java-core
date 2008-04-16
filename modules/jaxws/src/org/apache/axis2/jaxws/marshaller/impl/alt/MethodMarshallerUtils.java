@@ -223,7 +223,8 @@ public class MethodMarshallerUtils {
             // Create an Attachment object with the signature value
             Attachment attachment = new Attachment(value, 
                                                    formalType, 
-                                                   attachmentDesc);  
+                                                   attachmentDesc,
+                                                   pd.getPartName());
             pde = new PDElement(pd, 
                     null, // For SWA Attachments, there is no element reference to the attachment
                     null, 
@@ -338,7 +339,22 @@ public class MethodMarshallerUtils {
                 } else {
                     // Attachment Processing
                     if (attachmentDesc.getAttachmentType() == AttachmentType.SWA) {
-                        String cid = message.getAttachmentID(swaIndex);
+                        String partName = pd.getPartName();
+                        String cid = null;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Getting the attachment dataHandler for partName=" + partName);
+                        }
+                        if (partName != null && partName.length() > 0) {
+                            // Compliant WS-I behavior
+                            cid = message.getAttachmentID(partName);
+                        }
+                        if (cid == null) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Attachment dataHandler was not found.  Fallback to use attachment " + swaIndex);
+                            }
+                            // Toleration mode for non-compliant attachment names
+                            cid = message.getAttachmentID(swaIndex);
+                        }
                         DataHandler dh = message.getDataHandler(cid);
                         Attachment attachment = new Attachment(dh, cid);
                         PDElement pde = new PDElement(pd, null, null, attachment);

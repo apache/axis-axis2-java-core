@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Holder;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 
@@ -67,6 +68,56 @@ public class SWAMTOMPortTypeImpl {
             attachment[2] = 'A';
         }
         return attachment;
+    }
+    
+    /**
+     * This method passes two SWA attachments as a request
+     * and expects two SWA attachments as a response.
+     * Note that the body content in both cases is empty.
+     * (See the wsdl)
+     * @param attachment (swa)
+     * @return attachment (swa)
+     */
+    @WebMethod(operationName="swaAttachment2", action="swaAttachment2")
+    @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
+    public void swaAttachment2(
+          @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+          @WebParam(name = "jpegImage1Request", targetNamespace = "", partName = "jpegImage1Request")
+          byte[] attachment,
+          
+          @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+          @WebParam(name = "jpegImage2Request", targetNamespace = "", partName = "jpegImage2Request")
+          byte[] attachment2,
+          
+          @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+          @WebParam(name = "jpegImage1Response", 
+                    targetNamespace = "", 
+                    partName = "jpegImage1Response",
+                    mode= Mode.OUT)
+          Holder<byte[]> attachmentOut1,
+          
+          @XmlJavaTypeAdapter(HexBinaryAdapter.class)
+          @WebParam(name = "jpegImage2Response", 
+                    targetNamespace = "", 
+                    partName = "jpegImage2Response",
+                    mode= Mode.OUT)
+          Holder<byte[]> attachmentOut2) {
+          
+        if (attachment == null || attachment.length == 0){
+            throw new RuntimeException("Received empty first attachment");
+        } else if (attachment2 == null || attachment2.length == 0){
+            throw new RuntimeException("Received empty second attachment");
+        } else if (attachment[0] != '1') {
+            throw new RuntimeException("First attachment is not '1'");
+        } else if (attachment2[0] != '2') {
+            throw new RuntimeException("Second attachment is not '2'");
+        } else {
+            attachmentOut1.value = new byte[1];
+            attachmentOut1.value[0] = '3';
+            attachmentOut2.value = new byte[1];
+            attachmentOut2.value[0] = '4';
+        }
+        
     }
     
     @WebMethod(operationName="mtomAttachment", action="mtomAttachment")
