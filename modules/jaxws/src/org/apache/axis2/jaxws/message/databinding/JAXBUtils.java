@@ -38,6 +38,7 @@ import javax.xml.ws.Holder;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
@@ -1011,7 +1012,7 @@ public class JAXBUtils {
      * @param <V> Pooled object
      */
     private static class Pool<K,V> {
-        private Map<K,List<V>> map = new ConcurrentHashMap<K, List<V>>();
+        private Map<K,List<WeakReference<V>>> map = new ConcurrentHashMap<K, List<WeakReference<V>>>();
 
         // The maps are freed up when a LOAD FACTOR is hit
         private static int MAX_LIST_FACTOR = 10;
@@ -1021,10 +1022,16 @@ public class JAXBUtils {
          * @return removed item from pool or null.
          */
         public V get(K key) {
-            List<V> values = getValues(key);
+            List<WeakReference<V>> values = getValues(key);
             synchronized (values) {
-                if(values.size()>0) {
-                    return values.remove(values.size()-1);
+                while (values.size()>0) {
+                    // Get the WeakReference, and return the actual value if it is not
+                    // GC'd.  Otherwise try the next WeakReference
+                    WeakReference<V> wr = values.remove(values.size()-1);
+                    V v = wr.get();
+                    if (v != null) {
+                        return v;
+                    }
                 }
             }
             return null;
@@ -1037,10 +1044,12 @@ public class JAXBUtils {
          */
         public void put(K key, V value) {
             adjustSize();
-            List<V> values = getValues(key);
+            List<WeakReference<V>> values = getValues(key);
             synchronized (values) {
                 if (values.size() < MAX_LIST_FACTOR) {
-                    values.add(value);
+                    // Add a WeakReference to the value so that it can be GC'd
+                    WeakReference<V> wr = new WeakReference<V>(value);
+                    values.add(wr);
                 }
             }
         }
@@ -1050,15 +1059,15 @@ public class JAXBUtils {
          * @param key
          * @return list of values.
          */
-        private List<V> getValues(K key) {
-            List<V> values = map.get(key);
+        private List<WeakReference<V>> getValues(K key) {
+            List<WeakReference<V>> values = map.get(key);
             if(values !=null) {
                 return values;
             }
             synchronized (this) {
                 values = map.get(key);
                 if(values==null) {
-                    values = new ArrayList<V>();
+                    values = new ArrayList<WeakReference<V>>();
                     map.put(key, values);
                 }
                 return values;
