@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
@@ -1340,21 +1341,25 @@ public class MethodMarshallerUtils {
         // The information is registered on the AxisService.
         if (mc == null ||
             mc.getAxisMessageContext() == null ||
-            mc.getAxisMessageContext().getAxisService() == null) {
+            mc.getAxisMessageContext().getAxisService() == null ||
+            mc.getAxisMessageContext().getAxisOperation() == null) {
             return;
         }
-        AxisService ac = mc.getAxisMessageContext().getAxisService();
+        
+        // This needs to be stored on the AxisOperation as unmarshalling
+        // info will be specific to a method and its parameters
+        AxisOperation axisOp = mc.getAxisMessageContext().getAxisOperation();
         
         // There are two things that need to be saved.
         // 1) The UnmarshalInfo object containing the packages 
         //    (which will be used by the CustomBuilder)
         // 2) A MessageContextListener which (when triggered) registers
         //    the JAXBCustomBuilder
-        Parameter param = ac.getParameter(UnmarshalInfo.KEY);
+        Parameter param = axisOp.getParameter(UnmarshalInfo.KEY);
         if (param == null) {
             UnmarshalInfo info = new UnmarshalInfo(packages, packagesKey);
-            ac.addParameter(UnmarshalInfo.KEY, info);
-            param = ac.getParameter(UnmarshalInfo.KEY);
+            axisOp.addParameter(UnmarshalInfo.KEY, info);
+            param = axisOp.getParameter(UnmarshalInfo.KEY);
             param.setTransient(true);
             // Add a listener that will set the JAXBCustomBuilder
             UnmarshalMessageContextListener.

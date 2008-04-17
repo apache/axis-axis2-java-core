@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.MessageContextListener;
 import org.apache.axis2.description.Parameter;
@@ -94,11 +95,12 @@ public class UnmarshalMessageContextListener implements MessageContextListener {
 
         // Get the UnmarshalInfo object.
         // This contains information from prior unmarshalling
-        AxisService as = sc.getAxisService();
-        if (as == null) {
+        AxisOperation axisOp = mc.getAxisOperation();
+        if (axisOp == null) {
             return;
         }
-        Parameter parameterInfo = as.getParameter(UnmarshalInfo.KEY);
+        
+        Parameter parameterInfo = axisOp.getParameter(UnmarshalInfo.KEY);
         if (parameterInfo == null) {
             return;
         }
@@ -114,7 +116,7 @@ public class UnmarshalMessageContextListener implements MessageContextListener {
         JAXBCustomBuilder jcb = new JAXBCustomBuilder(jaxbDSC);
         ((StAXOMBuilder) envelope.getBuilder()).registerCustomBuilderForPayload(jcb);
         if (log.isDebugEnabled()) {
-            log.debug("Registering JAXBCustomBuilder: " + jcb);
+            log.debug("Registering JAXBCustomBuilder: " + jcb + " for AxisOperation: " + axisOp.getName());
         }
     }
 
