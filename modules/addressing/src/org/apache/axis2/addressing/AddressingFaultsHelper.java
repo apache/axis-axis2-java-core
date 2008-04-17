@@ -392,6 +392,14 @@ public class AddressingFaultsHelper {
                         soapFac.createSOAPFaultSubCode(soapFaultSubCode);
                 SOAPFaultValue soapFaultSubcodeValue2 =
                         soapFac.createSOAPFaultValue(soapFaultSubCode2);
+                String namespace =
+                        (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                if (namespace == null) {
+                    namespace = Final.WSA_NAMESPACE;
+                }
+                OMNamespace wsaNS = soapFac.createOMNamespace(namespace,
+                        AddressingConstants.WSA_DEFAULT_PREFIX);
+                soapFaultSubcodeValue2.declareNamespace(wsaNS);
                 soapFaultSubcodeValue2
                         .setText(AddressingConstants.WSA_DEFAULT_PREFIX + ":" + faultSubCode);
             }
