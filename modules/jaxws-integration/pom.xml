@@ -749,6 +749,20 @@
                                         />
                                 <delete dir="target/test-classes/servicejars/RPCLitSWA"/>
 
+                                <copy toDir="target/test-classes/servicejars/AddressingProvider/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/provider/addressing/**"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/provider/addressing/">
+                                        <include name="META-INF/**"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="target/test-classes/servicejars/AddressingProvider.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/AddressingProvider"
+                                        />
+                                <delete dir="target/test-classes/servicejars/AddressingProvider"/>
+
                                 <copy toDir="target/test-classes/servicejars/SOAP12EchoService/">
                                     <fileset dir="target/test-classes">
                                         <include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
@@ -1329,6 +1343,7 @@
                         <include>**/ParallelAsyncTests.java</include>
                         <include>**/SWAMTOMTests.java</include>
                         <include>**/RuntimeExceptionsAsyncMepTest.java</include>
+                        <include>**/AddressingProviderTests.java</include>
                     </includes>
                     <systemProperties>
                         <property>
