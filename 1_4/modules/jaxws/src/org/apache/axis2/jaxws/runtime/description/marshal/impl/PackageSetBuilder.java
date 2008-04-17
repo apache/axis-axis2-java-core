@@ -159,6 +159,9 @@ public class PackageSetBuilder {
         String implClassName = getServiceImplClassName(endpointDesc);
         if (implClassName != null) {
             Class clz = loadClass(implClassName);
+            if(clz == null){
+                clz = loadClass(implClassName, endpointDesc.getAxisService().getClassLoader());
+            }
             if (clz != null) {
                 addXmlSeeAlsoPackages(clz, msrd, set);
             }
@@ -166,7 +169,7 @@ public class PackageSetBuilder {
         EndpointInterfaceDescription endpointInterfaceDesc =
                 endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getPackagesFromAnnotations(endpointInterfaceDesc, set, msrd);
+            getPackagesFromAnnotations(endpointDesc, endpointInterfaceDesc, set, msrd);
         }
         return set;
     }
@@ -177,6 +180,7 @@ public class PackageSetBuilder {
      * @param msrd
      */
     private static void getPackagesFromAnnotations(
+            EndpointDescription ed,
             EndpointInterfaceDescription endpointInterfaceDesc,
             TreeSet<String> set,
             MarshalServiceRuntimeDescription msrd) {
@@ -190,7 +194,7 @@ public class PackageSetBuilder {
         // Build a set of packages from all of the operations
         if (opDescs != null) {
             for (int i = 0; i < opDescs.length; i++) {
-                getPackagesFromAnnotations(opDescs[i], set, msrd);
+                getPackagesFromAnnotations(ed, opDescs[i], set, msrd);
             }
         }
         return;
@@ -202,7 +206,7 @@ public class PackageSetBuilder {
      * @param opDesc OperationDescription
      * @param set    Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(OperationDescription opDesc, TreeSet<String> set,
+    private static void getPackagesFromAnnotations(EndpointDescription ed, OperationDescription opDesc, TreeSet<String> set,
                                                    MarshalServiceRuntimeDescription msrd) {
 
         // Walk the parameter information
@@ -217,7 +221,7 @@ public class PackageSetBuilder {
         FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
         if (faultDescs != null) {
             for (int i = 0; i < faultDescs.length; i++) {
-                getPackagesFromAnnotations(faultDescs[i], set, msrd);
+                getPackagesFromAnnotations(ed, faultDescs[i], set, msrd);
             }
         }
 
@@ -277,7 +281,8 @@ public class PackageSetBuilder {
      * @param faultDesc FaultDescription
      * @param set       Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set,
+    private static void getPackagesFromAnnotations(EndpointDescription ed, 
+                                                   FaultDescription faultDesc, TreeSet<String> set,
                                                    MarshalServiceRuntimeDescription msrd) {
 
         FaultBeanDesc faultBeanDesc = msrd.getFaultBeanDesc(faultDesc);
@@ -297,6 +302,9 @@ public class PackageSetBuilder {
             return;
         }
         Class faultBean = loadClass(faultBeanName);
+        if(faultBean == null){
+            faultBean = loadClass(faultBeanName, ed.getAxisService().getClassLoader());
+        }
         if (faultBean != null) {
             setTypeAndElementPackages(faultBean, faultBeanDesc.getFaultBeanNamespace(),
                                       faultBeanDesc.getFaultBeanLocalName(), set, msrd);
@@ -467,6 +475,36 @@ public class PackageSetBuilder {
             Class cls = ClassUtils.getPrimitiveClass(className);
             if (cls == null) {
                 cls = Class.forName(className, true, getContextClassLoader());
+            }
+            return cls;
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+        } catch (Throwable e) {
+            // TODO Should the exception be swallowed ?
+            if (log.isDebugEnabled()) {
+                log.debug("PackageSetBuilder cannot load the following class:" + className);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Loads the class
+     *
+     * @param className
+     * @return Class (or null if the class cannot be loaded)
+     */
+    private static Class loadClass(String className, ClassLoader loader) {
+        // Don't make this public, its a security exposure
+        if (className == null || className.length() == 0) {
+            return null;
+        }
+        try {
+            // Class.forName does not support primitives
+            Class cls = ClassUtils.getPrimitiveClass(className);
+            if (cls == null) {
+                cls = Class.forName(className, true, loader);
             }
             return cls;
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that

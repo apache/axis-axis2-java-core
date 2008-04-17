@@ -28,6 +28,8 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.headers.ConfigBody;
+import org.apache.axis2.jaxws.message.headers.ConfigHeader;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.test.stock1.ObjectFactory;
 import org.test.stock1.StockPrice;
@@ -248,7 +250,6 @@ public class MessageRPCTests extends TestCase {
         assertTrue(newText.contains("Body"));
     }
     
-    
     public void testJAXBInflow_soap11() throws Exception {
 		_testJAXBInflow(sampleEnvelope11);
 	}
@@ -314,4 +315,80 @@ public class MessageRPCTests extends TestCase {
         assertTrue(obj.getPrice().equals("100"));
     }
     
+    public void testJAXBHeader() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+                "\t<soapenv:Header>\n" +
+                "\t\t<ns2:ConfigHeader2 xmlns:ns2=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t\t<message>configHeader2</message>\n" +
+                "\t\t</ns2:ConfigHeader2>\n" +
+                "\t\t<ns2:ConfigHeader3 xmlns:ns2=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t\t<message>xyz</message>\n" +
+                "\t\t</ns2:ConfigHeader3>\n" +
+                "\t</soapenv:Header>\n" +
+                "\t<soapenv:Body>\n" +
+                "\t\t<rpcOp:ConfigResponse xmlns:rpcOp=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t<rpcParam:ConfigBody xmlns:rpcParam=\"http://headers.message.jaxws.axis2.apache.org/types4\">\n" +
+                "\t\t\t<message>Got it</message>\n" +
+                "\t\t</rpcParam:ConfigBody>\n" +
+                "\t\t</rpcParam:ConfigResponse>\n" +
+                "\t</soapenv:Body>\n" +
+                "</soapenv:Envelope>";
+
+        // Create a SOAP OM out of the sample incoming XML.  This
+        // simulates what Axis2 will be doing with the inbound message. 
+        StringReader sr = new StringReader(xml);
+        XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        OMElement omElement = builder.getSOAPEnvelope();
+        
+        // Create a SOAP 1.1 Message from the sample incoming XML
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.createFrom(omElement, null);
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
+        // Indicate that the message should be accessed as RPC
+        m.setStyle(Style.RPC);
+        
+        // Get the BlockFactory
+        JAXBBlockFactory bf = (JAXBBlockFactory)
+            FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        // Create the JAXBContext instance that will be used
+        // to deserialize the JAX-B object content in the message.
+        JAXBBlockContext context = new JAXBBlockContext(ConfigHeader.class.getPackage().getName());
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+
+        // Get the JAXBBlock that wraps the content
+        Block block = m.getHeaderBlock("http://headers.message.jaxws.axis2.apache.org/types4","ConfigHeader2", context, bf);
+
+        // Get the business object from the block, which should be a 
+        // JAX-B object
+        Object bo = block.getBusinessObject(true);
+        
+        // Check to make sure the right object was returned
+        assertNotNull(bo);
+        if (bo instanceof JAXBElement) {
+            bo = ((JAXBElement) bo).getValue();
+        }
+        assertTrue(bo instanceof ConfigHeader);
+        
+        Block block2 = m.getBodyBlock(context, bf);
+        Object b2 = block2.getBusinessObject(true);
+        if (b2 instanceof JAXBElement) {
+            b2 = ((JAXBElement) b2).getValue();
+        }
+        assertTrue(b2 instanceof ConfigBody);
+    }
 }

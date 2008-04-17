@@ -88,15 +88,19 @@ public class AnnotationBuilder {
                                            Map<String, AnnotationDesc> map) {
         String implClassName = getServiceImplClassName(endpointDesc);
         if (implClassName != null) {
-            Class clz = loadClass(implClassName);
+            Class clz;
+            clz = loadClass(implClassName);
+            if(clz == null){
+                clz = loadClass(implClassName, endpointDesc.getAxisService().getClassLoader());
+            }
             if (clz != null) {
-                addAnnotation(clz, map);
+                addAnnotation(endpointDesc, clz, map);
             }
         }
         EndpointInterfaceDescription endpointInterfaceDesc =
                 endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getAnnotationDescs(endpointInterfaceDesc, ap, map);
+            getAnnotationDescs(endpointDesc, endpointInterfaceDesc, ap, map);
         }
     }
 
@@ -106,12 +110,13 @@ public class AnnotationBuilder {
      * @param ap                    ArtifactProcessor which found/produced artifact classes
      * @param map
      */
-    private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc,
+    private static void getAnnotationDescs(EndpointDescription endpointDesc, 
+                                           EndpointInterfaceDescription endpointInterfaceDesc,
                                            ArtifactProcessor ap,
                                            Map<String, AnnotationDesc> map) {
         Class clz = endpointInterfaceDesc.getSEIClass();
         if (clz != null) {
-            addAnnotation(clz, map);
+            addAnnotation(endpointDesc, clz, map);
         }
         
         // Don't dig into the async operations
@@ -120,7 +125,7 @@ public class AnnotationBuilder {
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i = 0; i < opDescs.length; i++) {
-                getAnnotationDescs(opDescs[i], ap, map);
+                getAnnotationDescs(endpointDesc, opDescs[i], ap, map);
             }
         }
     }
@@ -133,7 +138,8 @@ public class AnnotationBuilder {
      * @param ap     ArtifactProcessor which found/produced artifact classes
      * @param map
      */
-    private static void getAnnotationDescs(OperationDescription opDesc,
+    private static void getAnnotationDescs(EndpointDescription endpointDesc,
+                                           OperationDescription opDesc,
                                            ArtifactProcessor ap,
                                            Map<String, AnnotationDesc> map) {
 
@@ -141,7 +147,7 @@ public class AnnotationBuilder {
         ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
         if (parameterDescs != null) {
             for (int i = 0; i < parameterDescs.length; i++) {
-                getAnnotationDescs(parameterDescs[i], map);
+                getAnnotationDescs(endpointDesc, parameterDescs[i], map);
             }
         }
 
@@ -149,36 +155,37 @@ public class AnnotationBuilder {
         FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
         if (faultDescs != null) {
             for (int i = 0; i < faultDescs.length; i++) {
-                getAnnotationDescs(faultDescs[i], ap, map);
+                getAnnotationDescs(endpointDesc, faultDescs[i], ap, map);
             }
         }
 
         // Also consider the request and response wrappers
         String wrapperName = ap.getRequestWrapperMap().get(opDesc);
         if (wrapperName != null) {
-            addAnnotation(wrapperName, map);
+            addAnnotation(endpointDesc, wrapperName, map);
         }
         wrapperName = ap.getResponseWrapperMap().get(opDesc);
         if (wrapperName != null) {
-            addAnnotation(wrapperName, map);
+            addAnnotation(endpointDesc, wrapperName, map);
         }
 
         // Finally consider the result type
         Class cls = opDesc.getResultActualType();
         if (cls != null && cls != void.class && cls != Void.class) {
-            addAnnotation(cls, map);
+            addAnnotation(endpointDesc, cls, map);
         }
     }
 
 
-    private static void getAnnotationDescs(ParameterDescription paramDesc,
+    private static void getAnnotationDescs(EndpointDescription endpointDesc,
+                                           ParameterDescription paramDesc,
                                            Map<String, AnnotationDesc> map) {
 
         // Get the type that defines the actual data.  (this is never a holder )
         Class paramClass = paramDesc.getParameterActualType();
 
         if (paramClass != null) {
-            getTypeAnnotationDescs(paramClass, map);
+            getTypeAnnotationDescs(endpointDesc, paramClass, map);
         }
 
     }
@@ -189,13 +196,17 @@ public class AnnotationBuilder {
      * @param faultDesc FaultDescription
      * @param set       Set<Package> that is updated
      */
-    private static void getAnnotationDescs(FaultDescription faultDesc,
+    private static void getAnnotationDescs(EndpointDescription endpointDesc, 
+                                           FaultDescription faultDesc,
                                            ArtifactProcessor ap,
                                            Map<String, AnnotationDesc> map) {
         FaultBeanDesc faultBeanDesc = ap.getFaultBeanDescMap().get(faultDesc);
         Class faultBean = loadClass(faultBeanDesc.getFaultBeanClassName());
+        if(faultBean == null) {
+            faultBean = loadClass(faultBeanDesc.getFaultBeanClassName(), endpointDesc.getAxisService().getClassLoader());    
+        }
         if (faultBean != null) {
-            getTypeAnnotationDescs(faultBean, map);
+            getTypeAnnotationDescs(endpointDesc, faultBean, map);
         }
     }
 
@@ -206,13 +217,13 @@ public class AnnotationBuilder {
      *
      * @param cls
      */
-    private static void getTypeAnnotationDescs(Class cls, Map<String, AnnotationDesc> map) {
+    private static void getTypeAnnotationDescs(EndpointDescription endpointDesc, Class cls, Map<String, AnnotationDesc> map) {
 
         if (JAXBElement.class.isAssignableFrom(cls)) {
             try {
                 Method m = cls.getMethod("getValue", noClass);
                 Class cls2 = m.getReturnType();
-                addAnnotation(cls2, map);
+                addAnnotation(endpointDesc, cls2, map);
 
             } catch (Exception e) {
                 // We should never get here
@@ -221,21 +232,24 @@ public class AnnotationBuilder {
                 }
             }
         } else {
-            addAnnotation(cls, map);
+            addAnnotation(endpointDesc, cls, map);
         }
     }
 
-    private static void addAnnotation(String className, Map<String, AnnotationDesc> map) {
+    private static void addAnnotation(EndpointDescription endpointDesc, String className, Map<String, AnnotationDesc> map) {
 
         if (map.get(className) == null) {
             Class clz = loadClass(className);
+            if (clz == null) {
+                clz = loadClass(className, endpointDesc.getAxisService().getClassLoader());    
+            }
             if (clz != null) {
-                addAnnotation(clz, map);
+                addAnnotation(endpointDesc, clz, map);
             }
         }
     }
 
-    private static void addAnnotation(Class cls, Map<String, AnnotationDesc> map) {
+    private static void addAnnotation(EndpointDescription endpointDesc, Class cls, Map<String, AnnotationDesc> map) {
 
         String className = cls.getCanonicalName();
         if (map.get(className) == null) {
@@ -258,11 +272,38 @@ public class AnnotationBuilder {
             Class[] interfaces = cls.getInterfaces();
             if (interfaces != null) {
                 for (int i=0; i<interfaces.length; i++) {
-                    addAnnotation(interfaces[i], map);
+                    addAnnotation(endpointDesc, interfaces[i], map);
                 }
             }
             
         }
+    }
+
+    /**
+     * Loads the class
+     *
+     * @param className
+     * @return Class (or null if the class cannot be loaded)
+     */
+    private static Class loadClass(String className, ClassLoader loader) {
+        // Don't make this public, its a security exposure
+        if (className == null || className.length() == 0) {
+            return null;
+        }
+        try {
+
+            return forName(className, true,
+                           loader);
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+        } catch (Throwable e) {
+            // TODO Should the exception be swallowed ?
+            if (log.isDebugEnabled()) {
+                log.debug("PackageSetBuilder cannot load the following class:" + className);
+            }
+        }
+        return null;
     }
 
     /**

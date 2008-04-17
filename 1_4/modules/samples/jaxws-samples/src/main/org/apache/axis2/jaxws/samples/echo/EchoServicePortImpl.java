@@ -19,9 +19,11 @@
 package org.apache.axis2.jaxws.samples.echo;
 
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 
 
 @WebService(endpointInterface = "org.apache.axis2.jaxws.samples.echo.EchoServicePortType", targetNamespace = "http://org/apache/axis2/jaxws/samples/echo/", serviceName = "EchoService", portName = "EchoServicePort", wsdlLocation = "WEB-INF/wsdl/Echo.wsdl")
+@HandlerChain(file="loghandler.xml")
 public class EchoServicePortImpl {
 
     public EchoStringResponse echoOperation(EchoStringInput parameter) {

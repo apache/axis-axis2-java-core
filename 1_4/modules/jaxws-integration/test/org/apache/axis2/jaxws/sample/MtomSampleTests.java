@@ -27,6 +27,7 @@ import org.apache.axis2.datasource.jaxb.JAXBAttachmentUnmarshallerMonitor;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.util.Utils;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -66,6 +67,8 @@ public class MtomSampleTests extends AbstractTestCase {
         "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMEnableServicePort";
     private static final String URL_ENDPOINT_MTOMDEFAULT = 
         "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMDefaultServicePort";
+    private static final String URL_ENDPOINT_MTOMTHRESHOLD = 
+        "http://localhost:6060/axis2/services/MtomSampleService.MtomSampleMTOMThresholdServicePort";
     
     
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
@@ -631,6 +634,63 @@ public class MtomSampleTests extends AbstractTestCase {
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         */
+    }
+    /*
+     * Enable attachment Optimization but call an endpoint with @MTOM(enable=true, Threshold = 99000)
+     */
+    
+    public void testSendImage_setMTOMThreshold() throws Exception {
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        System.out.println("testSendImage_setMTOMThreshold()");
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        //Setting Threshold to send request Inline
+        int threshold = 100000;
+        MTOMFeature mtom21 = new MTOMFeature(true, threshold);
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT_MTOMTHRESHOLD);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD, mtom21);
+        
+        List cids = null;
+        SendImageResponse response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        //There shold be no cid as attachment should be inlined.
+        int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment inlined:" + numCIDs, numCIDs == 0);
     }
     
 }

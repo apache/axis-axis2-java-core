@@ -183,7 +183,7 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
             String msg =
                     "Error occurred generating WSDL file for Web service implementation class " +
                             "{" + className + "}: {" + t + "}";
-            log.error(msg);
+            log.error(msg, t);
             throw new WebServiceException(msg, t);
         }
     }

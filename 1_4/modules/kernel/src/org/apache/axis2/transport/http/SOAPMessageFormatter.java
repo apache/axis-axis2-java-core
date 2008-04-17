@@ -26,9 +26,11 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -52,6 +54,15 @@ public class SOAPMessageFormatter implements MessageFormatter {
             log.debug("  isDoingSWA=" + format.isDoingSWA());
         }
         OMElement element = msgCtxt.getEnvelope();
+        
+        int optimizedThreshold = Utils.getMtomThreshold(msgCtxt);       
+        if(optimizedThreshold > 0){
+        	if(log.isDebugEnabled()){
+        		log.debug("Setting MTOM optimized Threshold Value on OMOutputFormat");
+        	}
+        	format.setOptimizedThreshold(optimizedThreshold);
+        }	        
+
         try {
             if (!(format.isOptimized()) & format.isDoingSWA()) {
                 StringWriter bufferedSOAPBody = new StringWriter();

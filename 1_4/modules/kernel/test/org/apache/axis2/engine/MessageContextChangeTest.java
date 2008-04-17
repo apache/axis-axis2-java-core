@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class MessageContextChangeTest extends TestCase {
     protected static final Log log = LogFactory.getLog(MessageContextChangeTest.class);
@@ -109,9 +110,9 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("boolean", "executedPhasesReset"),
             new FieldDescription("java.lang.String", "selfManagedDataDelimiter"),
             new FieldDescription("java.lang.Class",
-                                 "class$org$apache$axis2$context$MessageContext"),
+                                 new String[] {"class$org$apache$axis2$context$MessageContext","class$0"}),
             new FieldDescription("java.lang.Class",
-                                 "class$org$apache$axis2$context$SelfManagedDataManager"),
+                                 new String[] {"class$org$apache$axis2$context$SelfManagedDataManager","class$1"}),
             new FieldDescription("java.lang.Exception", "failureReason"),
     };
 
@@ -144,19 +145,22 @@ public class MessageContextChangeTest extends TestCase {
 
         for (int i = 0; i < numberKnownFields; i++) {
             // see if this entry is in the actual list
-            String name = knownList[i].getName();
-
-            Field actualField = findField(fields, name);
+            String[] names = knownList[i].getNames();
+            Field actualField = null;
+            for (int j = 0; actualField == null && j < names.length; j++) {
+                String name = names[j];
+                actualField = findField(fields, name);
+            }
 
             if (actualField == null) {
-                log.error("ERROR:  MessageContext is missing field [" + name + "]");
+                log.error("ERROR:  MessageContext is missing field [" + Arrays.asList(names) + "]");
                 noChange = false;
             } else {
                 String knownType = knownList[i].getType();
                 String actualType = actualField.getType().getName();
 
                 if (!knownType.equals(actualType)) {
-                    log.error("ERROR:  MessageContext field [" + name +
+                    log.error("ERROR:  MessageContext field [" + Arrays.asList(names) +
                             "] expected type [" + knownType + "] does not match actual type [" +
                             actualType + "]");
                     noChange = false;
@@ -212,9 +216,11 @@ public class MessageContextChangeTest extends TestCase {
 
     private FieldDescription findFieldDescription(String name) {
         for (int k = 0; k < knownList.length; k++) {
-            String fieldName = knownList[k].getName();
-            if (fieldName.equals(name)) {
-                return knownList[k];
+            String[] fieldName = knownList[k].getNames();
+            for (int i = 0; i < fieldName.length; i++) {
+                if (fieldName[i].equals(name)) {
+                    return knownList[k];
+                }
             }
         }
         return null;
@@ -223,7 +229,7 @@ public class MessageContextChangeTest extends TestCase {
 
     private class FieldDescription {
         String type = null;
-        String name = null;
+        String[] name = null;
 
         // constructor
         public FieldDescription() {
@@ -232,6 +238,12 @@ public class MessageContextChangeTest extends TestCase {
         // constructor
         public FieldDescription(String t, String n) {
             type = t;
+            name = new String[]{n};
+        }
+
+        // constructor
+        public FieldDescription(String t, String[] n) {
+            type = t;
             name = n;
         }
 
@@ -239,16 +251,12 @@ public class MessageContextChangeTest extends TestCase {
             return type;
         }
 
-        public String getName() {
+        public String[] getNames() {
             return name;
         }
 
         public void setType(String t) {
             type = t;
-        }
-
-        public void setName(String n) {
-            name = n;
         }
     }
 

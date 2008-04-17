@@ -77,6 +77,14 @@ public interface Message extends XMLPart {
     public String getAttachmentID(int index);
     
     /**
+     * Get the indicated (non-soap part) attachment id
+     * @param partName (WS-I indicates that SWA attachments have a partName prefix)
+     * @return CID or null if not present
+     */
+    public String getAttachmentID(String partName);
+    
+    
+    /**
      * Get the attachment identified by the contentID 
      * @param cid
      * @return

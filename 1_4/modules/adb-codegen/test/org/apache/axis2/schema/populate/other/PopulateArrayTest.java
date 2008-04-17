@@ -21,6 +21,7 @@ package org.apache.axis2.schema.populate.other;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.populate.Util;
 
 import javax.xml.stream.XMLStreamReader;
 import java.beans.BeanInfo;
@@ -43,7 +44,7 @@ public class PopulateArrayTest extends TestCase {
 
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(xmlString.getBytes()));
         Class clazz = Class.forName("org2.soapinterop.xsd.Myobject");
-        Class innerClazz = clazz.getDeclaredClasses()[0];
+        Class innerClazz = Util.getFactory(clazz);
         Method parseMethod = innerClazz.getMethod("parse",new Class[]{XMLStreamReader.class});
         Object obj = parseMethod.invoke(null,new Object[]{reader});
 
