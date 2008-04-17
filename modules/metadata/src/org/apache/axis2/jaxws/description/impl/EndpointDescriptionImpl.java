@@ -211,7 +211,6 @@ class EndpointDescriptionImpl
                             ServiceDescriptionImpl parent) {
         this(theClass, portName, dynamicPort, parent, null, null);
     }
-
     EndpointDescriptionImpl(Class theClass, QName portName, boolean dynamicPort,
                             ServiceDescriptionImpl parent, 
                             DescriptionBuilderComposite sparseComposite,
@@ -265,7 +264,10 @@ class EndpointDescriptionImpl
         } catch (Exception e) {
             String msg = Messages.getMessage("endpointDescriptionErr2",e.getClass().getName(),parent.getClass().getName());
             throw ExceptionFactory.makeWebServiceException(msg, e);
+        } finally {
+            releaseAxisServiceResources();
         }
+        
     }
     
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
@@ -536,6 +538,9 @@ class EndpointDescriptionImpl
         
         // Configure any available WebServiceFeatures on the endpoint.
         configureWebServiceFeatures();
+        
+        // REVIEW: there are some throws above that won't cause the release
+        releaseAxisServiceResources();
     }
 
     /**
@@ -571,6 +576,8 @@ class EndpointDescriptionImpl
         buildEndpointDescriptionFromAnnotations();
         
         configureWebServiceFeatures();
+        
+        releaseAxisServiceResources();
 
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -1010,6 +1017,13 @@ class EndpointDescriptionImpl
 
         //TODO: Set other things on AxisService here, this function may have to be
         //      moved to after we create all the AxisOperations
+    }
+
+    private void releaseAxisServiceResources() {
+        // release the schema list in the AxisService
+        if (axisService != null) {
+            axisService.releaseSchemaList();
+        }
     }
 
     private void buildDescriptionHierachy() {
