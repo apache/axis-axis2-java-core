@@ -92,13 +92,13 @@ public abstract class AsyncResponse implements Response {
     }
 
     protected void onError(Throwable flt, MessageContext mc, ClassLoader cl) {
-        setThreadClassLoader(cl);
-        onError(flt, mc);
         ClassLoader origClassLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
+        setThreadClassLoader(cl);
+        onError(flt, mc);
         setThreadClassLoader(origClassLoader);
     }
     
@@ -151,13 +151,13 @@ public abstract class AsyncResponse implements Response {
     }
     
     protected void onComplete(MessageContext mc, ClassLoader cl) {
-        setThreadClassLoader(cl);
-        onComplete(mc);
         ClassLoader origClassLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
+        setThreadClassLoader(cl);
+        onComplete(mc);
         setThreadClassLoader(origClassLoader);
     }
 

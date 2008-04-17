@@ -79,7 +79,8 @@ public class ClassFinderImpl implements ClassFinder {
                                             // Don't add any interfaces or JAXWS specific classes.
                                             // Only classes that represent data and can be marshalled
                                             // by JAXB should be added.
-                                            if (!clazz.isInterface()
+                                            if (!clazz.isInterface() &&
+                                                    clazz.getPackage().getName().equals(pkg)
                                                     && ClassUtils
                                                     .getDefaultPublicConstructor(clazz) != null
                                                     && !ClassUtils.isJAXWSClass(clazz)) {

@@ -289,6 +289,21 @@ public class MessageImpl implements Message {
         return resultCID;
     }
     
+
+    public String getAttachmentID(String partName) {
+        // Find the prefix that starts with the 
+        // partName=
+        String prefix = partName + "=";
+        List<String> cids = getAttachmentIDs();
+        for (String cid: cids) {
+            if (cid.startsWith(prefix)) {
+                return cid;
+            }
+        }
+        return null;
+    }
+
+    
     private String getSOAPPartContentID() {
         String contentID = null;
         if (messageContext == null) {

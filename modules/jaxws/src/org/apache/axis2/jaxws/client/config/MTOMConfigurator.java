@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.client.config;
 
+import org.apache.axis2.Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -68,49 +70,22 @@ public class MTOMConfigurator implements ClientConfigurator {
             // Enable MTOM
             requestMsg.setMTOMEnabled(true);
             
-            
             if (threshold <= 0) {
                 if (log.isDebugEnabled()) {
                     log.debug("Enabling MTOM with no threshold.");
                 }             
+            }else{
+                if(log.isDebugEnabled()){
+                	log.debug("MTOM Threshold Value ="+threshold);
             }
-            else if (attachmentIDs != null) {
-                // REVIEW This processing will be moved to axiom.
-                // DISABLING FOR NOW
-                /*
-            	long size = 0L;
             	
-            	for (String attachmentID : attachmentIDs) {
-            	    DataHandler dh = requestMsg.getDataHandler(attachmentID);
-        			
-            	    if (dh != null) {
-            	        DataSource ds = dh.getDataSource();
-            	        InputStream is = null;
-                    	
-            	        try {
-            	            is = ds.getInputStream();
-            	            size += is.available();
-            	        }
-            	        catch (Exception e) {
-            	            throw ExceptionFactory.
-                              makeWebServiceException(Messages.getMessage("mtomAttachErr"), e);
-                    	}
-                    	finally {
-                    	    try {
-                    	        if (is != null)
-                    	            is.close();
-                    	    }
-                    	    catch (Exception e) {
-                    	        //Nothing to do.
-                    	    }
-                    	}
-            	    }
-            	}
-            	
-            	if (size > threshold) {
-            	    requestMsg.setMTOMEnabled(true);
-                }
-                */
+                //set MTOM threshold value on message context.
+                //Once MTOM threshold is set on message context it will be
+                //read by SOAPMessageFormatter.writeTo() while writing the attachment
+                //SOAPMessageFormatter will further propogate the threshold value to
+                //Axiom.OMOutputFormat. JAXBAttachmentUnmarshaller will then make 
+                //decision if the attachment should be inlined or optimized.  
+                messageContext.setProperty(Constants.Configuration.MTOM_THRESHOLD, new Integer(threshold));
             }
         }
         else {

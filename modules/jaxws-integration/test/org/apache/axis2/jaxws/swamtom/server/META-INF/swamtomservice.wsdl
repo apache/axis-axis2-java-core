@@ -55,10 +55,20 @@
   <wsdl:message name="swaAttachmentRequest">
     <part name="jpegImageRequest" type="xsd:hexBinary"/>
   </wsdl:message>
-  <wsdl:message name="swAattachmentResponse">
+  <wsdl:message name="swaAttachmentResponse">
     <part name="jpegImageResponse" type="xsd:hexBinary"/>
   </wsdl:message>
 
+  
+  <!-- two attachments...and no body part -->
+  <wsdl:message name="swaAttachment2Request">
+    <part name="jpegImage1Request" type="xsd:hexBinary"/>
+    <part name="jpegImage2Request" type="xsd:hexBinary"/>
+  </wsdl:message>
+  <wsdl:message name="swaAttachment2Response">
+    <part name="jpegImage1Response" type="xsd:hexBinary"/>
+    <part name="jpegImage2Response" type="xsd:hexBinary"/>
+  </wsdl:message>
   
 
    <!-- mtom -->
@@ -75,6 +85,11 @@
       <wsdl:operation name="swaAttachment">
          <wsdl:input message="tns:swaAttachmentRequest" />
          <wsdl:output message="tns:swaAttachmentResponse" />
+      </wsdl:operation>
+      
+      <wsdl:operation name="swaAttachment2">
+         <wsdl:input message="tns:swaAttachment2Request" />
+         <wsdl:output message="tns:swaAttachment2Response" />
       </wsdl:operation>
       
       <wsdl:operation name="mtomAttachment">
@@ -107,6 +122,37 @@
             </mime:part>
             <mime:part>
               <mime:content part="jpegImageResponse" type="text/plain"/>
+            </mime:part>
+          </mime:multipartRelated>
+        </wsdl:output>
+      </wsdl:operation>
+      
+      <wsdl:operation name="swaAttachment2">
+        <wsdlsoap:operation soapAction="swaAttachment2"/>
+        <wsdl:input >
+          <mime:multipartRelated>
+            <mime:part>
+              <wsdlsoap:body parts="" use="literal"/>
+            </mime:part>
+
+            <mime:part>
+              <mime:content part="jpegImage1Request" type="text/plain"/>
+            </mime:part>
+            <mime:part>
+              <mime:content part="jpegImage2Request" type="text/plain"/>
+            </mime:part>
+          </mime:multipartRelated>
+        </wsdl:input>
+        <wsdl:output >
+          <mime:multipartRelated>
+            <mime:part>
+              <wsdlsoap:body parts="" use="literal"/>
+            </mime:part>
+            <mime:part>
+              <mime:content part="jpegImage1Response" type="text/plain"/>
+            </mime:part>
+            <mime:part>
+              <mime:content part="jpegImage2Response" type="text/plain"/>
             </mime:part>
           </mime:multipartRelated>
         </wsdl:output>
