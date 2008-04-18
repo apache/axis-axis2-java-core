@@ -492,6 +492,10 @@ class OperationDescriptionImpl
                                         partQName);
                             }
                             axisMessage.setElementQName(partQName);
+                            
+                            getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl()
+                        		.getAxisService()
+                        			.addMessageElementQNameToOperationMapping(partQName, newAxisOperation);
                         }
                         break;
                     }
