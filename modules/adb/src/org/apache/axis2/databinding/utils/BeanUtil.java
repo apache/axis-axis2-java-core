@@ -158,6 +158,9 @@ public class BeanUtil {
             HashMap propertMap = new HashMap();
             for (int i = 0; i < propDescs.length; i++) {
                 PropertyDescriptor propDesc = propDescs[i];
+                if (propDesc.getName().equals("class")) {
+                    continue;
+                }
                 propertMap.put(propDesc.getName(), propDesc);
             }
             ArrayList object = new ArrayList();
@@ -166,7 +169,10 @@ public class BeanUtil {
                 PropertyDescriptor propDesc = (PropertyDescriptor)propertMap.get(
                         getCorrectName(property.getSimpleName()));
                 if (propDesc == null) {
-                    // JAM does bad thing so I need to add this
+                    propDesc = (PropertyDescriptor)propertMap.get(
+                        (property.getSimpleName()));
+                }
+                 if (propDesc == null) {
                     continue;
                 }
                 Class ptype = propDesc.getPropertyType();
@@ -313,13 +319,13 @@ public class BeanUtil {
                                      boolean processingDocLitBare) {
         if (elemntNameSpace != null) {
             object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                    propDesc.getName(), elemntNameSpace.getPrefix()));
+                   getCorrectName(propDesc.getName()) , elemntNameSpace.getPrefix()));
         } else {
             if(processingDocLitBare){
-                object.add(new QName(propDesc.getName()));
+                object.add(new QName(getCorrectName(propDesc.getName())));
             } else {
                 object.add(new QName(beanName.getNamespaceURI(),
-                        propDesc.getName(), beanName.getPrefix()));
+                        getCorrectName(propDesc.getName()), beanName.getPrefix()));
             }
 
         }
