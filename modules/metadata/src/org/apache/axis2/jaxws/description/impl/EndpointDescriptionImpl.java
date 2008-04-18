@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -98,6 +99,9 @@ class EndpointDescriptionImpl
         implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
+    // In some environments some of the resources on an AxisService can lead to OOMs.
+    // However, releasing these resources can have other implications.  
+    private boolean releaseAxisServiceResources = false;
 
     private QName portQName;
     private QName serviceQName;
@@ -251,6 +255,7 @@ class EndpointDescriptionImpl
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
         setupAxisService();
         addToAxisService();
+        setupReleaseResources(getServiceDescription().getAxisConfigContext());
 
         buildDescriptionHierachy();
         addAnonymousAxisOperations();
@@ -270,6 +275,23 @@ class EndpointDescriptionImpl
         
     }
     
+    private void setupReleaseResources(ConfigurationContext configurationContext) {
+        if (configurationContext != null) {
+            AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+            if (axisConfiguration != null) {
+                Parameter param = 
+                    axisConfiguration.getParameter(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
+                if (param != null) {
+                    releaseAxisServiceResources = ((String) param.getValue()).equalsIgnoreCase("true");
+                    if (log.isDebugEnabled()) {
+                        log.debug("EndpointDescription configured to release AxisService resources via "
+                                  + Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
+                    }
+                }
+            }
+        }
+        
+    }
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
         this(parent, serviceImplName, null);
     }
@@ -540,6 +562,7 @@ class EndpointDescriptionImpl
         configureWebServiceFeatures();
         
         // REVIEW: there are some throws above that won't cause the release
+        setupReleaseResources(composite.getConfigurationContext());
         releaseAxisServiceResources();
     }
 
@@ -576,8 +599,8 @@ class EndpointDescriptionImpl
         buildEndpointDescriptionFromAnnotations();
         
         configureWebServiceFeatures();
-        
-        releaseAxisServiceResources();
+        // This constructor isn't used anymore, so there's no need to do this
+//        releaseAxisServiceResources();
 
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -1021,7 +1044,7 @@ class EndpointDescriptionImpl
 
     private void releaseAxisServiceResources() {
         // release the schema list in the AxisService
-        if (axisService != null) {
+        if (releaseAxisServiceResources && axisService != null) {
             axisService.releaseSchemaList();
         }
     }
