@@ -1338,7 +1338,7 @@ public class MethodMarshallerUtils {
                                  TreeSet<String> packages, 
                                  String packagesKey) throws AxisFault {
         
-        // The information is registered on the AxisService.
+        // The information is registered on the AxisOperation.
         if (mc == null ||
             mc.getAxisMessageContext() == null ||
             mc.getAxisMessageContext().getAxisService() == null ||
