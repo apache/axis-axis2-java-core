@@ -54,6 +54,7 @@ public class ReferenceParameterListTests extends TestCase {
         results.add("0123456789");
         results.add("ABCDEFG");
         results.add("abcdefg");
+        results.add("xyz");
         
         List<Element> rpList = new ReferenceParameterList(header);
         assertFalse(rpList.isEmpty());
