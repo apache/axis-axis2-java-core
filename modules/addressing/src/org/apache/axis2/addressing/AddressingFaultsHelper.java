@@ -386,7 +386,20 @@ public class AddressingFaultsHelper {
                     SOAP12Constants.FAULT_CODE_SENDER);
             SOAPFaultSubCode soapFaultSubCode = soapFac.createSOAPFaultSubCode(soapFaultCode);
             SOAPFaultValue soapFaultSubcodeValue = soapFac.createSOAPFaultValue(soapFaultSubCode);
-            soapFaultSubcodeValue.setText(AddressingConstants.WSA_DEFAULT_PREFIX + ":" + faultCode);
+
+            if (faultCode != null){
+                String namespace =
+                        (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                if (namespace == null) {
+                    namespace = Final.WSA_NAMESPACE;
+                }
+                OMNamespace wsaNS = soapFac.createOMNamespace(namespace,
+                        AddressingConstants.WSA_DEFAULT_PREFIX);
+                soapFaultSubcodeValue.declareNamespace(wsaNS);
+                soapFaultSubcodeValue
+                        .setText(AddressingConstants.WSA_DEFAULT_PREFIX + ":" + faultCode);
+            }
+
             if (faultSubCode != null) {
                 SOAPFaultSubCode soapFaultSubCode2 =
                         soapFac.createSOAPFaultSubCode(soapFaultSubCode);
