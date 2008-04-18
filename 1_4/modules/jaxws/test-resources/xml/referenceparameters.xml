@@ -28,7 +28,7 @@
         <axis2:ParamOne wsa:IsReferenceParameter='true'>0123456789</axis2:ParamOne>
         <axis2:ParamTwo wsa:IsReferenceParameter='true'>ABCDEFG</axis2:ParamTwo>
         <axis2:ParamThree wsa:IsReferenceParameter='true'>abcdefg</axis2:ParamThree>
-        <axis2:ParamFour wsa:IsReferenceParameter='true'>xyz</axis2:ParamFour>
+        <axis2:ParamFour wsa:IsReferenceParameter='1'>xyz</axis2:ParamFour>
         <wsa:Action axis2:AttrExt="123456789">http://ws.apache.org/tests/action</wsa:Action>
         <wsa:ReplyTo axis2:AttrExt="123456789">
             <wsa:Address>http://example.com/fabrikam/acct</wsa:Address>
