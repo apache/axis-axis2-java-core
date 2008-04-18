@@ -99,7 +99,9 @@ public class ReferenceParameterList extends AbstractList<Element> {
                     log.trace("initialize: Checking header element: " + headerElement.getQName());
                 }
                 
-                if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
+                if (isRefParamAttr != null && 
+                    ("true".equals(isRefParamAttr.getAttributeValue()) ||
+                     "1".equals(isRefParamAttr.getAttributeValue()))) {
                     try {
                         Element element = XMLUtils.toDOM(headerElement);
                         list.add(element);
