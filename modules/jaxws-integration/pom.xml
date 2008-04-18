@@ -197,115 +197,115 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/soap11.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/soap11.xsd"/>
                                 </java>
                                 <echo>Generating java from echo.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
                                 </java>
                                 <echo>Generating java from stock1.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
                                 </java>
                                 <echo>Generating java from stock2.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
                                 </java>
                                 <echo>Generating java from samplemtom.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
                                 </java>
                                 <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
                                 </java>
                                 <echo>Generating java from AddNumbers.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
                                 </java>
                                 <echo>Generating java from ProxyDocLitnonWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
                                 </java>
                                 <echo>Generating java from samplemtomjpeg.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl"/>
                                 </java>
                                 <echo>Generating java from RPCLit.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
                                 </java>
                                 <echo>Generating java from RPCLitSWA.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclitswa -quiet -wsdl ${wsdl.source.dir}/RPCLitSWA.wsdl"/>
                                 </java>
                                 <echo>Generating java from gorilla_dlw.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl"/>
                                 </java>
                                 <echo>Generating java from SOAP12Echo.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl"/>
                                 </java>
                                 <echo>Generating java from AddNumbersHandler.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
                                 </java>
                                 <echo>Generating java from async_doclitwr.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
                                 </java>
                                 <echo>Generating java from async_doclitwr2.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr2.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr2.wsdl"/>
                                 </java>
                                 <echo>Generating java from FaultyWebService.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl"/>
                                 </java>
                                 <echo>Generating java from FaultsService.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl"/>
                                 </java>
                                 <echo>Generating java from jaxbsource</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
                                 </java>
                                 <echo>Generating java from doclit_nonwrap.wsdl for javabean endpoint
                                     support
@@ -313,7 +313,7 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl"/>
                                 </java>
                                 <echo>Generating java from doclitwrap.wsdl for javabean endpoint
                                     support
@@ -321,7 +321,7 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl"/>
                                 </java>
                                 <echo>Generating java from doclitbare.wsdl for javabean endpoint
                                     support
@@ -329,13 +329,13 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
                                 </java>
                                 <echo>Generating java from greeterTypes.xsd</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
                                 </java>
                                 <echo>Generating java from EchoMessage.wsdl for javabean endpoint
                                     support
@@ -343,7 +343,7 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
                                 </java>
                                 <echo>Generating java from resourceinjection.wsdl for javabean
                                     endpoint Resource Injection support
@@ -351,7 +351,7 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
                                 </java>
                                 <echo>Generating java from AnyType.wsdl for javabean endpoint
                                     AnyType support
@@ -359,7 +359,7 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
                                 </java>
                                 <echo>Generating java from MessageContext.wsdl for message context
                                     properties support
@@ -367,13 +367,13 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/MessageContext.wsdl"/>
                                 </java>
                                 <echo>Generating java from WSDLMultiTests.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl"/>
                                 </java>
                                 <echo>Generating java from Polymorphic shapes.wsdl for javabean
                                     endpoint support
@@ -381,37 +381,37 @@
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
                                 </java>
                                 <echo>Generating java from SOAPActionTest.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
                                 </java>
                                 <echo>Generating java from rpclitenum.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
                                 </java>
                                 <echo>Generating java from AddNumbersHandler.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
                                 </java>
                                 <echo>Generating java from rpclitstringarray.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitstringarray.wsdl"/>
                                 </java>
                                 <echo>Generating java from swamtomservice.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl"/>
+                                    <jvmarg line="-Xbootclasspath/p:${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar"/><arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/swamtomservice.wsdl"/>
                                 </java>
                             </tasks>
                         </configuration>

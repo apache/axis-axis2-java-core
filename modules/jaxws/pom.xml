@@ -156,7 +156,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <compilerArgument>
-                        -Xbootclasspath/p:${basedir}/../jaxws-api/target/classes${path.separator}${basedir}/../jws-api/target/classes
+                        -Xbootclasspath/p:${basedir}/../jaxws-api/target/classes${path.separator}${basedir}/../jws-api/target/classes${path.separator}${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}/jaxb-api-${jaxb.api.version}.jar
                     </compilerArgument>
                     <compilerVersion>1.5</compilerVersion>
                     <source>1.5</source>
