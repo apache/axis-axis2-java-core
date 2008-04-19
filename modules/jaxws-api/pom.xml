@@ -75,9 +75,6 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                    <compilerArguments>
-                        <endorseddirs>${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}</endorseddirs>
-                    </compilerArguments>
                 </configuration>
             </plugin>
         </plugins>

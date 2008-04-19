@@ -160,7 +160,6 @@
                 <configuration>
                     <skip>false</skip>
                     <forkMode>once</forkMode>
-                    <argLine>-Djava.endorsed.dirs=${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}</argLine>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
