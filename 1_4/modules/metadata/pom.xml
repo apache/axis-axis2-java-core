@@ -202,7 +202,6 @@
                     <includes>
                         <include>**/*Tests.java</include>
                     </includes>
-                    <argLine>-Djava.endorsed.dirs=${settings.localRepository}/javax/xml/bind/jaxb-api/${jaxb.api.version}</argLine>
                     <systemProperties>
                         <property>
                             <name>org.apache.axis2.jaxws.repo.path</name>
