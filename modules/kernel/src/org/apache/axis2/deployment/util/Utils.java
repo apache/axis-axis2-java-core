@@ -1432,10 +1432,12 @@ public class Utils {
 				AxisOperation operation = (AxisOperation) iterator.next();
 				AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
 
-				axisBindingOperation.setName(operation.getName());
+                QName operationQName = operation.getName();
+                axisBindingOperation.setName(operationQName);
 				axisBindingOperation.setAxisOperation(operation);
-
-				axisBinding.addChild(axisBindingOperation.getName(),
+                String httpLocation = serviceName + "/" + operationQName.getLocalPart();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+                axisBinding.addChild(axisBindingOperation.getName(),
 						axisBindingOperation);
 
 				populateBindingOperation(axisService, axisBinding,
