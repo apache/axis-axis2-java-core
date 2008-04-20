@@ -1323,7 +1323,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 		if (axisBinding == null) {
 			axisBinding = new AxisBinding();
@@ -1370,7 +1370,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 		if (axisBinding == null) {
 			axisBinding = new AxisBinding();
@@ -1417,7 +1417,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 
 		if (axisBinding == null) {
