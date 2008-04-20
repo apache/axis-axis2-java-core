@@ -148,7 +148,28 @@ public interface ServiceDescription {
     
     public JAXWSCatalogManager getCatalogManager();
 
-    public List<Class> getHandlerChainClasses(PortInfo portinfo);
+    /**
+     * Answer information for resolved handlers for the given port.  This information is set
+     * when the handler resolver initially resolves the handlers based on the handler 
+     * configuration information.  It is cached on the service description for performance 
+     * so that subsequent queries by other handler resolvers for the same port do not have to
+     * re-resolve the information from the handler configuration information.  
+     * 
+     * @param portInfo Port for which the handler information is desired
+     * @return An object containing information for the resolved handlers, or null if no 
+     *     information is found in the cache.
+     */
+    public ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo);
 
-    public void setHandlerChainClasses(PortInfo portinfo, List<Class> handlerClasses);
+    /**
+     * Cache information for handlers which have been resolved for this port. This information is set
+     * when the handler resolver initially resolves the handlers based on the handler 
+     * configuration information.  It is cached on the service description for performance 
+     * so that subsequent queries by other handler resolvers for the same port do not have to
+     * re-resolve the information from the handler configuration information.
+     *   
+     * @param portInfo Port for which the handler information should be cached
+     * @param resolvedHandlersInfo An object containing information for the resolved handlers
+     */
+    public void setResolvedHandlersDescription(PortInfo portInfo, ResolvedHandlersDescription resolvedHandlersInfo);
 }

@@ -376,4 +376,13 @@ public class DescriptionFactory {
     public static ClientConfigurationFactory createClientConfigurationFactory() {
         return DescriptionFactoryImpl.getClientConfigurationFactory();
     }
+
+    /**
+     * Create a ResolvedHandlersDescription object, which describes attributes of handlers
+     * that have been resolved for a give port.  This includes the handler classes and the roles.
+     * @return A new instance of a ResolfedHandlersDescription object.
+     */
+    public static ResolvedHandlersDescription createResolvedHandlersDescription() {
+        return DescriptionFactoryImpl.createResolvedHandlersDescription();
+    }
 }

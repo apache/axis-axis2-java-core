@@ -21,8 +21,11 @@ package org.apache.axis2.jaxws.handler;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ResolvedHandlersDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.impl.ResolvedHandlersDescriptionImpl;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
@@ -75,21 +78,80 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         this.serviceDesc = sd;
         this.serviceDelegateKey = serviceDelegateKey;
     }
-
-    public List<Handler> getHandlerChain(PortInfo portinfo) {
-        List<Class> handlerClasses = null;
-        // Look into the cache only if the service delegate key is null.
+    
+    private ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo) {
+        ResolvedHandlersDescription resolvedHandlersDesc = null;
+        // On the client the handler information can be changed via service-delegate-specific
+        // deployment information.  So, only look into the service-side cache only if the 
+        // service delegate key is null.
         if (serviceDelegateKey == null) {
-            handlerClasses = serviceDesc.getHandlerChainClasses(portinfo);
+            resolvedHandlersDesc = serviceDesc.getResolvedHandlersDescription(portInfo);
         }
-        if (handlerClasses == null) {
-            // resolve handlers if we did not find them in the cache
-            handlerClasses = resolveHandlers(portinfo);
-            // Store the list of classes
-            if (serviceDelegateKey == null) {
-                serviceDesc.setHandlerChainClasses(portinfo, handlerClasses);
+        return resolvedHandlersDesc;
+    }
+    private ResolvedHandlersDescription getOrCreateResolvedHandlersDescription(PortInfo portInfo) {
+        ResolvedHandlersDescription resolvedHandlersDesc = null;
+        // On the client the handler information can be changed via service-delegate-specific
+        // deployment information.  So, only look into the service-side cache only if the 
+        // service delegate key is null.
+        if (serviceDelegateKey == null) {
+            resolvedHandlersDesc = serviceDesc.getResolvedHandlersDescription(portInfo);
+            if (resolvedHandlersDesc == null) {
+                resolvedHandlersDesc = DescriptionFactory.createResolvedHandlersDescription();
             }
         }
+        return resolvedHandlersDesc;
+    }
+    private List<Class> geCachedResolvedHandlersClasses(PortInfo portInfo) {
+        List<Class> cachedHandlerClasses = null;
+        ResolvedHandlersDescription resolvedHandlersDesc = getResolvedHandlersDescription(portInfo);
+        if (resolvedHandlersDesc != null) {
+            cachedHandlerClasses = resolvedHandlersDesc.getHandlerClasses();
+        }
+        return cachedHandlerClasses;
+    }
+    
+    private void cacheResolvedHandlersInfo(PortInfo portInfo, 
+                                              List<Class> handlerClasses,
+                                              List<String> roles) {
+        ResolvedHandlersDescription resolvedHandlersDesc = getOrCreateResolvedHandlersDescription(portInfo);
+        if (resolvedHandlersDesc != null) {
+            resolvedHandlersDesc.setHandlerClasses(handlerClasses);
+            resolvedHandlersDesc.setRoles(roles);
+            serviceDesc.setResolvedHandlersDescription(portInfo, resolvedHandlersDesc);
+        }
+    }
+
+    private List<Class> getHandlerClasses(PortInfo portInfo) {
+        List<Class> handlerClasses = geCachedResolvedHandlersClasses(portInfo);
+        if (handlerClasses == null) {
+            List<String> resolveRoles = new ArrayList<String>();
+            handlerClasses = resolveHandlers(portInfo, resolveRoles);
+            cacheResolvedHandlersInfo(portInfo, handlerClasses, resolveRoles);
+        }
+        return handlerClasses;
+    }
+    private List<String> getHandlerRoles(PortInfo portInfo) {
+        List<String> resolveRoles = getCachedResolvedHandlersRoles(portInfo);
+        if (resolveRoles == null) {
+            resolveRoles = new ArrayList<String>();
+            List<Class> resolveClasses = resolveHandlers(portInfo, resolveRoles);
+            cacheResolvedHandlersInfo(portInfo, resolveClasses, resolveRoles);
+        }
+        return resolveRoles;
+    }
+    private List<String> getCachedResolvedHandlersRoles(PortInfo portInfo) {
+        List<String> cachedHandlerRoles = null;
+        ResolvedHandlersDescription resolvedHandlersDesc = getResolvedHandlersDescription(portInfo);
+        if (resolvedHandlersDesc != null) {
+            cachedHandlerRoles = resolvedHandlersDesc.getRoles();
+        }
+        return cachedHandlerRoles;
+    }
+
+    public List<Handler> getHandlerChain(PortInfo portInfo) {
+        List<Class> handlerClasses = getHandlerClasses(portInfo);
+
         if (handlerClasses.size() == 0) {
             return new ArrayList<Handler>();
         }
@@ -97,7 +159,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         ArrayList<Handler> handlers = new ArrayList<Handler>();
         // Create temporary MessageContext to pass information to HandlerLifecycleManager
         MessageContext ctx = new MessageContext();
-        ctx.setEndpointDescription(serviceDesc.getEndpointDescription(portinfo.getPortName()));
+        ctx.setEndpointDescription(serviceDesc.getEndpointDescription(portInfo.getPortName()));
 
         HandlerLifecycleManager hlm = createHandlerlifecycleManager();
 
@@ -119,8 +181,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
     }
 
     public List<String> getRoles(PortInfo portInfo) {
-        List<String> handlerRoles = new ArrayList();
-        resolveHandlers(portInfo, handlerRoles);
+        List<String> handlerRoles = getHandlerRoles(portInfo);
         return handlerRoles;
     }
     /*
@@ -132,12 +193,21 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
 	 * running the annotated PostConstruct method, resolving the list,
 	 * and returning it.  We do not sort here.
       */
-    private ArrayList<Class> resolveHandlers(PortInfo portinfo) throws WebServiceException {
-        return resolveHandlers(portinfo, null);
-    }
+    /**
+     * Resolve the handlers and roles for the given port.  This will process the handler configuration
+     * information, which can be specified either in a file on a HandlerChain annotaiton or via a
+     * deployment descriptor.  The handler classes and the SOAP roles played will be resolved and
+     * returned.
+     * 
+     * @param portinfo  Information describing the port for which the handlers and roles are to be
+     *     resolved
+     * @param handlerRoles  OUTPUT PARAMETER!  The List that is passed in will be updated with the
+     *     roles relevant to the specfied port.
+     * @return List of handler classes relevant to the specified port.
+     * @throws WebServiceException
+     */
     private ArrayList<Class> resolveHandlers(PortInfo portinfo, List<String> handlerRoles) throws WebServiceException {
         /*
-
             A sample XML file for the handler-chains:
             
             <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">

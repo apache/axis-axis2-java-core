@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionKey;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ResolvedHandlersDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
@@ -446,6 +447,10 @@ public class DescriptionFactoryImpl {
                 endpointDesc.setProperty(key, value);
             }
         }
+    }
+
+    public static ResolvedHandlersDescription createResolvedHandlersDescription() {
+        return new ResolvedHandlersDescriptionImpl();
     }
 
 }

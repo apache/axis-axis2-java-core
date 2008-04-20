@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.catalog.impl.OASISCatalogManager;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.ResolvedHandlersDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
@@ -103,9 +104,9 @@ class ServiceDescriptionImpl
     private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
                 new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
 
-    // Cache classes for the handler chain
-    Map<PortInfo, List<Class>> handlerClassesMap =
-            new WeakHashMap<PortInfo, List<Class>>();
+    // Cache classes for the info for resolved handlers
+    Map<PortInfo, ResolvedHandlersDescription> resolvedHandlersDescription =
+            new WeakHashMap<PortInfo, ResolvedHandlersDescription>();
     
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
@@ -2175,12 +2176,13 @@ class ServiceDescriptionImpl
         return cl;
     }
 
-    public List<Class> getHandlerChainClasses(PortInfo portinfo) {
-        return handlerClassesMap.get(portinfo);
+    public void setResolvedHandlersDescription(PortInfo portInfo, ResolvedHandlersDescription resolvedHandlersInfo) {
+        resolvedHandlersDescription.put(portInfo, resolvedHandlersInfo);
+        
     }
 
-    public void setHandlerChainClasses(PortInfo portinfo, List<Class> handlerClasses) {
-        handlerClassesMap.put(portinfo, handlerClasses);
+    public ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo) {
+        return resolvedHandlersDescription.get(portInfo);
     }
 
 }

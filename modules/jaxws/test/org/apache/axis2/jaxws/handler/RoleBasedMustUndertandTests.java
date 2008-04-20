@@ -84,6 +84,48 @@ public class RoleBasedMustUndertandTests extends TestCase {
     }
     
     /**
+     * Validate that handler information can be cached on the ServiceDescritpion on the server side. 
+     */
+    public void testCachingOnServer() {
+        ServiceDescription serviceDesc = DescriptionFactory.createServiceDescription(RoleBasedMUServiceImpl.class);
+        HandlerResolverImpl handlerResolver1 = new HandlerResolverImpl(serviceDesc);
+        HandlerResolverImpl handlerResolver2 = new HandlerResolverImpl(serviceDesc);
+
+        EndpointDescription epDesc = serviceDesc.getEndpointDescriptions()[0];
+        PortInfo portInfo = epDesc.getPortInfo();
+        
+        List<String> roles1 = handlerResolver1.getRoles(portInfo);
+        List<String> roles2 = handlerResolver2.getRoles(portInfo);
+        assertNotNull(roles1);
+        assertNotNull(roles2);
+        assertTrue(roles1 == roles2);
+    }
+    
+    
+    /**
+     * Validate that handler information can NOT be cached on the client.  That is because the client
+     * can specify handler information per instance of a service delegate.  Those service
+     * delegates could share a ServiceDescription, but since each service delegate could specify
+     * unique handler information, we can't use common handler information stored on the
+     * ServiceDescription 
+     */
+    public void testCachingOnClient() {
+        ServiceDescription serviceDesc = DescriptionFactory.createServiceDescription(RoleBasedMUServiceImpl.class);
+        HandlerResolverImpl handlerResolver1 = new HandlerResolverImpl(serviceDesc, "sd1");
+        HandlerResolverImpl handlerResolver2 = new HandlerResolverImpl(serviceDesc, "sd2");
+
+        EndpointDescription epDesc = serviceDesc.getEndpointDescriptions()[0];
+        PortInfo portInfo = epDesc.getPortInfo();
+        
+        List<String> roles1 = handlerResolver1.getRoles(portInfo);
+        List<String> roles2 = handlerResolver2.getRoles(portInfo);
+        assertNotNull(roles1);
+        assertNotNull(roles2);
+        assertTrue(roles1 != roles2);
+        
+    }
+    
+    /**
      * The JAXWS Spec, section 10, says roles can be set on the SOAP binding.  Verify that a 
      * mustUnderstand header which is not processed for a role added by the SOAPBinding causes
      * a Not Understood fault 
