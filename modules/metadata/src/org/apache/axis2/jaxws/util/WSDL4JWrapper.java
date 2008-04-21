@@ -178,9 +178,13 @@ public class WSDL4JWrapper implements WSDLWrapper {
                 });
         this.wsdlURL = wsdlURL;
        
-        try {
-            URLConnection urlCon = getURLConnection(this.wsdlURL);
-            InputStream is = null;
+        URLConnection urlCon;
+        try {        
+        	
+        	urlCon = getPrivilegedURLConnection(this.wsdlURL);
+
+        	InputStream is = null;
+            
             try {
                 is = getInputStream(urlCon);
             }
@@ -280,6 +284,20 @@ public class WSDL4JWrapper implements WSDLWrapper {
         return connection;
     }
     
+    private URLConnection getPrivilegedURLConnection(final URL url) throws IOException {
+        try {
+
+        	return (URLConnection) AccessController.doPrivileged( new PrivilegedExceptionAction() {
+                public Object run() throws IOException {
+                    return (getURLConnection(url));
+                }
+            });
+        
+        } catch (PrivilegedActionException e) {
+            throw (IOException) e.getException();
+        }
+    }
+
     private URLConnection openConnection(final URL url) throws IOException {
         try {
             return (URLConnection) AccessController.doPrivileged(new PrivilegedExceptionAction() {
@@ -313,13 +331,23 @@ public class WSDL4JWrapper implements WSDLWrapper {
                 log.debug("Could not get URL from classloader. Looking in a jar.");
             }
             if(classLoader instanceof URLClassLoader){
-                URLClassLoader urlLoader = (URLClassLoader)classLoader;
-                url = getURLFromJAR(urlLoader, wsdlURL);
+                final URLClassLoader urlLoader = (URLClassLoader)classLoader;
+                
+                url = (URL) AccessController.doPrivileged( new PrivilegedAction() {
+                    public Object run()  {
+                        return (getURLFromJAR(urlLoader, wsdlURL));
+                    }
+                });
+
             }
             else {
-                URLClassLoader nestedLoader = (URLClassLoader) getNestedClassLoader(URLClassLoader.class, classLoader);
+                final URLClassLoader nestedLoader = (URLClassLoader) getNestedClassLoader(URLClassLoader.class, classLoader);
                 if (nestedLoader != null) {
-                    url = getURLFromJAR(nestedLoader, wsdlURL);
+                    url = (URL) AccessController.doPrivileged( new PrivilegedAction() {
+                        public Object run()  {
+                            return (getURLFromJAR(nestedLoader, wsdlURL));
+                        }
+                    });
                 }
             }
         }
@@ -662,7 +690,8 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
         if (wsdlExplicitURL != null) {
             try {
-                URLConnection urlConn = getURLConnection(wsdlURL);
+
+                URLConnection urlConn = getPrivilegedURLConnection(this.wsdlURL);
                 if(urlConn != null) {
                     try {
                         InputStream is = getInputStream(urlConn);
