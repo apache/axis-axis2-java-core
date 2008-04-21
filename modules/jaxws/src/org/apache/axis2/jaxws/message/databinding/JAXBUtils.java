@@ -59,9 +59,15 @@ public class JAXBUtils {
 
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
 
-    // Create a concurrent map to get the JAXBObject: keys are ClassLoader and String (package names).
-    private static Map<ClassLoader, Map<String, JAXBContextValue>> jaxbMap =
-            new ConcurrentHashMap<ClassLoader, Map<String, JAXBContextValue>>();
+    // Create a concurrent map to get the JAXBObject: 
+    //    key is the String (sorted packages)
+    //    value is a WeakReference to a ConcurrentHashMap of Classloader keys and JAXBContextValue objects
+    //               It is a weak map to encourage GC in low memory situations
+    private static Map<
+        String, 
+        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>> jaxbMap =
+            new ConcurrentHashMap<String, 
+                WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>>();
 
     private static Pool<JAXBContext, Marshaller>       mpool = new Pool<JAXBContext, Marshaller>();
     private static Pool<JAXBContext, Unmarshaller>     upool = new Pool<JAXBContext, Unmarshaller>();
@@ -151,59 +157,115 @@ public class JAXBUtils {
             }
         }
         JAXBUtilsMonitor.addPackageKey(key);
-        
-         // The JAXBContexts are keyed by ClassLoader and the set of Strings
-        ClassLoader cl = getContextClassLoader();
 
-        // Get the innerMap 
-        Map<String, JAXBContextValue> innerMap = null;
-        innerMap = getInnerMap(cacheKey, cl);
+        // Get or Create The InnerMap using the package key
+        ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
+        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+            weakRef = jaxbMap.get(key);
+        
+        if (weakRef != null) {
+            innerMap = weakRef.get();
+        }
+        
         if (innerMap == null) {
             synchronized(jaxbMap) {
-                innerMap = getInnerMap(cacheKey, cl);
-                if(innerMap==null) {
-                    adjustPoolSize(jaxbMap);
-                    innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
-                    if (cacheKey != null) {
-                        jaxbMap.put(cacheKey, innerMap);
-                    }
+                weakRef = jaxbMap.get(key);
+                if (weakRef != null) {
+                    innerMap = weakRef.get();
+                }
+                if (innerMap == null) {
+                    innerMap = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
+                    weakRef = 
+                        new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(innerMap);
+                    jaxbMap.put(key, weakRef);
                 }
             }
         }
+        
+        // Now get the contextValue using either the classloader key or 
+        // the current Classloader
+        ClassLoader cl = getContextClassLoader();
+        JAXBContextValue contextValue = null;
+        if(cacheKey != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Using supplied classloader to retrieve JAXBContext: " + 
+                          cacheKey);
+            }
+            contextValue = innerMap.get(cacheKey);
+        } else {
+            if(log.isDebugEnabled()) {
+                log.debug("Using classloader from Thread to retrieve JAXBContext: " + 
+                          cl);
+            }
+            contextValue = innerMap.get(cl);
+        }
+      
+        
 
         if (contextPackages == null) {
             contextPackages = new TreeSet<String>();
         }
-
-        JAXBContextValue contextValue = innerMap.get(key);
         if (contextValue == null) {
             synchronized (innerMap) {
-                contextValue = innerMap.get(key);
-                if(contextValue==null) {
-                    adjustPoolSize(innerMap);
-
+                // Try to get the contextValue once more since sync was temporarily exited.
+                ClassLoader clKey = (cacheKey != null) ? cacheKey:cl;
+                contextValue = innerMap.get(clKey);
+                adjustPoolSize(innerMap);
+                if (contextValue==null) {
                     // Create a copy of the contextPackages.  This new TreeSet will
                     // contain only the valid contextPackages.
                     // Note: The original contextPackage set is accessed by multiple 
                     // threads and should not be altered.
 
-                    TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages);  
+                    TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages); 
+                    
+                    ClassLoader tryCl = cl;
                     contextValue = createJAXBContextValue(validContextPackages, cl);
 
                     // If we don't get all the classes, try the cached classloader 
                     if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
+                        tryCl = cacheKey;
                         validContextPackages = new TreeSet<String>(contextPackages);
                         contextValue = createJAXBContextValue(validContextPackages, cacheKey);
                     }
+                    synchronized (jaxbMap) {
+                        // Add the context value with the original package set
+                        ConcurrentHashMap<ClassLoader, JAXBContextValue> map1 = null;
+                        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+                        weakRef1 = jaxbMap.get(key);
+                        if (weakRef1 != null) {
+                            map1 = weakRef.get();
+                        }
+                        if (map1 == null) {
+                            map1 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
+                            weakRef1 = 
+                                new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map1);
+                            jaxbMap.put(key, weakRef1);
+                        }
+                        map1.put(clKey, contextValue);
 
-                    // Put the new context in the map keyed by both the original and valid list of packages
-                    String validPackagesKey = validContextPackages.toString();
-                    innerMap.put(key, contextValue);
-                    innerMap.put(validPackagesKey, contextValue);
-                    if (log.isDebugEnabled()) {
-                        log.debug("JAXBContext [created] for " + key);
-                        log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
-                    }
+                        String validPackagesKey = validContextPackages.toString();
+
+                        // Add the context value with the new package set
+                        ConcurrentHashMap<ClassLoader, JAXBContextValue> map2 = null;
+                        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+                        weakRef2 = jaxbMap.get(validPackagesKey);
+                        if (weakRef2 != null) {
+                            map2 = weakRef.get();
+                        }
+                        if (map2 == null) {
+                            map2 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
+                            weakRef2 = 
+                                new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map2);
+                            jaxbMap.put(key, weakRef2);
+                        }
+                        map2.put(clKey, contextValue);
+                        
+                        if (log.isDebugEnabled()) {
+                            log.debug("JAXBContext [created] for " + key);
+                            log.debug("JAXBContext also stored by the list of valid packages:" + validPackagesKey);
+                        }
+                    }        
                 }
             }
         } else {
@@ -213,24 +275,6 @@ public class JAXBUtils {
         }
         constructionType.value = contextValue.constructionType;
         return contextValue.jaxbContext;
-    }
-
-    private static Map<String, JAXBContextValue> getInnerMap(ClassLoader cacheKey, ClassLoader cl) {
-        Map<String, JAXBContextValue> innerMap;
-        if(cacheKey != null) {
-            if(log.isDebugEnabled()) {
-                log.debug("Using supplied classloader to retrieve JAXBContext: " + 
-                          cacheKey);
-            }
-            innerMap = jaxbMap.get(cacheKey);
-        }else {
-            if(log.isDebugEnabled()) {
-                log.debug("Using classloader from Thread to retrieve JAXBContext: " + 
-                          cl);
-            }
-            innerMap = jaxbMap.get(cl);
-        }
-        return innerMap;
     }
 
     /**
@@ -354,9 +398,15 @@ public class JAXBUtils {
 
         // The code above may have removed some packages from the list. 
         // Retry our lookup with the updated list
-        Map<String, JAXBContextValue> innerMap = jaxbMap.get(cl);
+        String key = contextPackages.toString();
+        ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
+        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> weakRef = jaxbMap.get(key);
+        if (weakRef != null) {
+            innerMap = weakRef.get();
+        }
+        
         if (innerMap != null) {
-            contextValue = innerMap.get(contextPackages.toString());
+            contextValue = innerMap.get(cl);
             if (contextValue != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Successfully found JAXBContext with updated context list:" +
@@ -1012,7 +1062,9 @@ public class JAXBUtils {
      * @param <V> Pooled object
      */
     private static class Pool<K,V> {
-        private Map<K,List<WeakReference<V>>> map = new ConcurrentHashMap<K, List<WeakReference<V>>>();
+        private WeakReference<Map<K,List<V>>> weakMap = 
+            new WeakReference<Map<K,List<V>>>(
+                    new ConcurrentHashMap<K, List<V>>());
 
         // The maps are freed up when a LOAD FACTOR is hit
         private static int MAX_LIST_FACTOR = 10;
@@ -1022,16 +1074,12 @@ public class JAXBUtils {
          * @return removed item from pool or null.
          */
         public V get(K key) {
-            List<WeakReference<V>> values = getValues(key);
+            List<V> values = getValues(key);
             synchronized (values) {
-                while (values.size()>0) {
-                    // Get the WeakReference, and return the actual value if it is not
-                    // GC'd.  Otherwise try the next WeakReference
-                    WeakReference<V> wr = values.remove(values.size()-1);
-                    V v = wr.get();
-                    if (v != null) {
-                        return v;
-                    }
+                if (values.size()>0) {
+                    V v = values.remove(values.size()-1);
+                    return v;
+                    
                 }
             }
             return null;
@@ -1044,12 +1092,10 @@ public class JAXBUtils {
          */
         public void put(K key, V value) {
             adjustSize();
-            List<WeakReference<V>> values = getValues(key);
+            List<V> values = getValues(key);
             synchronized (values) {
                 if (values.size() < MAX_LIST_FACTOR) {
-                    // Add a WeakReference to the value so that it can be GC'd
-                    WeakReference<V> wr = new WeakReference<V>(value);
-                    values.add(wr);
+                    values.add(value);
                 }
             }
         }
@@ -1059,16 +1105,28 @@ public class JAXBUtils {
          * @param key
          * @return list of values.
          */
-        private List<WeakReference<V>> getValues(K key) {
-            List<WeakReference<V>> values = map.get(key);
-            if(values !=null) {
-                return values;
+        private List<V> getValues(K key) {
+            Map<K,List<V>> map = weakMap.get();
+            List<V> values = null;
+            if (map != null) {
+                values = map.get(key);
+                if(values !=null) {
+                    return values;
+                }
             }
             synchronized (this) {
-                values = map.get(key);
-                if(values==null) {
-                    values = new ArrayList<WeakReference<V>>();
+                if (map != null) {
+                    values = map.get(key);
+                }
+                if (values == null) {
+                    if (map == null) {
+                        map = new ConcurrentHashMap<K, List<V>>();
+                        weakMap = 
+                            new WeakReference<Map<K,List<V>>>(map);
+                    }
+                    values = new ArrayList<V>();
                     map.put(key, values);
+
                 }
                 return values;
             }
@@ -1083,7 +1141,8 @@ public class JAXBUtils {
          * a large footprint.
          */
         private void adjustSize() {
-            if (map.size() > MAX_LOAD_FACTOR) {
+            Map<K,List<V>> map = weakMap.get();
+            if (map != null && map.size() > MAX_LOAD_FACTOR) {
                 // Remove every other Entry in the map.
                 Iterator it = map.entrySet().iterator();
                 boolean removeIt = false;

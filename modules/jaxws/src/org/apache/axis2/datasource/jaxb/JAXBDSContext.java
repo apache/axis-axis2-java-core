@@ -45,6 +45,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
@@ -64,17 +65,22 @@ public class JAXBDSContext {
     public static final boolean DEBUG_ENABLED = log.isDebugEnabled();
 
     private TreeSet<String> contextPackages;  // List of packages needed by the context
-    private String contextPackagesKey;        // Unique key that represents the set of contextPackages (usually toString)
-    private JAXBContext jaxbContext = null;   // JAXBContext
+    private String contextPackagesKey;        // Unique key that represents the set of packages
+    
+    private JAXBContext customerJAXBContext;      // JAXBContext provided by the customer api
+    //  JAXBContext loaded by the engine.  It is weakref'd to allow GC
+    private WeakReference<JAXBContext> autoJAXBContext = null;   
     private JAXBUtils.CONSTRUCTION_TYPE       // How the JAXBContext is constructed
             constructionType = JAXBUtils.CONSTRUCTION_TYPE.UNKNOWN;
     private MessageContext msgContext;    
 
-    // There are two modes of marshalling and unmarshalling: "by java type" and "by schema element".
+    // There are two modes of marshalling and unmarshalling: 
+    //   "by java type" and "by schema element".
     // The prefered mode is "by schema element" because it is safe and xml-centric.
     // However there are some circumstances when "by schema element" is not available.
     //    Examples: RPC Lit processing (the wire element is defined by a wsdl:part...not schema)
-    //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...and thus we must use "by type" for primitives/String)
+    //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...
+    //                   and thus we must use "by type" for primitives/String)
     // Please don't use "by java type" processing to get around errors.
     private Class processType = null;
     private boolean isxmlList =false;
@@ -111,13 +117,14 @@ public class JAXBDSContext {
     }
 
     /**
-     * "Dispatch" Constructor Use this full constructor when the JAXBContent is provided by the
+     * "Dispatch" Constructor 
+     * Use this full constructor when the JAXBContent is provided by the
      * customer.
      *
      * @param jaxbContext
      */
     public JAXBDSContext(JAXBContext jaxbContext) {
-        this.jaxbContext = jaxbContext;
+        this.customerJAXBContext = jaxbContext;
     }
 
     /** @return Class representing type of the element */
@@ -134,22 +141,33 @@ public class JAXBDSContext {
      * @throws JAXBException
      */
     public JAXBContext getJAXBContext(ClassLoader cl) throws JAXBException {
-        if (jaxbContext == null) {
+        if (customerJAXBContext != null) {
+            return customerJAXBContext;
+        }
+        
+        // Get the weakly cached JAXBContext
+        JAXBContext jc = null;
+        if (autoJAXBContext != null) {
+            jc = autoJAXBContext.get();
+        }
+        
+        if (jc == null) {
             if (log.isDebugEnabled()) {
                 log.debug(
                         "A JAXBContext did not exist, creating a new one with the context packages.");
             }
             Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
                     new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
-            jaxbContext =
+            jc =
                     JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl);
             constructionType = constructType.value;
+            autoJAXBContext = new WeakReference<JAXBContext>(jc);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Using an existing JAXBContext");
             }
         }
-        return jaxbContext;
+        return jc;
     }
 
     /** @return RPC Declared Type */
