@@ -1323,7 +1323,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 		if (axisBinding == null) {
 			axisBinding = new AxisBinding();
@@ -1370,7 +1370,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 		if (axisBinding == null) {
 			axisBinding = new AxisBinding();
@@ -1417,7 +1417,7 @@ public class Utils {
 		QName bindingName = new QName(name);
 
 		AxisBinding axisBinding = (bindingCache != null) ? (AxisBinding) bindingCache
-				.get(bindingName)
+				.get(name)
 				: null;
 
 		if (axisBinding == null) {
@@ -1432,9 +1432,11 @@ public class Utils {
 				AxisOperation operation = (AxisOperation) iterator.next();
 				AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
 
-				axisBindingOperation.setName(operation.getName());
+                QName operationQName = operation.getName();
+                axisBindingOperation.setName(operationQName);
 				axisBindingOperation.setAxisOperation(operation);
-
+                String httpLocation = serviceName + "/" + operationQName.getLocalPart();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
 				axisBinding.addChild(axisBindingOperation.getName(),
 						axisBindingOperation);
 
