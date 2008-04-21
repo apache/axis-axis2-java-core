@@ -105,7 +105,7 @@ public class XFormURLEncodedBuilder implements Builder {
 
         String query = requestURL;
         int index;
-        if ((index = requestURL.indexOf("?")) > 0) {
+        if ((index = requestURL.indexOf("?")) > -1) {
             query = requestURL.substring(index + 1);
         }
 
@@ -254,9 +254,18 @@ public class XFormURLEncodedBuilder implements Builder {
                     if (templateStartIndex == -1) {
                         if (templateEndIndex == pathTemplate.length() - 1) {
 
+                            // We may have occations where we have templates of the form foo/{name}.
+                            // In this case the next connstant will be ? and not the
+                            // queryParameterSeparator
                             indexOfNextConstant =
                                     requestURIBuffer
-                                            .indexOf(queryParameterSeparator, endIndexOfConstant);
+                                            .indexOf("?", endIndexOfConstant);
+                            if (indexOfNextConstant == -1) {
+                                indexOfNextConstant =
+                                        requestURIBuffer
+                                                .indexOf(queryParameterSeparator,
+                                                         endIndexOfConstant);
+                            }
                             if (indexOfNextConstant > 0) {
                                 addParameterToMap(parameterMap, parameterName,
                                                   requestURIBuffer.substring(endIndexOfConstant,
