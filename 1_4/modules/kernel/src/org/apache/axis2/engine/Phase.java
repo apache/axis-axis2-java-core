@@ -251,8 +251,30 @@ public class Phase implements Handler {
 
         if (beforeIndex > -1) {
             handlers.add(beforeIndex, handler);
+        } else if (afterIndex > -1){
+            if (phaseLastSet){
+                if (handlers.size() ==1){
+                    handlers.add(0,handler);
+                }  else {
+                    handlers.add(handlers.size() -2,handler);
+                }
+            }  else {
+                if (afterIndex == (handlers.size() -1)) {
+                    handlers.add(handler);
+                } else {
+                    handlers.add(afterIndex +1,handler);
+                }
+            }
+        }  else {
+            if (phaseLastSet) {
+                if (handlers.size() ==1){
+                    handlers.add(0,handler);
+                }  else {
+                    handlers.add(handlers.size() -2,handler);
+                }
         } else {
             handlers.add(handler);
+            }
         }
     }
 
