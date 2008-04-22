@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface ServiceDescriptionWSDL {
-    // TODO: Remove these and replace with appropraite get* methods for WSDL information
     public abstract WSDLWrapper getWSDLWrapper();
 
     public abstract WSDLWrapper getGeneratedWsdlWrapper();

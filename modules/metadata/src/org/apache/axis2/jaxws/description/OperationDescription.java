@@ -89,7 +89,6 @@ public interface OperationDescription {
     public String getJavaDeclaringClassName();
 
     public String[] getJavaParameters();
-    // TODO: Fix up the difference between getSEIMethod and getMethodFromServiceImpl when java reflection is removed.
 
     /**
      * Client side and non-DBC service side only! Return the SEI method for which a
@@ -189,7 +188,6 @@ public interface OperationDescription {
 
     public String[] getParamNames();
 
-    // TODO: These should return Enums defined on this interface, not from the Annotation
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
 
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();

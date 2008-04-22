@@ -49,8 +49,6 @@ import javax.jws.WebParam;
  * </pre>
  */
 public interface ParameterDescription {
-// TODO: Fix this to not be the WebParam mode
-//    public enum Mode{IN, OUT, INOUT};
 
     public OperationDescription getOperationDescription();
 
@@ -70,7 +68,6 @@ public interface ParameterDescription {
     public Class getParameterActualType();
 
     public boolean isHeader();
-//  TODO: Fix this to not be the WebParam mode
 
     public WebParam.Mode getMode();
     
