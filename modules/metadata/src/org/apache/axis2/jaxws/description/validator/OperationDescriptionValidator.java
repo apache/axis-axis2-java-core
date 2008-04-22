@@ -47,7 +47,7 @@ public class OperationDescriptionValidator extends Validator {
             return VALID;
         }
 
-        // TODO Auto-generated method stub
+        // REVIEW: Should there be operation-level validation performed here?
         return VALID;
     }
 
