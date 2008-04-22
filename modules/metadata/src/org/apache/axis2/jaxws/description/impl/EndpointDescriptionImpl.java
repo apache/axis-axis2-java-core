@@ -566,47 +566,6 @@ class EndpointDescriptionImpl
         releaseAxisServiceResources();
     }
 
-    /**
-     * Create a service-provider side EndpointDescription from an annotated implementation class. Note this is
-     * currently used only on the server-side (this probably won't change).
-     * 
-     * @param theClass An implemntation or SEI class
-     * @param portName May be null; if so the annotation is used
-     * @param parent
-     * 
-     * @deprecated
-     */
-    EndpointDescriptionImpl(Class theClass, QName portName, AxisService axisService,
-                            ServiceDescriptionImpl parent) {
-        this.parentServiceDescription = parent;
-        composite = new DescriptionBuilderComposite();
-        composite.setIsDeprecatedServiceProviderConstruction(true);
-        composite.setIsServiceProvider(true);
-        this.portQName = portName;
-        composite.setCorrespondingClass(theClass);
-        ClassLoader loader = (ClassLoader) AccessController.doPrivileged(
-                new PrivilegedAction() {
-                    public Object run() {
-                        return this.getClass().getClassLoader();
-                    }
-                }
-        );
-        composite.setClassLoader(loader);
-        this.axisService = axisService;
-
-        addToAxisService();
-
-        buildEndpointDescriptionFromAnnotations();
-        
-        configureWebServiceFeatures();
-        // This constructor isn't used anymore, so there's no need to do this
-//        releaseAxisServiceResources();
-
-        // The anonymous AxisOperations are currently NOT added here.  The reason 
-        // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
-        // are only needed on the client side.
-    }
-
     private void addToAxisService() {
         // Add a reference to this EndpointDescription object to the AxisService
         if (axisService != null) {
@@ -640,19 +599,6 @@ class EndpointDescriptionImpl
         // - The @WebService and @WebServiceProvider annotations can not appear in the same class per 
         //   JAX-WS section 7.7 on page 82.
 
-        // Verify that one (and only one) of the required annotations is present.
-        // TODO: Add tests to verify this error checking
-
-        if (composite.isDeprecatedServiceProviderConstruction()) {
-
-            webServiceAnnotation = composite.getWebServiceAnnot();
-            webServiceProviderAnnotation = composite.getWebServiceProviderAnnot();
-
-            if (webServiceAnnotation == null && webServiceProviderAnnotation == null)
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr6",composite.getClassName()));
-            else if (webServiceAnnotation != null && webServiceProviderAnnotation != null)
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr7",composite.getClassName()));
-        }
         // If portName was specified, set it.  Otherwise, we will get it from the appropriate
         // annotation when the getter is called.
         // TODO: If the portName is specified, should we verify it against the annotation?
@@ -669,9 +615,7 @@ class EndpointDescriptionImpl
             //       that this is also called with just an SEI interface from svcDesc.updateWithSEI()
             String seiClassName = getAnnoWebServiceEndpointInterface();
 
-            if (composite.isDeprecatedServiceProviderConstruction()
-                    || !composite.isServiceProvider()) {
-//            if (!getServiceDescriptionImpl().isDBCMap()) {
+            if (!composite.isServiceProvider()) {
                 Class seiClass = null;
                 if (DescriptionUtils.isEmpty(seiClassName)) {
                     // This is the client code path; the @WebServce will not have an endpointInterface member
@@ -1211,7 +1155,7 @@ class EndpointDescriptionImpl
                 annotation_WsdlLocation = getAnnoWebService().wsdlLocation();
 
                 //If this is not an implicit SEI, then make sure that its not on the SEI
-                if (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) {
+                if (composite.isServiceProvider()) {
                     if (!DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface())) {
 
                         DescriptionBuilderComposite seic =
@@ -1469,7 +1413,7 @@ class EndpointDescriptionImpl
                 String className = composite.getClassName();
 
                 // REVIEW: This is using the classloader for EndpointDescriptionImpl; is that OK?
-                ClassLoader classLoader = (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) ?
+                ClassLoader classLoader = (composite.isServiceProvider()) ?
                         composite.getClassLoader() :
                         (ClassLoader) AccessController.doPrivileged(
                                 new PrivilegedAction() {
@@ -1504,7 +1448,7 @@ class EndpointDescriptionImpl
   
     public HandlerChain getAnnoHandlerChainAnnotation() {
         if (this.handlerChainAnnotation == null) {
-            if (composite.isServiceProvider() && !composite.isDeprecatedServiceProviderConstruction()) {
+            if (composite.isServiceProvider()) {
                 /*
                  * Per JSR-181 The @HandlerChain annotation MAY be present on
                  * the endpoint interface and service implementation bean. The

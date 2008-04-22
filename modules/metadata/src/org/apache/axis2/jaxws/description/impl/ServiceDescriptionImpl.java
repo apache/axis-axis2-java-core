@@ -242,34 +242,6 @@ class ServiceDescriptionImpl
         }
         return theUrl;
     }
-    
-
-
-    /**
-     * Create a service-provider side ServiceDesciption.  Create a service Description
-     * based on a service implementation class.  Note this is for test-only code; it should not be 
-     * used in production code.  And it is being removed from the test code as well.
-     *
-     * @deprecated
-     * @param serviceImplClass
-     */
-    ServiceDescriptionImpl(Class serviceImplClass, AxisService axisService) {
-        if (log.isDebugEnabled()) {
-            log.debug("ServiceDescriptionImpl(Class,AxisService)");
-        }
-        composite = new DescriptionBuilderComposite();
-        composite.setIsDeprecatedServiceProviderConstruction(true);
-        composite.setIsServiceProvider(true);
-        isServerSide = true;
-
-        // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
-        // it will be set to the annotation value.
-        EndpointDescriptionImpl endpointDescription =
-                new EndpointDescriptionImpl(serviceImplClass, null, axisService, this);
-        addEndpointDescription(endpointDescription);
-
-        // TODO: The ServiceQName instance variable should be set based on annotation or default
-    }
 
     ServiceDescriptionImpl(
                            HashMap<String, DescriptionBuilderComposite> dbcMap,

@@ -734,31 +734,6 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     	return catalogManager;
     }
     
-    /**
-     * @deprecated
-     */
-    private boolean isDeprecatedServiceProviderConstruction = false;
-    /**
-     * Answer if this composite represents a service provider that was constructed using the
-     * deprecated path (used for testing only and being removed).  Once that deprecated path
-     * is removed, this method and all code blocks referencing it can be removed.
-     * 
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory.createServiceDescriptionFromServiceImpl
-     * 
-     * @deprecated
-     * @return true if the this was constructed with the deprecated logic
-     */
-    public boolean isDeprecatedServiceProviderConstruction() {
-        return isDeprecatedServiceProviderConstruction;        
-    }
-    /**
-     * @deprecated
-     * @param value
-     */
-    public void setIsDeprecatedServiceProviderConstruction(boolean value) {
-        isDeprecatedServiceProviderConstruction = value;
-    }
-
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
     }
