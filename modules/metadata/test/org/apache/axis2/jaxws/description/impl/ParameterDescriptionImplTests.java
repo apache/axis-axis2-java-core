@@ -26,16 +26,8 @@ import javax.xml.ws.Holder;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * 
- */
 public class ParameterDescriptionImplTests extends TestCase {
 
-    /*
-    * This is a TEMPORARY test.  It is testing the construction of a
-    * ParameterDesc using a class (instead of a DBC).  Using a class should
-    * be deprecated and only a DBC should be used in construction
-    */
     public void test1() {
         Method[] methods = TestInterface.class.getMethods();
         Method method1 = methods[0];
