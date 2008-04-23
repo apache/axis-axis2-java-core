@@ -28,6 +28,7 @@ import javax.wsdl.xml.WSDLReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.io.File;
 
 /**
  * 
@@ -53,10 +54,10 @@ public class DescriptionTestUtils {
 
     static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
-        String urlString = "file://localhost/" + getWSDLLocation(wsdlFileName);
+        String urlString = getWSDLLocation(wsdlFileName);
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
         try {
-            wsdlURL = new URL(urlString);
+            wsdlURL = new File(urlString).getAbsoluteFile().toURL();
         } catch (Exception e) {
             System.out.println("Caught exception creating WSDL URL :" + urlString +
                     "; exception: " + e.toString());
