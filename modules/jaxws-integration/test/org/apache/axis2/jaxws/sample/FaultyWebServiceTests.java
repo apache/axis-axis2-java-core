@@ -112,7 +112,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
-        assertEquals(exception.getCause().getMessage(), host);
+        assertTrue(exception.getCause().getMessage().indexOf(host)!=-1);
 
     }
 
@@ -147,8 +147,7 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
-        assertEquals(exception.getCause().getMessage(), host);
-
+        assertTrue(exception.getCause().getMessage().indexOf(host)!=-1);
     }
 
     public void testFaultyWebService_badEndpoint_AsyncCallback()
