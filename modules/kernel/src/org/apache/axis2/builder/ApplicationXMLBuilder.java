@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -50,7 +51,13 @@ public class ApplicationXMLBuilder implements Builder {
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         if (inputStream != null) {
             try {
-                PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream);
+                // Apply a detachable inputstream.  This can be used later
+                // to (a) get the length of the incoming message or (b)
+                // free transport resources.
+                DetachableInputStream is = new DetachableInputStream(inputStream);
+                messageContext.setProperty(Constants.DETACHABLE_INPUT_STREAM, is);
+                
+                PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
                 int b;
                 if ((b = pushbackInputStream.read()) > 0) {
                     pushbackInputStream.unread(b);

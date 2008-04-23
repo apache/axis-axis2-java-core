@@ -263,6 +263,15 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * from SOAPFault to AxisFault
      */
     public static final String INBOUND_FAULT_OVERRIDE = "inboundFaultOverride";
+    
+    
+    /**
+     * On inbound requests, the detachable input stream can be queried to get
+     * the inbound length.  It can also be "detached" from the inbound http stream
+     * to allow resources to be freed.
+     */
+    public static final String DETACHABLE_INPUT_STREAM = 
+        "org.apache.axiom.om.util.DetachableInputStream";
 
     /** SOAP Role Configuration */
     public static final String SOAP_ROLE_CONFIGURATION_ELEMENT = "SOAPRoleConfiguration";

@@ -22,6 +22,7 @@ package org.apache.axis2.builder;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
@@ -43,8 +44,14 @@ public class SOAPBuilder implements Builder {
             String charSetEncoding = (String) messageContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             
+            // Apply a detachable inputstream.  This can be used later
+            // to (a) get the length of the incoming message or (b)
+            // free transport resources.
+            DetachableInputStream is = new DetachableInputStream(inputStream);
+            messageContext.setProperty(Constants.DETACHABLE_INPUT_STREAM, is);
+            
             // Get the actual encoding by looking at the BOM of the InputStream
-            PushbackInputStream pis = BuilderUtil.getPushbackInputStream(inputStream);
+            PushbackInputStream pis = BuilderUtil.getPushbackInputStream(is);
             String actualCharSetEncoding = BuilderUtil.getCharSetEncoding(pis, charSetEncoding);
             
             // Get the XMLStreamReader for this input stream

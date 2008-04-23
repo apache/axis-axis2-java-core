@@ -21,6 +21,7 @@ package org.apache.axis2.context;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -1179,6 +1180,24 @@ public class MessageContext extends AbstractContext
         return isSOAP11;
     }
 
+    /**
+     * @return inbound content length of 0
+     */
+    public long getInboundContentLength() throws IOException {
+        // If there is an attachment map, the Attachments keep track
+        // of the inbound content length.
+        if (attachments != null) {
+            return attachments.getContentLength();
+        } 
+        
+        // Otherwise the length is accumulated by the DetachableInputStream.
+        DetachableInputStream dis = 
+            (DetachableInputStream) getProperty(Constants.DETACHABLE_INPUT_STREAM);
+        if (dis != null) {
+            return dis.length();
+        }
+        return 0;
+    }
     /**
      * @return Returns boolean.
      */
