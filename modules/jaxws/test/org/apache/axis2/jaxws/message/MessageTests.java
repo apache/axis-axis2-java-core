@@ -30,6 +30,7 @@ import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
@@ -39,6 +40,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
@@ -46,6 +48,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.util.TreeSet;
 
 /**
  * MessageTests
@@ -806,8 +809,9 @@ public class MessageTests extends TestCase {
         StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
         OMElement omElement = builder.getSOAPEnvelope();
         
+        JAXBDSContext jds = null;
         if (installJAXBCustomBuilder) {
-            JAXBDSContext jds = new JAXBDSContext(EchoStringResponse.class.getPackage().getName());
+            jds = new JAXBDSContext(EchoStringResponse.class.getPackage().getName());
             JAXBCustomBuilder jcb = new JAXBCustomBuilder(jds);
             builder.registerCustomBuilderForPayload(jcb);
         }
@@ -823,6 +827,53 @@ public class MessageTests extends TestCase {
         assertTrue(!isFault);
         assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
                     "OM".equals(m.getXMLPartContentType()));
+        
+        if (installJAXBCustomBuilder) {
+            // The JAXBDSContext and the JAXBUtils access the JAXBContext
+            // for the "test" package.
+            // The JAXBContext creation is very expensive.
+            // However the JAXBContext can also be very large.
+            // 
+            // For these reasons, the JAXBUtils code caches the JAXBContext values.
+            // And, the JAXBDSContext and JAXBUtils code use WeakReferences to refer 
+            // to the JAXBContext (so that it is easily gc'd).
+            
+            // The following code checks makes sure that the caching and gc is correct.
+            
+            // Get the JAXBContext
+            JAXBContext context = jds.getJAXBContext();
+            
+            // Get the identity hash code.  This is an indicator of the unique memory pointer
+            // for the context.
+            int contextPointer = System.identityHashCode(context);
+            
+            // Release our access to the context.
+            // Now the only accesses in the system should be "weak refs"
+            context = null;
+            
+            // Force garbage collection
+            System.gc();
+            
+            // Get a new context from JAXBUtils
+            TreeSet<String> packages = new TreeSet<String>();
+            packages.add(EchoStringResponse.class.getPackage().getName());
+            context = JAXBUtils.getJAXBContext(packages);
+            
+            // This new context should have a different pointer than the original
+            int contextPointer2 = System.identityHashCode(context);
+            assertTrue(contextPointer != contextPointer2);
+            
+            // Release the hold on the context
+            context = null;
+            
+            // Now call JAXBUtils again to get a JAXBContext.
+            // Since there was no intervening gc(), it should return the cached value
+            context = JAXBUtils.getJAXBContext(packages);
+            int contextPointer3 = System.identityHashCode(context);
+            assertTrue(contextPointer3 == contextPointer2);
+            
+           
+        }
         
         String saveMsgText = "";
         if (persist == SAVE_AND_PERSIST) {
