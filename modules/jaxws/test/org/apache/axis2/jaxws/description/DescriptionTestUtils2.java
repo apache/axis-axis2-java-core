@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.io.File;
 
 /**
  * 
@@ -51,16 +52,15 @@ public class DescriptionTestUtils2 {
     
     static public String getWSDLLocation(String wsdlFileName) {
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
-        String basedir = System.getProperty("basedir");
-        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/" + wsdlFileName;
-        return urlString;
+        String basedir = System.getProperty("basedir",".");
+        return basedir + "/test-resources/wsdl/" + wsdlFileName;
     }
     
     static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
         String urlString = getWSDLLocation(wsdlFileName);
         try {
-            wsdlURL = new URL(urlString);
+            wsdlURL = new File(urlString).getAbsoluteFile().toURL();
         } catch (Exception e) {
             TestLogger.logger.debug(
                     "Caught exception creating WSDL URL :" + urlString + "; exception: " +
