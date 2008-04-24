@@ -43,6 +43,10 @@
         #include &lt;stdio.h&gt;
         #include &lt;axis2_svc.h&gt;
 
+        #ifdef __cplusplus
+        extern "C" {
+        #endif
+       
         /**
          * functions prototypes
          */
@@ -79,6 +83,62 @@
             <xsl:value-of select="$method-prefix"/>_on_fault,
             <xsl:value-of select="$method-prefix"/>_free
         };
+
+
+
+        /**
+         * Following block distinguish the exposed part of the dll.
+         * create the instance
+         */
+
+        AXIS2_EXTERN int
+        axis2_get_instance(struct axis2_svc_skeleton **inst,
+                                const axutil_env_t *env);
+
+        AXIS2_EXTERN int 
+        axis2_remove_instance(axis2_svc_skeleton_t *inst,
+                                const axutil_env_t *env);
+
+
+         /**
+          * function to free any soap input headers
+          */
+         <xsl:for-each select="method">
+
+            <xsl:if test="input/param[@location='soap_header']">
+             void
+             axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                                     <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                     <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                                     </xsl:for-each>);
+            </xsl:if>
+            <xsl:if test="output/param[@location='soap_header']">
+             void
+             axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                                     <xsl:variable name="outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                     <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                                     </xsl:for-each>);
+           </xsl:if>
+         </xsl:for-each>
+
+
+         <xsl:for-each select="method/output/param[@location='soap_header']">
+            <xsl:if test="position()=1">
+            /*
+             * Create the response soap envelope when output headers are to be set..
+             */
+            axiom_soap_envelope_t* AXIS2_CALL
+            <xsl:value-of select="$method-prefix"/>_create_response_envelope(const axutil_env_t *env,
+                                                                            axis2_msg_ctx_t *in_msg_ctx, 
+                                                                            axis2_msg_ctx_t *msg_ctx,
+                                                                            axiom_node_t *body_content_node);
+            </xsl:if>
+         </xsl:for-each>
+
+
+        #ifdef __cplusplus
+        }
+        #endif
 
 
         /**
@@ -221,7 +281,7 @@
 
         if (!default_envelope)
         {
-            axiom_namespce_free(env_ns, env);
+            axiom_namespace_free(env_ns, env);
             return NULL;
         }
 
@@ -229,7 +289,7 @@
         if (!out_header)
         {
             axiom_soap_envelope_free(default_envelope, env);
-            axiom_namespce_free(env_ns, env);
+            axiom_namespace_free(env_ns, env);
             return NULL;
         }
 
@@ -238,7 +298,7 @@
         {
             axiom_soap_body_free(out_body, env);
             axiom_soap_envelope_free(default_envelope, env);
-            axiom_namespce_free(env_ns, env);
+            axiom_namespace_free(env_ns, env);
             return NULL;
         }
 
@@ -247,7 +307,7 @@
         {
             axiom_soap_body_free(out_body, env);
             axiom_soap_envelope_free(default_envelope, env);
-            axiom_namespce_free(env_ns, env);
+            axiom_namespace_free(env_ns, env);
             return NULL;
         }
  
@@ -260,10 +320,10 @@
         {
             axiom_soap_body_free(out_body, env);
             axiom_soap_envelope_free(default_envelope, env);
-            axiom_namespce_free(env_ns, env);
+            axiom_namespace_free(env_ns, env);
             if (body_content_node)
             {
-                axiom_node_free(body_content_node, env);
+                axiom_node_free_tree(body_content_node, env);
             }
             return NULL;
         }
