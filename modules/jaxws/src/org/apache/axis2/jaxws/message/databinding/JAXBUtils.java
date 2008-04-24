@@ -82,7 +82,7 @@ public class JAXBUtils {
     // as long as you don't use one instance from two threads at the same time. 
     // ENABLE_ADV_POOLING is false...which means they are obtained from the JAXBContext instead of
     // from the pool.
-    private static boolean ENABLE_MARSHALL_POOLING = false;
+    private static boolean ENABLE_MARSHALL_POOLING = true;
     private static boolean ENABLE_UNMARSHALL_POOLING = true;
     private static boolean ENABLE_INTROSPECTION_POOLING = false;
     
