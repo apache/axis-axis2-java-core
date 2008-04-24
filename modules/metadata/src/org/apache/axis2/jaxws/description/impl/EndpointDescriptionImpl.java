@@ -598,20 +598,6 @@ class EndpointDescriptionImpl
                     // This is the client code path; the @WebServce will not have an endpointInterface member
                     // For now, just build the EndpointInterfaceDesc based on the class itself.
                     seiClass = composite.getCorrespondingClass();
-                } else {
-                    // TODO: (JLB) This should be removed; it was for server-side introspection code
-                    //  This is the deprecated server-side introspection code for an impl that references an SEI
-                    try {
-                        // TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
-                        seiClass = forName(seiClassName, false,
-                                                            getContextClassLoader(this.axisService != null ? this.axisService.getClassLoader() : null));
-                        // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-                        // does not extend Exception, so lets catch everything that extends Throwable
-                        // rather than just Exception.
-                    } catch (Throwable e) {
-                    	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr8"),e);
-
-                    }
                 }
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(seiClass, this);
             } else {

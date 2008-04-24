@@ -389,23 +389,6 @@ public class DescriptionFactoryImpl {
     }
 
     /**
-     * Builds a list of DescriptionBuilderComposite which is relevant to the particular class
-     *
-     * @param List<>          A list of DescriptionBuilderComposite objects
-     * @param serviceImplName
-     * @return List<>
-     */
-    // TODO: (JLB) Remove unreferenced method
-    private static List<DescriptionBuilderComposite> buildRelevantCompositeList(
-            List<DescriptionBuilderComposite> compositeList,
-            String serviceImplName) {
-
-        List<DescriptionBuilderComposite> relevantList = compositeList;
-
-        return relevantList;
-    }
-
-    /**
      * This method will be used to determine if a given DBC represents a Web service
      * implementation.
      *

@@ -193,7 +193,6 @@ class EndpointInterfaceDescriptionImpl
      * @param isClass
      * @param parent
      */
-    // TODO: (JLB) isClass parameter is not used; can be removed.
     EndpointInterfaceDescriptionImpl(DescriptionBuilderComposite dbc,
                                      boolean isClass,
                                      EndpointDescriptionImpl parent) {
