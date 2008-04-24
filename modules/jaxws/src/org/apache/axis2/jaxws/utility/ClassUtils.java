@@ -284,11 +284,14 @@ public class ClassUtils {
             return true;
         }
 
-        if (cls.getPackage() != null && cls.getPackage().getName().startsWith("javax.xml.ws")) {
+        String className = cls.getPackage() == null ? null : cls.getPackage().getName();
+        if (className != null && className.startsWith("javax.xml.ws") && !className.startsWith("javax.xml.ws.wsaddressing")) {
             return true;
         }
+        
         return false;
     }
+    
     /**
      * Get an annotation.  This is wrappered to avoid a Java2Security violation.
      * @param cls Class that contains annotation 
