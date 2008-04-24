@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.jms;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.RelatesTo;
@@ -40,6 +39,7 @@ import javax.jms.Topic;
 import javax.naming.Context;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
+import java.util.concurrent.Executor;
 
 /**
  * This is the actual receiver which listens for and accepts JMS messages, and

@@ -20,7 +20,6 @@
 
 package org.apache.axis2.deployment;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.axiom.attachments.lifecycle.LifecycleManager;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -39,7 +38,6 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -65,6 +63,7 @@ import java.io.InputStream;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

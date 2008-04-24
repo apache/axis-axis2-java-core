@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +37,7 @@ import org.apache.http.protocol.ResponseServer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class DefaultHttpConnectionManager implements HttpConnectionManager {
 

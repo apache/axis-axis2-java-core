@@ -230,6 +230,9 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             map.put("com.sun.xml.bind.defaultNamespaceRemap", defaultNs);
         }
 
+        for (Class<?> cls : classes) {
+            System.out.println(">>>> :" + cls);
+        }
         return JAXBContext.newInstance(classes.toArray(new Class[classes.size()]), map);
     }
 

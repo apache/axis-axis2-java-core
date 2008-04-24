@@ -20,11 +20,6 @@
 
 package org.apache.axis2.util.threadpool;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.java.security.AccessController;
@@ -33,6 +28,11 @@ import org.apache.commons.logging.LogFactory;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This the thread pool for axis2. This class will be used a singleton
@@ -113,11 +113,12 @@ public class ThreadPool implements ThreadFactory {
                     TimeUnit.SECONDS, new LinkedBlockingQueue(),
                     new DefaultThreadFactory(name, daemon, priority));
         }
-        rc.allowCoreThreadTimeOut(true);
+// FIXME: This API is only in JDK 1.6 - Use reflection?        
+//        rc.allowCoreThreadTimeOut(true);
         return rc;
     }
 
-    private static class DefaultThreadFactory implements edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory {
+    private static class DefaultThreadFactory implements java.util.concurrent.ThreadFactory {
         private final String name;
         private final boolean daemon;
         private final int priority;

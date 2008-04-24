@@ -19,8 +19,8 @@
 
 package org.apache.axis2.util.threadpool;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is a simple ThreadFactory implementation using java.util.concurrent

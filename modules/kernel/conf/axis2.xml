@@ -113,10 +113,10 @@
     <!-- ================================================= -->
     <!-- Message Receivers -->
     <!-- ================================================= -->
-    <!--This is the deafult MessageReceiver for the system , if you want to have MessageReceivers for -->
+    <!--This is the default MessageReceiver for the system , if you want to have MessageReceivers for -->
     <!--all the other MEP implement it and add the correct entry to here , so that you can refer from-->
     <!--any operation -->
-    <!--Note : You can ovrride this for a particular service by adding the same element with your requirement-->
+    <!--Note : You can override this for a particular service by adding the same element with your requirement-->
      <messageReceivers>
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
                          class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>

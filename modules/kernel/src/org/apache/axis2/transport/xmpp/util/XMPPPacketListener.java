@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.xmpp.util;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -45,6 +44,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
 
 public class XMPPPacketListener implements PacketListener {
 	private static final Log log = LogFactory.getLog(XMPPPacketListener.class);

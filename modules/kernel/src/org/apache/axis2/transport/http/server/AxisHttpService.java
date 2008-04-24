@@ -19,7 +19,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -63,6 +62,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * This class is an extension of the default HTTP service responsible for

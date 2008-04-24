@@ -20,11 +20,9 @@
 
 package org.apache.axis2.context;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
@@ -36,6 +34,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
@@ -44,13 +43,14 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.security.PrivilegedAction;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy

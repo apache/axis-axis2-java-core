@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
 Import-Package: 
  com.ibm.wsdl.util.xml,
- edu.emory.mathcs.backport.java.util,
- edu.emory.mathcs.backport.java.util.concurrent,
- edu.emory.mathcs.backport.java.util.concurrent.atomic,
+ java.util,
+ java.util.concurrent,
+ java.util.concurrent.atomic,
  javax.activation,
  javax.jms;resolution:=optional,
  javax.mail,
