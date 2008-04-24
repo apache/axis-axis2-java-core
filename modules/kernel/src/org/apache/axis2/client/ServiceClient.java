@@ -53,6 +53,8 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.axis2.namespace.Constants;
+
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -76,14 +78,13 @@ public class ServiceClient {
     /** Counter used to generate the anonymous service name. */
     private static Counter anonServiceCounter = new Counter();
 
-
     /**
      * Operation name used for an anonymous out-only operation (meaning we send
      * a message with no response allowed from the service, equivalent to a WSDL
      * In-Only operation).
      */
     public static final QName ANON_OUT_ONLY_OP = new QName(
-            "anonOutonlyOp");
+            Constants.AXIS2_NAMESPACE_URI, "anonOutonlyOp", Constants.AXIS2_NAMESPACE_PREFIX);
 
     /**
      * Operation name used for an anonymous robust-out-only operation
@@ -91,13 +92,13 @@ public class ServiceClient {
      * equivalent to a WSDL Robust-In-Only operation).
      */
     public static final QName ANON_ROBUST_OUT_ONLY_OP = new QName(
-            "anonRobustOp");
+            Constants.AXIS2_NAMESPACE_URI, "anonRobustOp", Constants.AXIS2_NAMESPACE_PREFIX);
 
     /**
      * Operation name used for an anonymous in-out operation (meaning we sent a
      * message and receive a response, equivalent to a WSDL In-Out operation).
      */
-    public static final QName ANON_OUT_IN_OP = new QName("anonOutInOp");
+    public static final QName ANON_OUT_IN_OP = new QName(Constants.AXIS2_NAMESPACE_URI, "anonOutInOp", Constants.AXIS2_NAMESPACE_PREFIX);
 
     // the meta-data of the service that this client access
     private AxisService axisService;

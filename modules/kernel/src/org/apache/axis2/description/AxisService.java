@@ -26,6 +26,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
@@ -623,6 +624,15 @@ public class AxisService extends AxisDescription {
 	 */
 	public void addOperation(AxisOperation axisOperation) {
 		axisOperation.setParent(this);
+        
+        if (log.isDebugEnabled()) {
+            if (axisOperation.getName().equals(ServiceClient.ANON_OUT_ONLY_OP)
+                    || (axisOperation.getName().equals(ServiceClient.ANON_OUT_ONLY_OP))
+                    || (axisOperation.getName().equals(ServiceClient.ANON_OUT_ONLY_OP))) {
+                log.debug("Client-defined operation name matches default operation name. "
+                        + "this may cause interoperability issues.  Name is: " + axisOperation.getName().toString());
+            }
+        }
 
 		Iterator modules = getEngagedModules().iterator();
 
