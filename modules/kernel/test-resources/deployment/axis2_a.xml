@@ -144,14 +144,6 @@
     </transportSender>
 
     <!-- ================================================= -->
-    <!-- Non-blocking http/s Transport Sender  -->
-
-    <!-- the non-blocking http transport sender based on HttpCore + NIO extensions
-    <transportSender name="http"  class="org.apache.axis2.transport.nhttp.HttpCoreNIOSender">
-        <parameter name="non-blocking" locked="false">true</parameter>
-    </transportSender>-->
-
-    <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->
     <phaseOrder type="InFlow">

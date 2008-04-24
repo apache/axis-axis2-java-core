@@ -137,8 +137,6 @@ Export-Package:
  org.apache.axis2.transport.local,
  org.apache.axis2.transport.mail.server,
  org.apache.axis2.transport.mail,
- org.apache.axis2.transport.nhttp.util,
- org.apache.axis2.transport.nhttp,
  org.apache.axis2.transport.tcp,
  org.apache.axis2.transport.xmpp.util,
  org.apache.axis2.transport.xmpp,

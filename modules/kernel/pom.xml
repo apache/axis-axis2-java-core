@@ -50,10 +50,6 @@
             <artifactId>httpcore</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore-nio</artifactId>
-        </dependency>
-        <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
         </dependency>
@@ -135,7 +131,6 @@
                         <inherited>true</inherited>
                         <configuration>
                             <excludes>
-                                <exclude>**/nhttp/**</exclude>
                                 <exclude>**/XMPP*.java</exclude>
                             </excludes>
                         </configuration>
