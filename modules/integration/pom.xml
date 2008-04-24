@@ -307,10 +307,6 @@
             <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>apache-activemq</artifactId>
-        </dependency>
-        <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
         </dependency>
@@ -336,11 +332,6 @@
                 <jdk>1.4</jdk>
             </activation>
             <dependencies>
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>apache-activemq</artifactId>
-                    <version>${activemq.version-jdk14}</version>
-                </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -366,9 +357,6 @@
                                 <exclude>**/*InteropStubTest.java</exclude>
                                 <exclude>**/*ServiceGroupContextTest.java</exclude>
                                 <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
-                                <exclude>**org/apache/axis2/mail/*.java</exclude>
-                                <exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.java
-                                </exclude>
                                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
                                 <exclude>**/ScenarioST1Test.java</exclude>
                                 <exclude>**/samples/wsdl/perf2/*.java</exclude>
@@ -413,9 +401,6 @@
                                 <exclude>**/*InteropStubTest.java</exclude>
                                 <exclude>**/*ServiceGroupContextTest.java</exclude>
                                 <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
-                                <exclude>**org/apache/axis2/mail/*.java</exclude>
-                                <exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.java
-                                </exclude>
                                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
                                 <exclude>**/ScenarioST1Test.java</exclude>
                                 <exclude>**/samples/wsdl/perf2/*.java</exclude>
@@ -460,9 +445,6 @@
                                 <exclude>**/*InteropStubTest.java</exclude>
                                 <exclude>**/*ServiceGroupContextTest.java</exclude>
                                 <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
-                                <exclude>**org/apache/axis2/mail/*.java</exclude>
-                                <exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.java
-                                </exclude>
                                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
                                 <exclude>**/ScenarioST1Test.java</exclude>
                                 <exclude>**/samples/wsdl/perf2/*.java</exclude>

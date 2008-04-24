@@ -106,8 +106,6 @@ Study</strong></a></li>
 "http://ws.apache.org/axis2/@axis2_version_dir@/rest-ws.html">http://ws.apache.org/axis2/@axis2_version_dir@/rest-ws.html</a></p>
 <p>TCP Transport-<a href=
 "http://ws.apache.org/axis2/@axis2_version_dir@/tcp-transport.html">http://ws.apache.org/axis2/@axis2_version_dir@/tcp-transport.html</a></p>
-<p>Mail Transport-<a href=
-"http://ws.apache.org/axis2/@axis2_version_dir@/mail-transport.html">http://ws.apache.org/axis2/@axis2_version_dir@/mail-transport.html</a></p>
 <p>HTTP Transports-<a href=
 "http://ws.apache.org/axis2/@axis2_version_dir@/http-transport.html">http://ws.apache.org/axis2/@axis2_version_dir@/http-transport.html</a></p>
 <p>MTOM with Axis2-<a href=

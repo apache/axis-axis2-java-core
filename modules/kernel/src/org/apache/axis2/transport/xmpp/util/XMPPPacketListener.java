@@ -51,8 +51,10 @@ public class XMPPPacketListener implements PacketListener {
 	private XMPPConnectionFactory xmppConnectionFactory = null;
 	private ConfigurationContext configurationContext = null;
 	private Executor workerPool = null;
+    
+    public final static String CONTENT_TYPE = "mail.contenttype";
 
-	public XMPPPacketListener(XMPPConnectionFactory xmppConnectionFactory, ConfigurationContext configurationContext, Executor workerPool) {
+    public XMPPPacketListener(XMPPConnectionFactory xmppConnectionFactory, ConfigurationContext configurationContext, Executor workerPool) {
 		this.xmppConnectionFactory = xmppConnectionFactory;
 		this.configurationContext = configurationContext;
 		this.workerPool = workerPool;
@@ -96,7 +98,7 @@ public class XMPPPacketListener implements PacketListener {
 				msgContext.setServerSide(isServerSide.booleanValue());
 			}
 			msgContext.setProperty(
-					org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
+					CONTENT_TYPE,
 					"text/xml");
 			msgContext.setProperty(
 					Constants.Configuration.CHARACTER_SET_ENCODING, "UTF-8");

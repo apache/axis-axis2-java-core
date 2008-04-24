@@ -89,9 +89,6 @@
         <ping.mar.version>SNAPSHOT</ping.mar.version>
         <scripting.mar.version>SNAPSHOT</scripting.mar.version>
 
-        <!-- Version #'s of all our dependencies -->
-        <activemq.version>5.0.0</activemq.version>
-        <activemq.version-jdk14>4.1.1</activemq.version-jdk14>
         <annogen.version>0.1.0</annogen.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
@@ -110,7 +107,6 @@
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.2</geronimo.spec.javamail.version>
         <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
-        <geronimo.spec.jms.version>1.1</geronimo.spec.jms.version>
         <httpcore.version>4.0-beta1</httpcore.version>
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
@@ -722,11 +718,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${geronimo.spec.jms.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-annotation_1.0_spec</artifactId>
                 <version>${geronimo.spec.annotation.version}</version>
             </dependency>
@@ -936,33 +927,6 @@
                 <groupId>bsf</groupId>
                 <artifactId>bsf</artifactId>
                 <version>${bsf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>apache-activemq</artifactId>
-                <version>${activemq.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.woodstox</groupId>
-                        <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>stax</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.activemq</groupId>
-                        <artifactId>activeio-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>activesoap</groupId>
-                        <artifactId>jaxp-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>axis</groupId>
-                        <artifactId>axis</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>jalopy</groupId>

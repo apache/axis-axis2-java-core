@@ -167,36 +167,6 @@
         <!-- <parameter name="threadKeepAliveTimeUnit"  >MILLISECONDS</parameter>            -->
     </transportReceiver>
     
-    <!--Uncomment this and configure as appropriate for JMS transport support, after setting up your JMS environment (e.g. ActiveMQ)
-    <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
-        <parameter name="myTopicConnectionFactory">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</parameter>
-        </parameter>
-
-        <parameter name="myQueueConnectionFactory">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">QueueConnectionFactory</parameter>
-        </parameter>
-
-        <parameter name="default">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">QueueConnectionFactory</parameter>
-        </parameter>
-    </transportReceiver>-->
-
-    <!--Uncomment if you want to have SMTP transport support-->
-    <!--<transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener">-->
-    <!--<parameter name="transport.mail.pop3.host">127.0.0.1</parameter>-->
-    <!--<parameter name="transport.mail.pop3.user">axis2</parameter>-->
-    <!--<parameter name="transport.mail.pop3.password">axis2</parameter>-->
-    <!--<parameter name="transport.mail.pop3.port">110</parameter>-->
-    <!--<parameter name="transport.mail.replyToAddress">axis2@127.0.0.1</parameter>-->
-    <!--</transportReceiver>-->
-
 	<!--Uncomment if you want to have TCP transport support-->
     <!--transportReceiver name="tcp"
                        class="org.apache.axis2.transport.tcp.TCPServer">
@@ -224,19 +194,6 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
-    <!--Uncomment this and configure as appropriate for JMS transport support, after setting up your JMS environment (e.g. ActiveMQ)
-    <transportSender name="jms"
-                     class="org.apache.axis2.transport.jms.JMSSender"/>
-    -->
-
-    <!-- Uncomment this one with the appropriate papameters to enable the SMTP transport Receiver
-   <transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender">
-       <parameter name="transport.mail.smtp.host">127.0.0.1</parameter>
-       <parameter name="transport.mail.smtp.user">axis2</parameter>
-       <parameter name="transport.mail.smtp.password">axis2</parameter>
-       <parameter name="transport.mail.smtp.port">25</parameter>
-   </transportSender>
-   -->
 
     <!-- ================================================= -->
     <!-- Global Modules  -->

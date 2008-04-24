@@ -239,42 +239,6 @@
 		<copy file="test/org/apache/axis2/engine/chunking-disabled-axis2.xml"
     	                  tofile="target/test-resources/chunking-disabledRepository/conf/axis2.xml"/>
 
-		<!-- Create JMS enabled Server Repository -->
-		<mkdir dir="target/test-resources/jms-enabled-server-repository"/>
-		<mkdir dir="target/test-resources/jms-enabled-server-repository/conf"/>
-		<mkdir dir="target/test-resources/jms-enabled-server-repository/modules"/>
-		<copy file="test/org/apache/axis2/jms/jms-enabled-server-axis2.xml"
-    	                  tofile="target/test-resources/jms-enabled-server-repository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/jms-enabled-server-repository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- Create JMS enabled Client Repository -->
-		<mkdir dir="target/test-resources/jms-enabled-client-repository"/>
-		<mkdir dir="target/test-resources/jms-enabled-client-repository/conf"/>
-		<mkdir dir="target/test-resources/jms-enabled-client-repository/modules"/>
-		<copy file="test/org/apache/axis2/jms/jms-enabled-client-axis2.xml"
-    	                  tofile="target/test-resources/jms-enabled-client-repository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/jms-enabled-client-repository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- Create Mail Client transport enabled Repository -->
-		<mkdir dir="target/test-resources/mail-transport-client-enabledRepository"/>
-		<mkdir dir="target/test-resources/mail-transport-client-enabledRepository/conf"/>
-		<mkdir dir="target/test-resources/mail-transport-client-enabledRepository/modules"/>
-		<copy file="test/org/apache/axis2/mail/mail-enabled-client-axis2.xml"
-    	                  tofile="target/test-resources/mail-transport-client-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/mail-transport-client-enabledRepository/modules/addressing-${addressing_version}.mar"/>
-
-		<!-- Create Mail Server transport enabled Repository -->
-		<mkdir dir="target/test-resources/mail-transport-server-enabledRepository"/>
-		<mkdir dir="target/test-resources/mail-transport-server-enabledRepository/conf"/>
-		<mkdir dir="target/test-resources/mail-transport-server-enabledRepository/modules"/>
-		<copy file="test/org/apache/axis2/mail/mail-enabled-server-axis2.xml"
-    	                  tofile="target/test-resources/mail-transport-server-enabledRepository/conf/axis2.xml"/>
-		<copy file="../addressing/target/addressing-${addressing_version}.mar"
-    	                  tofile="target/test-resources/mail-transport-server-enabledRepository/modules/addressing-${addressing_version}.mar"/>
-
 		<mkdir dir="target/test-resources/MessageContextInjectionRepo"/>
 		<mkdir dir="target/test-resources/integrationRepo/modules"/>
 		<mkdir dir="target/test-resources/integrationRepo/conf"/>

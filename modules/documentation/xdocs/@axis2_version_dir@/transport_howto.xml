@@ -43,9 +43,6 @@ description.</p>
   transport.</li>
   <li><b>TCP</b> - This is the most simple transport, but needs Addressing
     support to be functional.</li>
-  <li><b>SMTP</b> - This can work off a single email account or a mail
-    server. The Mail Transport Receiver is a thread that checks for emails in
-    fixed time intervals.</li>
 </ul>
 
 <p>To understand the rest of this document you will need some understanding
@@ -224,8 +221,7 @@ did for the TransportReceiver.</p>
   &lt;/transportSender&gt;
   </pre>
 </source>
-<p>Have a look at org.apache.Axis2.transport.mail.MailTransportSender for a
-very simple Transport Sender. Also have a look at
+<p>Have a look at
 org.apache.Axis2.transport.http.CommonsHTTPTransportSender which is used to
 send HTTP responses.</p>
 

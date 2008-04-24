@@ -193,46 +193,7 @@
         <!-- <parameter name="threadKeepAliveTimeUnit">MILLISECONDS</parameter>            -->
     </transportReceiver>
 
-    <!--Uncomment this and configure as appropriate for JMS transport support, after setting up your JMS environment (e.g. ActiveMQ)
-    <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
-        <parameter name="myTopicConnectionFactory">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">TopicConnectionFactory</parameter>
-        </parameter>
-
-        <parameter name="myQueueConnectionFactory">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">QueueConnectionFactory</parameter>
-        </parameter>
-
-        <parameter name="default">
-        	<parameter name="java.naming.factory.initial">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
-        	<parameter name="java.naming.provider.url">tcp://localhost:61616</parameter>
-        	<parameter name="transport.jms.ConnectionFactoryJNDIName">QueueConnectionFactory</parameter>
-        </parameter>
-    </transportReceiver>-->
-
-    <!-- ================================================= -->
-    <!-- Mail Transport Listener  -->
-    <!-- This is a sample configuration. It assumes a mail server running in localhost.
-         Listener pops  messages that comes to the email address red@localhost. Users
-         password is red. Listener connect to the server every 3000 milliseconds.
-         Parameters with "transport." prefix is Axis2 specific. Others are all from Java Mail API. 
-         http://people.apache.org/~pzf/SMTPBase64Binding-0.2.html
-     -->
-    <!-- ================================================= -->
-    <!--<transportReceiver name="mailto" class="org.apache.axis2.transport.mail.SimpleMailListener">
-        <parameter name="mail.pop3.host">localhost</parameter>
-        <parameter name="mail.pop3.user">red</parameter>
-        <parameter name="mail.store.protocol">pop3</parameter>
-        <parameter name="transport.mail.pop3.password">red</parameter>
-        <parameter name="transport.mail.replyToAddress">red@localhost</parameter>
-        <parameter name="transport.listener.interval">3000</parameter>
-    </transportReceiver>-->
-
-	<!--Uncomment if you want to have TCP transport support-->
+    <!--Uncomment if you want to have TCP transport support-->
     <!--transportReceiver name="tcp"
                        class="org.apache.axis2.transport.tcp.TCPServer">
         <parameter name="port">6060</parameter-->>
@@ -267,20 +228,6 @@
     <!-- Please enable this if you need the java transport -->
     <!-- <transportSender name="java"
                      class="org.apache.axis2.transport.java.JavaTransportSender"/> -->
-
-    <!--<transportSender name="jms"-->
-                     <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
-
-    <!-- ================================================= -->
-    <!-- Mail Transport Sender  -->
-    <!--Only need to uncomment the sender. Configuration is achieved with every client.
-        At any instant mail host should be given. Sample configuration has been given.
-        http://people.apache.org/~pzf/SMTPBase64Binding-0.2.html
-   -->
-    <!-- ================================================= -->
-   <!--<transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender">
-        <parameter name="mail.smtp.host">localhost</parameter>
-    </transportSender>-->
 
     <!-- ================================================= -->
     <!-- Global Modules  -->

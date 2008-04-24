@@ -286,6 +286,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     // Keys to access JAXWS Request and Response SOAP Headers
     public static final String JAXWS_OUTBOUND_SOAP_HEADERS  = "jaxws.binding.soap.headers.outbound";
     public static final String JAXWS_INBOUND_SOAP_HEADERS = "jaxws.binding.soap.headers.inbound";
+
+    /**
+     * A MessageContext property or client Option stating the JMS correlation id
+     */
+    public static final String JMS_COORELATION_ID = "JMS_COORELATION_ID";
     
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

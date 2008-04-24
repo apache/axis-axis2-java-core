@@ -55,7 +55,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.jms.JMSConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -210,10 +209,10 @@ public class MessageContextBuilder {
     		log.debug("Incoming Transport is JMS, lets check for JMS correlation id");
     		
 	    	String correlationId =
-	            (String) inMessageContext.getProperty(JMSConstants.JMS_COORELATION_ID);
+	            (String) inMessageContext.getProperty(Constants.JMS_COORELATION_ID);
 	    	log.debug("Correlation id is " + correlationId);
 	        if (correlationId != null && correlationId.length() > 0) {
-	        	outMessageContext.setProperty(JMSConstants.JMS_COORELATION_ID, correlationId);
+	        	outMessageContext.setProperty(Constants.JMS_COORELATION_ID, correlationId);
 	        }
     	}
     }

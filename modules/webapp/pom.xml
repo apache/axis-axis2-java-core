@@ -64,10 +64,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -137,10 +133,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -214,10 +206,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -286,10 +274,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -379,10 +363,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -452,10 +432,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -529,10 +505,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -602,10 +574,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -679,10 +647,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -752,10 +716,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -830,10 +790,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -906,10 +862,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -980,10 +932,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -1059,10 +1007,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -1133,10 +1077,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
@@ -1210,10 +1150,6 @@
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>jakarta-regexp</groupId>
                     <artifactId>jakarta-regexp</artifactId>
                 </exclusion>
@@ -1284,10 +1220,6 @@
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-javamail_1.4_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jms_1.1_spec</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jakarta-regexp</groupId>
