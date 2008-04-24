@@ -30,22 +30,24 @@ The lib directory contains;
 1. axis2-adb-@axisVersion@.jar
 2. axis2-adb-codegen-@axisVersion@.jar
 3. axis2-ant-plugin-@axisVersion@.jar
-4. axis2-codegen-@axisVersion@.jar
-5. axis2-fastinfoset-@axisVersion@.jar
-6. axis2-java2wsdl-@axisVersion@.jar
-7. axis2-jaxbri-@axisVersion@.jar
-8. axis2-jaxws-@axisVersion@.jar
-9. axis2-jaxws-api-@axisVersion@.jar
-10. axis2-jibx-@axisVersion@.jar
-11. axis2-json-@axisVersion@.jar
-12. axis2-jws-api-@axisVersion@.jar
-13. axis2-kernel-@axisVersion@.jar
-14. axis2-metadata-@axisVersion@.jar
-15. axis2-saaj-@axisVersion@.jar
-16. axis2-saaj-api-@axisVersion@.jar
-17. axis2-soapmonitor-@axisVersion@.jar
-18. axis2-spring-@axisVersion@.jar
-19. axis2-xmlbeans-@axisVersion@.jar
+4. axis2-clustering-@axisVersion@.jar
+5. axis2-codegen-@axisVersion@.jar
+6. axis2-corba-@axisVersion@.jar
+7. axis2-fastinfoset-@axisVersion@.jar
+8. axis2-java2wsdl-@axisVersion@.jar
+9. axis2-jaxbri-@axisVersion@.jar
+10. axis2-jaxws-@axisVersion@.jar
+11. axis2-jaxws-api-@axisVersion@.jar
+12. axis2-jibx-@axisVersion@.jar
+13. axis2-json-@axisVersion@.jar
+14. axis2-jws-api-@axisVersion@.jar
+15. axis2-kernel-@axisVersion@.jar
+16. axis2-metadata-@axisVersion@.jar
+17. axis2-saaj-@axisVersion@.jar
+18. axis2-saaj-api-@axisVersion@.jar
+19. axis2-soapmonitor-@axisVersion@.jar
+20. axis2-spring-@axisVersion@.jar
+21. axis2-xmlbeans-@axisVersion@.jar
 
 and all 3rd party distributable dependencies of the above jars.
 
