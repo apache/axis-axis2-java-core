@@ -80,6 +80,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         this.deploymentEngine = deploymentEngine;
     }
 
+
+    public AxisConfigBuilder(AxisConfiguration axisConfiguration) {
+        this.axisConfig = axisConfiguration;
+    }
+
     public void populateConfig() throws DeploymentException {
         try {
             OMElement config_element = buildOM();
@@ -569,7 +574,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
-    private void processTransportReceivers(Iterator trs_senders) throws DeploymentException {
+    public ArrayList  processTransportReceivers(Iterator trs_senders) throws DeploymentException {
+        ArrayList transportReceivers = new ArrayList();
         while (trs_senders.hasNext()) {
             TransportInDescription transportIN;
             OMElement transport = (OMElement) trs_senders.next();
@@ -610,14 +616,16 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     processParameters(itr, transportIN, axisConfig);
                     // adding to axis2 config
                     axisConfig.addTransportIn(transportIN);
+                    transportReceivers.add(transportIN);
                 } catch (AxisFault axisFault) {
                     throw new DeploymentException(axisFault);
                 }
             }
         }
+        return transportReceivers;
     }
 
-    private void processTransportSenders(Iterator trs_senders) throws DeploymentException {
+    public void processTransportSenders(Iterator trs_senders) throws DeploymentException {
         while (trs_senders.hasNext()) {
             TransportOutDescription transportout;
             OMElement transport = (OMElement) trs_senders.next();
