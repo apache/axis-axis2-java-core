@@ -88,7 +88,6 @@ class ServiceDescriptionImpl
     private String wsdlURL;
     private QName serviceQName;
 
-    // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper;
     private WSDLWrapper generatedWsdlWrapper;
     
@@ -270,12 +269,6 @@ class ServiceDescriptionImpl
         String serviceImplName = this.composite.getClassName();
 
         this.dbcMap = dbcMap;
-        //TODO: How to we get this when called from server side, create here for now
-        //REVIEW: The value being set here is used later in validation checking to
-        //        validation that should occur separately on server and client. If
-        //        at some point this constructor is ever called by the client side,
-        //        then we'll have to get smarter about how we determine server/client
-        //        validation
         this.isServerSide = true;
 
         //capture the WSDL, if there is any...to be used for later processing
@@ -283,18 +276,14 @@ class ServiceDescriptionImpl
 
         // Do a first pass validation for this DescriptionBuilderComposite.
         // This is not intended to be a full integrity check, but rather a fail-fast mechanism
-        // TODO: Refactor this to a seperate validator class?
         validateDBCLIntegrity();
 
         // The ServiceQName instance variable is set based on annotation or default
         // It will be set by the EndpointDescriptionImpl since it is the one that knows
         // how to process the annotations and the defaults.
-        //TODO: When we get this, need to consider verifying service name between WSDL
-        //      and annotations, so
 
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
-        //EndpointDescription endpointDescription = new EndpointDescription(null, this, serviceImplName);
         EndpointDescriptionImpl endpointDescription =
                 new EndpointDescriptionImpl(this, serviceImplName, composite.getProperties());
         addEndpointDescription(endpointDescription);
@@ -474,19 +463,19 @@ class ServiceDescriptionImpl
                     // The EndpointDescription already exists; nothing needs to be done
                 } else if (sei != null) {
                     // The Dispatch should not have an SEI associated with it on the update call.
-                    // REVIEW: Is this a valid check?
                     throw ExceptionFactory.makeWebServiceException(
                     		Messages.getMessage("createDispatchFail3",portQName.toString()));
                 } else if (getWSDLWrapper() != null && isPortDeclared) {
                     // EndpointDescription doesn't exist and this is a declared Port, so create one
-                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  Note that EndpointInterface, Operations, Parameters, etc.
-                    // are not created for Dispatch-based ports, but might be updated later if a getPort is done against the same declared port.
-                    // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
+                    // Use the SEI Class and its annotations to finish creating the Description hierarchy.  
+                    // Note that EndpointInterface, Operations, Parameters, etc. are not created for 
+                    // Dispatch-based ports, but might be updated later if a getPort is done against 
+                    // the same declared port.
                     endpointDescription = new EndpointDescriptionImpl(sei, portQName, this);
                     addEndpointDescription(endpointDescription);
                 } else {
                     // The port is not a declared port and it does not have an EndpointDescription, 
-                	// meaning an addPort has not been done for it
+                    // meaning an addPort has not been done for it
                     // This is an error.
                     throw ExceptionFactory.makeWebServiceException(
                             Messages.getMessage("createDispatchFail1", portQName.toString()));
@@ -936,7 +925,6 @@ class ServiceDescriptionImpl
         );
     }
 
-    // TODO: Remove these and replace with appropraite get* methods for WSDL information
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.ServiceDescriptionWSDL#getWSDLWrapper()
      */
@@ -951,10 +939,6 @@ class ServiceDescriptionImpl
         return wsdlURL;
     }
 
-    /**
-     * TODO: This method should be replaced with specific methods for getWSDLGenerated... similar to
-     * how getWsdlWrapper should be replaced.
-     */
     public WSDLWrapper getGeneratedWsdlWrapper() {
         return this.generatedWsdlWrapper;
     }
@@ -1067,13 +1051,6 @@ class ServiceDescriptionImpl
         //and retrieve
         //the composite that represents this impl
 
-//TODO: Currently, we are calling this method on the DBC. However, the DBC
-//will eventually need access to to the whole DBC map to do proper validation.
-//We don't want to pass the map of DBC's back into a single DBC.
-//So, for starters, this method and all the privates that it calls should be 
-// moved to here. At some point, we should consider using a new class that we
-//can implement scenarios of, like validateServiceImpl implements validator
-
         try {
             validateIntegrity();
         }
@@ -1087,16 +1064,9 @@ class ServiceDescriptionImpl
       * Validates the integrity of an impl. class. This should not be called directly for an SEI composite
       */
     void validateIntegrity() {
-        //TODO: Consider moving this to a utils area, do we really want a public
-        //      method that checks integrity...possibly
-
         //In General, this integrity checker should do gross level checking
         //It should not be setting spec-defined default values, but can look
         //at things like empty strings or null values
-
-        //TODO: This method will validate the integrity of this object. Basically, if
-        //consumer set this up improperly, then we should fail fast, should consider placing
-        //this method in a utils class within the 'description' package
 
         //Verify that, if this implements a strongly typed provider interface, that it
         // also contain a WebServiceProvider annotation per JAXWS Sec. 5.1
@@ -1156,7 +1126,6 @@ class ServiceDescriptionImpl
                 		Messages.getMessage("validateIntegrityErr6",composite.getClassName()));
             }
 
-            //TODO: hmmm, will we ever actually validate an interface directly...don't think so
             if (!composite.isInterface()) {
                 // TODO: Validate on the class that this.classModifiers Array does not contain the strings
                 //        FINAL or ABSTRACT, but does contain PUBLIC
@@ -1227,8 +1196,6 @@ class ServiceDescriptionImpl
             }
 
             // Verify that the SOAPBinding annotations are supported.
-            //REVIEW: The assumption here is that SOAPBinding annotation can be place on an impl. class
-            //        (implicit SEI) or a WebServiceProvider
             if (composite.getSoapBindingAnnot() != null) {
                 if (composite.getSoapBindingAnnot().use() == javax.jws.soap.SOAPBinding.Use.ENCODED) {
                     throw ExceptionFactory.makeWebServiceException(
@@ -1236,7 +1203,6 @@ class ServiceDescriptionImpl
                 }
             }
             
-            //TODO: don't think this is necessary
             checkMethodsAgainstWSDL();
         }
     }
@@ -1608,9 +1574,9 @@ class ServiceDescriptionImpl
       * that all the public methods are in the wsdl
       */
     private void checkMethodsAgainstWSDL() {
-//Verify that, for ImplicitSEI, that all methods that should exist(if one false found, then
-//only look for WebMethods w/ False, else take all public methods but ignore those with
-//exclude == true
+        // Verify that, for ImplicitSEI, that all methods that should exist(if one false found, then
+        // only look for WebMethods w/ False, else take all public methods but ignore those with
+        // exclude == true
         if (webMethodAnnotationsExist()) {
             if (DescriptionUtils.falseExclusionsExist(composite))
                 verifyFalseExclusionsWithWSDL();
@@ -1648,8 +1614,6 @@ class ServiceDescriptionImpl
 
     private void validateSEI(DescriptionBuilderComposite seic) {
 
-        //TODO: Validate SEI superclasses -- hmmm, may be doing this below
-        //
         if (seic.getWebServiceAnnot() == null) {
             throw ExceptionFactory.makeWebServiceException(
             		Messages.getMessage("validateSEIErr1",composite.getClassName(),seic.getClassName()));

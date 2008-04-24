@@ -103,10 +103,6 @@ class ParameterDescriptionImpl
         //TODO: Need to build the schema map. Need to add logic to add this parameter
         //      to the schema map.
 
-        //TODO: Need to consider processing the following JAXWS annotations on this DBC
-        // webServiceRef is probably only client, so shouldn't be here
-        //webServiceContextAnnotation = pdc.getWebServiceContextAnnot();
-        //webServiceRefAnnotation = pdc.getWebServiceRefAnnot();
     }
 
     /*
@@ -228,7 +224,6 @@ class ParameterDescriptionImpl
     }
 
     public String getParameterName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamName();
     }
 
@@ -253,7 +248,6 @@ class ParameterDescriptionImpl
     }
 
     public String getPartName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamPartName();
     }
 
@@ -271,7 +265,6 @@ class ParameterDescriptionImpl
     }
 
     public String getTargetNamespace() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamTargetNamespace();
     }
 
@@ -299,13 +292,11 @@ class ParameterDescriptionImpl
 //    public Mode getMode() {
 
     public WebParam.Mode getMode() {
-        // REVIEW: WSDL/Anno merge.  Problem is that OpDesc is expecting WebParam.Mode
         return getAnnoWebParamMode();
     }
 
     public WebParam.Mode getAnnoWebParamMode() {
         if (webParamMode == null) {
-            // REVIEW: Is the following correct?
             // Interesting conundrum here:
             // Because WebParam.mode has a default value, it will always return something if the
             // annotation is present.  That value is currently Mode.IN.  However, that default is only
@@ -334,7 +325,6 @@ class ParameterDescriptionImpl
     }
 
     public boolean isHeader() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamHeader();
     }
 

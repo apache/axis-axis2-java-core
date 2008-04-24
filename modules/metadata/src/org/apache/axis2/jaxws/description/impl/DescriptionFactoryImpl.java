@@ -395,17 +395,12 @@ public class DescriptionFactoryImpl {
      * @param serviceImplName
      * @return List<>
      */
+    // TODO: (JLB) Remove unreferenced method
     private static List<DescriptionBuilderComposite> buildRelevantCompositeList(
             List<DescriptionBuilderComposite> compositeList,
             String serviceImplName) {
 
         List<DescriptionBuilderComposite> relevantList = compositeList;
-
-        // TODO: Find the composite which represents this serviceImplName
-
-        // TODO: Go through input list to find composites relevant to this one
-        // and add
-        // to 'relevant list'
 
         return relevantList;
     }

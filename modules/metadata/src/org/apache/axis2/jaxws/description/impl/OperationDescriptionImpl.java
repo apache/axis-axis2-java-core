@@ -96,8 +96,6 @@ import java.util.concurrent.Future;
 //       support overloaded methods in the WSDL; the operations are stored on AxisService as children in a HashMap with the wsdl
 //       operation name as the key.
 
-// TODO: Need tests for all the "default" code paths in the annotation getters.
-// TODO: Need tests for each when annotation is not present where that is allowed by the spec. 
 class OperationDescriptionImpl
         implements OperationDescription, OperationDescriptionJava, OperationDescriptionWSDL {
     private EndpointInterfaceDescription parentEndpointInterfaceDescription;
@@ -140,7 +138,6 @@ class OperationDescriptionImpl
     // annotation is absent, the behavior defined on the Type is used.
     // per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
     private SOAPBinding soapBindingAnnotation;
-    // REVIEW: Should this be using the jaxws annotation values or should that be wrappered?
     private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
     public static final javax.jws.soap.SOAPBinding.Style SoapBinding_Style_VALID =
             javax.jws.soap.SOAPBinding.Style.DOCUMENT;
@@ -200,7 +197,6 @@ class OperationDescriptionImpl
     private Class resultActualTypeClazz;
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
-        // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
         partAttachmentMap = new HashMap<String, AttachmentDescription>();
         setSEIMethod(method);
@@ -300,7 +296,7 @@ class OperationDescriptionImpl
                 newAxisOperation =
                         AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_OUT_IN);
             }
-            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+            //REVIEW: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
             //                                              ROBUST_IN_ONLY
             //      Determine how these MEP's should be handled, if at all
         } catch (Exception e) {
@@ -810,13 +806,10 @@ class OperationDescriptionImpl
         return new QName(determineOperationName(javaMethod));
     }
 
-    //TODO: For now, we are overriding the above method only because it is static, these should
-    //be combined at some point
     public static QName determineOperationQName(MethodDescriptionComposite mdc) {
         return new QName(determineOperationName(mdc));
     }
 
-    //TODO: Deprecate this after we use only DBC objects
     private static String determineOperationName(Method javaMethod) {
 
         String operationName = null;
@@ -856,7 +849,6 @@ class OperationDescriptionImpl
     }
 
     public String getOperationName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebMethodOperationName();
     }
 
@@ -914,7 +906,6 @@ class OperationDescriptionImpl
     }
 
     public String getAction() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebMethodAction();
     }
 
@@ -931,7 +922,6 @@ class OperationDescriptionImpl
     }
 
     public boolean isExcluded() {
-        // REVIEW: WSDL/Annotation merge
         return getAnnoWebMethodExclude();
     }
 
@@ -971,7 +961,6 @@ class OperationDescriptionImpl
     }
 
     public String getRequestWrapperLocalName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperLocalName();
     }
 
@@ -1000,7 +989,6 @@ class OperationDescriptionImpl
     }
 
     public String getRequestWrapperTargetNamespace() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperTargetNamespace();
     }
 
@@ -1029,7 +1017,6 @@ class OperationDescriptionImpl
     }
 
     public String getRequestWrapperClassName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperClassName();
     }
 
@@ -1106,7 +1093,6 @@ class OperationDescriptionImpl
     }
 
     public String getResponseWrapperTargetNamespace() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoResponseWrapperTargetNamespace();
     }
 
@@ -1127,7 +1113,6 @@ class OperationDescriptionImpl
                 responseWrapperTargetNamespace = getAnnoResponseWrapper().targetNamespace();
             } else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
-                // TODO: Implement getting the TNS from the SEI 
                 responseWrapperTargetNamespace =
                         getEndpointInterfaceDescription().getTargetNamespace();
             }
@@ -1136,7 +1121,6 @@ class OperationDescriptionImpl
     }
 
     public String getResponseWrapperClassName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoResponseWrapperClassName();
     }
 
@@ -1226,7 +1210,6 @@ class OperationDescriptionImpl
     }
 
     public String[] getParamNames() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamNames();
     }
 
@@ -1269,7 +1252,6 @@ class OperationDescriptionImpl
             ArrayList<Mode> buildModes = new ArrayList<Mode>();
             ParameterDescription[] paramDescs = getParameterDescriptions();
             for (ParameterDescription currentParamDesc : paramDescs) {
-                // TODO: Consider new ParamDesc.Mode vs WebParam.Mode
                 buildModes.add(((ParameterDescriptionJava)currentParamDesc).getAnnoWebParamMode());
             }
             webParamMode = buildModes.toArray(new Mode[0]);
@@ -1329,7 +1311,6 @@ class OperationDescriptionImpl
     }
 
     public String getResultName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultName();
     }
 
@@ -1355,7 +1336,6 @@ class OperationDescriptionImpl
     }
 
     public String getResultPartName() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultPartName();
     }
 
@@ -1376,7 +1356,6 @@ class OperationDescriptionImpl
     }
 
     public String getResultTargetNamespace() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultTargetNamespace();
     }
 
@@ -1406,7 +1385,6 @@ class OperationDescriptionImpl
     }
 
     public boolean isResultHeader() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultHeader();
     }
 
@@ -1448,7 +1426,6 @@ class OperationDescriptionImpl
     }
 
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingStyle();
     }
 
@@ -1465,7 +1442,6 @@ class OperationDescriptionImpl
     }
 
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingUse();
     }
 
@@ -1482,7 +1458,6 @@ class OperationDescriptionImpl
     }
 
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
-        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingParameterStyle();
     }
 
@@ -1575,7 +1550,6 @@ class OperationDescriptionImpl
     }
 
     public boolean isOneWay() {
-        // REVIEW: WSDL/Anno merge
         return isAnnoOneWay();
     }
 
@@ -1731,7 +1705,6 @@ class OperationDescriptionImpl
             }
         }
         if (methodName != null && returnTypeName != null) {
-            // REVIEW: Not sure the method MUST end with "Async"; I think it can be customized.
             answer = (returnTypeName.contains(Response.class.getName()) ||
                     returnTypeName.contains(Future.class.getName()));
         }
