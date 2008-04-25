@@ -144,7 +144,7 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public String getAttributeType(int i) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     public String getAttributeValue(int i) {
