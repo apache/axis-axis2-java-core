@@ -268,6 +268,14 @@
     </distributionManagement>
     <build>
         <resources>
+          <resource>
+              <directory>../../..</directory>
+              <includes>
+                  <include>NOTICE.txt</include>
+                  <include>LICENSE.txt</include>
+              </includes>
+              <filtering>false</filtering>
+          </resource>
             <resource>
                 <directory>src/main/java</directory>
             </resource>
