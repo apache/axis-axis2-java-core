@@ -42,3 +42,8 @@ Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble 
 Improvements
 ============
 Make this sample run possible with ant 
+
+
+**** WARNING ****
+Please Remove xalan jar from <AXIS2_HOME>/ before you start axis2 server. If you are using this
+sample inside a WAR, please remove xalan jar from WEB-INF/lib
