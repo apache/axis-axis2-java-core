@@ -183,31 +183,6 @@
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 									 target="jar.server"/>
 
-		<echo>Running codegen for eBaySvc WSDL</echo>
-		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -ss -sd -g -u -ssi -t -o target/eBaySvc -uri test-resources/eBaySvc.wsdl"/>
-		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvc"
-									 target="jar.server"/>
-
-		<echo>Running codegen for eBaySvc WSDL Back word compatibiliy</echo>
-		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -ss -sd -g -t -u -ssi -b -s -o target/eBaySvcB -uri test-resources/eBaySvc.wsdl"/>
-		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcB"
-									 target="jar.server"/>
-
-		<echo>Running codegen for eBaySvc WSDL with un wrapping </echo>
-		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-ap -ss -sd -ssi -u -g -t -uw  -o target/eBaySvcUW -uri test-resources/eBaySvc.wsdl"/>
-		</java>
-		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
-									 target="jar.server"/>
-	</target>
-
 	<target name="build-repos" unless="test.skip">
 		<mkdir dir="target/test-resources/samples/modules"/>
 		<mkdir dir="target/test-resources/samples/conf"/>
