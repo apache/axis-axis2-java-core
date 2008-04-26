@@ -60,5 +60,15 @@
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>../..</directory>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 </project>
