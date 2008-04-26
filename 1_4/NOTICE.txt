@@ -16,6 +16,9 @@ This product also includes WS-* schemas developed by International
 Business Machines Corporation, Microsoft Corporation, BEA Systems, 
 TIBCO Software, SAP AG, Sonic Software, and VeriSign
 
+This product also includes a WSDL developed by salesforce.com
+- Copyright 1999-2006 salesforce.com, inc.
+
 Portions of the included xmlbeans library were originally based on the following:
 - software copyright (c) 2000-2003, BEA Systems, <http://www.bea.com/>.
 
