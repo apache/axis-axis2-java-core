@@ -69,6 +69,13 @@
     <build>
         <resources>
             <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
                 <directory>../../..</directory>
                 <includes>
                     <include>NOTICE.txt</include>
