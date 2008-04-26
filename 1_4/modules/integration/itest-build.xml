@@ -182,7 +182,8 @@
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 									 target="jar.server"/>
-
+	</target>
+	
 	<target name="build-repos" unless="test.skip">
 		<mkdir dir="target/test-resources/samples/modules"/>
 		<mkdir dir="target/test-resources/samples/conf"/>
