@@ -102,29 +102,6 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>java14</id>
-            <activation>
-                <jdk>1.4</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <inherited>true</inherited>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*NIOSSL*.java</exclude>
-                                <exclude>**/SSLServerIOEventDispatch.java</exclude>
-                                <exclude>**/SSLClientIOEventDispatch.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>

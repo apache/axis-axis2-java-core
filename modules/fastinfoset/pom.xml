@@ -98,26 +98,6 @@
             <artifactId>neethi</artifactId>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>java14</id>
-            <activation>
-                <jdk>1.4</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun.xml.fastinfoset</groupId>
-                    <artifactId>FastInfoset</artifactId>
-                    <version>${fi.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                    <version>${junit.version-jdk1.4}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -157,8 +137,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.4</source>
-                    <target>1.4</target>
+                    <source>1.5</source>
+                    <target>1.5</target>
                 </configuration>
             </plugin>
             <plugin>
