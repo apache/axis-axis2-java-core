@@ -40,6 +40,8 @@ import org.w3c.dom.Node;
 public class HandlerChainsParser {
 
     private static final String JAVA_EE_NS = "http://java.sun.com/xml/ns/javaee";
+    private static final QName QNAME_HANDLER_CHAINS = new QName(JAVA_EE_NS, "handler-chains");
+    private static final QName QNAME_HANDLER_CHAIN = new QName(JAVA_EE_NS, "handler-chain");
     private static JAXBContext context;
     
     public HandlerChainsType loadHandlerChains(InputStream in) throws Exception {       
@@ -47,7 +49,7 @@ public class HandlerChainsParser {
         Element el = document.getDocumentElement();
         if (!JAVA_EE_NS.equals(el.getNamespaceURI()) ||
             !"handler-chains".equals(el.getLocalName())) {
-                throw new WebServiceException("Unexpected element. Expected handler-chains element");
+                throw new WebServiceException("Unexpected element {" + el.getNamespaceURI() + "}" + el.getLocalName() + ". Expected " + QNAME_HANDLER_CHAINS + " element");
         }
 
         HandlerChainsType handlerChains = new HandlerChainsType();
@@ -57,7 +59,7 @@ public class HandlerChainsParser {
                 el = (Element)node;
                 if (!JAVA_EE_NS.equals(el.getNamespaceURI()) ||
                     !el.getLocalName().equals("handler-chain")) {                
-                    throw new WebServiceException("Unexpected element. Expected handler-chain element.");
+                    throw new WebServiceException("Unexpected element {" + el.getNamespaceURI() + "}" + el.getLocalName() + ". Expected " + QNAME_HANDLER_CHAIN + " element");
                 }
                 handlerChains.getHandlerChain().add(processHandlerChainElement(el));
             }

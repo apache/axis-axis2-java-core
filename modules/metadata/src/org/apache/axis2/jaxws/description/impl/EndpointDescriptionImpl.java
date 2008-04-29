@@ -70,6 +70,7 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.MTOMFeature;
@@ -1356,6 +1357,9 @@ class EndpointDescriptionImpl
                                 }
                         );
 
+                if(log.isDebugEnabled()){
+                    log.debug("Trying to load file " + handlerFileName + " relative to " + className);
+                }
                 InputStream is = DescriptionUtils.openHandlerConfigStream(
                         handlerFileName,
                         className,
