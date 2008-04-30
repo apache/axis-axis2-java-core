@@ -43,10 +43,18 @@
             <directory>../../modules/tool/script</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
-                <include>*</include>
+                <include>*.bat</include>
             </includes>
         </fileSet>
 
+        <fileSet>
+            <directory>../../modules/tool/script</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
 
         <!--********************** creating the conf ********************** -->
         <!-- copy the axis2.xml into conf directoy -->
