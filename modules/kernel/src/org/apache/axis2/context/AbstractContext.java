@@ -41,7 +41,7 @@ public abstract class AbstractContext {
     private static final Log log = LogFactory.getLog(AbstractContext.class);
     
     private static boolean DEBUG_ENABLED = log.isDebugEnabled();
-    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
+    private static boolean DEBUG_PROPERTY_SET = false;
     
     /**
      * Property used to indicate copying of properties is needed by context.
@@ -391,7 +391,7 @@ public abstract class AbstractContext {
      * @param value
      */
     private void debugPropertySet(String key, Object value) {
-        if (DEBUG_ENABLED) {
+        if (DEBUG_PROPERTY_SET) {
             String className = (value == null) ? "null" : value.getClass().getName();
             String classloader = "null";
             if(value != null) {
@@ -412,9 +412,7 @@ public abstract class AbstractContext {
             }
             log.debug("  Value Class = " + className);
             log.debug("  Value Classloader = " + classloader);
-            if (this.DEBUG_CALLSTACK_ON_SET) {
-                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
-            }
+            log.debug(  "Call Stack = " + JavaUtils.callStackToString());
             log.debug("==================");
         }
     }

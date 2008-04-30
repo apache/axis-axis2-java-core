@@ -54,7 +54,7 @@ public class ParameterIncludeImpl
      */
     private static final Log log = LogFactory.getLog(ParameterIncludeImpl.class);
     private static boolean DEBUG_ENABLED = log.isDebugEnabled();
-    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
+    private static boolean DEBUG_PROPERTY_SET = log.isDebugEnabled();
 
     private static final String myClassName = "ParameterIncludeImpl";
 
@@ -289,7 +289,7 @@ public class ParameterIncludeImpl
      * @param value
      */
     private void debugParameterAdd(Parameter parameter) {
-        if (DEBUG_ENABLED) {
+        if (DEBUG_PROPERTY_SET) {
             String key = parameter.getName();
             Object value = parameter.getValue();
             String className = (value == null) ? "null" : value.getClass().getName();
@@ -312,9 +312,7 @@ public class ParameterIncludeImpl
             }
             log.debug("  Value Class = " + className);
             log.debug("  Value Classloader = " + classloader);
-            if (this.DEBUG_CALLSTACK_ON_SET) {
-                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
-            }
+            log.debug(  "Call Stack = " + JavaUtils.callStackToString());
             log.debug("==================");
         }
     }

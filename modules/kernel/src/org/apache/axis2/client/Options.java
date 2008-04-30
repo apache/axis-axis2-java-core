@@ -73,7 +73,7 @@ public class Options implements Externalizable, SafeSerializable {
      */
     private static final Log log = LogFactory.getLog(Options.class);
     private static boolean DEBUG_ENABLED = log.isDebugEnabled();
-    private static boolean DEBUG_CALLSTACK_ON_SET = log.isDebugEnabled();
+    private static boolean DEBUG_PROPERTY_SET = false;
 
     private static final String myClassName = "Options";
 
@@ -1639,7 +1639,7 @@ public class Options implements Externalizable, SafeSerializable {
      * @param value
      */
     private void debugPropertySet(String key, Object value) {
-        if (DEBUG_ENABLED) {
+        if (DEBUG_PROPERTY_SET) {
             String className = (value == null) ? "null" : value.getClass().getName();
             String classloader = "null";
             if(value != null) {
@@ -1661,9 +1661,7 @@ public class Options implements Externalizable, SafeSerializable {
             }
             log.debug("  Value Class = " + className);
             log.debug("  Value Classloader = " + classloader);
-            if (DEBUG_CALLSTACK_ON_SET) {
-                log.debug(  "Call Stack = " + JavaUtils.callStackToString());
-            }
+            log.debug(  "Call Stack = " + JavaUtils.callStackToString());
             log.debug("==================");
         }
     }
