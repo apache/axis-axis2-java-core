@@ -97,6 +97,20 @@ public class AxisInvocationController extends InvocationControllerImpl {
         OperationClient opClient = createOperationClient(svcClient, operationName);
 
         initOperationClient(opClient, request);
+        
+        // Setup the client so that it knows whether the underlying call to
+        // Axis2 knows whether or not to start a listening port for an
+        // asynchronous response.
+        Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
+        if ((useAsyncMep != null && useAsyncMep.booleanValue())
+                || opClient.getOptions().isUseSeparateListener()) {
+            configureAsyncListener(opClient, request.getAxisMessageContext());
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Asynchronous message exchange not enabled.  The invocation will be synchronous.");
+            }
+        }
 
         org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
         org.apache.axis2.context.MessageContext axisResponseMsgCtx = null;
