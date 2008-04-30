@@ -19,44 +19,6 @@
 
 package org.apache.axis2.deployment.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -70,26 +32,8 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.description.AxisBinding;
-import org.apache.axis2.description.AxisBindingMessage;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.description.AxisEndpoint;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.java2wsdl.AnnotationConstants;
-import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
+import org.apache.axis2.description.*;
+import org.apache.axis2.description.java2wsdl.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -101,8 +45,27 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.codehaus.jam.JAnnotation;
-import org.codehaus.jam.JMethod;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class Utils {
 
@@ -269,14 +232,14 @@ public class Utils {
 			Boolean exists = (Boolean) org.apache.axis2.java.security.AccessController
 					.doPrivileged(new PrivilegedAction() {
 						public Object run() {
-							return new Boolean(tempFile.exists());
+							return Boolean.valueOf(tempFile.exists());
 						}
 					});
 			if (!exists.booleanValue()) {
 				Boolean mkdirs = (Boolean) org.apache.axis2.java.security.AccessController
 						.doPrivileged(new PrivilegedAction() {
 							public Object run() {
-								return new Boolean(tempFile.mkdirs());
+								return Boolean.valueOf(tempFile.mkdirs());
 							}
 						});
 				if (!mkdirs.booleanValue()) {
@@ -318,7 +281,7 @@ public class Utils {
 						return null;
 					}
 				});
-		FileOutputStream out = null;
+		FileOutputStream out;
 		try {
 			out = (FileOutputStream) org.apache.axis2.java.security.AccessController
 					.doPrivileged(new PrivilegedExceptionAction() {
@@ -396,7 +359,7 @@ public class Utils {
 		Boolean exists = (Boolean) org.apache.axis2.java.security.AccessController
 				.doPrivileged(new PrivilegedAction() {
 					public Object run() {
-						return new Boolean(libfiles.exists());
+						return Boolean.valueOf(libfiles.exists());
 					}
 				});
 		if (exists.booleanValue()) {
@@ -544,19 +507,19 @@ public class Utils {
 					.setTargetNamespace(schemaGenerator.getTargetNamespace());
 		}
 
-		JMethod[] method = schemaGenerator.getMethods();
+		Method[] method = schemaGenerator.getMethods();
 		PhasesInfo pinfo = axisConfig.getPhasesInfo();
 
 		for (int i = 0; i < method.length; i++) {
-			JMethod jmethod = method[i];
-			String opName = getSimpleName(jmethod);
+			Method jmethod = method[i];
+			String opName = jmethod.getName();
 			AxisOperation operation = axisService
 					.getOperation(new QName(opName));
 			// if the operation there in services.xml then try to set it schema
 			// element name
 			if (operation == null) {
 				operation = axisService.getOperation(new QName(
-						getSimpleName(jmethod)));
+						jmethod.getName()));
 			}
 			MessageReceiver mr = axisService.getMessageReceiver(operation
 					.getMessageExchangePattern());
@@ -576,11 +539,11 @@ public class Utils {
 		}
 	}
 
-	public static AxisOperation getAxisOperationForJmethod(JMethod jmethod)
+	public static AxisOperation getAxisOperationForJmethod(Method method)
 			throws AxisFault {
 		AxisOperation operation;
-		if (jmethod.getReturnType().isVoidType()) {
-			if (jmethod.getExceptionTypes().length > 0) {
+		if ("void".equals(method.getReturnType().getName())) {
+			if (method.getExceptionTypes().length > 0) {
 				operation = AxisOperationFactory
 						.getAxisOperation(WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY);
 			} else {
@@ -591,34 +554,16 @@ public class Utils {
 			operation = AxisOperationFactory
 					.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
 		}
-		String opName = getSimpleName(jmethod);
+		String opName = method.getName();
 		operation.setName(new QName(opName));
-		JAnnotation methodAnnon = jmethod
-				.getAnnotation(AnnotationConstants.WEB_METHOD);
-		if (methodAnnon != null) {
-			String action = methodAnnon.getValue(AnnotationConstants.ACTION)
-					.asString();
+		WebMethod methodAnnon = method.getAnnotation(WebMethod.class);
+        if (methodAnnon != null) {
+			String action = methodAnnon.action();
 			if (action != null && !"".equals(action)) {
 				operation.setSoapAction(action);
 			}
 		}
 		return operation;
-	}
-
-	public static String getSimpleName(JMethod method) {
-		JAnnotation methodAnnon = method
-				.getAnnotation(AnnotationConstants.WEB_METHOD);
-		if (methodAnnon != null) {
-			if (methodAnnon.getValue(AnnotationConstants.OPERATION_NAME) != null) {
-				String methodName = methodAnnon.getValue(
-						AnnotationConstants.OPERATION_NAME).asString();
-				if (methodName.equals("")) {
-					methodName = method.getSimpleName();
-				}
-				return methodName;
-			}
-		}
-		return method.getSimpleName();
 	}
 
 	public static OMElement getParameter(String name, String value,
@@ -991,23 +936,6 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * This will split a bean exclude property values into ArrayList
-	 * 
-	 * @param value :
-	 *            String to be splited
-	 * @return : Arryalist of the splited string
-	 */
-	private static List getArrayFromString(String value) {
-		String values[] = value.split(",");
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < values.length; i++) {
-			String s = values[i];
-			list.add(s);
-		}
-		return list;
-	}
-
 	public static String getShortFileName(String filename) {
 		File file = new File(filename);
 		return file.getName();
@@ -1023,11 +951,10 @@ public class Utils {
 	 * @return String version of the ServiceName according to the JSR 181 spec
 	 */
 	public static String getAnnotatedServiceName(Class serviceClass,
-			JAnnotation serviceAnnotation) {
+			WebService serviceAnnotation) {
 		String serviceName = "";
-		if (serviceAnnotation.getValue(AnnotationConstants.SERVICE_NAME) != null) {
-			serviceName = (serviceAnnotation
-					.getValue(AnnotationConstants.SERVICE_NAME)).asString();
+		if (serviceAnnotation.serviceName() != null) {
+			serviceName = serviceAnnotation.serviceName();
 		}
 		if (serviceName.equals("")) {
 			serviceName = serviceClass.getName();

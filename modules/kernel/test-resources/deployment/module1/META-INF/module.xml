@@ -28,8 +28,13 @@
         <handler name="h6" class="org.apache.axis2.registry.Handler3">
             <order phase="NewPhase"/>
         </handler>
+         <handler name="h10" class="org.apache.axis2.registry.Handler3">
+            <order phaseLast="true" phase="NewPhase"/>
+        </handler>
+        <handler name="h11" class="org.apache.axis2.registry.Handler3">
+            <order after="h6" phase="NewPhase"/>
+        </handler>
     </InFlow>
-
     <OutFlow>
         <handler name="h3" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationOutPhase"/>

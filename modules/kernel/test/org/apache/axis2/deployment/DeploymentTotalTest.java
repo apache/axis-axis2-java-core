@@ -56,7 +56,7 @@ public class DeploymentTotalTest extends TestCase {
             Phase phase = (Phase) inFlow.get(i);
             if (phase.getName().equals("NewPhase")) {
                 assertEquals("Wrong index for NewPhase!", 3, i);
-                assertEquals("Wrong # of handlers in NewPhase", 1, phase.getHandlerCount());
+                assertEquals("Wrong # of handlers in NewPhase", 3, phase.getHandlerCount());
                 Handler h6 = (Handler)phase.getHandlers().get(0);
                 assertTrue("Wrong type for handler", h6 instanceof Handler3);
             }

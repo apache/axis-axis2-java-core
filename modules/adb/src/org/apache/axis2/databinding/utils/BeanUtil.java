@@ -20,11 +20,7 @@
 package org.apache.axis2.databinding.utils;
 
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
@@ -35,16 +31,11 @@ import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.java2wsdl.FieldComparator;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.StreamWrapper;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -53,14 +44,10 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 
 
 public class BeanUtil {
@@ -79,22 +66,6 @@ public class BeanUtil {
                                                 boolean qualified,
                                                 boolean processingDocLitBare) {
         try {
-            JamServiceFactory factory = JamServiceFactory.getInstance();
-            JamServiceParams jam_service_parms = factory.createServiceParams();
-            ClassLoader cl = beanObject.getClass().getClassLoader();
-            if (cl == null)
-                cl = ClassLoader.getSystemClassLoader();
-            jam_service_parms.addClassLoader(cl);
-
-            jam_service_parms.includeClass(beanObject.getClass().getName());
-            JamService service = factory.createService(jam_service_parms);
-            JamClassIterator jClassIter = service.getClasses();
-            JClass jClass;
-            if (jClassIter.hasNext()) {
-                jClass = (JClass)jClassIter.next();
-            } else {
-                throw new AxisFault("No service class found , exception from JAM");
-            }
             QName elemntNameSpace = null;
             if (typeTable != null && qualified) {
                 QName qNamefortheType =
@@ -109,50 +80,51 @@ public class BeanUtil {
                 }
 
                 elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
-                                            "elementName");
+                        "elementName");
             }
             AxisService axisService = null;
             if (MessageContext.getCurrentMessageContext() != null) {
                 axisService = MessageContext.getCurrentMessageContext().getAxisService();
             }
             BeanExcludeInfo beanExcludeInfo = null;
+            Class beanClass = beanObject.getClass();
             if (axisService != null && axisService.getExcludeInfo() != null) {
                 beanExcludeInfo = axisService.getExcludeInfo().getBeanExcludeInfoForClass(
-                        jClass.getQualifiedName());
+                        beanClass.getName());
             }
             // properties from JAM
             ArrayList propertyList = new ArrayList();
-            JProperty properties [] = jClass.getDeclaredProperties();
+            Field properties [] = beanClass.getDeclaredFields();
             for (int i = 0; i < properties.length; i++) {
-                JProperty property = properties[i];
-                String propertyName = getCorrectName(property.getSimpleName());
+                Field property = properties[i];
+                String propertyName = property.getName();
                 if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
                     propertyList.add(property);
                 }
 
             }
-            JClass supClass = jClass.getSuperclass();
-            while (!supClass.getQualifiedName().startsWith("java.")) {
-                properties = supClass.getDeclaredProperties();
+            Class supClass = beanClass.getSuperclass();
+            while (!getQualifiedName(supClass.getPackage()).startsWith("java.")) {
+                properties = supClass.getDeclaredFields();
                 ExcludeInfo excludeInfo = axisService.getExcludeInfo();
                 if (excludeInfo != null) {
-                    beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getQualifiedName());
+                    beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getName());
                 }
                 for (int i = 0; i < properties.length; i++) {
-                    JProperty property = properties[i];
-                    String propertyName = getCorrectName(property.getSimpleName());
+                    Field property = properties[i];
+                    String propertyName = property.getName();
                     if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
                         propertyList.add(property);
                     }
                 }
                 supClass = supClass.getSuperclass();
             }
-            properties = new JProperty[propertyList.size()];
+            properties = new Field[propertyList.size()];
             for (int i = 0; i < propertyList.size(); i++) {
-                JProperty jProperty = (JProperty)propertyList.get(i);
+                Field jProperty = (Field)propertyList.get(i);
                 properties[i] = jProperty;
             }
-            Arrays.sort(properties);
+            Arrays.sort(properties , new FieldComparator());
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             HashMap propertMap = new HashMap();
@@ -165,14 +137,9 @@ public class BeanUtil {
             }
             ArrayList object = new ArrayList();
             for (int i = 0; i < properties.length; i++) {
-                JProperty property = properties[i];
-                PropertyDescriptor propDesc = (PropertyDescriptor)propertMap.get(
-                        getCorrectName(property.getSimpleName()));
+                Field property = properties[i];
+                PropertyDescriptor propDesc = (PropertyDescriptor)propertMap.get(property.getName());
                 if (propDesc == null) {
-                    propDesc = (PropertyDescriptor)propertMap.get(
-                        (property.getSimpleName()));
-                }
-                 if (propDesc == null) {
                     continue;
                 }
                 Class ptype = propDesc.getPropertyType();
@@ -183,9 +150,7 @@ public class BeanUtil {
                     Method readMethod = propDesc.getReadMethod();
                     Object value;
                     if(readMethod!=null){
-                        if (property.getGetter() !=null && property.getGetter().isPublic()){
-                            readMethod.setAccessible(true);
-                        }
+                        readMethod.setAccessible(true);
                         value = readMethod.invoke(beanObject, null);
                     } else {
                         throw new AxisFault("can not find read method for : "  + propDesc.getName());
@@ -198,9 +163,7 @@ public class BeanUtil {
                         Method readMethod = propDesc.getReadMethod();
                         Object value;
                         if(readMethod!=null){
-                            if (property.getGetter() !=null && property.getGetter().isPublic()){
-                                readMethod.setAccessible(true);
-                            }
+                            readMethod.setAccessible(true);
                             value = readMethod.invoke(beanObject,null);
                         } else {
                             throw new AxisFault("can not find read method for : "  + propDesc.getName());
@@ -225,9 +188,7 @@ public class BeanUtil {
                         Method readMethod = propDesc.getReadMethod();
                         Object value [] = null;
                         if(readMethod!=null){
-                            if (property.getGetter() !=null && property.getGetter().isPublic()){
-                                readMethod.setAccessible(true);
-                            }
+                            readMethod.setAccessible(true);
                             value = (Object[])propDesc.getReadMethod().invoke(beanObject,
                                     null);
                         }
@@ -245,11 +206,9 @@ public class BeanUtil {
                     }
                 } else if (SimpleTypeMapper.isCollection(ptype)) {
                     Method readMethod = propDesc.getReadMethod();
-                    if (property.getGetter() !=null && property.getGetter().isPublic()){
-                        readMethod.setAccessible(true);
-                    }
+                    readMethod.setAccessible(true);
                     Object value = readMethod.invoke(beanObject,
-                                                                   null);
+                            null);
                     Collection objList = (Collection)value;
                     if (objList != null && objList.size() > 0) {
                         //this was given error , when the array.size = 0
@@ -273,9 +232,7 @@ public class BeanUtil {
                 } else {
                     addTypeQname(elemntNameSpace, object, propDesc, beanName,processingDocLitBare);
                     Method readMethod = propDesc.getReadMethod();
-                    if (property.getGetter() !=null && property.getGetter().isPublic()){
-                        readMethod.setAccessible(true);
-                    }
+                    readMethod.setAccessible(true);
                     Object value = readMethod.invoke(beanObject,
                             null);
                     if ("java.lang.Object".equals(ptype.getName())){
@@ -291,7 +248,7 @@ public class BeanUtil {
                     object.add(value);
                 }
             }
-             // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to 
+            // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to
             // support polymorphism in POJO approach.
             // For some reason, using QName(Constants.XSI_NAMESPACE, "type", "xsi") does not generate
             // an xsi:type attribtue properly for inner objects. So just using a simple QName("type").
@@ -299,7 +256,7 @@ public class BeanUtil {
             objectAttributes.add(new QName("type"));
             objectAttributes.add(beanObject.getClass().getName());
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), objectAttributes.toArray(),
-                                              typeTable, qualified);
+                    typeTable, qualified);
 
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
@@ -319,7 +276,7 @@ public class BeanUtil {
                                      boolean processingDocLitBare) {
         if (elemntNameSpace != null) {
             object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                   getCorrectName(propDesc.getName()) , elemntNameSpace.getPrefix()));
+                    getCorrectName(propDesc.getName()) , elemntNameSpace.getPrefix()));
         } else {
             if(processingDocLitBare){
                 object.add(new QName(getCorrectName(propDesc.getName())));
@@ -341,7 +298,7 @@ public class BeanUtil {
         String className = beanObject.getClass().getName();
         if (className.indexOf(".") > 0) {
             className = className.substring(className.lastIndexOf('.') + 1,
-                                            className.length());
+                    className.length());
         }
         return getPullParser(beanObject, new QName(className), null, false, false);
     }
@@ -600,12 +557,12 @@ public class BeanUtil {
             currentLocalName = omElement.getLocalName();
             classType = (Class)javaTypes[count];
             omElement = ProcessElement(classType, omElement, helper, parts,
-                                       currentLocalName, retObjs, count, objectSupplier);
+                    currentLocalName, retObjs, count, objectSupplier);
             while (omElement != null) {
                 count ++;
                 omElement = ProcessElement((Class)javaTypes[count], omElement,
-                                           helper, parts, omElement.getLocalName(), retObjs, count,
-                                           objectSupplier);
+                        helper, parts, omElement.getLocalName(), retObjs, count,
+                        objectSupplier);
             }
             count ++;
         }
@@ -639,7 +596,7 @@ public class BeanUtil {
                 return null;
             } else {
                 valueList.add(processObject(omElement, arrayClassType, helper, true,
-                                            objectSupplier));
+                        objectSupplier));
             }
             while (parts.hasNext()) {
                 objValue = parts.next();
@@ -653,7 +610,7 @@ public class BeanUtil {
                     break;
                 }
                 Object o = processObject(omElement, arrayClassType,
-                                         helper, true, objectSupplier);
+                        helper, true, objectSupplier);
                 valueList.add(o);
             }
             if(valueList.get(0)==null){
@@ -871,6 +828,14 @@ public class BeanUtil {
                     + wrongName.substring(1, wrongName.length());
         } else {
             return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
+        }
+    }
+
+    private static String getQualifiedName(Package packagez) {
+        if (packagez != null) {
+            return packagez.getName();
+        } else {
+            return "";
         }
     }
 

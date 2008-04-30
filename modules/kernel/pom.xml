@@ -34,6 +34,11 @@
     </description>
     <dependencies>
         <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jws-api</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
@@ -94,10 +99,6 @@
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>annogen</groupId>
-            <artifactId>annogen</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -164,7 +165,7 @@
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
                         <exclude>**/*Util*.java</exclude>
-                        <exclude>**/*PhaseResolvingTest.java</exclude>
+                        <exclude>**/*MessageContextChangeTest.java</exclude>
                         <exclude>**/MessageContextChangeTest.java</exclude> <!-- Removed because of problem on Java5. Needs reinstated -->
                     </excludes>
                     <includes>

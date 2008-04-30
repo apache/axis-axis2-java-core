@@ -28,20 +28,14 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.java2wsdl.AnnotationConstants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jam.JAnnotation;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
 
+import javax.jws.WebService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
@@ -72,56 +66,43 @@ public class POJODeployer implements Deployer {
             if ("class".equals(extension)) {
                 File file = deploymentFileData.getFile();
                 File parentFile = file.getParentFile();
-                if (file != null) {
-                    ClassLoader classLoader =
-                            Utils.getClassLoader(configCtx.getAxisConfiguration().
-                                    getSystemClassLoader(), parentFile);
+                ClassLoader classLoader =
+                        Utils.getClassLoader(configCtx.getAxisConfiguration().
+                                getSystemClassLoader(), parentFile);
 
-                    Thread.currentThread().setContextClassLoader(classLoader);
-                    String className = file.getName();
-                    className = className.replaceAll(".class", "");
+                Thread.currentThread().setContextClassLoader(classLoader);
+                String className = file.getName();
+                className = className.replaceAll(".class", "");
+                Class clazz = Class.forName(className);
+                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
+                        className,
+                        deploymentFileData.getFile().getAbsolutePath()));
 
-                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
-                                                 className,
-                                                 deploymentFileData.getFile().getAbsolutePath()));
 
-                    JamServiceFactory factory = JamServiceFactory.getInstance();
-                    JamServiceParams jamServiceParams = factory.createServiceParams();
-                    jamServiceParams.addClassLoader(classLoader);
-                    jamServiceParams.includeClass(className);
-                    JamService service = factory.createService(jamServiceParams);
-                    JamClassIterator jClassIter = service.getClasses();
-                    while (jClassIter.hasNext()) {
-                        JClass jclass = (JClass) jClassIter.next();
-                        if (jclass.getQualifiedName().equals(className)) {
-                            /**
-                             * Schema genertaion done in two stage 1. Load all the methods and
-                             * create type for methods parameters (if the parameters are Bean
-                             * then it will create Complex types for those , and if the
-                             * parameters are simple type which decribe in SimpleTypeTable
-                             * nothing will happen) 2. In the next stage for all the methods
-                             * messages and port types will be creteated
-                             */
-                            JAnnotation annotation =
-                                    jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
-                            if (annotation != null) {
-                                // try to see whether JAX-WS jars in the class path , if so use them
-                                // to process annotated pojo else use annogen to process the pojo class
-                                AxisService axisService;
-                                axisService =
-                                        createAxisService(classLoader,
-                                                          className,
-                                                          deploymentFileData.getFile().toURL());
-                                configCtx.getAxisConfiguration().addService(axisService);
-                            } else {
-                                AxisService axisService =
-                                        createAxisServiceUsingAnnogen(className,
-                                                                      classLoader,
-                                                                      deploymentFileData.getFile().toURL());
-                                configCtx.getAxisConfiguration().addService(axisService);
-                            }
-                        }
-                    }
+                /**
+                 * Schema genertaion done in two stage 1. Load all the methods and
+                 * create type for methods parameters (if the parameters are Bean
+                 * then it will create Complex types for those , and if the
+                 * parameters are simple type which decribe in SimpleTypeTable
+                 * nothing will happen) 2. In the next stage for all the methods
+                 * messages and port types will be creteated
+                 */
+                WebService annotation = (WebService) clazz.getAnnotation(WebService.class);
+                if (annotation != null) {
+                    // try to see whether JAX-WS jars in the class path , if so use them
+                    // to process annotated pojo else use annogen to process the pojo class
+                    AxisService axisService;
+                    axisService =
+                            createAxisService(classLoader,
+                                    className,
+                                    deploymentFileData.getFile().toURL());
+                    configCtx.getAxisConfiguration().addService(axisService);
+                } else {
+                    AxisService axisService =
+                            createAxisServiceUsingAnnogen(className,
+                                    classLoader,
+                                    deploymentFileData.getFile().toURL());
+                    configCtx.getAxisConfiguration().addService(axisService);
                 }
 
             } else if ("jar".equals(extension)) {
@@ -171,39 +152,27 @@ public class POJODeployer implements Deployer {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
-                    JamServiceFactory factory = JamServiceFactory.getInstance();
-                    JamServiceParams jamServiceParams = factory.createServiceParams();
-                    jamServiceParams.addClassLoader(classLoader);
-                    jamServiceParams.includeClass(className);
-                    JamService service = factory.createService(jamServiceParams);
-                    JamClassIterator jClassIter = service.getClasses();
-                    while (jClassIter.hasNext()) {
-                        JClass jclass = (JClass) jClassIter.next();
-                        if (jclass.getQualifiedName().equals(className)) {
-                            /**
-                             * Schema generation done in two stage 1. Load all the methods and
-                             * create type for methods parameters (if the parameters are Bean
-                             * then it will create Complex types for those , and if the
-                             * parameters are simple type which decribe in SimpleTypeTable
-                             * nothing will happen) 2. In the next stage for all the methods
-                             * messages and port types will be creteated
-                             */
-                            JAnnotation annotation =
-                                    jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
-                            if(annotation == null) {
-                                annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE_PROVIDER);
-                            }
-                            if (annotation != null) {
-                                AxisService axisService;
-                                axisService =
-                                        createAxisService(classLoader,
-                                                          className,
-                                                          deploymentFileData.getFile().toURL());
-                                axisServiceList.add(axisService);
-                            }
-                        }
+                    Class clazz = Class.forName(className);
+
+                    /**
+                     * Schema generation done in two stage 1. Load all the methods and
+                     * create type for methods parameters (if the parameters are Bean
+                     * then it will create Complex types for those , and if the
+                     * parameters are simple type which decribe in SimpleTypeTable
+                     * nothing will happen) 2. In the next stage for all the methods
+                     * messages and port types will be creteated
+                     */
+                    WebService annotation = (WebService) clazz.getAnnotation(WebService.class);
+                    if (annotation != null) {
+                        AxisService axisService;
+                        axisService =
+                                createAxisService(classLoader,
+                                        className,
+                                        deploymentFileData.getFile().toURL());
+                        axisServiceList.add(axisService);
                     }
                 }
+
                 if (axisServiceList.size() > 0) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     serviceGroup.setServiceGroupName(deploymentFileData.getName());
@@ -214,15 +183,15 @@ public class POJODeployer implements Deployer {
                     configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
                 } else {
                     String msg = "Error:\n No annotated classes found in the jar: " +
-                                 deploymentFileData.getFile().getName() +
-                                 ". Service deployment failed.";
+                            deploymentFileData.getFile().getName() +
+                            ". Service deployment failed.";
                     log.error(msg);
                     configCtx.getAxisConfiguration().getFaultyServices().
                             put(deploymentFileData.getFile().getAbsolutePath(), msg);
                 }
             }
         } catch (Exception e) {
-             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,e.getMessage()),e);
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,e.getMessage()),e);
             storeFaultyService(deploymentFileData, e);
         } catch (Throwable t) {
             log.debug(Messages.getMessage(DeploymentErrorMsgs.STORING_FAULTY_SERVICE,t.getMessage()),t);
@@ -246,9 +215,9 @@ public class POJODeployer implements Deployer {
     private AxisService createAxisService(ClassLoader classLoader,
                                           String className,
                                           URL serviceLocation) throws ClassNotFoundException,
-                                                                      InstantiationException,
-                                                                      IllegalAccessException,
-                                                                      AxisFault {
+            InstantiationException,
+            IllegalAccessException,
+            AxisFault {
         AxisService axisService;
         try {
             Class claxx = Class.forName(
@@ -280,9 +249,9 @@ public class POJODeployer implements Deployer {
             axisService.setElementFormDefault(false);
             axisService.setFileName(serviceLocation);
             Utils.fillAxisService(axisService,
-                                  configCtx.getAxisConfiguration(),
-                                  new ArrayList(),
-                                  new ArrayList());
+                    configCtx.getAxisConfiguration(),
+                    new ArrayList(),
+                    new ArrayList());
             //Not needed at this case, the message receivers always set to RPC if this executes
             //setMessageReceivers(axisService);
             
@@ -299,30 +268,30 @@ public class POJODeployer implements Deployer {
                                                       ClassLoader classLoader,
                                                       URL serviceLocation)
             throws ClassNotFoundException,
-                   InstantiationException,
-                   IllegalAccessException,
-                   AxisFault {
+            InstantiationException,
+            IllegalAccessException,
+            AxisFault {
         HashMap messageReciverMap = new HashMap();
         Class inOnlyMessageReceiver = Loader.loadClass(
                 "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
         MessageReceiver messageReceiver =
                 (MessageReceiver) inOnlyMessageReceiver.newInstance();
         messageReciverMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
-                              messageReceiver);
+                messageReceiver);
         Class inoutMessageReceiver = Loader.loadClass(
                 "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         MessageReceiver inOutmessageReceiver =
                 (MessageReceiver) inoutMessageReceiver.newInstance();
         messageReciverMap.put(WSDL2Constants.MEP_URI_IN_OUT,
-                              inOutmessageReceiver);
+                inOutmessageReceiver);
         messageReciverMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
-                              inOutmessageReceiver);
+                inOutmessageReceiver);
         AxisService axisService =
                 AxisService.createService(className,
-                                          configCtx.getAxisConfiguration(),
-                                          messageReciverMap,
-                                          null, null,
-                                          classLoader);
+                        configCtx.getAxisConfiguration(),
+                        messageReciverMap,
+                        null, null,
+                        classLoader);
         axisService.setFileName(serviceLocation);
         return axisService;
     }
@@ -335,8 +304,8 @@ public class POJODeployer implements Deployer {
             if (MEP != null) {
                 try {
                     if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
-                        || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)
-                        || WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)) {
+                            || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)
+                            || WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)) {
                         Class inOnlyMessageReceiver = Loader.loadClass(
                                 "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
                         MessageReceiver messageReceiver =
@@ -375,7 +344,7 @@ public class POJODeployer implements Deployer {
                         configCtx.getAxisConfiguration().removeServiceGroup(className);
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                             fileName));
+                        fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,axisFault.getMessage()),axisFault);
@@ -387,7 +356,7 @@ public class POJODeployer implements Deployer {
                         configCtx.getAxisConfiguration().removeServiceGroup(fileName);
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                             fileName));
+                        fileName));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,axisFault.getMessage()),axisFault);

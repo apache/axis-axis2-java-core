@@ -94,10 +94,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>annogen</groupId>
-            <artifactId>annogen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>

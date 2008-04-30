@@ -217,7 +217,7 @@
             <xs:complexType name="Person">
                 <xs:sequence>
                     <xs:element minOccurs="0" name="age" nillable="true" type="xs:double"/>
-                    <xs:element minOccurs="0" name="iD" nillable="true" type="xs:float"/>
+                    <xs:element minOccurs="0" name="id" nillable="true" type="xs:float"/>
 
                     <xs:element minOccurs="0" name="male" nillable="true" type="xs:boolean"/>
                     <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>

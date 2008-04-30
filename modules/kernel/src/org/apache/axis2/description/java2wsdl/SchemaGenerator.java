@@ -20,8 +20,8 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.description.AxisService;
-import org.codehaus.jam.JMethod;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -33,7 +33,7 @@ public interface SchemaGenerator {
 
     TypeTable getTypeTable();
 
-    JMethod[] getMethods();
+    Method[] getMethods();
 
     void setExcludeMethods(ArrayList excludeMethods);
 

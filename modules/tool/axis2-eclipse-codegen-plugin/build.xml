@@ -55,7 +55,7 @@
     <!--Filter tockens for the copy command to filter the versions of external dependencies -->
      <filter token="version_number" value="${version_number}" />
      <filter token="activation.version" value="${activation.version}" />
-     <filter token="annogen.version" value="${annogen.version}" />
+
      <filter token="ant.version" value="${ant.version}" />
      <filter token="axiom.version" value="${axiom.version}" />
      <filter token="commons.logging.version" value="${commons.logging.version}" />
@@ -75,7 +75,7 @@
      <!--Codegen wizard libraries -->
      <fileset id="codegen.libs" dir="${axis2.lib.dir}">
  		<include name="activation-${activation.version}.jar" />
- 		<include name="annogen-${annogen.version}.jar" />
+
 		<include name="ant-${ant.version}.jar" />
 		<include name="axiom-api-${axiom.version}.jar" />
 		<include name="axiom-dom-${axiom.version}.jar" />

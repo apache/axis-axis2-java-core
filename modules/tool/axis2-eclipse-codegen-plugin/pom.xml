@@ -146,12 +146,7 @@
             <artifactId>geronimo-javamail_1.4_spec</artifactId>
             <version>${geronimo.spec.javamail.version}</version>
         </dependency>
-        <dependency>
-            <groupId>annogen</groupId>
-            <artifactId>annogen</artifactId>
-            <version>${annogen.version}</version>
-        </dependency>
-        <dependency>
+       <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>${commons.logging.version}</version>

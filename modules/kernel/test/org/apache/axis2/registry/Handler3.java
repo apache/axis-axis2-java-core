@@ -29,15 +29,11 @@ import org.apache.commons.logging.LogFactory;
 public class Handler3 extends AbstractHandler implements Handler {
     private static final Log log = LogFactory.getLog(Handler3 .class);
     private String message;
-    private String name;
 
     public Handler3() {
         this.message = "inside Module 1";
     }
 
-    public String getName() {
-        return name;
-    }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + message + " Handler Running :)");
@@ -48,9 +44,7 @@ public class Handler3 extends AbstractHandler implements Handler {
         log.info("I am " + message + " Handler Running :)");
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+
 
 }
 

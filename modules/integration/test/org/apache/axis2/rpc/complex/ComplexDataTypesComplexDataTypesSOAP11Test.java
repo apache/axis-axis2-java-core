@@ -236,7 +236,7 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
 
         Person input = new Person();
         input.setAge(23);
-        input.setID(345);
+        input.setId(345);
         input.setMale(false);
         input.setName("Why?");
         assertNotNull(stub.retStructSN(input));
@@ -253,7 +253,7 @@ public class ComplexDataTypesComplexDataTypesSOAP11Test extends UtilServerBasedT
         ArrayOfPerson input = new ArrayOfPerson();
         Person p1 = new Person();
         p1.setAge(34);
-        p1.setID(2345);
+        p1.setId(2345);
         p1.setMale(true);
         p1.setName("HJHJH");
         input.setPerson(new Person[]{p1});

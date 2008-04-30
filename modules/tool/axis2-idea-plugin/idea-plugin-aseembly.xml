@@ -36,7 +36,6 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>annogen:annogen:jar</include>
                 <include>org.apache.ws.commons.axiom:axiom-api:jar</include>
                 <include>org.apache.ws.commons.axiom:axiom-dom:jar</include>
                 <include>org.apache.ws.commons.axiom:axiom-impl:jar</include>                

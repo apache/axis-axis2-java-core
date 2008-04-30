@@ -52,18 +52,19 @@ public class Person {
      * @return possible object is
      *         {@link Float }
      */
-    public Float getID() {
+    public Float getId() {
         return id;
     }
 
     /**
      * Sets the value of the id property.
      *
-     * @param value allowed object is
      *              {@link Float }
      */
-    public void setID(Float value) {
-        this.id = value;
+
+
+    public void setId(Float id) {
+        this.id = id;
     }
 
     /**

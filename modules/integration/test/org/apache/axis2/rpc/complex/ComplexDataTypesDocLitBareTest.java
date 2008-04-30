@@ -232,7 +232,7 @@ public class ComplexDataTypesDocLitBareTest extends
 
         ComplexDataTypesDocLitBareStub.Person input = new ComplexDataTypesDocLitBareStub.Person();
         input.setAge(23);
-        input.setID(345);
+        input.setId(345);
         input.setMale(false);
         input.setName("Why?");
         req.setInStructSN(input);
@@ -252,7 +252,7 @@ public class ComplexDataTypesDocLitBareTest extends
         ComplexDataTypesDocLitBareStub.ArrayOfPerson input = new ComplexDataTypesDocLitBareStub.ArrayOfPerson();
         ComplexDataTypesDocLitBareStub.Person p1 = new ComplexDataTypesDocLitBareStub.Person();
         p1.setAge(34);
-        p1.setID(2345);
+        p1.setId(2345);
         p1.setMale(true);
         p1.setName("HJHJH");
         input.setPerson(new ComplexDataTypesDocLitBareStub.Person[]{p1});

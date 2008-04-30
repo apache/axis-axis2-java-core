@@ -109,12 +109,7 @@
             <artifactId>geronimo-activation_1.1_spec</artifactId>
             <version>1.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>annogen</groupId>
-            <artifactId>annogen</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-    </dependencies>
+       </dependencies>
 
     <build>
         <plugins>

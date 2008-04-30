@@ -150,10 +150,6 @@
             <artifactId>jaxen</artifactId>
         </dependency>
         <dependency>
-            <groupId>annogen</groupId>
-            <artifactId>annogen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>

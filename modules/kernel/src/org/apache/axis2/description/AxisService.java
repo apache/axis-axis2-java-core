@@ -29,30 +29,13 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.dataretrieval.AxisDataLocator;
-import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
-import org.apache.axis2.dataretrieval.DRConstants;
-import org.apache.axis2.dataretrieval.Data;
-import org.apache.axis2.dataretrieval.DataRetrievalException;
-import org.apache.axis2.dataretrieval.DataRetrievalRequest;
-import org.apache.axis2.dataretrieval.LocatorType;
-import org.apache.axis2.dataretrieval.OutputForm;
-import org.apache.axis2.dataretrieval.SchemaSupplier;
-import org.apache.axis2.dataretrieval.WSDLSupplier;
+import org.apache.axis2.dataretrieval.*;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.DocLitBareSchemaGenerator;
-import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
-import org.apache.axis2.description.java2wsdl.SchemaGenerator;
-import org.apache.axis2.description.java2wsdl.TypeTable;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DefaultObjectSupplier;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ObjectSupplier;
-import org.apache.axis2.engine.ServiceLifeCycle;
+import org.apache.axis2.description.java2wsdl.*;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
@@ -71,20 +54,10 @@ import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
-import org.codehaus.jam.JMethod;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Import;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.Types;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -94,26 +67,12 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
+import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -2279,12 +2238,12 @@ public class AxisService extends AxisDescription {
 		if (targetNamespace != null && !"".equals(targetNamespace)) {
 			axisService.setTargetNamespace(targetNamespace);
 		}
-		JMethod[] method = schemaGenerator.getMethods();
+		Method[] method = schemaGenerator.getMethods();
 		PhasesInfo pinfo = axisConfiguration.getPhasesInfo();
 		for (int i = 0; i < method.length; i++) {
-			JMethod jmethod = method[i];
+			Method jmethod = method[i];
 			AxisOperation operation = axisService.getOperation(new QName(
-					jmethod.getSimpleName()));
+					jmethod.getName()));
 			String mep = operation.getMessageExchangePattern();
 			MessageReceiver mr;
 			if (messageReceiverClassMap != null) {

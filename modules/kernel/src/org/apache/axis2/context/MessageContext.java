@@ -1187,7 +1187,7 @@ public class MessageContext extends AbstractContext
         // If there is an attachment map, the Attachments keep track
         // of the inbound content length.
         if (attachments != null) {
-            return attachments.getContentLength();
+//            return attachments.getContentLength();
         } 
         
         // Otherwise the length is accumulated by the DetachableInputStream.

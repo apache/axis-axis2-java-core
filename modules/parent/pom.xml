@@ -89,7 +89,6 @@
         <ping.mar.version>SNAPSHOT</ping.mar.version>
         <scripting.mar.version>SNAPSHOT</scripting.mar.version>
 
-        <annogen.version>0.1.0</annogen.version>
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
         <axiom.version>SNAPSHOT</axiom.version>
@@ -725,11 +724,6 @@
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
                 <version>${jaxen.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>annogen</groupId>
-                <artifactId>annogen</artifactId>
-                <version>${annogen.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-httpclient</groupId>

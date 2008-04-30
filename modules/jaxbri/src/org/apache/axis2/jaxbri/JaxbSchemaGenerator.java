@@ -67,7 +67,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
      */
     public void generateSchemaForParameters() throws Exception {
         Set<Class<?>> classes = new HashSet<Class<?>>();
-        classes.addAll(processMethods(serviceClass.getMethods()));
+        classes.addAll(processJaxBeMethods(serviceClass.getMethods()));
 
         if (extraClasses != null) {
             for (Object extraClass : extraClasses) {
@@ -127,7 +127,7 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     }
 
 
-    protected List<Class<?>> processMethods(Method[] declaredMethods) throws Exception {
+    protected List<Class<?>> processJaxBeMethods(Method[] declaredMethods) throws Exception {
         List<Class<?>> list = new ArrayList<Class<?>>();
 
         for (int i = 0; i < declaredMethods.length; i++) {
