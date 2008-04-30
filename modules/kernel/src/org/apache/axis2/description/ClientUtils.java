@@ -75,7 +75,7 @@ public class ClientUtils {
             String uri = epr.getAddress();
             int index = uri.indexOf(':');
             String transport = (index > 0) ? uri.substring(0, index) : null;
-            if (transport != null) {
+            if (transport != null && ac.getTransportOut(transport) != null) {
                 return ac.getTransportOut(transport);
             } else {
                 log.error(Messages.getMessage("cannotInferTransport", uri));
