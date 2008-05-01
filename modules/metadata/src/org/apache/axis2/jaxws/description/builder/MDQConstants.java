@@ -52,6 +52,8 @@ public class MDQConstants {
     public static final String CLIENT_SERVICE_CLASS = "CLIENT_SERVICE_CLASS";
     public static final String CLIENT_SEI_CLASS = "CLIENT_SEI_CLASS";
     
+    public static final String HANDLER_CHAIN_DECLARING_CLASS = "HANDLER_CHAIN_DECLARING_CLASS";
+    
     //Represent SOAP/JMS Bindings
     //REVIEW: SOAP-JMS may be using the same NS for SOAP11 and SOAP12, 
     //  if so we could remove some duplicate values below

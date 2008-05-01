@@ -1758,10 +1758,12 @@ class ServiceDescriptionImpl
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getHandlerChain(java.lang.Object)
      */
     public HandlerChainsType getHandlerChain(Object sparseCompositeKey) {
+        DescriptionBuilderComposite sparseComposite = null;
+
         // If there is a HandlerChainsType in the sparse composite for this ServiceDelegate
         // (i.e. this sparseCompositeKey), then return that.
         if (sparseCompositeKey != null) {
-            DescriptionBuilderComposite sparseComposite = composite.getSparseComposite(sparseCompositeKey);
+            sparseComposite = composite.getSparseComposite(sparseCompositeKey);
             if (sparseComposite != null && sparseComposite.getHandlerChainsType() != null) {
                 return sparseComposite.getHandlerChainsType();
             }
@@ -1771,7 +1773,7 @@ class ServiceDescriptionImpl
         // on the HandlerChain annotation if it is present.
         if (handlerChainsType == null) {
 
-            getAnnoHandlerChainAnnotation();
+            getAnnoHandlerChainAnnotation(sparseCompositeKey);
             if (handlerChainAnnotation != null) {
 
                 String handlerFileName = handlerChainAnnotation.file();
@@ -1789,9 +1791,24 @@ class ServiceDescriptionImpl
                         DescriptionUtils.openHandlerConfigStream(handlerFileName,
                                                                  className,
                                                                  classLoader);
+                if (is == null) {
+                    // config stream is still null.  This may mean the @HandlerChain annotation is on a *driver* class
+                    // next to a @WebServiceRef annotation, so the path is relative to the class declaring @HandlerChain
+                    // and NOT relative to the Service or Endpoint class, which also means we should use the sparseComposite
+                    // since that is where the @HandlerChain annotation info would have been loaded.
+                    if (sparseComposite != null) {
+                        String handlerChainDeclaringClass = (String)sparseComposite.getProperties().get(MDQConstants.HANDLER_CHAIN_DECLARING_CLASS);
+                        if (handlerChainDeclaringClass != null) {
+                            className = handlerChainDeclaringClass;
+                            is = DescriptionUtils.openHandlerConfigStream(handlerFileName, className, classLoader);
+                        }
+                    }
+                }
 
                 if(is == null) {
-                    log.warn("Unable to load handlers from file: " + handlerFileName);
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS",
+                            handlerFileName, className));
+
                 }
                 else {
                     handlerChainsType =
@@ -1808,12 +1825,20 @@ class ServiceDescriptionImpl
      * This is a client side only method. The generated service class may contain 
      * handler chain annotations
      */
-    public HandlerChain getAnnoHandlerChainAnnotation() {
+    public HandlerChain getAnnoHandlerChainAnnotation(Object sparseCompositeKey) {
         if (this.handlerChainAnnotation == null) {
             Class serviceClass = composite.getCorrespondingClass();
                 if (serviceClass != null) {
                     handlerChainAnnotation =
                             (HandlerChain) getAnnotation(serviceClass, HandlerChain.class);
+            }
+        }
+	if (handlerChainAnnotation == null) {
+            if (sparseCompositeKey != null) {
+                DescriptionBuilderComposite sparseComposite = composite.getSparseComposite(sparseCompositeKey);
+                if (sparseComposite != null && sparseComposite.getHandlerChainAnnot() != null) {
+                    handlerChainAnnotation = sparseComposite.getHandlerChainAnnot();
+                }
             }
         }
 

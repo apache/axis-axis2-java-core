@@ -270,7 +270,7 @@ public class DescriptionUtils {
         }
         if (configStream == null) {
             if (log.isDebugEnabled()) {
-                log.debug("@HandlerChain.file attribute referes to a relative location: "
+                log.debug("@HandlerChain.file attribute refers to a relative location: "
                         + configFile);
             }
             className = className.replace(".", "/");
@@ -285,7 +285,7 @@ public class DescriptionUtils {
                 if (log.isDebugEnabled()) {
                     log.debug("@HandlerChain.file resolved file path location: " + resolvedPath);
                 }
-                configStream = classLoader.getResourceAsStream(resolvedPath);
+                configStream = getInputStream(resolvedPath, classLoader);
             }
             catch (URISyntaxException e) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
@@ -294,12 +294,37 @@ public class DescriptionUtils {
             }
         }
         if (configStream == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS",
-                                                                         configFile, className));
+            //throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS",
+            //                                                             configFile, className));
+            // No longer throwing an exception here.  This method is best-effort, and the caller may
+            // change the class to which the path is relative and try again.  The caller is responsible
+            // for determining when to "give up"
+            if (log.isDebugEnabled()) {
+                log.debug("@HandlerChain configuration fail: " + configFile + " in class: " + className + " failed to load.");
+            }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("@HandlerChain configuration file: " + configFile + " in class: " +
                         className + " was successfully loaded.");
+            }
+        }
+        return configStream;
+    }
+    
+    private static InputStream getInputStream(String path, ClassLoader classLoader) {
+        InputStream configStream = classLoader.getResourceAsStream(path);
+        if (configStream == null) {
+            // try another classloader
+            ClassLoader cl = System.class.getClassLoader();
+            if (cl != null) {
+                configStream = cl.getResourceAsStream(path);
+            }
+        }
+        if (configStream == null) {
+            // and another classloader
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            if (cl != null) {
+                configStream = cl.getResourceAsStream(path);
             }
         }
         return configStream;
