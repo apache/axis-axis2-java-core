@@ -73,11 +73,6 @@ public abstract class AsyncResponse implements Response {
     private CountDownLatch latch;
     private boolean cacheValid = false;
     private Object cachedObject = null;
-
-    // we need to ensure the classloader used under onComplete (where the response object is unmarshalled) is
-    // the same classloader as the one used by the client app, otherwise we'll get a strange ClassCastException
-    // This object is just a cache object.
-    private ClassLoader classLoader = null;
     
     // The response business object to be returned
     private Object responseObject = null;
@@ -92,14 +87,13 @@ public abstract class AsyncResponse implements Response {
     }
 
     protected void onError(Throwable flt, MessageContext mc, ClassLoader cl) {
-        ClassLoader origClassLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+        ClassLoader contextCL = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
-        setThreadClassLoader(cl);
         onError(flt, mc);
-        setThreadClassLoader(origClassLoader);
+        checkClassLoader(cl, contextCL);
     }
     
     protected void onError(Throwable flt, MessageContext faultCtx) {
@@ -128,37 +122,63 @@ public abstract class AsyncResponse implements Response {
         }
     }
     
-    private void setThreadClassLoader(final ClassLoader cl) {
-        if (this.classLoader != null) {
-            if (!this.classLoader.getClass().equals(cl.getClass())) {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("threadClsLoaderErr",
-                		cl.getClass().toString(),this.classLoader.getClass().toString()));
-            }
+    /**
+     * Check for a valid relationship between unmarshalling classloader and
+     * Application's current context classloader
+     * @param cl
+     * @param contextCL
+     */
+    private void checkClassLoader(final ClassLoader cl, final ClassLoader contextCL) {
+        // Ensure that the classloader (cl) used for unmarshalling is the same
+        // or a parent of the current context classloader.  Otherwise 
+        // ClassCastExceptions can occur
+        if(log.isDebugEnabled()) {
+            log.debug("AsyncResponse ClassLoader is:");
+            log.debug(cl.toString());
         }
-        else {
-            if (log.isDebugEnabled()) {
-                log.debug("Setting up the thread's ClassLoader");
-                log.debug(cl.toString());
+        if (cl.equals(contextCL)) {
+            if(log.isDebugEnabled()) {
+                log.debug("AsyncResponse ClassLoader matches Context ClassLoader");
             }
-            this.classLoader = cl;
-            AccessController.doPrivileged(new PrivilegedAction() {
-                public Object run() {
-                    Thread.currentThread().setContextClassLoader(cl);
-                    return null;
+            return;
+        } else {
+            if(log.isDebugEnabled()) {
+                log.debug("Context ClassLoader is:");
+                log.debug(contextCL.toString());
+            }
+            ClassLoader parent = getParentClassLoader(contextCL);
+            while(parent != null) {
+                if (parent.equals(cl)) {
+                    return;
                 }
-            });
+                if(log.isDebugEnabled()) {
+                    log.debug("AsyncResponse ClassLoader is an ancestor of the Context ClassLoader");
+                }
+                parent = getParentClassLoader(parent);
+            }
         }
+        throw ExceptionFactory.
+          makeWebServiceException(Messages.getMessage("threadClsLoaderErr",
+                   contextCL.getClass().toString(), cl.getClass().toString()));
+    }
+    
+    
+    ClassLoader getParentClassLoader(final ClassLoader cl) {
+        return (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return cl.getParent();
+            }
+        });
     }
     
     protected void onComplete(MessageContext mc, ClassLoader cl) {
-        ClassLoader origClassLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+        ClassLoader contextCL = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
             }
         });
-        setThreadClassLoader(cl);
         onComplete(mc);
-        setThreadClassLoader(origClassLoader);
+        checkClassLoader(cl, contextCL);
     }
 
     protected void onComplete(MessageContext mc) {
