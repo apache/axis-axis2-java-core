@@ -43,6 +43,8 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     public static final String DEFAULT_CATALOG_WEB = "WEB-INF/jax-ws-catalog.xml";
     public static final String DEFAULT_CATALOG_EJB = "META-INF/jax-ws-catalog.xml";
     public static final String CATALOG_DEBUG_KEY = "OASISCatalogManager.catalog.debug.level";
+    
+    private ClassLoader classloader = null;
 
     private static final Logger LOG =
     	Logger.getLogger(OASISCatalogManager.class.getName());
@@ -65,6 +67,27 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     /** The static catalog used by this manager. */
     private Catalog staticCatalog = null;
 
+    /**
+     * Default constructor with ClassLoader argument.
+     * This constructor will use the defaults specified for Axis2 in the
+     * acceptDefaults method.
+     * @param classLoader
+     */
+    public OASISCatalogManager(ClassLoader classLoader) {
+        this();
+        this.classloader = classLoader;
+    }
+    
+    /**
+     * Constructor that specifies an explicit property file and ClassLoader.
+     * @param classLoader
+     * @param propertyFileName
+     */
+    public OASISCatalogManager(ClassLoader classLoader, String propertyFileName) {
+        this(propertyFileName);
+        this.classloader = classLoader;
+    }
+    
     /**
      * Default constructor with no arguments.
      * This constructor will use the defaults specified for Axis2 in the
@@ -119,7 +142,7 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
 
     private String determineFileName() {
 
-        ClassLoader classLoader = findClassLoader();
+        ClassLoader classLoader = (classloader != null) ? classloader : findClassLoader();
         // try web app WEB-INF first
         URL url = classLoader.getResource(DEFAULT_CATALOG_WEB);
         if (url != null) {

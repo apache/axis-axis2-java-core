@@ -47,6 +47,7 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xml.resolver.Catalog;
 
 import javax.jws.HandlerChain;
 import javax.wsdl.Definition;
@@ -159,10 +160,12 @@ class ServiceDescriptionImpl
             log.debug("ServiceDescriptionImpl(URL,QName,Class,DescriptionBuilderComposite,Object)");
         }
     	
-    	if (sparseComposite != null)
+    	if (sparseComposite != null) {
     	    catalogManager = sparseComposite.getCatalogManager();
-    	else
+        }
+    	if (catalogManager == null) {
     		catalogManager = new OASISCatalogManager();
+        }
     	
         if (serviceQName == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr0"));
@@ -853,6 +856,8 @@ class ServiceDescriptionImpl
     /**
      * This method will handle obtaining a URL for the given WSDL location.  The WSDL will be
      * looked for in the following places in this order:
+     * 
+     * PreResolution) check for xmlcatalog resolver
      * 1) As a resource on the classpath
      * 2) As a fully specified URL
      * 3) As a file on the filesystem.  This is analagous to what the generated
@@ -864,6 +869,10 @@ class ServiceDescriptionImpl
      */
     private URL getWSDLURL(String wsdlLocation) {
         // Look for the WSDL file as follows:
+        // PreResolution) check for xmlcatalog resolver
+        wsdlLocation = resolveWSDLLocationByCatalog(wsdlLocation);
+        
+        
         // 1) As a resource on the classpath
 
         ClassLoader loader = composite.getClassLoader();
@@ -2144,6 +2153,38 @@ class ServiceDescriptionImpl
 
     public ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo) {
         return resolvedHandlersDescription.get(portInfo);
+    }
+    
+    private String resolveWSDLLocationByCatalog(String wsdlLocation) {
+        if (catalogManager != null) {
+            Catalog catalog = catalogManager.getCatalog();
+            if (catalog != null) {
+                String resolvedLocation = null;
+                try {
+                    resolvedLocation = catalog.resolveSystem(wsdlLocation);
+                    if (resolvedLocation == null) {
+                        resolvedLocation = catalog.resolveURI(wsdlLocation);
+                    }
+                    // normally, one might also do the following, but in this case we're looking at a top-level WSDL, so no parent
+                    // resolvedLocation = catalog.resolvePublic(wsdlLocation, parent);
+                    if (resolvedLocation != null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("XMLCatalog transformed original wsdl location \""
+                                    + wsdlLocation
+                                    + "\" to \""
+                                    + resolvedLocation + "\"");
+                        }
+                        return resolvedLocation;
+                    }
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Catalog resolution attempt caused exception: "
+                                + e);
+                    }
+                }
+            }
+        }
+        return wsdlLocation;
     }
 
 }
