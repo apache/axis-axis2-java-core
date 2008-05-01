@@ -46,6 +46,7 @@
             <outputDirectory>docs</outputDirectory>
             <includes>
                 <include>LICENSE.txt</include>
+                <include>NOTICE.txt</include>
                 <include>README.txt</include>
                 <include>release-notes.html</include>
             </includes>
