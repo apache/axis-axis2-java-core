@@ -81,6 +81,12 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
 
+            // Remember this unmarshal information so that we can speed up processing
+            // the next time.
+            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                        packages,
+                                                        marshalDesc.getPackagesKey());
+
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
@@ -161,6 +167,12 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             MarshalServiceRuntimeDescription marshalDesc =
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+
+            // Remember this unmarshal information so that we can speed up processing
+            // the next time.
+            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                        packages,
+                                                        marshalDesc.getPackagesKey());
 
             // Unmarshal the ParamValues from the message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds,
