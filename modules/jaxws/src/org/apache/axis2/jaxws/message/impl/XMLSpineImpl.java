@@ -77,7 +77,7 @@ import java.util.Set;
  */
 class XMLSpineImpl implements XMLSpine {
 
-    private static Log log = LogFactory.getLog(XMLSpine.class);
+    private static Log log = LogFactory.getLog(XMLSpineImpl.class);
     private static OMBlockFactory obf =
             (OMBlockFactory)FactoryRegistry.getFactory(OMBlockFactory.class);
 
