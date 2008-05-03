@@ -248,13 +248,28 @@ public class BeanUtil {
                     object.add(value);
                 }
             }
-            // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to
-            // support polymorphism in POJO approach.
-            // For some reason, using QName(Constants.XSI_NAMESPACE, "type", "xsi") does not generate
-            // an xsi:type attribtue properly for inner objects. So just using a simple QName("type").
+
             ArrayList objectAttributes = new ArrayList();
-            objectAttributes.add(new QName("type"));
-            objectAttributes.add(beanObject.getClass().getName());
+            objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
+            if( typeTable != null && qualified )
+            {
+                QName qNamefortheType =
+                    typeTable.getQNamefortheType(beanObject.getClass().getName());
+                if (qNamefortheType == null) {
+                    // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to
+                    // support polymorphism in POJO approach.
+                    objectAttributes.add(beanObject.getClass().getName());
+                }
+                else
+                {
+                    objectAttributes.add(qNamefortheType);
+                }
+            }
+            else
+            {
+                objectAttributes.add(beanObject.getClass().getName());
+            } 
+
             return new ADBXMLStreamReaderImpl(beanName, object.toArray(), objectAttributes.toArray(),
                     typeTable, qualified);
 
