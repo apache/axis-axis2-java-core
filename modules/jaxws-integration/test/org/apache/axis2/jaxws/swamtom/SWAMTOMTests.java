@@ -144,6 +144,42 @@ public class SWAMTOMTests extends AbstractTestCase {
         if (bytes[0] != 'S' || bytes[1] != 'W' || bytes[2] != 'A') { 
             fail("Did not receive a modified attachment"); 
         }
+        
+        
+        // Invoke a second time to verify
+
+        // invoke
+        reply = dispatch.invoke(request);
+
+        // iterate over the attachments, there should only be one
+        it = reply.getAttachments();
+        ap = null;
+
+        // verify that the attachment is not null or empty
+        if ((ap = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+
+        // verify that the attachment is not null or empty
+        if (it.hasNext()){
+            fail("Detected more then 1 attachment");
+        }
+
+        sb = reply.getSOAPBody();
+        if (sb.getChildElements().hasNext()) {
+            fail("Message contains soap:body payload");
+        }
+
+        bytes = ap.getRawContentBytes();
+        if (bytes.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+
+        // verify that endpoint has been able to modify the attachment
+        if (bytes[0] != 'S' || bytes[1] != 'W' || bytes[2] != 'A') { 
+            fail("Did not receive a modified attachment"); 
+        }
     }
     
     /**
@@ -216,6 +252,45 @@ public class SWAMTOMTests extends AbstractTestCase {
         }
 
         SOAPBody sb = reply.getSOAPBody();
+        if (sb.getChildElements().hasNext()) {
+            fail("Message contains soap:body payload");
+        }
+
+        bytes = ap.getRawContentBytes();
+        if (bytes.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+
+        // verify that endpoint has been able to modify the attachment
+        if (bytes[0] != 'S' || bytes[1] != 'W' || bytes[2] != 'A') { 
+            fail("Did not receive a modified attachment"); 
+        }
+        
+        // Invoke a second time to verify
+
+        // invoke
+        reply = dispatch.invoke(request);
+
+        // iterate over the attachments, there should only be one
+        it = reply.getAttachments();
+        ap = null;
+
+        // verify that the attachment is not null or empty
+        if ((ap = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+        // Make sure the content id starts with the appropriate SWA name
+        if (!ap.getContentId().startsWith("jpegImageResponse=")) {
+            fail("Expected content id to start with jpegImageResponse");
+        }
+
+        // verify that the attachment is not null or empty
+        if (it.hasNext()){
+            fail("Detected more then 1 attachment");
+        }
+
+        sb = reply.getSOAPBody();
         if (sb.getChildElements().hasNext()) {
             fail("Message contains soap:body payload");
         }
@@ -322,6 +397,60 @@ public class SWAMTOMTests extends AbstractTestCase {
         if (bytes4[0] != '4') { 
             fail("The response attachment is not correct"); 
         }
+        
+        
+        // Invoke a second time to verify
+        reply = dispatch.invoke(request);
+
+        // iterate over the attachments, there should only be one
+        it = reply.getAttachments();
+        ap3 = null;
+
+        // verify that the attachment is not null or empty
+        if ((ap3 = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+        // Make sure the content id starts with the appropriate SWA name
+        if (!ap3.getContentId().startsWith("jpegImage1Response=")) {
+            fail("Expected content id to start with jpegImage1Response");
+        }
+        
+        ap4 = null;
+        // verify that the second attachment is not null or empty
+        if ((ap4 = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+        // Make sure the content id starts with the appropriate SWA name
+        if (!ap4.getContentId().startsWith("jpegImage2Response=")) {
+            fail("Expected content id to start with jpegImage2Response");
+        }
+
+        if (it.hasNext()){
+            fail("Detected more then 2 attachment");
+        }
+
+        sb = reply.getSOAPBody();
+        if (sb.getChildElements().hasNext()) {
+            fail("Message contains soap:body payload");
+        }
+
+        bytes3 = ap3.getRawContentBytes();
+        if (bytes3.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+        if (bytes3[0] != '3') { 
+            fail("The response attachment is not correct"); 
+        }
+        
+        bytes4 = ap4.getRawContentBytes();
+        if (bytes4.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+        if (bytes4[0] != '4') { 
+            fail("The response attachment is not correct"); 
+        }
     }
     
     /**
@@ -410,6 +539,61 @@ public class SWAMTOMTests extends AbstractTestCase {
         }
         
         byte[] bytes4 = ap4.getRawContentBytes();
+        if (bytes4.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+        if (bytes4[0] != '4') { 
+            fail("The response attachment is not correct"); 
+        }
+        
+        // Invoke a second time to verify
+        
+        // invoke
+        reply = dispatch.invoke(request);
+
+        // iterate over the attachments, there should only be one
+        it = reply.getAttachments();
+        ap3 = null;
+
+        // verify that the attachment is not null or empty
+        if ((ap3 = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+        // Make sure the content id starts with the appropriate SWA name
+        if (!ap3.getContentId().startsWith("jpegImage1Response=")) {
+            fail("Expected content id to start with jpegImage1Response");
+        }
+        
+        ap4 = null;
+        // verify that the second attachment is not null or empty
+        if ((ap4 = (AttachmentPart) it.next()) == null){
+            fail("Attachment is null");
+        }
+        
+        // Make sure the content id starts with the appropriate SWA name
+        if (!ap4.getContentId().startsWith("jpegImage2Response=")) {
+            fail("Expected content id to start with jpegImage2Response");
+        }
+
+        if (it.hasNext()){
+            fail("Detected more then 2 attachment");
+        }
+
+        sb = reply.getSOAPBody();
+        if (sb.getChildElements().hasNext()) {
+            fail("Message contains soap:body payload");
+        }
+
+        bytes3 = ap3.getRawContentBytes();
+        if (bytes3.length == 0) { 
+            fail("Attachment is empty"); 
+        }
+        if (bytes3[0] != '3') { 
+            fail("The response attachment is not correct"); 
+        }
+        
+        bytes4 = ap4.getRawContentBytes();
         if (bytes4.length == 0) { 
             fail("Attachment is empty"); 
         }

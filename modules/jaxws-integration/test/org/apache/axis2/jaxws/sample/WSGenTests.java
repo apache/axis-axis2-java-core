@@ -54,6 +54,12 @@ public class WSGenTests extends AbstractTestCase {
 
             TestLogger.logger.debug("String s = " + s);
             assertEquals(outString, s);
+            
+            // Repeat to ensure validity
+            s = proxy.echoString(outString);
+
+            TestLogger.logger.debug("String s = " + s);
+            assertEquals(outString, s);
             TestLogger.logger.debug("----------------------------------");
         } catch(Exception e) {
             e.printStackTrace();

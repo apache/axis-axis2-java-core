@@ -46,26 +46,30 @@ public class NonWrapTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(NonWrapTests.class));
     }
 	
-	public void testTwoWaySync(){
+    public void testTwoWaySync(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			TwoWay twoWay = new ObjectFactory().createTwoWay();
-			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
-			DocLitNonWrapService service = new DocLitNonWrapService();
-			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
-			
-			BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-			
-			ReturnType returnValue = proxy.twoWay(twoWay);
+        try{
+            TwoWay twoWay = new ObjectFactory().createTwoWay();
+            twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+
+            BindingProvider p =	(BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            ReturnType returnValue = proxy.twoWay(twoWay);
+            TestLogger.logger.debug(returnValue.getReturnStr());
+            
+            // Repeat to verify behavior
+            returnValue = proxy.twoWay(twoWay);
             TestLogger.logger.debug(returnValue.getReturnStr());
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			e.printStackTrace();
-			fail();
-		}
-	}
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
     
     public void _testTwoWaySyncNull() throws Exception{
         TestLogger.logger.debug("------------------------------");
@@ -79,6 +83,9 @@ public class NonWrapTests extends AbstractTestCase {
 			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
             
             ReturnType returnValue = proxy.twoWay(twoWay);
+            
+            // Repeat to verify behavior
+            returnValue = proxy.twoWay(twoWay);
             
             // TODO Revisit JAXB validation
             // JAXWS does not make the decision of whether a
@@ -98,82 +105,102 @@ public class NonWrapTests extends AbstractTestCase {
         }
     }
 
-	public void testTwoWayASyncCallback(){
+    public void testTwoWayASyncCallback(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			TwoWay twoWay = new ObjectFactory().createTwoWay();
-			twoWay.setTwowayStr("testing Async call for java bean non wrap endpoint");
-			DocLitNonWrapService service = new DocLitNonWrapService();
-			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
-			
-			BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-			
-			AsyncCallback callback = new AsyncCallback();
-			Future<?> monitor = proxy.twoWayAsync(twoWay, callback);
-			assertNotNull(monitor);
+        try{
+            TwoWay twoWay = new ObjectFactory().createTwoWay();
+            twoWay.setTwowayStr("testing Async call for java bean non wrap endpoint");
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+
+            BindingProvider p =	(BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            AsyncCallback callback = new AsyncCallback();
+            Future<?> monitor = proxy.twoWayAsync(twoWay, callback);
+            assertNotNull(monitor);
+            
+            // Repeat to verify behavior
+            callback = new AsyncCallback();
+            monitor = proxy.twoWayAsync(twoWay, callback);
+            assertNotNull(monitor);
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			e.printStackTrace();
-			fail();
-		}
-	}
-	public void testTwoWayHolder(){
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    public void testTwoWayHolder(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			TwoWayHolder twh = new TwoWayHolder();
-			twh.setTwoWayHolderInt(new Integer(0));
-			twh.setTwoWayHolderStr(new String("Request Holder String"));
-			Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
-			TwoWay twoWay = new ObjectFactory().createTwoWay();
-			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
-			DocLitNonWrapService service = new DocLitNonWrapService();
-			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
-			
-			BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-			
-			proxy.twoWayHolder(holder);
-			twh = holder.value;
+        try{
+            TwoWayHolder twh = new TwoWayHolder();
+            twh.setTwoWayHolderInt(new Integer(0));
+            twh.setTwoWayHolderStr(new String("Request Holder String"));
+            Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
+            TwoWay twoWay = new ObjectFactory().createTwoWay();
+            twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+
+            BindingProvider p =	(BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            proxy.twoWayHolder(holder);
+            twh = holder.value;
+            TestLogger.logger.debug("Holder string =" + twh.getTwoWayHolderStr());
+            TestLogger.logger.debug("Holder int =" + twh.getTwoWayHolderInt());
+            
+            // Repeat to verify behavior
+            proxy.twoWayHolder(holder);
+            twh = holder.value;
             TestLogger.logger.debug("Holder string =" + twh.getTwoWayHolderStr());
             TestLogger.logger.debug("Holder int =" + twh.getTwoWayHolderInt());
 
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			e.printStackTrace();
-			fail();
-		}
-	}
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
 	
-	public void testTwoWayHolderAsync(){
+    public void testTwoWayHolderAsync(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			TwoWayHolder twh = new TwoWayHolder();
-			twh.setTwoWayHolderInt(new Integer(0));
-			twh.setTwoWayHolderStr(new String("Request Holder String"));
-			Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
-			TwoWay twoWay = new ObjectFactory().createTwoWay();
-			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
-			DocLitNonWrapService service = new DocLitNonWrapService();
-			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
-			
-			BindingProvider p =	(BindingProvider)proxy;
-			p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
-			
-			AsyncCallback callback = new AsyncCallback();
-			Future<?> monitor =proxy.twoWayHolderAsync(twh, callback);
-			while(!monitor.isDone()){
-				Thread.sleep(1000);
-			}
-			assertNotNull(monitor);
+        try{
+            TwoWayHolder twh = new TwoWayHolder();
+            twh.setTwoWayHolderInt(new Integer(0));
+            twh.setTwoWayHolderStr(new String("Request Holder String"));
+            Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
+            TwoWay twoWay = new ObjectFactory().createTwoWay();
+            twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+
+            BindingProvider p =	(BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            AsyncCallback callback = new AsyncCallback();
+            Future<?> monitor =proxy.twoWayHolderAsync(twh, callback);
+            while(!monitor.isDone()){
+                Thread.sleep(1000);
+            }
+            assertNotNull(monitor);
+            
+            // Repeat to verify behavior
+            callback = new AsyncCallback();
+            monitor =proxy.twoWayHolderAsync(twh, callback);
+            while(!monitor.isDone()){
+                Thread.sleep(1000);
+            }
+            assertNotNull(monitor);
 
             TestLogger.logger.debug("------------------------------");
-		}catch(Exception e){
-			e.printStackTrace();
-			fail();
-		}
-	}
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
 }

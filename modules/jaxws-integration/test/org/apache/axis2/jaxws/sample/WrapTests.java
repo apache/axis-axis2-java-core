@@ -85,6 +85,9 @@ public class WrapTests extends AbstractTestCase {
                 DocLitWrapService service = new DocLitWrapService();
                 DocLitWrap proxy = getProxy();
                 proxy.oneWayVoid();
+                
+                // Repeat to ensure correct behavior
+                proxy.oneWayVoid();
 
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
@@ -102,6 +105,11 @@ public class WrapTests extends AbstractTestCase {
                 Holder<String> strHolder = new Holder<String>(holderString);
                 Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
                 DocLitWrap proxy = getProxy();
+                proxy.twoWayHolder(strHolder, intHolder);
+                TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
+                TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
+                
+                // Repeat to ensure correct behavior
                 proxy.twoWayHolder(strHolder, intHolder);
                 TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
                 TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
@@ -128,6 +136,12 @@ public class WrapTests extends AbstractTestCase {
                 hp0=holder.value;
                 TestLogger.logger.debug("Holder Response String =" + hp0.getHeaderType());
                 TestLogger.logger.debug("Header Response Long =" + hr.getOut());
+                
+                // Repeat to ensure correct behavior
+                hr = proxy.header(header, holder, hp1);
+                hp0=holder.value;
+                TestLogger.logger.debug("Holder Response String =" + hp0.getHeaderType());
+                TestLogger.logger.debug("Header Response Long =" + hr.getOut());
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
                 e.printStackTrace();
@@ -144,6 +158,11 @@ public class WrapTests extends AbstractTestCase {
                 Holder<String> strHolder = new Holder<String>(holderString);
                 Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
                 DocLitWrap proxy = getProxy();
+                proxy.twoWayHolder(strHolder, intHolder);
+                TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
+                TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
+                
+                // Repeat 
                 proxy.twoWayHolder(strHolder, intHolder);
                 TestLogger.logger.debug("Holder Response String =" + strHolder.value);;
                 TestLogger.logger.debug("Holder Response Integer =" + intHolder.value);
@@ -166,6 +185,10 @@ public class WrapTests extends AbstractTestCase {
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN1(request);
                 assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
                 e.printStackTrace();
@@ -186,6 +209,10 @@ public class WrapTests extends AbstractTestCase {
 
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN1(request);
                 assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
@@ -209,6 +236,10 @@ public class WrapTests extends AbstractTestCase {
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN2(request);
                 assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN2(request);
+                assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
                 e.printStackTrace();
@@ -227,6 +258,10 @@ public class WrapTests extends AbstractTestCase {
 
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN1(request);
                 assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
@@ -249,6 +284,10 @@ public class WrapTests extends AbstractTestCase {
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN1(request);
                 assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN1(request);
+                assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){
                 e.printStackTrace();
@@ -270,6 +309,10 @@ public class WrapTests extends AbstractTestCase {
 
                 DocLitWrap proxy = getProxy();
                 String response = proxy.echoStringWSGEN2(request);
+                assertTrue(response.equals(request));
+                
+                // Repeat
+                response = proxy.echoStringWSGEN2(request);
                 assertTrue(response.equals(request));
                 TestLogger.logger.debug("------------------------------");
             }catch(Exception e){

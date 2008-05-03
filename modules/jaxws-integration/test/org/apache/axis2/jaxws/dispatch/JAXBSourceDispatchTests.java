@@ -62,34 +62,50 @@ public class JAXBSourceDispatchTests extends AbstractTestCase {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
         try{
-	        // Initialize the JAX-WS client artifacts
-	        Service svc = Service.create(serviceName);
-	        svc.addPort(portName, null, url);
-	        Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
-	        
-	        //Create JAXBContext and JAXBSource here.
-	        ObjectFactory factory = new ObjectFactory();
-	        Invoke invokeObj = factory.createInvoke();
-	        invokeObj.setInvokeStr("Some Request");
-	        JAXBContext ctx = JAXBContext.newInstance("org.test.dispatch.jaxbsource");
-	       
-	        JAXBSource jbSrc = new JAXBSource(ctx.createMarshaller(), invokeObj);
-	        // Invoke the Dispatch
+            // Initialize the JAX-WS client artifacts
+            Service svc = Service.create(serviceName);
+            svc.addPort(portName, null, url);
+            Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
+
+            //Create JAXBContext and JAXBSource here.
+            ObjectFactory factory = new ObjectFactory();
+            Invoke invokeObj = factory.createInvoke();
+            invokeObj.setInvokeStr("Some Request");
+            JAXBContext ctx = JAXBContext.newInstance("org.test.dispatch.jaxbsource");
+
+            JAXBSource jbSrc = new JAXBSource(ctx.createMarshaller(), invokeObj);
+            // Invoke the Dispatch
             TestLogger.logger.debug(">> Invoking sync Dispatch");
-	        //Invoke Server endpoint and read response
-	        Source response = dispatch.invoke(jbSrc);
-	       
-	        assertNotNull("dispatch invoke returned null", response);
-	        //Print the response as string.
-	        StringWriter writer = new StringWriter();
-	        Transformer t = TransformerFactory.newInstance().newTransformer();
-	        Result result = new StreamResult(writer);
-	        t.transform(response, result);
+            //Invoke Server endpoint and read response
+            Source response = dispatch.invoke(jbSrc);
+
+            assertNotNull("dispatch invoke returned null", response);
+            //Print the response as string.
+            StringWriter writer = new StringWriter();
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            Result result = new StreamResult(writer);
+            t.transform(response, result);
+
+            TestLogger.logger.debug("Response On Client: \n" + writer.getBuffer().toString());
+            
+            // Invoke a second time
+            jbSrc = new JAXBSource(ctx.createMarshaller(), invokeObj);
+            // Invoke the Dispatch
+            TestLogger.logger.debug(">> Invoking sync Dispatch");
+            //Invoke Server endpoint and read response
+            response = dispatch.invoke(jbSrc);
+
+            assertNotNull("dispatch invoke returned null", response);
+            //Print the response as string.
+            writer = new StringWriter();
+            t = TransformerFactory.newInstance().newTransformer();
+            result = new StreamResult(writer);
+            t.transform(response, result);
 
             TestLogger.logger.debug("Response On Client: \n" + writer.getBuffer().toString());
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){
-        	e.printStackTrace();
+            e.printStackTrace();
         }
         
     }

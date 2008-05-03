@@ -106,6 +106,20 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Invoke a second time
+        response = dispatch.invoke(request);
+        assertNotNull("dispatch invoke returned null",response);
+        
+        // Turn the Source into a String so we can check it
+        responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
 	}
 
     public void testAsyncCallbackPayloadMode() throws Exception {
@@ -137,6 +151,31 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         
         // Turn the Source into a String so we can check it
         String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Invoke a second time
+        // Setup the callback for async responses
+        callbackHandler = new AsyncCallback<Source>();
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
+        monitor = dispatch.invokeAsync(request, callbackHandler);
+            
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callbackHandler.getValue();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        responseText = createStringFromSource(response);
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -182,6 +221,33 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
+        
+        
+        
+        // Invoke a second time
+        // Setup the callback for async responses
+        callbackHandler = new AsyncCallback<Source>();
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
+        monitor = dispatch.invokeAsync(request, callbackHandler);
+                
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callbackHandler.getValue();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
 	}
     
     public void testAsyncPollingPayloadMode() throws Exception {
@@ -210,6 +276,28 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         
         // Turn the Source into a String so we can check it
         String responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Invoke a second time
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
+        asyncResponse = dispatch.invokeAsync(request);
+            
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        responseText = createStringFromSource(response);
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -252,6 +340,29 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
+        asyncResponse = dispatch.invokeAsync(request);
+            
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        responseText = createStringFromSource(response);
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
     }
     
     public void testOneWayPayloadMode() throws Exception {
@@ -267,6 +378,10 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         // Create the DOMSource
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
 
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
+        dispatch.invokeOneWay(request);
+        
+        // Invoke a second time
         TestLogger.logger.debug(">> Invoking One Way Dispatch");
         dispatch.invokeOneWay(request);
     }
@@ -286,6 +401,10 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
 
         TestLogger.logger.debug(">> Invoking One Way Dispatch");
         dispatch.invokeOneWay(request);
+        
+        // Invoke a second time
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
+        dispatch.invokeOneWay(request);
 	}
     
     public void testBadDOMSource() throws Exception {
@@ -301,6 +420,17 @@ public class DOMSourceDispatchTests extends AbstractTestCase{
         // Create the DOMSource
         DOMSource request = new DOMSource();
 
+        try {
+            dispatch.invokeOneWay(request);
+            fail("WebServiceException was expected");
+        } catch (WebServiceException e) {
+            TestLogger.logger.debug("A Web Service Exception was expected: " + e.toString());
+            assertTrue(e.getMessage() != null);
+        } catch (Exception e) {
+            fail("WebServiceException was expected, but received " + e);
+        }
+        
+        // Invoke a second time
         try {
             dispatch.invokeOneWay(request);
             fail("WebServiceException was expected");

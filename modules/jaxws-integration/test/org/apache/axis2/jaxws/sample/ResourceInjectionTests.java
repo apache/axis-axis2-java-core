@@ -53,6 +53,12 @@ public class ResourceInjectionTests extends AbstractTestCase {
             assertTrue("The response was null", response != null);
             assertTrue("The response was not succesful: " + response, 
                        response.indexOf("SUCCESS") >= 0);
+            
+            // Repeat to verify behavior
+            response = proxy.testInjection("sample");
+            assertTrue("The response was null", response != null);
+            assertTrue("The response was not succesful: " + response, 
+                       response.indexOf("SUCCESS") >= 0);
         
     }
    

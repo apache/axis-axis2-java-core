@@ -58,5 +58,10 @@ public class DocLitBareMinTests extends AbstractTestCase {
         
         assertTrue(request.equals(response));
         
+        // Try the call again to verify behavior
+        response = proxy.echo(request);
+        
+        assertTrue(request.equals(response));
+        
     }
 }

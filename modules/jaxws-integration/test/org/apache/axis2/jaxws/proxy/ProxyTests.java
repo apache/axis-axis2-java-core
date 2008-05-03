@@ -101,6 +101,11 @@ public class ProxyTests extends AbstractTestCase {
             String request = null;
             String response = dwp.invoke(request);
             TestLogger.logger.debug("Proxy Response =" + response);
+
+            
+            // Try again
+            response = dwp.invoke(request);
+            TestLogger.logger.debug("Proxy Response =" + response);
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
             e.printStackTrace(); 
@@ -126,6 +131,10 @@ public class ProxyTests extends AbstractTestCase {
             DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;
             TestLogger.logger.debug(">> Invoking Proxy Synchronously");
             String response = dwp.invoke(request);
+            TestLogger.logger.debug("Proxy Response =" + response);
+            
+            // Try again
+            response = dwp.invoke(request);
             TestLogger.logger.debug("Proxy Response =" + response);
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
@@ -153,6 +162,10 @@ public class ProxyTests extends AbstractTestCase {
             DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;
             TestLogger.logger.debug(">> Invoking Proxy Synchronously");
             String response = dwp.invoke(request);
+            TestLogger.logger.debug("Proxy Response =" + response);
+            
+            // Try again
+            response = dwp.invoke(request);
             TestLogger.logger.debug("Proxy Response =" + response);
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
@@ -182,6 +195,10 @@ public class ProxyTests extends AbstractTestCase {
             TestLogger.logger.debug(">> Invoking Proxy Asynchronous Callback");
             AsyncHandler handler = new AsyncCallback();
             Future<?> response = dwp.invokeAsync(request, handler);
+            
+            // Try again
+            handler = new AsyncCallback();
+            response = dwp.invokeAsync(request, handler);
             TestLogger.logger.debug("---------------------------------------");
         }catch(Exception e){ 
             e.printStackTrace(); 
@@ -214,6 +231,17 @@ public class ProxyTests extends AbstractTestCase {
             
             ReturnType response = asyncResponse.get();
             assertNotNull(response);
+            
+            // Try again
+            asyncResponse = proxy.invokeAsync(request);
+
+            while (!asyncResponse.isDone()) {
+                TestLogger.logger.debug(">> Async invocation still not complete");
+                Thread.sleep(1000);
+            }
+            
+            response = asyncResponse.get();
+            assertNotNull(response);
         }
         catch(Exception e) { 
             e.printStackTrace(); 
@@ -238,6 +266,10 @@ public class ProxyTests extends AbstractTestCase {
                 
             DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;  
             String response = dwp.twoWay(request);
+            System.out.println("Response =" + response);
+            
+            // Try again
+            response = dwp.twoWay(request);
             System.out.println("Response =" + response);
         } catch(Exception e){ 
             e.printStackTrace(); 
@@ -273,6 +305,10 @@ public class ProxyTests extends AbstractTestCase {
             DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;
             AsyncHandler handler = new AsyncCallback();
             Future<?> response = dwp.twoWayAsync(request, handler);
+            
+            // Try again
+            handler = new AsyncCallback();
+            response = dwp.twoWayAsync(request, handler);
             
         }catch(Exception e){ 
             e.printStackTrace(); 

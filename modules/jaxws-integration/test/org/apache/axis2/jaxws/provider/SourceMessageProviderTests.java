@@ -48,21 +48,29 @@ public class SourceMessageProviderTests extends ProviderTestCase {
 
     public void testProviderSource(){
         try{
-        	String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();
-        	String fileName = resourceDir+File.separator+"web.xml";
-        	
-        	File file = new File(fileName);
-        	InputStream inputStream = new FileInputStream(file);
-        	StreamSource xmlStreamSource = new StreamSource(inputStream);
-        	
-        	Service svc = Service.create(serviceName);
-        	svc.addPort(portName,null, endpointUrl);
-        	Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
+            String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();
+            String fileName = resourceDir+File.separator+"web.xml";
+
+            File file = new File(fileName);
+            InputStream inputStream = new FileInputStream(file);
+            StreamSource xmlStreamSource = new StreamSource(inputStream);
+
+            Service svc = Service.create(serviceName);
+            svc.addPort(portName,null, endpointUrl);
+            Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
             TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
-        	Source response = dispatch.invoke(xmlStreamSource);
+            Source response = dispatch.invoke(xmlStreamSource);
 
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
-        	
+            
+            // Try again to verify
+            TestLogger.logger.debug(">> Invoking SourceMessageProviderDispatch");
+            inputStream = new FileInputStream(file);
+            xmlStreamSource = new StreamSource(inputStream);
+            response = dispatch.invoke(xmlStreamSource);
+
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+
         }catch(Exception e){
         	e.printStackTrace();
             fail("Caught exception " + e);

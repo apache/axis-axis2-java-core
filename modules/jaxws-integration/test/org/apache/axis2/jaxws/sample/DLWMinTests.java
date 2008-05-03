@@ -86,6 +86,10 @@ public class DLWMinTests extends AbstractTestCase {
         String me = "Scheu";
         String response = proxy.greetMe(me);
         assertTrue("Hello Scheu".equals(response));
+        
+        // Try the call again
+        response = proxy.greetMe(me);
+        assertTrue("Hello Scheu".equals(response));
     }
     
     /**
@@ -109,6 +113,16 @@ public class DLWMinTests extends AbstractTestCase {
         assertTrue(response.contains(":responseType") ||
                    response.contains("responseType xmlns="));  // assert that response type is a qualified element
         assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
+        
+        // Try the call again
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("Hello Scheu"));
+        assertTrue(response.contains("dlwmin:greetMeResponse"));
+        assertTrue(response.contains(":responseType") ||
+                   response.contains("responseType xmlns="));  // assert that response type is a qualified element
+        assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
     }
     
     /**
@@ -121,6 +135,10 @@ public class DLWMinTests extends AbstractTestCase {
         
         String request = "hello world";
         String response = proxy.testUnqualified(request);
+        assertTrue("hello world".equals(response));
+        
+        // Try the call again
+        response = proxy.testUnqualified(request);
         assertTrue("hello world".equals(response));
     }
     
@@ -144,6 +162,16 @@ public class DLWMinTests extends AbstractTestCase {
         assertTrue(response.contains("dlwmin:testUnqualifiedResponse"));
         assertTrue(response.contains("<unqualifiedResponse"));  // assert that the child element is an uqualified element
         assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
+        
+        
+        // Try the call again to verify
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("hello world"));
+        assertTrue(response.contains("dlwmin:testUnqualifiedResponse"));
+        assertTrue(response.contains("<unqualifiedResponse"));  // assert that the child element is an uqualified element
+        assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
     }
     
     /**
@@ -160,6 +188,13 @@ public class DLWMinTests extends AbstractTestCase {
         assertTrue(response != null);
         assertTrue(response.getData1().equals("hello world"));
         assertTrue(response.getData2() == 10);
+        
+        
+        // Try the call again to verify
+        response = proxy.process(0, request);
+        assertTrue(response != null);
+        assertTrue(response.getData1().equals("hello world"));
+        assertTrue(response.getData2() == 10);
     }
     
     /**
@@ -172,6 +207,20 @@ public class DLWMinTests extends AbstractTestCase {
         TestBean request = new TestBean();
         request.setData1("hello world");
         request.setData2(10);
+        try {
+            TestBean response = proxy.process(1, request);
+            fail("Expected TestException thrown");
+        } catch (WebServiceException wse) {
+            // Currently there is no support if the fault bean is missing
+            assertTrue(wse.getMessage().contains("User fault processing is not supported"));
+        } catch (TestException te) {
+            assertTrue(te.getMessage().equals("TestException thrown"));
+            assertTrue(te.getFlag() == 123);
+        } catch (Exception e) {
+            fail("Expected TestException thrown but found " + e.getClass());
+        }
+        
+        // Try the call again to verify
         try {
             TestBean response = proxy.process(1, request);
             fail("Expected TestException thrown");
@@ -205,6 +254,17 @@ public class DLWMinTests extends AbstractTestCase {
         } catch (Exception e) {
             fail("Expected TestException2 thrown but found " + e.getClass());
         }
+        
+        // Try the call again to verify the same behavior
+        try {
+            TestBean response = proxy.process(4, request);
+            fail("Expected TestException2 thrown");
+        } catch (TestException2 te) {
+            assertTrue(te.getMessage().equals("TestException2 thrown"));
+            assertTrue(te.getFlag() == 456);
+        } catch (Exception e) {
+            fail("Expected TestException2 thrown but found " + e.getClass());
+        }
     }
     
     /**
@@ -217,6 +277,17 @@ public class DLWMinTests extends AbstractTestCase {
         TestBean request = new TestBean();
         request.setData1("hello world");
         request.setData2(10);
+        try {
+            TestBean response = proxy.process(5, request);
+            fail("Expected TestException3 thrown");
+        } catch (TestException3 te) {
+            assertTrue(te.getMessage().equals("TestException3 thrown"));
+            assertTrue(te.getFaultInfo().getFlag() == 789);
+        } catch (Exception e) {
+            fail("Expected TestException3 thrown but found " + e.getClass());
+        }
+        
+        // Try the call again to verify the same behavior
         try {
             TestBean response = proxy.process(5, request);
             fail("Expected TestException3 thrown");
@@ -246,6 +317,16 @@ public class DLWMinTests extends AbstractTestCase {
         } catch (Exception e) {
             fail("Expected WebServiceException thrown but found " + e.getClass());
         }
+        
+        // Try the call again to verify the same behavior
+        try {
+            TestBean response = proxy.process(2, request);
+            fail("Expected WebServiceException thrown");
+        } catch (WebServiceException wse) {
+            assertTrue(wse.getMessage().equals("WebServiceException thrown"));
+        } catch (Exception e) {
+            fail("Expected WebServiceException thrown but found " + e.getClass());
+        }
     }
     
     /**
@@ -258,6 +339,16 @@ public class DLWMinTests extends AbstractTestCase {
         TestBean request = new TestBean();
         request.setData1("hello world");
         request.setData2(10);
+        try {
+            TestBean response = proxy.process(3, request);
+            fail("Expected NullPointerException thrown");
+        } catch (WebServiceException wse) {
+            assertTrue(wse.getMessage().equals("NPE thrown"));
+        } catch (Exception e) {
+            fail("Expected NullPointerException thrown but found " + e.getClass());
+        }
+        
+        // Try the call again to verify the same behavior
         try {
             TestBean response = proxy.process(3, request);
             fail("Expected NullPointerException thrown");

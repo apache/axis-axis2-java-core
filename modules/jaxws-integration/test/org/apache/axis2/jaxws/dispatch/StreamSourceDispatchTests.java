@@ -84,7 +84,28 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertTrue(!responseText.contains("soap"));
         assertTrue(!responseText.contains("Envelope"));
         assertTrue(!responseText.contains("Body"));
-        assertTrue(responseText.contains("echoStringResponse"));            
+        assertTrue(responseText.contains("echoStringResponse"));     
+
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+        
+        // Invoke the Dispatch<Source>
+        TestLogger.logger.debug(">> Invoking sync Dispatch with PAYLOAD mode");
+        response = dispatch.invoke(srcStream);
+        assertNotNull(response);
+        
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));       
 	}
 
     /**
@@ -119,7 +140,27 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertTrue(responseText.contains("soap"));
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
-        assertTrue(responseText.contains("echoStringResponse"));            
+        assertTrue(responseText.contains("echoStringResponse"));  
+        
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking sync Dispatch with MESSAGE Mode");
+        response = (StreamSource) dispatch.invoke(srcStream);
+        assertNotNull(response);
+
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));  
 	}
 
     /**
@@ -159,6 +200,35 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        monitor = dispatch.invokeAsync(srcStream, callbackHandler);
+
+        // Wait for the async response to be returned
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callbackHandler.getValue();
+        assertNotNull(response);
+        
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -212,6 +282,40 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time to verify
+        // We'll need a callback instance to handle the async responses
+        callbackHandler = new AsyncCallback<Source>();
+
+        // Create a StreamSource with the desired content
+        bytes = DispatchTestConstants.sampleSoapMessage.getBytes();
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
+        monitor = dispatch.invokeAsync(srcStream, callbackHandler);
+
+        // Wait for the async response to be returned
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callbackHandler.getValue();
+        assertNotNull(response);
+
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
     }
 
     /**
@@ -247,6 +351,34 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(response);
         Reader2Writer r2w = new Reader2Writer(reader);
         String responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with PAYLOAD mode");
+        asyncResponse = dispatch.invokeAsync(srcStream);
+
+        // Wait for the async response to be returned
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
+        assertNotNull(response);
+        
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
         TestLogger.logger.debug(responseText);
         
         // Check to make sure the content is correct
@@ -297,27 +429,63 @@ public class StreamSourceDispatchTests extends AbstractTestCase {
         assertTrue(responseText.contains("Envelope"));
         assertTrue(responseText.contains("Body"));
         assertTrue(responseText.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with MESSAGE mode");
+        asyncResponse = dispatch.invokeAsync(srcStream);
+
+        // Wait for the async response to be returned
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
+        assertNotNull(response);
+
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(response);
+        r2w = new Reader2Writer(reader);
+        responseText = r2w.getAsString();
+        TestLogger.logger.debug(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
     }
     
     /**
      * Invoke a Dispatch<Source> one-way operation
      */
-	public void testOneWayPayloadMode() throws Exception {
+    public void testOneWayPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
-        
+
         // Initialize the JAX-WS client artifacts
-		Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
-		svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
-		Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
-				Service.Mode.PAYLOAD);
-        
-		// Create a StreamSource with the desired content
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, Source.class,
+                                                       Service.Mode.PAYLOAD);
+
+        // Create a StreamSource with the desired content
         byte[] bytes = DispatchTestConstants.sampleBodyContent.getBytes();
         ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-		Source srcStream = new StreamSource((InputStream) stream);
+        Source srcStream = new StreamSource((InputStream) stream);
 
         TestLogger.logger.debug(">> Invoking One Way Dispatch");
-		dispatch.invokeOneWay(srcStream);
-	}
+        dispatch.invokeOneWay(srcStream);
+        
+        // Invoke a second time to verify
+        stream = new ByteArrayInputStream(bytes);
+        srcStream = new StreamSource((InputStream) stream);
+
+        TestLogger.logger.debug(">> Invoking One Way Dispatch");
+        dispatch.invokeOneWay(srcStream);
+    }
 }

@@ -85,12 +85,22 @@ public class AddressBookTests extends AbstractTestCase {
         request.setEntry(content);
         
         AddEntryResponse response = (AddEntryResponse) dispatch.invoke(request);
-        
+
         // Validate the results
         assertNotNull(response);
         assertTrue(response.isStatus());
-            TestLogger.logger.debug("[pass]     - valid response received");
-            TestLogger.logger.debug("[response] - " + response.isStatus());
+        TestLogger.logger.debug("[pass]     - valid response received");
+        TestLogger.logger.debug("[response] - " + response.isStatus());
+
+        
+        // Try the dispatch again
+        response = (AddEntryResponse) dispatch.invoke(request);
+
+        // Validate the results
+        assertNotNull(response);
+        assertTrue(response.isStatus());
+        TestLogger.logger.debug("[pass]     - valid response received");
+        TestLogger.logger.debug("[response] - " + response.isStatus());
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -123,6 +133,14 @@ public class AddressBookTests extends AbstractTestCase {
         // Validate the results
         assertNotNull(added);
         assertTrue(added);
+        
+        
+        // Try the test again
+        added = ab.addEntry(content);
+        
+        // Validate the results
+        assertNotNull(added);
+        assertTrue(added);
     }
     
     /**
@@ -142,6 +160,16 @@ public class AddressBookTests extends AbstractTestCase {
         String fname = "Joe";
         String lname = "Test";
         AddressBookEntry result = ab.findEntryByName(fname, lname);
+        
+        // Validate the results
+        assertNotNull(result);
+        assertNotNull(result.getFirstName());
+        assertNotNull(result.getLastName());
+        assertTrue(result.getFirstName().equals(fname));
+        assertTrue(result.getLastName().equals(lname));
+        
+        // Try the invoke again to verify
+        result = ab.findEntryByName(fname, lname);
         
         // Validate the results
         assertNotNull(result);

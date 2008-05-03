@@ -55,6 +55,17 @@ public class RPCLitStringArrayTests extends AbstractTestCase {
             assertEquals(array.getItem().get(i), result.getItem().get(i));
         }
 
+        // Try a second time to verify
+        String[] strArray2 = {"str1", "str2", "str3", "str4 5"};
+        array = new StringArray();
+        array.getItem().addAll(Arrays.asList(strArray2));
+        result = portType.echoStringArray(array);
+            
+        assertEquals(array.getItem().size(), result.getItem().size());
+        for (int i = 0; i < array.getItem().size(); i++) {
+            assertEquals(array.getItem().get(i), result.getItem().get(i));
+        }
+
         System.out.print("---------------------------------");
     }
 
@@ -72,6 +83,17 @@ public class RPCLitStringArrayTests extends AbstractTestCase {
         StringArray array = new StringArray();
         array.getItem().addAll(Arrays.asList(strArray));
         StringArray result = portType.echoStringArray(array);
+            
+        assertEquals(array.getItem().size(), result.getItem().size());
+        for (int i = 0; i < array.getItem().size(); i++) {
+            assertEquals(array.getItem().get(i) + "return", result.getItem().get(i));
+        }
+        
+        // Try a second time to verify
+        String[]strArray2 = {"str1", "str2", "str3", "str4 5"};
+        array = new StringArray();
+        array.getItem().addAll(Arrays.asList(strArray2));
+        result = portType.echoStringArray(array);
             
         assertEquals(array.getItem().size(), result.getItem().size());
         for (int i = 0; i < array.getItem().size(); i++) {

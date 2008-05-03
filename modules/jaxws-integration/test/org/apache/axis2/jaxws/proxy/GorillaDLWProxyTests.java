@@ -95,6 +95,11 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
             assertTrue(response != null);
             assertEquals(response, request);
             
+            // Try again to verify
+            response = proxy.echoString(request);
+            assertTrue(response != null);
+            assertEquals(response, request);
+            
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -110,6 +115,10 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
             String request = null;  // Null is an appropriate input
            
             String response = proxy.echoString(request);
+            assertTrue(response == null);
+            
+            // Try again to verify
+            response = proxy.echoString(request);
             assertTrue(response == null);
         }catch(Exception e){ 
             e.printStackTrace(); 
@@ -145,6 +154,25 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
                 // Check for the package referenced only by an @XmlSeeAlso
                 assertTrue(observedKey.contains("org.test.stock2"));
             }
+            
+            
+            // Try again to verify
+            JAXBUtilsMonitor.clear();
+            response = proxy.echoString(request);
+            assertTrue(response != null);
+            assertEquals(response, request);
+            
+            // Now query the monitor
+            keys = JAXBUtilsMonitor.getPackageKeys();
+            assertTrue(keys != null && keys.size() > 0);
+            for (int i=0; i<keys.size(); i++) {
+                String observedKey = keys.get(i);
+                TestLogger.logger.debug("Observed Key =" + observedKey);
+                // Check for one of the expected (referenced) packages
+                assertTrue(observedKey.contains("org.apache.axis2.jaxws.proxy.gorilla_dlw.data"));
+                // Check for the package referenced only by an @XmlSeeAlso
+                assertTrue(observedKey.contains("org.test.stock2"));
+            }
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -157,6 +185,12 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * Testing of StringList (xsd:list of string)
      */
     public void testEchoStringList() throws Exception {
+        // Run the test multiple times to verify correct behavior
+        _testEchoStringList();
+        _testEchoStringList();
+        _testEchoStringList();
+    }
+    public void _testEchoStringList() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
             
@@ -210,6 +244,13 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * SEI is mapped to String[] instead of List<String>
      */
     public void testEchoStringListAlt() throws Exception {
+        
+        // Run the test multiple times to verify correct behavior
+        _testEchoStringListAlt();
+        _testEchoStringListAlt();
+        _testEchoStringListAlt();
+    }
+    public void _testEchoStringListAlt() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
             
@@ -257,6 +298,12 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * @throws Exception
      */
     public void testEchoIndexedStringArray() throws Exception {
+        // Run the test multiple times to verify correct behavior
+        _testEchoIndexedStringArray();
+        _testEchoIndexedStringArray();
+        _testEchoIndexedStringArray();
+    }
+    public void _testEchoIndexedStringArray() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
             
@@ -311,6 +358,13 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * @throws Exception
      */
     public void testEchoStringArray() throws Exception {
+        
+        // Run the test multiple times to verify correct behavior
+        _testEchoStringArray();
+        _testEchoStringArray();
+        _testEchoStringArray();
+    }
+    public void _testEchoStringArray() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
             
@@ -365,6 +419,13 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
      * @throws Exception
      */
     public void testEchoStringArrayAlt() throws Exception {
+        
+        // Run the test multiple times to verify correct behavior
+        _testEchoStringArrayAlt();
+        _testEchoStringArrayAlt();
+        _testEchoStringArrayAlt();
+    }
+    public void _testEchoStringArrayAlt() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
             

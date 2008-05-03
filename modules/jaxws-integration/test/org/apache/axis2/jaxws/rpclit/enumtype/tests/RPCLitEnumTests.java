@@ -44,20 +44,26 @@ public class RPCLitEnumTests extends AbstractTestCase {
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         try{
-                Service service = new Service();
-                PortType portType = service.getPort();
-                
-                BindingProvider p = (BindingProvider) portType;
-                p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+            Service service = new Service();
+            PortType portType = service.getPort();
 
-                Holder<ElementString> pString = new Holder<ElementString>(ElementString.A);
-                portType.echoString(pString);
-                ElementString es = pString.value;
+            BindingProvider p = (BindingProvider) portType;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+
+            Holder<ElementString> pString = new Holder<ElementString>(ElementString.A);
+            portType.echoString(pString);
+            ElementString es = pString.value;
             TestLogger.logger.debug("Response =" + es);
-                System.out.print("---------------------------------");
+            
+            // Try a second time
+            pString = new Holder<ElementString>(ElementString.A);
+            portType.echoString(pString);
+            es = pString.value;
+            TestLogger.logger.debug("Response =" + es);
+            System.out.print("---------------------------------");
         }catch(Exception e){
-                e.printStackTrace();
-                fail();
+            e.printStackTrace();
+            fail();
         }
     }
 }

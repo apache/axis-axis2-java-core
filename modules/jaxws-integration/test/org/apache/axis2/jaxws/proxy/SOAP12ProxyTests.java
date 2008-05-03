@@ -67,6 +67,14 @@ public class SOAP12ProxyTests extends AbstractTestCase {
         // validate the results
         assertNotNull(response);
         assertTrue(!response.equals("FAIL"));
+        
+        // Try a second time
+        response = proxy.echo(SEND_SOAP12_RESPONSE);
+        TestLogger.logger.debug("response returned [" + response + "]");
+        
+        // validate the results
+        assertNotNull(response);
+        assertTrue(!response.equals("FAIL"));
     }
     
     /**
@@ -86,6 +94,19 @@ public class SOAP12ProxyTests extends AbstractTestCase {
         // invoke the remote operation.  send a key that tells the 
         // service send back a SOAP 1.1 response.  this should result
         // in an error.
+        try {
+            String response = proxy.echo(SEND_SOAP11_RESPONSE);
+            TestLogger.logger.debug("response returned [" + response + "]");
+            
+            // if we've gotten this far, then something went wrong.
+            fail();
+        }
+        catch (WebServiceException wse) {
+            TestLogger.logger.debug("an exception was thrown, as expected");
+            TestLogger.logger.debug(wse.getMessage());
+        }
+        
+        // Now do it a second time to confirm the same behavior
         try {
             String response = proxy.echo(SEND_SOAP11_RESPONSE);
             TestLogger.logger.debug("response returned [" + response + "]");

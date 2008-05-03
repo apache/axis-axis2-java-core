@@ -88,7 +88,14 @@ public class AddressingProviderTests extends AbstractTestCase {
                      
         assertResponseXML(response, "Hello Response");
         
-        System.out.println(response.toString());       
+        System.out.println(response.toString()); 
+        
+        // Try Again to verify
+        response = dispatch.invoke(request);
+        
+        assertResponseXML(response, "Hello Response");
+        
+        System.out.println(response.toString()); 
     }
     
     /**
@@ -113,7 +120,14 @@ public class AddressingProviderTests extends AbstractTestCase {
                      
         assertResponseXML(response, "Hello Response");
         
-        System.out.println(response.toString());       
+        System.out.println(response.toString());
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
+        
+        assertResponseXML(response, "Hello Response");
+        
+        System.out.println(response.toString());
     }
     
     private SOAPElement assertResponseXML(SOAPMessage msg, String expectedText) throws Exception {

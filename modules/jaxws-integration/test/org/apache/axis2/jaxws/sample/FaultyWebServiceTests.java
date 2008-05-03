@@ -52,13 +52,39 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
 
     public void testFaultyWebService(){
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        FaultyWebServiceService service = new FaultyWebServiceService();
+        FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
+        
         FaultyWebServiceFault_Exception exception = null;
         try{
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
-            FaultyWebServiceService service = new FaultyWebServiceService();
-            FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
+            exception = null;
             BindingProvider p =	(BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.faultyWebService(10);
+
+        }catch(FaultyWebServiceFault_Exception e){
+            exception = e;
+        }catch(Exception e) {
+            e.printStackTrace();
+            fail(e.toString());
+        }
+
+        TestLogger.logger.debug("----------------------------------");
+
+        assertNotNull(exception);
+        assertEquals("custom exception", exception.getMessage());
+        assertNotNull(exception.getFaultInfo());
+        assertEquals("bean custom fault info", exception.getFaultInfo().getFaultInfo());
+        assertEquals("bean custom message", exception.getFaultInfo().getMessage());
+        
+        // Repeat to verify behavior
+        try{
+            exception = null;
+            BindingProvider p = (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
 
             // the invoke will throw an exception, if the test is performed right
@@ -83,16 +109,43 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
     public void testFaultyWebService_badEndpoint(){
 
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        FaultyWebServiceService service = new FaultyWebServiceService();
+        FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
+        
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
 
         WebServiceException exception = null;
 
         try{
-            TestLogger.logger.debug("----------------------------------");
-            TestLogger.logger.debug("test: " + getName());
-            FaultyWebServiceService service = new FaultyWebServiceService();
-            FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
+            exception = null;
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
+
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.faultyWebService(10);
+
+        }catch(FaultyWebServiceFault_Exception e) {
+            // shouldn't get this exception
+            fail(e.toString());
+        }catch(WebServiceException e) {
+            exception = e;
+        }catch(Exception e) {
+            fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
+        }
+
+        TestLogger.logger.debug("----------------------------------");
+
+        assertNotNull(exception);
+        assertTrue(exception.getCause() instanceof UnknownHostException);
+        assertTrue(exception.getCause().getMessage().indexOf(host)!=-1);
+        
+        
+        // Repeat to verify behavior
+        try{
+            exception = null;
             BindingProvider p = (BindingProvider)proxy;
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
 
@@ -121,20 +174,41 @@ public class FaultyWebServiceTests extends AbstractTestCase {
 
 
     public void testFaultyWebService_badEndpoint_oneWay() {
-
         String host = "this.is.a.bad.endpoint.terrible.in.fact";
         String badEndpoint = "http://" + host;
+        
+        DocLitWrapService service = new DocLitWrapService();
+        DocLitWrap proxy = service.getDocLitWrapPort();
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
+        
+       
 
         WebServiceException exception = null;
 
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
         try{
+            exception = null;
+           
+            proxy.oneWayVoid();
 
-            DocLitWrapService service = new DocLitWrapService();
-            DocLitWrap proxy = service.getDocLitWrapPort();
-            BindingProvider p = (BindingProvider)proxy;
-            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
+        }catch(WebServiceException e) {
+            exception = e;
+        }catch(Exception e) {
+            fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
+        }
+
+        TestLogger.logger.debug("----------------------------------");
+
+        assertNotNull(exception);
+        assertTrue(exception.getCause() instanceof UnknownHostException);
+        assertTrue(exception.getCause().getMessage().indexOf(host)!=-1);
+        
+        // Repeat to verify behavior
+        try{
+            exception = null;
+           
             proxy.oneWayVoid();
 
         }catch(WebServiceException e) {
@@ -174,6 +248,28 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         }
 
         Exception e = callback.getException();
+
+        // Section 4.3.3 states that the top level Exception should be
+        // an ExecutionException, with a WebServiceException underneath.
+        assertNotNull("The exception was null.", e);
+        assertTrue("The thrown exception should be an ExecutionException.", e
+                   .getClass().equals(ExecutionException.class));
+        assertTrue(
+                   "The expected fault type under the ExecutionException should be a "
+                   + "SOAPFaultException.  Found type: "
+                   + e.getCause().getClass(), e.getCause().getClass()
+                   .isAssignableFrom(SOAPFaultException.class));
+        
+        // Repeat to verify behavior
+        callback = new FaultyAsyncHandler();
+        future = proxy.faultyWebServiceAsync(1, callback);
+
+        while (!future.isDone()) {
+            Thread.sleep(1000);
+            TestLogger.logger.debug("Async invocation incomplete");
+        }
+
+        e = callback.getException();
 
         // Section 4.3.3 states that the top level Exception should be
         // an ExecutionException, with a WebServiceException underneath.
@@ -226,6 +322,32 @@ public class FaultyWebServiceTests extends AbstractTestCase {
                    + "SOAPFaultException.  Found type: "
                    + e.getCause().getClass(), e.getCause().getClass()
                    .isAssignableFrom(SOAPFaultException.class));
+        
+        
+        // Repeat to verify behavior
+        proxy.faultyWebServiceAsync(1);
+        while (!future.isDone()) {
+            Thread.sleep(1000);
+            TestLogger.logger.debug("Async invocation incomplete");
+        }
+
+        e = null;
+        try {
+            Object obj = future.get();
+        } catch (Exception ex) {
+            e = ex;
+        }
+
+        // Section 4.3.3 states that the top level Exception should be
+        // an ExecutionException, with a WebServiceException underneath.
+        assertNotNull("The exception was null.", e);
+        assertTrue("The thrown exception should be an ExecutionException.", e
+                   .getClass().equals(ExecutionException.class));
+        assertTrue(
+                   "The expected fault type under the ExecutionException should be a "
+                   + "SOAPFaultException.  Found type: "
+                   + e.getCause().getClass(), e.getCause().getClass()
+                   .isAssignableFrom(SOAPFaultException.class));
 
     }
 
@@ -250,6 +372,28 @@ public class FaultyWebServiceTests extends AbstractTestCase {
         }
 
         Exception e = callback.getException();
+        e.printStackTrace();
+
+        // Section 4.3.3 states that the top level Exception should be
+        // an ExecutionException, with a WebServiceException underneath.
+        assertNotNull("The exception was null.", e);
+        assertTrue("The thrown exception should be an ExecutionException.", 
+                   e.getClass().equals(ExecutionException.class));
+        assertTrue("The expected fault type under the ExecutionException should be a " +
+                   "FaultyWebServiceFault_Exception.  Found type: " + e.getCause().getClass(), 
+                   e.getCause().getClass().isAssignableFrom(FaultyWebServiceFault_Exception.class));
+        
+        
+        // Repeat to verify behavior
+        callback = new FaultyAsyncHandler();
+        future = proxy.faultyWebServiceAsync(1, callback);
+
+        while (!future.isDone()) {
+            Thread.sleep(1000);
+            TestLogger.logger.debug("Async invocation incomplete");
+        }
+
+        e = callback.getException();
         e.printStackTrace();
 
         // Section 4.3.3 states that the top level Exception should be

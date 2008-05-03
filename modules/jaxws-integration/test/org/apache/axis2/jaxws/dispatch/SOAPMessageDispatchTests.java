@@ -47,68 +47,8 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(SOAPMessageDispatchTests.class));
     }
 
-	public void testSOAPMessageSyncMessageMode() throws Exception {
-		
-        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
-        String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
+    public void testSOAPMessageSyncMessageMode() throws Exception {
 
-        TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
-		//Initialize the JAX-WS client artifacts
-		Service svc = Service.create(serviceName);
-		svc.addPort(portName, null, url);
-		Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
-				SOAPMessage.class, Service.Mode.MESSAGE);
-
-		//Create SOAPMessage Object no attachments here.
-		FileInputStream inputStream = new FileInputStream(messageResource);
-		MessageFactory factory = MessageFactory.newInstance();
-		SOAPMessage msgObject = factory.createMessage(null, inputStream);
-
-		//Invoke the Dispatch
-        TestLogger.logger.debug(">> Invoking Async Dispatch");
-		SOAPMessage response = dispatch.invoke(msgObject);
-
-		assertNotNull("dispatch invoke returned null", response);
-		response.writeTo(System.out);
-	}
-	
-	public void testSOAPMessageAsyncCallbackMessageMode() throws Exception {
-		
-        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
-        String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
-
-        TestLogger.logger.debug("---------------------------------------");
-        TestLogger.logger.debug("test: " + getName());
-		//Initialize the JAX-WS client artifacts
-		Service svc = Service.create(serviceName);
-		svc.addPort(portName, null, url);
-		Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
-				SOAPMessage.class, Service.Mode.MESSAGE);
-
-		//Create SOAPMessage Object no attachments here.
-		FileInputStream inputStream = new FileInputStream(messageResource);
-		MessageFactory factory = MessageFactory.newInstance();
-		SOAPMessage msgObject = factory.createMessage(null, inputStream);
-		
-        AsyncCallback<SOAPMessage> ac = new AsyncCallback<SOAPMessage>();
-		//Invoke the Dispatch
-        TestLogger.logger.debug(">> Invoking sync Dispatch");
-		Future<?> monitor = dispatch.invokeAsync(msgObject, ac);
-
-		assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
-		while (!monitor.isDone()) {
-            TestLogger.logger.debug(">> Async invocation still not complete");
-            Thread.sleep(1000);
-        }
-        
-        SOAPMessage response = ac.getValue();
-        assertNotNull("dispatch invoke returned null", response);
-        response.writeTo(System.out);
-	}
-    
-    public void testSOAPMessageAsyncPollingMessageMode() throws Exception {
-        
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
 
@@ -118,7 +58,91 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, url);
         Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
-                SOAPMessage.class, Service.Mode.MESSAGE);
+                                                            SOAPMessage.class, Service.Mode.MESSAGE);
+
+        //Create SOAPMessage Object no attachments here.
+        FileInputStream inputStream = new FileInputStream(messageResource);
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage msgObject = factory.createMessage(null, inputStream);
+
+        //Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking Async Dispatch");
+        SOAPMessage response = dispatch.invoke(msgObject);
+
+        assertNotNull("dispatch invoke returned null", response);
+        response.writeTo(System.out);
+        
+        // Invoke a second time to verify
+        // Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking Async Dispatch");
+        response = dispatch.invoke(msgObject);
+
+        assertNotNull("dispatch invoke returned null", response);
+        response.writeTo(System.out);
+    }
+
+    public void testSOAPMessageAsyncCallbackMessageMode() throws Exception {
+
+        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
+        String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
+
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        //Initialize the JAX-WS client artifacts
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName, null, url);
+        Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
+                                                            SOAPMessage.class, Service.Mode.MESSAGE);
+
+        //Create SOAPMessage Object no attachments here.
+        FileInputStream inputStream = new FileInputStream(messageResource);
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage msgObject = factory.createMessage(null, inputStream);
+
+        AsyncCallback<SOAPMessage> ac = new AsyncCallback<SOAPMessage>();
+        //Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        Future<?> monitor = dispatch.invokeAsync(msgObject, ac);
+
+        assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+
+        SOAPMessage response = ac.getValue();
+        assertNotNull("dispatch invoke returned null", response);
+        response.writeTo(System.out);
+        
+        // Invoke a second time to verify
+        ac = new AsyncCallback<SOAPMessage>();
+        //Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        monitor = dispatch.invokeAsync(msgObject, ac);
+
+        assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+
+        response = ac.getValue();
+        assertNotNull("dispatch invoke returned null", response);
+        response.writeTo(System.out);
+    }
+
+    public void testSOAPMessageAsyncPollingMessageMode() throws Exception {
+
+        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
+        String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
+
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        //Initialize the JAX-WS client artifacts
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName, null, url);
+        Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
+                                                            SOAPMessage.class, Service.Mode.MESSAGE);
 
         //Create SOAPMessage Object no attachments here.
         FileInputStream inputStream = new FileInputStream(messageResource);
@@ -134,10 +158,26 @@ public class SOAPMessageDispatchTests extends AbstractTestCase {
             TestLogger.logger.debug(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
-        
+
         SOAPMessage response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
         response.writeTo(System.out);
+        
+        
+        // Invoke a second time to verify
+        // Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        asyncResponse = dispatch.invokeAsync(msgObject);
+
+        assertNotNull("dispatch invokeAsync returned null Response", asyncResponse);
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+
+        response = asyncResponse.get();
+        assertNotNull("dispatch invoke returned null", response);
+        response.writeTo(System.out);
     }
-    
+
 }

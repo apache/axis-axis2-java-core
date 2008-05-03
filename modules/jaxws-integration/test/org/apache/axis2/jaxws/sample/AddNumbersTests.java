@@ -50,12 +50,26 @@ public class AddNumbersTests extends AbstractTestCase {
         int total = proxy.addNumbers(10, 10);
 
         TestLogger.logger.debug("Total =" + total);
-        TestLogger.logger.debug("----------------------------------");
+        
 
         assertEquals("sum", 20, total);
         assertEquals("http response code", 
                      new Integer(200), p.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE));
         Map headers = (Map) p.getResponseContext().get(MessageContext.HTTP_RESPONSE_HEADERS);
+        // the map should contain some headers
+        assertTrue("http response headers", headers != null && !headers.isEmpty());
+        
+        
+        // Try the test again
+        total = proxy.addNumbers(10, 10);
+
+        TestLogger.logger.debug("Total =" + total);
+        
+
+        assertEquals("sum", 20, total);
+        assertEquals("http response code", 
+                     new Integer(200), p.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE));
+        headers = (Map) p.getResponseContext().get(MessageContext.HTTP_RESPONSE_HEADERS);
         // the map should contain some headers
         assertTrue("http response headers", headers != null && !headers.isEmpty());
     }
@@ -71,6 +85,9 @@ public class AddNumbersTests extends AbstractTestCase {
             BindingProvider bp = (BindingProvider) proxy;
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
                     axisEndpoint);
+            proxy.oneWayInt(11);
+            
+            // Try it one more time
             proxy.oneWayInt(11);
             TestLogger.logger.debug("----------------------------------");
         } catch (Exception e) {

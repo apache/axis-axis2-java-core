@@ -157,6 +157,39 @@ public class RPCLitSWAProxyTests extends AbstractTestCase {
             assertTrue("The inout attachment holder is null", attachmentINOUT_Holder != null);
             assertTrue("The inout attachment is null", attachmentINOUT_Holder.value != null);
             // Ensure that this is not the same object
+            assertTrue(attachmentINOUT_Holder.value != attachmentINOUT); 
+            
+            // ------------------
+            // Try again with the same proxy
+            // ------------------
+            request = "This is a not attachment data";
+            
+            attachmentIN = "Data for plain text attachment";
+            attachmentINOUT = getImageDH();
+            
+            attachmentINOUT_Holder = new Holder<DataHandler>();
+            attachmentINOUT_Holder.value = attachmentINOUT;
+            response_Holder = new Holder<String>();
+            attachmentOUT_Holder = new Holder<String>();
+           
+            proxy.echo(request, attachmentIN, attachmentINOUT_Holder, response_Holder, 
+                       attachmentOUT_Holder);
+            
+            assertTrue("Bad Response Holder", response_Holder != null);
+            assertTrue("Response value is null", response_Holder.value != null);
+            assertTrue("Response is not the same as request. Receive="+response_Holder.value, 
+                       request.equals(response_Holder.value));
+            
+            assertTrue("The output attachment holder is null", attachmentOUT_Holder != null);
+            assertTrue("The output attachment is null", attachmentOUT_Holder.value != null);
+            assertTrue("The output attachment is not the same as the input.  Received=" + 
+                       attachmentOUT_Holder.value, 
+                    attachmentIN.equals(attachmentOUT_Holder.value));
+            
+           
+            assertTrue("The inout attachment holder is null", attachmentINOUT_Holder != null);
+            assertTrue("The inout attachment is null", attachmentINOUT_Holder.value != null);
+            // Ensure that this is not the same object
             assertTrue(attachmentINOUT_Holder.value != attachmentINOUT);  
         
     }

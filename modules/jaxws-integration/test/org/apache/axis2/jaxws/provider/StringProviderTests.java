@@ -63,6 +63,10 @@ public class StringProviderTests extends ProviderTestCase {
         String request = "<invoke>hello world</invoke>";
         String response = dispatch.invoke(request);
         assertTrue(request.equals(response));
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
+        assertTrue(request.equals(response));
     }
     
     public void testEmptyString() throws Exception {
@@ -78,7 +82,13 @@ public class StringProviderTests extends ProviderTestCase {
         // the nothing is echo'ed 
         assertTrue(response == null);
         
-        //assertTrue(request.equals(response));
+        // Try again to verify
+        response = dispatch.invoke(request);
+        
+        // The current belief is that this should return a null indicating
+        // the nothing is echo'ed 
+        assertTrue(response == null);
+       
     }
     
     public void testNullString() throws Exception {
@@ -89,6 +99,13 @@ public class StringProviderTests extends ProviderTestCase {
         
         String request = null;
         String response = dispatch.invoke(request);
+        
+        // The current belief is that this should return a null indicating
+        // the nothing is echo'ed 
+        assertTrue(response == null);
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
         
         // The current belief is that this should return a null indicating
         // the nothing is echo'ed 
@@ -107,6 +124,13 @@ public class StringProviderTests extends ProviderTestCase {
         // The current implementation does not send the mixedContent over the wire, so the
         // expectation is that the echo'd response is null
         assertTrue(response == null);
+        
+        // Try again to verifify
+        response = dispatch.invoke(request);
+        
+        // The current implementation does not send the mixedContent over the wire, so the
+        // expectation is that the echo'd response is null
+        assertTrue(response == null);
     }
     
     public void testCommentString() throws Exception {
@@ -117,6 +141,13 @@ public class StringProviderTests extends ProviderTestCase {
         
         String request = "<!--comment-->";
         String response = dispatch.invoke(request);
+        // The current implementation does not send the comment over the wire, so the
+        // expectation is that the echo'd response is null
+        assertTrue(response == null);
+        
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
         // The current implementation does not send the comment over the wire, so the
         // expectation is that the echo'd response is null
         assertTrue(response == null);
@@ -134,6 +165,14 @@ public class StringProviderTests extends ProviderTestCase {
         // The current implementatin only sends the first element
         // So the echo'd response is just the first one.
         assertTrue("<a>hello</a>".equals(response));
+        
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
+        
+        // The current implementatin only sends the first element
+        // So the echo'd response is just the first one.
+        assertTrue("<a>hello</a>".equals(response));
     }
     
     public void testTwoElementsAndMixedContentString() throws Exception {
@@ -147,6 +186,13 @@ public class StringProviderTests extends ProviderTestCase {
         // The current implementation only sends the first element.
         // The mixed content (mixed1) interferes and thus nothing is sent.
         assertTrue(response == null);
+        
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
+        // The current implementation only sends the first element.
+        // The mixed content (mixed1) interferes and thus nothing is sent.
+        assertTrue(response == null);
     }
     
     public void testException() throws Exception {
@@ -156,6 +202,15 @@ public class StringProviderTests extends ProviderTestCase {
         Dispatch<String> dispatch = getDispatch();
         
         String request = "<invoke>throwWebServiceException</invoke>";
+        try {
+            String response = dispatch.invoke(request);
+            fail("Expected Exception");
+        } catch (SOAPFaultException e) {
+            SOAPFault sf = e.getFault();
+            assertTrue(sf.getFaultString().equals("provider"));
+        }
+        
+        // Try again to verify
         try {
             String response = dispatch.invoke(request);
             fail("Expected Exception");

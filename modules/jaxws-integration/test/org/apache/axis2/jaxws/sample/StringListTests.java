@@ -53,5 +53,13 @@ public class StringListTests extends AbstractTestCase {
         for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], retString[i]);
         }
+        
+        // Repeat to ensure validity
+        retString = portType.stringList(send);
+        assertNotNull(retString);
+        assertEquals(expected.length, retString.length);
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], retString[i]);
+        }
     }
 }

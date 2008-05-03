@@ -87,6 +87,15 @@ public class SOAPFaultProviderTests extends ProviderTestCase {
         catch (Exception e) {
             fail("Caught unexpected exception " + e.toString());
         }
+        
+        // Try again
+        // Test that a Provider receives the full fault.  If not, it will throw an exception
+        try {
+            String response = dispatch.invoke(request);
+        }
+        catch (Exception e) {
+            fail("Caught unexpected exception " + e.toString());
+        }
     }
 
 }

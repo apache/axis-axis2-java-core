@@ -60,6 +60,10 @@ public class BareTests extends AbstractTestCase {
         String request = "Hello World";
         String response = proxy.echoString(request);
         assertTrue(request.equals(response));
+        
+        // Try the test again
+        response = proxy.echoString(request);
+        assertTrue(request.equals(response));
 
         TestLogger.logger.debug("------------------------------");
 
@@ -80,6 +84,10 @@ public class BareTests extends AbstractTestCase {
 
         String request = XMLCHARS;
         String response = proxy.echoString(request);
+        assertTrue(request.equals(response));
+        
+        // Try the test again
+        response = proxy.echoString(request);
         assertTrue(request.equals(response));
 
         TestLogger.logger.debug("------------------------------");
@@ -103,6 +111,11 @@ public class BareTests extends AbstractTestCase {
 
             String response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
+            
+            // Try the call again
+            response = proxy.twoWaySimple(10);
+            
+            TestLogger.logger.debug("Sync Response =" + response);
             TestLogger.logger.debug("------------------------------");
         }catch(Exception e){
             e.printStackTrace();
@@ -122,6 +135,11 @@ public class BareTests extends AbstractTestCase {
             p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
 
             String response = proxy.twoWaySimple(10);
+            TestLogger.logger.debug("Sync Response =" + response);
+            
+            
+            // Try the call again
+            response = proxy.twoWaySimple(10);
             TestLogger.logger.debug("Sync Response =" + response);
             TestLogger.logger.debug("------------------------------");
         }catch(Exception e){
@@ -146,6 +164,9 @@ public class BareTests extends AbstractTestCase {
             "oneWayEmpty");
             p.getRequestContext().put(
                                       BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+            proxy.oneWayEmpty();
+            
+            // Try the call again
             proxy.oneWayEmpty();
 
             TestLogger.logger.debug("------------------------------");

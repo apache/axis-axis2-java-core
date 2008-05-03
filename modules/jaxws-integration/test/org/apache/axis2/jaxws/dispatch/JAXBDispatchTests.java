@@ -80,6 +80,18 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - Response object was null", response != null);
         assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
         assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
+        
+        // Invoke the Dispatch<Object> a second time
+        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
+        response = (EchoStringResponse) dispatchPayload.invoke(request);
+        
+        assertNotNull(response);
+
+        TestLogger.logger.debug(">> Response content: " + response.getEchoStringReturn());
+        
+        assertTrue("[ERROR] - Response object was null", response != null);
+        assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
     }
     
     public void testAysncPayload() throws Exception {
@@ -112,6 +124,29 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
         assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
 
+        
+        // Invoke a second time
+        
+        // Create the callback for async responses
+        callback = new JAXBCallbackHandler<Object>();
+        
+        // Invoke the Dispatch<Object> asynchronously
+        TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
+        monitor = dispatchPayload.invokeAsync(request, callback);
+        
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+             Thread.sleep(1000);
+        }
+        
+        response = (EchoStringResponse) callback.getData();
+        assertNotNull(response);
+
+        TestLogger.logger.debug(">> Response content: " + response.getEchoStringReturn());
+        
+        assertTrue("[ERROR] - Response object was null", response != null);
+        assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
     }
     
     public void testOneWayPayload() throws Exception {
@@ -124,6 +159,10 @@ public class JAXBDispatchTests extends AbstractTestCase {
         request.setInput("ONE-WAY JAXB PAYLOAD TEST");
         
         // Invoke the Dispatch<Object> one-way
+        TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
+        dispatchPayload.invokeOneWay(request);
+        
+        // Invoke the Dispatch<Object> one-way a second time
         TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
         dispatchPayload.invokeOneWay(request);
     }
@@ -151,6 +190,22 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertNotNull(response);
         assertNotNull(response.getBody());
         EchoStringResponse echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
+
+        TestLogger.logger.debug(">> Response content: " + echoStringResponse.getEchoStringReturn());
+        assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
+    
+        
+        
+        // Invoke the Dispatch<Object> a second time
+        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
+        jaxbResponse = (JAXBElement<Envelope>) dispatchMessage.invoke(request);
+        
+        assertNotNull(jaxbResponse);
+        response = jaxbResponse.getValue();
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
 
         TestLogger.logger.debug(">> Response content: " + echoStringResponse.getEchoStringReturn());
         assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
@@ -195,6 +250,32 @@ public class JAXBDispatchTests extends AbstractTestCase {
         assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
         assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
 
+        // Invoke a second time
+        // Create the callback for async responses
+        callback = new JAXBCallbackHandler<Object>();
+        
+        // Invoke the Dispatch<Object> asynchronously
+        TestLogger.logger.debug(">> Invoking async(callback) Dispatch with JAX-B Parameter");
+        monitor = dispatchMessage.invokeAsync(request, callback);
+        
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+             Thread.sleep(1000);
+        }
+        
+        jaxbResponse = (JAXBElement<Envelope>) callback.getData();
+        
+        assertNotNull(jaxbResponse);
+        response = jaxbResponse.getValue();
+        
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
+
+        TestLogger.logger.debug(">> Response content: " + echoStringResponse.getEchoStringReturn());
+        assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
+
         
     }
     
@@ -211,6 +292,10 @@ public class JAXBDispatchTests extends AbstractTestCase {
         request.getValue().getBody().getAny().add(echoString);
         
         // Invoke the Dispatch<Object> one-way
+        TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
+        dispatchMessage.invokeOneWay(request);
+        
+        // Invoke the Dispatch<Object> one-way a second time
         TestLogger.logger.debug(">> Invoking one-way Dispatch with JAX-B Parameter");
         dispatchMessage.invokeOneWay(request);
     }

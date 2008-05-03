@@ -39,21 +39,29 @@ public class AnyTypeTests extends AbstractTestCase {
     public void testAnyTypeElementinWrappedWSDL(){
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try{
-			AnyTypeMessageService service = new AnyTypeMessageService();
-			AnyTypeMessagePortType portType = service.getAnyTypePort();
-			BindingProvider p = (BindingProvider) portType;
-	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        
+        // Run test a few times to ensure correct 
+        _testAnyTypeElementinWrappedWSDL();
+        _testAnyTypeElementinWrappedWSDL();
+        _testAnyTypeElementinWrappedWSDL();
+        
+        System.out.print("---------------------------------");
+    }
+    
+    public void _testAnyTypeElementinWrappedWSDL(){
+        try{
+            AnyTypeMessageService service = new AnyTypeMessageService();
+            AnyTypeMessagePortType portType = service.getAnyTypePort();
+            BindingProvider p = (BindingProvider) portType;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
-			String req = new String("Request as String");
-			Object response = portType.echoMessage(req);
-			assertTrue(response instanceof String);
+            String req = new String("Request as String");
+            Object response = portType.echoMessage(req);
+            assertTrue(response instanceof String);
             TestLogger.logger.debug("Response =" + response);
-			System.out.print("---------------------------------");
-		}catch(Exception e){
-			e.printStackTrace();
-			fail();
-		}
-		
-	}
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
 }

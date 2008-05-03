@@ -40,23 +40,27 @@ public class NonAnonymousComplexTypeTests extends AbstractTestCase {
         return getTestSetup(new TestSuite(NonAnonymousComplexTypeTests.class));
     }
 
-	public void testSimpleProxy() {
+    public void testSimpleProxy() {
         TestLogger.logger.debug("------------------------------");
         TestLogger.logger.debug("Test : " + getName());
-		try {
-			String msg = "Hello Server";
-		    EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
-	        BindingProvider p = (BindingProvider) myPort;
-	        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        try {
+            String msg = "Hello Server";
+            EchoMessagePortType myPort = (new EchoMessageService()).getEchoMessagePort();
+            BindingProvider p = (BindingProvider) myPort;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
 
-		    String response = myPort.echoMessage(msg);
+            String response = myPort.echoMessage(msg);
+            TestLogger.logger.debug(response);
+            
+            // Try a second time to verify
+            response = myPort.echoMessage(msg);
             TestLogger.logger.debug(response);
             TestLogger.logger.debug("------------------------------");
-		} catch (WebServiceException webEx) {
-			webEx.printStackTrace();
-			fail();
-		}
-	}
+        } catch (WebServiceException webEx) {
+            webEx.printStackTrace();
+            fail();
+        }
+    }
 
 		    
 

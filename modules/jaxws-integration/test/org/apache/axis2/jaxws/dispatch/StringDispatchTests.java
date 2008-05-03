@@ -65,6 +65,20 @@ public class StringDispatchTests extends AbstractTestCase {
         assertTrue(!response.contains("Envelope"));
         assertTrue(!response.contains("Body"));
         assertTrue(response.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        // Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
 	}
     
     /**
@@ -86,6 +100,22 @@ public class StringDispatchTests extends AbstractTestCase {
         // Invoke the Dispatch
         TestLogger.logger.debug(">> Invoking sync Dispatch");
         Exception e = null;
+        try {
+            // The _bad string passes "THROW EXCEPTION", which causes the echo function on the
+            // server to throw a RuntimeException.  We should get a ProtocolException here on the client
+            String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent_bad);
+        } catch (Exception ex) {
+            e = ex;
+        }
+
+        assertNotNull("No exception received", e);
+        assertTrue("'e' should be of type ProtocolException", e instanceof ProtocolException);
+        
+        // Invoke a second time to verify
+        
+        // Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        e = null;
         try {
             // The _bad string passes "THROW EXCEPTION", which causes the echo function on the
             // server to throw a RuntimeException.  We should get a ProtocolException here on the client
@@ -124,11 +154,26 @@ public class StringDispatchTests extends AbstractTestCase {
         assertTrue(response.contains("Envelope"));
         assertTrue(response.contains("Body"));
         assertTrue(response.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time to verify
+        // Invoke the Dispatch
+        TestLogger.logger.debug(">> Invoking sync Dispatch");
+        response = dispatch.invoke(DispatchTestConstants.sampleSoapMessage);
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(response.contains("soap"));
+        assertTrue(response.contains("Envelope"));
+        assertTrue(response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
 	}
     
-	/**
+    /**
      * Invoke a Dispatch<String> using the async callback API in PAYLOAD mode
-	 */
+     */
     public void testAsyncCallbackPayloadMode() throws Exception {
         TestLogger.logger.debug("---------------------------------------");
         TestLogger.logger.debug("test: " + getName());
@@ -151,6 +196,29 @@ public class StringDispatchTests extends AbstractTestCase {
         }
         
         String response = callback.getValue();
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
+        
+        
+        // Invoke a second time to verify
+        // Create the callback for async responses
+        callback = new AsyncCallback<String>();
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch");
+        monitor = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent, callback);
+                
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callback.getValue();
         assertNotNull("dispatch invoke returned null", response);
         TestLogger.logger.debug(response);
         
@@ -194,6 +262,28 @@ public class StringDispatchTests extends AbstractTestCase {
         assertTrue(response.contains("Envelope"));
         assertTrue(response.contains("Body"));
         assertTrue(response.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        // Create the callback for async responses
+        callback = new AsyncCallback<String>();
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
+        monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
+    
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = callback.getValue();
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(response.contains("soap"));
+        assertTrue(response.contains("Envelope"));
+        assertTrue(response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
 	}
     
     /**
@@ -218,6 +308,25 @@ public class StringDispatchTests extends AbstractTestCase {
         }
         
         String response = asyncResponse.get();
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
+        asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
+            
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
         assertNotNull("dispatch invoke returned null", response);
         TestLogger.logger.debug(response);
         
@@ -258,6 +367,25 @@ public class StringDispatchTests extends AbstractTestCase {
         assertTrue(response.contains("Envelope"));
         assertTrue(response.contains("Body"));
         assertTrue(response.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch with Message Mode");
+        asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage);
+    
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        response = asyncResponse.get();
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(response.contains("soap"));
+        assertTrue(response.contains("Envelope"));
+        assertTrue(response.contains("Body"));
+        assertTrue(response.contains("echoStringResponse"));
     }
 	
     /**
@@ -273,6 +401,10 @@ public class StringDispatchTests extends AbstractTestCase {
         Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 String.class, Service.Mode.PAYLOAD);
 
+        TestLogger.logger.debug(">> Invoking one-way Dispatch");
+        dispatch.invokeOneWay(DispatchTestConstants.sampleBodyContent);
+        
+        // Invoke a second time to verify
         TestLogger.logger.debug(">> Invoking one-way Dispatch");
         dispatch.invokeOneWay(DispatchTestConstants.sampleBodyContent);
     }
@@ -292,6 +424,10 @@ public class StringDispatchTests extends AbstractTestCase {
 
         TestLogger.logger.debug(">> Invoking one-way Dispatch");
         dispatch.invokeOneWay(DispatchTestConstants.sampleSoapMessage);
+        
+        // Invoke a second time to verify
+        TestLogger.logger.debug(">> Invoking one-way Dispatch");
+        dispatch.invokeOneWay(DispatchTestConstants.sampleSoapMessage);
 	}
     
     
@@ -307,6 +443,19 @@ public class StringDispatchTests extends AbstractTestCase {
         
         // Invoke the Dispatch
         Throwable ttemp = null;
+        try {
+            TestLogger.logger.debug(">> Invoking sync Dispatch");
+            String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
+        } catch (Throwable t) {
+            assertTrue(t instanceof WebServiceException);
+            assertTrue(t.getCause() instanceof UnknownHostException);
+            ttemp = t;
+        }
+        assertNotNull(ttemp);
+        
+        // Invoke a second time to verify
+        // Invoke the Dispatch
+        ttemp = null;
         try {
             TestLogger.logger.debug(">> Invoking sync Dispatch");
             String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
@@ -356,6 +505,35 @@ public class StringDispatchTests extends AbstractTestCase {
         } else {
             fail("No fault thrown.  Should have retrieved an UnknownHostException from callback");
         }
+        
+        // Invoke a second time to verify
+        // Create the callback for async responses
+        callback = new AsyncCallback<String>();
+
+        TestLogger.logger.debug(">> Invoking async (callback) Dispatch with Message Mode");
+        monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
+    
+        while (!monitor.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        if (callback.hasError()) {
+            Throwable t = callback.getError();
+            t.printStackTrace();
+            
+            assertTrue(t.getClass().getName() + " does not match expected type ExecutionException", t instanceof ExecutionException);
+            
+            Throwable cause = t.getCause();
+            assertNotNull("There must be a cause under the ExecutionException", cause);
+            assertTrue(cause.getClass().getName() + " does not match expected type WebServiceException" ,cause instanceof WebServiceException);
+            
+            Throwable hostException = t.getCause().getCause();
+            assertNotNull("There must be a cause under the WebServiceException", hostException);
+            assertTrue(hostException.getClass().getName() + " does not match expected type UnknownHostException", hostException instanceof UnknownHostException);
+        } else {
+            fail("No fault thrown.  Should have retrieved an UnknownHostException from callback");
+        }
     }
     
     public void testAsyncPollingPayloadMode_badHostName() throws Exception {
@@ -377,6 +555,27 @@ public class StringDispatchTests extends AbstractTestCase {
         }
         
         Throwable ttemp = null;
+        try {
+            asyncResponse.get();
+        } catch (Throwable t) {
+            assertTrue(t instanceof ExecutionException);
+            assertTrue(t.getCause() instanceof WebServiceException);
+            assertTrue(t.getCause().getCause() instanceof UnknownHostException);
+            ttemp = t;
+        }
+        assertNotNull(ttemp);
+        
+        
+        // Invoke a second time to verify
+        TestLogger.logger.debug(">> Invoking async (polling) Dispatch");
+        asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
+            
+        while (!asyncResponse.isDone()) {
+            TestLogger.logger.debug(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        ttemp = null;
         try {
             asyncResponse.get();
         } catch (Throwable t) {

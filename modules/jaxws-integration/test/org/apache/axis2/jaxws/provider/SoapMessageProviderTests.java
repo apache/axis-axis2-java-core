@@ -119,7 +119,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Dispatch
             TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
-        	SOAPMessage response = dispatch.invoke(request);
+            SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
             assertNotNull(response.getContentDescription());
@@ -127,6 +127,25 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // Check assertions and get the data element
             SOAPElement dataElement = assertResponseXML(response, SoapMessageProvider.XML_RESPONSE);
+            
+            assertTrue(countAttachments(response) == 0);
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+            
+            
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
+
+            // Check for valid content description
+            assertNotNull(response.getContentDescription());
+            assertEquals(SoapMessageProvider.XML_RESPONSE, response.getContentDescription());
+            
+            // Check assertions and get the data element
+            dataElement = assertResponseXML(response, SoapMessageProvider.XML_RESPONSE);
             
             assertTrue(countAttachments(response) == 0);
             
@@ -161,6 +180,21 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Dispatch
             TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             SOAPMessage response = dispatch.invoke(request);
+            
+            // Check assertions
+            assertTrue(response !=null);
+            assertTrue(response.getSOAPBody() != null);
+            assertTrue(response.getSOAPBody().getFirstChild() == null);  // There should be nothing in the body
+            
+            assertTrue(countAttachments(response) == 0);
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
             
             // Check assertions
             assertTrue(response !=null);
@@ -216,6 +250,27 @@ public class SoapMessageProviderTests extends ProviderTestCase {
                 assertTrue(de.getValue().equals("sample detail"));
                 assertTrue(fault.getFaultActor().equals("sample actor"));
             }    
+            
+            // Try a second time
+            try {
+                // Dispatch
+                TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+                SOAPMessage response = dispatch.invoke(request);
+                assertTrue("Expected failure", false);
+            } catch (SOAPFaultException e) {
+                // Okay
+                SOAPFault fault = e.getFault();
+                assertTrue(fault != null);
+                assertTrue(fault.getFaultString().equals("sample fault"));
+                QName expectedFaultCode = new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Client"); 
+                assertTrue(fault.getFaultCodeAsQName().equals(expectedFaultCode));
+                assertTrue(fault.getDetail() != null);
+                DetailEntry de = (DetailEntry) fault.getDetail().getDetailEntries().next();
+                assertTrue(de != null);
+                assertTrue(de.getLocalName().equals("detailEntry"));
+                assertTrue(de.getValue().equals("sample detail"));
+                assertTrue(fault.getFaultActor().equals("sample actor"));
+            }    
     }
     
     /**
@@ -246,8 +301,22 @@ public class SoapMessageProviderTests extends ProviderTestCase {
                 SOAPFault fault = e.getFault();
                 assertTrue(fault != null);
                 assertTrue(fault.getFaultString().equals("A WSE was thrown"));
-            }    
+            }   
+            
+            // Try a second time
+            try {
+                // Dispatch
+                TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+                SOAPMessage response = dispatch.invoke(request);
+                assertTrue("Expected failure", false);
+            } catch (SOAPFaultException e) {
+                // Okay...SOAPFaultException should be thrown
+                SOAPFault fault = e.getFault();
+                assertTrue(fault != null);
+                assertTrue(fault.getFaultString().equals("A WSE was thrown"));
+            } 
     }
+    
     
     /**
      * Sends an SOAPMessage containing xml data and raw attachments to the web service.  
@@ -288,6 +357,28 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Check the attachment
             StreamSource contentSS = (StreamSource) attachmentPart.getContent();
             String content = SoapMessageProvider.getAsString(contentSS);
+            assertTrue(content != null);
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+            
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
+
+            // Check assertions and get the data element
+            dataElement = assertResponseXML(response, SoapMessageProvider.XML_ATTACHMENT_RESPONSE);
+            assertTrue(countAttachments(response) == 1);
+            
+            // Get the Attachment
+            attachmentPart = (AttachmentPart) response.getAttachments().next();
+            
+            // Check the attachment
+            contentSS = (StreamSource) attachmentPart.getContent();
+            content = SoapMessageProvider.getAsString(contentSS);
             assertTrue(content != null);
             assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             
@@ -346,6 +437,28 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
+
+            // Check assertions and get the data element
+            dataElement = assertResponseXML(response, SoapMessageProvider.XML_MTOM_RESPONSE);
+            assertTrue(countAttachments(response) == 1);
+            
+            // Get the Attachment
+            attachmentPart = (AttachmentPart) response.getAttachments().next();
+            
+            // Check the attachment
+            contentSS = (StreamSource) attachmentPart.getContent();
+            content = SoapMessageProvider.getAsString(contentSS);
+            assertTrue(content != null);
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+            
         }catch(Exception e){
             e.printStackTrace();
             fail("Caught exception " + e);
@@ -394,6 +507,30 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Print out the response
             TestLogger.logger.debug(">> Response [" + response.toString() + "]");
             
+            
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
+
+            // Check assertions and get the data element
+            dataElement = assertResponseXML(response, SoapMessageProvider.XML_SWAREF_RESPONSE);
+            assertTrue(countAttachments(response) == 1);
+            
+            // Get the Attachment
+            attachmentPart = (AttachmentPart) response.getAttachments().next();
+            
+            // Check the attachment
+            contentSS = (StreamSource) attachmentPart.getContent();
+            content = SoapMessageProvider.getAsString(contentSS);
+            assertTrue(content != null);
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
+            assertEquals(SoapMessageProvider.ID, attachmentPart.getContentId());
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+            
         }catch(Exception e){
             e.printStackTrace();
             fail("Caught exception " + e);
@@ -415,6 +552,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         }catch(Exception e){
             e.printStackTrace();
         }
+        
     }
     
     /**
@@ -465,6 +603,18 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             // Dispatch
             TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
             String response = dispatch.invoke(request);
+            
+            // Check assertions and get the data element
+            assertTrue(response.contains(SoapMessageProvider.XML_CHECKHEADERS_RESPONSE));
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response + "]");
+            
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
             
             // Check assertions and get the data element
             assertTrue(response.contains(SoapMessageProvider.XML_CHECKHEADERS_RESPONSE));
@@ -547,6 +697,39 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             
             // There should be no foo header in the response
             List<String> fooHeaders = responseHeaders.get(SoapMessageProvider.FOO_HEADER_QNAME);
+            assertTrue(fooHeaders == null);
+            
+            // Print out the response
+            TestLogger.logger.debug(">> Response [" + response + "]");
+            
+            
+            
+            
+            // Try a second time
+            // Dispatch
+            TestLogger.logger.debug(">> Invoking SOAPMessageProviderDispatch");
+            response = dispatch.invoke(request);
+            
+            // Check assertions and get the data element
+            assertTrue(response.contains(SoapMessageProvider.XML_CHECKHEADERS_RESPONSE));
+            
+            // Check outbound headers
+            responseContext = dispatch.getResponseContext();
+            assertTrue(responseContext != null);
+            responseHeaders = (Map<QName, List<String>>) 
+                responseContext.get(Constants.JAXWS_INBOUND_SOAP_HEADERS);
+            assertTrue(responseHeaders != null);
+            assertTrue(responseHeaders.size() >= 2);
+            batHeaders = responseHeaders.get(SoapMessageProvider.BAT_HEADER_QNAME);
+            assertTrue(batHeaders != null && batHeaders.size() == 1);
+            assertTrue(batHeaders.get(0).contains(SoapMessageProvider.BAT_HEADER_CONTENT));
+            barHeaders =responseHeaders.get(SoapMessageProvider.BAR_HEADER_QNAME);
+            assertTrue(barHeaders != null &&  barHeaders.size() == 2);
+            assertTrue(barHeaders.get(0).contains(SoapMessageProvider.BAR_HEADER_CONTENT1));
+            assertTrue(barHeaders.get(1).contains(SoapMessageProvider.BAR_HEADER_CONTENT2));
+            
+            // There should be no foo header in the response
+            fooHeaders = responseHeaders.get(SoapMessageProvider.FOO_HEADER_QNAME);
             assertTrue(fooHeaders == null);
             
             // Print out the response

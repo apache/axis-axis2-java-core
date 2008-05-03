@@ -117,7 +117,33 @@ public class SOAP12DispatchTest extends AbstractTestCase {
         assertTrue(!responseText.contains("soap"));
         assertTrue(!responseText.contains("Envelope"));
         assertTrue(!responseText.contains("Body"));
-        assertTrue(responseText.contains("echoStringResponse"));        
+        assertTrue(responseText.contains("echoStringResponse"));   
+        
+        // Invoke a second time to verify
+        bais = new ByteArrayInputStream(bytes);
+        request = new StreamSource(bais);
+        
+        // Send the SOAP 1.2 request
+        response = dispatch.invoke(request);
+
+        assertTrue("The response was null.  We expected content to be returned.", response != null);
+        
+        // Convert the response to a more consumable format
+        baos = new ByteArrayOutputStream();
+        result = new StreamResult(baos);
+        
+        factory = TransformerFactory.newInstance();
+        trans = factory.newTransformer();
+        trans.transform(response, result);
+        
+        // Check to make sure the contents are correct.  Again, since we're
+        // in PAYLOAD mode, we shouldn't have anything related to the envelope
+        // in the return, just the contents of the Body.
+        responseText = baos.toString();
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));    
     }
     
     /**
@@ -153,6 +179,32 @@ public class SOAP12DispatchTest extends AbstractTestCase {
         // in PAYLOAD mode, we shouldn't have anything related to the envelope
         // in the return, just the contents of the Body.
         String responseText = baos.toString();
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Invoke a second time to verify
+        bais = new ByteArrayInputStream(bytes);
+        request = new StreamSource(bais);
+        
+        // Send the SOAP 1.2 request
+        response = dispatch.invoke(request);
+
+        assertTrue("The response was null.  We expected content to be returned.", response != null);
+        
+        // Convert the response to a more consumable format
+        baos = new ByteArrayOutputStream();
+        result = new StreamResult(baos);
+        
+        factory = TransformerFactory.newInstance();
+        trans = factory.newTransformer();
+        trans.transform(response, result);
+        
+        // Check to make sure the contents are correct.  Again, since we're
+        // in PAYLOAD mode, we shouldn't have anything related to the envelope
+        // in the return, just the contents of the Body.
+        responseText = baos.toString();
         assertTrue(!responseText.contains("soap"));
         assertTrue(!responseText.contains("Envelope"));
         assertTrue(!responseText.contains("Body"));
@@ -201,6 +253,34 @@ public class SOAP12DispatchTest extends AbstractTestCase {
         // purposes of the test.
         assertTrue(responseText.contains("http://www.w3.org/2003/05/soap-envelope"));
         assertTrue(!responseText.contains("http://schemas.xmlsoap.org/soap/envelope"));
+        
+        // Invoke a second time to verify
+        bais = new ByteArrayInputStream(bytes);
+        request = new StreamSource(bais);
+        
+        response = dispatch.invoke(request);
+        
+        // Convert the response to a more consumable format
+        baos = new ByteArrayOutputStream();
+        result = new StreamResult(baos);
+        
+        factory = TransformerFactory.newInstance();
+        trans = factory.newTransformer();
+        trans.transform(response, result);
+        
+        // Check to make sure the contents of the message are correct
+        responseText = baos.toString();
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("echoStringResponse"));
+        
+        // Check to make sure the message returned had the right protocol version
+        // TODO: Need to determine whether or not we should be using the hard 
+        // coded URLs here, or whether we should be using a constant for the 
+        // purposes of the test.
+        assertTrue(responseText.contains("http://www.w3.org/2003/05/soap-envelope"));
+        assertTrue(!responseText.contains("http://schemas.xmlsoap.org/soap/envelope"));
     }
     
     /**
@@ -221,6 +301,20 @@ public class SOAP12DispatchTest extends AbstractTestCase {
         StreamSource request = new StreamSource(bais);
         
         SOAPFaultException e = null;
+        try {
+            Source response = dispatch.invoke(request);
+        } catch (SOAPFaultException ex) {
+            e = ex;
+        }
+        
+        assertNotNull("We should have an exception, but none was thrown.", e);
+        assertEquals("FaultCode should be \"MustUnderstand\"", "MustUnderstand", e.getFault().getFaultCodeAsQName().getLocalPart());
+        
+        // Invoke a second time to verify
+        bais = new ByteArrayInputStream(bytes);
+        request = new StreamSource(bais);
+        
+        e = null;
         try {
             Source response = dispatch.invoke(request);
         } catch (SOAPFaultException ex) {

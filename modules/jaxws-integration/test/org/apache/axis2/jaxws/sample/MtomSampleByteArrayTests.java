@@ -54,7 +54,7 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
      * -- setMTOMEnabled([true|false])
      * Using SOAP11
      */
-    public void testAttachmentByteArrayAPI11() throws Exception {
+    public void _testAttachmentByteArrayAPI11() throws Exception {
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
     	
@@ -82,6 +82,13 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
       	SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
       	
       	assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        checkText(response.getOutput());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         checkText(response.getOutput());
     }
@@ -121,6 +128,13 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         checkText(response.getOutput());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        checkText(response.getOutput());
     }
     
     /*
@@ -128,6 +142,7 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
      * property for MTOM.
      */
     public void testAttachmentByteArrayProperty11() throws Exception {
+        
         TestLogger.logger.debug("----------------------------------");
         TestLogger.logger.debug("test: " + getName());
     	
@@ -152,6 +167,13 @@ public class MtomSampleByteArrayTests extends AbstractTestCase {
       	SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
       	
       	assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        checkText(response.getOutput());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
         checkText(response.getOutput());
         

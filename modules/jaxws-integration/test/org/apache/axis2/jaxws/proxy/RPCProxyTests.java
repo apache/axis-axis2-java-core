@@ -95,6 +95,11 @@ public class RPCProxyTests extends AbstractTestCase {
             String response = proxy.testSimple(request);
             assertTrue(response != null);
             assertTrue(response.equals(request));
+            
+            // Try a second time
+            response = proxy.testSimple(request);
+            assertTrue(response != null);
+            assertTrue(response.equals(request));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -112,6 +117,12 @@ public class RPCProxyTests extends AbstractTestCase {
             requestParam.value = request;
            
             String response = proxy.testSimpleInOut(requestParam);
+            assertTrue(response != null);
+            assertTrue(response.equals(request));
+            assertTrue(requestParam.value.equals(request));
+            
+            // Try a second time
+            response = proxy.testSimpleInOut(requestParam);
             assertTrue(response != null);
             assertTrue(response.equals(request));
             assertTrue(requestParam.value.equals(request));
@@ -133,6 +144,11 @@ public class RPCProxyTests extends AbstractTestCase {
             String response = proxy.testSimple2(request1, request2);
             assertTrue(response != null);
             assertTrue(response.equals("helloworld"));
+            
+            // Try a second time
+            response = proxy.testSimple2(request1, request2);
+            assertTrue(response != null);
+            assertTrue(response.equals("helloworld"));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -152,15 +168,31 @@ public class RPCProxyTests extends AbstractTestCase {
         assertTrue(response != null);
         assertTrue(response.equals("helloworld"));
         
+        // Try a second time
+        response = proxy.testHeader(request1, request2);
+        assertTrue(response != null);
+        assertTrue(response.equals("helloworld"));
+        
     }
     
     /**
      * Simple test that ensures that a service fault is thrown correctly
      */
     public void testFault() throws Exception {
+        RPCLit proxy = getProxy();
         try{ 
-            RPCLit proxy = getProxy();
-     
+            proxy.testFault();
+            fail("Expected RPCFault");
+        } catch(RPCFault rpcFault){ 
+            assertTrue(rpcFault.getMessage().equals("Throw RPCFault"));
+            assertTrue(rpcFault.getFaultInfo() == 123);
+        } catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+        
+        // Try a second time
+        try{ 
             proxy.testFault();
             fail("Expected RPCFault");
         } catch(RPCFault rpcFault){ 
@@ -176,8 +208,19 @@ public class RPCProxyTests extends AbstractTestCase {
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
     public void testForNull() throws Exception {
-        try{ 
-            RPCLit proxy = getProxy();
+        RPCLit proxy = getProxy();
+        try{   
+            String request = null;
+           
+            String response = proxy.testSimple(request);
+            fail("RPC/LIT should throw webserviceException when operation is invoked with null input parameter");
+        }catch(Exception e){ 
+            assertTrue(e instanceof WebServiceException);
+            TestLogger.logger.debug(e.getMessage());
+        }
+        
+        // Try a second time
+        try{   
             String request = null;
            
             String response = proxy.testSimple(request);
@@ -192,9 +235,18 @@ public class RPCProxyTests extends AbstractTestCase {
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
     public void testForNullReturn() throws Exception {
+        
+        RPCLit proxy = getProxy();
         try{ 
-            RPCLit proxy = getProxy();
-           
+            String response = proxy.testSimple("returnNull");
+            fail("RPC/LIT should throw webserviceException when operation is invoked with null out parameter");
+        }catch(Exception e){ 
+            assertTrue(e instanceof WebServiceException);
+            TestLogger.logger.debug(e.getMessage());
+        }
+        
+        // Try a second time
+        try{ 
             String response = proxy.testSimple("returnNull");
             fail("RPC/LIT should throw webserviceException when operation is invoked with null out parameter");
         }catch(Exception e){ 
@@ -214,6 +266,22 @@ public class RPCProxyTests extends AbstractTestCase {
         "</simpleIn></tns:testSimple>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simpleOut"));
+        assertTrue(!response.contains(":simpleOut"));  // Make sure simple out is not namespace qualified
+        assertTrue(response.contains(":testSimpleResponse"));  // Make sure response is namespace qualified  
+        assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
+        
+        // Try a second time
+        response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
         TestLogger.logger.debug(response);
@@ -255,6 +323,24 @@ public class RPCProxyTests extends AbstractTestCase {
         assertTrue(!response.contains(":simple2Out"));// Make sure simpleOut is not namespace qualified
         assertTrue(response.contains(":testSimple2Response")); 
         assertTrue(response.contains("HELLOWORLD"));
+        
+        
+        // Try a second time
+        response = dispatch.invoke(request);
+        
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simple2Out"));
+        assertTrue(!response.contains(":simple2Out"));// Make sure simpleOut is not namespace qualified
+        assertTrue(response.contains(":testSimple2Response")); 
+        assertTrue(response.contains("HELLOWORLD"));
     }
     
     public void testSimple_DispatchWithoutXSIType() throws Exception {
@@ -266,6 +352,24 @@ public class RPCProxyTests extends AbstractTestCase {
         "</simpleIn></tns:testSimple>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
+        
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simpleOut"));
+        assertTrue(!response.contains(":simpleOut"));  // Make sure simpleOut is not namespace qualified
+        assertTrue(response.contains(":testSimpleResponse")); 
+        assertTrue(response.contains("PAYLOAD WITHOUT XSI:TYPE"));
+        
+        
+        // Try a second time
+        response = dispatch.invoke(request);
         
 
         assertNotNull("dispatch invoke returned null", response);
@@ -295,6 +399,13 @@ public class RPCProxyTests extends AbstractTestCase {
             assertTrue(response.length==2);
             assertTrue(response[0].equals("Hello"));
             assertTrue(response[1].equals("World"));
+            
+            // Try a second time
+            response = proxy.testStringList2(request);
+            assertTrue(response != null);
+            assertTrue(response.length==2);
+            assertTrue(response[0].equals("Hello"));
+            assertTrue(response[1].equals("World"));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -311,6 +422,22 @@ public class RPCProxyTests extends AbstractTestCase {
         "</tns:arg_2_0></tns:testStringList2>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
+
+        assertNotNull("dispatch invoke returned null", response);
+        TestLogger.logger.debug(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("testStringList2Return"));
+        assertTrue(response.contains("testStringList2Response"));
+        assertTrue(response.contains("Hello World"));
+        
+        
+        // Try a second time
+        response = dispatch.invoke(request);
 
         assertNotNull("dispatch invoke returned null", response);
         TestLogger.logger.debug(response);
@@ -347,6 +474,20 @@ public class RPCProxyTests extends AbstractTestCase {
             assertTrue(qNames.length==2);
             assertTrue(qNames[0].equals(RPCLitImpl.qname1));
             assertTrue(qNames[1].equals(RPCLitImpl.qname2));
+            
+            
+            //Try a second time
+            qNames = proxy.testLists(request,
+                                     new XMLGregorianCalendar[0],
+                                     new String[0],
+                                     new BigInteger[0],
+                                     new Long[0],
+                                     new Enum[0],
+                                     new String[0],
+                                     new ComplexAll());
+                             assertTrue(qNames.length==2);
+                             assertTrue(qNames[0].equals(RPCLitImpl.qname1));
+                             assertTrue(qNames[1].equals(RPCLitImpl.qname2));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -369,6 +510,12 @@ public class RPCProxyTests extends AbstractTestCase {
             assertTrue(cals.length == 2);
             assertTrue(cals[0].compare(RPCLitImpl.bday) == 0);
             assertTrue(cals[1].compare(RPCLitImpl.holiday) == 0);
+            
+            // Try a second time
+            cals  = proxy.testCalendarList1(request);
+            assertTrue(cals.length == 2);
+            assertTrue(cals[0].compare(RPCLitImpl.bday) == 0);
+            assertTrue(cals[1].compare(RPCLitImpl.holiday) == 0);
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -381,6 +528,12 @@ public class RPCProxyTests extends AbstractTestCase {
             BigInteger[] request = new BigInteger[] {RPCLitImpl.bigInt1, RPCLitImpl.bigInt2};
            
             BigInteger[] ints  = proxy.testBigIntegerList3(request);
+            assertTrue(ints.length==2);
+            assertTrue(ints[0].compareTo(RPCLitImpl.bigInt1) == 0);
+            assertTrue(ints[1].compareTo(RPCLitImpl.bigInt2) == 0);
+            
+            // Try a second time
+            ints  = proxy.testBigIntegerList3(request);
             assertTrue(ints.length==2);
             assertTrue(ints[0].compareTo(RPCLitImpl.bigInt1) == 0);
             assertTrue(ints[1].compareTo(RPCLitImpl.bigInt2) == 0);
@@ -400,6 +553,13 @@ public class RPCProxyTests extends AbstractTestCase {
             assertTrue(longs[0] == 0);
             assertTrue(longs[1] == 1);
             assertTrue(longs[2] == 2);
+            
+            // Try a second time
+            longs  = proxy.testLongList4(request);
+            assertTrue(longs.length==3);
+            assertTrue(longs[0] == 0);
+            assertTrue(longs[1] == 1);
+            assertTrue(longs[2] == 2);
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -412,6 +572,14 @@ public class RPCProxyTests extends AbstractTestCase {
             Enum[] request = new Enum[] {Enum.ONE, Enum.TWO, Enum.THREE};
            
             Enum[] enums  = proxy.testEnumList5(request);
+            assertTrue(enums.length==3);
+            assertTrue(enums[0] == Enum.ONE);
+            assertTrue(enums[1] == Enum.TWO);
+            assertTrue(enums[2] == Enum.THREE);
+            
+            
+            // Try a second time
+            enums  = proxy.testEnumList5(request);
             assertTrue(enums.length==3);
             assertTrue(enums[0] == Enum.ONE);
             assertTrue(enums[1] == Enum.TWO);

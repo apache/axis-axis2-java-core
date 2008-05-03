@@ -128,6 +128,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
 
         TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+        
+        // Try again to verify
+        response = (SendImageResponse) dispatch.invoke(request);
+
+        TestLogger.logger.debug(">> Response [" + response.toString() + "]");
     }
     
     /**
@@ -165,6 +170,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         TestLogger.logger.debug(">> Invoking Dispatch<Object> JAXBProviderService");
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+
+        TestLogger.logger.debug(">> Response [" + response.toString() + "]");
+        
+        // Try again to verify
+        response = (SendImageResponse) dispatch.invoke(request);
 
         TestLogger.logger.debug(">> Response [" + response.toString() + "]");
     }
@@ -207,6 +217,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         SendImage response = (SendImage) dispatch.invoke(request);
 
         assertTrue(response != null);
+        
+        // Try again to verify
+        response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
     }
     
     /**
@@ -242,6 +257,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         
         // The provider service returns the same image back if successful
         SendImage response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
+        
+        // Try again to verify
+        response = (SendImage) dispatch.invoke(request);
 
         assertTrue(response != null);
     }
@@ -281,6 +301,11 @@ public class JAXBProviderTests extends ProviderTestCase {
         
         // The provider service returns the same image back if successful
         SendImage response = (SendImage) dispatch.invoke(request);
+
+        assertTrue(response != null);
+        
+        // Try again to verify
+        response = (SendImage) dispatch.invoke(request);
 
         assertTrue(response != null);
     }

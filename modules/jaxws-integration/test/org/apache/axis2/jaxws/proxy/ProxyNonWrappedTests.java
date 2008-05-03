@@ -69,6 +69,12 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         assertNotNull(response);
         TestLogger.logger.debug(">>Response =" + response.getReturnStr());
 
+        
+        // Try again to verify
+        response = proxy.invoke(invokeObj);
+        assertNotNull(response);
+        TestLogger.logger.debug(">>Response =" + response.getReturnStr());
+
         TestLogger.logger.debug("-------------------------------------");
     }
     
@@ -85,6 +91,10 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         BindingProvider p = (BindingProvider)proxy;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
         ReturnType response = proxy.invoke(invokeObj);
+        assertNull(response);
+        
+        // Try again
+        response = proxy.invoke(invokeObj);
         assertNull(response);
 
         TestLogger.logger.debug("-------------------------------------");
@@ -113,6 +123,16 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
             AsyncHandler<ReturnType> handler = new AsyncCallback();
             //Invoke operation Asynchronously.
             Future<?> monitor = proxy.invokeAsync(invokeObj, handler);
+            while(!monitor.isDone()){
+                Thread.sleep(1000);
+            }
+            
+            
+            // Try again
+            TestLogger.logger.debug(">> Invoking Proxy Asynchronous Callback");
+            handler = new AsyncCallback();
+            //Invoke operation Asynchronously.
+            monitor = proxy.invokeAsync(invokeObj, handler);
             while(!monitor.isDone()){
                 Thread.sleep(1000);
             }

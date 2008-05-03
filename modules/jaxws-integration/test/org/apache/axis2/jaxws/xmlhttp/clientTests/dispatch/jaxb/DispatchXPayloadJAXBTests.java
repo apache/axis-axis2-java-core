@@ -69,12 +69,26 @@ public class DispatchXPayloadJAXBTests extends AbstractTestCase {
        request.setInput("SYNC JAXB XML PAYLOAD TEST");
        
        // Invoke the Dispatch<Object>
-        TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
+       TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
        EchoString response = (EchoString) dispatch.invoke(request);
        
        assertNotNull(response);
 
-        TestLogger.logger.debug(">> Response content: " + response.getInput());
+       TestLogger.logger.debug(">> Response content: " + response.getInput());
+       
+       assertTrue("[ERROR] - Response object was null", response != null);
+       assertTrue("[ERROR] - No content in response object", response.getInput() != null);
+       assertTrue("[ERROR] - Zero length content in response", response.getInput().length() > 0);
+       assertTrue(response.getInput().equals(request.getInput()));
+       
+       // Test a second time to verify
+       // Invoke the Dispatch<Object>
+       TestLogger.logger.debug(">> Invoking sync Dispatch with JAX-B Parameter");
+       response = (EchoString) dispatch.invoke(request);
+       
+       assertNotNull(response);
+
+       TestLogger.logger.debug(">> Response content: " + response.getInput());
        
        assertTrue("[ERROR] - Response object was null", response != null);
        assertTrue("[ERROR] - No content in response object", response.getInput() != null);

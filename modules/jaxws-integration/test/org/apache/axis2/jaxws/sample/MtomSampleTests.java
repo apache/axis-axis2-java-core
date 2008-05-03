@@ -122,6 +122,12 @@ public class MtomSampleTests extends AbstractTestCase {
         
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
     }
     
     /*
@@ -180,6 +186,27 @@ public class MtomSampleTests extends AbstractTestCase {
         
         int numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
     }
     
     /*
@@ -236,6 +263,28 @@ public class MtomSampleTests extends AbstractTestCase {
         
         
         int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
+        
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
     }
     
@@ -295,6 +344,28 @@ public class MtomSampleTests extends AbstractTestCase {
         
         int numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
+        
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected zero attachments but there were:" + numCIDs, numCIDs == 0);
     }
     
     /*
@@ -351,6 +422,27 @@ public class MtomSampleTests extends AbstractTestCase {
         
         
         int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
     }
     
@@ -409,6 +501,28 @@ public class MtomSampleTests extends AbstractTestCase {
         
         int numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
+        
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        
+        numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment but there were:" + numCIDs, numCIDs == 1);
     }
     
     /*
@@ -447,6 +561,12 @@ public class MtomSampleTests extends AbstractTestCase {
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
         
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
@@ -493,6 +613,12 @@ public class MtomSampleTests extends AbstractTestCase {
         binding.setMTOMEnabled(true);
         
         SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        // Repeat to verify behavior
+        response = (SendImageResponse) dispatch.invoke(request);
         
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
@@ -559,8 +685,30 @@ public class MtomSampleTests extends AbstractTestCase {
             }
         }
         
-        //assertNotNull(response);
-        //assertNotNull(response.getOutput().getImageData());
+        // Repeat to verify behavior
+        try {
+            SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+            fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
+        } catch (Exception e) {
+            assertNotNull(e);
+            if (CHECK_VERSIONMISMATCH) {
+                assertTrue("Expected SOAPFaultException, but received: "+ e.getClass(),
+                           e instanceof SOAPFaultException);
+                SOAPFaultException sfe = (SOAPFaultException) e;
+
+                SOAPFault fault = sfe.getFault();
+
+                assertTrue("SOAPFault is null ",
+                           fault != null);
+                QName faultCode = sfe.getFault().getFaultCodeAsQName();
+
+
+                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+                           new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
+
+            }
+        }
+        
         
 
 	}
@@ -630,10 +778,31 @@ public class MtomSampleTests extends AbstractTestCase {
 
             }
         }
-        /*
-        assertNotNull(response);
-        assertNotNull(response.getOutput().getImageData());
-        */
+        
+        // Repeat to verify behavior
+        try {
+            SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+            fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
+        } catch (Exception e) {
+            assertNotNull(e);
+            if (CHECK_VERSIONMISMATCH) {
+                assertTrue("Expected SOAPFaultException, but received: "+ e.getClass(),
+                           e instanceof SOAPFaultException);
+                SOAPFaultException sfe = (SOAPFaultException) e;
+
+                SOAPFault fault = sfe.getFault();
+
+                assertTrue("SOAPFault is null ",
+                           fault != null);
+                QName faultCode = sfe.getFault().getFaultCodeAsQName();
+
+
+                assertTrue("Expected VERSION MISMATCH but received: "+ faultCode,
+                          new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "VersionMismatch", SOAPConstants.SOAP_ENV_PREFIX).equals(faultCode));
+
+            }
+        }
+       
     }
     /*
      * Enable attachment Optimization but call an endpoint with @MTOM(enable=true, Threshold = 99000)
@@ -690,6 +859,27 @@ public class MtomSampleTests extends AbstractTestCase {
         
         //There shold be no cid as attachment should be inlined.
         int numCIDs = (cids == null) ? 0 : cids.size();
+        assertTrue("Expected one attachment inlined:" + numCIDs, numCIDs == 0);
+        
+        // Repeat to verify behavior
+        response = null;
+        try {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(true);
+            response = (SendImageResponse) dispatch.invoke(request);
+            
+            // The cids are collected in the monitor.  We will check
+            // this to make sure the response mtom is not inlined
+            cids = JAXBAttachmentUnmarshallerMonitor.getBlobCIDs();
+        } finally {
+            JAXBAttachmentUnmarshallerMonitor.setMonitoring(false);
+        }
+        
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+        
+        //There shold be no cid as attachment should be inlined.
+        numCIDs = (cids == null) ? 0 : cids.size();
         assertTrue("Expected one attachment inlined:" + numCIDs, numCIDs == 0);
     }
     

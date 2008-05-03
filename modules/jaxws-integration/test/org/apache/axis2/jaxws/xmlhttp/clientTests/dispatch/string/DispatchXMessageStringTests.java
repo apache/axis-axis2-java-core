@@ -63,6 +63,12 @@ public class DispatchXMessageStringTests extends AbstractTestCase {
         TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
+        
+        // Try a second time
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Response = " + response);
+        assertTrue(response != null);
+        assertTrue(request.equals(response));
     }
     
     /**
@@ -74,6 +80,13 @@ public class DispatchXMessageStringTests extends AbstractTestCase {
         String request = "";
         TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
+        TestLogger.logger.debug("Response = " + response);
+        assertTrue(response != null);
+        assertTrue(request.equals(response));
+        
+        // Try again to verify
+        TestLogger.logger.debug("Request  = " + request);
+        response = dispatch.invoke(request);
         TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
@@ -91,6 +104,13 @@ public class DispatchXMessageStringTests extends AbstractTestCase {
         TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));
+        
+        // Try again to verify
+        TestLogger.logger.debug("Request  = " + request);
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Response = " + response);
+        assertTrue(response != null);
+        assertTrue(request.equals(response));
     }
     
     /**
@@ -102,6 +122,13 @@ public class DispatchXMessageStringTests extends AbstractTestCase {
         String request = XML_TEXT_NPE;
         TestLogger.logger.debug("Request  = " + request);
         String response = dispatch.invoke(request);
+        TestLogger.logger.debug("Response = " + response);
+        assertTrue(response != null);
+        assertTrue(request.equals(response));
+        
+        // Try again to verify
+        TestLogger.logger.debug("Request  = " + request);
+        response = dispatch.invoke(request);
         TestLogger.logger.debug("Response = " + response);
         assertTrue(response != null);
         assertTrue(request.equals(response));

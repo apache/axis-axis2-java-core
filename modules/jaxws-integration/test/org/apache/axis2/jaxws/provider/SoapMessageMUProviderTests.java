@@ -74,6 +74,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
             String string = AttachmentUtil.toString(response);
             assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
                     + AttachmentUtil.msgEnvPlain));
+            
+            // Try a second time
+            response = dispatch.invoke(message);
+
+            string = AttachmentUtil.toString(response);
+            assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
+                    + AttachmentUtil.msgEnvPlain));
         } catch (Exception e) {
             fail("Unexpected Exception: " + e.getMessage());
         }
@@ -101,6 +108,14 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnvMU);
 
+        try {
+            dispatch.invoke(message);
+            fail("Should have received fault for not understood headers on request");
+        } catch (Exception e) {
+            // Expected path
+        }
+        
+        // Try a second time
         try {
             dispatch.invoke(message);
             fail("Should have received fault for not understood headers on request");
@@ -137,6 +152,14 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
         } catch (Exception e) {
             // Expected path
         }
+        
+        // Try a second time
+        try {
+            dispatch.invoke(message);
+            fail("Should have received fault for not understood headers on response");
+        } catch (Exception e) {
+            // Expected path
+        }
     }
 
     /**
@@ -166,6 +189,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
         } catch (Exception e) {
             fail("Should not have received fault for headers that were understood.  " + e.getMessage());
         }
+        
+        // Try a second time
+        try {
+            dispatch.invoke(message);
+        } catch (Exception e) {
+            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
+        }
     }
 
     /**
@@ -190,6 +220,13 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnv_understood);
 
+        try {
+            dispatch.invoke(message);
+        } catch (Exception e) {
+            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
+        }
+        
+        // Try a second time
         try {
             dispatch.invoke(message);
         } catch (Exception e) {

@@ -50,5 +50,11 @@ public class StringMessageProviderTests extends ProviderTestCase {
         TestLogger.logger.debug(">> Invoking Dispatch<String> StringMessageProviderService");
         String retVal = dispatch.invoke(xmlString);
         TestLogger.logger.debug(">> Response [" + retVal + "]");
+        
+        
+        // Try again to verify
+        TestLogger.logger.debug(">> Invoking Dispatch<String> StringMessageProviderService");
+        retVal = dispatch.invoke(xmlString);
+        TestLogger.logger.debug(">> Response [" + retVal + "]");
     }
 }

@@ -78,6 +78,20 @@ public class DispatchXPayloadSourceTests extends AbstractTestCase {
         
         assertTrue(response != null);
         assertTrue(request.equals(response));
+        
+        // Try a second time to verify
+        stream = new ByteArrayInputStream(request.getBytes());
+        inSource = new StreamSource((InputStream) stream);
+        
+        outSource = dispatch.invoke(inSource);
+        
+        // Prepare the response content for checking
+        reader = inputFactory.createXMLStreamReader(outSource);
+        r2w = new Reader2Writer(reader);
+        response = r2w.getAsString();
+        
+        assertTrue(response != null);
+        assertTrue(request.equals(response));
     }
     
    
