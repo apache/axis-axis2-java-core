@@ -215,7 +215,7 @@ public class EndpointController {
             
             // Need to make sure the protocol (envelope ns)  of the request matches the binding
             // expected by the service description
-            if (!Utils.bindingTypesMatch(request, endpointDesc.getServiceDescription())) {
+            if (!Utils.bindingTypesMatch(request, endpointDesc)) {
                 Protocol protocol = request.getMessage().getProtocol();
                 MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
                 eic.setResponseMessageContext(faultContext);

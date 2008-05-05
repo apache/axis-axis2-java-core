@@ -37,6 +37,8 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.PortComposite;
+
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_FUTURE;
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.RETURN_TYPE_RESPONSE;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -274,6 +276,7 @@ class ServiceDescriptionImpl
         this.dbcMap = dbcMap;
         this.isServerSide = true;
 
+        
         //capture the WSDL, if there is any...to be used for later processing
         setupWsdlDefinition();
 
@@ -285,11 +288,43 @@ class ServiceDescriptionImpl
         // It will be set by the EndpointDescriptionImpl since it is the one that knows
         // how to process the annotations and the defaults.
 
-        // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
-        // it will be set to the annotation value.
-        EndpointDescriptionImpl endpointDescription =
-                new EndpointDescriptionImpl(this, serviceImplName, composite.getProperties());
-        addEndpointDescription(endpointDescription);
+        List<PortComposite> portComposites = composite.getPortComposites();
+        
+        // If PortComposite instances were specified on the DBC we are currently processing
+        // we want to switch the context of processing to the PortComposites
+        if(portComposites != null
+                &&
+                !portComposites.isEmpty()) {
+            if(log.isDebugEnabled()) {
+                log.debug("Constructing EndpointDescription instance from PortComposites for " +
+                		"implementation class: " + composite.getClassName());
+            }
+            int i = 0;
+            for(PortComposite portComposite : portComposites) {
+                
+                // here we pass in an index so the EndpointDescriptionImpl instance will know
+                // which PortComposite instance it is associated with and can retrieve that 
+                // instance as required
+                EndpointDescriptionImpl endpointDescription =
+                    new EndpointDescriptionImpl(this, serviceImplName, portComposite.getProperties(), i);
+                addEndpointDescription(endpointDescription);
+                i++;
+            }
+        }
+        
+        // If no PortComposites then we build the EndpointDescriptionImpl instance from the
+        // DBC that was supplied
+        else {
+            if(log.isDebugEnabled()) {
+                log.debug("No PortComposites found for implementation class: " + composite.getClassName());
+            }
+            
+                // Create the single EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
+        	// it will be set to the annotation value.
+        	EndpointDescriptionImpl endpointDescription =
+                	new EndpointDescriptionImpl(this, serviceImplName, composite.getProperties(), null);
+        	addEndpointDescription(endpointDescription);
+        }
     }
 
     /*=======================================================================*/
@@ -586,9 +621,38 @@ class ServiceDescriptionImpl
         }
         return null;
     }
-
+    
     public DescriptionBuilderComposite getDescriptionBuilderComposite() {
-        return composite;
+        return getDescriptionBuilderComposite(null);
+    }
+
+    /**
+     * This method provides a means for accessing a DescriptionBuilderComposite instance.
+     * If the integer value passed in is an index in the list of PortComposite objects, 
+     * then the indiciated PortComposite will be returned. Otherwise, the instance DBC
+     * will be returned.
+     */
+    public DescriptionBuilderComposite getDescriptionBuilderComposite(Integer portCompositeIndex) {
+        
+        // ignore null values or values that would cause an IndexOutOfBoundsException
+        if(portCompositeIndex == null 
+                || 
+                composite.getPortComposites() == null
+                ||
+                portCompositeIndex < 0
+                ||
+                portCompositeIndex >= composite.getPortComposites().size()) {
+            return composite;  
+        }
+        
+        // return the appropriate PortComposite instance
+        else {
+            if(log.isDebugEnabled()) {
+                log.debug("Returning PortComposite at index: " + portCompositeIndex + 
+                          " from ServiceDescriptionImpl: " + this.hashCode());
+            }
+            return composite.getPortComposites().get(portCompositeIndex);
+        }
     }
 
     /* (non-Javadoc)

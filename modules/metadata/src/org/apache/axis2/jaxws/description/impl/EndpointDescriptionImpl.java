@@ -181,6 +181,8 @@ class EndpointDescriptionImpl
     // ANNOTATION: @RespectBinding
     private Boolean respectBinding = false;
     
+    private Integer portCompositeIndex = null;
+    
     private List<CustomAnnotationInstance> customAnnotations;
     
     private Map<String, CustomAnnotationProcessor> customAnnotationProcessors;
@@ -290,7 +292,7 @@ class EndpointDescriptionImpl
         
     }
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
-        this(parent, serviceImplName, null);
+        this(parent, serviceImplName, null, null);
     }
 
     /**
@@ -303,11 +305,12 @@ class EndpointDescriptionImpl
      *                 don't use an SEI
      */
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName, Map<String, Object>
-        properties) {
+        properties, Integer portCompositeIndex) {
         
         // initialize CustomAnnotationIntance list and CustomAnnotationProcessor map
         customAnnotations = new ArrayList<CustomAnnotationInstance>();
         customAnnotationProcessors = new HashMap<String, CustomAnnotationProcessor>();
+        this.portCompositeIndex = portCompositeIndex;
         
         // set properties map
         this.properties = properties;
@@ -315,7 +318,7 @@ class EndpointDescriptionImpl
         this.parentServiceDescription = parent;
         this.serviceImplName = serviceImplName;
 
-        composite = getServiceDescriptionImpl().getDescriptionBuilderComposite();
+        composite = getServiceDescriptionImpl().getDescriptionBuilderComposite(portCompositeIndex);
         if (composite == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr3"));
         }

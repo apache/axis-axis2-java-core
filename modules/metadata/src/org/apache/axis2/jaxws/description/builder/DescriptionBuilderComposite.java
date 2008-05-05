@@ -89,6 +89,10 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     private List<WebServiceRefAnnot> webServiceRefAnnotList;
     private BindingTypeAnnot bindingTypeAnnot;
     
+    // Collection of PortComposite objects which were created from
+    // this DescriptionBuilderComposite instance
+    private List<PortComposite> portCompositeList = new ArrayList<PortComposite>();
+    
     private List<Annotation> features;
     
     // Class information
@@ -866,8 +870,24 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
             FieldDescriptionComposite fdc = fdcIter.next();
 			sb.append(fdc.toString());
 		}
+        
+        if(portCompositeList != null
+                &&
+                !portCompositeList.isEmpty()) {
+            sb.append(newLine);
+            sb.append(newLine);
+            sb.append("** PortComposite Objects**");
+            sb.append(newLine);
+            for(PortComposite pc : portCompositeList) {
+                sb.append("PortComposite");
+                sb.append(newLine);
+                sb.append(pc.toString());
+                sb.append(newLine);
+            }
+        }
+        
 		return sb.toString();
-	}
+    }
 
 
     /**
@@ -908,4 +928,13 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
     public ConfigurationContext getConfigurationContext() {
         return myConfigContext;
     }
+    
+    public void addPortComposite(PortComposite portDBC) {
+        portCompositeList.add(portDBC);
+    }
+    
+    public List<PortComposite> getPortComposites() {
+        return portCompositeList;
+    }
+    
 }

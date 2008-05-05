@@ -47,6 +47,7 @@ public class Utils {
     
     public static final Log log = LogFactory.getLog(Utils.class);
     
+    @Deprecated
     /**
      * Compares the version of the message in the MessageContext to what's expected
      * given the ServiceDescription.  The behavior is described in the SOAP 1.2
@@ -89,6 +90,36 @@ public class Utils {
                 return false; 
             }
         }
+        return true;
+    }
+    
+    /**
+     * Compares the version of the message in the MessageContext to what's expected
+     * given the ServiceDescription.  The behavior is described in the SOAP 1.2
+     * specification under Appendix 'A'.
+     * 
+     * @param mc
+     * @param serviceDesc
+     * @return
+     */
+    public static boolean bindingTypesMatch(MessageContext mc, EndpointDescription ed) {
+        
+        Protocol protocol = mc.getMessage().getProtocol();
+        String bindingType = ed.getBindingType();
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Checking for matching binding types.");
+            log.debug("    message protocol: " + protocol);
+            log.debug("        binding type: " + bindingType);
+        }
+        
+        if (protocol.equals(Protocol.soap11)) { 
+                return (BindingUtils.isSOAP11Binding(bindingType));
+        } else if (protocol.equals(Protocol.soap12)) {
+                return (BindingUtils.isSOAP12Binding(bindingType));                     
+        } else if (protocol.equals(Protocol.rest)) {
+            return HTTPBinding.HTTP_BINDING.equalsIgnoreCase(bindingType);
+        }               
         return true;
     }
     
