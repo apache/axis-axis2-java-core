@@ -45,6 +45,7 @@ public class Phase implements Handler {
      * Field log
      */
     private static final Log log = LogFactory.getLog(Phase.class);
+    private static boolean isDebugEnabled = LoggingControl.debugLoggingAllowed && log.isDebugEnabled();
 
     /**
      * Field handlers
@@ -287,7 +288,7 @@ public class Phase implements Handler {
      * @throws org.apache.axis2.AxisFault
      */
     public final InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
-        boolean isDebugEnabled = LoggingControl.debugLoggingAllowed && log.isDebugEnabled();
+        
         if (isDebugEnabled) {
             log.debug(msgctx.getLogIDString() + " Checking pre-condition for Phase \"" + phaseName +
                     "\"");
