@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.server;
 
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -61,6 +62,7 @@ import javax.xml.ws.handler.PortInfo;
 import java.io.StringReader;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -241,35 +243,26 @@ public class EndpointController {
                 eic.setHandlers(hri.getHandlerChain(portInfo));
                 handlerRoles = hri.getRoles(portInfo);
             }
-            //Lets Initialize the understood QName here, add only the headers that the handler 
-            //injects when we invoke the getHeader().
-            //Since we are adding the handlers to description layer here we will register all the
-            //headers set by SOAPHandler->getHeader().
-             List<QName> understood =HandlerUtils.registerSOAPHandlerHeaders(request.getAxisMessageContext(), eic.getHandlers());
-
-            // Get the service instance.  This will run the @PostConstruct code.
+            
+            //  Get the service instance.  This will run the @PostConstruct code.
             ServiceInstanceFactory instanceFactory = (ServiceInstanceFactory) 
                 FactoryRegistry.getFactory(ServiceInstanceFactory.class);
             Object serviceInstance = instanceFactory.createServiceInstance(request, serviceEndpoint);
-
+            
             // The application handlers and dispatcher invoke will 
             // modify/destroy parts of the message.  Make sure to save
             // the request message if appropriate.
             saveRequestMessage(request);
-            //As per section 10.2.1 of JAXWS Specification, perform a mustUnderstand processing before
-            //invoking inbound handlers.
-            HandlerUtils.checkMustUnderstand(request.getAxisMessageContext(), understood, handlerRoles);
-
-            // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
-            // always exactly one EndpointDescription on a server invoke
-            HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
-                                                                               HandlerChainProcessor.MEP.REQUEST,
-                                                                               isOneWay(request.getAxisMessageContext()));
-            HandlerInvokerFactory hiFactory = (HandlerInvokerFactory) 
-                FactoryRegistry.getFactory(HandlerInvokerFactory.class);
-            HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(request);
-            boolean success = handlerInvoker.invokeInboundHandlers(hiContext);
-
+            
+            boolean success = true;
+            
+            // Perform inbound header/handler processing only if there is are headers OR handlers
+            if ( (request.getAxisMessageContext() != null &&
+                 request.getAxisMessageContext().getEnvelope().getHeader() != null) ||
+                 (eic.getHandlers() != null && !eic.getHandlers().isEmpty())) {
+                success = inboundHeaderAndHandlerProcessing(request, eic, handlerRoles);
+            }
+            
             if (success) {
                 if (log.isDebugEnabled()) {
                     log.debug("JAX-WS inbound handler chain invocation complete.");
@@ -296,6 +289,44 @@ public class EndpointController {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
             throw ExceptionFactory.makeWebServiceException(e);
         } 
+    }
+    
+    /**
+     * Perform inbound Handler and Header processing
+     * This includes the must understand checking and
+     * invoking the inbound handler chain
+     * @param request
+     * @param eic
+     * @param handlerRoles
+     * @return
+     * @throws AxisFault
+     */
+    private boolean inboundHeaderAndHandlerProcessing(MessageContext request, 
+                                            EndpointInvocationContext eic, 
+                                            List<String> handlerRoles) throws AxisFault {
+        //Lets Initialize the understood QName here, add only the headers that the handler 
+        //injects when we invoke the getHeader().
+        //Since we are adding the handlers to description layer here we will register all the
+        //headers set by SOAPHandler->getHeader().
+         List<QName> understood =
+             HandlerUtils.registerSOAPHandlerHeaders(request.getAxisMessageContext(), eic.getHandlers());
+
+        //As per section 10.2.1 of JAXWS Specification, perform a mustUnderstand processing before
+        //invoking inbound handlers.
+        HandlerUtils.checkMustUnderstand(request.getAxisMessageContext(), understood, handlerRoles);
+
+        // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
+        // always exactly one EndpointDescription on a server invoke
+        HandlerInvocationContext hiContext = buildHandlerInvocationContext(request, eic.getHandlers(), 
+                                                                           HandlerChainProcessor.MEP.REQUEST,
+                                                                           isOneWay(request.getAxisMessageContext()));
+        HandlerInvokerFactory hiFactory = (HandlerInvokerFactory) 
+        FactoryRegistry.getFactory(HandlerInvokerFactory.class);
+        HandlerInvoker handlerInvoker = hiFactory.createHandlerInvoker(request);
+        boolean success = handlerInvoker.invokeInboundHandlers(hiContext);
+
+        return success;
+        
     }
     
     protected boolean handleResponse(EndpointInvocationContext eic) {
