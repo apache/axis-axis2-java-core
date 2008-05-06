@@ -1005,7 +1005,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
         }
         if (parameterName == null || "".equals(parameterName)) {
-            parameterName = parameterNames[j];
+            if(parameterNames != null && parameterNames.length > j) {
+                parameterName = parameterNames[j];
+            }
             if (parameterName == null || "".equals(parameterName)) {
                 parameterName = "args" + j;
             }
