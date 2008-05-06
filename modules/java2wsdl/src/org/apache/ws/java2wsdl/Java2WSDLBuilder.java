@@ -80,8 +80,9 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     // location of the class name to package mapping file
     // File is simple file with qualifiedClassName:SchemaQName
     private String mappingFileLocation;
+    private HashMap messageReceivers;
 
-	public Java2WSDLBuilder() {
+    public Java2WSDLBuilder() {
 		try {
 			ConfigurationContext configCtx = ConfigurationContextFactory
 					.createDefaultConfigurationContext();
@@ -109,7 +110,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		}
 	}
 
-	public String getSchemaTargetNamespace() throws Exception {
+    public Java2WSDLBuilder(OutputStream out, String className,
+                            ClassLoader classLoader, HashMap messageReceivers) {
+        this(out, className, classLoader);
+        this.messageReceivers = messageReceivers;
+    }
+
+    public String getSchemaTargetNamespace() throws Exception {
 		if (schemaTargetNamespace == null) {
 			schemaTargetNamespace = Java2WSDLUtils
 					.schemaNamespaceFromClassName(className, classLoader,
@@ -223,24 +230,25 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 			schemaGenerator.setUseWSDLTypesNamespace(true);
 		}
 
-		HashMap messageReciverMap = new HashMap();
-		Class inOnlyMessageReceiver = Loader
-				.loadClass("org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
-		MessageReceiver messageReceiver = (MessageReceiver) inOnlyMessageReceiver
-				.newInstance();
-		messageReciverMap.put(WSDL2Constants.MEP_URI_IN_ONLY, messageReceiver);
-		Class inoutMessageReceiver = Loader
-				.loadClass("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
-		MessageReceiver inOutmessageReceiver = (MessageReceiver) inoutMessageReceiver
-				.newInstance();
-		messageReciverMap.put(WSDL2Constants.MEP_URI_IN_OUT,
-				inOutmessageReceiver);
-		AxisService service = new AxisService();
+        if(messageReceivers == null) {
+            Class inOnlyMessageReceiver = Loader
+                    .loadClass("org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+            MessageReceiver messageReceiver = (MessageReceiver) inOnlyMessageReceiver
+                    .newInstance();
+            messageReceivers.put(WSDL2Constants.MEP_URI_IN_ONLY, messageReceiver);
+            Class inoutMessageReceiver = Loader
+                    .loadClass("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+            MessageReceiver inOutmessageReceiver = (MessageReceiver) inoutMessageReceiver
+                    .newInstance();
+            messageReceivers.put(WSDL2Constants.MEP_URI_IN_OUT,
+                    inOutmessageReceiver);
+        }
+        AxisService service = new AxisService();
 		schemaGenerator.setAxisService(service);
 		AxisService axisService = AxisService.createService(className,
 				serviceName == null ? Java2WSDLUtils
 						.getSimpleClassName(className) : serviceName,
-				axisConfig, messageReciverMap,
+				axisConfig, messageReceivers,
 				targetNamespace == null ? Java2WSDLUtils
 						.namespaceFromClassName(className, classLoader,
 								resolveNSGen()).toString() : targetNamespace,
