@@ -246,7 +246,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
 
         // since we do not support overload
-        HashMap uniqueMethods = new HashMap();
+        HashMap uniqueMethods = new LinkedHashMap();
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence = null;
 
@@ -521,8 +521,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), eltOuter.getQName());
 
 
-            Set propertiesSet = new HashSet();
-            Set propertiesNames = new HashSet();
+            Set propertiesSet = new LinkedHashSet();
+            Set propertiesNames = new LinkedHashSet();
             Field tempProperties[] = javaType.getDeclaredFields();
             BeanExcludeInfo beanExcludeInfo = null;
             if (service.getExcludeInfo() != null) {
@@ -557,7 +557,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             }
             Field[] tempFields = javaType.getDeclaredFields();
-            HashMap FieldMap = new HashMap();
+            HashMap FieldMap = new LinkedHashMap();
             for (int i = 0; i < tempFields.length; i++) {
                 Field tempFiled = tempFields[i];
                 // create a element for the field only if it is public

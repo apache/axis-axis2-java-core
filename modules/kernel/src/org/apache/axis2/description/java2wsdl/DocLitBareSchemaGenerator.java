@@ -43,11 +43,12 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
 
     private static final Log log = LogFactory.getLog(DocLitBareSchemaGenerator.class);
-    private HashMap processedParameters = new HashMap();
+    private HashMap processedParameters = new LinkedHashMap();
 
     public DocLitBareSchemaGenerator(ClassLoader loader,
                                      String className,
@@ -64,7 +65,7 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         Arrays.sort(declaredMethods , new MathodComparator());
 
         // since we do not support overload
-        HashMap uniqueMethods = new HashMap();
+        HashMap uniqueMethods = new LinkedHashMap();
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence;
 
