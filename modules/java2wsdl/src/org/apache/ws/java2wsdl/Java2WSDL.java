@@ -23,16 +23,13 @@ import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOptionParser;
 import org.apache.ws.java2wsdl.utils.Java2WSDLOptionsValidator;
 
 public class Java2WSDL {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Java2WSDLCommandLineOptionParser commandLineOptionParser = new Java2WSDLCommandLineOptionParser(
                 args);
         //  validate the arguments
         validateCommandLineOptions(commandLineOptionParser);
-        try {
-            new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions()).generate();
-        } catch (Exception e) {
-            System.out.println("An error occured while generating code" + e.getMessage());
-        }
+        Java2WSDLCodegenEngine engine = new Java2WSDLCodegenEngine(commandLineOptionParser.getAllOptions());
+        engine.generate();
     }
 
     public static void printUsage() {
