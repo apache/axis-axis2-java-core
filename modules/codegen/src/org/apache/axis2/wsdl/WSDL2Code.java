@@ -31,9 +31,11 @@ public class WSDL2Code {
     public static void main(String[] args) throws Exception {
         CommandLineOptionParser commandLineOptionParser = new CommandLineOptionParser(
                 args);
-        validateCommandLineOptions(commandLineOptionParser);
-        new CodeGenerationEngine(commandLineOptionParser).generate();
-
+        if (isOptionsValid(commandLineOptionParser)){
+            new CodeGenerationEngine(commandLineOptionParser).generate();
+        } else {
+            printUsage();
+        }
     }
 
     private static void printUsage() {
@@ -43,19 +45,19 @@ public class WSDL2Code {
         for (int i = 2; i <= 45; i++) {
             System.out.println("  " + CodegenMessages.getMessage("wsdl2code.arg" + i));
         }
-        System.exit(0);//$NON-SEC-2
     }
 
 
-    private static void validateCommandLineOptions(
-            CommandLineOptionParser parser) {
-        if (parser.getInvalidOptions(new WSDL2JavaOptionsValidator()).size() > 0)
-            printUsage();
-        if (null ==
-                parser.getAllOptions().get(
-                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION))
-            printUsage();
+    private static boolean isOptionsValid(CommandLineOptionParser parser) {
+        boolean isValid = true;
+        if (parser.getInvalidOptions(new WSDL2JavaOptionsValidator()).size() > 0){
+            isValid = false;
+        }
+        if (null == parser.getAllOptions().get(
+                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION)){
+            isValid = false;
+        }
+        return isValid;
     }
-
 
 }
