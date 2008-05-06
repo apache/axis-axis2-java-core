@@ -370,6 +370,7 @@
                                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
                                 <exclude>**/ScenarioST1Test.java</exclude>
                                 <exclude>**/samples/wsdl/perf2/*.java</exclude>
+                                <exclude>**/ComplexDataTypesDocLitBareTest.java</exclude>
                             </excludes>
                             <systemProperties>
                                 <property>
@@ -414,6 +415,7 @@
                                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
                                 <exclude>**/ScenarioST1Test.java</exclude>
                                 <exclude>**/samples/wsdl/perf2/*.java</exclude>
+                                <exclude>**/ComplexDataTypesDocLitBareTest.java</exclude>
                             </excludes>
                             <systemProperties>
                                 <property>
