@@ -56,11 +56,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
     }
 
     public void generate() throws Exception {
-        try {
-            java2WsdlBuilder.generateWSDL();
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
+        java2WsdlBuilder.generateWSDL();
     }
 
     private FileOutputStream resolveOutputStream(String className, Map optionsMap) throws Exception

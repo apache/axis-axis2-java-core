@@ -80,7 +80,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     // location of the class name to package mapping file
     // File is simple file with qualifiedClassName:SchemaQName
     private String mappingFileLocation;
-    private HashMap messageReceivers;
+    private HashMap messageReceivers = null;
 
     public Java2WSDLBuilder() {
 		try {
@@ -231,6 +231,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		}
 
         if(messageReceivers == null) {
+            messageReceivers = new HashMap();
             Class inOnlyMessageReceiver = Loader
                     .loadClass("org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
             MessageReceiver messageReceiver = (MessageReceiver) inOnlyMessageReceiver
