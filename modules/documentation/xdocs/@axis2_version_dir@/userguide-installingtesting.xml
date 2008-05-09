@@ -120,7 +120,7 @@ distribution from <a href=
 "http://ws.apache.org/axis2/download.cgi">http://ws.apache.org/axis2/download.cgi</a>
 and place the axis2.war file in the server's webapps directory. The
 server will then expand the distribution into its proper structure,
-as seen in the <a href="userguide-intro.html#hierarchy">earlier
+as seen in the <a href="userguide.html#hierarchy">earlier
 section</a>.</p>
 <p>Apache Axis2 services come bundled as *.aar files, which contain
 all the pieces necessary to define the service, such as the
