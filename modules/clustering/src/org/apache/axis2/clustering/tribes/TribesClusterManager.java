@@ -49,17 +49,21 @@ import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
+import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 public class TribesClusterManager implements ClusterManager {
     public static final int MSG_ORDER_OPTION = 512;
@@ -146,13 +150,6 @@ public class TribesClusterManager implements ClusterManager {
         MultiPointSender multiPointSender = replicationTransmitter.getTransport();
         multiPointSender.setMaxRetryAttempts(maxRetries);
 
-        // Set the IP address that will be advertised by this node
-        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
-        if (localIP != null) {
-            ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-            receiver.setAddress(localIP);
-        }
-
         // Set the domain for this Node
         Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
         byte[] domain;
@@ -162,46 +159,10 @@ public class TribesClusterManager implements ClusterManager {
             domain = "apache.axis2.domain".getBytes();
         }
 
-        // Add a DomainFilterInterceptor
-        channel.getMembershipService().setDomain(domain);
-        DomainFilterInterceptor dfi = new DomainFilterInterceptor();
-        dfi.setDomain(domain);
-        channel.addInterceptor(dfi);
+        // Add all the ChannelInterceptors
+        addInterceptors(channel, domain);
 
-        // Add the NonBlockingCoordinator. This is used for leader election
-        /*nbc = new NonBlockingCoordinator() {
-            public void fireInterceptorEvent(InterceptorEvent event) {
-                String status = event.getEventTypeDesc();
-                System.err.println("$$$$$$$$$$$$ NBC status=" + status);
-                int type = event.getEventType();
-            }
-        };
-        nbc.setPrevious(dfi);
-        channel.addInterceptor(nbc);*/
-
-        /*Properties mcastProps = channel.getMembershipService().getProperties();
-       mcastProps.setProperty("mcastPort", "5555");
-       mcastProps.setProperty("mcastAddress", "224.10.10.10");
-       mcastProps.setProperty("mcastClusterDomain", "catalina");
-       mcastProps.setProperty("bindAddress", "localhost");
-       mcastProps.setProperty("memberDropTime", "20000");
-       mcastProps.setProperty("mcastFrequency", "500");
-       mcastProps.setProperty("tcpListenPort", "4000");
-       mcastProps.setProperty("tcpListenHost", "127.0.0.1");*/
-
-        // Add the OrderInterceptor to preserve sender ordering 
-        OrderInterceptor orderInterceptor = new OrderInterceptor();
-        orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
-        channel.addInterceptor(orderInterceptor);
-
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        channel.addInterceptor(atMostOnceInterceptor);
-
-        // Add a reliable failure detector
-        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-        tcpFailureDetector.setPrevious(dfi);
-        channel.addInterceptor(tcpFailureDetector);
+        configureMulticastParameters(channel);
 
         channel.addChannelListener(channelListener);
 
@@ -250,6 +211,95 @@ public class TribesClusterManager implements ClusterManager {
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
     }
 
+    private void addInterceptors(ManagedChannel channel, byte[] domain) {
+        // Add a DomainFilterInterceptor
+        channel.getMembershipService().setDomain(domain);
+        DomainFilterInterceptor dfi = new DomainFilterInterceptor();
+        dfi.setDomain(domain);
+        channel.addInterceptor(dfi);
+
+        // Add the NonBlockingCoordinator. This is used for leader election
+        /*nbc = new NonBlockingCoordinator() {
+            public void fireInterceptorEvent(InterceptorEvent event) {
+                String status = event.getEventTypeDesc();
+                System.err.println("$$$$$$$$$$$$ NBC status=" + status);
+                int type = event.getEventType();
+            }
+        };
+        nbc.setPrevious(dfi);
+        channel.addInterceptor(nbc);*/
+
+        // Add the OrderInterceptor to preserve sender ordering
+        OrderInterceptor orderInterceptor = new OrderInterceptor();
+        orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
+        channel.addInterceptor(orderInterceptor);
+
+        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+        channel.addInterceptor(atMostOnceInterceptor);
+
+        // Add a reliable failure detector
+        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+        tcpFailureDetector.setPrevious(dfi);
+        channel.addInterceptor(tcpFailureDetector);
+
+//        if(memberDiscoverMode = WKA){
+//            TcpPing
+//            TcpFailure
+//            StaticMembership
+//        }
+        /*StaticMembershipInterceptor staticMembershipInterceptor = new StaticMembershipInterceptor();
+        channel.addInterceptor(staticMembershipInterceptor);
+        try {
+            staticMembershipInterceptor.addStaticMember(new StaticMember("10.100.1.190", 4000, 10));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    private void configureMulticastParameters(ManagedChannel channel) {
+        Properties mcastProps = channel.getMembershipService().getProperties();
+        Parameter mcastAddress = getParameter("multicastAddress");
+        if (mcastAddress != null) {
+            mcastProps.setProperty("mcastAddress", ((String) mcastAddress.getValue()).trim());
+        }
+        Parameter mcastPort = getParameter("multicastPort");
+        if (mcastPort != null) {
+            mcastProps.setProperty("mcastPort", ((String) mcastPort.getValue()).trim());
+        }
+        Parameter mcastFrequency = getParameter("multicastFrequency");
+        if (mcastFrequency != null) {
+            mcastProps.setProperty("mcastFrequency", ((String) mcastFrequency.getValue()).trim());
+        }
+        Parameter mcastMemberDropTime = getParameter("multicastMemberDropTime");
+        if (mcastMemberDropTime != null) {
+            mcastProps.setProperty("memberDropTime", ((String) mcastMemberDropTime.getValue()).trim());
+        }
+
+        // Set the IP address that will be advertised by this node
+        ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
+        Parameter tcpListenHost = getParameter("tcpListenHost");
+        if(tcpListenHost != null){
+            String host = ((String) tcpListenHost.getValue()).trim();
+            mcastProps.setProperty("tcpListenHost", host);
+            mcastProps.setProperty("bindAddress", host);
+            receiver.setAddress(host);
+        }
+        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
+        if (localIP != null) {
+            receiver.setAddress(localIP);
+        }
+
+        Parameter tcpListenPort = getParameter("tcpListenPort");
+        if(tcpListenPort != null){
+            String port = ((String) tcpListenPort.getValue()).trim();
+            mcastProps.setProperty("tcpListenPort", port);
+            receiver.setPort(Integer.parseInt(port));
+        }
+
+        /*mcastProps.setProperty("mcastClusterDomain", "catalina");*/
+    }
+
     /**
      * Get some information from a neighbour. This information will be used by this node to
      * initialize itself
@@ -269,7 +319,9 @@ public class TribesClusterManager implements ClusterManager {
         List sentMembersList = new ArrayList();
         sentMembersList.add(TribesUtil.getLocalHost(channel));
         Member[] members = membershipManager.getMembers();
-        if(members.length == 0) return;
+        if (members.length == 0) {
+            return;
+        }
 
         while (members.length > 0 && numberOfTries < 5) {
             Member member = (numberOfTries == 0) ?
@@ -301,7 +353,7 @@ public class TribesClusterManager implements ClusterManager {
             }
             numberOfTries++;
             members = membershipManager.getMembers();
-            if(numberOfTries >= members.length){
+            if (numberOfTries >= members.length) {
                 break;
             }
         }

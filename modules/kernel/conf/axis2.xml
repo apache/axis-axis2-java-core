@@ -250,6 +250,15 @@
         <parameter name="domain">apache.axis2.domain</parameter>
         <parameter name="synchronizeAll">true</parameter>
         <parameter name="maxRetries">10</parameter>
+
+        <parameter name="multicastAddress">228.0.0.4</parameter>
+        <parameter name="multicastPort">45564</parameter>
+        <parameter name="multicastFrequency">500</parameter>
+        <parameter name="multicastMemberDropTime">3000</parameter>
+
+        <parameter name="tcpListenHost">127.0.0.1</parameter>
+        <parameter name="tcpListenPort">4000</parameter>
+
     	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
