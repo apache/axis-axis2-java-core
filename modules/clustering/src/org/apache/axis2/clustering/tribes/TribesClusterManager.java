@@ -49,16 +49,13 @@ import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
-import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
-import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -158,6 +155,8 @@ public class TribesClusterManager implements ClusterManager {
         } else {
             domain = "apache.axis2.domain".getBytes();
         }
+        channel.getMembershipService().getProperties().setProperty("mcastClusterDomain",
+                                                                   new String(domain));
 
         // Add all the ChannelInterceptors
         addInterceptors(channel, domain);
@@ -263,6 +262,11 @@ public class TribesClusterManager implements ClusterManager {
         if (mcastAddress != null) {
             mcastProps.setProperty("mcastAddress", ((String) mcastAddress.getValue()).trim());
         }
+        Parameter mcastBindAddress = getParameter("multicastBindAddress");
+        if (mcastBindAddress != null) {
+            mcastProps.setProperty("mcastBindAddress", ((String) mcastBindAddress.getValue()).trim());
+        }
+
         Parameter mcastPort = getParameter("multicastPort");
         if (mcastPort != null) {
             mcastProps.setProperty("mcastPort", ((String) mcastPort.getValue()).trim());
@@ -279,7 +283,7 @@ public class TribesClusterManager implements ClusterManager {
         // Set the IP address that will be advertised by this node
         ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
         Parameter tcpListenHost = getParameter("tcpListenHost");
-        if(tcpListenHost != null){
+        if (tcpListenHost != null) {
             String host = ((String) tcpListenHost.getValue()).trim();
             mcastProps.setProperty("tcpListenHost", host);
             mcastProps.setProperty("bindAddress", host);
@@ -291,7 +295,7 @@ public class TribesClusterManager implements ClusterManager {
         }
 
         Parameter tcpListenPort = getParameter("tcpListenPort");
-        if(tcpListenPort != null){
+        if (tcpListenPort != null) {
             String port = ((String) tcpListenPort.getValue()).trim();
             mcastProps.setProperty("tcpListenPort", port);
             receiver.setPort(Integer.parseInt(port));

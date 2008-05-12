@@ -252,6 +252,7 @@
         <parameter name="maxRetries">10</parameter>
 
         <parameter name="multicastAddress">228.0.0.4</parameter>
+        <parameter name="multicastBindAddress">127.0.0.1</parameter>
         <parameter name="multicastPort">45564</parameter>
         <parameter name="multicastFrequency">500</parameter>
         <parameter name="multicastMemberDropTime">3000</parameter>
