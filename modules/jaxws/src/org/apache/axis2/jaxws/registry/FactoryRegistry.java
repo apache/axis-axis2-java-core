@@ -95,7 +95,7 @@ public class FactoryRegistry {
     private static final void init() {
         
         // An unsynchronized Map is used to ensure that gets are fast.
-        table = new HashMap<Class, Object>();
+        table = new HashMap<Class, Object>(64, .5f);
         
         // Load Factories
         table.put(XMLStringBlockFactory.class, new XMLStringBlockFactoryImpl());
