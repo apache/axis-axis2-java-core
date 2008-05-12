@@ -24,7 +24,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
@@ -36,6 +35,52 @@ import java.util.Map;
 public class AddressingHelper {
 
     private static final Log log = LogFactory.getLog(AddressingHelper.class);
+
+    /**
+     * Returns true if the ReplyTo address matches one of the supported
+     * anonymous urls. If the ReplyTo is not set, anonymous is assumed, per the Final
+     * spec. The AddressingInHandler should have set the ReplyTo to non-null in the
+     * 2004/08 case to ensure the different semantics. (per AXIS2-885)
+     * 
+     * According to the WS-Addressing Metadata spec the none URI must not be rejected.
+     *
+     * @param messageContext
+     */
+    public static boolean isSyncReplyAllowed(MessageContext messageContext) {
+        EndpointReference replyTo = messageContext.getReplyTo();
+        if (replyTo == null) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " isSyncReplyAllowed: ReplyTo is null. Returning true");
+            }
+            return true;
+        } else {
+            return replyTo.hasAnonymousAddress() || replyTo.hasNoneAddress();
+        }
+    }
+
+    /**
+     * Returns true if the FaultTo address matches one of the supported
+     * anonymous urls. If the FaultTo is not set, the ReplyTo is checked per the
+     * spec.
+     * 
+     * According to the WS-Addressing Metadata spec the none URI must not be rejected.
+     *
+     * @param messageContext
+     * @see #isSyncReplyAllowed(org.apache.axis2.context.MessageContext)
+     */
+    public static boolean isSyncFaultAllowed(MessageContext messageContext) {
+        EndpointReference faultTo = messageContext.getFaultTo();
+        if (faultTo == null) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " isSyncFaultAllowed: FaultTo is null. Returning isSyncReplyAllowed");
+            }
+            return isSyncReplyAllowed(messageContext);
+        } else {
+            return faultTo.hasAnonymousAddress() || faultTo.hasNoneAddress();
+        }
+    }
 
     /**
      * Returns true if the ReplyTo address does not match one of the supported
@@ -71,7 +116,7 @@ public class AddressingHelper {
         if (faultTo == null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(messageContext.getLogIDString() +
-                        " isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
+                        " isFaultRedirected: FaultTo is null. Returning isReplyRedirected");
             }
             return isReplyRedirected(messageContext);
         } else {

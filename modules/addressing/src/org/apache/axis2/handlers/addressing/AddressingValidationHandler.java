@@ -56,9 +56,6 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
 
                 // Check if the wsa:MessageID is required or not.
                 checkMessageIDHeader(msgContext);
-                
-                // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
-                checkWSAMInvocationPattern(msgContext);
             }
         }
 
@@ -66,6 +63,11 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
             // Check that if wsaddressing=required that addressing headers were found inbound
             checkUsingAddressing(msgContext);
         }
+        
+        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
+        // This method must always be called to ensure that the async required invocation pattern is
+        // enforced.
+        checkWSAMInvocationPattern(msgContext);
 
         return InvocationResponse.CONTINUE;
     }
@@ -110,7 +112,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         }
         if(!AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH.equals(value)){
         	if (WSAM_INVOCATION_PATTERN_SYNCHRONOUS.equals(value)) {
-        		if (AddressingHelper.isReplyRedirected(msgContext)) {
+        		if (!AddressingHelper.isSyncReplyAllowed(msgContext)) {
         			EndpointReference anonEPR =
         				new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
         			msgContext.setReplyTo(anonEPR);
@@ -118,7 +120,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         			AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext,
         					AddressingConstants.WSA_REPLY_TO);
         		}
-        		if (AddressingHelper.isFaultRedirected(msgContext)) {
+        		if (!AddressingHelper.isSyncFaultAllowed(msgContext)) {
         			EndpointReference anonEPR =
         				new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
         			msgContext.setReplyTo(anonEPR);

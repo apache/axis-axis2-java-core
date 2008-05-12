@@ -41,9 +41,21 @@ public class AddressingHelperTest extends TestCase {
         assertTrue(AddressingHelper.isReplyRedirected(mc));
     }
 
+    public void testIsReplyRedirectedNoneReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        assertTrue(AddressingHelper.isReplyRedirected(mc));
+    }
+
     public void testIsFaultRedirectedNoFaultToOrReplyTo() {
         MessageContext mc = new MessageContext();
         assertFalse(AddressingHelper.isFaultRedirected(mc));
+    }
+
+    public void testIsFaultRedirectedNoFaultTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference("http://ws.apache.org/axis2"));
+        assertTrue(AddressingHelper.isFaultRedirected(mc));
     }
 
     public void testIsFaultRedirectedAnonFaultTo() {
@@ -56,5 +68,63 @@ public class AddressingHelperTest extends TestCase {
         MessageContext mc = new MessageContext();
         mc.setFaultTo(new EndpointReference("http://ws.apache.org/axis2"));
         assertTrue(AddressingHelper.isFaultRedirected(mc));
+    }
+
+    public void testIsFaultRedirectedNoneReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        assertTrue(AddressingHelper.isFaultRedirected(mc));
+    }
+
+    public void testIsSyncReplyAllowedNoReplyTo() {
+        MessageContext mc = new MessageContext();
+        assertTrue(AddressingHelper.isSyncReplyAllowed(mc));
+    }
+
+    public void testIsSyncReplyAllowedAnonReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        assertTrue(AddressingHelper.isSyncReplyAllowed(mc));
+    }
+
+    public void testIsSyncReplyAllowedNonAnonReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference("http://ws.apache.org/axis2"));
+        assertFalse(AddressingHelper.isSyncReplyAllowed(mc));
+    }
+
+    public void testIsSyncReplyAllowedNoneReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        assertTrue(AddressingHelper.isSyncReplyAllowed(mc));
+    }
+
+    public void testIsSyncFaultAllowedNoFaultToOrReplyTo() {
+        MessageContext mc = new MessageContext();
+        assertTrue(AddressingHelper.isSyncFaultAllowed(mc));
+    }
+
+    public void testIsSyncFaultAllowedNoFaultTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference("http://ws.apache.org/axis2"));
+        assertFalse(AddressingHelper.isSyncFaultAllowed(mc));
+    }
+
+    public void testIsSyncFaultAllowedAnonFaultTo() {
+        MessageContext mc = new MessageContext();
+        mc.setFaultTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        assertTrue(AddressingHelper.isSyncFaultAllowed(mc));
+    }
+
+    public void testIsSyncFaultAllowedNonAnonFaultTo() {
+        MessageContext mc = new MessageContext();
+        mc.setFaultTo(new EndpointReference("http://ws.apache.org/axis2"));
+        assertFalse(AddressingHelper.isSyncFaultAllowed(mc));
+    }
+
+    public void testIsSyncFaultAllowedNoneReplyTo() {
+        MessageContext mc = new MessageContext();
+        mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        assertTrue(AddressingHelper.isSyncFaultAllowed(mc));
     }
 }
