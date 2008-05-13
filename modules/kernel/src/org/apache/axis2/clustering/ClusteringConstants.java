@@ -48,4 +48,16 @@ public final class ClusteringConstants {
      * Synchronize the states of all members in the cluster
      */
     public static final String SYNCHRONIZE_ALL_MEMBERS = "synchronizeAll";
+
+    public static final class MembershipScheme {
+        /**
+         * Multicast based membership discovery scheme
+         */
+        public static final String MULTICAST_BASED = "multicast";
+
+        /**
+         * Well-Known Address based membership management scheme
+         */
+        public static final String WKA_BASED = "wka";
+    }
 }

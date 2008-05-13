@@ -158,10 +158,22 @@ public class TribesClusterManager implements ClusterManager {
         channel.getMembershipService().getProperties().setProperty("mcastClusterDomain",
                                                                    new String(domain));
 
+        Parameter membershipSchemeParam = getParameter("membershipScheme");
+        String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
+        if (membershipSchemeParam != null) {
+            membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
+        }
+
+        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            log.info("Using WKA based membership management scheme");
+            channel.setMembershipService(new WkaMembershipService());
+        } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
+            log.info("Using multicast based membership management scheme");
+            configureMulticastParameters(channel);
+        }
+
         // Add all the ChannelInterceptors
         addInterceptors(channel, domain);
-
-        configureMulticastParameters(channel);
 
         channel.addChannelListener(channelListener);
 
@@ -210,7 +222,9 @@ public class TribesClusterManager implements ClusterManager {
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
     }
 
+    //TODO: The order of the interceptors will depend on the membership scheme
     private void addInterceptors(ManagedChannel channel, byte[] domain) {
+
         // Add a DomainFilterInterceptor
         channel.getMembershipService().setDomain(domain);
         DomainFilterInterceptor dfi = new DomainFilterInterceptor();
