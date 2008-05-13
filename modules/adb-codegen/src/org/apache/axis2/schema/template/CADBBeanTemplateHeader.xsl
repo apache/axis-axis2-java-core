@@ -132,6 +132,26 @@
         #define ADB_DEFAULT_LIST_SEPERATOR " "
         </xsl:if>
 
+        <!-- Check if this type is a supported enum -->
+        <xsl:variable name="isEnum">
+          <xsl:choose>
+            <xsl:when test="count(property)=1 and property/enumFacet and property/@type='axis2_char_t*'">1</xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <xsl:if test="$isEnum=1">
+          <xsl:variable name="enum">adb_<xsl:value-of select="property/@name"/>_enum_t</xsl:variable>
+          <xsl:variable name="propertyCapsCName" select="property/@caps-cname"/>
+        /* Enumeration for this type */
+        typedef enum {
+            <xsl:for-each select="property/enumFacet">
+                <xsl:text/><xsl:value-of select="$propertyCapsCName"/>_<xsl:value-of select="@id"/>
+                <xsl:if test="position()!=last()">,
+            </xsl:if>
+          </xsl:for-each> } <xsl:value-of select="$enum"/>;
+        </xsl:if>
+
         /******************************* Create and Free functions *********************************/
 
         /**
@@ -536,6 +556,48 @@
 
    
         </xsl:for-each>
+
+        <xsl:if test="$isEnum=1">
+          <xsl:for-each select="property">
+            <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
+            <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
+            <xsl:variable name="enum">adb_<xsl:value-of select="@name"/>_enum_t</xsl:variable>
+            <xsl:variable name="constValue">
+              <xsl:choose>
+                <xsl:when test="@isarray"></xsl:when>
+                <xsl:when test="@type='axis2_char_t*' or @type='unsigned short' or @type='uint64_t' or @type='unsigned int' or @type='unsigned char' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t'">const </xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+            
+            /************************** Getters and Setters For Enumerations ********************************/
+            /********************* Enumeration Specific Operations: get_enum, set_enum **********************/
+            
+            /**
+            * Enum getter for <xsl:value-of select="$propertyName"/>.
+            * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+            * @param env pointer to environment struct
+            * @return <xsl:value-of select="$enum"/>; -1 on failure
+            */
+            <xsl:value-of select="$enum"/> AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_enum(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+            
+            /**
+            * Enum setter for <xsl:value-of select="$propertyName"/>.
+            * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+            * @param env pointer to environment struct
+            * @param arg_<xsl:value-of select="$CName"/><xsl:text> </xsl:text> <xsl:value-of select="$enum"/>
+            * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+            */
+            axis2_status_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_enum(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env,
+            <xsl:value-of select="$constValue"/><xsl:value-of select="$enum"/><xsl:text> </xsl:text>arg_<xsl:value-of select="$CName"/>);
+            
+          </xsl:for-each>
+        </xsl:if>
 
 
         /******************************* Checking and Setting NIL values *********************************/

@@ -57,6 +57,14 @@
         <xsl:variable name="simple"><xsl:value-of select="@simple"/></xsl:variable>
         <xsl:variable name="choice"><xsl:value-of select="@choice"/></xsl:variable>
 
+        <!-- Check if this type is a supported enum -->
+        <xsl:variable name="isEnum">
+          <xsl:choose>
+            <xsl:when test="count(property)=1 and property/enumFacet and property/@type='axis2_char_t*'">1</xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
         /**
          * <xsl:value-of select="$axis2_name"/>.c
          *
@@ -4581,6 +4589,78 @@
                 </xsl:if>
                 return AXIS2_SUCCESS;
              }
+
+            <xsl:if test="$isEnum=1">
+               <xsl:variable name="enum">adb_<xsl:value-of select="$propertyName"/>_enum_t</xsl:variable>
+             /**
+             * specialized enum getter for <xsl:value-of select="$propertyName"/>.
+             */
+             <xsl:value-of select="$enum"/> AXIS2_CALL
+             <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>_enum(
+                 <xsl:value-of select="$axis2_name"/>_t* <xsl:value-of select="$name"/>,
+                 const axutil_env_t *env)
+             {
+                 AXIS2_ENV_CHECK(env, -1);
+                 AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, -1);
+             
+             <xsl:for-each select="enumFacet">
+                 if (axutil_strcmp(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, "<xsl:value-of select="@value"/>") == 0)
+                    return <xsl:value-of select="parent::node()/@caps-cname"/>_<xsl:value-of select="@id"/>;
+             </xsl:for-each>
+             
+                 /* Error: none of the strings matched; invalid enum value */
+                 return -1;
+             }
+             
+             
+             /**
+             * specialized enum setter for <xsl:value-of select="$propertyName"/>.
+             */
+             axis2_status_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>_enum(
+                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                    const axutil_env_t *env,
+                    <xsl:value-of select="$constValue"/><xsl:value-of select="$enum"/><xsl:text> </xsl:text> arg_<xsl:value-of select="$CName"/>)
+             {
+                <xsl:if test="@isarray">
+                 int size = 0;
+                 int i = 0;
+                 axis2_bool_t non_nil_exists = AXIS2_FALSE;
+                </xsl:if>
+
+                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
+                AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+
+                <!-- first reset whatever already in there -->
+                   <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
+
+                   
+                   switch (arg_<xsl:value-of select="$CName"/>)
+                   {
+                     <xsl:for-each select="enumFacet">
+                       case <xsl:value-of select="parent::node()/@caps-cname"/>_<xsl:value-of select="@id"/> :
+                          <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = (axis2_char_t *)axutil_strdup(env, "<xsl:value-of select="@value"/>");
+                          break;
+                     </xsl:for-each>
+                     
+                       default:
+                          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Error setting <xsl:value-of select="$propertyName"/>: undefined enum value");
+                          return AXIS2_FAILURE;
+                   }
+                
+                   if(NULL == <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>)
+                   {
+                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Error allocating memory for <xsl:value-of select="$propertyName"/>");
+                       return AXIS2_FAILURE;
+                   }
+                        <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_TRUE;
+                        
+                <xsl:if test="$choice">
+                    <xsl:value-of select="$name"/>->current_choice = "<xsl:value-of select="@nsuri"/>:<xsl:value-of select="$propertyName"/>";
+                </xsl:if>
+                return AXIS2_SUCCESS;
+             }
+            </xsl:if>
 
             <xsl:if test="@isarray">
             /**

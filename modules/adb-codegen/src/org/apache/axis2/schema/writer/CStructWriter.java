@@ -31,6 +31,7 @@ import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.util.XSLTUtils;
+//import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
@@ -893,10 +894,12 @@ public class CStructWriter implements BeanWriter {
                     String attribValue = (String) iterator.next();
                     XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
                     if (validJava) {
-                        XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
+                        XSLTUtils.addAttribute(model, "id", attribValue.toUpperCase(), enumFacet);
                     } else {
                         id++;
-                        XSLTUtils.addAttribute(model, "id", "value" + id, enumFacet);
+                        // Replace all invalid characters and append an id to avoid collisions
+                        XSLTUtils.addAttribute(model, "id", 
+                                attribValue.toUpperCase().replaceAll("[^A-Z0-9]", "_") + "_" + id, enumFacet);
                     }
                 }
             }
