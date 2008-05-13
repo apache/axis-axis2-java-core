@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class can be subclassed to produce different implementations of {@link HandlerResolver}
@@ -117,179 +119,51 @@ public abstract class BaseHandlerResolver implements HandlerResolver {
     private static boolean doesPatternMatch(QName portInfoQName, QName pattern) {
         if (pattern == null)
             return true;
-        String portInfoString = portInfoQName.toString();
-        String patternString = pattern.toString();
-        if (patternString.equals("*"))
-            return true;
-        if (patternString.contains("*")) {
-            return match(patternString, portInfoString, false);
+        // build up the strings according to the regular expression defined at http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
+        String portInfoNamespaceURI = portInfoQName.getNamespaceURI();
+        String portInfoLocalPart = portInfoQName.getLocalPart();
+        String portInfoString = ((portInfoNamespaceURI == null) || (portInfoNamespaceURI.equals(""))) ? "" : portInfoNamespaceURI + ":";
+        portInfoString += portInfoLocalPart;
+        
+        String patternStringNamespaceURI = pattern.getNamespaceURI();
+        String patternInfoLocalPart = pattern.getLocalPart();
+        String patternString = ((patternStringNamespaceURI == null) || (patternStringNamespaceURI.equals(""))) ? "" : patternStringNamespaceURI + ":";
+        patternString += patternInfoLocalPart;
+
+        /*
+         * Below pattern is ported from:  http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
+         * Schema regular expressions are defined differently from Java regular expressions which are different from Perl regular
+         * expressions.  I've converted the pattern defined in the above linked schema to its Java equivalent, as best as I can.
+         * 
+         * Schema reg ex:  "\*|([\i-[:]][\c-[:]]*:)?[\i-[:]][\c-[:]]*\*?"
+         * Java reg ex:  "\\*|((\\w|_)(\\w|\\.|-|_)*:)?(\\w|_)(\\w|\\.|-|_)*\\*?"
+         */
+
+        // first, confirm the defined pattern is legal
+        Pattern p = Pattern.compile("\\*|((\\w|_)(\\w|\\.|-|_)*:)?(\\w|_)(\\w|\\.|-|_)*\\*?");
+        Matcher m = p.matcher(patternString);
+        if (!m.matches()) {
+            // pattern defined by user in handler chain xml file is illegal -- report it but continue
+            log.warn("Pattern defined by user is illegal:  \"" + patternString + "\" does not match regular expression in schema http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd.  Pattern matching should now be considered \"best-effort.\"");
         }
-        return portInfoString.equals(patternString);
+        // now match the portInfoQName to the user pattern
+        // But first, convert the user pattern to a regular expression.  Remember, the only non-QName character allowed is "*", which
+        // is a wildcard, with obvious restrictions on what characters can match (for example, a .java filename cannot contain perentheses).
+        // We'll just use part of the above reg ex to form the appropriate restrictions on the user-specified "*" character:
+        Pattern userp = Pattern.compile(patternString.replace("*", "(\\w|\\.|-|_)*"));
+        Matcher userm = userp.matcher(portInfoString);
+        boolean match = userm.matches();
+        if (log.isDebugEnabled()) {
+            if (!match) {
+                log.debug("Pattern match failed: \"" + portInfoString + "\" does not match \"" + patternString + "\"");
+            } else {
+                log.debug("Pattern match succeeded: \"" + portInfoString + "\" matches \"" + patternString + "\"");
+            }
+        }
+        return match;
         
     }
     
-    /**
-     * Matches a string against a pattern. The pattern contains two special
-     * characters:
-     * '*' which means zero or more characters,
-     *
-     * @param pattern the (non-null) pattern to match against
-     * @param str     the (non-null) string that must be matched against the
-     *                pattern
-     * @param isCaseSensitive
-     *
-     * @return <code>true</code> when the string matches against the pattern,
-     *         <code>false</code> otherwise.
-     */
-    private static boolean match(String pattern, String str,
-                                   boolean isCaseSensitive) {
-
-        char[] patArr = pattern.toCharArray();
-        char[] strArr = str.toCharArray();
-        int patIdxStart = 0;
-        int patIdxEnd = patArr.length - 1;
-        int strIdxStart = 0;
-        int strIdxEnd = strArr.length - 1;
-        char ch;
-        boolean containsStar = false;
-
-        for (int i = 0; i < patArr.length; i++) {
-            if (patArr[i] == '*') {
-                containsStar = true;
-                break;
-            }
-        }
-        if (!containsStar) {
-
-            // No '*'s, so we make a shortcut
-            if (patIdxEnd != strIdxEnd) {
-                return false;        // Pattern and string do not have the same size
-            }
-            for (int i = 0; i <= patIdxEnd; i++) {
-                ch = patArr[i];
-                if (isCaseSensitive && (ch != strArr[i])) {
-                    return false;    // Character mismatch
-                }
-                if (!isCaseSensitive
-                        && (Character.toUpperCase(ch)
-                        != Character.toUpperCase(strArr[i]))) {
-                    return false;    // Character mismatch
-                }
-            }
-            return true;             // String matches against pattern
-        }
-        if (patIdxEnd == 0) {
-            return true;    // Pattern contains only '*', which matches anything
-        }
-
-        // Process characters before first star
-        while ((ch = patArr[patIdxStart]) != '*'
-                && (strIdxStart <= strIdxEnd)) {
-            if (isCaseSensitive && (ch != strArr[strIdxStart])) {
-                return false;    // Character mismatch
-            }
-            if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
-                    != Character.toUpperCase(strArr[strIdxStart]))) {
-                return false;    // Character mismatch
-            }
-            patIdxStart++;
-            strIdxStart++;
-        }
-        if (strIdxStart > strIdxEnd) {
-
-            // All characters in the string are used. Check if only '*'s are
-            // left in the pattern. If so, we succeeded. Otherwise failure.
-            for (int i = patIdxStart; i <= patIdxEnd; i++) {
-                if (patArr[i] != '*') {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Process characters after last star
-        while ((ch = patArr[patIdxEnd]) != '*' && (strIdxStart <= strIdxEnd)) {
-            if (isCaseSensitive && (ch != strArr[strIdxEnd])) {
-                return false;    // Character mismatch
-            }
-            if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
-                    != Character.toUpperCase(strArr[strIdxEnd]))) {
-                return false;    // Character mismatch
-            }
-            patIdxEnd--;
-            strIdxEnd--;
-        }
-        if (strIdxStart > strIdxEnd) {
-
-            // All characters in the string are used. Check if only '*'s are
-            // left in the pattern. If so, we succeeded. Otherwise failure.
-            for (int i = patIdxStart; i <= patIdxEnd; i++) {
-                if (patArr[i] != '*') {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // process pattern between stars. padIdxStart and patIdxEnd point
-        // always to a '*'.
-        while ((patIdxStart != patIdxEnd) && (strIdxStart <= strIdxEnd)) {
-            int patIdxTmp = -1;
-
-            for (int i = patIdxStart + 1; i <= patIdxEnd; i++) {
-                if (patArr[i] == '*') {
-                    patIdxTmp = i;
-                    break;
-                }
-            }
-            if (patIdxTmp == patIdxStart + 1) {
-
-                // Two stars next to each other, skip the first one.
-                patIdxStart++;
-                continue;
-            }
-
-            // Find the pattern between padIdxStart & padIdxTmp in str between
-            // strIdxStart & strIdxEnd
-            int patLength = (patIdxTmp - patIdxStart - 1);
-            int strLength = (strIdxEnd - strIdxStart + 1);
-            int foundIdx = -1;
-
-            strLoop:
-            for (int i = 0; i <= strLength - patLength; i++) {
-                for (int j = 0; j < patLength; j++) {
-                    ch = patArr[patIdxStart + j + 1];
-                    if (isCaseSensitive
-                            && (ch != strArr[strIdxStart + i + j])) {
-                        continue strLoop;
-                    }
-                    if (!isCaseSensitive && (Character
-                            .toUpperCase(ch) != Character
-                            .toUpperCase(strArr[strIdxStart + i + j]))) {
-                        continue strLoop;
-                    }
-                }
-                foundIdx = strIdxStart + i;
-                break;
-            }
-            if (foundIdx == -1) {
-                return false;
-            }
-            patIdxStart = patIdxTmp;
-            strIdxStart = foundIdx + patLength;
-        }
-
-        // All characters in the string are used. Check if only '*'s are left
-        // in the pattern. If so, we succeeded. Otherwise failure.
-        for (int i = patIdxStart; i <= patIdxEnd; i++) {
-            if (patArr[i] != '*') {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * Return the class for this name
