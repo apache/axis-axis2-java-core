@@ -29,6 +29,7 @@ import org.apache.axis2.jaxws.spi.Constants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.attachment.AttachmentMarshaller;
 import javax.xml.bind.attachment.AttachmentUnmarshaller;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.TreeSet;
 
@@ -93,8 +94,8 @@ public class JAXBBlockContext extends JAXBDSContext {
     }
     
     @Override
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller() {
-        return new JAXBAttachmentUnmarshaller(getMessage());
+    protected AttachmentUnmarshaller createAttachmentUnmarshaller(XMLStreamReader reader) {
+        return new JAXBAttachmentUnmarshaller(getMessage(), reader);
     }
 
     public ClassLoader getClassLoader() {

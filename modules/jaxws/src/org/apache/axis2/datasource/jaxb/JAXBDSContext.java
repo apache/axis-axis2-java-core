@@ -226,8 +226,8 @@ public class JAXBDSContext {
      * Create an Attachment unmarshaller for unmarshalling MTOM/SWA Attachments
      * @return AttachmentUnmarshaller
      */
-    protected AttachmentUnmarshaller createAttachmentUnmarshaller() {
-        return new JAXBAttachmentUnmarshaller(getMessageContext());
+    protected AttachmentUnmarshaller createAttachmentUnmarshaller(XMLStreamReader reader) {
+        return new JAXBAttachmentUnmarshaller(getMessageContext(), reader);
     }
 
     /**
@@ -245,7 +245,7 @@ public class JAXBDSContext {
 
         
         // Create an attachment unmarshaller
-        AttachmentUnmarshaller aum = createAttachmentUnmarshaller();
+        AttachmentUnmarshaller aum = createAttachmentUnmarshaller(reader);
 
         if (aum != null) {
             if (DEBUG_ENABLED) {

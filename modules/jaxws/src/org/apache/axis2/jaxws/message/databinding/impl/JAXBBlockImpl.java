@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLStreamReader;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
@@ -165,6 +166,19 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         ByteArrayInputStream baos =
                 new ByteArrayInputStream(_getBytesFromBO(busObj, busContext, "utf-8"));
         return StAXUtils.createXMLStreamReader(baos, "utf-8");
+    }
+    
+    protected XMLStreamReader _getReaderFromOM(OMElement omElement) {
+        XMLStreamReader reader;
+        if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
+            reader = omElement.getXMLStreamReaderWithoutCaching();
+        } else {
+            reader = omElement.getXMLStreamReader();
+        }
+        if (reader instanceof OMXMLStreamReader) {
+            ((OMXMLStreamReader)reader).setInlineMTOM(false);  // Optimize attachment usage
+        }
+        return reader;
     }
 
     protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)

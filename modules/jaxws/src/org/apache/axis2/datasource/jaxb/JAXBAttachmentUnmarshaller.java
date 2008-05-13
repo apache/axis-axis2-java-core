@@ -20,6 +20,7 @@
 package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMXMLStreamReader;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -27,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.bind.attachment.AttachmentUnmarshaller;
+import javax.xml.stream.XMLStreamReader;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,8 +45,10 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
     private static final Log log = LogFactory.getLog(JAXBAttachmentUnmarshaller.class);
 
     private MessageContext msgContext;
+    private XMLStreamReader xmlStreamReader;
 
-    public JAXBAttachmentUnmarshaller(MessageContext msgContext) {
+    public JAXBAttachmentUnmarshaller(MessageContext msgContext, 
+                                      XMLStreamReader xmlStreamReader) {
         this.msgContext = msgContext;
     }
 
@@ -52,6 +57,12 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         // Any message that is received might contain MTOM.
         // So always return true.
         boolean value = true;
+        
+        // Have the OM XMLStreamReader (OMStAXWrapper)
+        // sent xop:include events
+        if (xmlStreamReader instanceof OMXMLStreamReader) {
+            ((OMXMLStreamReader) xmlStreamReader).setInlineMTOM(true);
+        }
     
         if (log.isDebugEnabled()){ 
             log.debug("isXOPPackage returns " + value);
@@ -157,6 +168,14 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         // Get the attachment from the messagecontext using the blob cid
         if (msgContext != null) {
             DataHandler dh = msgContext.getAttachment(blobcid);
+            if (dh != null) {
+                JAXBAttachmentUnmarshallerMonitor.addBlobCID(blobcid);
+            }
+            return dh;
+        }
+        if (xmlStreamReader instanceof OMXMLStreamReader) {
+            DataHandler dh = 
+                ((OMXMLStreamReader) xmlStreamReader).getDataHandler(blobcid);
             if (dh != null) {
                 JAXBAttachmentUnmarshallerMonitor.addBlobCID(blobcid);
             }

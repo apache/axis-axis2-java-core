@@ -20,10 +20,13 @@
 package org.apache.axis2.jaxws.message;
 
 import junit.framework.TestCase;
+
+import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.OMXMLStreamReader;
 import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -47,6 +50,8 @@ import javax.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.xml.namespace.QName;
+
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -66,6 +71,8 @@ public class MessagePersistanceTests extends TestCase {
     DataSource stringDS, imageDS;
     public String imageResourceDir = "test-resources" + File.separator + "image";
     private final String sampleText = "Sample Text";
+    private final static QName XOP_INCLUDE = 
+        new QName("http://www.w3.org/2004/08/xop/include", "Include");
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -455,6 +462,46 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(restoredText.indexOf(sampleText) > 0);
         assertTrue(restoredText.indexOf("<soapenv:Body><sendImage xmlns=\"urn://mtom.test.org\"><input><imageData><xop:Include") > 0);
         
+        // Now try walking the saved envelope as an XMLInputStream.
+        // try to restore the message context again
+        // Now read in the persisted message
+        // Setup an input stream to the file
+        inStream = new FileInputStream(theFile);
+
+        // attach a stream capable of reading objects from the 
+        // stream connected to the file
+        inObjStream = new ObjectInputStream(inStream);
+        System.out.println("restoring a message context again.....");
+
+        restoredMC = 
+            (org.apache.axis2.context.MessageContext) inObjStream.readObject();
+        inObjStream.close();
+        inStream.close();
+        System.out.println("....restored message context.....");    
+        env = restoredMC.getEnvelope();
+        env.build();
+        
+        // Use tree as input to XMLStreamReader
+        OMXMLStreamReader xmlStreamReader = (OMXMLStreamReader) env.getXMLStreamReader();
+        
+        // Issue XOP:Include events for optimized MTOM text nodes
+        xmlStreamReader.setInlineMTOM(false);
+        
+        DataHandler dh = null;
+        while(xmlStreamReader.hasNext()) {
+            xmlStreamReader.next();
+            if (xmlStreamReader.isStartElement()) {
+                QName qName =xmlStreamReader.getName();
+                if (XOP_INCLUDE.equals(qName)) {
+                    String hrefValue = xmlStreamReader.getAttributeValue("", "href");
+                    if (hrefValue != null) {
+                        dh =((OMAttachmentAccessor)xmlStreamReader).getDataHandler(hrefValue);
+                    }
+                }
+            }
+        }
+        
+        assertTrue(dh != null);       
     }
     
     /**
@@ -549,7 +596,7 @@ public class MessagePersistanceTests extends TestCase {
         assertTrue(!omse.isExpanded());
         ds = omse.getDataSource();
         assertTrue(ds instanceof JAXBDataSource);
-        
+          
         // Simulate transport on the copied message
         baos = new ByteArrayOutputStream();
         outputFormat = new OMOutputFormat();
