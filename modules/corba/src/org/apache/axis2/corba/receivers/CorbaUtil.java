@@ -29,6 +29,7 @@ import org.apache.axis2.corba.deployer.CorbaConstants;
 import org.apache.axis2.corba.exceptions.CorbaException;
 import org.apache.axis2.corba.exceptions.CorbaInvocationException;
 import org.apache.axis2.corba.idl.IDLProcessor;
+import org.apache.axis2.corba.idl.PreProcessorInputStream;
 import org.apache.axis2.corba.idl.types.AbstractCollectionType;
 import org.apache.axis2.corba.idl.types.ArrayType;
 import org.apache.axis2.corba.idl.types.CompositeDataType;
@@ -152,7 +153,7 @@ public class CorbaUtil implements CorbaConstants {
         IDL idl = (IDL) IDL_CACHE.get(cacheKey);
         if (idl==null) {
             try {
-                File file = new File(dirName);
+                /*File file = new File(dirName);
                 InputStream stream;
                 if (file.isDirectory()) {
                     stream = new FileInputStream(cacheKey);
@@ -172,7 +173,9 @@ public class CorbaUtil implements CorbaConstants {
                         new CorbaInvocationException("cannot find " + idlFileName + " in " + file.getPath());
 
                     stream = zin;
-                }
+                }*/
+                InputStream stream = new PreProcessorInputStream(dirName, idlFileName);
+                //TODO: Set pre-processor system and user input paths
                 IDLProcessor idlProcessor = new IDLProcessor(stream);
                 idl = idlProcessor.process();
                 stream.close();
