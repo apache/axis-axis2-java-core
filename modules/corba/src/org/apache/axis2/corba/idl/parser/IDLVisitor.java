@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public class IDLVisitor implements ASTVisitor {
     private static final Log log = LogFactory.getLog(IDLVisitor.class);
-    private IDL idl = null;
+    private IDL idl = new IDL();
     private String module = "";
     private String moduleForInnerTypes = null;
     private static final String INNERTYPE_SUFFIX = "Package";
@@ -59,8 +59,11 @@ public class IDLVisitor implements ASTVisitor {
         return idl;
     }
 
+    public void setIDL(IDL idl) {
+        this.idl = idl;
+    }
+
     public void visit(AST node) {
-        idl = new IDL();
         while (node != null) {
             switch (node.getType()) {
 
@@ -72,6 +75,7 @@ public class IDLVisitor implements ASTVisitor {
                 case IDLTokenTypes.LITERAL_module: {
                     AST moduleName = node.getFirstChild();
                     IDLVisitor moduleVisitor = new IDLVisitor();
+                    moduleVisitor.setIDL(idl);
                     moduleVisitor.setModule(module + moduleName);
                     moduleVisitor.visit(moduleName.getNextSibling());
                     idl.addIDL(moduleVisitor.getIDL());
