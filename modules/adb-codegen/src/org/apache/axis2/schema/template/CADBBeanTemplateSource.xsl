@@ -4644,6 +4644,8 @@
                      </xsl:for-each>
                      
                        default:
+                          <xsl:value-of select="$name"/>->is_valid_<xsl:value-of select="$CName"/> = AXIS2_FALSE;
+                          <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = NULL;
                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Error setting <xsl:value-of select="$propertyName"/>: undefined enum value");
                           return AXIS2_FAILURE;
                    }
