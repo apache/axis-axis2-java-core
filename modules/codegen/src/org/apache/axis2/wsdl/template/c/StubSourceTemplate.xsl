@@ -872,9 +872,11 @@
      </xsl:for-each>   <!-- close of for-each select = "method" -->
 
 
+    <xsl:if test="method/input/param[@location='soap_header']">
      /**
       * function to free any soap input headers 
       */
+    </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="input/param[@location='soap_header']">
          void
@@ -902,9 +904,11 @@
      </xsl:for-each>
 
 
+    <xsl:if test="method/output/param[@location='soap_header']">
      /**
       * function to free any soap output headers 
       */
+    </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="output/param[@location='soap_header']">
          void

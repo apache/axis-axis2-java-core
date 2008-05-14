@@ -91,10 +91,11 @@
 
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
-          <xsl:if test="@mep='11' or @mep='12'">
+          <xsl:if test="@mep='10' or @mep='12'">
             <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
             <xsl:variable name="outputtype">
                 <xsl:choose>
+                    <xsl:when test="output/param/@ours=''">axis2_status_t</xsl:when>
                     <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"></xsl:value-of>_t*</xsl:when>
                     <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
                 </xsl:choose>
@@ -105,7 +106,7 @@
              * @param stub The stub (axis2_stub_t)
              * @param env environment ( mandatory)
              *<xsl:for-each select="input/param[@type!='']"><xsl:text>
-             </xsl:text>* @param _<xsl:value-of select="@name"/></xsl:for-each>
+             </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each>
              *<xsl:for-each select="output/param[@location='soap_header']"><xsl:text>
              </xsl:text>* @param dp_<xsl:value-of select="@name"/> - output header</xsl:for-each>
              * @return <xsl:value-of select="$outputtype"/>
@@ -131,18 +132,7 @@
         <!-- Async method prototype generation -->
         <xsl:if test="$isAsync='1'">
         <xsl:for-each select="method">
-        /**
-         * Auto generated function for asynchronous invocations
-         * for "<xsl:value-of select="@qname"/>" operation.
-         * @param stub The stub
-         * @param env environment ( mandatory)
-         <!--  select only the body parameters  -->
-         <xsl:for-each select="input/param[@type!='']">* @param _<xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
-         * @param user_data user data to be accessed by the callbacks
-         * @param on_complete callback to handle on complete
-         * @param on_error callback to handle on error
-         */
-
+        
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
 
         <xsl:variable name="outputtype">
@@ -159,6 +149,19 @@
         </xsl:variable>
         <xsl:if test="$mep='12'">
 
+        /**
+         * Auto generated function for asynchronous invocations
+         * for "<xsl:value-of select="@qname"/>" operation.
+         * @param stub The stub
+         * @param env environment ( mandatory)
+         <!--  select only the body parameters  -->
+         <xsl:for-each select="input/param[@type!='']">* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each>
+         * @param user_data user data to be accessed by the callbacks
+         * @param on_complete callback to handle on complete
+         * @param on_error callback to handle on error
+         */
+
+
         void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
                                                     <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                     <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
@@ -174,10 +177,12 @@
         </xsl:for-each>
         </xsl:if>  <!--close for  test="$isAsync='1'-->
 
-     /**
-      * function to free any soap input headers 
-      * @param env environment ( mandatory)
-      */
+     <xsl:if test="method/input/param[@location='soap_header']">
+      /**
+       * function to free any soap input headers 
+       * @param env environment ( mandatory)
+       */
+     </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="input/param[@location='soap_header']">
          void
@@ -188,10 +193,12 @@
         </xsl:if>
     </xsl:for-each>
 
-     /**
-      * function to free any soap output headers 
-      * @param env environment ( mandatory)
-      */
+     <xsl:if test="method/output/param[@location='soap_header']">
+      /**
+       * function to free any soap output headers 
+       * @param env environment ( mandatory)
+       */
+     </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="output/param[@location='soap_header']">
          void

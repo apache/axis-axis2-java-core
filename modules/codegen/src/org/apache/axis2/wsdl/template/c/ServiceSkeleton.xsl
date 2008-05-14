@@ -638,17 +638,14 @@
                     </xsl:otherwise>
                     </xsl:choose>
 
-                    <!-- below was  prior to the databinding -->
-                    <!-- <xsl:if test="$outputtype!=''">return </xsl:if>
-                    <xsl:text> </xsl:text>
-                    <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:for-each select="input/param[@type!='']"> ,
-                                         content_node </xsl:for-each>);
-                     <xsl:if test="$outputtype=''">return NULL;</xsl:if> -->
+                    /* since this has no output params it just returns NULL */                    
+                    <xsl:if test="$outputtype=''">return NULL;</xsl:if>
 
                 }
              </xsl:for-each>
              }
-          printf("<xsl:value-of select="$skeletonname"/> service ERROR: invalid OM parameters in request\n");
+            
+          AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "<xsl:value-of select="$skeletonname"/> service ERROR: invalid OM parameters in request\n");
           return NULL;
     }
 
