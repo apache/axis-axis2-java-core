@@ -78,7 +78,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * The list of URIs that should be considered equivalent to 
      * the WS-Addressing anonymous URI
      */
-    private static List anonymousEquivalentURIs = new ArrayList();
+    private static volatile List anonymousEquivalentURIs = new ArrayList();
 
 
     /**
@@ -114,8 +114,12 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         if (log.isTraceEnabled())
         	log.trace("addAnonymousEquivalentURI: " + anonymousEquivalentURI);
         
+        // Avoid synchronization in hasAnonymousAddress by using the
+        // technique outlined at http://is.gd/gv3
         synchronized (anonymousEquivalentURIs) {
-            anonymousEquivalentURIs.add(anonymousEquivalentURI);
+        	ArrayList newList = new ArrayList(anonymousEquivalentURIs);
+        	newList.add(anonymousEquivalentURI);
+            anonymousEquivalentURIs = newList;
         }
     }
  
@@ -219,18 +223,19 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         boolean result = isWSAddressingAnonymous();
         
         if(!result && address != null) {
-        	//If the address is not WS-A anonymous it might still be considered anonymous
-        	synchronized(anonymousEquivalentURIs){
-        		if(!anonymousEquivalentURIs.isEmpty()){
-            		Iterator it = anonymousEquivalentURIs.iterator();
-            		while(it.hasNext()){
-            			result = address.startsWith((String)it.next());
-            			if(result){
-            				break;
-            			}
-            		}	
-        		}
-        	} //end sync      	
+        	// If the address is not WS-A anonymous it might still be considered anonymous
+        	// Avoid synchronization by using the
+            // technique outlined at http://is.gd/gv3
+        	List localList = anonymousEquivalentURIs;
+        	if(!localList.isEmpty()){
+        		Iterator it = localList.iterator();
+        		while(it.hasNext()){
+        			result = address.startsWith((String)it.next());
+        			if(result){
+        				break;
+        			}
+        		}	
+        	}    	
         }
 
         if (log.isTraceEnabled()) {
