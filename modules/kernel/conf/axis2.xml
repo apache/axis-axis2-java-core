@@ -261,6 +261,17 @@
         <parameter name="tcpListenHost">127.0.0.1</parameter>
         <parameter name="tcpListenPort">4000</parameter>
 
+        <members>
+            <member>
+                <hostName>localhost</hostName>
+                <port>4000</port>
+            </member>
+            <member>
+                <hostName>localhost</hostName>
+                <port>4001</port>
+            </member>
+        </members>
+
     	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
