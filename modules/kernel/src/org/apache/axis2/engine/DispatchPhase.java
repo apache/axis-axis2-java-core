@@ -116,6 +116,11 @@ public class DispatchPhase extends Phase {
         // We should send an early ack to the transport whever possible, but some modules need
         // to use the backchannel, so we need to check if they have disabled this code.
         Boolean disableAck = (Boolean) msgContext.getProperty(Constants.Configuration.DISABLE_RESPONSE_ACK);
+        if(disableAck == null) {
+            disableAck = (Boolean) (msgContext.getAxisService() != null ? 
+                    msgContext.getAxisService().getParameterValue(Constants.Configuration.DISABLE_RESPONSE_ACK) : null);
+        }
+        
         if(disableAck == null || disableAck.booleanValue() == false) {
         	String mepString = msgContext.getAxisOperation().getMessageExchangePattern();
         	if (isOneway(mepString)) {
