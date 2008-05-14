@@ -19,6 +19,7 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.membership.MemberImpl;
+import org.apache.catalina.tribes.membership.StaticMember;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -29,6 +30,8 @@ import java.util.Properties;
  */
 public class WkaMembershipService implements MembershipService {
 
+    private MembershipManager membershipManager;
+
     /**
      * The descriptive information about this implementation.
      */
@@ -38,19 +41,22 @@ public class WkaMembershipService implements MembershipService {
      * The implementation specific properties
      */
     protected Properties properties = new Properties();
-    
+
     protected byte[] payload;
 
     protected byte[] domain;
+    private MembershipListener membershipListener;
+
+    public WkaMembershipService(MembershipManager membershipManager) {
+        this.membershipManager = membershipManager;
+    }
 
     public void setProperties(Properties properties) {
-        //TODO: Method implementation
-
+        this.properties = properties;
     }
 
     public Properties getProperties() {
-        //TODO: Method implementation
-        return null;
+        return properties;
     }
 
     public void start() throws Exception {
@@ -69,11 +75,11 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public boolean hasMembers() {
-        //TODO: Method implementation
-        return false;
+        return membershipManager.hasMembers();
     }
 
     public Member getMember(Member member) {
+
         //TODO: Method implementation
         try {
             return new MemberImpl("127.0.0.1", 11, 111);
@@ -84,13 +90,22 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public Member[] getMembers() {
-        //TODO: Method implementation
-        return new Member[0];
+        return membershipManager.getMembers();
     }
 
     public Member getLocalMember(boolean b) {
+        return membershipManager.getLocalMember();
+
         //TODO: Method implementation
-        return new MemberImpl();
+//        StaticMember member2 = null;
+//        try {
+//            member2 = new StaticMember("delly", 4000, 10, payload);
+//            member2.setDomain(domain);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return member2;
     }
 
     public String[] getMembersByName() {
@@ -114,22 +129,18 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public void setMembershipListener(MembershipListener membershipListener) {
-        //TODO: Method implementation
-
+        this.membershipListener = membershipListener;
     }
 
     public void removeMembershipListener() {
-        //TODO: Method implementation
-
+        this.membershipListener = null;
     }
 
     public void setPayload(byte[] bytes) {
-        //TODO: Method implementation
-
+        this.payload = payload;
     }
 
     public void setDomain(byte[] bytes) {
-        //TODO: Method implementation
-
+        this.domain = domain;
     }
 }

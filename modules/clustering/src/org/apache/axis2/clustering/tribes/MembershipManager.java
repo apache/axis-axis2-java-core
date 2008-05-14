@@ -30,6 +30,15 @@ import java.util.Random;
  */
 public class MembershipManager {
     private final List members = new ArrayList();
+    private Member localMember;
+
+    public Member getLocalMember() {
+        return localMember;
+    }
+
+    public void setLocalMember(Member localMember) {
+        this.localMember = localMember;
+    }
 
     public synchronized void memberAdded(Member member) {
         members.add(member);
@@ -68,4 +77,7 @@ public class MembershipManager {
         return (Member) members.get(memberIndex);
     }
 
+    public boolean hasMembers(){
+        return members.size() > 0;
+    }
 }

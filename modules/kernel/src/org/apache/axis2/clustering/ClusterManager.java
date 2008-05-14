@@ -70,4 +70,19 @@ public interface ClusterManager extends ParameterInclude {
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
+    /**
+     * Set the static members of the cluster. This is used only with static group membership.
+     *
+     * @param members Members to be added
+     */
+    void setMembers(Member[] members);
+
+    /**
+     * Get the list of members in a static group
+     *
+     * @return The members if static group membership is used. If any other membership scheme is used,
+     *         the values returned may not be valid
+     */
+    Member[] getMembers();
+
 }

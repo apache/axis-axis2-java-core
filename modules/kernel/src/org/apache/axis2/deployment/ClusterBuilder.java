@@ -23,10 +23,13 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.Member;
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
 import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.clustering.context.ContextManagerListener;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
@@ -54,6 +57,8 @@ public class ClusterBuilder extends DescriptionBuilder {
 
     /**
      * Populates service from corresponding OM.
+     *
+     * @param clusterElement Cluster element
      */
     public void buildCluster(OMElement clusterElement) throws DeploymentException {
 
@@ -82,6 +87,9 @@ public class ClusterBuilder extends DescriptionBuilder {
                               clusterManager,
                               null);
 
+            // loading the members
+            loadMembers(clusterManager, clusterElement);
+
             //loading the ConfigurationManager
             loadConfigManager(clusterElement, clusterManager);
 
@@ -93,6 +101,31 @@ public class ClusterBuilder extends DescriptionBuilder {
             throw new DeploymentException(Messages.getMessage("cannotLoadClusterImpl"));
         } catch (IllegalAccessException e) {
             throw new DeploymentException(e);
+        }
+    }
+
+    private void loadMembers(ClusterManager clusterManager, OMElement clusterElement) {
+        clusterManager.setMembers(new Member[0]);
+        Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
+        if (membershipSchemeParam != null) {
+            String membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
+            if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+                List members = new ArrayList();
+                OMElement membersEle =
+                        clusterElement.getFirstChildWithName(new QName("members"));
+                if (membersEle != null) {
+                    for (Iterator iter = membersEle.getChildrenWithLocalName("member"); iter.hasNext();)
+                    {
+                        OMElement memberEle = (OMElement) iter.next();
+                        String hostName =
+                                memberEle.getFirstChildWithName(new QName("hostName")).getText().trim();
+                        String port =
+                                memberEle.getFirstChildWithName(new QName("port")).getText().trim();
+                        members.add(new Member(hostName, Integer.parseInt(port)));
+                    }
+                }
+                clusterManager.setMembers((Member[]) members.toArray(new Member[members.size()]));
+            }
         }
     }
 

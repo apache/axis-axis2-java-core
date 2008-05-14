@@ -49,13 +49,17 @@ import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
+import org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor;
+import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.MultiPointSender;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,10 +81,20 @@ public class TribesClusterManager implements ClusterManager {
     private ChannelListener channelListener;
     private ChannelSender channelSender;
     private MembershipManager membershipManager;
+    private StaticMembershipInterceptor staticMembershipInterceptor;
+    private org.apache.axis2.clustering.Member[] members;
 
     public TribesClusterManager() {
         parameters = new HashMap();
         controlCmdProcessor = new ControlCommandProcessor(configurationContext);
+    }
+
+    public void setMembers(org.apache.axis2.clustering.Member[] members) {
+        this.members = members;
+    }
+
+    public org.apache.axis2.clustering.Member[] getMembers() {
+        return members;
     }
 
     public ContextManager getContextManager() {
@@ -158,22 +172,57 @@ public class TribesClusterManager implements ClusterManager {
         channel.getMembershipService().getProperties().setProperty("mcastClusterDomain",
                                                                    new String(domain));
 
+        // Membership scheme handling
+        //TODO: if it is a WKA scheme, connect to a WKA and get a list of members. Add the members
+        // TODO: to the membership manager
         Parameter membershipSchemeParam = getParameter("membershipScheme");
         String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
         if (membershipSchemeParam != null) {
             membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
         }
-
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             log.info("Using WKA based membership management scheme");
-            channel.setMembershipService(new WkaMembershipService());
+            channel.setMembershipService(new WkaMembershipService(membershipManager));
+            StaticMember localMember = new StaticMember();
+            membershipManager.setLocalMember(localMember);
+            ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
+            Parameter tcpListenHost = getParameter("tcpListenHost");
+            if (tcpListenHost != null) {
+                String host = ((String) tcpListenHost.getValue()).trim();
+                receiver.setAddress(host);
+                localMember.setHost(host);
+            }
+            Parameter tcpListenPort = getParameter("tcpListenPort");
+            if (tcpListenPort != null) {
+                String port = ((String) tcpListenPort.getValue()).trim();
+                receiver.setPort(Integer.parseInt(port));
+                localMember.setPort(Integer.parseInt(port));
+            }
+            localMember.setDomain(domain);
+            byte[] payload = "test".getBytes();
+            localMember.setPayload(payload);
+
+            staticMembershipInterceptor = new StaticMembershipInterceptor();
+            try {
+                for (int i = 0; i < members.length; i++) {
+                    org.apache.axis2.clustering.Member member = members[i];
+                    StaticMember member1 = new StaticMember(member.getHostName(),
+                                                            member.getPort(), 10, payload);
+                    member1.setDomain(domain);
+                    staticMembershipInterceptor.addStaticMember(member1);
+                }
+            } catch (IOException e) {
+                String msg = "Could not add static members";
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             log.info("Using multicast based membership management scheme");
             configureMulticastParameters(channel);
         }
 
         // Add all the ChannelInterceptors
-        addInterceptors(channel, domain);
+        addInterceptors(channel, domain, membershipScheme);
 
         channel.addChannelListener(channelListener);
 
@@ -223,7 +272,14 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     //TODO: The order of the interceptors will depend on the membership scheme
-    private void addInterceptors(ManagedChannel channel, byte[] domain) {
+    private void addInterceptors(ManagedChannel channel, byte[] domain, String membershipScheme)
+            throws ClusteringFault {
+
+        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
+            tcpPingInterceptor.setInterval(100);
+            channel.addInterceptor(tcpPingInterceptor);
+        }
 
         // Add a DomainFilterInterceptor
         channel.getMembershipService().setDomain(domain);
@@ -256,18 +312,9 @@ public class TribesClusterManager implements ClusterManager {
         tcpFailureDetector.setPrevious(dfi);
         channel.addInterceptor(tcpFailureDetector);
 
-//        if(memberDiscoverMode = WKA){
-//            TcpPing
-//            TcpFailure
-//            StaticMembership
-//        }
-        /*StaticMembershipInterceptor staticMembershipInterceptor = new StaticMembershipInterceptor();
-        channel.addInterceptor(staticMembershipInterceptor);
-        try {
-            staticMembershipInterceptor.addStaticMember(new StaticMember("10.100.1.190", 4000, 10));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            channel.addInterceptor(staticMembershipInterceptor);
+        }
     }
 
     private void configureMulticastParameters(ManagedChannel channel) {
