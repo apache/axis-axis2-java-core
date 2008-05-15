@@ -38,7 +38,7 @@ import javax.xml.ws.Holder;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
@@ -61,13 +61,13 @@ public class JAXBUtils {
 
     // Create a concurrent map to get the JAXBObject: 
     //    key is the String (sorted packages)
-    //    value is a WeakReference to a ConcurrentHashMap of Classloader keys and JAXBContextValue objects
-    //               It is a weak map to encourage GC in low memory situations
+    //    value is a SoftReference to a ConcurrentHashMap of Classloader keys and JAXBContextValue objects
+    //               It is a soft map to encourage GC in low memory situations
     private static Map<
         String, 
-        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>> jaxbMap =
+        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>> jaxbMap =
             new ConcurrentHashMap<String, 
-                WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>>();
+                SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>>();
 
     private static Pool<JAXBContext, Marshaller>       mpool = new Pool<JAXBContext, Marshaller>();
     private static Pool<JAXBContext, Unmarshaller>     upool = new Pool<JAXBContext, Unmarshaller>();
@@ -160,24 +160,24 @@ public class JAXBUtils {
 
         // Get or Create The InnerMap using the package key
         ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
-        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
-            weakRef = jaxbMap.get(key);
+        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+            softRef = jaxbMap.get(key);
         
-        if (weakRef != null) {
-            innerMap = weakRef.get();
+        if (softRef != null) {
+            innerMap = softRef.get();
         }
         
         if (innerMap == null) {
             synchronized(jaxbMap) {
-                weakRef = jaxbMap.get(key);
-                if (weakRef != null) {
-                    innerMap = weakRef.get();
+                softRef = jaxbMap.get(key);
+                if (softRef != null) {
+                    innerMap = softRef.get();
                 }
                 if (innerMap == null) {
                     innerMap = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
-                    weakRef = 
-                        new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(innerMap);
-                    jaxbMap.put(key, weakRef);
+                    softRef = 
+                        new SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(innerMap);
+                    jaxbMap.put(key, softRef);
                 }
             }
         }
@@ -231,16 +231,16 @@ public class JAXBUtils {
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
                         ConcurrentHashMap<ClassLoader, JAXBContextValue> map1 = null;
-                        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
-                        weakRef1 = jaxbMap.get(key);
-                        if (weakRef1 != null) {
-                            map1 = weakRef.get();
+                        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+                        softRef1 = jaxbMap.get(key);
+                        if (softRef1 != null) {
+                            map1 = softRef.get();
                         }
                         if (map1 == null) {
                             map1 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
-                            weakRef1 = 
-                                new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map1);
-                            jaxbMap.put(key, weakRef1);
+                            softRef1 = 
+                                new SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map1);
+                            jaxbMap.put(key, softRef1);
                         }
                         map1.put(clKey, contextValue);
 
@@ -248,16 +248,16 @@ public class JAXBUtils {
 
                         // Add the context value with the new package set
                         ConcurrentHashMap<ClassLoader, JAXBContextValue> map2 = null;
-                        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
-                        weakRef2 = jaxbMap.get(validPackagesKey);
-                        if (weakRef2 != null) {
-                            map2 = weakRef.get();
+                        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
+                        softRef2 = jaxbMap.get(validPackagesKey);
+                        if (softRef2 != null) {
+                            map2 = softRef.get();
                         }
                         if (map2 == null) {
                             map2 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
-                            weakRef2 = 
-                                new WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map2);
-                            jaxbMap.put(key, weakRef2);
+                            softRef2 = 
+                                new SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map2);
+                            jaxbMap.put(key, softRef2);
                         }
                         map2.put(clKey, contextValue);
                         
@@ -400,9 +400,9 @@ public class JAXBUtils {
         // Retry our lookup with the updated list
         String key = contextPackages.toString();
         ConcurrentHashMap<ClassLoader, JAXBContextValue> innerMap = null;
-        WeakReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> weakRef = jaxbMap.get(key);
-        if (weakRef != null) {
-            innerMap = weakRef.get();
+        SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> softRef = jaxbMap.get(key);
+        if (softRef != null) {
+            innerMap = softRef.get();
         }
         
         if (innerMap != null) {
@@ -1062,8 +1062,8 @@ public class JAXBUtils {
      * @param <V> Pooled object
      */
     private static class Pool<K,V> {
-        private WeakReference<Map<K,List<V>>> weakMap = 
-            new WeakReference<Map<K,List<V>>>(
+        private SoftReference<Map<K,List<V>>> softMap = 
+            new SoftReference<Map<K,List<V>>>(
                     new ConcurrentHashMap<K, List<V>>());
 
         // The maps are freed up when a LOAD FACTOR is hit
@@ -1106,7 +1106,7 @@ public class JAXBUtils {
          * @return list of values.
          */
         private List<V> getValues(K key) {
-            Map<K,List<V>> map = weakMap.get();
+            Map<K,List<V>> map = softMap.get();
             List<V> values = null;
             if (map != null) {
                 values = map.get(key);
@@ -1121,8 +1121,8 @@ public class JAXBUtils {
                 if (values == null) {
                     if (map == null) {
                         map = new ConcurrentHashMap<K, List<V>>();
-                        weakMap = 
-                            new WeakReference<Map<K,List<V>>>(map);
+                        softMap = 
+                            new SoftReference<Map<K,List<V>>>(map);
                     }
                     values = new ArrayList<V>();
                     map.put(key, values);
@@ -1141,7 +1141,7 @@ public class JAXBUtils {
          * a large footprint.
          */
         private void adjustSize() {
-            Map<K,List<V>> map = weakMap.get();
+            Map<K,List<V>> map = softMap.get();
             if (map != null && map.size() > MAX_LOAD_FACTOR) {
                 // Remove every other Entry in the map.
                 Iterator it = map.entrySet().iterator();

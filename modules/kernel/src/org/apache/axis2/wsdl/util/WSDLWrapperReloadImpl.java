@@ -51,7 +51,7 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -95,14 +95,14 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     
     // The wsdlDefinition always has the Types and DocumentElement
     // purged from it.
-    // If USE_WEAK_REFERENCES is true, then we keep a weak reference
+    // If USE_SOFT_REFERENCES is true, then we keep a SOFT reference
     // to these objects.
-    // If USE_WEAK_REFERENCES is false, then a loadDefinition is always
+    // If USE_SOFT_REFERENCES is false, then a loadDefinition is always
     // performed to get the Type or DocumentationElement
     
-    private static boolean USE_WEAK_REFERENCES = true;
-    private transient WeakReference weakTypes = null;
-    private transient WeakReference weakDocElement = null;
+    private static boolean USE_SOFT_REFERENCES = true;
+    private transient SoftReference softTypes = null;
+    private transient SoftReference softDocElement = null;
 
     /**
      * Constructor
@@ -211,37 +211,37 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     }
     
     /**
-     * Store the cached type.  Since this is a weak reference,
+     * Store the cached type.  Since this is a SOFT reference,
      * the gc may remove it.
      * @param types
      */
     private void setCachedTypes(Types types) {
-        if (USE_WEAK_REFERENCES) {
-            if (weakTypes == null || weakTypes.get() == null) {
+        if (USE_SOFT_REFERENCES) {
+            if (softTypes == null || softTypes.get() == null) {
                 if (types != null) {
-                    weakTypes = new WeakReference(types);
+                    softTypes = new SoftReference(types);
                 } else {
                     // The wsdl has no types
-                    weakTypes = new WeakReference(Boolean.FALSE);
+                    softTypes = new SoftReference(Boolean.FALSE);
                 }
             }
         }
     }
     
     /**
-     * Get the cached type.  Since this is a weak reference,
+     * Get the cached type.  Since this is a SOFT reference,
      * the gc may remove it.
      * @return types
      */
     private Types getCachedTypes() {
-        if (USE_WEAK_REFERENCES) {
-            if (weakTypes == null || weakTypes.get() == null) {
+        if (USE_SOFT_REFERENCES) {
+            if (softTypes == null || softTypes.get() == null) {
                 return null;
-            } else if (weakTypes.get().equals(Boolean.FALSE)) {
+            } else if (softTypes.get().equals(Boolean.FALSE)) {
                 // The wsdl has no types
                 return null;
             } else {
-                return (Types) weakTypes.get();
+                return (Types) softTypes.get();
             }
         } else {
             return null;
@@ -249,45 +249,45 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     }
     
     private boolean hasCachedTypes() {
-        if (USE_WEAK_REFERENCES) {
-            return (weakTypes != null && weakTypes.get() != null);
+        if (USE_SOFT_REFERENCES) {
+            return (softTypes != null && softTypes.get() != null);
         } else {
             return false;
         }
     }
     
     /**
-     * Store the cached document element.  Since this is a weak reference,
+     * Store the cached document element.  Since this is a SOFT reference,
      * the gc may remove it.
      * @param e Element
      */
     private void setCachedDocElement(Element e) {
-        if (USE_WEAK_REFERENCES) {
-            if (weakDocElement == null || weakDocElement.get() == null) {
+        if (USE_SOFT_REFERENCES) {
+            if (softDocElement == null || softDocElement.get() == null) {
                 if (e != null) {
-                    weakDocElement = new WeakReference(e);
+                    softDocElement = new SoftReference(e);
                 } else {
                     // The wsdl has no document element
-                    weakDocElement = new WeakReference(Boolean.FALSE);
+                    softDocElement = new SoftReference(Boolean.FALSE);
                 }
             }
         }
     }
     
     /**
-     * Get the cached type.  Since this is a weak reference,
+     * Get the cached type.  Since this is a SOFT reference,
      * the gc may remove it.
      * @return types
      */
     private Element getCachedDocElement() {
-        if (USE_WEAK_REFERENCES) {
-            if (weakDocElement == null || weakDocElement.get() == null) {
+        if (USE_SOFT_REFERENCES) {
+            if (softDocElement == null || softDocElement.get() == null) {
                 return null;
-            } else if (weakDocElement.get().equals(Boolean.FALSE)) {
+            } else if (softDocElement.get().equals(Boolean.FALSE)) {
                 // The wsdl has no document element
                 return null;
             } else {
-                return (Element) weakDocElement.get();
+                return (Element) softDocElement.get();
             }
         } else {
             return null;
@@ -295,8 +295,8 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     }
     
     private boolean hasCachedDocElement() {
-        if (USE_WEAK_REFERENCES) {
-            return (weakDocElement != null && weakDocElement.get() != null);
+        if (USE_SOFT_REFERENCES) {
+            return (softDocElement != null && softDocElement.get() != null);
         } else {
             return false;
         }
@@ -592,12 +592,12 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         if (isDebugEnabled) {
             log.debug(myClassName + ".getTypes() call stack =" + JavaUtils.callStackToString());
         }
-        // See if we have a weak reference to the Type
+        // See if we have a soft reference to the Type
         
         if (hasCachedTypes()) {
             Types t = getCachedTypes();
             if (isDebugEnabled) {
-                log.debug(myClassName + ".getTypes() from weak reference [" + t
+                log.debug(myClassName + ".getTypes() from soft reference [" + t
                             + "]");
             }
             return t;
@@ -915,13 +915,13 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                       JavaUtils.callStackToString());
         }
         
-        // See if we have a weak reference to the DocumentElement
+        // See if we have a soft reference to the DocumentElement
         if (hasCachedDocElement()) {
             Element e = getCachedDocElement();
 
             if (log.isDebugEnabled()) {
                 log.debug(myClassName
-                          + ".getDocumentationElement() from weak reference ");
+                          + ".getDocumentationElement() from soft reference ");
             }
             return e;
         }    

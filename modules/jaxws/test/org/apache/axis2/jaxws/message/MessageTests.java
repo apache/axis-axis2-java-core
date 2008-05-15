@@ -848,7 +848,7 @@ public class MessageTests extends TestCase {
             int contextPointer = System.identityHashCode(context);
             
             // Release our access to the context.
-            // Now the only accesses in the system should be "weak refs"
+            // Now the only accesses in the system should be "soft refs"
             context = null;
             
             // Force garbage collection
@@ -861,7 +861,11 @@ public class MessageTests extends TestCase {
             
             // This new context should have a different pointer than the original
             int contextPointer2 = System.identityHashCode(context);
-            assertTrue(contextPointer != contextPointer2);
+            
+            // The following statement is no longer valid.  The 
+            // JAXBContext is stored in a SoftReference (which will only
+            // get gc'd if memory is low).  
+            //assertTrue(contextPointer != contextPointer2);
             
             // Release the hold on the context
             context = null;
