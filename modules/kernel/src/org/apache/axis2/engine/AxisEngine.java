@@ -639,11 +639,20 @@ public class AxisEngine {
                             Object callback = ((CallbackReceiver) msgReceiver)
                                     .lookupCallback(msgctx.getMessageID());
                             if (callback == null) return; // TODO: should we log this??
-
+                            
                             if (callback instanceof Callback) {
+                                // Instances of Callback only expect onComplete to be called
+                                // for a successful MEP.  Errors are reported through the
+                                // Async Response object, which the Callback implementations 
+                                // all use.
                                 ((Callback)callback).onError(e);
                             } else {
+                                // The AxisCallback (which is OutInAxisOperationClient$SyncCallBack
+                                // used to support async-on-the-wire under a synchronous API 
+                                // operation) need to be told the MEP is complete after being told
+                                // of the error.
                                 ((AxisCallback)callback).onError(e);
+                                ((AxisCallback)callback).onComplete();
                             }
                         }
                     }

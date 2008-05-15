@@ -450,7 +450,7 @@ class OutInAxisOperationClient extends OperationClient {
                         AxisFault fault = new AxisFault(body.getFault(), response);
                         if (callback != null) {
                             callback.onError(fault);
-                        } else {
+                        } else if (axisCallback != null) {
                             axisCallback.onError(fault);
                         }
 
@@ -458,7 +458,7 @@ class OutInAxisOperationClient extends OperationClient {
                         if (callback != null) {
                             AsyncResult asyncResult = new AsyncResult(response);
                             callback.onComplete(asyncResult);
-                        } else {
+                        } else if (axisCallback != null) {
                             axisCallback.onMessage(response);
                         }
 
@@ -468,13 +468,15 @@ class OutInAxisOperationClient extends OperationClient {
             } catch (Exception e) {
                 if (callback != null) {
                     callback.onError(e);
-                } else {
+                } else if (axisCallback != null) {
                     axisCallback.onError(e);
                 }
 
             } finally {
                 if (callback != null) {
                     callback.setComplete(true);
+                }else if (axisCallback != null) {
+                    axisCallback.onComplete();
                 }
             }
         }
