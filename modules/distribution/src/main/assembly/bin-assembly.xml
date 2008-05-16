@@ -231,13 +231,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/jws-api/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-jws-api-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../../modules/metadata/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -256,13 +249,6 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-saaj-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>../../modules/saaj-api/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-saaj-api-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
