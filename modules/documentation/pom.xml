@@ -328,10 +328,6 @@
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
-                                    <packageset dir="../../modules/jws-api/src" defaultexcludes="yes">
-                                        <include name="org/apache/axis2/**"/>
-                                        <include name="javax/**"/>
-                                    </packageset>
                                     <packageset dir="../../modules/metadata/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
@@ -349,10 +345,6 @@
                                         <include name="javax/**"/>
                                     </packageset>
                                     <packageset dir="../../modules/saaj/src" defaultexcludes="yes">
-                                        <include name="org/apache/axis2/**"/>
-                                        <include name="javax/**"/>
-                                    </packageset>
-                                    <packageset dir="../../modules/saaj-api/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>

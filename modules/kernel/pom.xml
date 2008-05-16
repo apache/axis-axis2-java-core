@@ -34,9 +34,8 @@
     </description>
     <dependencies>
         <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jws-api</artifactId>
-            <version>${version}</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

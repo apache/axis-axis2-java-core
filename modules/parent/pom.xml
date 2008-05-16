@@ -106,6 +106,8 @@
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
         <geronimo.spec.javamail.version>1.2</geronimo.spec.javamail.version>
         <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
+        <geronimo.spec.metadata.version>1.1.2</geronimo.spec.metadata.version>
+        <geronimo.spec.saaj.version>1.0.0</geronimo.spec.saaj.version>
         <httpcore.version>4.0-beta1</httpcore.version>
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
@@ -720,6 +722,17 @@
                 <artifactId>geronimo-annotation_1.0_spec</artifactId>
                 <version>${geronimo.spec.annotation.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+                <version>${geronimo.spec.metadata.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-saaj_1.3_spec</artifactId>
+                <version>${geronimo.spec.saaj.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
