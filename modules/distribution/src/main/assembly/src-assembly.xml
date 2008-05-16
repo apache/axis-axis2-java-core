@@ -45,7 +45,6 @@
                 <include>modules/java2wsdl/**</include>
                 <include>modules/jaxbri/**</include>
                 <include>modules/jaxws/**</include>
-                <include>modules/jaxws-api/**</include>
                 <include>modules/jaxws-integration/**</include>
                 <include>modules/jibx/**</include>
                 <include>modules/json/**</include>

@@ -316,10 +316,6 @@
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>
                                     </packageset>
-                                    <packageset dir="../../modules/jaxws-api/src" defaultexcludes="yes">
-                                        <include name="org/apache/axis2/**"/>
-                                        <include name="javax/**"/>
-                                    </packageset>
                                     <packageset dir="../../modules/jibx/src" defaultexcludes="yes">
                                         <include name="org/apache/axis2/**"/>
                                         <include name="javax/**"/>

@@ -66,7 +66,6 @@
         <module>modules/jaxbri</module>
         <module>modules/metadata</module>
         <module>modules/saaj</module>
-        <module>modules/jaxws-api</module>
         <module>modules/jaxws</module>
         <module>modules/jaxws-integration</module>
         <module>modules/clustering</module>

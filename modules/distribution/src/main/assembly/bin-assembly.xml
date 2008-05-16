@@ -224,13 +224,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/jaxws-api/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-jaxws-api-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../../modules/metadata/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>

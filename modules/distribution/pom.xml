@@ -154,6 +154,10 @@
             <artifactId>geronimo-saaj_1.3_spec</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jaxws_2.1_spec</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
         </dependency>
