@@ -20,6 +20,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
 import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.catalina.tribes.membership.StaticMember;
+import org.apache.catalina.tribes.util.UUIDGenerator;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -32,10 +33,6 @@ public class WkaMembershipService implements MembershipService {
 
     private MembershipManager membershipManager;
 
-    /**
-     * The descriptive information about this implementation.
-     */
-    private static final String info = "McastService/2.1";
 
     /**
      * The implementation specific properties
@@ -60,18 +57,15 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public void start() throws Exception {
-        //TODO: Method implementation
-
+        // Nothing to do here
     }
 
     public void start(int i) throws Exception {
-        //TODO: Method implementation
-
+        // Nothing to do here
     }
 
     public void stop(int i) {
-        //TODO: Method implementation
-
+        // Nothing to do here
     }
 
     public boolean hasMembers() {
@@ -79,14 +73,7 @@ public class WkaMembershipService implements MembershipService {
     }
 
     public Member getMember(Member member) {
-
-        //TODO: Method implementation
-        try {
-            return new MemberImpl("127.0.0.1", 11, 111);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return member;
+        return membershipManager.getMember(member);
     }
 
     public Member[] getMembers() {
@@ -95,37 +82,51 @@ public class WkaMembershipService implements MembershipService {
 
     public Member getLocalMember(boolean b) {
         return membershipManager.getLocalMember();
-
-        //TODO: Method implementation
-//        StaticMember member2 = null;
-//        try {
-//            member2 = new StaticMember("delly", 4000, 10, payload);
-//            member2.setDomain(domain);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return member2;
     }
 
     public String[] getMembersByName() {
-        //TODO: Method implementation
-        return new String[0];
+        Member[] currentMembers = getMembers();
+        String[] membernames;
+        if (currentMembers != null) {
+            membernames = new String[currentMembers.length];
+            for (int i = 0; i < currentMembers.length; i++) {
+                membernames[i] = currentMembers[i].toString();
+            }
+        } else {
+            membernames = new String[0];
+        }
+        return membernames;
     }
 
-    public Member findMemberByName(String s) {
-        //TODO: Method implementation
-        try {
-            return new MemberImpl("127.0.0.1", 11, 111);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Member findMemberByName(String name) {
+        Member[] currentMembers = getMembers();
+        for (Member currentMember : currentMembers) {
+            if (name.equals(currentMember.toString())) {
+                return currentMember;
+            }
         }
         return null;
     }
 
-    public void setLocalMemberProperties(String s, int i) {
-        //TODO: Method implementation
-
+    public void setLocalMemberProperties(String listenHost, int listenPort) {
+        properties.setProperty("tcpListenHost", listenHost);
+        properties.setProperty("tcpListenPort", String.valueOf(listenPort));
+        StaticMember localMember = (StaticMember) membershipManager.getLocalMember();
+        try {
+            if (localMember != null) {
+                localMember.setHostname(listenHost);
+                localMember.setPort(listenPort);
+            } else {
+                localMember = new StaticMember(listenHost, listenPort, 0);
+                localMember.setUniqueId(UUIDGenerator.randomUUID(true));
+                localMember.setPayload(payload);
+                localMember.setDomain(domain);
+                membershipManager.setLocalMember(localMember);
+            }
+            localMember.getData(true, true);
+        } catch (IOException x) {
+            throw new IllegalArgumentException(x);
+        }
     }
 
     public void setMembershipListener(MembershipListener membershipListener) {
@@ -136,11 +137,11 @@ public class WkaMembershipService implements MembershipService {
         this.membershipListener = null;
     }
 
-    public void setPayload(byte[] bytes) {
+    public void setPayload(byte[] payload) {
         this.payload = payload;
     }
 
-    public void setDomain(byte[] bytes) {
+    public void setDomain(byte[] domain) {
         this.domain = domain;
     }
 }

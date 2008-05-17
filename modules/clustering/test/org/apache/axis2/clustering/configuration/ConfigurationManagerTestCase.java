@@ -21,15 +21,11 @@ package org.apache.axis2.clustering.configuration;
 
 import org.apache.axis2.clustering.ClusterManagerTestCase;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 
 
 public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCase {
-
-    private static final Log log = LogFactory.getLog(ConfigurationManagerTestCase.class);
 
     public void testLoadServiceGroup() throws ClusteringFault {
 

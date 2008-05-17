@@ -20,16 +20,24 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.membership.MemberImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /**
- * Responsible for managing the membership
+ * Responsible for managing the membership. Handles membership changes.
  */
 public class MembershipManager {
-    private final List members = new ArrayList();
+    /**
+     * List of members in the cluster
+     */
+    private final List<Member> members = new ArrayList<Member>();
+
+    /**
+     * The member representing this node
+     */
     private Member localMember;
 
     public Member getLocalMember() {
@@ -40,26 +48,47 @@ public class MembershipManager {
         this.localMember = localMember;
     }
 
+    /**
+     * A new member is added
+     *
+     * @param member The new member that joined the cluster
+     */
     public synchronized void memberAdded(Member member) {
-        members.add(member);
+        if (!members.contains(member)) {
+            members.add(member);
+        }
     }
 
+    /**
+     * A member disappeared
+     *
+     * @param member The member that left the cluster
+     */
     public synchronized void memberDisappeared(Member member) {
         members.remove(member);
     }
 
+    /**
+     * Get the list of current members
+     *
+     * @return list of current members
+     */
     public synchronized Member[] getMembers() {
-        return (Member[]) members.toArray(new Member[members.size()]);
+        return members.toArray(new Member[members.size()]);
     }
 
+    /**
+     * Get the member that has been alive for the longest time
+     *
+     * @return The member that has been alive for the longest time
+     */
     public synchronized Member getLongestLivingMember() {
         Member longestLivingMember = null;
         if (members.size() > 0) {
-            Member member0 = (Member) members.get(0);
+            Member member0 = members.get(0);
             long longestAliveTime = member0.getMemberAliveTime();
             longestLivingMember = member0;
-            for (int i = 0; i < members.size(); i++) {
-                Member member = (Member) members.get(i);
+            for (Member member : members) {
                 if (longestAliveTime < member.getMemberAliveTime()) {
                     longestAliveTime = member.getMemberAliveTime();
                     longestLivingMember = member;
@@ -69,15 +98,44 @@ public class MembershipManager {
         return longestLivingMember;
     }
 
+    /**
+     * Get a random member from the list of current members
+     *
+     * @return A random member from the list of current members
+     */
     public synchronized Member getRandomMember() {
         if (members.size() == 0) {
             return null;
         }
         int memberIndex = new Random().nextInt(members.size());
-        return (Member) members.get(memberIndex);
+        return members.get(memberIndex);
     }
 
-    public boolean hasMembers(){
+    /**
+     * Check whether there are any members
+     *
+     * @return true if there are other members, false otherwise
+     */
+    public boolean hasMembers() {
         return members.size() > 0;
+    }
+
+    /**
+     * Get a member
+     *
+     * @param member The member to be found
+     * @return The member, if it is found
+     */
+    public Member getMember(Member member) {
+        if (hasMembers()) {
+            MemberImpl result = null;
+            for (int i = 0; i < this.members.size() && result == null; i++) {
+                if (members.get(i).equals(member)) {
+                    result = (MemberImpl) members.get(i);
+                }
+            }
+            return result;
+        }
+        return null;
     }
 }

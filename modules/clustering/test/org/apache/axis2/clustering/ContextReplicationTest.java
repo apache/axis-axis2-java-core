@@ -556,6 +556,23 @@ public class ContextReplicationTest extends TestCase {
         assertNull(serviceContext1.getProperty(key1));
     }
 
+    public void testReplicationExclusion0() throws Exception {
+        if (!canRunTests) {
+            return;
+        }
+
+        String key1 = "local_configCtxKey";
+        String val1 = "configCtxVal1";
+        configurationContext1.setProperty(key1, val1);
+        List<String> exclusionPatterns = new ArrayList<String>();
+        exclusionPatterns.add("*"); // Exclude all properties
+        ctxMan1.setReplicationExcludePatterns("defaults", exclusionPatterns);
+        ctxMan1.updateContext(configurationContext1);
+
+        String value = (String) configurationContext2.getProperty(key1);
+        assertNull(value); // The property should not have gotten replicated
+    }
+
     public void testReplicationExclusion1() throws Exception {
         if (!canRunTests) {
             return;
@@ -564,7 +581,7 @@ public class ContextReplicationTest extends TestCase {
         String key1 = "local_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
-        List exclusionPatterns = new ArrayList();
+        List<String> exclusionPatterns = new ArrayList<String>();
         exclusionPatterns.add("local_*");
         ctxMan1.setReplicationExcludePatterns("defaults", exclusionPatterns);
         ctxMan1.updateContext(configurationContext1);
@@ -581,7 +598,7 @@ public class ContextReplicationTest extends TestCase {
         String key1 = "local_configCtxKey";
         String val1 = "configCtxVal1";
         configurationContext1.setProperty(key1, val1);
-        List exclusionPatterns = new ArrayList();
+        List<String> exclusionPatterns = new ArrayList<String>();
         exclusionPatterns.add("local_*");
         ctxMan1.setReplicationExcludePatterns("org.apache.axis2.context.ConfigurationContext",
                                               exclusionPatterns);
@@ -608,9 +625,9 @@ public class ContextReplicationTest extends TestCase {
         String val3 = "configCtxVal3";
         configurationContext1.setProperty(key3, val3);
 
-        List exclusionPatterns1 = new ArrayList();
+        List<String> exclusionPatterns1 = new ArrayList<String>();
         exclusionPatterns1.add("local1_*");
-        List exclusionPatterns2 = new ArrayList();
+        List<String> exclusionPatterns2 = new ArrayList<String>();
         exclusionPatterns2.add("local2_*");
         ctxMan1.setReplicationExcludePatterns("org.apache.axis2.context.ConfigurationContext",
                                               exclusionPatterns1);

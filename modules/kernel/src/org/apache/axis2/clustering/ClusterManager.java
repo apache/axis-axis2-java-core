@@ -27,7 +27,7 @@ import org.apache.axis2.description.ParameterInclude;
 /**
  * This is the main interface in the Axis2 clustering implementation.
  * In order to plug-in a new clustering implementation, this interface has to be
- * implmented.
+ * implemented.
  */
 public interface ClusterManager extends ParameterInclude {
 

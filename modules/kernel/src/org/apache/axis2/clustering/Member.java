@@ -20,7 +20,14 @@ package org.apache.axis2.clustering;
  */
 public class Member {
 
+    /**
+     * The host name of this member. Can be the name or the IP address
+     */
     private String hostName;
+
+    /**
+     * The TCP port used by this member
+     */
     private int port;
 
     public Member(String hostName, int port) {
