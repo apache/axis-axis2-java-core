@@ -220,7 +220,7 @@ public class TribesClusterManager implements ClusterManager {
      * Set the maximum number of retries, if message sending to a particular node fails
      */
     private void setMaximumRetries() {
-        Parameter maxRetriesParam = getParameter("maxRetries");
+        Parameter maxRetriesParam = getParameter(TribesConstants.MAX_RETRIES);
         int maxRetries = 10;
         if (maxRetriesParam != null) {
             maxRetries = Integer.parseInt((String) maxRetriesParam.getValue());

@@ -32,4 +32,5 @@ public final class TribesConstants {
     public static final String TCP_LISTEN_HOST = "tcpListenHost";
     public static final String BIND_ADDRESS = "bindAddress";
     public static final String TCP_LISTEN_PORT = "tcpListenPort";
+    public static final String MAX_RETRIES = "maxRetries";
 }

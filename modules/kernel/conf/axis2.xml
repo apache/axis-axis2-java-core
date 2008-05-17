@@ -30,7 +30,7 @@
     <!--parameter name="cacheAttachments">true</parameter>
     <parameter name="attachmentDIR"></parameter>
     <parameter name="sizeThreshold">4000</parameter-->
-    
+
     <!--Uncomment if you want to plugin your own attachments lifecycle implementation -->
     <!--<attachmentsLifecycleManager class="org.apache.axiom.attachments.lifecycle.impl.LifecycleManagerImpl"/>-->
 
@@ -40,7 +40,7 @@
     <!--Since in-memory copies of WSDL definitions can be large, some steps can be taken-->
     <!--to reduce the memory needed for the cached WSDL definitions. -->
     <!--parameter name="reduceWSDLMemoryCache">true</parameter-->
-                                                       
+
     <!--This will give out the timout of the configuration contexts, in milliseconds-->
     <parameter name="ConfigContextTimeoutInterval">30000</parameter>
 
@@ -82,7 +82,7 @@
 
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
-    
+
     <!-- Following parameter will suppress generation of SOAP 1.2 bindings in auto-generated WSDL files -->
     <parameter name="disableSOAP12" locked="true">false</parameter>
 
@@ -92,7 +92,7 @@
     <deployer extension=".jar" directory="transports" class="org.apache.axis2.deployment.TransportDeployer"/>
 
     <!--<deployer extension=".jsa" directory="rmiservices" class="org.apache.axis2.rmi.deploy.RMIServiceDeployer"/>-->
-    
+
 
     <!-- Following parameter will set the host name for the epr-->
     <!--<parameter name="hostname" locked="true">myhost.com</parameter>-->
@@ -106,7 +106,7 @@
     <!--    <listener class="org.apache.axis2.ObserverIMPL">-->
     <!--        <parameter name="RSS_URL">http://127.0.0.1/rss</parameter>-->
     <!--    </listener>-->
-    
+
     <threadContextMigrators>
         <threadContextMigrator listId="JAXWS-ThreadContextMigrator-List" class="org.apache.axis2.jaxws.addressing.migrator.EndpointContextMapMigrator"/>
     </threadContextMigrators>
@@ -224,7 +224,7 @@
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
-    
+
     <!-- Please enable this if you need the java transport -->
     <!-- <transportSender name="java"
                      class="org.apache.axis2.transport.java.JavaTransportSender"/> -->
@@ -245,24 +245,82 @@
     <!-- ================================================= -->
     <!--
      To enable clustering for this node, set the value of "enable" attribute of the "cluster"
-     element to "true"
+     element to "true". The initilization of a node in the cluster is handled by the class
+     corresponding to the "class" attribute of the "cluster" element. It is also responsible for
+     getting this node to join the cluster.
      -->
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager" enable="false">
+
+        <!--
+           The membership scheme used in this setup. The only values supported at the moment are
+           "multicast" and "wka"
+
+           1. multicast - membership is automatically discovered using multicasting
+           2. wka - Well-Known Address based multicasting. Membership is discovered with the help
+                    of one or more nodes running at a Well-Known Address. New members joining a
+                    cluster will first connect to a well-known node, register with the well-known node
+                    and get the membership list from it. When new members join, one of the well-known
+                    nodes will notify the others in the group. When a member leaves the cluster or
+                    is deemed to have left the cluster, it will be detected by the Group Membership
+                    Service (GMS) using a TCP ping mechanism.
+        -->
         <parameter name="membershipScheme">multicast</parameter>
-        <parameter name="param1">value1</parameter>
+
+        <!--
+         The clustering domain/group. Nodes in the same group will belong to the same multicast
+         domain. There will not be interference between nodes in different groups.
+        -->
         <parameter name="domain">apache.axis2.domain</parameter>
+
+        <!--
+           When a Web service request is received, and processed, before the response is sent to the
+           client, should we update the states of all members in the cluster? If the value of
+           this parameter is set to "true", the response to the client will be sent only after
+           all the members have been updated. Obviously, this can be time consuming. In some cases,
+           such this overhead may not be acceptable, in which case the value of this parameter
+           should be set to "false"
+        -->
         <parameter name="synchronizeAll">true</parameter>
+
+        <!--
+          The maximum number of times we need to retry to send a message to a particular node
+          before giving up and considering that node to be faulty
+        -->
         <parameter name="maxRetries">10</parameter>
 
+        <!-- The multicast address to be used -->
         <parameter name="mcastAddress">228.0.0.4</parameter>
+
+        <!-- The multicast port to be used -->
         <parameter name="mcastPort">45564</parameter>
+
+        <!-- The frequency of sending membership multicast messages (in ms) -->
         <parameter name="mcastFrequency">500</parameter>
+
+        <!-- The time interval within which if a member does not respond, the member will be
+         deemed to have left the group (in ms)
+         -->
         <parameter name="memberDropTime">3000</parameter>
+
+        <!--
+           The IP address of the network interface to which the multicasting has to be bound to.
+           Multicasting would be done using this interface.
+        -->
         <parameter name="mcastBindAddress">127.0.0.1</parameter>
 
+        <!-- The host name or IP address of this member -->
         <parameter name="localMemberHost">127.0.0.1</parameter>
+
+        <!--
+        The TCP port used by this member. This is the port through which other nodes will
+        contact this member
+         -->
         <parameter name="localMemberPort">4000</parameter>
 
+        <!--
+           The list of static or well-known members. These entries will only be valid if the
+           "membershipScheme" above is set to "wka"
+        -->
         <members>
             <member>
                 <hostName>localhost</hostName>
@@ -274,12 +332,46 @@
             </member>
         </members>
 
-    	<configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
+        <!--
+           This interface is responsible for handling configuration management. C
+           onfiguraion changes include
+
+            1. Rebooting an entire cluster, in which case, all nodes have to load the new
+               Axis2 configuration in a consistent manner
+            2. Deploying a new service to a cluster or undeploying a service from a cluster
+            3. Changing the policies of a service deployed on the cluster
+        -->
+        <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
-    	<contextManager class="org.apache.axis2.cluster.context.TribesContextManager">
-    	    <listener class="org.apache.axis2.cluster.context.DefaultContextManagerListener"/>
-    	</contextManager>
+
+        <!--
+           This interface is responsible for handling context replication. The property changes in
+           the Axis2 context hierarchy in this node, are propagated to all other nodes in the cluster.
+
+           The "excludes" patterns can be used to specify the prefixes (e.g. local_*) or
+           suffixes (e.g. *_local) of the properties to be excluded from replication. The pattern
+           "*" indicates that all properties in a particular context should not be replicated.
+        -->
+        <contextManager class="org.apache.axis2.clustering.context.DefaultContextManager">
+            <listener class="org.apache.axis2.clustering.context.DefaultContextManagerListener"/>
+            <replication>
+                <defaults>
+                    <exclude name="local_*"/>
+                    <exclude name="LOCAL_*"/>
+                </defaults>
+                <context class="org.apache.axis2.context.ConfigurationContext">
+                    <exclude name="UseAsyncOperations"/>
+                    <exclude name="SequencePropertyBeanMap"/>
+                </context>
+                <context class="org.apache.axis2.context.ServiceGroupContext">
+                    <exclude name="my.sandesha.*"/>
+                </context>
+                <context class="org.apache.axis2.context.ServiceContext">
+                    <exclude name="my.sandesha.*"/>
+                </context>
+            </replication>
+        </contextManager>
     </cluster>
 
     <!-- ================================================= -->
