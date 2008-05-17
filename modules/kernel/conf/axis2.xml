@@ -243,9 +243,11 @@
     <!-- ================================================= -->
     <!-- Clustering  -->
     <!-- ================================================= -->
-    <!-- Configure and uncomment following for preparing Axis2 to a clustered environment -->
     <!--
-    <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
+     To enable clustering for this node, set the value of "enable" attribute of the "cluster"
+     element to "true"
+     -->
+    <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager" enable="false">
         <parameter name="membershipScheme">multicast</parameter>
         <parameter name="param1">value1</parameter>
         <parameter name="domain">apache.axis2.domain</parameter>
@@ -279,7 +281,6 @@
     	    <listener class="org.apache.axis2.cluster.context.DefaultContextManagerListener"/>
     	</contextManager>
     </cluster>
-    -->
 
     <!-- ================================================= -->
     <!-- Phases  -->

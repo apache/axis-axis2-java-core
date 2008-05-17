@@ -23,8 +23,8 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
 import org.apache.axis2.clustering.context.ContextManager;
@@ -34,33 +34,34 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 
 /**
- * Builds a service description from OM
+ * Builds the cluster configuration from the axis2.xml file
  */
 public class ClusterBuilder extends DescriptionBuilder {
-
-//	private static final Log log = LogFactory.getLog(ClusterBuilder.class);
 
     public ClusterBuilder(AxisConfiguration axisConfig) {
         this.axisConfig = axisConfig;
     }
 
-    public ClusterBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig) {
-        super(serviceInputStream, axisConfig);
-    }
-
     /**
-     * Populates service from corresponding OM.
+     * Build the cluster configuration
      *
      * @param clusterElement Cluster element
+     * @throws DeploymentException If an error occurs while building the cluster configuration
      */
     public void buildCluster(OMElement clusterElement) throws DeploymentException {
+
+        OMAttribute enableAttr = clusterElement.getAttribute(new QName("enable"));
+        if(enableAttr != null){
+            if(!Boolean.parseBoolean(enableAttr.getAttributeValue().trim())){
+                return;
+            }
+        }
 
         OMAttribute classNameAttr = clusterElement.getAttribute(new QName(TAG_CLASS_NAME));
         if (classNameAttr == null) {
