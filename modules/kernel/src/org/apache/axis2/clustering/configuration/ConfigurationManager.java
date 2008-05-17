@@ -23,6 +23,42 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
+/**
+ * <p>
+ * This interface is responsible for handling configuration management. Configuraion changes include
+ * <p/>
+ * <ul>
+ * <li>Rebooting an entire cluster, in which case, all nodes have to load the new Axis2 configuration
+ * in a consistent manner
+ * </li>
+ * <li>
+ * Deploying a new service to a cluster or undeploying a service from a cluster
+ * </li>
+ * <li>
+ * Changing the policies of a service deployed on the cluster
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
+ * It is not mandatory to have a ConfigurationManager in a node. In which case the cluster may be
+ * used only for <a href="http://afkham.org/2008/05/definition-of-high-availability.html">
+ * High Availability</a> through context replication. However, it is difficult to imagine that
+ * a cluster will be deployed in production with only context replication but without cluster
+ * configuration management.
+ * </p>
+ * <p>
+ * The implementation of this interface is set by the
+ * {@link org.apache.axis2.deployment.ClusterBuilder}, by
+ * reading the  "configurationManager" element in the axis2.xml
+ * <p/>
+ * e.g.
+ * <code>
+ * <b>
+ * <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
+ * </b>
+ * </code>
+ * </p>
+ */
 public interface ConfigurationManager extends ParameterInclude {
 
     // ###################### Configuration management methods ##########################
@@ -30,7 +66,7 @@ public interface ConfigurationManager extends ParameterInclude {
      * Load a set of service groups
      *
      * @param serviceGroupNames The set of service groups to be loaded
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while loading service groups
      */
     void loadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
 
@@ -38,7 +74,7 @@ public interface ConfigurationManager extends ParameterInclude {
      * Unload a set of service groups
      *
      * @param serviceGroupNames The set of service groups to be unloaded
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while unloading service groups
      */
     void unloadServiceGroups(String[] serviceGroupNames) throws ClusteringFault;
 
@@ -47,14 +83,14 @@ public interface ConfigurationManager extends ParameterInclude {
      *
      * @param serviceName The name of the service to which this policy needs to be applied
      * @param policy      The serialized policy to be applied to the service
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while applying service policies
      */
     void applyPolicy(String serviceName, String policy) throws ClusteringFault;
 
     /**
      * Reload the entire configuration of an Axis2 Node
      *
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while reinitializing Axis2
      */
     void reloadConfiguration() throws ClusteringFault;
 
@@ -64,14 +100,15 @@ public interface ConfigurationManager extends ParameterInclude {
      * First phase of the 2-phase commit protocol.
      * Notifies a node that it needs to prepare to switch to a new configuration.
      *
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while preparing to commit
      */
     void prepare() throws ClusteringFault;
 
     /**
      * Rollback whatever was done
      *
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while rolling back a cluster configuration
+     *                         transaction
      */
     void rollback() throws ClusteringFault;
 
@@ -79,7 +116,8 @@ public interface ConfigurationManager extends ParameterInclude {
      * Second phase of the 2-phase commit protocol.
      * Notifies a node that it needs to switch to a new configuration.
      *
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while committing a cluster configuration
+     *                         transaction
      */
     void commit() throws ClusteringFault;
 
@@ -89,18 +127,24 @@ public interface ConfigurationManager extends ParameterInclude {
      * of a {@link ConfigurationClusteringCommand}
      *
      * @param throwable The throwable which has to be propogated to other nodes
+     * @throws org.apache.axis2.clustering.ClusteringFault
+     *          If an error occurs while processing the
+     *          exception message
      */
     void exceptionOccurred(Throwable throwable) throws ClusteringFault;
 
     /**
      * For registering a configuration event listener.
+     *
+     * @param listener The ConfigurationManagerListener instance
      */
     void setConfigurationManagerListener(ConfigurationManagerListener listener);
 
     /**
-     * Set the configuration context
+     * Set the system's configuration context. This will be used by the clustering implementations
+     * to get information about the Axis2 environment and to correspond with the Axis2 environment
      *
-     * @param configurationContext
+     * @param configurationContext The configuration context
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 }
