@@ -36,6 +36,11 @@ public final class ClusteringConstants {
      */
     public static final String DOMAIN = "domain";
 
+    /**
+     * The default domain to which this node belongs to
+     */
+    public static final String DEFAULT_DOMAIN = "apache.axis2.domain";
+
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
     public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
@@ -48,6 +53,13 @@ public final class ClusteringConstants {
      * Synchronize the states of all members in the cluster
      */
     public static final String SYNCHRONIZE_ALL_MEMBERS = "synchronizeAll";
+
+    /**
+     * The main cluster configuration parameters
+     */
+    public static final class Parameters {
+
+    }
 
     public static final class MembershipScheme {
         /**

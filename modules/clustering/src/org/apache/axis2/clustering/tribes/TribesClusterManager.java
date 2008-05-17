@@ -128,12 +128,7 @@ public class TribesClusterManager implements ClusterManager {
 
         setMaximumRetries();
         byte[] domain = getClusterDomain();
-
-        Parameter membershipSchemeParam = getParameter("membershipScheme");
-        String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
-        if (membershipSchemeParam != null) {
-            membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
-        }
+        String membershipScheme = getMembershipScheme();
 
         // Add all the ChannelInterceptors
         addInterceptors(channel, domain, membershipScheme);
@@ -156,7 +151,7 @@ public class TribesClusterManager implements ClusterManager {
                                           ". Please set an IP address other than " +
                                           localHost + " in your /etc/hosts file or set the " +
                                           ClusteringConstants.LOCAL_IP_ADDRESS +
-                                          " System property and retry.");
+                                          " System property and retry."); //TODO: setting the value in the axis2.xml file
             }
         } catch (ChannelException e) {
             String msg = "Error starting Tribes channel";
@@ -194,7 +189,21 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     /**
+     * Get the membership scheme applicable to this cluster
+     * @return The membership scheme. Only "wka" & "multicast" are valid return values.
+     */
+    private String getMembershipScheme() {
+        Parameter membershipSchemeParam = getParameter("membershipScheme");
+        String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
+        if (membershipSchemeParam != null) {
+            membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
+        }
+        return membershipScheme;
+    }
+
+    /**
      * Get the clustering domain to which this node belongs to
+     *
      * @return The clustering domain to which this node belongs to
      */
     private byte[] getClusterDomain() {
@@ -203,7 +212,7 @@ public class TribesClusterManager implements ClusterManager {
         if (domainParam != null) {
             domain = ((String) domainParam.getValue()).getBytes();
         } else {
-            domain = "apache.axis2.domain".getBytes();
+            domain = ClusteringConstants.DEFAULT_DOMAIN.getBytes();
         }
         return domain;
     }
@@ -310,46 +319,63 @@ public class TribesClusterManager implements ClusterManager {
             for (org.apache.axis2.clustering.Member member : members) {
                 StaticMember tribesMember;
                 try {
-                    tribesMember = new StaticMember(member.getHostName(),
-                                                    member.getPort(),
-                                                    0,
-                                                    payload);
+                    tribesMember = new StaticMember(member.getHostName(), member.getPort(),
+                                                    0, payload);
                 } catch (IOException e) {
                     String msg = "Could not add static member " +
                                  member.getHostName() + ":" + member.getPort();
                     log.error(msg, e);
                     throw new ClusteringFault(msg, e);
                 }
+                
                 // Do not add the local member to the list of members
                 if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
                       localMember.getPort() == tribesMember.getPort())) {
                     tribesMember.setDomain(domain);
-                    staticMembershipInterceptor.addStaticMember(tribesMember);
-                    try {
 
-                        // Before adding a static member, we will try to verify whether
-                        // we can connect to it
-                        InetAddress addr = InetAddress.getByName(member.getHostName());
-                        SocketAddress sockaddr = new InetSocketAddress(addr,
-                                                                       member.getPort());
-                        new Socket().connect(sockaddr, 3000);
+                    // We will add the member even if it is offline at this moment. When the
+                    // member comes online, it will be detected by the GMS
+                    staticMembershipInterceptor.addStaticMember(tribesMember);
+                    if (canConnect(member)) {
                         membershipManager.memberAdded(tribesMember);
                         log.info("Added static member " + TribesUtil.getHost(tribesMember));
-                    } catch (Exception e) {
-                        log.info("Could not connect to member " +
-                                 TribesUtil.getHost(tribesMember));
+                    } else {
+                        log.info("Could not connect to member " + TribesUtil.getHost(tribesMember));
                     }
                 }
             }
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             log.info("Using multicast based membership management scheme");
             configureMulticastParameters(channel, domain);
-        } else {                                        
+        } else {
             String msg = "Invalid membership scheme '" + membershipScheme +
                          "'. Supported schemes are multicast & wka";
             log.error(msg);
             throw new ClusteringFault(msg);
         }
+    }
+
+    /**
+     * Before adding a static member, we will try to verify whether we can connect to it
+     *
+     * @param member The member whose connectvity needs to be verified
+     * @return true, if the member can be contacted; false, otherwise.
+     */
+    private boolean canConnect(org.apache.axis2.clustering.Member member) {
+        boolean canConnect = false;
+        try {
+            InetAddress addr = InetAddress.getByName(member.getHostName());
+            SocketAddress sockaddr = new InetSocketAddress(addr,
+                                                           member.getPort());
+            new Socket().connect(sockaddr, 3000);
+            canConnect = true;
+        } catch (IOException ignored) {
+            // A debug level log is sufficient here since we are only trying to verify whether
+            // the member in concern is online or offline
+//            log.debug("Cannot connect to member " +
+//                      member.getHostName() + ":" + member.getPort(), e);
+        }
+        return canConnect;
     }
 
     /**
@@ -412,7 +438,7 @@ public class TribesClusterManager implements ClusterManager {
      * parameters
      *
      * @param channel The Tribes channel
-     * @param domain The clustering domain to which this node belongs to
+     * @param domain  The clustering domain to which this node belongs to
      */
     private void configureMulticastParameters(ManagedChannel channel,
                                               byte[] domain) {
