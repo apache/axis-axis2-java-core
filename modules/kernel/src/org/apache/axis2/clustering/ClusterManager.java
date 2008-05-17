@@ -25,16 +25,42 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
 /**
+ * <p>
  * This is the main interface in the Axis2 clustering implementation.
  * In order to plug-in a new clustering implementation, this interface has to be
  * implemented.
+ * </p>
+ * <p>
+ * The initilization of a node in the cluster is handled here. It is also responsible for getting this
+ * node to join the cluster. This node should not process any Web services requests until it
+ * successfully joins the cluster. Generally, this node will also need to obtain the state
+ * information and/or configuration information from a neighboring node.
+ * This interface is also responsible for
+ * properly instantiating a {@link ContextManager} & {@link ConfigurationManager}. In the case of
+ * a static <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">membership scheme</a>,
+ * this members are read from the axis2.xml file and added to the ClusterManager.
+ * </p>
+ * <p>
+ * In the axis2.xml, the instance of this interface is specified using the "cluster" class attribute.
+ * e.g.
+ * <code><b>
+ * <nobr>&lt;cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager"&gt;</nobr>
+ * </b>
+ * </code>
+ * specifies that the TribesClusterManager class is the instance of this interface that
+ * needs to be used.
+ * </p>
+ * <p>
+ * There can also be several "parameter" elements, which are children of the "cluster" element
+ * in the axis2.xml file. Generally, these parameters will be specific to the ClusterManager implementation.
+ * </p>
  */
 public interface ClusterManager extends ParameterInclude {
 
     /**
-     * Initialize the ClusteManager
+     * Initialize this node, and join the cluster
      *
-     * @throws ClusteringFault
+     * @throws ClusteringFault If an error occurs while initializing this node or joining the cluster
      */
     void init() throws ClusteringFault;
 
@@ -49,36 +75,55 @@ public interface ClusterManager extends ParameterInclude {
     ConfigurationManager getConfigurationManager();
 
     /**
-     * @param contextManager
+     * Set the ContextManager corresponding to this ClusterManager. This is an optional attribute.
+     * We can have a cluster with no context replication, in which case the contextManager will be
+     * null
+     *
+     * @param contextManager The ContextManager instance
      */
     void setContextManager(ContextManager contextManager);
 
     /**
+     * Set the ConfigurationManager corresponding to this ClusterManager. This is an optional attribute.
+     * We can have a cluster with no configuration management, in which case the configurationManager
+     * will be null
+     *
      * @param configurationManager
      */
     void setConfigurationManager(ConfigurationManager configurationManager);
 
     /**
-     * @throws ClusteringFault
+     * Disconnect this node from the cluster. This node will no longer receive membership change
+     * notifications, state change messages or configuration change messages. The node will be "
+     * "standing alone" once it is shutdown. However, it has to continue to process Web service
+     * requests.
+     *
+     * @throws ClusteringFault If an error occurs while leaving the cluster
      */
     void shutdown() throws ClusteringFault;
 
     /**
-     * Set the configuration context
+     * Set the system's configuration context. This will be used by the clustering implementations
+     * to get information about the Axis2 environment and to correspond with the Axis2 environment
      *
-     * @param configurationContext
+     * @param configurationContext The configuration context
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
     /**
-     * Set the static members of the cluster. This is used only with static group membership.
+     * Set the static members of the cluster. This is used only with
+     * <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+     * static group membership </a>
      *
      * @param members Members to be added
      */
     void setMembers(Member[] members);
 
     /**
-     * Get the list of members in a static group
+     * Get the list of members in a
+     * <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+     * static group
+     * </a>
      *
      * @return The members if static group membership is used. If any other membership scheme is used,
      *         the values returned may not be valid

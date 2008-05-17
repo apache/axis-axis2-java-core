@@ -284,37 +284,39 @@ public class TribesClusterManager implements ClusterManager {
             byte[] payload = "ping".getBytes();
             localMember.setPayload(payload);
 
-            try {
-                for (org.apache.axis2.clustering.Member member : members) {
-                    StaticMember tribesMember = new StaticMember(member.getHostName(),
-                                                                 member.getPort(),
-                                                                 0,
-                                                                 payload);
-                    // Do not add the local member to the list of members
-                    if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
-                          localMember.getPort() == tribesMember.getPort())) {
-                        tribesMember.setDomain(domain);
-                        staticMembershipInterceptor.addStaticMember(tribesMember);
-                        try {
+            for (org.apache.axis2.clustering.Member member : members) {
+                StaticMember tribesMember;
+                try {
+                    tribesMember = new StaticMember(member.getHostName(),
+                                                    member.getPort(),
+                                                    0,
+                                                    payload);
+                } catch (IOException e) {
+                    String msg = "Could not add static member " +
+                                 member.getHostName() + ":" + member.getPort();
+                    log.error(msg, e);
+                    throw new ClusteringFault(msg, e);
+                }
+                // Do not add the local member to the list of members
+                if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
+                      localMember.getPort() == tribesMember.getPort())) {
+                    tribesMember.setDomain(domain);
+                    staticMembershipInterceptor.addStaticMember(tribesMember);
+                    try {
 
-                            // Before adding a static member, we will try to verify whether
-                            // we can connect to it
-                            InetAddress addr = InetAddress.getByName(member.getHostName());
-                            SocketAddress sockaddr = new InetSocketAddress(addr,
-                                                                           member.getPort());
-                            new Socket().connect(sockaddr, 3000);
-                            membershipManager.memberAdded(tribesMember);
-                            log.info("Added static member " + TribesUtil.getHost(tribesMember));
-                        } catch (Exception e) {
-                            log.info("Could not connect to member " +
-                                     TribesUtil.getHost(tribesMember));
-                        }
+                        // Before adding a static member, we will try to verify whether
+                        // we can connect to it
+                        InetAddress addr = InetAddress.getByName(member.getHostName());
+                        SocketAddress sockaddr = new InetSocketAddress(addr,
+                                                                       member.getPort());
+                        new Socket().connect(sockaddr, 3000);
+                        membershipManager.memberAdded(tribesMember);
+                        log.info("Added static member " + TribesUtil.getHost(tribesMember));
+                    } catch (Exception e) {
+                        log.info("Could not connect to member " +
+                                 TribesUtil.getHost(tribesMember));
                     }
                 }
-            } catch (IOException e) {
-                String msg = "Could not add static members";   // TODO host and port
-                log.error(msg, e);
-                throw new ClusteringFault(msg, e);
             }
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             log.info("Using multicast based membership management scheme");
