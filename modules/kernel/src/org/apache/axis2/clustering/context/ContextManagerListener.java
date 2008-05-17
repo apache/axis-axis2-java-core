@@ -22,9 +22,29 @@ package org.apache.axis2.clustering.context;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 
+/**
+ * This is the countepart of the {@link ContextManager} implementation. On the message sending side,
+ * the ContextManager will send a context replication message, which on the receiving
+ * side will be handed over to the implementer of this interface. So when a node sends a message
+ * through using its ContextManager, all receivers will be notified through their respective
+ * ContextManagerListeners.
+ */
 public interface ContextManagerListener {
-    
+
+    /**
+     * Notification that a context replication message has been received. The receiver will have to
+     * take appropriate action to process this message
+     *
+     * @param message The context replication message
+     * @throws ClusteringFault If an error occurs while processing the received message
+     */
     public void contextUpdated(ContextClusteringCommand message) throws ClusteringFault;
 
+    /**
+     * Set the system's configuration context. This will be used by the clustering implementations
+     * to get information about the Axis2 environment and to correspond with the Axis2 environment
+     *
+     * @param configurationContext The configuration context
+     */
     public void setConfigurationContext(ConfigurationContext configurationContext);
 }

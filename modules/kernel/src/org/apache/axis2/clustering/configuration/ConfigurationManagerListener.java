@@ -22,25 +22,69 @@ package org.apache.axis2.clustering.configuration;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
- * This is the counterpart of {@link ConfigurationManager}
+ * This is the counterpart of {@link ConfigurationManager}. On the message sending side,
+ * the ConfigurationManager will send a context replication message, which on the receiving
+ * side will be handed over to the implementer of this interface. So when a node sends a message
+ * through using its ConfigurationManager, all receivers will be notified through their respective
+ * ConfigurationManagerListeners.
  */
 public interface ConfigurationManagerListener {
 
+    /**
+     * Notification that a load service groups message has been received.
+     *
+     * @param command The message
+     */
     void serviceGroupsLoaded(ConfigurationClusteringCommand command);
 
+    /**
+     * Notification that an unload seervice groups message has been received.
+     *
+     * @param command  The message
+     */
     void serviceGroupsUnloaded(ConfigurationClusteringCommand command);
 
+    /**
+     * Notification that an apply policy to service message has been received.
+     *
+     * @param command The message
+     */
     void policyApplied(ConfigurationClusteringCommand command);
 
+    /**
+     * Notification that a reload configuration message has been received.
+     *
+     * @param command The message
+     */
     void configurationReloaded(ConfigurationClusteringCommand command);
 
+    /**
+     * Prepare to commit cpmfiguration changes
+     */
     void prepareCalled();
 
+    /**
+     * Rollback configuration changes
+     */
     void rollbackCalled();
 
+    /**
+     * Commit configuration changes
+     */
     void commitCalled();
 
+    /**
+     * An exception has occurred on a remote node while processing a configuration change command
+     *
+     * @param throwable The exception that occurred on the remote node
+     */
     void handleException(Throwable throwable);
 
+    /**
+     * Set the system's configuration context. This will be used by the clustering implementations
+     * to get information about the Axis2 environment and to correspond with the Axis2 environment
+     *
+     * @param configurationContext The configuration context
+     */
     void setConfigurationContext(ConfigurationContext configurationContext);
 }
