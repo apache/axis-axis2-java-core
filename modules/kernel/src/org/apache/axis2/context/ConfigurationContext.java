@@ -113,7 +113,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Initializes the ClusterManager for this ConfigurationContext
-     * 
+     *
      * @throws AxisFault
      */
     public void initCluster() throws AxisFault {
@@ -134,8 +134,15 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    /**
+     *
+     * @param clusterManager The ClusterManager implementation
+     * @return true, if the cluster needs to be automatically initialized by the framework;
+     *         false, otherwise
+     */
     private static boolean shouldClusterBeInitiated(ClusterManager clusterManager) {
-        Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
+        Parameter param =
+                clusterManager.getParameter(ClusteringConstants.Parameters.AVOID_INITIATION);
         return !(param != null && JavaUtils.isTrueExplicitly(param.getValue()));
     }
 
@@ -290,31 +297,31 @@ public class ConfigurationContext extends AbstractContext {
      * @param messageID
      * @param mepContext
      */
-    public boolean registerOperationContext(String messageID, 
+    public boolean registerOperationContext(String messageID,
                                             OperationContext mepContext) {
         return registerOperationContext(messageID, mepContext, false);
     }
-    
+
     /**
      * Registers a OperationContext with a given message ID.
      * If the given message id already has a registered operation context,
-     * no change is made unless the override flag is set. 
+     * no change is made unless the override flag is set.
      *
      * @param messageID
      * @param mepContext
      * @param override
      */
-    public boolean registerOperationContext(String messageID, 
-                                            OperationContext mepContext, 
+    public boolean registerOperationContext(String messageID,
+                                            OperationContext mepContext,
                                             boolean override) {
-    	
+
     	if(messageID == null){
     		if(log.isDebugEnabled()){
     			log.debug("messageID is null. Returning false");
     		}
     		return false;
     	}
-    	
+
         boolean alreadyInMap = false;
         mepContext.setKey(messageID);
 
@@ -357,10 +364,10 @@ public class ConfigurationContext extends AbstractContext {
     public boolean isAnyOperationContextRegistered(){
     	return !operationContextMap.isEmpty();
     }
-    
+
     /**
      * Adds the given ServiceGroupContext into the SOAP session table
-     * 
+     *
      * @param serviceGroupContext ServiceGroup Context to add
      */
     public void addServiceGroupContextIntoSoapSessionTable(
@@ -421,7 +428,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Finds the OperationContext given the Operation name, Service Name, and ServiceGroupName
-     * 
+     *
      * @param operationName - OperationName to find
      * @param serviceName - ServiceName to find
      * @param serviceGroupName - ServiceGroupName to find
@@ -518,7 +525,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Retrieve the ServiceGroupContext from the SOAP session table
-     * 
+     *
      * @param serviceGroupContextId Service Group Context ID to search on
      * @param msgContext Message Context to search on
      * @return Returns a ServiceGroupContext
@@ -617,7 +624,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Set the AxisConfiguration to the specified configuration
-     * 
+     *
      * @param configuration
      */
     public void setAxisConfiguration(AxisConfiguration configuration) {
@@ -658,8 +665,8 @@ public class ConfigurationContext extends AbstractContext {
             return;
         }
         long currentTime = new Date().getTime();
-        
-        synchronized (serviceGroupContextMap) { 
+
+        synchronized (serviceGroupContextMap) {
             for (Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
                  sgCtxtMapKeyIter.hasNext();) {
                 String sgCtxtId = (String) sgCtxtMapKeyIter.next();
@@ -677,7 +684,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Retrieve the ListenerManager
-     * 
+     *
      * @return Returns the ListenerManager
      */
     public ListenerManager getListenerManager() {
@@ -686,7 +693,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Set the TransportManager to the given ListenerManager
-     * 
+     *
      * @param listenerManager The ListenerManager for which to set the TransportManager
      */
     public void setTransportManager(ListenerManager listenerManager) {
@@ -734,9 +741,9 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     /**
-     * Invoked during shutdown to stop the ListenerManager and 
+     * Invoked during shutdown to stop the ListenerManager and
      * perform configuration cleanup
-     * 
+     *
      * @throws AxisFault
      */
     public void terminate() throws AxisFault {
@@ -800,7 +807,7 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Retrieves the ServiceContext path
-     * 
+     *
      * @return path to the ServiceContext
      */
     public String getServiceContextPath() {

@@ -252,14 +252,14 @@
         <parameter name="synchronizeAll">true</parameter>
         <parameter name="maxRetries">10</parameter>
 
-        <parameter name="multicastAddress">228.0.0.4</parameter>
-        <parameter name="multicastBindAddress">127.0.0.1</parameter>
-        <parameter name="multicastPort">45564</parameter>
-        <parameter name="multicastFrequency">500</parameter>
-        <parameter name="multicastMemberDropTime">3000</parameter>
+        <parameter name="mcastAddress">228.0.0.4</parameter>
+        <parameter name="mcastPort">45564</parameter>
+        <parameter name="mcastFrequency">500</parameter>
+        <parameter name="memberDropTime">3000</parameter>
+        <parameter name="mcastBindAddress">127.0.0.1</parameter>
 
-        <parameter name="tcpListenHost">127.0.0.1</parameter>
-        <parameter name="tcpListenPort">4000</parameter>
+        <parameter name="localMemberHost">127.0.0.1</parameter>
+        <parameter name="localMemberPort">4000</parameter>
 
         <members>
             <member>

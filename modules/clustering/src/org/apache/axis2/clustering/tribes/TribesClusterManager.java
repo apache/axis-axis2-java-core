@@ -149,9 +149,7 @@ public class TribesClusterManager implements ClusterManager {
                 channel.stop(Channel.DEFAULT);
                 throw new ClusteringFault("Cannot join cluster using IP " + localHost +
                                           ". Please set an IP address other than " +
-                                          localHost + " in your /etc/hosts file or set the " +
-                                          ClusteringConstants.LOCAL_IP_ADDRESS +
-                                          " System property and retry."); //TODO: setting the value in the axis2.xml file
+                                          localHost + " in the axis2.xml file"); 
             }
         } catch (ChannelException e) {
             String msg = "Error starting Tribes channel";
@@ -193,7 +191,8 @@ public class TribesClusterManager implements ClusterManager {
      * @return The membership scheme. Only "wka" & "multicast" are valid return values.
      */
     private String getMembershipScheme() {
-        Parameter membershipSchemeParam = getParameter("membershipScheme");
+        Parameter membershipSchemeParam =
+                getParameter(ClusteringConstants.Parameters.MEMBERSHIP_SCHEME);
         String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
         if (membershipSchemeParam != null) {
             membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
@@ -207,7 +206,7 @@ public class TribesClusterManager implements ClusterManager {
      * @return The clustering domain to which this node belongs to
      */
     private byte[] getClusterDomain() {
-        Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
+        Parameter domainParam = getParameter(ClusteringConstants.Parameters.DOMAIN);
         byte[] domain;
         if (domainParam != null) {
             domain = ((String) domainParam.getValue()).getBytes();
@@ -300,15 +299,15 @@ public class TribesClusterManager implements ClusterManager {
             StaticMember localMember = new StaticMember();
             membershipManager.setLocalMember(localMember);
             ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-            Parameter tcpListenHost = getParameter("tcpListenHost");
-            if (tcpListenHost != null) {
-                String host = ((String) tcpListenHost.getValue()).trim();
+            Parameter localHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
+            if (localHost != null) {
+                String host = ((String) localHost.getValue()).trim();
                 receiver.setAddress(host);
                 localMember.setHost(host);
             }
-            Parameter tcpListenPort = getParameter("tcpListenPort");
-            if (tcpListenPort != null) {
-                String port = ((String) tcpListenPort.getValue()).trim();
+            Parameter localPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
+            if (localPort != null) {
+                String port = ((String) localPort.getValue()).trim();
                 receiver.setPort(Integer.parseInt(port));
                 localMember.setPort(Integer.parseInt(port));
             }
@@ -369,11 +368,11 @@ public class TribesClusterManager implements ClusterManager {
                                                            member.getPort());
             new Socket().connect(sockaddr, 3000);
             canConnect = true;
-        } catch (IOException ignored) {
+        } catch (IOException e) {
             // A debug level log is sufficient here since we are only trying to verify whether
             // the member in concern is online or offline
-//            log.debug("Cannot connect to member " +
-//                      member.getHostName() + ":" + member.getPort(), e);
+            log.debug("Cannot connect to member " +
+                      member.getHostName() + ":" + member.getPort(), e);
         }
         return canConnect;
     }
@@ -443,35 +442,40 @@ public class TribesClusterManager implements ClusterManager {
     private void configureMulticastParameters(ManagedChannel channel,
                                               byte[] domain) {
         Properties mcastProps = channel.getMembershipService().getProperties();
-        Parameter mcastAddress = getParameter("multicastAddress");
+        Parameter mcastAddress = getParameter(TribesConstants.MCAST_ADDRESS);
         if (mcastAddress != null) {
-            mcastProps.setProperty("mcastAddress", ((String) mcastAddress.getValue()).trim());
+            mcastProps.setProperty(TribesConstants.MCAST_ADDRESS,
+                                   ((String) mcastAddress.getValue()).trim());
         }
-        Parameter mcastBindAddress = getParameter("multicastBindAddress");
+        Parameter mcastBindAddress = getParameter(TribesConstants.MCAST_BIND_ADDRESS);
         if (mcastBindAddress != null) {
-            mcastProps.setProperty("mcastBindAddress", ((String) mcastBindAddress.getValue()).trim());
+            mcastProps.setProperty(TribesConstants.MCAST_BIND_ADDRESS,
+                                   ((String) mcastBindAddress.getValue()).trim());
         }
 
-        Parameter mcastPort = getParameter("multicastPort");
+        Parameter mcastPort = getParameter(TribesConstants.MCAST_PORT);
         if (mcastPort != null) {
-            mcastProps.setProperty("mcastPort", ((String) mcastPort.getValue()).trim());
+            mcastProps.setProperty(TribesConstants.MCAST_PORT, 
+                                   ((String) mcastPort.getValue()).trim());
         }
-        Parameter mcastFrequency = getParameter("multicastFrequency");
+        Parameter mcastFrequency = getParameter(TribesConstants.MCAST_FREQUENCY);
         if (mcastFrequency != null) {
-            mcastProps.setProperty("mcastFrequency", ((String) mcastFrequency.getValue()).trim());
+            mcastProps.setProperty(TribesConstants.MCAST_FREQUENCY,
+                                   ((String) mcastFrequency.getValue()).trim());
         }
-        Parameter mcastMemberDropTime = getParameter("multicastMemberDropTime");
+        Parameter mcastMemberDropTime = getParameter(TribesConstants.MEMBER_DROP_TIME);
         if (mcastMemberDropTime != null) {
-            mcastProps.setProperty("memberDropTime", ((String) mcastMemberDropTime.getValue()).trim());
+            mcastProps.setProperty(TribesConstants.MEMBER_DROP_TIME,
+                                   ((String) mcastMemberDropTime.getValue()).trim());
         }
 
         // Set the IP address that will be advertised by this node
         ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-        Parameter tcpListenHost = getParameter("tcpListenHost");
+        Parameter tcpListenHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
         if (tcpListenHost != null) {
             String host = ((String) tcpListenHost.getValue()).trim();
-            mcastProps.setProperty("tcpListenHost", host);
-            mcastProps.setProperty("bindAddress", host);
+            mcastProps.setProperty(TribesConstants.TCP_LISTEN_HOST, host);
+            mcastProps.setProperty(TribesConstants.BIND_ADDRESS, host);
             receiver.setAddress(host);
         }
         String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
@@ -479,14 +483,14 @@ public class TribesClusterManager implements ClusterManager {
             receiver.setAddress(localIP);
         }
 
-        Parameter tcpListenPort = getParameter("tcpListenPort");
+        Parameter tcpListenPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
         if (tcpListenPort != null) {
             String port = ((String) tcpListenPort.getValue()).trim();
-            mcastProps.setProperty("tcpListenPort", port);
+            mcastProps.setProperty(TribesConstants.TCP_LISTEN_PORT, port);
             receiver.setPort(Integer.parseInt(port));
         }
 
-        mcastProps.setProperty("mcastClusterDomain", new String(domain));
+        mcastProps.setProperty(TribesConstants.MCAST_CLUSTER_DOMAIN, new String(domain));
     }
 
     /**
@@ -626,7 +630,7 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     /**
-     * Method to check whether all members in the cluster have to be kep in sync at all times.
+     * Method to check whether all members in the cluster have to be kept in sync at all times.
      * Typically, this will require each member in the cluster to ACKnowledge receipt of a
      * particular message, which may have a significant performance hit.
      *
@@ -634,7 +638,7 @@ public class TribesClusterManager implements ClusterManager {
      *         otherwise
      */
     public boolean synchronizeAllMembers() {
-        Parameter syncAllParam = getParameter(ClusteringConstants.SYNCHRONIZE_ALL_MEMBERS);
+        Parameter syncAllParam = getParameter(ClusteringConstants.Parameters.SYNCHRONIZE_ALL_MEMBERS);
         return syncAllParam == null || Boolean.parseBoolean((String) syncAllParam.getValue());
     }
 }

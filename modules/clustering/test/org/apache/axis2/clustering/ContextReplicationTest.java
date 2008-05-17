@@ -57,7 +57,8 @@ public class ContextReplicationTest extends TestCase {
     private static final String TEST_SERVICE_NAME = "testService";
 
     private static final Parameter domainParam =
-            new Parameter(ClusteringConstants.DOMAIN, "axis2.domain." + UUIDGenerator.getUUID());
+            new Parameter(ClusteringConstants.Parameters.DOMAIN,
+                          "axis2.domain." + UUIDGenerator.getUUID());
 
     // --------------- Cluster-1 ------------------------------------------------------
     private ClusterManager clusterManager1;

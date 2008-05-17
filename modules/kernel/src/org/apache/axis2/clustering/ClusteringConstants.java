@@ -28,14 +28,6 @@ public final class ClusteringConstants {
     private ClusteringConstants() {
     }
 
-    public static final String AVOID_INITIATION_KEY = "AvoidInitiation";
-
-    /**
-     * The clustering domain/group. Nodes in the same group will belong to the same multicast domain.
-     * There will not be interference between nodes in different group.
-     */
-    public static final String DOMAIN = "domain";
-
     /**
      * The default domain to which this node belongs to
      */
@@ -50,15 +42,37 @@ public final class ClusteringConstants {
     public static final String LOCAL_IP_ADDRESS = "axis2.local.ip.address";
 
     /**
-     * Synchronize the states of all members in the cluster
-     */
-    public static final String SYNCHRONIZE_ALL_MEMBERS = "synchronizeAll";
-
-    /**
      * The main cluster configuration parameters
      */
     public static final class Parameters {
 
+        /**
+         * The membership scheme used in this setup. The only values supported at the moment are
+         * "multicast" and "wka"
+         */
+        public static final String MEMBERSHIP_SCHEME = "membershipScheme";
+
+        /**
+         * The clustering domain/group. Nodes in the same group will belong to the same multicast
+         * domain. There will not be interference between nodes in different groups.
+         */
+        public static final String DOMAIN = "domain";
+
+        /**
+         * When a Web service request is received, and processed, before the response is sent to the
+         * client, should we update the states of all members in the cluster? If the value of
+         * this parameter is set to "true", the response to the client will be sent only after
+         * all the members have been updated. Obviously, this can be time consuming. In some cases,
+         * such this overhead may not be acceptable, in which case the value of this parameter
+         * should be set to "false"
+         */
+        public static final String SYNCHRONIZE_ALL_MEMBERS = "synchronizeAll";
+
+        /**
+         * Do not automatically initialize the cluster. The programmer has to explicitly initialize
+         * the cluster.
+         */
+        public static final String AVOID_INITIATION = "AvoidInitiation";
     }
 
     public static final class MembershipScheme {
