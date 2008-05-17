@@ -77,7 +77,15 @@ public interface ClusterManager extends ParameterInclude {
     /**
      * Set the ContextManager corresponding to this ClusterManager. This is an optional attribute.
      * We can have a cluster with no context replication, in which case the contextManager will be
-     * null
+     * null. This value is set by the {@link org.apache.axis2.deployment.ClusterBuilder}, by
+     * reading the  "contextManager" element in the axis2.xml
+     *
+     * e.g.
+     * <code>
+     * <b>
+     * <contextManager class="org.apache.axis2.cluster.configuration.TribesContextManager"> 
+     * </b>
+     * </code>
      *
      * @param contextManager The ContextManager instance
      */
@@ -86,9 +94,17 @@ public interface ClusterManager extends ParameterInclude {
     /**
      * Set the ConfigurationManager corresponding to this ClusterManager. This is an optional attribute.
      * We can have a cluster with no configuration management, in which case the configurationManager
-     * will be null
+     * will be null. This value is set by the {@link org.apache.axis2.deployment.ClusterBuilder}, by
+     * reading the  "configurationManager" element in the axis2.xml
      *
-     * @param configurationManager
+     * e.g.
+     * <code>
+     * <b>
+     * <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
+     * </b>
+     * </code>
+     *
+     * @param configurationManager The ConfigurationManager instance
      */
     void setConfigurationManager(ConfigurationManager configurationManager);
 

@@ -27,6 +27,32 @@ import org.apache.axis2.description.ParameterInclude;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>
+ * This interface is responsible for handling context replication. The property changes in the
+ * <a href="http://www.ibm.com/developerworks/webservices/library/ws-apacheaxis2/">
+ * Axis2 context hierarchy
+ * </a> in this node, are propagated to all other nodes in the cluster.
+ * </p>
+ * <p>
+ * It is not necessary to have a ContextManager in a node. If we are not interested in
+ * <a href="http://afkham.org/2008/05/definition-of-high-availability.html">
+ * High Availability</a>, we may disable context replication by commenting out the "contextManager"
+ * section in the axis2.xml cluster configuration section.
+ * </p>
+ * <p>
+ * The implementation of this interface is set by the
+ * {@link org.apache.axis2.deployment.ClusterBuilder}, by
+ * reading the  "contextManager" element in the axis2.xml
+ * <p/>
+ * e.g.
+ * <code>
+ * <b>
+ * <contextManager class="org.apache.axis2.cluster.configuration.TribesContextManager">
+ * </b>
+ * </code>
+ * </p>
+ */
 public interface ContextManager extends ParameterInclude {
 
     /**
@@ -68,20 +94,14 @@ public interface ContextManager extends ParameterInclude {
     void removeContext(AbstractContext context) throws ClusteringFault;
 
     /**
-     * @param context AbstractContext
+     * This is a check to see whether the properties in an instance of {@link AbstractContext}
+     * should be replicated. This allows an implementer to dissallow the replication of properties
+     * stored in a certain type of context
+     *
+     * @param context The instance of AbstractContext under consideration
      * @return True - if the provided {@link AbstractContext}  is clusterable
      */
     boolean isContextClusterable(AbstractContext context);
-
-    /**
-     * Indicates whether a particular message has been ACKed by all members of a cluster
-     *
-     * @param messageUniqueId The UUID of the message in concern
-     * @return true - if all memebers have ACKed the message with ID <code>messageUniqueId</code>
-     *         false - otherwise
-     * @throws ClusteringFault If an error occurs while checking whether a message is ACKed
-     */
-//    boolean isMessageAcknowledged(String messageUniqueId) throws ClusteringFault;
 
     /**
      * @param listener ContextManagerListener
@@ -89,15 +109,28 @@ public interface ContextManager extends ParameterInclude {
     void setContextManagerListener(ContextManagerListener listener);
 
     /**
-     * @param configurationContext ConfigurationContext
+     * Set the system's configuration context. This will be used by the clustering implementations
+     * to get information about the Axis2 environment and to correspond with the Axis2 environment
+     *
+     * @param configurationContext The configuration context
      */
     void setConfigurationContext(ConfigurationContext configurationContext);
 
     /**
+     * <p>
      * All properties in the context with type <code>contextType</code> which have
      * names that match the specified pattern will be excluded from replication.
+     * </p>
      * <p/>
+     * <p>
+     * Only prefixes and suffixes are allowed. e.g. the local_* pattern indicates that
+     * all property names starting with local_ should be omitted from replication. *_local pattern
+     * indicated that all property names ending with _local should be omitted from replication.
+     * * pattern indicates that all properties should be excluded.
+     * </p>
+     * <p>
      * Generally, we can use the context class name as the context type.
+     * </p>
      *
      * @param contextType The type of the context such as
      *                    org.apache.axis2.context.ConfigurationContext,
@@ -115,6 +148,7 @@ public interface ContextManager extends ParameterInclude {
      *         the <code>contextType</code>. See {@link #setReplicationExcludePatterns(String,List)}.
      *         The values are of type {@link List} of {@link String} Objects,
      *         which are a collection of patterns to be excluded.
+     * @see #setReplicationExcludePatterns(String, java.util.List)
      */
     Map getReplicationExcludePatterns();
 }
