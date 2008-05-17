@@ -323,18 +323,18 @@
         -->
         <members>
             <member>
-                <hostName>localhost</hostName>
+                <hostName>127.0.0.1</hostName>
                 <port>4000</port>
             </member>
             <member>
-                <hostName>localhost</hostName>
+                <hostName>127.0.0.1</hostName>
                 <port>4001</port>
             </member>
         </members>
 
         <!--
-           This interface is responsible for handling configuration management. C
-           onfiguraion changes include
+           This interface is responsible for handling configuration management.
+           Configuraion changes include:
 
             1. Rebooting an entire cluster, in which case, all nodes have to load the new
                Axis2 configuration in a consistent manner
