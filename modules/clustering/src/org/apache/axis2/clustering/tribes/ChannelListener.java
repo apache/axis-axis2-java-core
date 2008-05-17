@@ -47,17 +47,14 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
     private DefaultContextManager contextManager;
     private DefaultConfigurationManager configurationManager;
-    private ControlCommandProcessor controlCommandProcessor;
 
     private ConfigurationContext configurationContext;
 
     public ChannelListener(ConfigurationContext configurationContext,
                            DefaultConfigurationManager configurationManager,
-                           DefaultContextManager contextManager,
-                           ControlCommandProcessor controlCommandProcessor) {
+                           DefaultContextManager contextManager) {
         this.configurationManager = configurationManager;
         this.contextManager = contextManager;
-        this.controlCommandProcessor = controlCommandProcessor;
         this.configurationContext = configurationContext;
     }
 
@@ -91,22 +88,22 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     public void messageReceived(Serializable msg, Member sender) {
         try {
             AxisConfiguration configuration = configurationContext.getAxisConfiguration();
-            List classLoaders = new ArrayList();
+            List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
             classLoaders.add(configuration.getSystemClassLoader());
             classLoaders.add(getClass().getClassLoader());
             for (Iterator iter = configuration.getServiceGroups(); iter.hasNext();) {
                 AxisServiceGroup group = (AxisServiceGroup) iter.next();
                 classLoaders.add(group.getServiceGroupClassLoader());
             }
-            for (Iterator iter = configuration.getModules().values().iterator(); iter.hasNext();) {
-                AxisModule module = (AxisModule) iter.next();
+            for(Object obj: configuration.getModules().values()){    
+                AxisModule module = (AxisModule) obj;
                 classLoaders.add(module.getModuleClassLoader());
             }
             byte[] message = ((ByteMessage) msg).getMessage();
             msg = XByteBuffer.deserialize(message,
                                           0,
                                           message.length,
-                                          (ClassLoader[]) classLoaders.toArray(new ClassLoader[classLoaders.size()]));
+                                          classLoaders.toArray(new ClassLoader[classLoaders.size()]));
         } catch (Exception e) {
             String errMsg = "Cannot deserialize received message";
             log.error(errMsg, e);
@@ -127,7 +124,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         }
 
         try {
-            processMessage(msg, sender);
+            processMessage(msg);
         } catch (Exception e) {
             String errMsg = "Cannot process received message";
             log.error(errMsg, e);
@@ -135,7 +132,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
         }
     }
 
-    private void processMessage(Serializable msg, Member sender) throws ClusteringFault {
+    private void processMessage(Serializable msg) throws ClusteringFault {
         if (msg instanceof ContextClusteringCommand && contextManager != null) {
             ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
             ctxCmd.execute(configurationContext);

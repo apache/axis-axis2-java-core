@@ -21,6 +21,9 @@ package org.apache.axis2.clustering.configuration;
 
 import org.apache.axis2.context.ConfigurationContext;
 
+/**
+ * This is the counterpart of {@link ConfigurationManager}
+ */
 public interface ConfigurationManagerListener {
 
     void serviceGroupsLoaded(ConfigurationClusteringCommand command);

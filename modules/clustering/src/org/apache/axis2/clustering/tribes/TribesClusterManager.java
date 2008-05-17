@@ -118,75 +118,16 @@ public class TribesClusterManager implements ClusterManager {
      * @throws ClusteringFault If initialization fails
      */
     public void init() throws ClusteringFault {
-
-        AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
-        for (Object o : axisConfig.getInFlowPhases()) {
-            Phase phase = (Phase) o;
-            if (phase instanceof DispatchPhase) {
-                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
-                if (!phase.getHandlers().contains(requestBlockingHandler)) {
-                    PhaseRule rule = new PhaseRule("Dispatch");
-                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
-                    rule.setBefore("InstanceDispatcher");
-                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
-                    handlerDesc.setHandler(requestBlockingHandler);
-                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
-                    handlerDesc.setRules(rule);
-                    phase.addHandler(requestBlockingHandler);
-
-                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
-                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFlow");
-                    break;
-                }
-            }
-        }
-        for (Object o : axisConfig.getInFaultFlowPhases()) {
-            Phase phase = (Phase) o;
-            if (phase instanceof DispatchPhase) {
-                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
-                if (!phase.getHandlers().contains(requestBlockingHandler)) {
-                    PhaseRule rule = new PhaseRule("Dispatch");
-                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
-                    rule.setBefore("InstanceDispatcher");
-                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
-                    handlerDesc.setHandler(requestBlockingHandler);
-                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
-                    handlerDesc.setRules(rule);
-                    phase.addHandler(requestBlockingHandler);
-
-                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
-                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFaultFlow");
-                    break;
-                }
-            }
-        }
+        log.info("Initializing cluster...");
+        addRequestBlockingHandlerToInFlows();
         membershipManager = new MembershipManager();
         channel = new GroupChannel();
         channelSender = new ChannelSender(channel, membershipManager, synchronizeAllMembers());
-        channelListener = new ChannelListener(configurationContext, configurationManager,
-                                              contextManager, controlCmdProcessor);
+        channelListener =
+                new ChannelListener(configurationContext, configurationManager, contextManager);
 
-        // Set the maximum number of retries, if message sending to a particular node fails
-        Parameter maxRetriesParam = getParameter("maxRetries");
-        int maxRetries = 10;
-        if (maxRetriesParam != null) {
-            maxRetries = Integer.parseInt((String) maxRetriesParam.getValue());
-        }
-        ReplicationTransmitter replicationTransmitter =
-                (ReplicationTransmitter) channel.getChannelSender();
-        MultiPointSender multiPointSender = replicationTransmitter.getTransport();
-        multiPointSender.setMaxRetryAttempts(maxRetries);
-
-        // Set the domain for this Node
-        Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
-        byte[] domain;
-        if (domainParam != null) {
-            domain = ((String) domainParam.getValue()).getBytes();
-        } else {
-            domain = "apache.axis2.domain".getBytes();
-        }
-        channel.getMembershipService().getProperties().setProperty("mcastClusterDomain",
-                                                                   new String(domain));
+        setMaximumRetries();
+        byte[] domain = getClusterDomain();
 
         Parameter membershipSchemeParam = getParameter("membershipScheme");
         String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
@@ -249,6 +190,88 @@ public class TribesClusterManager implements ClusterManager {
 
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
+        log.info("Cluster initialization completed.");
+    }
+
+    /**
+     * Get the clustering domain to which this node belongs to
+     * @return The clustering domain to which this node belongs to
+     */
+    private byte[] getClusterDomain() {
+        Parameter domainParam = getParameter(ClusteringConstants.DOMAIN);
+        byte[] domain;
+        if (domainParam != null) {
+            domain = ((String) domainParam.getValue()).getBytes();
+        } else {
+            domain = "apache.axis2.domain".getBytes();
+        }
+        return domain;
+    }
+
+    /**
+     * Set the maximum number of retries, if message sending to a particular node fails
+     */
+    private void setMaximumRetries() {
+        Parameter maxRetriesParam = getParameter("maxRetries");
+        int maxRetries = 10;
+        if (maxRetriesParam != null) {
+            maxRetries = Integer.parseInt((String) maxRetriesParam.getValue());
+        }
+        ReplicationTransmitter replicationTransmitter =
+                (ReplicationTransmitter) channel.getChannelSender();
+        MultiPointSender multiPointSender = replicationTransmitter.getTransport();
+        multiPointSender.setMaxRetryAttempts(maxRetries);
+    }
+
+    /**
+     * A RequestBlockingHandler, which is an implementation of
+     * {@link org.apache.axis2.engine.Handler} is added to the InFlow & InFaultFlow. This handler
+     * is used for rejecting Web service requests until this node has been initialized. This handler
+     * can also be used for rejecting requests when this node is reinitializing or is in an
+     * inconsistent state (which can happen when a configuration change is taking place).
+     */
+    private void addRequestBlockingHandlerToInFlows() {
+        AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+        for (Object o : axisConfig.getInFlowPhases()) {
+            Phase phase = (Phase) o;
+            if (phase instanceof DispatchPhase) {
+                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
+                if (!phase.getHandlers().contains(requestBlockingHandler)) {
+                    PhaseRule rule = new PhaseRule("Dispatch");
+                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                    rule.setBefore("InstanceDispatcher");
+                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                    handlerDesc.setHandler(requestBlockingHandler);
+                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
+                    handlerDesc.setRules(rule);
+                    phase.addHandler(requestBlockingHandler);
+
+                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
+                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFlow");
+                    break;
+                }
+            }
+        }
+        for (Object o : axisConfig.getInFaultFlowPhases()) {
+            Phase phase = (Phase) o;
+            if (phase instanceof DispatchPhase) {
+                RequestBlockingHandler requestBlockingHandler = new RequestBlockingHandler();
+                if (!phase.getHandlers().contains(requestBlockingHandler)) {
+                    PhaseRule rule = new PhaseRule("Dispatch");
+                    rule.setAfter("SOAPMessageBodyBasedDispatcher");
+                    rule.setBefore("InstanceDispatcher");
+                    HandlerDescription handlerDesc = requestBlockingHandler.getHandlerDesc();
+                    handlerDesc.setHandler(requestBlockingHandler);
+                    handlerDesc.setName(ClusteringConstants.REQUEST_BLOCKING_HANDLER);
+                    handlerDesc.setRules(rule);
+                    phase.addHandler(requestBlockingHandler);
+
+                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
+                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFaultFlow");
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -320,8 +343,8 @@ public class TribesClusterManager implements ClusterManager {
             }
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             log.info("Using multicast based membership management scheme");
-            configureMulticastParameters(channel);
-        } else {
+            configureMulticastParameters(channel, domain);
+        } else {                                        
             String msg = "Invalid membership scheme '" + membershipScheme +
                          "'. Supported schemes are multicast & wka";
             log.error(msg);
@@ -389,8 +412,10 @@ public class TribesClusterManager implements ClusterManager {
      * parameters
      *
      * @param channel The Tribes channel
+     * @param domain The clustering domain to which this node belongs to
      */
-    private void configureMulticastParameters(ManagedChannel channel) {
+    private void configureMulticastParameters(ManagedChannel channel,
+                                              byte[] domain) {
         Properties mcastProps = channel.getMembershipService().getProperties();
         Parameter mcastAddress = getParameter("multicastAddress");
         if (mcastAddress != null) {
@@ -435,7 +460,7 @@ public class TribesClusterManager implements ClusterManager {
             receiver.setPort(Integer.parseInt(port));
         }
 
-        /*mcastProps.setProperty("mcastClusterDomain", "catalina");*/
+        mcastProps.setProperty("mcastClusterDomain", new String(domain));
     }
 
     /**

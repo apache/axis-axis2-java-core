@@ -31,13 +31,14 @@ import org.apache.axis2.description.ParameterInclude;
  * implemented.
  * </p>
  * <p>
- * The initilization of a node in the cluster is handled here. It is also responsible for getting this
- * node to join the cluster. This node should not process any Web services requests until it
+ * The initilization of a node in the cluster is handled here. It is also responsible for getting
+ * this node to join the cluster. This node should not process any Web services requests until it
  * successfully joins the cluster. Generally, this node will also need to obtain the state
  * information and/or configuration information from a neighboring node.
  * This interface is also responsible for
  * properly instantiating a {@link ContextManager} & {@link ConfigurationManager}. In the case of
- * a static <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">membership scheme</a>,
+ * a static <a href="http://afkham.org/2008/05/group-membership-management-schemes.html">
+ * membership scheme</a>,
  * this members are read from the axis2.xml file and added to the ClusterManager.
  * </p>
  * <p>
@@ -52,7 +53,8 @@ import org.apache.axis2.description.ParameterInclude;
  * </p>
  * <p>
  * There can also be several "parameter" elements, which are children of the "cluster" element
- * in the axis2.xml file. Generally, these parameters will be specific to the ClusterManager implementation.
+ * in the axis2.xml file. Generally, these parameters will be specific to the ClusterManager
+ * implementation.
  * </p>
  */
 public interface ClusterManager extends ParameterInclude {
@@ -79,11 +81,11 @@ public interface ClusterManager extends ParameterInclude {
      * We can have a cluster with no context replication, in which case the contextManager will be
      * null. This value is set by the {@link org.apache.axis2.deployment.ClusterBuilder}, by
      * reading the  "contextManager" element in the axis2.xml
-     *
+     * <p/>
      * e.g.
      * <code>
      * <b>
-     * <contextManager class="org.apache.axis2.cluster.configuration.TribesContextManager"> 
+     * <contextManager class="org.apache.axis2.cluster.configuration.TribesContextManager">
      * </b>
      * </code>
      *
@@ -96,7 +98,7 @@ public interface ClusterManager extends ParameterInclude {
      * We can have a cluster with no configuration management, in which case the configurationManager
      * will be null. This value is set by the {@link org.apache.axis2.deployment.ClusterBuilder}, by
      * reading the  "configurationManager" element in the axis2.xml
-     *
+     * <p/>
      * e.g.
      * <code>
      * <b>
