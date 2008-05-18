@@ -49,8 +49,8 @@ public class CorbaInOnlyMessageReceiver extends AbstractInMessageReceiver implem
     public void invokeBusinessLogic(MessageContext inMessage) throws AxisFault {
         try{
             invoke(inMessage);
-            log.info("org.omg.CORBA.TRANSIENT exception thrown.");
         } catch (org.omg.CORBA.TRANSIENT e) {
+            log.info("org.omg.CORBA.TRANSIENT exception thrown.");
             /*
             * If cannot connect to the corba server
             * try again after clearing the cache
