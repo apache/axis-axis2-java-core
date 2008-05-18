@@ -124,7 +124,7 @@
                 <configuration>
                     <skip>false</skip>
                     <forkMode>once</forkMode>
-                    <argLine>-Djava.endorsed.dirs=${project.build.directory}/../../saaj-api/target/</argLine>
+                    <argLine>-Djava.endorsed.dirs=${settings.localRepository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/1.0.0/</argLine>
                     <systemProperties>
                         <property>
                             <name>javax.xml.soap.MessageFactory</name>
