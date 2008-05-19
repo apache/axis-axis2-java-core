@@ -252,6 +252,13 @@
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager" enable="false">
 
         <!--
+           This parameter indicates whther the cluster has to be automatically initalized
+           when the AxisConfiguration is built. If set to "true" the initialization will not be
+           done at that stage, and some other party will have to explictly initialize the cluster.
+        -->
+        <parameter name="AvoidInitiation">true</parameter>
+
+        <!--
            The membership scheme used in this setup. The only values supported at the moment are
            "multicast" and "wka"
 
