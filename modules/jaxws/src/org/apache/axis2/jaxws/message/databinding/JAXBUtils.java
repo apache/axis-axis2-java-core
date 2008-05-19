@@ -1067,7 +1067,7 @@ public class JAXBUtils {
                     new ConcurrentHashMap<K, List<V>>());
 
         // The maps are freed up when a LOAD FACTOR is hit
-        private static int MAX_LIST_FACTOR = 10;
+        private static int MAX_LIST_FACTOR = 50;
         
         /**
          * @param key
