@@ -343,7 +343,7 @@
 
             The "enable" attribute indicates whether Configuration management has been enabled
         -->
-        <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager"
+        <configurationManager class="org.apache.axis2.clustering.configuration.TribesConfigurationManager"
                               enable="true">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
