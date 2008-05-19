@@ -52,11 +52,14 @@ public class MembershipManager {
      * A new member is added
      *
      * @param member The new member that joined the cluster
+     * @return true - if the member was added to the <code>members</code> array; false, otherwise.
      */
-    public synchronized void memberAdded(Member member) {
+    public synchronized boolean memberAdded(Member member) {
         if (!members.contains(member)) {
             members.add(member);
+            return true;
         }
+        return false;
     }
 
     /**

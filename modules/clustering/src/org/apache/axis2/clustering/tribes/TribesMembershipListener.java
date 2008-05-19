@@ -37,8 +37,10 @@ public class TribesMembershipListener implements MembershipListener {
     }
 
     public void memberAdded(Member member) {
-        log.info("New member " + TribesUtil.getHost(member) + " joined cluster.");
-        membershipManager.memberAdded(member);
+
+        if (membershipManager.memberAdded(member)) {
+            log.info("New member " + TribesUtil.getHost(member) + " joined cluster.");
+        }
        //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
