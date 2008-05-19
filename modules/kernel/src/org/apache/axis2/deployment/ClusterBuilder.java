@@ -32,6 +32,8 @@ import org.apache.axis2.clustering.context.ContextManagerListener;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ import java.util.List;
  * Builds the cluster configuration from the axis2.xml file
  */
 public class ClusterBuilder extends DescriptionBuilder {
+
+    private static final Log log = LogFactory.getLog(ClusterBuilder.class);
 
     public ClusterBuilder(AxisConfiguration axisConfig) {
         this.axisConfig = axisConfig;
@@ -56,12 +60,11 @@ public class ClusterBuilder extends DescriptionBuilder {
      */
     public void buildCluster(OMElement clusterElement) throws DeploymentException {
 
-        OMAttribute enableAttr = clusterElement.getAttribute(new QName("enable"));
-        if(enableAttr != null){
-            if(!Boolean.parseBoolean(enableAttr.getAttributeValue().trim())){
-                return;
-            }
+        if (!isEnabled(clusterElement)) {
+            log.info("Clustering has been disabled");
+            return;
         }
+        log.info("Clustering has been enabled");
 
         OMAttribute classNameAttr = clusterElement.getAttribute(new QName(TAG_CLASS_NAME));
         if (classNameAttr == null) {
@@ -105,6 +108,15 @@ public class ClusterBuilder extends DescriptionBuilder {
         }
     }
 
+    private boolean isEnabled(OMElement element) {
+        boolean enabled = true;
+        OMAttribute enableAttr = element.getAttribute(new QName("enable"));
+        if (enableAttr != null) {
+            enabled = Boolean.parseBoolean(enableAttr.getAttributeValue().trim());
+        }
+        return enabled;
+    }
+
     private void loadMembers(ClusterManager clusterManager, OMElement clusterElement) {
         clusterManager.setMembers(new Member[0]);
         Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
@@ -137,6 +149,11 @@ public class ClusterBuilder extends DescriptionBuilder {
         OMElement contextManagerEle =
                 clusterElement.getFirstChildWithName(new QName(TAG_CONTEXT_MANAGER));
         if (contextManagerEle != null) {
+            if (!isEnabled(contextManagerEle)) {
+                log.info("Clustering context management has been disabled");
+                return;
+            }
+            log.info("Clustering context management has been enabled");
 
             // Load & set the ContextManager class
             OMAttribute classNameAttr =
@@ -243,6 +260,12 @@ public class ClusterBuilder extends DescriptionBuilder {
         OMElement configManagerEle =
                 clusterElement.getFirstChildWithName(new QName(TAG_CONFIGURATION_MANAGER));
         if (configManagerEle != null) {
+            if (!isEnabled(configManagerEle)) {
+                log.info("Clustering configuration management has been disabled");
+                return;
+            }
+            log.info("Clustering configuration management has been enabled");
+
             OMAttribute classNameAttr = configManagerEle.getAttribute(new QName(ATTRIBUTE_CLASS));
             if (classNameAttr == null) {
                 throw new DeploymentException(Messages.getMessage("classAttributeNotFound",

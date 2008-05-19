@@ -254,7 +254,7 @@ public class TribesClusterManager implements ClusterManager {
                     handlerDesc.setRules(rule);
                     phase.addHandler(requestBlockingHandler);
 
-                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
+                    log.debug("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
                              " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFlow");
                     break;
                 }
@@ -274,7 +274,7 @@ public class TribesClusterManager implements ClusterManager {
                     handlerDesc.setRules(rule);
                     phase.addHandler(requestBlockingHandler);
 
-                    log.info("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
+                    log.debug("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
                              " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFaultFlow");
                     break;
                 }

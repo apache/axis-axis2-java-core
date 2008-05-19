@@ -340,8 +340,11 @@
                Axis2 configuration in a consistent manner
             2. Deploying a new service to a cluster or undeploying a service from a cluster
             3. Changing the policies of a service deployed on the cluster
+
+            The "enable" attribute indicates whether Configuration management has been enabled
         -->
-        <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager">
+        <configurationManager class="org.apache.axis2.cluster.configuration.TribesConfigurationManager"
+                              enable="true">
     	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
 
@@ -352,8 +355,11 @@
            The "excludes" patterns can be used to specify the prefixes (e.g. local_*) or
            suffixes (e.g. *_local) of the properties to be excluded from replication. The pattern
            "*" indicates that all properties in a particular context should not be replicated.
+
+            The "enable" attribute indicates whether context replication has been enabled
         -->
-        <contextManager class="org.apache.axis2.clustering.context.DefaultContextManager">
+        <contextManager class="org.apache.axis2.clustering.context.DefaultContextManager"
+                         enable="true">
             <listener class="org.apache.axis2.clustering.context.DefaultContextManagerListener"/>
             <replication>
                 <defaults>
