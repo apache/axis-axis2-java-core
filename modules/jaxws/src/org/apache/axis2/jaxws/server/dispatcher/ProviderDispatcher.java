@@ -48,7 +48,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataSource;
-import javax.xml.bind.JAXBContext;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
@@ -499,8 +498,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             provider = (Provider<Source>)serviceInstance;
         } else if (clazz == SOAPMessage.class) {
             provider = (Provider<SOAPMessage>)serviceInstance;
-        } else if (clazz == JAXBContext.class) {
-            provider = (Provider<JAXBContext>)serviceInstance;
+        } else if (clazz == DataSource.class) {
+            provider = (Provider<DataSource>)serviceInstance;
         }
 
         if (provider == null) {
@@ -590,7 +589,7 @@ public class ProviderDispatcher extends JavaDispatcher {
                     SOAPEnvelopeBlockFactory.class);
         } else {
             throw ExceptionFactory.makeWebServiceException(
-            		Messages.getMessage("bFactoryErr",type.getClass().getName()));
+            		Messages.getMessage("bFactoryErr",type.getName()));
         }
 
         return _blockFactory;
