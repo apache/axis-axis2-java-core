@@ -447,6 +447,11 @@ public class TribesClusterManager implements ClusterManager {
                     throw x;
                 }
                 portstart++;
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ignored) {
+                    ignored.printStackTrace();
+                }
                 retries = getLocalPort(socket, hostname, portstart, retries);
             }
         }
