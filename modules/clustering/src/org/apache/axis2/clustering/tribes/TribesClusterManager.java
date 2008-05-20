@@ -40,6 +40,7 @@ import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Phase;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
@@ -62,8 +63,10 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -149,7 +152,7 @@ public class TribesClusterManager implements ClusterManager {
                 channel.stop(Channel.DEFAULT);
                 throw new ClusteringFault("Cannot join cluster using IP " + localHost +
                                           ". Please set an IP address other than " +
-                                          localHost + " in the axis2.xml file"); 
+                                          localHost + " in the axis2.xml file");
             }
         } catch (ChannelException e) {
             String msg = "Error starting Tribes channel";
@@ -188,6 +191,7 @@ public class TribesClusterManager implements ClusterManager {
 
     /**
      * Get the membership scheme applicable to this cluster
+     *
      * @return The membership scheme. Only "wka" & "multicast" are valid return values.
      */
     private String getMembershipScheme() {
@@ -255,7 +259,7 @@ public class TribesClusterManager implements ClusterManager {
                     phase.addHandler(requestBlockingHandler);
 
                     log.debug("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
-                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFlow");
+                              " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFlow");
                     break;
                 }
             }
@@ -275,7 +279,7 @@ public class TribesClusterManager implements ClusterManager {
                     phase.addHandler(requestBlockingHandler);
 
                     log.debug("Added " + ClusteringConstants.REQUEST_BLOCKING_HANDLER +
-                             " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFaultFlow");
+                              " between SOAPMessageBodyBasedDispatcher & InstanceDispatcher to InFaultFlow");
                     break;
                 }
             }
@@ -295,62 +299,107 @@ public class TribesClusterManager implements ClusterManager {
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             log.info("Using WKA based membership management scheme");
-            channel.setMembershipService(new WkaMembershipService(membershipManager));
-            StaticMember localMember = new StaticMember();
-            membershipManager.setLocalMember(localMember);
-            ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-            Parameter localHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
-            if (localHost != null) {
-                String host = ((String) localHost.getValue()).trim();
-                receiver.setAddress(host);
-                localMember.setHost(host);
-            }
-            Parameter localPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
-            if (localPort != null) {
-                String port = ((String) localPort.getValue()).trim();
-                receiver.setPort(Integer.parseInt(port));
-                localMember.setPort(Integer.parseInt(port));
-            }
-            localMember.setDomain(domain);
-            byte[] payload = "ping".getBytes();
-            localMember.setPayload(payload);
-
-            for (org.apache.axis2.clustering.Member member : members) {
-                StaticMember tribesMember;
-                try {
-                    tribesMember = new StaticMember(member.getHostName(), member.getPort(),
-                                                    0, payload);
-                } catch (IOException e) {
-                    String msg = "Could not add static member " +
-                                 member.getHostName() + ":" + member.getPort();
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
-                }
-                
-                // Do not add the local member to the list of members
-                if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
-                      localMember.getPort() == tribesMember.getPort())) {
-                    tribesMember.setDomain(domain);
-
-                    // We will add the member even if it is offline at this moment. When the
-                    // member comes online, it will be detected by the GMS
-                    staticMembershipInterceptor.addStaticMember(tribesMember);
-                    if (canConnect(member)) {
-                        membershipManager.memberAdded(tribesMember);
-                        log.info("Added static member " + TribesUtil.getHost(tribesMember));
-                    } else {
-                        log.info("Could not connect to member " + TribesUtil.getHost(tribesMember));
-                    }
-                }
-            }
+            configureWkaBasedMembership(domain);
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             log.info("Using multicast based membership management scheme");
-            configureMulticastParameters(channel, domain);
+            configureMulticastBasedMembership(channel, domain);
         } else {
             String msg = "Invalid membership scheme '" + membershipScheme +
                          "'. Supported schemes are multicast & wka";
             log.error(msg);
             throw new ClusteringFault(msg);
+        }
+    }
+
+    /**
+     * Configure the membership related to the WKA based scheme
+     *
+     * @param domain The domain to which the members belong to
+     * @throws ClusteringFault If an error occurs while configuring this scheme
+     */
+    private void configureWkaBasedMembership(byte[] domain) throws ClusteringFault {
+        channel.setMembershipService(new WkaMembershipService(membershipManager));
+        StaticMember localMember = new StaticMember();
+        membershipManager.setLocalMember(localMember);
+        ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
+
+        // ------------ START: Configure and add the local member ---------------------
+        Parameter localHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
+        String host;
+        if (localHost != null) {
+            host = ((String) localHost.getValue()).trim();
+        } else { // In cases where the localhost needs to be automatically figured out
+            try {
+                try {
+                    host = HttpUtils.getIpAddress();
+                } catch (SocketException e) {
+                    String msg = "Could not get local IP address";
+                    log.error(msg, e);
+                    throw new ClusteringFault(msg, e);
+                }
+                localMember.setHostname(host);
+                receiver.setAddress(host);
+            } catch (Exception e) {
+                String msg = "Could not get the localhost name";
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+        }
+        receiver.setAddress(host);
+        localMember.setHost(host);
+
+        Parameter localPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
+        int port;
+        if (localPort != null) {
+            port = Integer.parseInt(((String) localPort.getValue()).trim());
+        } else { // In cases where the localport needs to be automatically figured out
+            try {
+                port = getLocalPort(new ServerSocket(), localMember.getHostname(), 4000, 100);
+            } catch (IOException e) {
+                String msg =
+                        "Could not allocate a port in the range 4000-4100 for local host " +
+                        localMember.getHostname();
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+        }
+
+        byte[] payload = "ping".getBytes();
+        localMember.setPayload(payload);
+        receiver.setPort(port);
+        staticMembershipInterceptor.setLocalMember(localMember);
+        localMember.setPort(port);
+        localMember.setDomain(domain);
+        // ------------ END: Configure and add the local member ---------------------
+
+        // ------------ START: Add other members ---------------------
+        for (org.apache.axis2.clustering.Member member : members) {
+            StaticMember tribesMember;
+            try {
+                tribesMember = new StaticMember(member.getHostName(), member.getPort(),
+                                                0, payload);
+            } catch (IOException e) {
+                String msg = "Could not add static member " +
+                             member.getHostName() + ":" + member.getPort();
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+
+            // Do not add the local member to the list of members
+            if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
+                  localMember.getPort() == tribesMember.getPort())) {
+                tribesMember.setDomain(domain);
+
+                // We will add the member even if it is offline at this moment. When the
+                // member comes online, it will be detected by the GMS
+                staticMembershipInterceptor.addStaticMember(tribesMember);
+                if (canConnect(member)) {
+                    membershipManager.memberAdded(tribesMember);
+                    log.info("Added static member " + TribesUtil.getHost(tribesMember));
+                } else {
+                    log.info("Could not connect to member " + TribesUtil.getHost(tribesMember));
+                }
+            }
         }
     }
 
@@ -369,12 +418,34 @@ public class TribesClusterManager implements ClusterManager {
             new Socket().connect(sockaddr, 3000);
             canConnect = true;
         } catch (IOException e) {
-            // A debug level log is sufficient here since we are only trying to verify whether
-            // the member in concern is online or offline
-            log.debug("Cannot connect to member " +
-                      member.getHostName() + ":" + member.getPort(), e);
+            if (e.getMessage().indexOf("Connection refused") == -1) {
+                log.error("Cannot connect to member " +
+                          member.getHostName() + ":" + member.getPort(), e);
+            }
         }
         return canConnect;
+    }
+
+    protected int getLocalPort(ServerSocket socket, String hostname,
+                               int portstart, int retries) throws IOException {
+        InetSocketAddress addr = null;
+        while (retries > 0) {
+            try {
+                addr = new InetSocketAddress(hostname, portstart);
+                socket.bind(addr);
+                log.info("Receiver Server Socket bound to:" + addr);
+                return portstart;
+            } catch (IOException x) {
+                retries--;
+                if (retries <= 0) {
+                    log.info("Unable to bind server socket to:" + addr + " throwing error.");
+                    throw x;
+                }
+                portstart++;
+                retries = getLocalPort(socket, hostname, portstart, retries);
+            }
+        }
+        return retries;
     }
 
     /**
@@ -438,9 +509,10 @@ public class TribesClusterManager implements ClusterManager {
      *
      * @param channel The Tribes channel
      * @param domain  The clustering domain to which this node belongs to
+     * @throws ClusteringFault If an error occurs while obtaining the local host address
      */
-    private void configureMulticastParameters(ManagedChannel channel,
-                                              byte[] domain) {
+    private void configureMulticastBasedMembership(ManagedChannel channel,
+                                                   byte[] domain) throws ClusteringFault {
         Properties mcastProps = channel.getMembershipService().getProperties();
         Parameter mcastAddress = getParameter(TribesConstants.MCAST_ADDRESS);
         if (mcastAddress != null) {
@@ -455,7 +527,7 @@ public class TribesClusterManager implements ClusterManager {
 
         Parameter mcastPort = getParameter(TribesConstants.MCAST_PORT);
         if (mcastPort != null) {
-            mcastProps.setProperty(TribesConstants.MCAST_PORT, 
+            mcastProps.setProperty(TribesConstants.MCAST_PORT,
                                    ((String) mcastPort.getValue()).trim());
         }
         Parameter mcastFrequency = getParameter(TribesConstants.MCAST_FREQUENCY);
@@ -474,6 +546,18 @@ public class TribesClusterManager implements ClusterManager {
         Parameter tcpListenHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
         if (tcpListenHost != null) {
             String host = ((String) tcpListenHost.getValue()).trim();
+            mcastProps.setProperty(TribesConstants.TCP_LISTEN_HOST, host);
+            mcastProps.setProperty(TribesConstants.BIND_ADDRESS, host);
+            receiver.setAddress(host);
+        } else {
+            String host;
+            try {
+                host = HttpUtils.getIpAddress();
+            } catch (SocketException e) {
+                String msg = "Could not get local IP address";
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
             mcastProps.setProperty(TribesConstants.TCP_LISTEN_HOST, host);
             mcastProps.setProperty(TribesConstants.BIND_ADDRESS, host);
             receiver.setAddress(host);
