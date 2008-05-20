@@ -419,7 +419,7 @@ public class TribesClusterManager implements ClusterManager {
             InetAddress addr = InetAddress.getByName(member.getHostName());
             SocketAddress sockaddr = new InetSocketAddress(addr,
                                                            member.getPort());
-            new Socket().connect(sockaddr, 3000);
+            new Socket().connect(sockaddr, 5000);
             canConnect = true;
         } catch (IOException e) {
             String msg = e.getMessage();
