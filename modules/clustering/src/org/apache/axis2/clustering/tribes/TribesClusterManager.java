@@ -422,7 +422,8 @@ public class TribesClusterManager implements ClusterManager {
             new Socket().connect(sockaddr, 3000);
             canConnect = true;
         } catch (IOException e) {
-            if (e.getMessage().indexOf("Connection refused") == -1) {
+            String msg = e.getMessage();
+            if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
                 log.error("Cannot connect to member " +
                           member.getHostName() + ":" + member.getPort(), e);
             }
