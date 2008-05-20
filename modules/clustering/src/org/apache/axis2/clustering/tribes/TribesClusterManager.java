@@ -438,7 +438,13 @@ public class TribesClusterManager implements ClusterManager {
                 addr = new InetSocketAddress(hostname, portstart);
                 socket.bind(addr);
                 log.info("Receiver Server Socket bound to:" + addr);
+                socket.setSoTimeout(5);
                 socket.close();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                    ignored.printStackTrace();
+                }
                 return portstart;
             } catch (IOException x) {
                 retries--;
