@@ -151,6 +151,7 @@
         <commons.lang.version>2.3</commons.lang.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
+        <m2Repository>'${settings.localRepository}'</m2Repository>
     </properties>
     <mailingLists>
         <mailingList>
