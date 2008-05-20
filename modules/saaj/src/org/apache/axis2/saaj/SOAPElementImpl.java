@@ -35,6 +35,7 @@ import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -863,5 +864,73 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     
     public String toString() {
         return element.toString();
+    }
+        
+    public Node appendChild(Node child) throws DOMException {        
+        if (getOwnerDocument() != child.getOwnerDocument()) {
+            throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "Wrong document");
+        }
+        try {
+            if (child instanceof Text) {
+                return appendText((Text)child);
+            } else if (child instanceof ElementImpl) {
+                return appendElement((ElementImpl)child);
+            }
+        } catch (SOAPException e) {
+            DOMException ex = 
+                new DOMException(DOMException.HIERARCHY_REQUEST_ERR, e.getMessage());
+            ex.initCause(e);
+            throw ex;
+        }
+        
+        return super.appendChild(child);        
+    }
+    
+    protected Text appendText(Text child) throws SOAPException {
+        String text = child.getData();
+        Text textNode = getOwnerDocument().createTextNode(text);
+        NodeImpl node = ((NodeImpl)element.appendChild(textNode));
+        TextImplEx saajTextNode = new TextImplEx(text, this);
+        node.setUserData(SAAJ_NODE, saajTextNode, null);
+        return saajTextNode;
+    }
+    
+    protected Element appendElement(ElementImpl child) throws SOAPException {
+        String namespaceURI = child.getNamespaceURI();
+        String prefix = child.getPrefix();
+
+        SOAPElementImpl childEle = new SOAPElementImpl(child);
+        
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        if (namespaceURI != null && namespaceURI.trim().length() > 0) {
+            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        }
+        element.appendChild(childEle.element);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
+        return childEle;
+    }
+    
+    protected void copyContents(SOAPElementImpl childEle, Node child) throws SOAPException {
+        NamedNodeMap attributes = child.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Attr node = (Attr)attributes.item(i);
+            QName name;
+            if (node.getPrefix() == null) {
+                name = new QName(node.getNamespaceURI(), 
+                                 node.getLocalName());
+            } else {
+                name = new QName(node.getNamespaceURI(), 
+                                 node.getLocalName(),
+                                 node.getPrefix());
+            }
+            childEle.addAttribute(name, node.getValue());
+        }
+
+        NodeList children = child.getChildNodes();        
+        for (int i = 0; i < children.getLength(); i++) {
+            Node node = children.item(i);
+            childEle.appendChild(node);
+        }
     }
 }

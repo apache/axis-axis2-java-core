@@ -263,5 +263,53 @@ public class SOAPBodyTest extends TestCase {
         }
     }
 
-
+    public void testAppendChild() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPBody soapBody = message.getSOAPBody();
+        
+        assertEquals(0, soapBody.getChildNodes().getLength());
+        assertFalse(soapBody.getChildElements().hasNext());
+                      
+        Document doc = soapBody.getOwnerDocument();        
+        String namespace = "http://example.com";
+        String localName = "GetLastTradePrice";
+        Element getLastTradePrice = doc.createElementNS(namespace, localName);        
+        Element symbol = doc.createElement("symbol");
+        symbol.setAttribute("foo", "bar");
+        getLastTradePrice.appendChild(symbol);
+        org.w3c.dom.Text def = doc.createTextNode("DEF");
+        symbol.appendChild(def);
+                        
+        soapBody.appendChild(getLastTradePrice);
+        
+        assertEquals(1, soapBody.getChildNodes().getLength());
+        Iterator iter = soapBody.getChildElements();
+        assertTrue(iter.hasNext()); 
+        Object obj = iter.next();
+        // must be SOAPBodyElement
+        assertTrue(obj instanceof SOAPBodyElement);  
+        SOAPElement soapElement = (SOAPElement)obj;
+        assertEquals(namespace, soapElement.getNamespaceURI());
+        assertEquals(localName, soapElement.getLocalName());
+        assertFalse(iter.hasNext());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof SOAPElement);  
+        soapElement = (SOAPElement)obj;
+        assertEquals(null, soapElement.getNamespaceURI());
+        assertEquals("symbol", soapElement.getLocalName());
+        assertFalse(iter.hasNext());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof Text);  
+        Text text = (Text)obj;
+        assertEquals("DEF", text.getData());
+        assertFalse(iter.hasNext());   
+    }
+        
 }

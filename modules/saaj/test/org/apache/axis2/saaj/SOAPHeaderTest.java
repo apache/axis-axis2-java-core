@@ -34,6 +34,11 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.Text;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -360,5 +365,53 @@ public class SOAPHeaderTest extends TestCase {
         } catch (Exception e) {
             fail("Unexpected Exception: " + e.getMessage());
         }
+    }
+    
+    public void testAppendChild() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPHeader soapHeader = message.getSOAPHeader();
+        
+        assertEquals(0, soapHeader.getChildNodes().getLength());
+        assertFalse(soapHeader.getChildElements().hasNext());
+        
+        Document doc = soapHeader.getOwnerDocument();        
+        String namespace = "http://example.com";
+        String localName = "GetLastTradePrice";
+        Element getLastTradePrice = doc.createElementNS(namespace, localName);        
+        Element symbol = doc.createElement("symbol");
+        symbol.setAttribute("foo", "bar");
+        getLastTradePrice.appendChild(symbol);
+        org.w3c.dom.Text def = doc.createTextNode("DEF");
+        symbol.appendChild(def);
+                        
+        soapHeader.appendChild(getLastTradePrice);
+                
+        assertEquals(1, soapHeader.getChildNodes().getLength());
+        Iterator iter = soapHeader.getChildElements();
+        assertTrue(iter.hasNext()); 
+        Object obj = iter.next();
+        // must be SOAPHeaderElement
+        assertTrue(obj instanceof SOAPHeaderElement);  
+        SOAPElement soapElement = (SOAPElement)obj;
+        assertEquals(namespace, soapElement.getNamespaceURI());
+        assertEquals(localName, soapElement.getLocalName());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof SOAPElement);  
+        soapElement = (SOAPElement)obj;
+        assertEquals(null, soapElement.getNamespaceURI());
+        assertEquals("symbol", soapElement.getLocalName());
+        assertFalse(iter.hasNext());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof Text);  
+        Text text = (Text)obj;
+        assertEquals("DEF", text.getData());
+        assertFalse(iter.hasNext());   
     }
 }

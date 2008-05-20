@@ -31,6 +31,7 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 import org.apache.axis2.namespace.Constants;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -128,6 +129,31 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         return soapHeaderElement;
     }
 
+    @Override
+    protected Element appendElement(ElementImpl child) throws SOAPException {     
+        OMNamespace ns = new NamespaceImpl(child.getNamespaceURI(),
+                                           child.getPrefix());
+        SOAPHeaderBlock headerBlock = null;
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            headerBlock = new SOAP11HeaderBlockImpl(child.getLocalName(), ns,
+                                                    omSOAPHeader,
+                                                    (SOAPFactory)this.element.getOMFactory());
+        } else {
+            headerBlock = new SOAP12HeaderBlockImpl(child.getLocalName(), ns,
+                                                    omSOAPHeader,
+                                                    (SOAPFactory)this.element.getOMFactory());
+
+        }
+     
+        element.setUserData(SAAJ_NODE, this, null);
+        
+        SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
+        copyContents(soapHeaderElement, child);
+        soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);
+        soapHeaderElement.setParentElement(this);
+        return soapHeaderElement;
+    }
+    
     /**
      * Creates a new <CODE>SOAPHeaderElement</CODE> object initialized with the specified name and
      * adds it to this <CODE>SOAPHeader</CODE> object.

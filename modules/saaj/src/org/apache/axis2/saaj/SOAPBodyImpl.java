@@ -97,6 +97,23 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         return childEle;
     }
 
+    @Override
+    protected Element appendElement(ElementImpl child) throws SOAPException {    
+        String namespaceURI = child.getNamespaceURI();
+        String prefix = child.getPrefix();
+
+        element.declareNamespace(namespaceURI, prefix);
+        
+        SOAPBodyElementImpl childEle = new SOAPBodyElementImpl(child);
+
+        childEle.element.setUserData(SAAJ_NODE, childEle, null);
+        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        element.appendChild(childEle.element);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.setParentElement(this);
+        return childEle;
+    }
+    
     public SOAPElement addChildElement(SOAPElement soapElement) throws SOAPException {
         String namespaceURI = soapElement.getNamespaceURI();
         String prefix = soapElement.getPrefix();
