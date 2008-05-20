@@ -337,8 +337,6 @@ public class TribesClusterManager implements ClusterManager {
                     log.error(msg, e);
                     throw new ClusteringFault(msg, e);
                 }
-                localMember.setHostname(host);
-                receiver.setAddress(host);
             } catch (Exception e) {
                 String msg = "Could not get the localhost name";
                 log.error(msg, e);
@@ -346,7 +344,13 @@ public class TribesClusterManager implements ClusterManager {
             }
         }
         receiver.setAddress(host);
-        localMember.setHost(host);
+        try {
+            localMember.setHostname(host);
+        } catch (IOException e) {
+            String msg = "Could not set the local member's name";
+            log.error(msg, e);
+            throw new ClusteringFault(msg, e);
+        }
 
         Parameter localPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
         int port;
