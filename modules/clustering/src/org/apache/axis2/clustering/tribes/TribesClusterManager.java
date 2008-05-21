@@ -89,16 +89,15 @@ public class TribesClusterManager implements ClusterManager {
     private ManagedChannel channel;
     private RpcChannel rpcChannel;
     private ConfigurationContext configurationContext;
-    private ControlCommandProcessor controlCmdProcessor;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
     private MembershipManager membershipManager;
+    private InitializationRequestHandler initializationRequestHandler;
     private StaticMembershipInterceptor staticMembershipInterceptor;
     private org.apache.axis2.clustering.Member[] members;
 
     public TribesClusterManager() {
         parameters = new HashMap<String, Parameter>();
-        controlCmdProcessor = new ControlCommandProcessor(configurationContext);
     }
 
     public void setMembers(org.apache.axis2.clustering.Member[] members) {
@@ -164,9 +163,12 @@ public class TribesClusterManager implements ClusterManager {
 
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
+        initializationRequestHandler = new InitializationRequestHandler(configurationContext,
+                                                                        membershipManager,
+                                                                        staticMembershipInterceptor);
         rpcChannel =
                 new RpcChannel(domain, channel,
-                               new InitializationRequestHandler(controlCmdProcessor));
+                               initializationRequestHandler);
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(membershipManager);
@@ -184,7 +186,7 @@ public class TribesClusterManager implements ClusterManager {
                 }
             } catch (ChannelException e) {
                 String msg = "Could not JOIN group";
-                log.error(e);
+                log.error(msg, e);
                 throw new ClusteringFault(msg, e);
             }
         }
@@ -522,6 +524,10 @@ public class TribesClusterManager implements ClusterManager {
         nbc.setPrevious(dfi);
         channel.addInterceptor(nbc);*/
 
+        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+        channel.addInterceptor(atMostOnceInterceptor);
+        
         // Add the OrderInterceptor to preserve sender ordering
         OrderInterceptor orderInterceptor = new OrderInterceptor();
         orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
@@ -536,10 +542,6 @@ public class TribesClusterManager implements ClusterManager {
             staticMembershipInterceptor = new StaticMembershipInterceptor();
             channel.addInterceptor(staticMembershipInterceptor);
         }
-
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        channel.addInterceptor(atMostOnceInterceptor);
     }
 
     /**
@@ -740,7 +742,9 @@ public class TribesClusterManager implements ClusterManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        controlCmdProcessor.setConfigurationContext(configurationContext);
+        if (initializationRequestHandler != null) {
+            initializationRequestHandler.setConfigurationContext(configurationContext);
+        }
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
         }

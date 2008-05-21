@@ -18,15 +18,17 @@ package org.apache.axis2.clustering.control.wka;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  */
 public class JoinGroupCommand extends ControlCommand {
-    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        //TODO: Method implementation
-        System.out.println("### EXEC JoinGroupCommand");
 
-        //todo: send member list, add to static member list, send member joined to others
+    private Log log = LogFactory.getLog(JoinGroupCommand.class);
+
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        log.info("JOIN request received");
     }
 }

@@ -19,14 +19,20 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
+import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
+import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
+import org.apache.axis2.clustering.control.wka.MemberListCommand;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,35 +44,71 @@ import java.io.Serializable;
 public class InitializationRequestHandler implements RpcCallback {
 
     private static Log log = LogFactory.getLog(InitializationRequestHandler.class);
-    private ControlCommandProcessor controlCommandProcessor;
+    private ConfigurationContext configurationContext;
+    private MembershipManager membershipManager;
+    private StaticMembershipInterceptor staticMembershipInterceptor;
 
+    public InitializationRequestHandler(ConfigurationContext configurationContext, MembershipManager membershipManager,
+                                        StaticMembershipInterceptor staticMembershipInterceptor) {
+        this.configurationContext = configurationContext;
+        this.membershipManager = membershipManager;
+        this.staticMembershipInterceptor = staticMembershipInterceptor;
+    }
 
-    public InitializationRequestHandler(ControlCommandProcessor controlCommandProcessor) {
-        this.controlCommandProcessor = controlCommandProcessor;
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
     }
 
     public Serializable replyRequest(Serializable msg, Member member) {
-        if (msg instanceof GetStateCommand ||
-            msg instanceof GetConfigurationCommand) {
+        if (msg instanceof GetStateCommand) {
+            // If a GetStateRequest is received by a node which has not yet initialized
+            // this node cannot send a response to the state requester. So we simply return.
+            if (configurationContext.
+                    getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                return null;
+            }
             try {
                 log.info("Received " + msg + " initialization request message from " +
                          TribesUtil.getHost(member));
-                return controlCommandProcessor.process((ControlCommand) msg); // response is either GetConfigurationResponseCommand or GetStateResponseCommand
+                GetStateCommand command = (GetStateCommand) msg;
+                command.execute(configurationContext);
+                GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
+                getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
+                return getStateRespCmd;
+            } catch (ClusteringFault e) {
+                String errMsg = "Cannot handle initialization request";
+                log.error(errMsg, e);
+                throw new RemoteProcessException(errMsg, e);
+            }
+        } else if (msg instanceof GetConfigurationCommand) {
+            // If a GetConfigurationCommand is received by a node which has not yet initialized
+            // this node cannot send a response to the state requester. So we simply return.
+            if (configurationContext.
+                    getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
+                return null;
+            }
+            try {
+                log.info("Received " + msg + " initialization request message from " +
+                         TribesUtil.getHost(member));
+                GetConfigurationCommand command = (GetConfigurationCommand) msg;
+                command.execute(configurationContext);
+                GetConfigurationResponseCommand
+                    getConfigRespCmd = new GetConfigurationResponseCommand();
+                getConfigRespCmd.setServiceGroups(command.getServiceGroupNames());
+                return getConfigRespCmd;
             } catch (ClusteringFault e) {
                 String errMsg = "Cannot handle initialization request";
                 log.error(errMsg, e);
                 throw new RemoteProcessException(errMsg, e);
             }
         } else if (msg instanceof JoinGroupCommand) {
-            log.info("Received " + msg + " from " + TribesUtil.getHost(member));
-//            JoinGroupCommand command = (JoinGroupCommand) msg;
-            try {
-                return controlCommandProcessor.process((ControlCommand) msg); // response is 
-            } catch (ClusteringFault e) {
-                String errMsg = "Cannot handle JOIN request";
-                log.error(errMsg, e);
-                throw new RemoteProcessException(errMsg, e);
-            }
+            log.info("Received JOIN message from " + TribesUtil.getHost(member));
+            staticMembershipInterceptor.memberAdded(member);
+            membershipManager.memberAdded(member);
+
+            MemberListCommand memListCmd = new MemberListCommand();
+            //todo populate list
+            return memListCmd;
         }
         return null;
     }
