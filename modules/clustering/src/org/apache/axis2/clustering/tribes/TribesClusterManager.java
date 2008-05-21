@@ -33,6 +33,7 @@ import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
+import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
@@ -78,6 +79,7 @@ import java.util.Properties;
  */
 public class TribesClusterManager implements ClusterManager {
     public static final int MSG_ORDER_OPTION = 512;
+
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
     private DefaultConfigurationManager configurationManager;
@@ -168,6 +170,24 @@ public class TribesClusterManager implements ClusterManager {
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(membershipManager);
+
+        // If a WKA scheme is used, JOIN the group and get the member list
+        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            try {
+                Response[] responses = rpcChannel.send(membershipManager.getMembers(),
+                                                       new JoinGroupCommand(),
+                                                       RpcChannel.FIRST_REPLY,
+                                                       Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                       10000);
+                if (responses.length > 0) {
+                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                }
+            } catch (ChannelException e) {
+                String msg = "Could not JOIN group";
+                log.error(e);
+                throw new ClusteringFault(msg, e);
+            }
+        }
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
@@ -362,7 +382,9 @@ public class TribesClusterManager implements ClusterManager {
             } catch (IOException e) {
                 String msg =
                         "Could not allocate a port in the range 4000-4100 for local host " +
-                        localMember.getHostname();
+                        localMember.getHostname() +
+                        ". Check whether the IP address specified or inferred for the local " +
+                        "member is correct.";
                 log.error(msg, e);
                 throw new ClusteringFault(msg, e);
             }
@@ -434,7 +456,7 @@ public class TribesClusterManager implements ClusterManager {
     protected int getLocalPort(ServerSocket socket, String hostname,
                                int portstart, int retries) throws IOException {
         InetSocketAddress addr = null;
-        while (retries > 0) {
+        if (retries > 0) {
             try {
                 addr = new InetSocketAddress(hostname, portstart);
                 socket.bind(addr);
@@ -459,10 +481,10 @@ public class TribesClusterManager implements ClusterManager {
                 } catch (InterruptedException ignored) {
                     ignored.printStackTrace();
                 }
-                retries = getLocalPort(socket, hostname, portstart, retries);
+                getLocalPort(socket, hostname, portstart, retries);
             }
         }
-        return retries;
+        return portstart;
     }
 
     /**
@@ -505,10 +527,6 @@ public class TribesClusterManager implements ClusterManager {
         orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
         channel.addInterceptor(orderInterceptor);
 
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        channel.addInterceptor(atMostOnceInterceptor);
-
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
         tcpFailureDetector.setPrevious(dfi);
@@ -518,6 +536,10 @@ public class TribesClusterManager implements ClusterManager {
             staticMembershipInterceptor = new StaticMembershipInterceptor();
             channel.addInterceptor(staticMembershipInterceptor);
         }
+
+        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+        channel.addInterceptor(atMostOnceInterceptor);
     }
 
     /**

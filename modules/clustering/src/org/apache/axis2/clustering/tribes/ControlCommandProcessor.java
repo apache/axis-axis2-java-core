@@ -26,10 +26,12 @@ import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
+import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
+import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
- * 
+ *
  */
 public class ControlCommandProcessor {
     private ConfigurationContext configurationContext;
@@ -70,6 +72,10 @@ public class ControlCommandProcessor {
             getConfigRespCmd.
                     setServiceGroups(((GetConfigurationCommand) command).getServiceGroupNames());
             return getConfigRespCmd;
+        } else if (command instanceof JoinGroupCommand) {
+
+            command.execute(configurationContext);
+            return new MemberListCommand();
         }
         return null;
     }

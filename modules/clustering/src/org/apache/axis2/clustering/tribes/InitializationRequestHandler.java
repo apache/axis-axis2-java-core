@@ -23,6 +23,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
+import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
@@ -45,13 +46,24 @@ public class InitializationRequestHandler implements RpcCallback {
     }
 
     public Serializable replyRequest(Serializable msg, Member member) {
-        if (msg instanceof GetStateCommand || msg instanceof GetConfigurationCommand) {
+        if (msg instanceof GetStateCommand ||
+            msg instanceof GetConfigurationCommand) {
             try {
                 log.info("Received " + msg + " initialization request message from " +
                          TribesUtil.getHost(member));
-                return controlCommandProcessor.process((ControlCommand) msg);
+                return controlCommandProcessor.process((ControlCommand) msg); // response is either GetConfigurationResponseCommand or GetStateResponseCommand
             } catch (ClusteringFault e) {
                 String errMsg = "Cannot handle initialization request";
+                log.error(errMsg, e);
+                throw new RemoteProcessException(errMsg, e);
+            }
+        } else if (msg instanceof JoinGroupCommand) {
+            log.info("Received " + msg + " from " + TribesUtil.getHost(member));
+//            JoinGroupCommand command = (JoinGroupCommand) msg;
+            try {
+                return controlCommandProcessor.process((ControlCommand) msg); // response is 
+            } catch (ClusteringFault e) {
+                String errMsg = "Cannot handle JOIN request";
                 log.error(errMsg, e);
                 throw new RemoteProcessException(errMsg, e);
             }

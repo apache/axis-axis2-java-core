@@ -33,4 +33,11 @@ public final class TribesConstants {
     public static final String BIND_ADDRESS = "bindAddress";
     public static final String TCP_LISTEN_PORT = "tcpListenPort";
     public static final String MAX_RETRIES = "maxRetries";
+
+    public final class MembershipMessages {
+        public static final int JOIN = 3;
+        public static final int LEAVE = 5;
+        public static final int NEW_MEMBER_JOINED = 7;
+        public static final int MEMBER_LIST = 11;
+    }
 }
