@@ -34,6 +34,7 @@ import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
+import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
@@ -92,7 +93,7 @@ public class TribesClusterManager implements ClusterManager {
     private ChannelListener channelListener;
     private ChannelSender channelSender;
     private MembershipManager membershipManager;
-    private InitializationRequestHandler initializationRequestHandler;
+    private RpcRequestHandler rpcRequestHandler;
     private StaticMembershipInterceptor staticMembershipInterceptor;
     private org.apache.axis2.clustering.Member[] members;
 
@@ -163,12 +164,12 @@ public class TribesClusterManager implements ClusterManager {
 
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
-        initializationRequestHandler = new InitializationRequestHandler(configurationContext,
-                                                                        membershipManager,
-                                                                        staticMembershipInterceptor);
-        rpcChannel =
-                new RpcChannel(domain, channel,
-                               initializationRequestHandler);
+        rpcRequestHandler = new RpcRequestHandler(configurationContext,
+                                                  membershipManager,
+                                                  staticMembershipInterceptor);
+        rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
+        rpcRequestHandler.setRpcChannel(rpcChannel);
+
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(membershipManager);
@@ -182,7 +183,10 @@ public class TribesClusterManager implements ClusterManager {
                                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
                                                        10000);
                 if (responses.length > 0) {
-                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                    MemberListCommand command = (MemberListCommand) responses[0].getMessage();
+                    command.setMembershipManager(membershipManager);
+                    command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                    command.execute(configurationContext); // Do the initialization
                 }
             } catch (ChannelException e) {
                 String msg = "Could not JOIN group";
@@ -527,7 +531,7 @@ public class TribesClusterManager implements ClusterManager {
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
         AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
         channel.addInterceptor(atMostOnceInterceptor);
-        
+
         // Add the OrderInterceptor to preserve sender ordering
         OrderInterceptor orderInterceptor = new OrderInterceptor();
         orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
@@ -742,8 +746,8 @@ public class TribesClusterManager implements ClusterManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        if (initializationRequestHandler != null) {
-            initializationRequestHandler.setConfigurationContext(configurationContext);
+        if (rpcRequestHandler != null) {
+            rpcRequestHandler.setConfigurationContext(configurationContext);
         }
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);

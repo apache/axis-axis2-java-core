@@ -15,16 +15,45 @@
  */
 package org.apache.axis2.clustering.control.wka;
 
-import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.ControlCommand;
+import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
+
+import java.util.Arrays;
 
 /**
  *
  */
 public class MemberListCommand extends ControlCommand {
+
+    private Member[] members;
+    private MembershipManager membershipManager;
+    private StaticMembershipInterceptor staticMembershipInterceptor;
+
+    public void setMembershipManager(MembershipManager membershipManager) {
+        this.membershipManager = membershipManager;
+    }
+
+    public void setStaticMembershipInterceptor(
+            StaticMembershipInterceptor staticMembershipInterceptor) {
+        this.staticMembershipInterceptor = staticMembershipInterceptor;
+    }
+
+    public void setMembers(Member[] members) {
+        this.members = members;
+    }
+
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        //TODO: Method implementation
-        System.out.println("#### MEMBER LIST CMD");
+        for (Member member : members) {
+            Member localMember = membershipManager.getLocalMember();
+            if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
+                  localMember.getPort() == member.getPort())) {
+                membershipManager.memberAdded(member);
+                staticMembershipInterceptor.memberAdded(member);
+            }
+        }
     }
 }

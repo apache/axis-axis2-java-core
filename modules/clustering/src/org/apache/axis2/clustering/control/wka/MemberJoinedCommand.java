@@ -15,10 +15,46 @@
  */
 package org.apache.axis2.clustering.control.wka;
 
-import org.apache.catalina.tribes.io.ChannelData;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.ControlCommand;
+import org.apache.axis2.clustering.tribes.MembershipManager;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.Arrays;
 
 /**
  *
  */
-public class MemberJoinedCommand extends ChannelData {
+public class MemberJoinedCommand extends ControlCommand {
+
+    private static final Log log = LogFactory.getLog(MemberJoinedCommand.class);
+    private Member member;
+    private MembershipManager membershipManager;
+    private StaticMembershipInterceptor staticMembershipInterceptor;
+
+    public void setMembershipManager(MembershipManager membershipManager) {
+        this.membershipManager = membershipManager;
+    }
+
+    public void setStaticMembershipInterceptor(
+            StaticMembershipInterceptor staticMembershipInterceptor) {
+        this.staticMembershipInterceptor = staticMembershipInterceptor;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        Member localMember = membershipManager.getLocalMember();
+        if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
+              localMember.getPort() == member.getPort())) {
+            membershipManager.memberAdded(member);
+            staticMembershipInterceptor.memberAdded(member);
+        }
+    }
 }

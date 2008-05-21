@@ -15,10 +15,16 @@
  */
 package org.apache.axis2.clustering.control.wka;
 
-import org.apache.catalina.tribes.io.ChannelData;
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.ControlCommand;
+import org.apache.axis2.context.ConfigurationContext;
 
 /**
  *
  */
-public class LeaveGroupCommand extends ChannelData {
+public class LeaveGroupCommand extends ControlCommand {
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        //TODO: Method implementation
+
+    }
 }

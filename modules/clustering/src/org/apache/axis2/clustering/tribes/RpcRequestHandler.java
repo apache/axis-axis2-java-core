@@ -21,17 +21,19 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
+import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
+import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,20 +41,26 @@ import org.apache.commons.logging.LogFactory;
 import java.io.Serializable;
 
 /**
- * Handles initialization requests(GetConfiguration & GetState) from newly joining members
+ * Handles RPC Channel requests from members
  */
-public class InitializationRequestHandler implements RpcCallback {
+public class RpcRequestHandler implements RpcCallback {
 
-    private static Log log = LogFactory.getLog(InitializationRequestHandler.class);
+    private static Log log = LogFactory.getLog(RpcRequestHandler.class);
     private ConfigurationContext configurationContext;
     private MembershipManager membershipManager;
     private StaticMembershipInterceptor staticMembershipInterceptor;
+    private RpcChannel rpcChannel;
 
-    public InitializationRequestHandler(ConfigurationContext configurationContext, MembershipManager membershipManager,
+    public RpcRequestHandler(ConfigurationContext configurationContext,
+                                        MembershipManager membershipManager,
                                         StaticMembershipInterceptor staticMembershipInterceptor) {
         this.configurationContext = configurationContext;
         this.membershipManager = membershipManager;
         this.staticMembershipInterceptor = staticMembershipInterceptor;
+    }
+
+    public void setRpcChannel(RpcChannel rpcChannel) {
+        this.rpcChannel = rpcChannel;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
@@ -73,7 +81,7 @@ public class InitializationRequestHandler implements RpcCallback {
                 GetStateCommand command = (GetStateCommand) msg;
                 command.execute(configurationContext);
                 GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
-                getStateRespCmd.setCommands(((GetStateCommand) command).getCommands());
+                getStateRespCmd.setCommands(command.getCommands());
                 return getStateRespCmd;
             } catch (ClusteringFault e) {
                 String errMsg = "Cannot handle initialization request";
@@ -93,7 +101,7 @@ public class InitializationRequestHandler implements RpcCallback {
                 GetConfigurationCommand command = (GetConfigurationCommand) msg;
                 command.execute(configurationContext);
                 GetConfigurationResponseCommand
-                    getConfigRespCmd = new GetConfigurationResponseCommand();
+                        getConfigRespCmd = new GetConfigurationResponseCommand();
                 getConfigRespCmd.setServiceGroups(command.getServiceGroupNames());
                 return getConfigRespCmd;
             } catch (ClusteringFault e) {
@@ -103,13 +111,45 @@ public class InitializationRequestHandler implements RpcCallback {
             }
         } else if (msg instanceof JoinGroupCommand) {
             log.info("Received JOIN message from " + TribesUtil.getHost(member));
-            staticMembershipInterceptor.memberAdded(member);
-            membershipManager.memberAdded(member);
+            MemberListCommand memListCmd;
+            try {
+                // Add the member
+                staticMembershipInterceptor.memberAdded(member);
+                membershipManager.memberAdded(member);
 
-            MemberListCommand memListCmd = new MemberListCommand();
-            //todo populate list
+                // Return the list of current members to the caller
+                memListCmd = new MemberListCommand();
+                memListCmd.setMembers(membershipManager.getMembers());
+
+                // Send a message to all other informing that a member has joined
+                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                memberJoinedCommand.setMember(member);
+                rpcChannel.send(membershipManager.getMembers(),
+                                memberJoinedCommand,
+                                RpcChannel.ALL_REPLY,
+                                Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                10000);
+            } catch (Exception e) {
+                String errMsg = "Cannot handle JOIN request";
+                log.error(errMsg, e);
+                throw new RemoteProcessException(errMsg, e);
+            }
             return memListCmd;
+        } else if (msg instanceof MemberJoinedCommand) {
+            log.info("Received MEMBER_JOINED message from " + TribesUtil.getHost(member));
+            try {
+                MemberJoinedCommand command = (MemberJoinedCommand) msg;
+                command.setMembershipManager(membershipManager);
+                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                command.execute(configurationContext);
+            } catch (ClusteringFault e) {
+                String errMsg = "Cannot handle MEMBER_JOINED notification";
+                log.error(errMsg, e);
+                throw new RemoteProcessException(errMsg, e);
+            }
         }
+
+        //TODO: If a WKA member fails, it shud figure out the membership. The WKA member write membership to a local file
         return null;
     }
 
