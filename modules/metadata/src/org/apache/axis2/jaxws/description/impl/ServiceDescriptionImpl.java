@@ -66,6 +66,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.ref.SoftReference;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -107,8 +108,9 @@ class ServiceDescriptionImpl
                 new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
 
     // Cache classes for the info for resolved handlers
-    Map<PortInfo, ResolvedHandlersDescription> resolvedHandlersDescription =
-            new WeakHashMap<PortInfo, ResolvedHandlersDescription>();
+    private SoftReference<Map<PortInfo, ResolvedHandlersDescription>> resolvedHandlersDescription =
+            new SoftReference<Map<PortInfo, ResolvedHandlersDescription>>
+        (new ConcurrentHashMap<PortInfo, ResolvedHandlersDescription>());
     
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
@@ -2211,12 +2213,27 @@ class ServiceDescriptionImpl
     }
 
     public void setResolvedHandlersDescription(PortInfo portInfo, ResolvedHandlersDescription resolvedHandlersInfo) {
-        resolvedHandlersDescription.put(portInfo, resolvedHandlersInfo);
+        // Get the cache and store the handler description
+        Map<PortInfo, ResolvedHandlersDescription> cache = resolvedHandlersDescription.get();
+        
+        if (cache == null) {
+            cache = new ConcurrentHashMap<PortInfo, ResolvedHandlersDescription>();
+            resolvedHandlersDescription =
+                new SoftReference<Map<PortInfo, ResolvedHandlersDescription>>(cache);
+            
+        }
+        cache.put(portInfo, resolvedHandlersInfo);
         
     }
 
+    
     public ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo) {
-        return resolvedHandlersDescription.get(portInfo);
+        Map<PortInfo, ResolvedHandlersDescription> cache = resolvedHandlersDescription.get();
+
+        return (cache == null) ?
+                null: // No Cache
+                cache.get(portInfo); 
+       
     }
     
     private String resolveWSDLLocationByCatalog(String wsdlLocation) {
