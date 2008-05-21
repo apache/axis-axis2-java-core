@@ -1874,9 +1874,13 @@ class EndpointDescriptionImpl
                         dbc.getCustomWsdlGenerator().generateWsdl(implName, this);
 
                 if (wsdlComposite != null) {
-                    wsdlComposite.setWsdlFileName(
-                            (this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase());
-
+                    if(wsdlComposite.getWsdlFileName() == null
+                            ||
+                            "".equals(wsdlComposite.getWsdlFileName())) {
+                        wsdlComposite.setWsdlFileName(
+                                                      (this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase()); 
+                    }
+                    
                     Definition wsdlDef = wsdlComposite.getRootWsdlDefinition();
 
                     try {

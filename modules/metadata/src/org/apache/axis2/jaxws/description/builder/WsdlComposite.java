@@ -48,8 +48,7 @@ public class WsdlComposite {
 
     /** @return Returns the root WSDL Definition */
     public Definition getRootWsdlDefinition() {
-
-        return wsdlDefinitionsMap.get(getWsdlFileName().toLowerCase());
+        return wsdlDefinitionsMap.get(getWsdlFileName());
     }
 
     /** @return Returns the wsdlFileName. */
@@ -72,7 +71,7 @@ public class WsdlComposite {
      */
     public void setWsdlFileName(String wsdlFileName) {
         this.wsdlFileName = wsdlFileName;
-	}
+    }
 	
 	
 }
