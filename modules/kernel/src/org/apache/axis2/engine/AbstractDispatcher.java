@@ -115,18 +115,17 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                 AxisEndpoint axisEndpoint =
                         (AxisEndpoint) msgctx.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+
                 if (axisEndpoint != null) {
                     AxisBindingOperation axisBindingOperation =
-                            (AxisBindingOperation) axisEndpoint.getBinding()
-                                    .getChild(axisOperation.getName());
-                    msgctx
-					.setProperty(
-							Constants.AXIS_BINDING_MESSAGE,
-							axisBindingOperation
-									.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
-                    msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
-
+                            (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
+                    if (axisBindingOperation != null) {
+                        msgctx.setProperty(Constants.AXIS_BINDING_MESSAGE,
+                                axisBindingOperation.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                        msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                    }
                 }
+
 
             }
         }
