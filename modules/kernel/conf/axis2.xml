@@ -249,7 +249,7 @@
      corresponding to the "class" attribute of the "cluster" element. It is also responsible for
      getting this node to join the cluster.
      -->
-    <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager" enable="false">
+    <cluster class="org.apache.axis2.clustering.tribes.TribesClusterManager" enable="false">
 
         <!--
            This parameter indicates whther the cluster has to be automatically initalized
@@ -350,9 +350,9 @@
 
             The "enable" attribute indicates whether Configuration management has been enabled
         -->
-        <configurationManager class="org.apache.axis2.clustering.configuration.TribesConfigurationManager"
+        <configurationManager class="org.apache.axis2.clustering.configuration.DefaultConfigurationManager"
                               enable="true">
-    	    <listener class="org.apache.axis2.cluster.configuration.DefaultConfigurationManagerListener"/>
+    	    <listener class="org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener"/>
     	</configurationManager>
 
         <!--
