@@ -36,7 +36,8 @@ import java.util.Map;
 public class AtMostOnceInterceptor extends ChannelInterceptorBase {          
 
     private static Log log = LogFactory.getLog(AtMostOnceInterceptor.class);
-    private static final Map receivedMessages = new HashMap();
+    private static final Map<ChannelMessage, Long> receivedMessages =
+            new HashMap<ChannelMessage, Long>();
 
     /**
      * The time a message lives in the receivedMessages Map
@@ -52,7 +53,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     public void messageReceived(ChannelMessage msg) {
         synchronized (receivedMessages) {
             if (receivedMessages.get(msg) == null) {  // If it is a new message, keep track of it
-                receivedMessages.put(msg, new Long(System.currentTimeMillis()));
+                receivedMessages.put(msg, System.currentTimeMillis());
                 super.messageReceived(msg);
             } else {  // If it is a duplicate message, discard it. i.e. dont call super.messageReceived
                 log.info("Duplicate message received from " + TribesUtil.getHost(msg.getAddress()));
@@ -63,36 +64,33 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
     private class MessageCleanupTask implements Runnable {
 
         public void run() {
-            while (true) {
+            while (true) { // This task should never terminate
                 try {
                     Thread.sleep(TIMEOUT);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 try {
-                    List toBeRemoved = new ArrayList();
+                    List<ChannelMessage> toBeRemoved = new ArrayList<ChannelMessage>();
                     Thread.yield();
                     synchronized (receivedMessages) {
-                        for (Iterator iterator = receivedMessages.keySet().iterator();
-                             iterator.hasNext();) {
-                            ChannelMessage msg = (ChannelMessage) iterator.next();
-                            long arrivalTime = ((Long) receivedMessages.get(msg)).longValue();
+                        for (ChannelMessage msg : receivedMessages.keySet()) {
+                            long arrivalTime = receivedMessages.get(msg);
                             if (System.currentTimeMillis() - arrivalTime >= TIMEOUT) {
                                 toBeRemoved.add(msg);
-                                if(toBeRemoved.size() > 10000){ // Do not allow this thread to run for too long
+                                if (toBeRemoved.size() > 10000) { // Do not allow this thread to run for too long
                                     break;
                                 }
                             }
                         }
-                        for (Iterator iterator = toBeRemoved.iterator(); iterator.hasNext();) {
-                            ChannelMessage msg = (ChannelMessage) iterator.next();
+                        for (ChannelMessage msg : toBeRemoved) {
                             receivedMessages.remove(msg);
                             if (log.isDebugEnabled()) {
                                 log.debug("Cleaned up message ");
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     log.error("Exception occurred while trying to cleanup messages", e);
                 }
             }
