@@ -73,6 +73,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class AxisService
@@ -252,7 +253,8 @@ public class AxisService extends AxisDescription {
 	private String bindingName;
         
 	// List of MessageContextListeners that listen for events on the MessageContext
-        private ArrayList messageContextListeners = new ArrayList();
+        private CopyOnWriteArrayList<MessageContextListener> messageContextListeners = 
+            new CopyOnWriteArrayList<MessageContextListener>();
 
         // names list keep to preserve the parameter order
         private List operationsNameList;
@@ -2979,9 +2981,7 @@ public class AxisService extends AxisDescription {
      * @param scl
      */
     public void addMessageContextListener(MessageContextListener scl) {
-        synchronized (messageContextListeners) {
-            messageContextListeners.add(scl);
-        }
+        messageContextListeners.add(scl);
     }
     
     /**
@@ -2989,9 +2989,7 @@ public class AxisService extends AxisDescription {
      * @param scl
      */
     public void removeMessageContextListener(MessageContextListener scl) {
-        synchronized (messageContextListeners) {
-            messageContextListeners.remove(scl);
-        }
+        messageContextListeners.remove(scl);
     }
     
     /**
@@ -2999,11 +2997,9 @@ public class AxisService extends AxisDescription {
      * @return true if ServiceContextLister is in the list
      */
     public boolean hasMessageContextListener(Class cls) {
-        synchronized (messageContextListeners) {
-            for (int i=0; i<messageContextListeners.size(); i++) {
-                if (messageContextListeners.get(i).getClass() == cls) {
-                    return true;
-                }
+        for (int i=0; i<messageContextListeners.size(); i++) {
+            if (messageContextListeners.get(i).getClass() == cls) {
+                return true;
             }
         }
         return false;
@@ -3015,11 +3011,8 @@ public class AxisService extends AxisDescription {
      * @param mc MessageContext
      */
     public void attachServiceContextEvent(ServiceContext sc, MessageContext mc) {
-        synchronized (messageContextListeners) {
-            for (int i=0; i<messageContextListeners.size(); i++) {
-                ((MessageContextListener) messageContextListeners.get(i)).
-                    attachServiceContextEvent(sc, mc);
-            }
+        for (int i=0; i<messageContextListeners.size(); i++) {
+            messageContextListeners.get(i).attachServiceContextEvent(sc, mc);
         }
     }
     
@@ -3029,11 +3022,8 @@ public class AxisService extends AxisDescription {
      * @param mc MessageContext
      */
     public void attachEnvelopeEvent(MessageContext mc) {
-        synchronized (messageContextListeners) {
-            for (int i=0; i<messageContextListeners.size(); i++) {
-                ((MessageContextListener) messageContextListeners.get(i)).
-                    attachEnvelopeEvent(mc);
-            }
+        for (int i=0; i<messageContextListeners.size(); i++) {
+            messageContextListeners.get(i).attachEnvelopeEvent(mc);
         }
     }
 }
