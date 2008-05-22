@@ -843,7 +843,7 @@ public class JAXBUtils {
             // primitives
             "boolean[]",
             "byte[]",
-            "char[][]",
+            "char[]",
             "double[]",
             "float[]",
             "int[]",
@@ -984,46 +984,21 @@ public class JAXBUtils {
      */
     private static JAXBContext JAXBContext_newInstance(final Class[] classArray, 
                                                        final ClassLoader cl)
-            throws JAXBException {
+    throws JAXBException {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
-        try {
-            if (log.isDebugEnabled()) {
-                if (classArray == null || classArray.length == 0) {
-                    log.debug("JAXBContext is constructed with 0 input classes.");
-                } else {
-                    log.debug("JAXBContext is constructed with " + classArray.length +
-                            " input classes.");
-                }
-            }
-            jaxbContext = (JAXBContext)AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws JAXBException {
-                            // Unlike the JAXBContext.newInstance(Class[]) method
-                            // does now accept a classloader.  To workaround this
-                            // issue, the classloader is temporarily changed to cl
-                            Thread currentThread = Thread.currentThread();
-                            ClassLoader savedClassLoader = currentThread.getContextClassLoader();
-                            try {
-                                currentThread.setContextClassLoader(cl);
-                                return JAXBContext.newInstance(classArray);
-                            } finally {
-                                currentThread.setContextClassLoader(savedClassLoader);
-                            }
-                        }
-                    }
-            );
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-                log.debug("  Exception is " + e.getException());
-            }
-            if (e.getException() instanceof JAXBException) {
-                throw (JAXBException)e.getException();
-            } else if (e.getException() instanceof RuntimeException) {
-                throw ExceptionFactory.makeWebServiceException(e.getException());
+
+        if (log.isDebugEnabled()) {
+            if (classArray == null || classArray.length == 0) {
+                log.debug("JAXBContext is constructed with 0 input classes.");
+            } else {
+                log.debug("JAXBContext is constructed with " + classArray.length +
+                " input classes.");
             }
         }
+
+        // Get JAXBContext from classes
+        jaxbContext = JAXBContextFromClasses.newInstance(classArray, cl);
 
         return jaxbContext;
     }
