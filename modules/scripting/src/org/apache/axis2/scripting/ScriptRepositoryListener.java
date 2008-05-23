@@ -22,8 +22,10 @@ package org.apache.axis2.scripting;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.RepositoryListener;
 import org.apache.axis2.deployment.repository.util.WSInfo;
+import org.apache.axis2.java.security.AccessController;
 
 import java.io.File;
+import java.security.PrivilegedAction;
 
 /**
  * An Axis2 RepositoryListener subclass for dealing with script services
@@ -39,8 +41,12 @@ public class ScriptRepositoryListener extends RepositoryListener {
      * the WSInfolist class.
      */
     protected void findServicesInDirectory() {
-
-        File[] files = deploymentEngine.getServicesDir().listFiles();
+        // need doPriv to list files with J2S enabled
+        File[] files = (File[]) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return deploymentEngine.getServicesDir().listFiles();
+            }
+        });
 
         if (files != null && files.length > 0) {
             for (int i = 0; i < files.length; i++) {

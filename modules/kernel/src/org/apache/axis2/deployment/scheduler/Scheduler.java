@@ -20,12 +20,19 @@
 
 package org.apache.axis2.deployment.scheduler;
 
+import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.axis2.java.security.AccessController;
+
 public class Scheduler {
-    private final Timer timer = new Timer(true);
+    private final Timer timer = (Timer)AccessController.doPrivileged(new PrivilegedAction() {
+        public Object run() {
+            return new Timer(true);
+        }
+    });
 
     private void reschedule(SchedulerTask schedulerTask, DeploymentIterator iterator) {
         Date time = iterator.next();
