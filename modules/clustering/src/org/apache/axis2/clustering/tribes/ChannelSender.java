@@ -80,8 +80,7 @@ public class ChannelSender implements MessageSender {
             } catch (ChannelException e) {
                 log.error("Could not send message to some members", e);
                 ChannelException.FaultyMember[] faultyMembers = e.getFaultyMembers();
-                for (int i = 0; i < faultyMembers.length; i++) {
-                    ChannelException.FaultyMember faultyMember = faultyMembers[i];
+                for (ChannelException.FaultyMember faultyMember : faultyMembers) {
                     Member member = faultyMember.getMember();
                     log.error("Member " + TribesUtil.getHost(member) + " is faulty",
                               faultyMember.getCause());

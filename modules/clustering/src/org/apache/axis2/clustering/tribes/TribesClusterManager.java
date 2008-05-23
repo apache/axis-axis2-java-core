@@ -96,17 +96,17 @@ public class TribesClusterManager implements ClusterManager {
     private MembershipManager membershipManager;
     private RpcRequestHandler rpcRequestHandler;
     private StaticMembershipInterceptor staticMembershipInterceptor;
-    private org.apache.axis2.clustering.Member[] members;
+    private List<org.apache.axis2.clustering.Member> members;
 
     public TribesClusterManager() {
         parameters = new HashMap<String, Parameter>();
     }
 
-    public void setMembers(org.apache.axis2.clustering.Member[] members) {
+    public void setMembers(List<org.apache.axis2.clustering.Member> members) {
         this.members = members;
     }
 
-    public org.apache.axis2.clustering.Member[] getMembers() {
+    public List<org.apache.axis2.clustering.Member> getMembers() {
         return members;
     }
 
@@ -140,8 +140,8 @@ public class TribesClusterManager implements ClusterManager {
         addInterceptors(channel, domain, membershipScheme);
 
         // Membership scheme handling
-        //TODO: if it is a WKA scheme, connect to a WKA and get a list of members. Add the members
-        // TODO: to the membership manager
+        // If it is a WKA scheme, connect to a WKA and get a list of members. Add the members
+        // to the membership manager
         configureMembershipScheme(domain, membershipScheme);
 
         channel.addChannelListener(channelListener);
@@ -169,6 +169,7 @@ public class TribesClusterManager implements ClusterManager {
                                                   membershipManager,
                                                   staticMembershipInterceptor);
         rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
+        membershipManager.setRpcChannel(rpcChannel);
 
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
@@ -197,16 +198,13 @@ public class TribesClusterManager implements ClusterManager {
                         Member[] sendTo = new Member[currentMembers.length - 1];
                         int j = 0;
                         for (Member currentMember : currentMembers) {
-                            if (!currentMember.equals(source)) {
+                            if (!currentMember.equals(source)) {  // Don't send back to the sender
                                 sendTo[j] = currentMember;
                                 j++;
                             }
                         }
-                        rpcChannel.send(sendTo,
-                                        memberJoinedCommand,
-                                        RpcChannel.ALL_REPLY,
-                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                        10000);
+                        rpcChannel.send(sendTo, memberJoinedCommand, RpcChannel.ALL_REPLY,
+                                        Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
                     } catch (ChannelException e) {
                         String msg = "Could not send MEMBER_JOINED message to group";
                         log.error(msg, e);
@@ -450,6 +448,7 @@ public class TribesClusterManager implements ClusterManager {
                 // We will add the member even if it is offline at this moment. When the
                 // member comes online, it will be detected by the GMS
                 staticMembershipInterceptor.addStaticMember(tribesMember);
+                membershipManager.addWellKnownMember(tribesMember);
                 if (canConnect(member)) {
                     membershipManager.memberAdded(tribesMember);
                     log.info("Added static member " + TribesUtil.getHost(tribesMember));

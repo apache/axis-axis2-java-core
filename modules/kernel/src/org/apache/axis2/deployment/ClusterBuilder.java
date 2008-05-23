@@ -118,12 +118,12 @@ public class ClusterBuilder extends DescriptionBuilder {
     }
 
     private void loadMembers(ClusterManager clusterManager, OMElement clusterElement) {
-        clusterManager.setMembers(new Member[0]);
+        clusterManager.setMembers(new ArrayList<Member>());
         Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
         if (membershipSchemeParam != null) {
             String membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
             if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-                List members = new ArrayList();
+                List<Member> members = new ArrayList<Member>();
                 OMElement membersEle =
                         clusterElement.getFirstChildWithName(new QName("members"));
                 if (membersEle != null) {
@@ -137,7 +137,7 @@ public class ClusterBuilder extends DescriptionBuilder {
                         members.add(new Member(hostName, Integer.parseInt(port)));
                     }
                 }
-                clusterManager.setMembers((Member[]) members.toArray(new Member[members.size()]));
+                clusterManager.setMembers(members);
             }
         }
     }

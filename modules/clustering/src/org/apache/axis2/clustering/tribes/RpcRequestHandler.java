@@ -49,8 +49,8 @@ public class RpcRequestHandler implements RpcCallback {
     private StaticMembershipInterceptor staticMembershipInterceptor;
 
     public RpcRequestHandler(ConfigurationContext configurationContext,
-                                        MembershipManager membershipManager,
-                                        StaticMembershipInterceptor staticMembershipInterceptor) {
+                             MembershipManager membershipManager,
+                             StaticMembershipInterceptor staticMembershipInterceptor) {
         this.configurationContext = configurationContext;
         this.membershipManager = membershipManager;
         this.staticMembershipInterceptor = staticMembershipInterceptor;
@@ -128,6 +128,19 @@ public class RpcRequestHandler implements RpcCallback {
                 command.execute(configurationContext);
             } catch (ClusteringFault e) {
                 String errMsg = "Cannot handle MEMBER_JOINED notification";
+                log.error(errMsg, e);
+                throw new RemoteProcessException(errMsg, e);
+            }
+        } else if (msg instanceof MemberListCommand) {
+            try {                    //TODO: What if we receive more than one member list message?
+                MemberListCommand command = (MemberListCommand) msg;
+                command.setMembershipManager(membershipManager);
+                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                command.execute(configurationContext);
+
+                //TODO Send MEMBER_JOINED messages to all nodes
+            } catch (ClusteringFault e) {
+                String errMsg = "Cannot handle MEMBER_LIST message";
                 log.error(errMsg, e);
                 throw new RemoteProcessException(errMsg, e);
             }

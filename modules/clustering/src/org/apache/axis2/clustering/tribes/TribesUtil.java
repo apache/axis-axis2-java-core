@@ -24,8 +24,6 @@ import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.StringTokenizer;
-
 public class TribesUtil {
 
     private static Log log = LogFactory.getLog(TribesUtil.class);

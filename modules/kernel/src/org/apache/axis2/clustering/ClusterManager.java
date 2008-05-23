@@ -24,6 +24,8 @@ import org.apache.axis2.clustering.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
+import java.util.List;
+
 /**
  * <p>
  * This is the main interface in the Axis2 clustering implementation.
@@ -135,7 +137,7 @@ public interface ClusterManager extends ParameterInclude {
      *
      * @param members Members to be added
      */
-    void setMembers(Member[] members);
+    void setMembers(List<Member> members);
 
     /**
      * Get the list of members in a
@@ -146,6 +148,6 @@ public interface ClusterManager extends ParameterInclude {
      * @return The members if static group membership is used. If any other membership scheme is used,
      *         the values returned may not be valid
      */
-    Member[] getMembers();
+    List<Member> getMembers();
 
 }
