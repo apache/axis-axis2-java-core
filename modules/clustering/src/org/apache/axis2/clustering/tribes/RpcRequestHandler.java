@@ -29,11 +29,9 @@ import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
 import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
-import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +47,6 @@ public class RpcRequestHandler implements RpcCallback {
     private ConfigurationContext configurationContext;
     private MembershipManager membershipManager;
     private StaticMembershipInterceptor staticMembershipInterceptor;
-    private RpcChannel rpcChannel;
 
     public RpcRequestHandler(ConfigurationContext configurationContext,
                                         MembershipManager membershipManager,
@@ -59,15 +56,11 @@ public class RpcRequestHandler implements RpcCallback {
         this.staticMembershipInterceptor = staticMembershipInterceptor;
     }
 
-    public void setRpcChannel(RpcChannel rpcChannel) {
-        this.rpcChannel = rpcChannel;
-    }
-
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
     }
 
-    public Serializable replyRequest(Serializable msg, Member member) {
+    public Serializable replyRequest(Serializable msg, Member invoker) {
         if (msg instanceof GetStateCommand) {
             // If a GetStateRequest is received by a node which has not yet initialized
             // this node cannot send a response to the state requester. So we simply return.
@@ -77,7 +70,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             try {
                 log.info("Received " + msg + " initialization request message from " +
-                         TribesUtil.getHost(member));
+                         TribesUtil.getHost(invoker));
                 GetStateCommand command = (GetStateCommand) msg;
                 command.execute(configurationContext);
                 GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
@@ -97,7 +90,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             try {
                 log.info("Received " + msg + " initialization request message from " +
-                         TribesUtil.getHost(member));
+                         TribesUtil.getHost(invoker));
                 GetConfigurationCommand command = (GetConfigurationCommand) msg;
                 command.execute(configurationContext);
                 GetConfigurationResponseCommand
@@ -110,25 +103,16 @@ public class RpcRequestHandler implements RpcCallback {
                 throw new RemoteProcessException(errMsg, e);
             }
         } else if (msg instanceof JoinGroupCommand) {
-            log.info("Received JOIN message from " + TribesUtil.getHost(member));
+            log.info("Received JOIN message from " + TribesUtil.getHost(invoker));
             MemberListCommand memListCmd;
             try {
                 // Add the member
-                staticMembershipInterceptor.memberAdded(member);
-                membershipManager.memberAdded(member);
+                staticMembershipInterceptor.memberAdded(invoker);
+                membershipManager.memberAdded(invoker);
 
                 // Return the list of current members to the caller
                 memListCmd = new MemberListCommand();
                 memListCmd.setMembers(membershipManager.getMembers());
-
-                // Send a message to all other informing that a member has joined
-                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                memberJoinedCommand.setMember(member);
-                rpcChannel.send(membershipManager.getMembers(),
-                                memberJoinedCommand,
-                                RpcChannel.ALL_REPLY,
-                                Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                10000);
             } catch (Exception e) {
                 String errMsg = "Cannot handle JOIN request";
                 log.error(errMsg, e);
@@ -136,7 +120,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             return memListCmd;
         } else if (msg instanceof MemberJoinedCommand) {
-            log.info("Received MEMBER_JOINED message from " + TribesUtil.getHost(member));
+            log.info("Received MEMBER_JOINED message from " + TribesUtil.getHost(invoker));
             try {
                 MemberJoinedCommand command = (MemberJoinedCommand) msg;
                 command.setMembershipManager(membershipManager);

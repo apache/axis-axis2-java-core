@@ -20,7 +20,7 @@ import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**
- *
+ *  When a member wishes to gracefully leave a group, it will send this message to the group
  */
 public class LeaveGroupCommand extends ControlCommand {
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {

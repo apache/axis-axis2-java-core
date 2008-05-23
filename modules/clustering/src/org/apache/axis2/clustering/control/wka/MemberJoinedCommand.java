@@ -21,17 +21,16 @@ import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.Arrays;
 
 /**
- *
+ * This is the notification message a member will send to all others in the group after it has
+ * joined the group. When the other members received this message, they will add the newly joined
+ * member to their member list
  */
 public class MemberJoinedCommand extends ControlCommand {
 
-    private static final Log log = LogFactory.getLog(MemberJoinedCommand.class);
     private Member member;
     private MembershipManager membershipManager;
     private StaticMembershipInterceptor staticMembershipInterceptor;

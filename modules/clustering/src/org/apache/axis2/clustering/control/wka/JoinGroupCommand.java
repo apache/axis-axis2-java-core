@@ -15,14 +15,15 @@
  */
 package org.apache.axis2.clustering.control.wka;
 
-import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * This is the message a member will send to another member when it intends to join a group.
+ * This is used with WKA based membership
  */
 public class JoinGroupCommand extends ControlCommand {
 

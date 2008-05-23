@@ -18,16 +18,23 @@ package org.apache.axis2.clustering.control.wka;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.tribes.MembershipManager;
+import org.apache.axis2.clustering.tribes.TribesUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Arrays;
 
 /**
- *
+ * When a new member wishes to join a group, it will send a {@link JoinGroupCommand} message to
+ * a known member. Then this known member will respond with this MemberListCommand message.
+ * This message will contain a list of all current members.
  */
 public class MemberListCommand extends ControlCommand {
+
+    private static final Log log = LogFactory.getLog(MemberListCommand.class);
 
     private Member[] members;
     private MembershipManager membershipManager;
@@ -37,8 +44,7 @@ public class MemberListCommand extends ControlCommand {
         this.membershipManager = membershipManager;
     }
 
-    public void setStaticMembershipInterceptor(
-            StaticMembershipInterceptor staticMembershipInterceptor) {
+    public void setStaticMembershipInterceptor(StaticMembershipInterceptor staticMembershipInterceptor) {
         this.staticMembershipInterceptor = staticMembershipInterceptor;
     }
 
@@ -47,10 +53,12 @@ public class MemberListCommand extends ControlCommand {
     }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        log.info("Received MEMBER_LIST message");
         for (Member member : members) {
             Member localMember = membershipManager.getLocalMember();
             if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
                   localMember.getPort() == member.getPort())) {
+                log.info("Added member " + TribesUtil.getHost(member));
                 membershipManager.memberAdded(member);
                 staticMembershipInterceptor.memberAdded(member);
             }

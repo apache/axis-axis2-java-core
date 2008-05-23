@@ -34,6 +34,7 @@ import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
+import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -168,7 +169,6 @@ public class TribesClusterManager implements ClusterManager {
                                                   membershipManager,
                                                   staticMembershipInterceptor);
         rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
-        rpcRequestHandler.setRpcChannel(rpcChannel);
 
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
@@ -183,10 +183,35 @@ public class TribesClusterManager implements ClusterManager {
                                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
                                                        10000);
                 if (responses.length > 0) {
+                    Member source = responses[0].getSource();
                     MemberListCommand command = (MemberListCommand) responses[0].getMessage();
                     command.setMembershipManager(membershipManager);
                     command.setStaticMembershipInterceptor(staticMembershipInterceptor);
-                    command.execute(configurationContext); // Do the initialization
+                    command.execute(configurationContext);
+
+                    log.info("Sending MEMBER_JOINED to group...");
+                    MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                    memberJoinedCommand.setMember(membershipManager.getLocalMember());
+                    try {
+                        Member[] currentMembers = membershipManager.getMembers();
+                        Member[] sendTo = new Member[currentMembers.length - 1];
+                        int j = 0;
+                        for (Member currentMember : currentMembers) {
+                            if (!currentMember.equals(source)) {
+                                sendTo[j] = currentMember;
+                                j++;
+                            }
+                        }
+                        rpcChannel.send(sendTo,
+                                        memberJoinedCommand,
+                                        RpcChannel.ALL_REPLY,
+                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                        10000);
+                    } catch (ChannelException e) {
+                        String msg = "Could not send MEMBER_JOINED message to group";
+                        log.error(msg, e);
+                        throw new ClusteringFault(msg, e);
+                    }
                 }
             } catch (ChannelException e) {
                 String msg = "Could not JOIN group";
