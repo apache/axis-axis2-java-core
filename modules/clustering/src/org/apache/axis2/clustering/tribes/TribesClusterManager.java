@@ -202,9 +202,11 @@ public class TribesClusterManager implements ClusterManager {
                         member.setPayload("ping".getBytes());
                         membershipManager.removeWellKnownMember(wkaMember);
                         staticMembershipInterceptor.removeStaticMember(wkaMember);
-                        membershipManager.addWellKnownMember(member);
-                        membershipManager.memberAdded(member);
-                        staticMembershipInterceptor.memberAdded(member);
+                        if (!membershipManager.getLocalMember().equals(member)) {
+                            membershipManager.addWellKnownMember(member);
+                            membershipManager.memberAdded(member);
+                            staticMembershipInterceptor.memberAdded(member);
+                        }
 
                         log.info("Sending MEMBER_JOINED to group...");
                         MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
@@ -581,6 +583,8 @@ public class TribesClusterManager implements ClusterManager {
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
         tcpFailureDetector.setPrevious(dfi);
+        tcpFailureDetector.setReadTestTimeout(30000);
+        tcpFailureDetector.setConnectTimeout(30000);
         channel.addInterceptor(tcpFailureDetector);
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
