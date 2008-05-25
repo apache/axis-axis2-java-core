@@ -460,21 +460,26 @@ public class TribesClusterManager implements ClusterManager {
      * @return true, if the member can be contacted; false, otherwise.
      */
     private boolean canConnect(org.apache.axis2.clustering.Member member) {
-        boolean canConnect = false;
-        try {
-            InetAddress addr = InetAddress.getByName(member.getHostName());
-            SocketAddress sockaddr = new InetSocketAddress(addr,
-                                                           member.getPort());
-            new Socket().connect(sockaddr, 5000);
-            canConnect = true;
-        } catch (IOException e) {
-            String msg = e.getMessage();
-            if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
-                log.error("Cannot connect to member " +
-                          member.getHostName() + ":" + member.getPort(), e);
+        for (int retries = 10; retries > 0; retries--) {
+            try {
+                InetAddress addr = InetAddress.getByName(member.getHostName());
+                SocketAddress sockaddr = new InetSocketAddress(addr,
+                                                               member.getPort());
+                new Socket().connect(sockaddr, 10000);
+                return true;
+            } catch (IOException e) {
+                String msg = e.getMessage();
+                if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
+                    log.error("Cannot connect to member " +
+                              member.getHostName() + ":" + member.getPort(), e);
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
+                }
             }
         }
-        return canConnect;
+        return false;
     }
 
     protected int getLocalPort(ServerSocket socket, String hostname,
