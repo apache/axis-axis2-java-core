@@ -178,37 +178,54 @@ public class TribesClusterManager implements ClusterManager {
         // If a WKA scheme is used, JOIN the group and get the member list
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             try {
-                Response[] responses = rpcChannel.send(membershipManager.getMembers(),
-                                                       new JoinGroupCommand(),
-                                                       RpcChannel.FIRST_REPLY,
-                                                       Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                       10000);
-                if (responses.length > 0) {
-                    Member source = responses[0].getSource();
-                    MemberListCommand command = (MemberListCommand) responses[0].getMessage();
-                    command.setMembershipManager(membershipManager);
-                    command.setStaticMembershipInterceptor(staticMembershipInterceptor);
-                    command.execute(configurationContext);
+                Member[] wkaMembers = membershipManager.getMembers(); // The well-known members
+                for (Member wkaMember : wkaMembers) {
+                    Response[] responses = rpcChannel.send(new Member[]{wkaMember},
+                                                           new JoinGroupCommand(),
+                                                           RpcChannel.FIRST_REPLY,
+                                                           Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                           10000);
+                    if (responses.length > 0) {
+                        Member source = responses[0].getSource();
+                        MemberListCommand command = (MemberListCommand) responses[0].getMessage();
+                        command.setMembershipManager(membershipManager);
+                        command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                        command.execute(configurationContext);
 
-                    log.info("Sending MEMBER_JOINED to group...");
-                    MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                    memberJoinedCommand.setMember(membershipManager.getLocalMember());
-                    try {
-                        Member[] currentMembers = membershipManager.getMembers();
-                        Member[] sendTo = new Member[currentMembers.length - 1];
-                        int j = 0;
-                        for (Member currentMember : currentMembers) {
-                            if (!currentMember.equals(source)) {  // Don't send back to the sender
-                                sendTo[j] = currentMember;
-                                j++;
+                        // Replace the WKA member, with the details received from that member
+                        // This is because we may have used a public IP address to point to the
+                        // wka member. But subequently, we need to use the private IP address
+                        StaticMember member = new StaticMember();
+                        member.setHost(source.getHost());
+                        member.setPort(source.getPort());
+                        member.setMemberAliveTime(source.getMemberAliveTime());
+                        member.setPayload("ping".getBytes());
+                        membershipManager.removeWellKnownMember(wkaMember);
+                        staticMembershipInterceptor.removeStaticMember(wkaMember);
+                        membershipManager.addWellKnownMember(member);
+                        membershipManager.memberAdded(member);
+                        staticMembershipInterceptor.memberAdded(member);
+
+                        log.info("Sending MEMBER_JOINED to group...");
+                        MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                        memberJoinedCommand.setMember(membershipManager.getLocalMember());
+                        try {
+                            Member[] currentMembers = membershipManager.getMembers();
+                            Member[] sendTo = new Member[currentMembers.length - 1];
+                            int j = 0;
+                            for (Member currentMember : currentMembers) {
+                                if (!currentMember.equals(source)) {  // Don't send back to the sender
+                                    sendTo[j] = currentMember;
+                                    j++;
+                                }
                             }
+                            rpcChannel.send(sendTo, memberJoinedCommand, RpcChannel.ALL_REPLY,
+                                            Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                        } catch (ChannelException e) {
+                            String msg = "Could not send MEMBER_JOINED message to group";
+                            log.error(msg, e);
+                            throw new ClusteringFault(msg, e);
                         }
-                        rpcChannel.send(sendTo, memberJoinedCommand, RpcChannel.ALL_REPLY,
-                                        Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
-                    } catch (ChannelException e) {
-                        String msg = "Could not send MEMBER_JOINED message to group";
-                        log.error(msg, e);
-                        throw new ClusteringFault(msg, e);
                     }
                 }
             } catch (ChannelException e) {

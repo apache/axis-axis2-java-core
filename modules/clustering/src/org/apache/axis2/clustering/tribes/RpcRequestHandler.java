@@ -145,9 +145,7 @@ public class RpcRequestHandler implements RpcCallback {
                 throw new RemoteProcessException(errMsg, e);
             }
         }
-
-        //TODO: If a WKA member fails, it shud figure out the membership. The WKA member write membership to a local file
-        return null;
+        return null;                      
     }
 
     public void leftOver(Serializable msg, Member member) {

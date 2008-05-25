@@ -76,6 +76,10 @@ public class MembershipManager {
         wkaMembers.add(wkaMember);
     }
 
+    public void removeWellKnownMember(Member wkaMember) {
+        wkaMembers.remove(wkaMember);
+    }
+
     /**
      * A new member is added
      *
