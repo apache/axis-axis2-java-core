@@ -188,19 +188,22 @@ public class TribesClusterManager implements ClusterManager {
                     MemberListCommand command = (MemberListCommand) response.getMessage();
                     command.setMembershipManager(membershipManager);
                     command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                    command.setSender(response.getSource());
                     command.execute(configurationContext);
                 }
 
-                log.info("Sending MEMBER_JOINED to group...");
-                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                memberJoinedCommand.setMember(membershipManager.getLocalMember());
-                try {
-                    rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
-                                    RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
-                } catch (ChannelException e) {
-                    String msg = "Could not send MEMBER_JOINED message to group";
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
+                if (membershipManager.getMembers().length > 0) {
+                    log.info("Sending MEMBER_JOINED to group...");
+                    MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                    memberJoinedCommand.setMember(membershipManager.getLocalMember());
+                    try {
+                        rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
+                                        RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                    } catch (ChannelException e) {
+                        String msg = "Could not send MEMBER_JOINED message to group";
+                        log.error(msg, e);
+                        throw new ClusteringFault(msg, e);
+                    }
                 }
             } catch (ChannelException e) {
                 String msg = "Could not JOIN group";
