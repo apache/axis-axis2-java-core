@@ -55,6 +55,7 @@ public class MemberListCommand extends ControlCommand {
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         log.info("Received MEMBER_LIST message");
         for (Member member : members) {
+            log.info("Trying to add member " + TribesUtil.getHost(member) + "...");
             Member localMember = membershipManager.getLocalMember();
             if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
                   localMember.getPort() == member.getPort())) {
