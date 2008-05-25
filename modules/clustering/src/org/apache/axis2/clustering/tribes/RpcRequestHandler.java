@@ -136,6 +136,7 @@ public class RpcRequestHandler implements RpcCallback {
                 MemberListCommand command = (MemberListCommand) msg;
                 command.setMembershipManager(membershipManager);
                 command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                command.setSender(invoker);
                 command.execute(configurationContext);
 
                 //TODO Send MEMBER_JOINED messages to all nodes
