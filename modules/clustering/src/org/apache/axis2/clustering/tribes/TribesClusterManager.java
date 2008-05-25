@@ -185,32 +185,22 @@ public class TribesClusterManager implements ClusterManager {
                                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
                                                        10000);
                 for (Response response : responses) {
-                    Member source = response.getSource();
                     MemberListCommand command = (MemberListCommand) response.getMessage();
                     command.setMembershipManager(membershipManager);
                     command.setStaticMembershipInterceptor(staticMembershipInterceptor);
                     command.execute(configurationContext);
+                }
 
-                    log.info("Sending MEMBER_JOINED to group...");
-                    MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                    memberJoinedCommand.setMember(membershipManager.getLocalMember());
-                    try {
-                        Member[] currentMembers = membershipManager.getMembers();
-                        Member[] sendTo = new Member[currentMembers.length - 1];
-                        int j = 0;
-                        for (Member currentMember : currentMembers) {
-                            if (!currentMember.equals(source)) {  // Don't send back to the sender
-                                sendTo[j] = currentMember;
-                                j++;
-                            }
-                        }
-                        rpcChannel.send(sendTo, memberJoinedCommand, RpcChannel.ALL_REPLY,
-                                        Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
-                    } catch (ChannelException e) {
-                        String msg = "Could not send MEMBER_JOINED message to group";
-                        log.error(msg, e);
-                        throw new ClusteringFault(msg, e);
-                    }
+                log.info("Sending MEMBER_JOINED to group...");
+                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                memberJoinedCommand.setMember(membershipManager.getLocalMember());
+                try {
+                    rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
+                                    RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                } catch (ChannelException e) {
+                    String msg = "Could not send MEMBER_JOINED message to group";
+                    log.error(msg, e);
+                    throw new ClusteringFault(msg, e);
                 }
             } catch (ChannelException e) {
                 String msg = "Could not JOIN group";
