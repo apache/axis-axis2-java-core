@@ -178,11 +178,11 @@ public class TribesClusterManager implements ClusterManager {
         // If a WKA scheme is used, JOIN the group and get the member list
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)
             && membershipManager.getMembers().length > 0) {
-            try {
-                log.info("Sending JOIN message to WKA members...");
-                Member[] wkaMembers = membershipManager.getMembers(); // The well-known members
-                Response[] responses;
-                do {
+            log.info("Sending JOIN message to WKA members...");
+            Member[] wkaMembers = membershipManager.getMembers(); // The well-known members
+            Response[] responses = null;
+            do {
+                try {
                     responses = rpcChannel.send(wkaMembers,
                                                 new JoinGroupCommand(),
                                                 RpcChannel.ALL_REPLY,
@@ -194,33 +194,35 @@ public class TribesClusterManager implements ClusterManager {
                         } catch (InterruptedException ignored) {
                         }
                     }
-                } while (responses.length == 0);  // Wait until we've received at least one response
-
-                for (Response response : responses) {
-                    MemberListCommand command = (MemberListCommand) response.getMessage();
-                    command.setMembershipManager(membershipManager);
-                    command.setStaticMembershipInterceptor(staticMembershipInterceptor);
-                    command.setSender(response.getSource());
-                    command.execute(configurationContext);
+                } catch (Exception e) {
+                    String msg = "Error occurred while trying to send JOIN request to WKA members";
+                    log.error(msg, e);
                 }
 
-                if (membershipManager.getMembers().length > 0) {
-                    log.info("Sending MEMBER_JOINED to group...");
-                    MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                    memberJoinedCommand.setMember(membershipManager.getLocalMember());
-                    try {
-                        rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
-                                        RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
-                    } catch (ChannelException e) {
-                        String msg = "Could not send MEMBER_JOINED message to group";
-                        log.error(msg, e);
-                        throw new ClusteringFault(msg, e);
-                    }
+                // TODO: If we do not get a response within some time, try to recover from this fault
+            }
+            while (responses == null || responses.length == 0);  // Wait until we've received at least one response
+
+            for (Response response : responses) {
+                MemberListCommand command = (MemberListCommand) response.getMessage();
+                command.setMembershipManager(membershipManager);
+                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
+                command.setSender(response.getSource());
+                command.execute(configurationContext);
+            }
+
+            if (membershipManager.getMembers().length > 0) {
+                log.info("Sending MEMBER_JOINED to group...");
+                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
+                memberJoinedCommand.setMember(membershipManager.getLocalMember());
+                try {
+                    rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
+                                    RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                } catch (ChannelException e) {
+                    String msg = "Could not send MEMBER_JOINED message to group";
+                    log.error(msg, e);
+                    throw new ClusteringFault(msg, e);
                 }
-            } catch (ChannelException e) {
-                String msg = "Could not JOIN group";
-                log.error(msg, e);
-                throw new ClusteringFault(msg, e);
             }
         }
 
@@ -703,6 +705,7 @@ public class TribesClusterManager implements ClusterManager {
                             } catch (InterruptedException ignored) {
                             }
                         }
+                        // TODO: If we do not get a response within some time, try to recover from this fault
                     } while (responses.length == 0);
                     if (responses.length > 0) {
                         ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
