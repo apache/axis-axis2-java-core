@@ -243,12 +243,34 @@ class CallbackFutureTask implements Callable {
         error = e;
     }
 
+    
+    /*
+     * An invocation of the call() method is what drives the response processing
+     * for Callback clients.  The end result of this should be that the AysncHandler
+     * (the callback instance) provided by the client is called and the response or
+     * an error is delivered.
+     */
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
     	try {
-            ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+            // The ClassLoader that was used to load the AsyncHandler instance is the same
+            // one that is used to create the JAXB request object instances.  Because of that
+            // we need to make sure we're using the same ClassLoader as we start response
+            // processing or ClassCastExceptions will occur.
+            final ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
                 public Object run() {
                     return handler.getClass().getClassLoader();
+                }
+            });
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Setting up the thread's ClassLoader");
+                log.debug(classLoader.toString());
+            }
+            AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                    return null;
                 }
             });
             
@@ -262,13 +284,6 @@ class CallbackFutureTask implements Callable {
             
             // Now that the content is available, call the JAX-WS AsyncHandler class
             // to deliver the response to the user.
-            ClassLoader cl = handler.getClass().getClassLoader();
-            if (log.isDebugEnabled()) {
-                log.debug("Setting up the thread's ClassLoader");
-                log.debug(cl.toString());
-            }
-            Thread.currentThread().setContextClassLoader(cl);
-
             if (debug) {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");
                 log.debug("AyncHandler class: " + handler.getClass());
