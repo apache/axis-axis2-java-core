@@ -56,11 +56,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +65,8 @@ import java.util.Map;
 
 public class CodeGenerationUtility {
     private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
+
+    public static final String BINDING_FILE_NAME = "bindingFileName";
 
     /**
      * @param additionalSchemas
@@ -146,11 +144,19 @@ public class CodeGenerationUtility {
                 }
             };
 
+
+            Map properties = cgconfig.getProperties();
+            String bindingFileName = (String) properties.get(BINDING_FILE_NAME);
+
             XmlSchema key = null;
             for (Iterator schemaIter = schemaToInputSourceMap.keySet().iterator();
                  schemaIter.hasNext();) {
 
                 SchemaCompiler sc = XJC.createSchemaCompiler();
+                if (bindingFileName != null){
+                    sc.getOptions().addBindFile(new InputSource(new FileInputStream(bindingFileName)));
+                }
+
                 key = (XmlSchema) schemaIter.next();
 
                 if (nsMap != null) {
