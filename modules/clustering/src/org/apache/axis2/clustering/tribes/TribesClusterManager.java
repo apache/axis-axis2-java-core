@@ -149,7 +149,7 @@ public class TribesClusterManager implements ClusterManager {
         TribesMembershipListener membershipListener = new TribesMembershipListener(membershipManager);
         channel.addMembershipListener(membershipListener);
         try {
-            channel.start(Channel.DEFAULT);
+            channel.start(Channel.DEFAULT); // At this point, this member joins the group
             String localHost = TribesUtil.getLocalHost(channel);
             if (localHost.startsWith("127.0.")) {
                 channel.stop(Channel.DEFAULT);
@@ -180,6 +180,10 @@ public class TribesClusterManager implements ClusterManager {
             && membershipManager.getMembers().length > 0) {
             log.info("Sending JOIN message to WKA members...");
             Member[] wkaMembers = membershipManager.getMembers(); // The well-known members
+            try {
+                Thread.sleep(3000); // Wait for sometime so that the WKA members can receive the MEMBER_LIST message, if they have just joined the group
+            } catch (InterruptedException ignored) {
+            }
             Response[] responses = null;
             do {
                 try {
