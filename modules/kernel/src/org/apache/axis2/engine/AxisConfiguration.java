@@ -628,7 +628,24 @@ public class AxisConfiguration extends AxisDescription {
      *         the given content type.
      */
     public Builder getMessageBuilder(String contentType) {
-        return (Builder) messageBuilders.get(contentType);
+        if(messageBuilders.isEmpty()){
+            return null;
+        }
+        Builder builder = (Builder) messageBuilders.get(contentType);
+        if (builder == null) {
+            builder = (Builder) messageBuilders.get(contentType.toLowerCase());
+        }
+        if (builder == null) {
+            Iterator iterator = messageBuilders.entrySet().iterator();
+            while (iterator.hasNext() && builder == null) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String key = (String) entry.getKey();
+                if (contentType.matches(key)) {
+                    builder = (Builder) entry.getValue();
+                }
+            }
+        }
+        return builder;
     }
 
     /**

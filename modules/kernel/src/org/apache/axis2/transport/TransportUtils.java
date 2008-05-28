@@ -280,6 +280,12 @@ public class TransportUtils {
 
         }
         if (messageFormatter == null) {
+            messageFormatter = (MessageFormatter) msgContext.getProperty(Constants.Configuration.MESSAGE_FORMATTER);
+            if(messageFormatter != null) {
+                return messageFormatter;
+            }
+        }
+        if (messageFormatter == null) {
 
             // If we are doing rest better default to Application/xml formatter
             if (msgContext.isDoingREST()) {
