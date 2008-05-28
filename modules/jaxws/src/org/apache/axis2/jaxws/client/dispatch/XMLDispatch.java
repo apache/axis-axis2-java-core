@@ -21,21 +21,26 @@ package org.apache.axis2.jaxws.client.dispatch;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.utility.DataSourceFormatter;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.DataSourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataSource;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
@@ -224,6 +229,11 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 log.debug(">> returning SourceBlockFactory");
             }
             return SourceBlockFactory.class;
+        } else if (DataSource.class.isAssignableFrom(o.getClass())) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning DataSourceBlockFactory");
+            }
+            return DataSourceBlockFactory.class;
         } else if (SOAPMessage.class.isAssignableFrom(o.getClass())) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SOAPMessageFactory");
@@ -277,5 +287,13 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         return m;
     }
 
+
+    protected void initMessageContext(Object obj, MessageContext requestMsgCtx) {
+        super.initMessageContext(obj, requestMsgCtx);
+        if(obj instanceof DataSource){
+            requestMsgCtx.setProperty(Constants.Configuration.MESSAGE_FORMATTER, 
+                    new DataSourceFormatter(((DataSource)obj).getContentType()));    
+        }
+    }
 
 }

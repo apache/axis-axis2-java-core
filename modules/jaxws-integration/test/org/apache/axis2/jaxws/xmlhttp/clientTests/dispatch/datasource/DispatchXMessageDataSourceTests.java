@@ -23,8 +23,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axiom.attachments.utils.IOUtils;
 
 import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
@@ -34,6 +36,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.http.HTTPBinding;
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Arrays;
 
 public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
@@ -44,6 +48,7 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");
  
     private DataSource imageDS;
+    private DataSource xmlDS;
 
     public static Test suite() {
         return getTestSetup(new TestSuite(DispatchXMessageDataSourceTests.class));
@@ -51,12 +56,15 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
  
     public void setUp() throws Exception {
         String imageResourceDir = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";
-        
         //Create a DataSource from an image 
         File file = new File(imageResourceDir+File.separator+"test.jpg");
         ImageInputStream fiis = new FileImageInputStream(file);
         Image image = ImageIO.read(fiis);
         imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+
+        String xmlResourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
+        File file2 = new File(xmlResourceDir+File.separator+"axis2.xml");
+        xmlDS = new FileDataSource(file2);
     }
     
     public Dispatch<DataSource> getDispatch() {
@@ -70,14 +78,25 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
      * Simple XML/HTTP Message Test
      * @throws Exception
      */
-    public void testSimple() throws Exception {
+    public void testDataSourceWithXML() throws Exception {
+        Dispatch<DataSource> dispatch = getDispatch();
+        DataSource request = xmlDS;
+        DataSource response = dispatch.invoke(request);
+        assertTrue(response != null);
+        String req = new String(IOUtils.getStreamAsByteArray(request.getInputStream()));
+        String res = new String(IOUtils.getStreamAsByteArray(response.getInputStream()));
+        assertEquals(req, res);
+    }
+
+    /**
+     * Simple XML/HTTP Message Test with an Image
+     * @throws Exception
+     */
+    public void testDataSourceWithImage() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
         DataSource request = imageDS;
-        
-        // TODO NOT IMPLEMENTED
-        
-        //DataSource response = dispatch.invoke(request);
-        //assertTrue(response != null);
-        //assertTrue(request.equals(response));
+        DataSource response = dispatch.invoke(request);
+        assertTrue(response != null);
+        Arrays.equals(IOUtils.getStreamAsByteArray(request.getInputStream()), IOUtils.getStreamAsByteArray(response.getInputStream()));
     }
 }

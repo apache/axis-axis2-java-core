@@ -137,10 +137,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = createRequestMessage(obj);
-           
-            setupMessageProperties(requestMsg);
-            requestMsgCtx.setMessage(requestMsg);
+            initMessageContext(obj, requestMsgCtx);
 
             // Migrate the properties from the client request context bag to
             // the request MessageContext.
@@ -187,6 +184,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
         }
     }
 
+    protected void initMessageContext(Object obj, MessageContext requestMsgCtx) {
+        Message requestMsg = createRequestMessage(obj);
+        setupMessageProperties(requestMsg);
+        requestMsgCtx.setMessage(requestMsg);
+    }
+
     public void invokeOneWay(Object obj) throws WebServiceException {
 
         // All exceptions are caught and rethrown as a WebServiceException
@@ -221,10 +224,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = createRequestMessage(obj);
-
-            setupMessageProperties(requestMsg);
-            requestMsgCtx.setMessage(requestMsg);
+            initMessageContext(obj, requestMsgCtx);
 
             // Migrate the properties from the client request context bag to
             // the request MessageContext.
@@ -288,10 +288,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = createRequestMessage(obj);
-
-            setupMessageProperties(requestMsg);
-            requestMsgCtx.setMessage(requestMsg);
+            initMessageContext(obj, requestMsgCtx);
 
             // Migrate the properties from the client request context bag to
             // the request MessageContext.
@@ -366,10 +363,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Binding binding = (Binding) getBinding();
             invocationContext.setHandlers(binding.getHandlerChain());
 
-            Message requestMsg = createRequestMessage(obj);
-
-            setupMessageProperties(requestMsg);
-            requestMsgCtx.setMessage(requestMsg);
+            initMessageContext(obj, requestMsgCtx);
 
             // Migrate the properties from the client request context bag to
             // the request MessageContext.

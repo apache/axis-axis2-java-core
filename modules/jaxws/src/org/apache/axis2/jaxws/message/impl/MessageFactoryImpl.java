@@ -20,7 +20,12 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.OMNamespaceImpl;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -28,6 +33,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
+import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
 
@@ -129,6 +135,8 @@ public class MessageFactoryImpl implements MessageFactory {
         // Small optimization to quickly consider the SOAPEnvelope case
         if (block instanceof SOAPEnvelopeBlock) {
             return new MessageImpl((SOAPEnvelope)block.getBusinessObject(true), protocol);
+        } else if (block instanceof DataSourceBlock) {
+            return createFrom(block.getOMElement(), protocol);
         }
         return createFrom(block.getXMLStreamReader(true), protocol);
     }

@@ -109,6 +109,8 @@
                          class="org.apache.axis2.builder.ApplicationXMLBuilder"/>
         <messageBuilder contentType="application/x-www-form-urlencoded"
                          class="org.apache.axis2.builder.XFormURLEncodedBuilder"/>
+        <messageBuilder contentType=".*"
+                         class="org.apache.axis2.builder.DataSourceBuilder"/>
         <!--Left commented because it adds the depandancy of servlet-api to other modules.
         Please uncomment to Receive messages in multipart/form-data format-->
         <!--<messageBuilder contentType="multipart/form-data"-->

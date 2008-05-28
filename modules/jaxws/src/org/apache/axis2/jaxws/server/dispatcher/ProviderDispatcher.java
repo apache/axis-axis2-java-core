@@ -19,8 +19,8 @@
 
 package org.apache.axis2.jaxws.server.dispatcher;
 
+import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -32,6 +32,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.DataSourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -42,6 +43,7 @@ import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.server.InvocationHelper;
 import org.apache.axis2.jaxws.server.ServerConstants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.jaxws.utility.DataSourceFormatter;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
@@ -343,7 +345,7 @@ public class ProviderDispatcher extends JavaDispatcher {
             
 
             response = MessageContextUtils.createResponseMessageContext(request);
-            response.setMessage(m);
+            initMessageContext(response, m, output);
         } catch (RuntimeException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Throwable caught creating Response MessageContext");
@@ -356,6 +358,14 @@ public class ProviderDispatcher extends JavaDispatcher {
         }
         
         return response;
+    }
+    
+    protected void initMessageContext(MessageContext responseMsgCtx, Message m, Object output) {
+        responseMsgCtx.setMessage(m);
+        if(output instanceof DataSource){
+            responseMsgCtx.setProperty(Constants.Configuration.MESSAGE_FORMATTER, 
+                    new DataSourceFormatter(((DataSource)output).getContentType()));
+        }
     }
     
     public MessageContext createFaultResponse(MessageContext request, Throwable fault) {
@@ -581,6 +591,9 @@ public class ProviderDispatcher extends JavaDispatcher {
         if (type.equals(String.class)) {
             _blockFactory = (XMLStringBlockFactory)FactoryRegistry.getFactory(
                     XMLStringBlockFactory.class);
+        } else if (type.equals(DataSource.class)) {
+            _blockFactory = (DataSourceBlockFactory)FactoryRegistry.getFactory(
+                    DataSourceBlockFactory.class);
         } else if (type.equals(Source.class)) {
             _blockFactory = (SourceBlockFactory)FactoryRegistry.getFactory(
                     SourceBlockFactory.class);
