@@ -53,13 +53,9 @@ public class SAAJResultTest extends TestCase {
     }
 
 
-    public void testGetResult() {
-        try {
-            SAAJResult sr = new SAAJResult();
-            Node node = sr.getResult();
-            assertNull(node);
-        } catch (Exception e) {
-            fail("Exception: " + e);
-        }
+    public void testGetResult() throws Exception{
+    	SAAJResult sr = new SAAJResult();
+    	Node node = sr.getResult();
+    	assertNull(node);
     }
 }
