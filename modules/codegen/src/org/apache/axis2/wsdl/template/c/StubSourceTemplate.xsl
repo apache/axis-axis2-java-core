@@ -276,12 +276,15 @@
               soap_act = axutil_string_create(env, "<xsl:value-of select="$soapAction"/>");
               axis2_options_set_soap_action(options, env, soap_act);    
             }
-            <xsl:if test="$soapVersion='1.2'">
-            axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
-            </xsl:if>
-            <xsl:if test="$soapVersion!='1.1'">
-            axis2_options_set_soap_version(options, env, AXIOM_SOAP11 );
-            </xsl:if>
+
+            <xsl:choose>
+             <xsl:when test="$soapVersion='http://www.w3.org/2003/05/soap-envelope'">
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP12);
+             </xsl:when>
+             <xsl:otherwise>
+            axis2_options_set_soap_version(options, env, AXIOM_SOAP11);
+             </xsl:otherwise>
+            </xsl:choose>
             ret_node =  axis2_svc_client_send_receive_with_op_qname( svc_client, env, op_qname, payload);
  
             if (!is_soap_act_set)
@@ -739,7 +742,7 @@
               axis2_options_set_soap_action(options, env, soap_act);
             }
             <xsl:choose>
-             <xsl:when test="$soapVersion='1.2'">
+             <xsl:when test="$soapVersion='http://www.w3.org/2003/05/soap-envelope'">
             axis2_options_set_soap_version(options, env, AXIOM_SOAP12);
              </xsl:when>
              <xsl:otherwise>
@@ -847,7 +850,7 @@
               axis2_options_set_soap_action(options, env, soap_act);    
             }
             <xsl:choose>
-             <xsl:when test="$soapVersion='1.2'">
+             <xsl:when test="$soapVersion='http://www.w3.org/2003/05/soap-envelope'">
             axis2_options_set_soap_version(options, env, AXIOM_SOAP12 );
              </xsl:when>
              <xsl:otherwise>
