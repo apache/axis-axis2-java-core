@@ -337,8 +337,8 @@ service will be the name given by the name attribute.</p>
 
 <p><strong>scope</strong>: (Optional Attribute) The time period during which
 runtime information of the deployed services will be available. Scope is of
-several types- "Application", "SOAPSession", "TransportSession", "Request".
-The default value (if you don't enter any value) will be "Request"</p>
+several types- "application", "soapsession", "transportsession", "request".
+The default value (if you don't enter any value) will be "request"</p>
 
 <p><strong>class</strong>: (Optional attribute) The full qualified name of
 the service lifecycle implementation class. ServiceLifeCycle class is useful
