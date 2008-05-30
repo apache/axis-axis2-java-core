@@ -19,14 +19,29 @@
 
 package org.apache.axis2.jaxws.utility;
 
-import org.apache.axis2.transport.http.ApplicationXMLFormatter;
-import org.apache.axis2.AxisFault;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMSourcedElement;
+import org.apache.axiom.om.impl.MIMEOutputUtils;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.jaxws.handler.AttachmentsAdapter;
+import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.http.ApplicationXMLFormatter;
+import org.apache.axis2.transport.http.util.URLTemplatingUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.handler.MessageContext;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 
-public class DataSourceFormatter extends ApplicationXMLFormatter {
+public class DataSourceFormatter implements MessageFormatter {
+    private static final Log log = LogFactory.getLog(ApplicationXMLFormatter.class);
     private final String contentType;
 
     public DataSourceFormatter(String contentType) {
@@ -34,22 +49,71 @@ public class DataSourceFormatter extends ApplicationXMLFormatter {
     }
 
     public byte[] getBytes(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format) throws AxisFault {
-        return super.getBytes(messageContext, format);
+        throw new UnsupportedOperationException("FIXME");
     }
 
     public void writeTo(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format, OutputStream outputStream, boolean preserve) throws AxisFault {
-        super.writeTo(messageContext, format, outputStream, preserve);
+        AttachmentsAdapter attachments = (AttachmentsAdapter) messageContext.getProperty(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS);
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("start writeTo()");
+            }
+            if (attachments != null && !attachments.isEmpty()) {
+                OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
+                DataSource busObject;
+                try {
+                    busObject = (DataSource)((DataSourceBlock)((OMSourcedElement) omElement).getDataSource()).getBusinessObject(true);
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
+                MIMEOutputUtils.writeDataHandlerWithAttachmentsMessage(
+                        new DataHandler(busObject), 
+                        contentType, 
+                        outputStream, 
+                        attachments, 
+                        format);
+            } else { 
+                    OMElement omElement = messageContext.getEnvelope().getBody().getFirstElement();
+                    if (omElement != null) {
+                        try {
+                            if (preserve) {
+                                omElement.serialize(outputStream, format);
+                            } else {
+                                omElement.serializeAndConsume(outputStream, format);
+                            }
+                        } catch (XMLStreamException e) {
+                            throw AxisFault.makeFault(e);
+                        }
+                    }
+                    try {
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        throw AxisFault.makeFault(e);
+                    }
+            }
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("end writeTo()");
+            }
+        }
     }
 
     public String getContentType(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format, String soapAction) {
+        AttachmentsAdapter attachments = (AttachmentsAdapter) messageContext.getProperty(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS);
+        if (attachments != null && !attachments.isEmpty()) {
+            return format.getContentTypeForSwA(contentType);
+        }
         return contentType;
     }
 
     public URL getTargetAddress(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format, URL targetURL) throws AxisFault {
-        return super.getTargetAddress(messageContext, format, targetURL);
+        // Check whether there is a template in the URL, if so we have to replace then with data
+        // values and create a new target URL.
+        targetURL = URLTemplatingUtil.getTemplatedURL(targetURL, messageContext, false);
+        return targetURL;
     }
 
     public String formatSOAPAction(org.apache.axis2.context.MessageContext messageContext, OMOutputFormat format, String soapAction) {
-        return super.formatSOAPAction(messageContext, format, soapAction);
+        return null;
     }
 }

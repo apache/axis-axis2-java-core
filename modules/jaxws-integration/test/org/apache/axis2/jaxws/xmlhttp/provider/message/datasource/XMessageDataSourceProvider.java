@@ -25,7 +25,11 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
+import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * Sample XML/HTTP DataSource Provider 
@@ -34,8 +38,13 @@ import javax.xml.ws.http.HTTPBinding;
 @BindingType(HTTPBinding.HTTP_BINDING)
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class XMessageDataSourceProvider implements Provider<DataSource> {
-
+    @Resource
+    WebServiceContext wsContext;
+    
     public DataSource invoke(DataSource input) {
+        MessageContext ctx = wsContext.getMessageContext();
+        Map attachments = (Map) ctx.get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS);
+        ctx.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, attachments);
         return input;
     }
 

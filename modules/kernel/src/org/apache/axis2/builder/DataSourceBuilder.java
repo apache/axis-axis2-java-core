@@ -1,24 +1,33 @@
 package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.impl.BufferUtils;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.OMNamespaceImpl;
+import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.MessageContext;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.ByteArrayOutputStream;
 
 public class DataSourceBuilder implements Builder {
 
@@ -26,11 +35,15 @@ public class DataSourceBuilder implements Builder {
                                      MessageContext msgContext)
             throws AxisFault {
         msgContext.setDoingREST(true);
+        
         OMNamespace ns = new OMNamespaceImpl("", "");
         OMFactory factory = OMAbstractFactory.getOMFactory();
         byte[] bytes;
         try {
-            bytes = IOUtils.getStreamAsByteArray(inputStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+            BufferUtils.inputStream2OutputStream(inputStream, baos);
+            baos.flush();
+            bytes = baos.toByteArray();
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
@@ -70,5 +83,4 @@ public class DataSourceBuilder implements Builder {
             throw new UnsupportedOperationException("FIXME");
         }
     }
-    
 }

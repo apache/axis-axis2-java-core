@@ -24,20 +24,28 @@ import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axiom.attachments.impl.BufferUtils;
+import org.apache.axiom.om.util.UUIDGenerator;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.activation.DataHandler;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.http.HTTPBinding;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 public class DispatchXMessageDataSourceTests extends AbstractTestCase {
 
@@ -48,7 +56,8 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
     private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageDataSourceProviderPort");
  
     private DataSource imageDS;
-    private DataSource xmlDS;
+    private FileDataSource txtDS;
+    private DataSource attachmentDS;
 
     public static Test suite() {
         return getTestSetup(new TestSuite(DispatchXMessageDataSourceTests.class));
@@ -56,15 +65,19 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
  
     public void setUp() throws Exception {
         String imageResourceDir = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";
-        //Create a DataSource from an image 
+
         File file = new File(imageResourceDir+File.separator+"test.jpg");
         ImageInputStream fiis = new FileImageInputStream(file);
         Image image = ImageIO.read(fiis);
         imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
 
-        String xmlResourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
-        File file2 = new File(xmlResourceDir+File.separator+"axis2.xml");
-        xmlDS = new FileDataSource(file2);
+        String textResourceDir = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/xmlhttp";
+        File file2 = new File(textResourceDir+File.separator+"README.txt");
+        txtDS = new FileDataSource(file2);
+
+        String resourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
+        File file3 = new File(resourceDir+File.separator+"log4j.properties");
+        attachmentDS = new FileDataSource(file3);
     }
     
     public Dispatch<DataSource> getDispatch() {
@@ -74,29 +87,102 @@ public class DispatchXMessageDataSourceTests extends AbstractTestCase {
        return dispatch;
     }
     
-    /**
-     * Simple XML/HTTP Message Test
-     * @throws Exception
-     */
-    public void testDataSourceWithXML() throws Exception {
+    public void testDataSourceWithTXT() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
-        DataSource request = xmlDS;
+        DataSource request = txtDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        String req = new String(IOUtils.getStreamAsByteArray(request.getInputStream()));
-        String res = new String(IOUtils.getStreamAsByteArray(response.getInputStream()));
+        assertEquals(response.getContentType(),"text/plain");
+        String req = new String(getStreamAsByteArray(request.getInputStream()));
+        String res = new String(getStreamAsByteArray(response.getInputStream()));
         assertEquals(req, res);
     }
 
-    /**
-     * Simple XML/HTTP Message Test with an Image
-     * @throws Exception
-     */
     public void testDataSourceWithImage() throws Exception {
         Dispatch<DataSource> dispatch = getDispatch();
         DataSource request = imageDS;
         DataSource response = dispatch.invoke(request);
         assertTrue(response != null);
-        Arrays.equals(IOUtils.getStreamAsByteArray(request.getInputStream()), IOUtils.getStreamAsByteArray(response.getInputStream()));
+        assertEquals(response.getContentType(),"image/jpeg");
+        assertTrue(Arrays.equals(getStreamAsByteArray(request.getInputStream()), 
+                getStreamAsByteArray(response.getInputStream())));
+    }
+
+    public void testDataSourceWithTXTPlusAttachment() throws Exception {
+        Dispatch<DataSource> dispatch = getDispatch();
+
+        Map attachments = new HashMap();
+        Map requestContext = dispatch.getRequestContext();
+
+//        requestContext.put(org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT , new 
+//        Integer(999999));
+//        requestContext.put(org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT, new 
+//        Integer(999999));
+
+        requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
+                attachments);
+        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
+
+        DataSource request = txtDS;
+        DataSource response = dispatch.invoke(request);
+        assertTrue(response != null);
+        assertEquals(response.getContentType(),"text/plain");
+        String req = new String(getStreamAsByteArray(request.getInputStream()));
+        String res = new String(getStreamAsByteArray(response.getInputStream()));
+        assertEquals(req, res);
+        Map attachments2 = (Map) dispatch.getResponseContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS);
+        assertTrue(attachments2 != null);
+        assertEquals(attachments2.size(), 1);
+    }
+
+    public void testDataSourceWithImagePlusAttachment() throws Exception {
+        Dispatch<DataSource> dispatch = getDispatch();
+
+        Map attachments = new HashMap();
+        Map requestContext = dispatch.getRequestContext();
+
+        requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
+                attachments);
+        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
+        
+        DataSource request = imageDS;
+        DataSource response = dispatch.invoke(request);
+        assertTrue(response != null);
+        assertEquals(response.getContentType(),"image/jpeg");
+        assertTrue(Arrays.equals(getStreamAsByteArray(request.getInputStream()), 
+                getStreamAsByteArray(response.getInputStream())));
+        Map attachments2 = (Map) dispatch.getResponseContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS);
+        assertTrue(attachments2 != null);
+        assertEquals(attachments2.size(), 1);
+    }
+
+    public void testDataSourceWithTXTPlusTwoAttachments() throws Exception {
+        Dispatch<DataSource> dispatch = getDispatch();
+
+        Map attachments = new HashMap();
+        Map requestContext = dispatch.getRequestContext();
+
+        requestContext.put(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS,
+                attachments);
+        attachments.put(UUIDGenerator.getUUID(), new DataHandler(attachmentDS));
+        attachments.put(UUIDGenerator.getUUID(), new DataHandler(imageDS));
+
+        DataSource request = txtDS;
+        DataSource response = dispatch.invoke(request);
+        assertTrue(response != null);
+        assertEquals(response.getContentType(),"text/plain");
+        String req = new String(getStreamAsByteArray(request.getInputStream()));
+        String res = new String(getStreamAsByteArray(response.getInputStream()));
+        assertEquals(req, res);
+        Map attachments2 = (Map) dispatch.getResponseContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS);
+        assertTrue(attachments2 != null);
+        assertEquals(attachments2.size(), 2);
+    }
+    
+    private byte[] getStreamAsByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+        BufferUtils.inputStream2OutputStream(is, baos);
+        baos.flush();
+        return baos.toByteArray();
     }
 }

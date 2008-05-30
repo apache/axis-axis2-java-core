@@ -21,12 +21,14 @@ package org.apache.axis2.builder;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
-import javax.xml.stream.XMLStreamReader;
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import java.io.InputStream;
 
 public class MIMEBuilder implements Builder {
@@ -34,7 +36,6 @@ public class MIMEBuilder implements Builder {
     public OMElement processDocument(InputStream inputStream, String contentType,
                                      MessageContext msgContext)
             throws AxisFault {
-        XMLStreamReader streamReader;
         Attachments attachments =
                 BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
         String charSetEncoding =
@@ -57,11 +58,25 @@ public class MIMEBuilder implements Builder {
         // by subsequent builders(eg:MTOMBuilder) if needed..
         msgContext.setDoingSwA(true);
         
+        ContentType ct;
+        try {
+            ct = new ContentType(contentType);
+        } catch (ParseException e) {
+            throw new OMException(
+                    "Invalid Content Type Field in the Mime Message"
+                    , e);
+        }
+        
+        String type = ct.getParameter("type");
         Builder builder =
-                BuilderUtil.getBuilderFromSelector(attachments.getAttachmentSpecType(), msgContext);
-        OMElement element = builder.processDocument(attachments.getSOAPPartInputStream(),
-                                                    contentType, msgContext);
-        return element;
+                BuilderUtil.getBuilderFromSelector(type, msgContext);
+        if(MTOMConstants.MTOM_TYPE.equals(type)){
+            String startInfo = ct.getParameter("start-info");
+            if(startInfo != null){
+                type = startInfo;
+            }
+        }
+        return builder.processDocument(attachments.getSOAPPartInputStream(),
+                type, msgContext);
     }
-
 }

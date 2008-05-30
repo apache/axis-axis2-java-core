@@ -90,6 +90,10 @@ public class MEPContext implements javax.xml.ws.handler.MessageContext {
     }
     
     public void setResponseMessageContext(MessageContext responseMC) {
+        if(this.responseMC != null) {
+            responseMC.setProperty(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, 
+                    this.responseMC.getProperty(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS));
+        }
         // TODO does ApplicationAccessLocked mean anything here? -- method is protected, so probably not
         this.responseMC = responseMC;
         // if callers are being careful, the responseMC should not be set
