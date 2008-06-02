@@ -20,6 +20,7 @@
 package org.apache.axis2.extensions.osgi;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.deployment.ModuleDeployer;
 import org.apache.axis2.deployment.util.Utils;
@@ -42,6 +43,7 @@ public class ServiceRegistry extends JAXWSDeployer {
     private OSGiAxis2Servlet servlet;
     private LogService log;
     private HashMap services = new HashMap();
+    private boolean isInited = false;
 
     public ServiceRegistry(OSGiAxis2Servlet servlet, LogService log) {
         this.servlet = servlet;
@@ -49,7 +51,15 @@ public class ServiceRegistry extends JAXWSDeployer {
     }
 
     public void register(Bundle bundle) {
-        axisConfig = servlet.getConfiguration();
+        if(!isInited){
+            ConfigurationContext context = servlet.ConfigurationContext();
+            if(context == null){
+                System.out.println("[Axis2/OSGi] Configuration Context is null. unable to register bundle");
+                return;
+            }
+            init(context);
+            isInited = true;
+        }
         ClassLoader loader = new BundleClassLoader(bundle, this.getClass().getClassLoader());
 
         addModules(bundle, loader);

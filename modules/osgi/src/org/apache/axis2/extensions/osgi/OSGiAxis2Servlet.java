@@ -21,23 +21,18 @@ package org.apache.axis2.extensions.osgi;
 
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.AxisServlet;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.WarBasedAxisConfigurator;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.Constants;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 public class OSGiAxis2Servlet extends AxisServlet {
-    public void init(ServletConfig config) throws ServletException {
-        // Fix for a class loader issue in Felix
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-        try {
-            super.init(config);
-        } finally {
-            Thread.currentThread().setContextClassLoader(cl);
-        }
-    }
-
+    
     /**
      * Set the context root if it is not set already. We are overriding AxisServlet's impl to
      * get past an issue in Felix.
@@ -59,7 +54,7 @@ public class OSGiAxis2Servlet extends AxisServlet {
         configContext.setContextRoot(contextRoot);
     }
 
-    public AxisConfiguration getConfiguration() {
-        return this.axisConfiguration;
+    public ConfigurationContext ConfigurationContext() {
+        return configContext;
     }
 }
