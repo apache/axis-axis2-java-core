@@ -19,6 +19,7 @@
 
 package org.apache.axis2.extensions.osgi;
 
+import org.apache.axis2.extensions.osgi.util.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -34,11 +35,12 @@ public class Activator implements BundleActivator, BundleListener {
     OSGiAxis2Servlet servlet = new OSGiAxis2Servlet();
     ServiceRegistry registry = null;
     HttpService httpServ = null;
-    LogService log = null;
+    Logger logger;
 
     public void start(BundleContext context) throws Exception {
         this.context = context;
-        System.out.println("[Axis2/OSGi] Registering Axis2 Servlet");
+        logger = new Logger(context);
+        logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Registering Axis2 Servlet");
 
         ServiceReference sr = context.getServiceReference(HttpService.class.getName());
         if (sr != null) {
@@ -47,24 +49,15 @@ public class Activator implements BundleActivator, BundleListener {
                 httpServ.registerServlet("/axis2",
                         servlet, null, null);
             } catch (Exception e) {
-                System.err.println("[Axis2/OSGi] Exception registering Axis Servlet:"
-                        + e);
+                logger.log(LogService.LOG_ERROR,"[Axis2/OSGi] Exception registering Axis Servlet",
+                        e);
             }
         }
 
-        ServiceReference sr2 = context.getServiceReference(LogService.class.getName());
-        if (sr2 != null) {
-            log = (LogService) context.getService(sr);
-            if (log == null) {
-                System.err.println("[Axis2/OSGi] Unable to find Log Service");
-            }
-        }
+        registry = new ServiceRegistry(servlet, logger);
 
-        System.out.println("[Axis2/OSGi] Starting Bundle Listener");
+        logger.log(LogService.LOG_INFO, "[Axis2/OSGi] Starting Bundle Listener");
         context.addBundleListener(this);
-
-        registry = new ServiceRegistry(servlet, log);
-        
 // TODO: We should poke at all the bundles already in the system
 //        Bundle bundles[] = context.getBundles();
 //        for (int i = 0; i < bundles.length; i++) {
@@ -82,14 +75,14 @@ public class Activator implements BundleActivator, BundleListener {
         switch (event.getType()) {
             case BundleEvent.STARTED:
                 if(context.getBundle() != bundle){
-                    System.out.println("[Axis2/OSGi] Starting any services in Bundle - " + bundle.getSymbolicName());
+                    logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Starting any services in Bundle - " + bundle.getSymbolicName());
                     registry.register(event.getBundle());
                 }
                 break;
 
             case BundleEvent.STOPPED:
                 if(context.getBundle() != bundle){
-                    System.out.println("[Axis2/OSGi] Stopping any services in Bundle - " + bundle.getSymbolicName());
+                    logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Stopping any services in Bundle - " + bundle.getSymbolicName());
                     registry.unregister(event.getBundle());
                 }
                 break;
@@ -97,7 +90,7 @@ public class Activator implements BundleActivator, BundleListener {
     }
 
     public void stop(BundleContext context) throws Exception {
-        System.out.println("[Axis2/OSGi] Stopping all services and the Bundle Listener");
+        logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Stopping all services and the Bundle Listener");
         this.context.removeBundleListener(this);
         registry.close();
     }

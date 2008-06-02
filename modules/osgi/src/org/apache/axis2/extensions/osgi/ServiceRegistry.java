@@ -29,9 +29,11 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.extensions.osgi.util.BundleClassLoader;
+import org.apache.axis2.extensions.osgi.util.Logger;
 import org.apache.axis2.jaxws.framework.JAXWSDeployer;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
+import org.osgi.util.tracker.ServiceTracker;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,20 +43,20 @@ import java.util.Iterator;
 
 public class ServiceRegistry extends JAXWSDeployer {
     private OSGiAxis2Servlet servlet;
-    private LogService log;
+    private Logger logger;
     private HashMap services = new HashMap();
     private boolean isInited = false;
 
-    public ServiceRegistry(OSGiAxis2Servlet servlet, LogService log) {
+    public ServiceRegistry(OSGiAxis2Servlet servlet, Logger logger) {
         this.servlet = servlet;
-        this.log = log;
+        this.logger = logger;
     }
 
     public void register(Bundle bundle) {
         if(!isInited){
             ConfigurationContext context = servlet.ConfigurationContext();
             if(context == null){
-                System.out.println("[Axis2/OSGi] Configuration Context is null. unable to register bundle");
+                logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Configuration Context is null. unable to register bundle");
                 return;
             }
             init(context);
@@ -79,17 +81,17 @@ public class ServiceRegistry extends JAXWSDeployer {
         try {
             AxisServiceGroup serviceGroup = deployClasses(bundle.getSymbolicName(), null, loader, classes);
             if (serviceGroup != null) {
-                System.out.println("[Axis2/OSGi] Deployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Deployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator = serviceGroup.getServices(); iterator.hasNext();) {
                     AxisService service = (AxisService) iterator.next();
-                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
+                    logger.log(LogService.LOG_INFO,"[Axis2/OSGi]      Service - " + service.getName());
                 }
                 services.put(bundle, serviceGroup);
             }
         } catch (Exception e) {
-            if(log != null) {
-                log.log(LogService.LOG_INFO, "Exception deploying classes", e);
+            if(logger != null) {
+                logger.log(LogService.LOG_INFO, "Exception deploying classes", e);
             }
         }
     }
@@ -137,8 +139,8 @@ public class ServiceRegistry extends JAXWSDeployer {
                 }
             }
         } catch (Exception e) {
-            if(log != null) {
-                log.log(LogService.LOG_INFO, "Exception deploying modules", e);
+            if(logger != null) {
+                logger.log(LogService.LOG_INFO, "Exception deploying modules", e);
             }
         }
     }
@@ -148,15 +150,15 @@ public class ServiceRegistry extends JAXWSDeployer {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) iterator.next();
             try {
                 axisConfig.removeServiceGroup(serviceGroup.getServiceGroupName());
-                System.out.println("[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator2 = serviceGroup.getServices(); iterator2.hasNext();) {
                     AxisService service = (AxisService) iterator2.next();
-                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
+                    logger.log(LogService.LOG_INFO,"[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
-                if(log != null) {
-                    log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                if(logger != null) {
+                    logger.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
                 }
             }
         }
@@ -167,15 +169,15 @@ public class ServiceRegistry extends JAXWSDeployer {
         if (serviceGroup != null) {
             try {
                 axisConfig.removeServiceGroup(serviceGroup.getServiceGroupName());
-                System.out.println("[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
+                logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Undeployed ServiceGroup - " + serviceGroup.getServiceGroupName());
 
                 for (Iterator iterator2 = serviceGroup.getServices(); iterator2.hasNext();) {
                     AxisService service = (AxisService) iterator2.next();
-                    System.out.println("[Axis2/OSGi]      Service - " + service.getName());
+                    logger.log(LogService.LOG_INFO,"[Axis2/OSGi]      Service - " + service.getName());
                 }
             } catch (AxisFault axisFault) {
-                if(log != null) {
-                    log.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
+                if(logger != null) {
+                    logger.log(LogService.LOG_INFO, axisFault.getMessage(), axisFault);
                 }
             }
         }

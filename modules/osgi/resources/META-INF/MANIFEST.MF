@@ -122,6 +122,7 @@ Import-Package:
  org.jivesoftware.smack;resolution:=optional,
  org.osgi.framework,
  org.osgi.service.http,
+ org.osgi.util.tracker,
  org.osgi.service.log,
  org.w3c.dom,
  org.xml.sax
