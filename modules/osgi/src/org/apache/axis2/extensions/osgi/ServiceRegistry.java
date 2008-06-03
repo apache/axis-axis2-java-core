@@ -40,11 +40,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServiceRegistry extends JAXWSDeployer {
     private OSGiAxis2Servlet servlet;
     private Logger logger;
-    private HashMap services = new HashMap();
+    private ConcurrentHashMap services = new ConcurrentHashMap();
     private boolean isInited = false;
 
     public ServiceRegistry(OSGiAxis2Servlet servlet, Logger logger) {
