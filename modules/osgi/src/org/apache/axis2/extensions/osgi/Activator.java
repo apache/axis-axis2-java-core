@@ -19,13 +19,13 @@
 
 package org.apache.axis2.extensions.osgi;
 
+import org.apache.axis2.extensions.osgi.util.HttpServiceTracker;
 import org.apache.axis2.extensions.osgi.util.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.log.LogService;
 
@@ -34,26 +34,14 @@ public class Activator implements BundleActivator, BundleListener {
     BundleContext context;
     OSGiAxis2Servlet servlet = new OSGiAxis2Servlet();
     ServiceRegistry registry = null;
-    HttpService httpServ = null;
+    HttpServiceTracker httpTracker = null;
     Logger logger;
 
     public void start(BundleContext context) throws Exception {
         this.context = context;
+
         logger = new Logger(context);
-        logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Registering Axis2 Servlet");
-
-        ServiceReference sr = context.getServiceReference(HttpService.class.getName());
-        if (sr != null) {
-            HttpService httpServ = (HttpService) context.getService(sr);
-            try {
-                httpServ.registerServlet("/axis2",
-                        servlet, null, null);
-            } catch (Exception e) {
-                logger.log(LogService.LOG_ERROR,"[Axis2/OSGi] Exception registering Axis Servlet",
-                        e);
-            }
-        }
-
+        httpTracker = new HttpServiceTracker(context, servlet, logger); 
         registry = new ServiceRegistry(servlet, logger);
 
         logger.log(LogService.LOG_INFO, "[Axis2/OSGi] Starting Bundle Listener");
@@ -92,6 +80,7 @@ public class Activator implements BundleActivator, BundleListener {
     public void stop(BundleContext context) throws Exception {
         logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Stopping all services and the Bundle Listener");
         this.context.removeBundleListener(this);
+        httpTracker.close();
         logger.close();
         registry.close();
     }

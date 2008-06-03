@@ -16,11 +16,11 @@ public class Logger extends ServiceTracker {
 
     public void log(int i, java.lang.String s) {
         LogService service = getLogService();
-        if(service == null){
-            print(i, s);
-        } else {
+        if(service != null){
             service.log(i, s);
+            //return;
         }
+        print(i, s);
     }
 
     private void print(int i, String s) {
@@ -32,7 +32,7 @@ public class Logger extends ServiceTracker {
                 System.out.print("[INFO]    ");
                 break;
             case LogService.LOG_WARNING: 
-                System.out.print("[WARNDING]");
+                System.out.print("[WARNING]");
                 break;
             case LogService.LOG_DEBUG: 
                 System.out.print("[DEBUG]   ");
@@ -43,11 +43,11 @@ public class Logger extends ServiceTracker {
 
     public void log(int i, java.lang.String s, java.lang.Throwable throwable) {
         LogService service = getLogService();
-        if(service == null){
-            print(i, s);
-            throwable.printStackTrace(System.out);
-        } else {
+        if(service != null){
             service.log(i, s, throwable);
+            //return;
         }
+        print(i, s);
+        throwable.printStackTrace(System.out);
     }
 }
