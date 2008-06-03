@@ -92,6 +92,7 @@ public class Activator implements BundleActivator, BundleListener {
     public void stop(BundleContext context) throws Exception {
         logger.log(LogService.LOG_INFO,"[Axis2/OSGi] Stopping all services and the Bundle Listener");
         this.context.removeBundleListener(this);
+        logger.close();
         registry.close();
     }
 }
