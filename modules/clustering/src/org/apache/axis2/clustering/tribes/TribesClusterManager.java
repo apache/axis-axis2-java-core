@@ -638,8 +638,8 @@ public class TribesClusterManager implements ClusterManager {
         channel.addInterceptor(tcpFailureDetector);
 
         // Add a DomainFilterInterceptor
+        channel.getMembershipService().setDomain(domain);
         if (mode.equals(ClusteringConstants.Mode.APPLICATION)) {
-            channel.getMembershipService().setDomain(domain);
             DomainFilterInterceptor dfi = new DomainFilterInterceptor();
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
