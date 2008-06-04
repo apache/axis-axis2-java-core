@@ -29,9 +29,15 @@ public final class ClusteringConstants {
     }
 
     /**
-     * The default domain to which this node belongs to
+     * The default domain to which this member belongs to. This node may be running in application
+     * or loadBalance mode
      */
     public static final String DEFAULT_DOMAIN = "apache.axis2.domain";
+
+    /**
+     * The default application domain to which this member belongs to
+     */
+    public static final String DEFAULT_APP_DOMAIN = "apache.axis2.app.domain";
 
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
     public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
@@ -59,6 +65,22 @@ public final class ClusteringConstants {
         public static final String DOMAIN = "domain";
 
         /**
+         * Indicates the mode in which this member is running. Valid values are "application" and
+         * "loadBalance"
+         *
+         * application - This member hosts end user applications
+         * loadBalance - This member is a part of the load balancer cluster
+         */
+        public static final String MODE = "mode";
+
+        /**
+         * This parameter is only valid when the "mode" parameter is set to "application"
+         *
+         * This indicates the domain in which the the applications being load balanced are deployed.
+         */
+        public static final String APPLICATION_DOMAIN = "applicationDomain";
+
+        /**
          * When a Web service request is received, and processed, before the response is sent to the
          * client, should we update the states of all members in the cluster? If the value of
          * this parameter is set to "true", the response to the client will be sent only after
@@ -73,6 +95,22 @@ public final class ClusteringConstants {
          * the cluster.
          */
         public static final String AVOID_INITIATION = "AvoidInitiation";
+    }
+
+    /**
+     * Represents the mode of this member
+     */
+    public static final class Mode{
+
+        /**
+         * Load balancing mode
+         */
+        public static final String LOAD_BALANCE = "loadBalance";
+
+        /**
+         * Application mode
+         */
+        public static final String APPLICATION = "application";
     }
 
     public static final class MembershipScheme {

@@ -280,6 +280,21 @@
         <parameter name="domain">apache.axis2.domain</parameter>
 
         <!--
+         Indicates the mode in which this member is running. Valid values are "application" and
+         "loadBalance"
+
+         application - This member hosts end user applications
+         loadBalance - This member is a part of the load balancer cluster
+        -->
+        <parameter name="mode">application</parameter>
+
+        <!--
+        This parameter is only valid when the "mode" parameter is set to application. This indicates
+        the domain in which the the applications being load balanced are deployed.
+        -->
+        <parameter name="applicationDomain">apache.axis2.application.domain</parameter>
+
+        <!--
            When a Web service request is received, and processed, before the response is sent to the
            client, should we update the states of all members in the cluster? If the value of
            this parameter is set to "true", the response to the client will be sent only after

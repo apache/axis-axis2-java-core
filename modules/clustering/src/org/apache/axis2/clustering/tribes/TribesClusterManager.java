@@ -133,15 +133,28 @@ public class TribesClusterManager implements ClusterManager {
                 new ChannelListener(configurationContext, configurationManager, contextManager);
 
         setMaximumRetries();
-        byte[] domain = getClusterDomain();
+
         String membershipScheme = getMembershipScheme();
+        log.info("Using " + membershipScheme + " based membership management scheme");
+
+        String mode = getMode();
+        log.info("Operating in " + mode + " mode");
+
+        byte[] domain = getClusterDomain();
+        log.info("Cluster domain: " + new String(domain));
+
+        byte[] applicationDomain = new byte[0];
+        if (mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
+            applicationDomain = getApplicationDomain();
+            log.info("Application domain: " + new String(applicationDomain));
+        }
 
         // Add all the ChannelInterceptors
-        addInterceptors(channel, domain, membershipScheme);
+        addInterceptors(channel, domain, applicationDomain, membershipScheme, mode);
 
         // Membership scheme handling
         // If it is a WKA scheme, connect to a WKA and get a list of members. Add the members
-        // to the membership manager
+        // to the MembershipManager
         configureMembershipScheme(domain, membershipScheme);
 
         channel.addChannelListener(channelListener);
@@ -254,15 +267,49 @@ public class TribesClusterManager implements ClusterManager {
      * Get the membership scheme applicable to this cluster
      *
      * @return The membership scheme. Only "wka" & "multicast" are valid return values.
+     * @throws ClusteringFault If the membershipScheme specified in the axis2.xml file is invalid
      */
-    private String getMembershipScheme() {
+    private String getMembershipScheme() throws ClusteringFault {
         Parameter membershipSchemeParam =
                 getParameter(ClusteringConstants.Parameters.MEMBERSHIP_SCHEME);
-        String membershipScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
+        String mbrScheme = ClusteringConstants.MembershipScheme.MULTICAST_BASED;
         if (membershipSchemeParam != null) {
-            membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
+            mbrScheme = ((String) membershipSchemeParam.getValue()).trim();
         }
-        return membershipScheme;
+        if (!mbrScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED) &&
+            !mbrScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            String msg = "Invalid membership scheme '" + mbrScheme + "'. Supported schemes are " +
+                         ClusteringConstants.MembershipScheme.MULTICAST_BASED + " & " +
+                         ClusteringConstants.MembershipScheme.WKA_BASED;
+            log.error(msg);
+            throw new ClusteringFault(msg);
+        }
+        return mbrScheme;
+    }
+
+    /**
+     * Get the mode in which this member is running
+     *
+     * @return The member mode. Only "application" & "loadBalance" are valid return values.
+     * @throws ClusteringFault If an invalid membershipScheme has been specified in the axis2.xml
+     *                         file
+     */
+    private String getMode() throws ClusteringFault {
+        Parameter modeParam =
+                getParameter(ClusteringConstants.Parameters.MODE);
+        String mode = ClusteringConstants.Mode.APPLICATION;
+        if (modeParam != null) {
+            mode = ((String) modeParam.getValue()).trim();
+        }
+        if (!mode.equals(ClusteringConstants.Mode.APPLICATION) &&
+            !mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
+            String msg = "Invalid mode '" + mode + "'. Supported modes are " +
+                         ClusteringConstants.Mode.APPLICATION + " & " +
+                         ClusteringConstants.Mode.LOAD_BALANCE;
+            log.error(msg);
+            throw new ClusteringFault(msg);
+        }
+        return mode;
     }
 
     /**
@@ -277,6 +324,24 @@ public class TribesClusterManager implements ClusterManager {
             domain = ((String) domainParam.getValue()).getBytes();
         } else {
             domain = ClusteringConstants.DEFAULT_DOMAIN.getBytes();
+        }
+        return domain;
+    }
+
+    /**
+     * Get the clustering application domain to which this node belongs to. A valid domain
+     * will be returned only of this member is running in loadBalance mode.
+     *
+     * @return The clustering application domain to which this node belongs to. A valid domain
+     *         will be returned only of this member is running in loadBalance mode.
+     */
+    private byte[] getApplicationDomain() {
+        Parameter domainParam = getParameter(ClusteringConstants.Parameters.APPLICATION_DOMAIN);
+        byte[] domain;
+        if (domainParam != null) {
+            domain = ((String) domainParam.getValue()).getBytes();
+        } else {
+            domain = ClusteringConstants.DEFAULT_APP_DOMAIN.getBytes();
         }
         return domain;
     }
@@ -350,7 +415,7 @@ public class TribesClusterManager implements ClusterManager {
     /**
      * Handle specific configurations related to different membership management schemes.
      *
-     * @param domain           The clustering domain to which this member belongs to
+     * @param domain           The clustering loadBalancerDomain to which this member belongs to
      * @param membershipScheme The membership scheme. Only wka & multicast are valid values.
      * @throws ClusteringFault If the membership scheme is invalid, or if an error occurs
      *                         while configuring membership scheme
@@ -359,10 +424,8 @@ public class TribesClusterManager implements ClusterManager {
             throws ClusteringFault {
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-            log.info("Using WKA based membership management scheme");
             configureWkaBasedMembership(domain);
         } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
-            log.info("Using multicast based membership management scheme");
             configureMulticastBasedMembership(channel, domain);
         } else {
             String msg = "Invalid membership scheme '" + membershipScheme +
@@ -375,7 +438,7 @@ public class TribesClusterManager implements ClusterManager {
     /**
      * Configure the membership related to the WKA based scheme
      *
-     * @param domain The domain to which the members belong to
+     * @param domain The loadBalancerDomain to which the members belong to
      * @throws ClusteringFault If an error occurs while configuring this scheme
      */
     private void configureWkaBasedMembership(byte[] domain) throws ClusteringFault {
@@ -538,25 +601,23 @@ public class TribesClusterManager implements ClusterManager {
      * Add ChannelInterceptors. The order of the interceptors that are added will depend on the
      * membership management scheme
      *
-     * @param channel          The Tribes channel
-     * @param domain           The domain to which this node belongs to
-     * @param membershipScheme The membership scheme. Only wka & multicast are valid values.
+     * @param channel           The Tribes channel
+     * @param domain            The loadBalancerDomain to which this node belongs to
+     * @param applicationDomain The application domain, across which the load is balanced
+     * @param membershipScheme  The membership scheme. Only wka & multicast are valid values.
+     * @param mode              The mode in which this member operates such as "loadBalance" or
+     *                          "application"
      * @throws ClusteringFault If an error occurs while adding interceptors
      */
-    private void addInterceptors(ManagedChannel channel, byte[] domain, String membershipScheme)
-            throws ClusteringFault {
+    private void addInterceptors(ManagedChannel channel,
+                                 byte[] domain, byte[] applicationDomain,
+                                 String membershipScheme, String mode) throws ClusteringFault {
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
             tcpPingInterceptor.setInterval(100);
             channel.addInterceptor(tcpPingInterceptor);
         }
-
-        // Add a DomainFilterInterceptor
-        channel.getMembershipService().setDomain(domain);
-        DomainFilterInterceptor dfi = new DomainFilterInterceptor();
-        dfi.setDomain(domain);
-        channel.addInterceptor(dfi);
 
         // Add the NonBlockingCoordinator. This is used for leader election
         /*nbc = new NonBlockingCoordinator() {
@@ -569,6 +630,25 @@ public class TribesClusterManager implements ClusterManager {
         nbc.setPrevious(dfi);
         channel.addInterceptor(nbc);*/
 
+        // Add a reliable failure detector
+        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
+//        tcpFailureDetector.setPrevious(dfi); //TODO: check this
+//        tcpFailureDetector.setReadTestTimeout(30000);
+        tcpFailureDetector.setConnectTimeout(30000);
+        channel.addInterceptor(tcpFailureDetector);
+
+        // Add a DomainFilterInterceptor
+        if (mode.equals(ClusteringConstants.Mode.APPLICATION)) {
+            channel.getMembershipService().setDomain(domain);
+            DomainFilterInterceptor dfi = new DomainFilterInterceptor();
+            dfi.setDomain(domain);
+            channel.addInterceptor(dfi);
+        } else if (mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
+            LoadBalancerInterceptor lbInterceptor =
+                    new LoadBalancerInterceptor(domain, applicationDomain);
+            channel.addInterceptor(lbInterceptor);
+        }
+
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
         AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
         channel.addInterceptor(atMostOnceInterceptor);
@@ -577,13 +657,6 @@ public class TribesClusterManager implements ClusterManager {
         OrderInterceptor orderInterceptor = new OrderInterceptor();
         orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
         channel.addInterceptor(orderInterceptor);
-
-        // Add a reliable failure detector
-        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-        tcpFailureDetector.setPrevious(dfi);
-        tcpFailureDetector.setReadTestTimeout(30000);
-        tcpFailureDetector.setConnectTimeout(30000);
-        channel.addInterceptor(tcpFailureDetector);
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             staticMembershipInterceptor = new StaticMembershipInterceptor();
@@ -596,7 +669,7 @@ public class TribesClusterManager implements ClusterManager {
      * parameters
      *
      * @param channel The Tribes channel
-     * @param domain  The clustering domain to which this node belongs to
+     * @param domain  The clustering loadBalancerDomain to which this node belongs to
      * @throws ClusteringFault If an error occurs while obtaining the local host address
      */
     private void configureMulticastBasedMembership(ManagedChannel channel,
@@ -716,7 +789,7 @@ public class TribesClusterManager implements ClusterManager {
                         break;
                     }
                 }
-            } catch (ChannelException e) {
+            } catch (Exception e) {
                 log.error("Cannot get initialization information from " +
                           memberHost + ". Will retry in 2 secs.", e);
                 sentMembersList.add(memberHost);
