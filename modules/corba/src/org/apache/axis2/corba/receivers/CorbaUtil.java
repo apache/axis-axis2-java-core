@@ -74,7 +74,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,8 +86,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+//import java.util.zip.ZipEntry;
+//import java.util.zip.ZipInputStream;
 
 public class CorbaUtil implements CorbaConstants {
     private static Map IDL_CACHE = new HashMap();
@@ -99,12 +99,12 @@ public class CorbaUtil implements CorbaConstants {
         Properties props = System.getProperties();
 
         if (orbClass!=null)
-            props.put(ORG_OMG_CORBA_ORBCLASS, orbClass.getValue());
+            props.put(ORG_OMG_CORBA_ORBCLASS, ((String) orbClass.getValue()).trim());
         else
             props.put(ORG_OMG_CORBA_ORBCLASS, DEFAULR_ORB_CLASS);
 
         if (orbSingletonClass!=null)
-            props.put(ORG_OMG_CORBA_ORBSINGLETON_CLASS, orbSingletonClass.getValue());
+            props.put(ORG_OMG_CORBA_ORBSINGLETON_CLASS, ((String) orbSingletonClass.getValue()).trim());
         else
             props.put(ORG_OMG_CORBA_ORBSINGLETON_CLASS, DEFAULT_ORBSINGLETON_CLASS);
 
@@ -120,16 +120,16 @@ public class CorbaUtil implements CorbaConstants {
             Parameter iorString = service.getParameter(IOR_STRING);
 
             if (namingServiceUrl!=null && objectName!=null) {
-                obj = orb.string_to_object((String) namingServiceUrl.getValue());
+                obj = orb.string_to_object(((String) namingServiceUrl.getValue()).trim());
                 NamingContextExt nc = NamingContextExtHelper.narrow(obj);
-                obj = nc.resolve(nc.to_name((String) objectName.getValue()));
+                obj = nc.resolve(nc.to_name(((String) objectName.getValue()).trim()));
             } else if (iorFilePath!=null) {
-                FileReader fileReader = new FileReader((String) iorFilePath.getValue());
+                FileReader fileReader = new FileReader(((String) iorFilePath.getValue()).trim());
                 char[] buf = new char[1000];
                 fileReader.read(buf);
                 obj = orb.string_to_object((new String(buf)).trim());
             } else if (iorString!=null) {
-                obj = orb.string_to_object((String) iorString.getValue());
+                obj = orb.string_to_object(((String) iorString.getValue()).trim());
             } else {
                 throw new CorbaInvocationException("cannot resolve object");
             }
@@ -148,7 +148,12 @@ public class CorbaUtil implements CorbaConstants {
 
     public static IDL getIDL(AxisService service, ORB orb, String dirName) throws CorbaException {
         Parameter idlFile = service.getParameter(IDL_FILE);
-        String idlFileName = (String) idlFile.getValue();
+
+        if (idlFile == null) {
+            throw new CorbaInvocationException("Please specify the IDL file");    
+        }
+
+        String idlFileName = ((String) idlFile.getValue()).trim();
         String cacheKey = dirName + File.separator + idlFileName;
         IDL idl = (IDL) IDL_CACHE.get(cacheKey);
         if (idl==null) {
@@ -203,7 +208,7 @@ public class CorbaUtil implements CorbaConstants {
         Parameter interfaceName = service.getParameter(INTERFACE_NAME);
         if (interfaceName==null)
             throw new CorbaInvocationException("interfaceName cannot be null");
-        return invokerFactory.newInvoker((String) interfaceName.getValue(), methodName, obj);
+        return invokerFactory.newInvoker(((String) interfaceName.getValue()).trim(), methodName, obj);
     }
 
     public static Object[] extractParameters(OMElement methodElement, Member[] parameterMembers) throws CorbaInvocationException {
