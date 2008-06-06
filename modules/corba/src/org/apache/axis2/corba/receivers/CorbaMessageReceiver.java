@@ -146,7 +146,7 @@ public class CorbaMessageReceiver extends AbstractInOutMessageReceiver implement
             } else {
                 msg = e.getMessage();
             }
-            throw new AxisFault(msg);
+            throw new AxisFault(msg, e);
         }
     }
 }
