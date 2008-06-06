@@ -1053,7 +1053,7 @@ class EndpointDescriptionImpl
                 AxisService axisSvc = getAxisService();
                 AxisConfiguration axisCfg = configCtx.getAxisConfiguration();
                 if (axisCfg.getService(axisSvc.getName()) != null) {
-                    axisSvc.setName(axisSvc.getName() + this.hashCode());
+                    axisSvc.setName(axisSvc.getName() + uniqueID());
                 }
                 serviceClient = new ServiceClient(configCtx, axisSvc);
             }
@@ -2068,6 +2068,14 @@ class EndpointDescriptionImpl
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("setupAxisServiceErr2"),e);
             }
         }
+    }
+    
+    private static long currentUniqueID = 0;
+    private long uniqueID() {
+        if (currentUniqueID == 0) {
+            currentUniqueID = System.currentTimeMillis();
+        }
+        return currentUniqueID++;
     }
 }
 
