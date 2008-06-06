@@ -87,13 +87,13 @@ public class TypeTable {
         simpleTypetoxsd.put("java.lang.Short",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "short", "xs"));
         simpleTypetoxsd.put("java.util.Date",
-                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date", "xs"));
         simpleTypetoxsd.put("java.util.Calendar",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
 
         // SQL date time
          simpleTypetoxsd.put("java.sql.Date",
-                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "dateTime", "xs"));
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "date", "xs"));
          simpleTypetoxsd.put("java.sql.Time",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "time", "xs"));
         simpleTypetoxsd.put("java.sql.Timestamp",
