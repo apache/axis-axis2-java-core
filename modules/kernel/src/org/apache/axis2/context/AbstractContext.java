@@ -40,6 +40,7 @@ public abstract class AbstractContext {
 
     private static final Log log = LogFactory.getLog(AbstractContext.class);
     
+    private static final int DEFAULT_MAP_SIZE = 64;
     private static boolean DEBUG_ENABLED = log.isDebugEnabled();
     private static boolean DEBUG_PROPERTY_SET = false;
     
@@ -93,7 +94,7 @@ public abstract class AbstractContext {
      */
     public Map getProperties() {
         if (this.properties == null) {
-            this.properties = new HashMap();
+            this.properties = new HashMap(DEFAULT_MAP_SIZE);
         }
         return properties;
     }
@@ -106,7 +107,7 @@ public abstract class AbstractContext {
      */
     public Iterator getPropertyNames() {
         if (properties == null) {
-            properties = new HashMap();
+            properties = new HashMap(DEFAULT_MAP_SIZE);
         }
         return properties.keySet().iterator();
     }
@@ -174,7 +175,7 @@ public abstract class AbstractContext {
      */
     public void setProperty(String key, Object value) {
         if (this.properties == null) {
-            this.properties = new HashMap();
+            this.properties = new HashMap(DEFAULT_MAP_SIZE);
         }
         properties.put(key, value);
         addPropertyDifference(key, value, false);
@@ -193,7 +194,7 @@ public abstract class AbstractContext {
         synchronized(this) {
             // Lazizly create propertyDifferences map
             if (propertyDifferences == null) {
-                propertyDifferences = new HashMap();
+                propertyDifferences = new HashMap(DEFAULT_MAP_SIZE);
             }
             propertyDifferences.put(key, new PropertyDifference(key, value, isRemoved));
         }
@@ -231,7 +232,7 @@ public abstract class AbstractContext {
      */
     public void setNonReplicableProperty(String key, Object value) {
         if (this.properties == null) {
-            this.properties = new HashMap();
+            this.properties = new HashMap(DEFAULT_MAP_SIZE);
         }
         properties.put(key, value);
     }
@@ -276,7 +277,7 @@ public abstract class AbstractContext {
      */
     public synchronized Map getPropertyDifferences() {
         if (propertyDifferences == null) {
-            propertyDifferences = new HashMap();
+            propertyDifferences = new HashMap(DEFAULT_MAP_SIZE);
         }
         return propertyDifferences;
     }
@@ -341,7 +342,7 @@ public abstract class AbstractContext {
     public void mergeProperties(Map props) {
         if (props != null) {
             if (this.properties == null) {
-                this.properties = new HashMap();
+                this.properties = new HashMap(DEFAULT_MAP_SIZE);
             }
             for (Iterator iterator = props.keySet().iterator();
                  iterator.hasNext();) {
