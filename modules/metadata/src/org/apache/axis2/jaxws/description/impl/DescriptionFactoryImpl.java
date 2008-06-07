@@ -277,8 +277,9 @@ public class DescriptionFactoryImpl {
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
-            DescriptionFactory.UpdateType updateType) {
-        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, null);
+            DescriptionFactory.UpdateType updateType,
+            String bindingId, String endpointAddress) {
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, null, bindingId, endpointAddress);
     }
     
     /**
@@ -287,8 +288,8 @@ public class DescriptionFactoryImpl {
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
-            DescriptionFactory.UpdateType updateType, Object serviceDelegateKey ) {
-        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, serviceDelegateKey);
+            DescriptionFactory.UpdateType updateType, Object serviceDelegateKey, String bindingId, String endpointAddress) {
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, null, serviceDelegateKey, bindingId, endpointAddress);
     }
     
     /**
@@ -298,12 +299,14 @@ public class DescriptionFactoryImpl {
             ServiceDescription serviceDescription, Class sei, QName portQName,
             DescriptionFactory.UpdateType updateType, 
             DescriptionBuilderComposite composite,
-            Object serviceDelegateKey) {
+            Object serviceDelegateKey,
+            String bindingId, 
+            String endpointAddress) {
         EndpointDescription endpointDesc = null;
         synchronized(serviceDescription) {
                 endpointDesc = 
                 ((ServiceDescriptionImpl)serviceDescription)
-                        .updateEndpointDescription(sei, portQName, updateType, composite, serviceDelegateKey);
+                        .updateEndpointDescription(sei, portQName, updateType, composite, serviceDelegateKey, bindingId, endpointAddress);
         }
         EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
         
@@ -330,8 +333,8 @@ public class DescriptionFactoryImpl {
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, EndpointReference epr,
             String addressingNamespace,
-            DescriptionFactory.UpdateType updateType) {
-        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, null);
+            DescriptionFactory.UpdateType updateType, String bindingId, String endpointAddress) {
+        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, null, bindingId, endpointAddress);
     }
 
     /**
@@ -342,8 +345,8 @@ public class DescriptionFactoryImpl {
             ServiceDescription serviceDescription, Class sei, EndpointReference epr,
             String addressingNamespace,
             DescriptionFactory.UpdateType updateType,
-            Object sparseCompositeKey) {
-        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, sparseCompositeKey);
+            Object sparseCompositeKey, String bindingId, String endpointAddress) {
+        return updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, sparseCompositeKey, bindingId, endpointAddress);
     }
 
     /**
@@ -355,7 +358,7 @@ public class DescriptionFactoryImpl {
             String addressingNamespace,
             DescriptionFactory.UpdateType updateType,
             DescriptionBuilderComposite composite,
-            Object sparseCompositeKey) {
+            Object sparseCompositeKey, String bindingId, String endpointAddress) {
         QName portQName = null;
         
         try {
@@ -381,7 +384,7 @@ public class DescriptionFactoryImpl {
                  Messages.getMessage("updateEndpointError", e.getMessage()));
         }
         
-        return updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);
+        return updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey, bindingId, endpointAddress);
     }
 
     public static ClientConfigurationFactory getClientConfigurationFactory() {

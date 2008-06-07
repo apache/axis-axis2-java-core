@@ -241,7 +241,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
         EndpointDescription endpointDesc =
                 DescriptionFactory.updateEndpoint(serviceDescription, null, portName,
-                                                  DescriptionFactory.UpdateType.ADD_PORT, this);
+                                                  DescriptionFactory.UpdateType.ADD_PORT, this, bindingId, endpointAddress);
         // TODO: Need to set endpointAddress and set or check bindingId on the EndpointDesc
         endpointDesc.setEndpointAddress(endpointAddress);
         endpointDesc.setClientBindingID(bindingId);

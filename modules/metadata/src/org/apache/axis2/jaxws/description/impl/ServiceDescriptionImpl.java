@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description.impl;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -47,6 +48,7 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.resolver.Catalog;
@@ -371,7 +373,9 @@ class ServiceDescriptionImpl
                                                   QName portQName,
                                                   DescriptionFactory.UpdateType updateType,
                                                   DescriptionBuilderComposite composite,
-                                                  Object serviceDelegateKey) {
+                                                  Object serviceDelegateKey,
+                                                  String bindingId,
+                                                  String endpointAddress) {
 
 	
     	EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
@@ -419,8 +423,7 @@ class ServiceDescriptionImpl
                                  Messages.getMessage("serviceDescriptionImplAddPortErr"));
                     }
 
-                    endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
-
+                    endpointDescription = createEndpointDescriptionImpl(sei, portQName, bindingId, endpointAddress);    
                     addDynamicEndpointDescriptionImpl(endpointDescription, serviceDelegateKey);
 
                 } else {
@@ -521,6 +524,39 @@ class ServiceDescriptionImpl
                             Messages.getMessage("createDispatchFail1", portQName.toString()));
                 }
                 break;
+        }
+        return endpointDescription;
+    }
+
+    private EndpointDescriptionImpl createEndpointDescriptionImpl(Class sei, QName portQName, String bindingId, String endpointAddress) {
+        EndpointDescriptionImpl endpointDescription;
+        Parameter parameter = configContext.getAxisConfiguration().getParameter("jaxws.dynamic.endpoints");
+        WeakHashMap<String, EndpointDescriptionImpl> cachedDescriptions = (WeakHashMap<String, EndpointDescriptionImpl>)
+                ((parameter == null) ? null : parameter.getValue());
+        if(cachedDescriptions == null) {
+            cachedDescriptions = new WeakHashMap<String, EndpointDescriptionImpl>();
+            try {
+                configContext.getAxisConfiguration().addParameter("jaxws.dynamic.endpoints", cachedDescriptions);
+            } catch (AxisFault axisFault) {
+                throw new RuntimeException(axisFault);
+            }
+            configContext.setProperty("jaxws.dynamic.endpoints", cachedDescriptions);
+        }
+
+        StringBuffer key = new StringBuffer();
+        key.append(portQName == null ? "NULL" : portQName.toString());
+        key.append(':');
+        key.append(bindingId == null ? "NULL" : bindingId);
+        key.append(':');
+        key.append(endpointAddress == null ? "NULL" : endpointAddress);
+        synchronized(cachedDescriptions) {
+            endpointDescription = cachedDescriptions.get(key.toString());
+        }
+        if(endpointDescription == null) {
+            endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
+            synchronized(cachedDescriptions) {
+                cachedDescriptions.put(key.toString(), endpointDescription);
+            }
         }
         return endpointDescription;
     }

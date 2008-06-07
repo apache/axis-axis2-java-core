@@ -123,7 +123,7 @@ public class DescriptionFactory {
                                                      Class sei, QName portQName,
                                                      DescriptionFactory.UpdateType updateType) {
         return DescriptionFactoryImpl
-                   .updateEndpoint(serviceDescription, sei, portQName, updateType);
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, null, null);
     }    
     
     /**
@@ -151,7 +151,7 @@ public class DescriptionFactory {
                                                      DescriptionFactory.UpdateType updateType,
                                                      Object serviceDelegateKey) {
         return DescriptionFactoryImpl
-                   .updateEndpoint(serviceDescription, sei, portQName, updateType, serviceDelegateKey);
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, serviceDelegateKey, null, null);
     }    
     
     /**
@@ -175,7 +175,7 @@ public class DescriptionFactory {
             DescriptionBuilderComposite composite,
             Object sparseCompositeKey) {
         return DescriptionFactoryImpl
-                   .updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey);
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey, null, null);
     }
 
     /**
@@ -204,7 +204,7 @@ public class DescriptionFactory {
                                                      String addressingNamespace,
                                                      DescriptionFactory.UpdateType updateType) {
         return DescriptionFactoryImpl
-                .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType);
+                .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, null, null);
     }
     
     /**
@@ -232,7 +232,7 @@ public class DescriptionFactory {
                                                      DescriptionFactory.UpdateType updateType,
                                                      Object serviceDelegateKey) {
         return DescriptionFactoryImpl
-                   .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, serviceDelegateKey);
+                   .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, serviceDelegateKey, null, null);
     }    
 
     /**
@@ -257,7 +257,178 @@ public class DescriptionFactory {
             DescriptionBuilderComposite composite,
             Object sparseCompositeKey) {
         return DescriptionFactoryImpl
-        .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, composite, sparseCompositeKey);
+        .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, composite, sparseCompositeKey, null, null);
+    }
+    
+    /**
+     * Retrieve or create the EndpointDescription hierarchy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  If an EndpointDescritption already exists, it will
+     * be returned; if one does not already exist, it will be created.  Note that if the SEI is null
+     * then the EndpointDescription returned will be for a Dispatch client only and it will not have
+     * an EndpointInterfaceDescription hierarchy associated with it.  If, at a later point, the same
+     * port is requested and an SEI is provided, the existing EndpointDescription will be updated
+     * with a newly-created EndpointInterfaceDescription hierarchy.
+     *
+     * @param serviceDescription An existing client-side ServiceDescription.  This must not be
+     *                           null.
+     * @param sei                The ServiceInterface class.  This can be null for adding a port or
+     *                           creating a Dispatch; it can not be null when getting a port.
+     * @param portQName          The QName of the port.  If this is null, the runtime will attempt
+     *                           to to select an appropriate port to use.
+     * @param updateType         The type of the update: adding a port, creating a dispatch, or
+     *                           getting an SEI-based port.
+     * @return An EndpointDescription corresponding to the port.
+     * @see #createServiceDescription(URL, QName, Class)
+     * @see DescriptionFactory.UpdateType
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+                                                     Class sei, QName portQName,
+                                                     DescriptionFactory.UpdateType updateType,
+                                                     String bindingId, 
+                                                     String endpointAddress) {
+        return DescriptionFactoryImpl
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, bindingId, endpointAddress);
+    }    
+    
+    /**
+     * Retrieve or create the EndpointDescription hierarchy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  This is identical to above, but this method has a 
+     * reference back to the ServiceDelegate (which invoked it) for purposes of properly caching 
+     * ServiceDescriptions that contain dynamic ports
+     *
+     * @param serviceDescription An existing client-side ServiceDescription.  This must not be
+     *                           null.
+     * @param sei                The ServiceInterface class.  This can be null for adding a port or
+     *                           creating a Dispatch; it can not be null when getting a port.
+     * @param portQName          The QName of the port.  If this is null, the runtime will attempt
+     *                           to to select an appropriate port to use.
+     * @param updateType         The type of the update: adding a port, creating a dispatch, or
+     *                           getting an SEI-based port.
+     * @param serviceDelegateKey A reference back to the ServiceDelegate that called it
+     * @return An EndpointDescription corresponding to the port.
+     * @see #createServiceDescription(URL, QName, Class)
+     * @see DescriptionFactory.UpdateType
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+                                                     Class sei, 
+                                                     QName portQName,
+                                                     DescriptionFactory.UpdateType updateType,
+                                                     Object serviceDelegateKey,
+                                                     String bindingId, 
+                                                     String endpointAddress) {
+        return DescriptionFactoryImpl
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, serviceDelegateKey, bindingId, endpointAddress);
+    }    
+    
+    /**
+     * Retrieve or create an EndpointDescription hierarchy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  Additional metadata may be specified in a sparse
+     * composite.  That metadata may come from a JSR-109 client deployment descriptor, for example,
+     * or from resource injection of an WebServiceRef or other Resource annotation.
+     * 
+     * @see #updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     *  
+     * @param serviceDescription
+     * @param sei
+     * @param portQName
+     * @param updateType
+     * @param composite
+     * @return
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+            Class sei, QName portQName,
+            DescriptionFactory.UpdateType updateType,
+            DescriptionBuilderComposite composite,
+            Object sparseCompositeKey,
+            String bindingId, String endpointAddress) {
+        return DescriptionFactoryImpl
+                   .updateEndpoint(serviceDescription, sei, portQName, updateType, composite, sparseCompositeKey, bindingId, endpointAddress);
+    }
+
+    /**
+     * Retrieve or create the EndpointDescription hierachy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  If an EndpointDescritption already exists, it will
+     * be returned; if one does not already exist, it will be created.  Note that if the SEI is null
+     * then the EndpointDescription returned will be for a Dispatch client only and it will not have
+     * an EndpointInterfaceDescription hierachy associated with it.  If, at a later point, the same
+     * port is requested and an SEI is provided, the existing EndpointDescription will be updated
+     * with a newly-created EndpointInterfaceDescription hieracy.
+     *
+     * @param serviceDescription  An existing client-side ServiceDescription.  This must not be
+     *                            null.
+     * @param sei                 The ServiceInterface class.  This can be null for adding a port or
+     *                            creating a Dispatch; it can not be null when getting a port.
+     * @param epr                 The endpoint reference to the target port.
+     * @param addressingNamespace The addressing namespace of the endpoint reference.
+     * @param updateType          The type of the update: adding a port, creating a dispatch, or
+     *                            getting an SEI-based port.
+     * @return An EndpointDescription corresponding to the port.
+     * @see #createServiceDescription(URL, QName, Class)
+     * @see DescriptionFactory.UpdateType
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+                                                     Class sei, EndpointReference epr,
+                                                     String addressingNamespace,
+                                                     DescriptionFactory.UpdateType updateType,
+                                                     String bindingId, String endpointAddress) {
+        return DescriptionFactoryImpl
+                .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, bindingId, endpointAddress);
+    }
+    
+    /**
+     * Retrieve or create the EndpointDescription hierarchy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  This is identical to above, but this method has a 
+     * reference back to the ServiceDelegate (which invoked it) for purposes of properly caching 
+     * ServiceDescriptions that contain dynamic ports
+     *
+     * @param serviceDescription An existing client-side ServiceDescription.  This must not be
+     *                           null.
+     * @param sei                The ServiceInterface class.  This can be null for adding a port or
+     *                           creating a Dispatch; it can not be null when getting a port.
+     * @param epr                 The endpoint reference to the target port.
+     * @param addressingNamespace The addressing namespace of the endpoint reference.
+     * @param updateType         The type of the update: adding a port, creating a dispatch, or
+     *                           getting an SEI-based port.
+     * @param serviceDelegateKey A reference back to the ServiceDelegate that called it
+     * @return An EndpointDescription corresponding to the port.
+     * @see #createServiceDescription(URL, QName, Class)
+     * @see DescriptionFactory.UpdateType
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+                                                     Class sei, EndpointReference epr,
+                                                     String addressingNamespace,
+                                                     DescriptionFactory.UpdateType updateType,
+                                                     Object serviceDelegateKey,
+                                                     String bindingId, 
+                                                     String endpointAddress) {
+        return DescriptionFactoryImpl
+                   .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, serviceDelegateKey, bindingId, endpointAddress);
+    }    
+
+    /**
+     * Retrieve or create an EndpointDescription hierachy associated with an existing CLIENT side
+     * ServiceDescription for a particular port.  Additonal metdata may be specified in a sparse
+     * composite.  That metadata may come from a JSR-109 client deployment descriptor, for example,
+     * or from resource injection of an WebServiceRef or other Resource annotation.
+     * 
+     * @see #updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     *  
+     * @param serviceDescription
+     * @param sei
+     * @param portQName
+     * @param updateType
+     * @param composite
+     * @return
+     */
+    public static EndpointDescription updateEndpoint(ServiceDescription serviceDescription,
+            Class sei, EndpointReference epr,
+            String addressingNamespace,
+            DescriptionFactory.UpdateType updateType,
+            DescriptionBuilderComposite composite,
+            Object sparseCompositeKey,
+            String bindingId, String endpointAddress) {
+        return DescriptionFactoryImpl
+        .updateEndpoint(serviceDescription, sei, epr, addressingNamespace, updateType, composite, sparseCompositeKey, bindingId, endpointAddress);
     }
     
     /**
