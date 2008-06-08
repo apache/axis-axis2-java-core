@@ -16,55 +16,24 @@
 package org.apache.axis2.clustering;
 
 /**
- * Represents a member in the cluster. This is used with static membership
+ * This is the interface through which the load balancing event are notified.
+ * This will only be used when this member is running in loadBalance mode. In order to do this,
+ * in the axis2.xml file, set the value of the "mode" parameter to "loadBalance" and then provide
+ * the class that implements this interface using the "loadBalanceEventHandler" entry.
  */
-public class Member {
+public interface LoadBalanceEventHandler {
 
     /**
-     * The host name of this member. Can be the name or the IP address
+     * An application member joined the application group
+     *
+     * @param member Represents the member who joined
      */
-    private String hostName;
+    void applicationMemberAdded(Member member);
 
     /**
-     * The TCP port used by this member
+     * An application member left the application group
+     *
+     * @param member Represents the member who left
      */
-    private int port;
-
-    public Member(String hostName, int port) {
-        this.hostName = hostName;
-        this.port = port;
-    }
-
-    public String getHostName() {
-        return hostName;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Member member = (Member) o;
-        return port == member.getPort() &&
-               !(hostName != null ? !hostName.equals(member.getHostName()) :
-                 member.getHostName() != null);
-    }
-
-    public int hashCode() {
-        int result;
-        result = (hostName != null ? hostName.hashCode() : 0);
-        result = 31 * result + port;
-        return result;
-    }
-
-    public String toString() {
-        return hostName + ":" + port;
-    }
+    void applicationMemberRemoved(Member member);
 }

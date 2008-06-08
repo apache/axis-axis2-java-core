@@ -289,6 +289,16 @@
         <parameter name="mode">application</parameter>
 
         <!--
+        This is the even handler which will be notified in the case of load balancing events occurring.
+        This class has to be an implementation of org.apache.axis2.clustering.LoadBalanceEventHandler
+
+        This entry is only valid if the "mode" parameter is set to loadBalance
+        -->
+        <parameter name="loadBalanceEventHandler">
+            org.apache.axis2.clustering.DefaultLoadBalanceEventHandler
+        </parameter>
+
+        <!--
         This parameter is only valid when the "mode" parameter is set to application. This indicates
         the domain in which the the applications being load balanced are deployed.
         -->

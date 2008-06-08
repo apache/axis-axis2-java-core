@@ -15,56 +15,21 @@
  */
 package org.apache.axis2.clustering;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
- * Represents a member in the cluster. This is used with static membership
+ * The default, dummy implementation of {@link LoadBalanceEventHandler}
  */
-public class Member {
+public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler{
 
-    /**
-     * The host name of this member. Can be the name or the IP address
-     */
-    private String hostName;
+    private static final Log log  = LogFactory.getLog(DefaultLoadBalanceEventHandler.class);
 
-    /**
-     * The TCP port used by this member
-     */
-    private int port;
-
-    public Member(String hostName, int port) {
-        this.hostName = hostName;
-        this.port = port;
+    public void applicationMemberAdded(Member member) {
+        log.info("Application member " + member + " joined cluster.");
     }
 
-    public String getHostName() {
-        return hostName;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Member member = (Member) o;
-        return port == member.getPort() &&
-               !(hostName != null ? !hostName.equals(member.getHostName()) :
-                 member.getHostName() != null);
-    }
-
-    public int hashCode() {
-        int result;
-        result = (hostName != null ? hostName.hashCode() : 0);
-        result = 31 * result + port;
-        return result;
-    }
-
-    public String toString() {
-        return hostName + ":" + port;
+    public void applicationMemberRemoved(Member member) {
+        log.info("Application member " + member + " left cluster.");
     }
 }

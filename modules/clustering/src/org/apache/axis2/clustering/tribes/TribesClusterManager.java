@@ -25,6 +25,7 @@ import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.RequestBlockingHandler;
+import org.apache.axis2.clustering.LoadBalanceEventHandler;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ClusteringContextListener;
@@ -646,6 +647,20 @@ public class TribesClusterManager implements ClusterManager {
         } else if (mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
             LoadBalancerInterceptor lbInterceptor =
                     new LoadBalancerInterceptor(domain, applicationDomain);
+            Parameter lbEvtHandlerParam =
+                    getParameter(ClusteringConstants.Parameters.LOAD_BALANCE_EVENT_HANDLER);
+            if(lbEvtHandlerParam != null && lbEvtHandlerParam.getValue() != null){
+                String lbEvtHandlerClass = ((String)lbEvtHandlerParam.getValue()).trim();
+                try {
+                    lbInterceptor.
+                        setEventHandler((LoadBalanceEventHandler)Class.forName(lbEvtHandlerClass).newInstance());
+                } catch (Exception e) {
+                    String msg = "Could not instantiate LoadBalanceEventHandler class " +
+                                 lbEvtHandlerClass;
+                    log.error(msg, e);
+                    throw new ClusteringFault(msg, e);
+                }
+            }
             channel.addInterceptor(lbInterceptor);
         }
 

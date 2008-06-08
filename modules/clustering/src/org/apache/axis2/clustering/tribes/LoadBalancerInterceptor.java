@@ -22,6 +22,7 @@ import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.catalina.tribes.membership.Membership;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.clustering.LoadBalanceEventHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +56,8 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
      */
     protected byte[] applicationDomain = new byte[0];
 
+    private LoadBalanceEventHandler eventHandler;
+
     public LoadBalancerInterceptor(byte[] loadBalancerDomain,
                                    byte[] applicationDomain) {
         this.loadBalancerDomain = loadBalancerDomain;
@@ -67,6 +70,8 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         if (Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
             super.messageReceived(msg);
         }
+
+        // TODO: Application members may inform about their HTTP/S ports
     }
 
     public void memberAdded(Member member) {
@@ -82,11 +87,17 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
         if (notify) {
             super.memberAdded(member);
+            
         }
 
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
             log.info("Application member " + TribesUtil.getHost(member) + " joined cluster");
+            if(eventHandler != null){
+                org.apache.axis2.clustering.Member axis2Member =
+                        new org.apache.axis2.clustering.Member(member.getName(), member.getPort());
+                eventHandler.applicationMemberAdded(axis2Member);
+            }
             applicationMembers.add(member);
         }
 
@@ -108,7 +119,12 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
             log.info("Application member " + TribesUtil.getHost(member) + " left cluster");
-            applicationMembers.remove(member);
+            if(eventHandler != null){
+                org.apache.axis2.clustering.Member axis2Member =
+                        new org.apache.axis2.clustering.Member(member.getName(), member.getPort());
+                eventHandler.applicationMemberRemoved(axis2Member);
+                applicationMembers.remove(member);
+            }
         }
     }
 
@@ -157,5 +173,9 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
 
     public void setLoadBalancerDomain(byte[] loadBalancerDomain) {
         this.loadBalancerDomain = loadBalancerDomain;
+    }
+
+    public void setEventHandler(LoadBalanceEventHandler eventHandler) {
+        this.eventHandler = eventHandler;
     }
 }

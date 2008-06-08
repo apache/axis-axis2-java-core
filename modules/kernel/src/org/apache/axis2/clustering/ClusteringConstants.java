@@ -67,15 +67,23 @@ public final class ClusteringConstants {
         /**
          * Indicates the mode in which this member is running. Valid values are "application" and
          * "loadBalance"
-         *
+         * <p/>
          * application - This member hosts end user applications
          * loadBalance - This member is a part of the load balancer cluster
          */
         public static final String MODE = "mode";
 
         /**
+         * This is the even handler which will be notified in the case of load balancing events occurring.
+         * This class has to be an implementation of org.apache.axis2.clustering.LoadBalanceEventHandler
+         * <p/>
+         * This entry is only valid if the "mode" parameter is set to loadBalance
+         */
+        public static final String LOAD_BALANCE_EVENT_HANDLER = "loadBalanceEventHandler";
+
+        /**
          * This parameter is only valid when the "mode" parameter is set to "application"
-         *
+         * <p/>
          * This indicates the domain in which the the applications being load balanced are deployed.
          */
         public static final String APPLICATION_DOMAIN = "applicationDomain";
@@ -100,7 +108,7 @@ public final class ClusteringConstants {
     /**
      * Represents the mode of this member
      */
-    public static final class Mode{
+    public static final class Mode {
 
         /**
          * Load balancing mode
