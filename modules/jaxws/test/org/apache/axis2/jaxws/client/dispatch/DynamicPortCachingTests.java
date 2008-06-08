@@ -18,25 +18,17 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.jaxws.ClientConfigurationFactory;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.DescriptionTestUtils2;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.spi.ClientMetadataTest;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.metadata.registry.MetadataFactoryRegistry;
-import org.apache.axis2.engine.AxisConfigurator;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * Tests the caching and isolation of dynamic ports,i.e. those created with
@@ -63,7 +55,7 @@ public class DynamicPortCachingTests extends TestCase {
      */
     public void _testSamePortsSameService() {
         try {
-            installCachingFactory();
+            ClientMetadataTest.installCachingFactory();
             QName svcQN = new QName(namespaceURI, svcLocalPart);
             
             Service svc1 = Service.create(svcQN);
@@ -103,18 +95,15 @@ public class DynamicPortCachingTests extends TestCase {
             
             
         } finally {
-            restoreOriginalFactory();
+            ClientMetadataTest.restoreOriginalFactory();
         }
         
     }
     
     public void testAddPortOOM() {
-        System.out.println("testAddPortOOM");
-
-        ClientConfigurationFactory oldFactory = setClientConfigurationFactory();
         QName svcQN = new QName(namespaceURI, svcLocalPart);
-        
         try {
+            ClientMetadataTest.installCachingFactory();
             for (int i = 0; i < 5000 ; i++) {
                 Service svc1 = Service.create(svcQN);
                 System.out.println("Port number " + i);
@@ -125,29 +114,8 @@ public class DynamicPortCachingTests extends TestCase {
         } catch (Throwable t) {
             fail("Caught throwable " + t);
         } finally {
-            MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, oldFactory);
+            ClientMetadataTest.restoreOriginalFactory();
         }
-    }
-
-    private ClientConfigurationFactory setClientConfigurationFactory() {
-        ClientConfigurationFactory oldFactory = (ClientConfigurationFactory) MetadataFactoryRegistry.getFactory(ClientConfigurationFactory.class);
-        ClientConfigurationFactory factory = new ClientConfigurationFactory(new AxisConfigurator() {
-            public AxisConfiguration getAxisConfiguration()  {
-                try {
-                    return ConfigurationContextFactory.createDefaultConfigurationContext().getAxisConfiguration();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            public void loadServices() {
-            }
-            public void engageGlobalModules() throws AxisFault {
-            }
-            public void cleanup() {
-            }
-        });
-        MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, factory);
-        return oldFactory;
     }
 
     private List getList(Iterator it) {
@@ -157,63 +125,4 @@ public class DynamicPortCachingTests extends TestCase {
         }
         return returnList;
     }
-    
-    /**
-     * Methods to install a client configuration factory that will return the same AxisConfiguration
-     * each time.  This is used so that the ServiceDescriptions will be cached in the DescriptionFactory.
-     * 
-     * IMPORTANT!!!
-     * If you install a caching factory, you MUST restore the original factory before your test
-     * exits, otherwise it will remain installed when subsequent tests run and cause REALLY STRANGE
-     * failures.  Use restoreOriginalFactory() INSIDE A finally() block to restore the factory.
-     */
-    static private ClientConfigurationFactory originalFactory = null;
-    static void installCachingFactory() {
-        // install caching factory
-        if (originalFactory != null) {
-            throw new UnsupportedOperationException("Attempt to install the caching factory when the original factory has already been overwritten");
-        }
-        originalFactory = 
-            (ClientConfigurationFactory)MetadataFactoryRegistry.getFactory(ClientConfigurationFactory.class);
-        DynamicPortCachingClientContextFactory newFactory = new DynamicPortCachingClientContextFactory();
-        MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, newFactory);
-        resetClientConfigFactory();
-    }
-    static void restoreOriginalFactory() {
-        if (originalFactory == null) {
-            throw new UnsupportedOperationException("Attempt to restore original factory to a null value");
-        }
-        MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, originalFactory);
-        resetClientConfigFactory();
-        originalFactory = null;
-    }
-    static void resetClientConfigFactory() {
-//        Field field;
-//        try {
-//            field = DescriptionFactoryImpl.class.getDeclaredField("clientConfigFactory");
-//            field.setAccessible(true);
-//            field.set(null, null);
-//        } catch (Exception e) {
-//            throw new UnsupportedOperationException("Unable to reset client config factory; caught " + e);
-//        }
-    }
-    
 }
-
-class DynamicPortCachingClientContextFactory extends ClientConfigurationFactory {
-    ConfigurationContext context;
-    
-    public ConfigurationContext getClientConfigurationContext() {
-        if (context == null) {
-            context = super.getClientConfigurationContext();
-        }
-        System.out.println("Test version of DynamicPortCachingClientContextFactory: " + context);
-        return context;
-    }
-    
-    public void reset() {
-        context = null;
-    }
-}
-
-

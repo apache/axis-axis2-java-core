@@ -1047,7 +1047,7 @@ public class ClientMetadataTest extends TestCase {
      * failures.  Use restoreOriginalFactory() INSIDE A finally() block to restore the factory.
      */
     static private ClientConfigurationFactory originalFactory = null;
-    static void installCachingFactory() {
+    public static void installCachingFactory() {
         // install caching factory
         if (originalFactory != null) {
             throw new UnsupportedOperationException("Attempt to install the caching factory when the original factory has already been overwritten");
@@ -1058,7 +1058,7 @@ public class ClientMetadataTest extends TestCase {
         MetadataFactoryRegistry.setFactory(ClientConfigurationFactory.class, newFactory);
         resetClientConfigFactory();
     }
-    static void restoreOriginalFactory() {
+    public static void restoreOriginalFactory() {
         if (originalFactory == null) {
             throw new UnsupportedOperationException("Attempt to restore original factory to a null value");
         }
