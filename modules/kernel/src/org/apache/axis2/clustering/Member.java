@@ -26,9 +26,19 @@ public class Member {
     private String hostName;
 
     /**
-     * The TCP port used by this member
+     * The TCP port used by this member for communicating clustering messages
      */
     private int port;
+
+    /**
+     * The HTTP port used by this member for servicing Web service requests. Used for load balancing
+     */
+    private int httpPort;
+
+    /**
+     * The HTTPS port used by this member for servicing Web service requests. Used for load balancing
+     */
+    private int httpsPort;
 
     public Member(String hostName, int port) {
         this.hostName = hostName;
@@ -41,6 +51,22 @@ public class Member {
 
     public int getPort() {
         return port;
+    }
+
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public void setHttpsPort(int httpsPort) {
+        this.httpsPort = httpsPort;
+    }
+
+    public int getHttpPort() {
+        return httpPort;
+    }
+
+    public void setHttpPort(int httpPort) {
+        this.httpPort = httpPort;
     }
 
     public boolean equals(Object o) {

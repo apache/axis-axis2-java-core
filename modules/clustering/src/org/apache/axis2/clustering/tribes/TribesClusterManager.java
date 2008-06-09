@@ -24,8 +24,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.RequestBlockingHandler;
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.RequestBlockingHandler;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ClusteringContextListener;
@@ -41,6 +41,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Phase;
@@ -81,7 +82,6 @@ import java.util.Properties;
  * The main ClusterManager class for the Tribes based clustering implementation
  */
 public class TribesClusterManager implements ClusterManager {
-    public static final int MSG_ORDER_OPTION = 512;
 
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
@@ -159,6 +159,8 @@ public class TribesClusterManager implements ClusterManager {
         configureMembershipScheme(domain, membershipScheme);
 
         channel.addChannelListener(channelListener);
+
+        setMemberTransportInfo();
 
         TribesMembershipListener membershipListener = new TribesMembershipListener(membershipManager);
         channel.addMembershipListener(membershipListener);
@@ -262,6 +264,26 @@ public class TribesClusterManager implements ClusterManager {
         configurationContext.
                 setNonReplicableProperty(ClusteringConstants.CLUSTER_INITIALIZED, "true");
         log.info("Cluster initialization completed.");
+    }
+
+    private void setMemberTransportInfo() {
+        String payload = "";
+        AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+        TransportInDescription httpTransport = axisConfig.getTransportIn("http");
+        if (httpTransport != null) {
+            Parameter port = httpTransport.getParameter("port");
+            if (port != null) {
+                payload +="HTTP:" + Integer.parseInt((String) port.getValue()) + ";";
+            }
+        }
+        TransportInDescription httpsTransport = axisConfig.getTransportIn("https");
+        if (httpsTransport != null) {
+            Parameter port = httpsTransport.getParameter("port");
+            if (port != null) {
+                payload +="HTTPS:" + Integer.parseInt((String) port.getValue()) + ";";
+            }
+        }
+        channel.getMembershipService().setPayload(payload.getBytes());
     }
 
     /**
@@ -527,9 +549,9 @@ public class TribesClusterManager implements ClusterManager {
                 membershipManager.addWellKnownMember(tribesMember);
                 if (canConnect(member)) {
                     membershipManager.memberAdded(tribesMember);
-                    log.info("Added static member " + TribesUtil.getHost(tribesMember));
+                    log.info("Added static member " + TribesUtil.getName(tribesMember));
                 } else {
-                    log.info("Could not connect to member " + TribesUtil.getHost(tribesMember));
+                    log.info("Could not connect to member " + TribesUtil.getName(tribesMember));
                 }
             }
         }
@@ -649,11 +671,11 @@ public class TribesClusterManager implements ClusterManager {
                     new LoadBalancerInterceptor(domain, applicationDomain);
             Parameter lbEvtHandlerParam =
                     getParameter(ClusteringConstants.Parameters.LOAD_BALANCE_EVENT_HANDLER);
-            if(lbEvtHandlerParam != null && lbEvtHandlerParam.getValue() != null){
-                String lbEvtHandlerClass = ((String)lbEvtHandlerParam.getValue()).trim();
+            if (lbEvtHandlerParam != null && lbEvtHandlerParam.getValue() != null) {
+                String lbEvtHandlerClass = ((String) lbEvtHandlerParam.getValue()).trim();
                 try {
                     lbInterceptor.
-                        setEventHandler((LoadBalanceEventHandler)Class.forName(lbEvtHandlerClass).newInstance());
+                            setEventHandler((LoadBalanceEventHandler) Class.forName(lbEvtHandlerClass).newInstance());
                 } catch (Exception e) {
                     String msg = "Could not instantiate LoadBalanceEventHandler class " +
                                  lbEvtHandlerClass;
@@ -670,7 +692,7 @@ public class TribesClusterManager implements ClusterManager {
 
         // Add the OrderInterceptor to preserve sender ordering
         OrderInterceptor orderInterceptor = new OrderInterceptor();
-        orderInterceptor.setOptionFlag(MSG_ORDER_OPTION);
+        orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
         channel.addInterceptor(orderInterceptor);
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
@@ -780,7 +802,7 @@ public class TribesClusterManager implements ClusterManager {
             Member member = (numberOfTries == 0) ?
                             membershipManager.getLongestLivingMember() : // First try to get from the longest member alive
                             membershipManager.getRandomMember(); // Else get from a random member
-            String memberHost = TribesUtil.getHost(member);
+            String memberHost = TribesUtil.getName(member);
             log.info("Trying to send intialization request to " + memberHost);
             try {
                 if (!sentMembersList.contains(memberHost)) {

@@ -20,6 +20,9 @@ package org.apache.axis2.clustering.tribes;
  */
 public final class TribesConstants {
 
+    // Message sending and receiving options
+    public static final int MSG_ORDER_OPTION = 512;
+
     public static final String LOCAL_MEMBER_HOST = "localMemberHost";
     public static final String LOCAL_MEMBER_PORT = "localMemberPort";
 
@@ -33,11 +36,4 @@ public final class TribesConstants {
     public static final String BIND_ADDRESS = "bindAddress";
     public static final String TCP_LISTEN_PORT = "tcpListenPort";
     public static final String MAX_RETRIES = "maxRetries";
-
-    public final class MembershipMessages {
-        public static final int JOIN = 3;
-        public static final int LEAVE = 5;
-        public static final int NEW_MEMBER_JOINED = 7;
-        public static final int MEMBER_LIST = 11;
-    }
 }

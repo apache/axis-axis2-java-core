@@ -35,12 +35,16 @@ public class TribesUtil {
             if (length > 0) {
                 log.info("Members of current cluster");
                 for (int i = 0; i < length; i++) {
-                    log.info("Member" + (i + 1) + " " + getHost(members[i]));
+                    log.info("Member" + (i + 1) + " " + getName(members[i]));
                 }
             } else {
                 log.info("No members in current cluster");
             }
         }
+    }
+
+    public static String getName(Member member) {
+        return getHost(member) + ":" + member.getPort();
     }
 
     public static String getHost(Member member) {
@@ -55,10 +59,10 @@ public class TribesUtil {
                 }
             }
         }
-        return host.append(":").append(member.getPort()).toString();
+        return host.toString();
     }
 
     public static String getLocalHost(Channel channel) {
-        return getHost(channel.getLocalMember(true));
+        return getName(channel.getLocalMember(true));
     }
 }

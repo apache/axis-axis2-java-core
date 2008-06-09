@@ -67,10 +67,10 @@ public class MemberListCommand extends ControlCommand {
     }
 
     private void addMember(Member localMember, Member member) {
-        log.info("Trying to add member " + TribesUtil.getHost(member) + "...");
+        log.info("Trying to add member " + TribesUtil.getName(member) + "...");
         if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
               localMember.getPort() == member.getPort())) {
-            log.info("Added member " + TribesUtil.getHost(member));
+            log.info("Added member " + TribesUtil.getName(member));
             membershipManager.memberAdded(member);
             staticMembershipInterceptor.memberAdded(member);
         }

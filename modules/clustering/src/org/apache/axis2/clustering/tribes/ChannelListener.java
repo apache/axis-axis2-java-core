@@ -116,11 +116,11 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
                 getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED) == null) {
             log.warn("Received message " + msg +
                      " before cluster initialization has been completed from " +
-                     TribesUtil.getHost(sender));
+                     TribesUtil.getName(sender));
             return;
         }
         if (log.isDebugEnabled()) {
-            log.debug("Received message " + msg + " from " + TribesUtil.getHost(sender));
+            log.debug("Received message " + msg + " from " + TribesUtil.getName(sender));
         }
 
         try {

@@ -90,7 +90,7 @@ public class MembershipManager {
         if (!members.contains(member)) {
             if (rpcChannel != null && wkaMembers.contains(member)) { // if it is a well-known member
 
-                log.info("A WKA member " + TribesUtil.getHost(member) +
+                log.info("A WKA member " + TribesUtil.getName(member) +
                          " just joined the group. Sending MEMBER_LIST message.");
                 // send the memeber list to it
                 MemberListCommand memListCmd;
@@ -101,7 +101,7 @@ public class MembershipManager {
                                     Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
                 } catch (Exception e) {
                     String errMsg = "Could not send MEMBER_LIST to well-known member " +
-                                    TribesUtil.getHost(member);
+                                    TribesUtil.getName(member);
                     log.error(errMsg, e);
                     throw new RemoteProcessException(errMsg, e);
                 }

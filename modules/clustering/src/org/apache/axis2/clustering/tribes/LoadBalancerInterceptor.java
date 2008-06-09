@@ -92,10 +92,19 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
 
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
-            log.info("Application member " + TribesUtil.getHost(member) + " joined cluster");
+            log.info("Application member " + TribesUtil.getName(member) + " joined cluster");
             if(eventHandler != null){
                 org.apache.axis2.clustering.Member axis2Member =
-                        new org.apache.axis2.clustering.Member(member.getName(), member.getPort());
+                        new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                               member.getPort());
+                byte[] payload = member.getPayload();
+                String payloadStr = new String(payload);
+
+                String[] ports = payloadStr.split(";");
+                int httpPort = Integer.parseInt(ports[0].substring(ports[0].indexOf(":") + 1));
+                int httpsPort = Integer.parseInt(ports[1].substring(ports[1].indexOf(":") + 1));
+                axis2Member.setHttpPort(httpPort);
+                axis2Member.setHttpsPort(httpsPort);
                 eventHandler.applicationMemberAdded(axis2Member);
             }
             applicationMembers.add(member);
@@ -118,7 +127,7 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
 
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
-            log.info("Application member " + TribesUtil.getHost(member) + " left cluster");
+            log.info("Application member " + TribesUtil.getName(member) + " left cluster");
             if(eventHandler != null){
                 org.apache.axis2.clustering.Member axis2Member =
                         new org.apache.axis2.clustering.Member(member.getName(), member.getPort());

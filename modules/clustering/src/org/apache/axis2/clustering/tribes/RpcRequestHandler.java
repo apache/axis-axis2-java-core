@@ -70,7 +70,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             try {
                 log.info("Received " + msg + " initialization request message from " +
-                         TribesUtil.getHost(invoker));
+                         TribesUtil.getName(invoker));
                 GetStateCommand command = (GetStateCommand) msg;
                 command.execute(configurationContext);
                 GetStateResponseCommand getStateRespCmd = new GetStateResponseCommand();
@@ -90,7 +90,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             try {
                 log.info("Received " + msg + " initialization request message from " +
-                         TribesUtil.getHost(invoker));
+                         TribesUtil.getName(invoker));
                 GetConfigurationCommand command = (GetConfigurationCommand) msg;
                 command.execute(configurationContext);
                 GetConfigurationResponseCommand
@@ -103,7 +103,7 @@ public class RpcRequestHandler implements RpcCallback {
                 throw new RemoteProcessException(errMsg, e);
             }
         } else if (msg instanceof JoinGroupCommand) {
-            log.info("Received JOIN message from " + TribesUtil.getHost(invoker));
+            log.info("Received JOIN message from " + TribesUtil.getName(invoker));
             MemberListCommand memListCmd;
             try {
                 // Add the member
@@ -120,7 +120,7 @@ public class RpcRequestHandler implements RpcCallback {
             }
             return memListCmd;
         } else if (msg instanceof MemberJoinedCommand) {
-            log.info("Received MEMBER_JOINED message from " + TribesUtil.getHost(invoker));
+            log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(invoker));
             try {
                 MemberJoinedCommand command = (MemberJoinedCommand) msg;
                 command.setMembershipManager(membershipManager);
@@ -146,7 +146,7 @@ public class RpcRequestHandler implements RpcCallback {
                 throw new RemoteProcessException(errMsg, e);
             }
         }
-        return null;                      
+        return null;
     }
 
     public void leftOver(Serializable msg, Member member) {

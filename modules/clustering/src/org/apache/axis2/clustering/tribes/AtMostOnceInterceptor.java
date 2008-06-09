@@ -55,7 +55,7 @@ public class AtMostOnceInterceptor extends ChannelInterceptorBase {
                 receivedMessages.put(msg, System.currentTimeMillis());
                 super.messageReceived(msg);
             } else {  // If it is a duplicate message, discard it. i.e. dont call super.messageReceived
-                log.info("Duplicate message received from " + TribesUtil.getHost(msg.getAddress()));
+                log.info("Duplicate message received from " + TribesUtil.getName(msg.getAddress()));
             }
         }
     }
