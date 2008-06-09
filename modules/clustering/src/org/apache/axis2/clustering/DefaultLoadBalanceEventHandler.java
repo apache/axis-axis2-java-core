@@ -18,18 +18,29 @@ package org.apache.axis2.clustering;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * The default, dummy implementation of {@link LoadBalanceEventHandler}
  */
 public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler{
 
     private static final Log log  = LogFactory.getLog(DefaultLoadBalanceEventHandler.class);
+    private List<Member> members = new ArrayList<Member>();
 
     public void applicationMemberAdded(Member member) {
         log.info("Application member " + member + " joined cluster.");
+        members.add(member);
     }
 
     public void applicationMemberRemoved(Member member) {
         log.info("Application member " + member + " left cluster.");
+        members.remove(member);
     }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
 }

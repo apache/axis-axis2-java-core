@@ -65,6 +65,7 @@ import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -98,6 +99,7 @@ public class TribesClusterManager implements ClusterManager {
     private RpcRequestHandler rpcRequestHandler;
     private StaticMembershipInterceptor staticMembershipInterceptor;
     private List<org.apache.axis2.clustering.Member> members;
+    private LoadBalanceEventHandler lbEventHandler;
 
     public TribesClusterManager() {
         parameters = new HashMap<String, Parameter>();
@@ -109,6 +111,10 @@ public class TribesClusterManager implements ClusterManager {
 
     public List<org.apache.axis2.clustering.Member> getMembers() {
         return members;
+    }
+
+    public LoadBalanceEventHandler getLoadBalanceEventHandler() {
+        return lbEventHandler;
     }
 
     public ContextManager getContextManager() {
@@ -266,24 +272,32 @@ public class TribesClusterManager implements ClusterManager {
         log.info("Cluster initialization completed.");
     }
 
-    private void setMemberTransportInfo() {
-        String payload = "";
+    private void setMemberTransportInfo() throws ClusteringFault {
+        Properties transportInfo = new Properties();
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
         TransportInDescription httpTransport = axisConfig.getTransportIn("http");
         if (httpTransport != null) {
             Parameter port = httpTransport.getParameter("port");
             if (port != null) {
-                payload +="HTTP:" + Integer.parseInt((String) port.getValue()) + ";";
+                transportInfo.put("HTTP", port.getValue());
             }
         }
         TransportInDescription httpsTransport = axisConfig.getTransportIn("https");
         if (httpsTransport != null) {
             Parameter port = httpsTransport.getParameter("port");
             if (port != null) {
-                payload +="HTTPS:" + Integer.parseInt((String) port.getValue()) + ";";
+                transportInfo.put("HTTPS", port.getValue());
             }
         }
-        channel.getMembershipService().setPayload(payload.getBytes());
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        try {
+            transportInfo.store(bout, "");
+        } catch (IOException e) {
+            String msg = "Cannot store member transport properties in the ByteArrayOutputStream";
+            log.error(msg, e);
+            throw new ClusteringFault(msg, e);
+        }
+        channel.getMembershipService().setPayload(bout.toByteArray());
     }
 
     /**
@@ -674,8 +688,9 @@ public class TribesClusterManager implements ClusterManager {
             if (lbEvtHandlerParam != null && lbEvtHandlerParam.getValue() != null) {
                 String lbEvtHandlerClass = ((String) lbEvtHandlerParam.getValue()).trim();
                 try {
-                    lbInterceptor.
-                            setEventHandler((LoadBalanceEventHandler) Class.forName(lbEvtHandlerClass).newInstance());
+                    lbEventHandler =
+                            (LoadBalanceEventHandler) Class.forName(lbEvtHandlerClass).newInstance();
+                    lbInterceptor.setEventHandler(lbEventHandler);
                 } catch (Exception e) {
                     String msg = "Could not instantiate LoadBalanceEventHandler class " +
                                  lbEvtHandlerClass;

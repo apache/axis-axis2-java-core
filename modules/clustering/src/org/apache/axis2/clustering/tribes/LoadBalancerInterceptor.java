@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.LoadBalanceEventHandler;
 import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
@@ -22,11 +23,13 @@ import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.catalina.tribes.membership.Membership;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.clustering.LoadBalanceEventHandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  * This interceptor is used when this member is part of a load balancer cluster.
@@ -87,22 +90,19 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
         if (notify) {
             super.memberAdded(member);
-            
+
         }
 
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
             log.info("Application member " + TribesUtil.getName(member) + " joined cluster");
-            if(eventHandler != null){
+            if (eventHandler != null) {
                 org.apache.axis2.clustering.Member axis2Member =
                         new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
                                                                member.getPort());
-                byte[] payload = member.getPayload();
-                String payloadStr = new String(payload);
-
-                String[] ports = payloadStr.split(";");
-                int httpPort = Integer.parseInt(ports[0].substring(ports[0].indexOf(":") + 1));
-                int httpsPort = Integer.parseInt(ports[1].substring(ports[1].indexOf(":") + 1));
+                Properties props = getProperties(member.getPayload());
+                int httpPort = Integer.parseInt(props.getProperty("HTTP"));
+                int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
                 axis2Member.setHttpPort(httpPort);
                 axis2Member.setHttpsPort(httpsPort);
                 eventHandler.applicationMemberAdded(axis2Member);
@@ -110,6 +110,18 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
             applicationMembers.add(member);
         }
 
+    }
+
+    private Properties getProperties(byte[] payload) {
+        Properties props = null;
+        try {
+            ByteArrayInputStream bin = new ByteArrayInputStream(payload);
+            props = new Properties();
+            props.load(bin);
+        } catch (IOException ignored) {
+            // This error will never occur
+        }
+        return props;
     }
 
     public void memberDisappeared(Member member) {
@@ -128,7 +140,7 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         // Is this an application domain member?
         if (Arrays.equals(applicationDomain, member.getDomain())) {
             log.info("Application member " + TribesUtil.getName(member) + " left cluster");
-            if(eventHandler != null){
+            if (eventHandler != null) {
                 org.apache.axis2.clustering.Member axis2Member =
                         new org.apache.axis2.clustering.Member(member.getName(), member.getPort());
                 eventHandler.applicationMemberRemoved(axis2Member);
