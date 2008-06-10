@@ -514,7 +514,7 @@ public class WSDLSerializationUtil {
 				if (key.startsWith("#")) {
 					key = key.substring(key.indexOf("#") + 1);
 				}
-				AxisService service = getAxisService(description);
+                AxisService service = getAxisService(description);
 				PolicyLocator locator = new PolicyLocator(service);
 				Policy p = locator.lookup(key);
 
@@ -559,7 +559,7 @@ public class WSDLSerializationUtil {
 		if (description == null || description instanceof AxisService) {
 			return (AxisService) description;
 		} else {
-			return getAxisService(description);
+			return getAxisService(description.getParent());
 		}
 	}
 }
