@@ -4717,7 +4717,7 @@
                 void *element = NULL;
                 int size = 0;
                 int j;
-                int k;
+                int non_nil_count;
                 axis2_bool_t non_nil_exists = AXIS2_FALSE;
 
                 <xsl:if test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='uint64_t' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t' or @type='axis2_bool_t' or @type='axis2_byte_t'">
@@ -4747,31 +4747,30 @@
                 <xsl:choose>
                   <xsl:when test="@type='unsigned short' or @type='unsigned char' or @type='unsigned int' or @type='uint64_t' or @type='short' or @type='char' or @type='int' or @type='float' or @type='double' or @type='int64_t' or @type='axis2_bool_t' or @type='axis2_byte_t'">
                      non_nil_exists = AXIS2_TRUE; /* no way to check for nill for each elements for primitive types */
+                     non_nil_count = axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
                   </xsl:when>
                   <xsl:otherwise>
-                    if(NULL == arg_<xsl:value-of select="$CName"/>)
+                    if(NULL != arg_<xsl:value-of select="$CName"/>)
                     {
-                        if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> != NULL)
+                        non_nil_exists = AXIS2_TRUE;
+                    }
+
+                    if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> != NULL)
+                    {
+                        size = axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
+                        for(j = 0, non_nil_count = 0; j &lt; size; j ++ )
                         {
-                            size = axutil_array_list_size(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env);
-                            for(j = 0, k = 0; j &lt; size; j ++ )
+                            if(i == j) continue; <!-- should not count the ith element -->
+                            if(NULL != axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i))
                             {
-                                if(i == j) continue; <!-- should not count the ith element -->
-                                if(NULL != axutil_array_list_get(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>, env, i))
+                                non_nil_count ++;
+                                non_nil_exists = AXIS2_TRUE;
+                                if(non_nil_count >= <xsl:value-of select="@minOccurs"/>)
                                 {
-                                    k ++;
-                                    non_nil_exists = AXIS2_TRUE;
-                                    if(k >= <xsl:value-of select="@minOccurs"/>)
-                                    {
-                                        break;
-                                    }
+                                    break;
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        non_nil_exists = AXIS2_TRUE;
                     }
                   </xsl:otherwise>
                 </xsl:choose>
@@ -4783,11 +4782,13 @@
                        return AXIS2_FAILURE;
                    }
                 </xsl:if>
-                if( k &lt; <xsl:value-of select="@minOccurs"/>)
-                {
-                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Size of the array of <xsl:value-of select="$propertyName"/> is beinng set to be smaller than the specificed number of minOccurs(<xsl:value-of select="@minOccurs"/>)");
-                       return AXIS2_FAILURE;
-                }
+                <xsl:if test="not(@minOccurs='0')"> <!-- if minOccurs=0 then no need to have error messages -->
+                    if( non_nil_count &lt; <xsl:value-of select="@minOccurs"/>)
+                    {
+                           AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Size of the array of <xsl:value-of select="$propertyName"/> is beinng set to be smaller than the specificed number of minOccurs(<xsl:value-of select="@minOccurs"/>)");
+                           return AXIS2_FAILURE;
+                    }
+                </xsl:if>
 
                 if(<xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> == NULL)
                 {
