@@ -142,7 +142,8 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
             log.info("Application member " + TribesUtil.getName(member) + " left cluster");
             if (eventHandler != null) {
                 org.apache.axis2.clustering.Member axis2Member =
-                        new org.apache.axis2.clustering.Member(member.getName(), member.getPort());
+                        new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                               member.getPort());
                 eventHandler.applicationMemberRemoved(axis2Member);
                 applicationMembers.remove(member);
             }

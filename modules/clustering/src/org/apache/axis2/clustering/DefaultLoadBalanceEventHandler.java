@@ -38,9 +38,4 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler{
         log.info("Application member " + member + " left cluster.");
         members.remove(member);
     }
-
-    public List<Member> getMembers() {
-        return members;
-    }
-
 }
