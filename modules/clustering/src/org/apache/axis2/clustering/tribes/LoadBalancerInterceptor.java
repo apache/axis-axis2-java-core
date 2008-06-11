@@ -73,8 +73,6 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         if (Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
             super.messageReceived(msg);
         }
-
-        // TODO: Application members may inform about their HTTP/S ports
     }
 
     public void memberAdded(Member member) {
