@@ -279,7 +279,6 @@ class ServiceDescriptionImpl
 
         this.dbcMap = dbcMap;
         this.isServerSide = true;
-
         
         //capture the WSDL, if there is any...to be used for later processing
         setupWsdlDefinition();
@@ -306,11 +305,14 @@ class ServiceDescriptionImpl
             int i = 0;
             for(PortComposite portComposite : portComposites) {
                 
+                // get the properties from the SEI and the Impl
+                Map<String, Object> props = getAllProps(portComposite, dbcMap);
+                
                 // here we pass in an index so the EndpointDescriptionImpl instance will know
                 // which PortComposite instance it is associated with and can retrieve that 
                 // instance as required
                 EndpointDescriptionImpl endpointDescription =
-                    new EndpointDescriptionImpl(this, serviceImplName, portComposite.getProperties(), i);
+                    new EndpointDescriptionImpl(this, serviceImplName, props, i);
                 addEndpointDescription(endpointDescription);
                 i++;
             }
@@ -323,10 +325,13 @@ class ServiceDescriptionImpl
                 log.debug("No PortComposites found for implementation class: " + composite.getClassName());
             }
             
+                // get the properties from the SEI and the Impl
+                Map<String, Object> props = getAllProps(composite, dbcMap);
+                
                 // Create the single EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         	// it will be set to the annotation value.
         	EndpointDescriptionImpl endpointDescription =
-                	new EndpointDescriptionImpl(this, serviceImplName, composite.getProperties(), null);
+                	new EndpointDescriptionImpl(this, serviceImplName, props, null);
         	addEndpointDescription(endpointDescription);
         }
     }
@@ -559,6 +564,43 @@ class ServiceDescriptionImpl
             }
         }
         return endpointDescription;
+    }
+    
+    /**
+     * This method will get all properties that have been set on the DescriptionBuilderComposite
+     * instance. If the DBC represents an implementation class that references an SEI, the
+     * properties from the SEI will also be merged with the returned result.
+     */
+    private Map<String, Object> getAllProps(DescriptionBuilderComposite dbc, 
+                                            Map<String, DescriptionBuilderComposite> dbcMap) {
+        Map<String, Object> props = new HashMap<String, Object>();
+        
+        // first get the properties from the DBC
+        if(dbc.getProperties() != null
+                &&
+                !dbc.getProperties().isEmpty()) {
+            props.putAll(dbc.getProperties());
+        }
+        
+        // no need to continue if the 'dbcMap' is null
+        if(dbcMap != null) {
+            
+         // now if this is a web service impl with an SEI, get the SEI props
+            if(dbc.getWebServiceAnnot() != null
+                    &&
+                    !DescriptionUtils.isEmpty(dbc.getWebServiceAnnot().endpointInterface())) {
+                DescriptionBuilderComposite seiDBC = dbcMap.get(dbc.getWebServiceAnnot().endpointInterface());
+                if(seiDBC != null
+                        &&
+                        seiDBC.getProperties() != null
+                        &&
+                        !seiDBC.getProperties().isEmpty()) {
+                    props.putAll(seiDBC.getProperties());
+                }
+            }
+        }
+        
+        return props;
     }
 
     private Class getEndpointSEI(QName portQName) {
