@@ -585,26 +585,32 @@ public class JAXBUtils {
             if (log.isDebugEnabled()) {
                 log.debug("JAXBIntrospector created [no pooling]");
             }
-            i = (JAXBIntrospector) AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        public Object run() {
-                            return context.createJAXBIntrospector();
-                        }
-                    }
-            );
+            i = internalCreateIntrospector(context);
         } else {
             i = ipool.get(context);
             if (i == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBIntrospector created [not in pool]");
                 }
-                i = context.createJAXBIntrospector();
+                i = internalCreateIntrospector(context);
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBIntrospector obtained [from  pool]");
                 }
             }
         }
+        return i;
+    }
+
+    private static JAXBIntrospector internalCreateIntrospector(final JAXBContext context) {
+        JAXBIntrospector i;
+        i = (JAXBIntrospector) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        return context.createJAXBIntrospector();
+                    }
+                }
+        );
         return i;
     }
 
