@@ -31,4 +31,20 @@ public interface Constants {
         org.apache.axis2.Constants.JAXWS_OUTBOUND_SOAP_HEADERS;
     public static final String JAXWS_INBOUND_SOAP_HEADERS   = 
         org.apache.axis2.Constants.JAXWS_INBOUND_SOAP_HEADERS;
+    /**
+     * Value that can be set on a MessageContext.  The property value should be a Boolean()
+     * 
+     * If set to false, then JAXB streaming of the XML body is disabled.
+     * A value of false will result in slower performance for unmarshalling JAXB objects
+     * but is a loss-less transformation.  
+     *  
+     * A value of true will cause the JAXB objects to be created when the XML body is initially 
+     * parsed, which is more performant, but it may loose some information contained in the 
+     * original XML such as namespace prefixes if the XML stream is recreated from the JAXB 
+     * objects.
+     * 
+     * The default value is Boolean(true) if this property is not set.  
+     */
+    public static final String JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING = 
+        "org.apache.axis2.jaxws.enableJAXBPayloadStreaming";
 }
