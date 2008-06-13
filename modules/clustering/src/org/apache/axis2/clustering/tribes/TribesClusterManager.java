@@ -78,6 +78,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map;
 
 /**
  * The main ClusterManager class for the Tribes based clustering implementation
@@ -99,7 +100,11 @@ public class TribesClusterManager implements ClusterManager {
     private RpcRequestHandler rpcRequestHandler;
     private StaticMembershipInterceptor staticMembershipInterceptor;
     private List<org.apache.axis2.clustering.Member> members;
-    private LoadBalanceEventHandler lbEventHandler;
+
+    private Map<byte[], LoadBalanceEventHandler> lbEventHandlers =
+            new HashMap<byte[], LoadBalanceEventHandler>();
+    private LoadBalancerInterceptor lbInterceptor;
+    private boolean loadBalanceMode;
 
     public TribesClusterManager() {
         parameters = new HashMap<String, Parameter>();
@@ -113,8 +118,12 @@ public class TribesClusterManager implements ClusterManager {
         return members;
     }
 
-    public LoadBalanceEventHandler getLoadBalanceEventHandler() {
-        return lbEventHandler;
+    public void addLoadBalanceEventHandler(LoadBalanceEventHandler eventHandler,
+                                           String applicationDomain) {
+        log.info("Load balancing for application domain " + applicationDomain +
+                 " using event handler " + eventHandler.getClass());
+        lbEventHandlers.put(applicationDomain.getBytes(), eventHandler);
+        loadBalanceMode = true;
     }
 
     public ContextManager getContextManager() {
@@ -144,20 +153,11 @@ public class TribesClusterManager implements ClusterManager {
         String membershipScheme = getMembershipScheme();
         log.info("Using " + membershipScheme + " based membership management scheme");
 
-        String mode = getMode();
-        log.info("Operating in " + mode + " mode");
-
         byte[] domain = getClusterDomain();
         log.info("Cluster domain: " + new String(domain));
 
-        byte[] applicationDomain = new byte[0];
-        if (mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
-            applicationDomain = getApplicationDomain();
-            log.info("Application domain: " + new String(applicationDomain));
-        }
-
         // Add all the ChannelInterceptors
-        addInterceptors(channel, domain, applicationDomain, membershipScheme, mode);
+        addInterceptors(channel, domain, membershipScheme);
 
         // Membership scheme handling
         // If it is a WKA scheme, connect to a WKA and get a list of members. Add the members
@@ -325,31 +325,6 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     /**
-     * Get the mode in which this member is running
-     *
-     * @return The member mode. Only "application" & "loadBalance" are valid return values.
-     * @throws ClusteringFault If an invalid membershipScheme has been specified in the axis2.xml
-     *                         file
-     */
-    private String getMode() throws ClusteringFault {
-        Parameter modeParam =
-                getParameter(ClusteringConstants.Parameters.MODE);
-        String mode = ClusteringConstants.Mode.APPLICATION;
-        if (modeParam != null) {
-            mode = ((String) modeParam.getValue()).trim();
-        }
-        if (!mode.equals(ClusteringConstants.Mode.APPLICATION) &&
-            !mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
-            String msg = "Invalid mode '" + mode + "'. Supported modes are " +
-                         ClusteringConstants.Mode.APPLICATION + " & " +
-                         ClusteringConstants.Mode.LOAD_BALANCE;
-            log.error(msg);
-            throw new ClusteringFault(msg);
-        }
-        return mode;
-    }
-
-    /**
      * Get the clustering domain to which this node belongs to
      *
      * @return The clustering domain to which this node belongs to
@@ -361,24 +336,6 @@ public class TribesClusterManager implements ClusterManager {
             domain = ((String) domainParam.getValue()).getBytes();
         } else {
             domain = ClusteringConstants.DEFAULT_DOMAIN.getBytes();
-        }
-        return domain;
-    }
-
-    /**
-     * Get the clustering application domain to which this node belongs to. A valid domain
-     * will be returned only of this member is running in loadBalance mode.
-     *
-     * @return The clustering application domain to which this node belongs to. A valid domain
-     *         will be returned only of this member is running in loadBalance mode.
-     */
-    private byte[] getApplicationDomain() {
-        Parameter domainParam = getParameter(ClusteringConstants.Parameters.APPLICATION_DOMAIN);
-        byte[] domain;
-        if (domainParam != null) {
-            domain = ((String) domainParam.getValue()).getBytes();
-        } else {
-            domain = ClusteringConstants.DEFAULT_APP_DOMAIN.getBytes();
         }
         return domain;
     }
@@ -640,15 +597,12 @@ public class TribesClusterManager implements ClusterManager {
      *
      * @param channel           The Tribes channel
      * @param domain            The loadBalancerDomain to which this node belongs to
-     * @param applicationDomain The application domain, across which the load is balanced
      * @param membershipScheme  The membership scheme. Only wka & multicast are valid values.
-     * @param mode              The mode in which this member operates such as "loadBalance" or
-     *                          "application"
      * @throws ClusteringFault If an error occurs while adding interceptors
      */
     private void addInterceptors(ManagedChannel channel,
-                                 byte[] domain, byte[] applicationDomain,
-                                 String membershipScheme, String mode) throws ClusteringFault {
+                                 byte[] domain,
+                                 String membershipScheme) throws ClusteringFault {
 
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
@@ -676,28 +630,13 @@ public class TribesClusterManager implements ClusterManager {
 
         // Add a DomainFilterInterceptor
         channel.getMembershipService().setDomain(domain);
-        if (mode.equals(ClusteringConstants.Mode.APPLICATION)) {
+        if (!loadBalanceMode) {
             DomainFilterInterceptor dfi = new DomainFilterInterceptor();
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
-        } else if (mode.equals(ClusteringConstants.Mode.LOAD_BALANCE)) {
-            LoadBalancerInterceptor lbInterceptor =
-                    new LoadBalancerInterceptor(domain, applicationDomain);
-            Parameter lbEvtHandlerParam =
-                    getParameter(ClusteringConstants.Parameters.LOAD_BALANCE_EVENT_HANDLER);
-            if (lbEvtHandlerParam != null && lbEvtHandlerParam.getValue() != null) {
-                String lbEvtHandlerClass = ((String) lbEvtHandlerParam.getValue()).trim();
-                try {
-                    lbEventHandler =
-                            (LoadBalanceEventHandler) Class.forName(lbEvtHandlerClass).newInstance();
-                    lbInterceptor.setEventHandler(lbEventHandler);
-                } catch (Exception e) {
-                    String msg = "Could not instantiate LoadBalanceEventHandler class " +
-                                 lbEvtHandlerClass;
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
-                }
-            }
+        } else {
+            lbInterceptor =
+                    new LoadBalancerInterceptor(domain, lbEventHandlers);
             channel.addInterceptor(lbInterceptor);
         }
 
@@ -835,11 +774,9 @@ public class TribesClusterManager implements ClusterManager {
                             }
                         }
                         // TODO: If we do not get a response within some time, try to recover from this fault
-                    } while (responses.length == 0);
-                    if (responses.length > 0) {
-                        ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
-                        break;
-                    }
+                    } while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);
+                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                    break;
                 }
             } catch (Exception e) {
                 log.error("Cannot get initialization information from " +

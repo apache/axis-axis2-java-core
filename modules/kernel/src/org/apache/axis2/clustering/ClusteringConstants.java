@@ -34,11 +34,6 @@ public final class ClusteringConstants {
      */
     public static final String DEFAULT_DOMAIN = "apache.axis2.domain";
 
-    /**
-     * The default application domain to which this member belongs to
-     */
-    public static final String DEFAULT_APP_DOMAIN = "apache.axis2.app.domain";
-
     public static final String NODE_MANAGER_SERVICE = "Axis2NodeManager";
     public static final String REQUEST_BLOCKING_HANDLER = "RequestBlockingHandler";
     public static final String CLUSTER_INITIALIZED = "local_cluster.initialized";
@@ -103,22 +98,6 @@ public final class ClusteringConstants {
          * the cluster.
          */
         public static final String AVOID_INITIATION = "AvoidInitiation";
-    }
-
-    /**
-     * Represents the mode of this member
-     */
-    public static final class Mode {
-
-        /**
-         * Load balancing mode
-         */
-        public static final String LOAD_BALANCE = "loadBalance";
-
-        /**
-         * Application mode
-         */
-        public static final String APPLICATION = "application";
     }
 
     public static final class MembershipScheme {

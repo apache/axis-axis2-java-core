@@ -280,25 +280,6 @@
         <parameter name="domain">apache.axis2.domain</parameter>
 
         <!--
-         Indicates the mode in which this member is running. Valid values are "application" and
-         "loadBalance"
-
-         application - This member hosts end user applications
-         loadBalance - This member is a part of the load balancer cluster
-        -->
-        <parameter name="mode">application</parameter>
-
-        <!--
-        This is the even handler which will be notified in the case of load balancing events occurring.
-        This class has to be an implementation of org.apache.axis2.clustering.LoadBalanceEventHandler
-
-        This entry is only valid if the "mode" parameter is set to loadBalance
-        -->
-        <parameter name="loadBalanceEventHandler">
-            org.apache.axis2.clustering.DefaultLoadBalanceEventHandler
-        </parameter>
-
-        <!--
         This parameter is only valid when the "mode" parameter is set to application. This indicates
         the domain in which the the applications being load balanced are deployed.
         -->
@@ -363,6 +344,16 @@
                 <port>4001</port>
             </member>
         </members>
+
+        <!--
+        Enable the load balancer entry if you need to run this node as a load balancer.
+        Multiple application domains with different LoadBalanceEventHandler implementations
+        can be defined in this section.
+        -->
+        <loadBalancer enable="false">
+            <applicationDomain name="apache.axis2.application.domain"
+                               handler="org.apache.axis2.clustering.DefaultLoadBalanceEventHandler"/>
+        </loadBalancer>
 
         <!--
            This interface is responsible for handling configuration management.

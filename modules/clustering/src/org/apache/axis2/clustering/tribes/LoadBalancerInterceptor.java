@@ -26,9 +26,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -45,26 +44,24 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
     protected Membership loadBalancerMembership = null;
 
     /**
-     * Represents the application group across which the load is balanced
-     */
-    protected List<Member> applicationMembers = new ArrayList<Member>();
-
-    /**
      * Represents the load balancer group
      */
     protected byte[] loadBalancerDomain = new byte[0];
 
     /**
-     * Represents the group in which the applications being load balanced, are deployed
+     * Represents the group in which the applications being load balanced, are deployed and their
+     * respective load balancer event handlers
      */
-    protected byte[] applicationDomain = new byte[0];
-
-    private LoadBalanceEventHandler eventHandler;
+    private Map<byte[], LoadBalanceEventHandler> lbEventHandlers;
 
     public LoadBalancerInterceptor(byte[] loadBalancerDomain,
-                                   byte[] applicationDomain) {
+                                   Map<byte[], LoadBalanceEventHandler> lbEventHandlers) {
         this.loadBalancerDomain = loadBalancerDomain;
-        this.applicationDomain = applicationDomain;
+        this.lbEventHandlers = lbEventHandlers;
+    }
+
+    public void setLbEventHandlers(Map<byte[], LoadBalanceEventHandler> lbEventHandlers) {
+        this.lbEventHandlers = lbEventHandlers;
     }
 
     public void messageReceived(ChannelMessage msg) {
@@ -92,22 +89,25 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
 
         // Is this an application domain member?
-        if (Arrays.equals(applicationDomain, member.getDomain())) {
-            log.info("Application member " + TribesUtil.getName(member) + " joined cluster");
-            if (eventHandler != null) {
-                org.apache.axis2.clustering.Member axis2Member =
-                        new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
-                                                               member.getPort());
-                Properties props = getProperties(member.getPayload());
-                int httpPort = Integer.parseInt(props.getProperty("HTTP"));
-                int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
-                axis2Member.setHttpPort(httpPort);
-                axis2Member.setHttpsPort(httpsPort);
-                eventHandler.applicationMemberAdded(axis2Member);
+        for (byte[] applicationDomain : lbEventHandlers.keySet()) {
+            if (Arrays.equals(applicationDomain, member.getDomain())) {
+                log.info("Application member " + TribesUtil.getName(member) + " joined group " +
+                         new String(applicationDomain));
+                LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
+                if (eventHandler != null) {
+                    org.apache.axis2.clustering.Member axis2Member =
+                            new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                                   member.getPort());
+                    Properties props = getProperties(member.getPayload());
+                    int httpPort = Integer.parseInt(props.getProperty("HTTP"));
+                    int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
+                    axis2Member.setHttpPort(httpPort);
+                    axis2Member.setHttpsPort(httpsPort);
+                    eventHandler.applicationMemberAdded(axis2Member);
+                }
+                break;
             }
-            applicationMembers.add(member);
         }
-
     }
 
     private Properties getProperties(byte[] payload) {
@@ -136,14 +136,17 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
 
         // Is this an application domain member?
-        if (Arrays.equals(applicationDomain, member.getDomain())) {
-            log.info("Application member " + TribesUtil.getName(member) + " left cluster");
-            if (eventHandler != null) {
-                org.apache.axis2.clustering.Member axis2Member =
-                        new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
-                                                               member.getPort());
-                eventHandler.applicationMemberRemoved(axis2Member);
-                applicationMembers.remove(member);
+        for (byte[] applicationDomain : lbEventHandlers.keySet()) {
+            if (Arrays.equals(applicationDomain, member.getDomain())) {
+                log.info("Application member " + TribesUtil.getName(member) + " left group " +
+                         new String(applicationDomain));
+                LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
+                if (eventHandler != null) {
+                    org.apache.axis2.clustering.Member axis2Member =
+                            new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                                   member.getPort());
+                    eventHandler.applicationMemberRemoved(axis2Member);
+                }
             }
         }
     }
@@ -177,25 +180,5 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         if (loadBalancerMembership == null) {
             loadBalancerMembership = new Membership((MemberImpl) super.getLocalMember(true));
         }
-    }
-
-    public byte[] getApplicationDomain() {
-        return applicationDomain;
-    }
-
-    public void setApplicationDomain(byte[] applicationDomain) {
-        this.applicationDomain = applicationDomain;
-    }
-
-    public byte[] getLoadBalancerDomain() {
-        return loadBalancerDomain;
-    }
-
-    public void setLoadBalancerDomain(byte[] loadBalancerDomain) {
-        this.loadBalancerDomain = loadBalancerDomain;
-    }
-
-    public void setEventHandler(LoadBalanceEventHandler eventHandler) {
-        this.eventHandler = eventHandler;
     }
 }

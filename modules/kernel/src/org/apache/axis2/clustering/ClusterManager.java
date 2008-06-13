@@ -151,10 +151,13 @@ public interface ClusterManager extends ParameterInclude {
     List<Member> getMembers();
 
     /**
-     * Get the load balance event handler which will be notified when load balance events occur.
+     * Set the load balance event handler which will be notified when load balance events occur.
      * This will be valid only when this node is running in loadBalance mode
      *
-     * @return The load balance event handler
+     * @param eventHandler      The load balance event handler
+     * @param applicationDomain The application domain which is handled by the eventHandler
      */
-    LoadBalanceEventHandler getLoadBalanceEventHandler();
+    void addLoadBalanceEventHandler(LoadBalanceEventHandler eventHandler, String applicationDomain);
+
+
 }

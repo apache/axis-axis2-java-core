@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.Member;
+import org.apache.axis2.clustering.LoadBalanceEventHandler;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
 import org.apache.axis2.clustering.context.ContextManager;
@@ -91,6 +92,9 @@ public class ClusterBuilder extends DescriptionBuilder {
                               clusterManager,
                               null);
 
+            // loading the application domains
+            loadApplicationDomains(clusterManager, clusterElement);
+
             // loading the members
             loadMembers(clusterManager, clusterElement);
 
@@ -117,6 +121,36 @@ public class ClusterBuilder extends DescriptionBuilder {
         return enabled;
     }
 
+    private void loadApplicationDomains(ClusterManager clusterManager,
+                                        OMElement clusterElement) throws DeploymentException {
+        OMElement lbEle = clusterElement.getFirstChildWithName(new QName("loadBalancer"));
+        if(lbEle != null){
+            if (isEnabled(lbEle)) {
+                log.info("Running in load balance mode");
+            } else {
+                log.info("Running in application mode");
+                return;
+            }
+
+            for(Iterator iter= lbEle.getChildrenWithName(new QName("applicationDomain"));
+                iter.hasNext();){
+                OMElement omElement = (OMElement) iter.next();
+                String domainName = omElement.getAttributeValue(new QName("name")).trim();
+                String handlerClass = omElement.getAttributeValue(new QName("handler")).trim();
+                LoadBalanceEventHandler eventHandler;
+                try {
+                    eventHandler = (LoadBalanceEventHandler) Class.forName(handlerClass).newInstance();
+                } catch (Exception e) {
+                    String msg = "Could not instantiate LoadBalanceEventHandler " + handlerClass +
+                                 " for domain " + domainName;
+                    log.error(msg, e);
+                    throw new DeploymentException(msg, e);
+                }
+                clusterManager.addLoadBalanceEventHandler(eventHandler, domainName);
+            }
+        }
+    }
+            
     private void loadMembers(ClusterManager clusterManager, OMElement clusterElement) {
         clusterManager.setMembers(new ArrayList<Member>());
         Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
