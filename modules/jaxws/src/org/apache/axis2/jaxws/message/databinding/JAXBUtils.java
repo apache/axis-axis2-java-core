@@ -43,6 +43,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -458,20 +459,52 @@ public class JAXBUtils {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [no pooling]");
             }
-            return context.createUnmarshaller();
+            return internalCreateUnmarshaller(context);
         }
         Unmarshaller unm = upool.get(context);
         if (unm == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [not in pool]");
             }
-            unm = context.createUnmarshaller();
+            unm = internalCreateUnmarshaller(context);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller obtained [from  pool]");
             }
         }
         return unm;
+    }
+
+    private static Unmarshaller internalCreateUnmarshaller(final JAXBContext context) throws JAXBException {
+        Unmarshaller unm;
+        try {
+            unm = (Unmarshaller) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws JAXBException {
+                            return context.createUnmarshaller();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw (JAXBException) e.getCause();
+        }
+        return unm;
+    }
+
+    private static Marshaller internalCreateMarshaller(final JAXBContext context) throws JAXBException {
+        Marshaller marshaller;
+        try {
+            marshaller = (Marshaller) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws JAXBException {
+                            return context.createMarshaller();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            throw (JAXBException) e.getCause();
+        }
+        return marshaller;
     }
 
     /**
@@ -504,14 +537,14 @@ public class JAXBUtils {
             if (log.isDebugEnabled()) {
                 log.debug("Marshaller created [no pooling]");
             }
-            m = context.createMarshaller();
+            m = internalCreateMarshaller(context);
         } else {
             m = mpool.get(context);
             if (m == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Marshaller created [not in pool]");
                 }
-                m = context.createMarshaller();
+                m = internalCreateMarshaller(context);
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Marshaller obtained [from  pool]");
@@ -546,13 +579,19 @@ public class JAXBUtils {
      * @return JAXBIntrospector
      * @throws JAXBException
      */
-    public static JAXBIntrospector getJAXBIntrospector(JAXBContext context) throws JAXBException {
+    public static JAXBIntrospector getJAXBIntrospector(final JAXBContext context) throws JAXBException {
         JAXBIntrospector i = null;
         if (!ENABLE_INTROSPECTION_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("JAXBIntrospector created [no pooling]");
             }
-            i = context.createJAXBIntrospector();
+            i = (JAXBIntrospector) AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            return context.createJAXBIntrospector();
+                        }
+                    }
+            );
         } else {
             i = ipool.get(context);
             if (i == null) {
