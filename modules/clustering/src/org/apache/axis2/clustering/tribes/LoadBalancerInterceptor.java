@@ -95,19 +95,23 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
                          new String(applicationDomain));
                 LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
                 if (eventHandler != null) {
-                    org.apache.axis2.clustering.Member axis2Member =
-                            new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
-                                                                   member.getPort());
-                    Properties props = getProperties(member.getPayload());
-                    int httpPort = Integer.parseInt(props.getProperty("HTTP"));
-                    int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
-                    axis2Member.setHttpPort(httpPort);
-                    axis2Member.setHttpsPort(httpsPort);
-                    eventHandler.applicationMemberAdded(axis2Member);
+                    eventHandler.applicationMemberAdded(toAxis2Member(member));
                 }
                 break;
             }
         }
+    }
+
+    private org.apache.axis2.clustering.Member toAxis2Member(Member member) {
+        org.apache.axis2.clustering.Member axis2Member =
+                new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                       member.getPort());
+        Properties props = getProperties(member.getPayload());
+        int httpPort = Integer.parseInt(props.getProperty("HTTP"));
+        int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
+        axis2Member.setHttpPort(httpPort);
+        axis2Member.setHttpsPort(httpsPort);
+        return axis2Member;
     }
 
     private Properties getProperties(byte[] payload) {
@@ -142,11 +146,9 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
                          new String(applicationDomain));
                 LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
                 if (eventHandler != null) {
-                    org.apache.axis2.clustering.Member axis2Member =
-                            new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
-                                                                   member.getPort());
-                    eventHandler.applicationMemberRemoved(axis2Member);
+                    eventHandler.applicationMemberRemoved(toAxis2Member(member));
                 }
+                break;
             }
         }
     }
