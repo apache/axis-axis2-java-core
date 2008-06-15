@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.clustering;
 
+import java.util.List;
+
 /**
  * This is the interface through which the load balancing event are notified.
  * This will only be used when this member is running in loadBalance mode. In order to do this,
@@ -36,5 +38,11 @@ public interface LoadBalanceEventHandler {
      * @param member Represents the member who left
      */
     void applicationMemberRemoved(Member member);
+
+    /** Get the list of current members
+     *
+     * @return List of current members
+     */
+    List<Member> getMembers();
     
 }

@@ -18,24 +18,88 @@ package org.apache.axis2.clustering;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The default, dummy implementation of {@link LoadBalanceEventHandler}
  */
-public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler{
+public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
 
-    private static final Log log  = LogFactory.getLog(DefaultLoadBalanceEventHandler.class);
+    private static final Log log = LogFactory.getLog(DefaultLoadBalanceEventHandler.class);
     private List<Member> members = new ArrayList<Member>();
 
     public void applicationMemberAdded(Member member) {
-        log.info("Application member " + member + " joined cluster.");
-        members.add(member);
+        Thread th = new Thread(new MemberAdder(member));
+        th.setPriority(Thread.MAX_PRIORITY);
+        th.start();
     }
 
     public void applicationMemberRemoved(Member member) {
         log.info("Application member " + member + " left cluster.");
         members.remove(member);
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
+
+    private class MemberAdder implements Runnable {
+
+        private final Member member;
+
+        private MemberAdder(Member member) {
+            this.member = member;
+        }
+
+        public void run() {
+            if (!members.contains(member) && canConnect(member)) {
+                //                try
+                //                    Thread.sleep(10000);   // Sleep for sometime to allow complete initialization of the node
+                //                } catch (InterruptedException e) {
+                //                    e.printStackTrace();
+                //                }
+                members.add(member);
+                log.info("Application member " + member + " joined application cluster");
+            } else {
+                log.error("Could not add application member " + member);
+            }
+        }
+
+        /**
+         * Before adding a member, we will try to verify whether we can connect to it
+         *
+         * @param member The member whose connectvity needs to be verified
+         * @return true, if the member can be contacted; false, otherwise.
+         */
+        private boolean canConnect(Member member) {
+            for (int retries = 30; retries > 0; retries--) {
+                try {
+                    InetAddress addr = InetAddress.getByName(member.getHostName());
+                    SocketAddress httpSockaddr = new InetSocketAddress(addr,
+                                                                       member.getHttpPort());
+                    new Socket().connect(httpSockaddr, 10000);
+                    SocketAddress httpsSockaddr = new InetSocketAddress(addr,
+                                                                        member.getHttpsPort());
+                    new Socket().connect(httpsSockaddr, 10000);
+                    return true;
+                } catch (IOException e) {
+                    String msg = e.getMessage();
+                    if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
+                        log.error("Cannot connect to member " + member, e);
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

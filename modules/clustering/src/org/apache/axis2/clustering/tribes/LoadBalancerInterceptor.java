@@ -52,15 +52,15 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
      * Represents the group in which the applications being load balanced, are deployed and their
      * respective load balancer event handlers
      */
-    private Map<byte[], LoadBalanceEventHandler> lbEventHandlers;
+    private Map<String, LoadBalanceEventHandler> lbEventHandlers;
 
     public LoadBalancerInterceptor(byte[] loadBalancerDomain,
-                                   Map<byte[], LoadBalanceEventHandler> lbEventHandlers) {
+                                   Map<String, LoadBalanceEventHandler> lbEventHandlers) {
         this.loadBalancerDomain = loadBalancerDomain;
         this.lbEventHandlers = lbEventHandlers;
     }
 
-    public void setLbEventHandlers(Map<byte[], LoadBalanceEventHandler> lbEventHandlers) {
+    public void setLbEventHandlers(Map<String, LoadBalanceEventHandler> lbEventHandlers) {
         this.lbEventHandlers = lbEventHandlers;
     }
 
@@ -89,10 +89,10 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
 
         // Is this an application domain member?
-        for (byte[] applicationDomain : lbEventHandlers.keySet()) {
-            if (Arrays.equals(applicationDomain, member.getDomain())) {
+        for (String applicationDomain : lbEventHandlers.keySet()) {
+            if (Arrays.equals(applicationDomain.getBytes(), member.getDomain())) {
                 log.info("Application member " + TribesUtil.getName(member) + " joined group " +
-                         new String(applicationDomain));
+                         applicationDomain);
                 LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
                 if (eventHandler != null) {
                     eventHandler.applicationMemberAdded(toAxis2Member(member));
@@ -140,10 +140,10 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
         }
 
         // Is this an application domain member?
-        for (byte[] applicationDomain : lbEventHandlers.keySet()) {
-            if (Arrays.equals(applicationDomain, member.getDomain())) {
+        for (String applicationDomain : lbEventHandlers.keySet()) {
+            if (Arrays.equals(applicationDomain.getBytes(), member.getDomain())) {
                 log.info("Application member " + TribesUtil.getName(member) + " left group " +
-                         new String(applicationDomain));
+                         applicationDomain);
                 LoadBalanceEventHandler eventHandler = lbEventHandlers.get(applicationDomain);
                 if (eventHandler != null) {
                     eventHandler.applicationMemberRemoved(toAxis2Member(member));

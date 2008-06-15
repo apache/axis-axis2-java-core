@@ -159,5 +159,13 @@ public interface ClusterManager extends ParameterInclude {
      */
     void addLoadBalanceEventHandler(LoadBalanceEventHandler eventHandler, String applicationDomain);
 
-
+    /**
+     * Get the LoadBalanceEventHandler which corresponds to the <code>applicationDomain</code>
+     * This will be valid only when this node is running in loadBalance mode
+     *
+     * @param applicationDomain The application domain to which the application nodes being
+     *                          load balanced belong to
+     * @return LoadBalanceEventHandler which corresponds to the <code>applicationDomain</code>
+     */
+    LoadBalanceEventHandler getLoadBalanceEventHandler(String applicationDomain);
 }

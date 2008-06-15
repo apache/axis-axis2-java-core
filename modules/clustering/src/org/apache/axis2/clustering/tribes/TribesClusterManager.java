@@ -77,8 +77,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * The main ClusterManager class for the Tribes based clustering implementation
@@ -101,9 +101,8 @@ public class TribesClusterManager implements ClusterManager {
     private StaticMembershipInterceptor staticMembershipInterceptor;
     private List<org.apache.axis2.clustering.Member> members;
 
-    private Map<byte[], LoadBalanceEventHandler> lbEventHandlers =
-            new HashMap<byte[], LoadBalanceEventHandler>();
-    private LoadBalancerInterceptor lbInterceptor;
+    private final Map<String, LoadBalanceEventHandler> lbEventHandlers =
+            new HashMap<String, LoadBalanceEventHandler>();
     private boolean loadBalanceMode;
 
     public TribesClusterManager() {
@@ -122,8 +121,12 @@ public class TribesClusterManager implements ClusterManager {
                                            String applicationDomain) {
         log.info("Load balancing for application domain " + applicationDomain +
                  " using event handler " + eventHandler.getClass());
-        lbEventHandlers.put(applicationDomain.getBytes(), eventHandler);
+        lbEventHandlers.put(applicationDomain, eventHandler);
         loadBalanceMode = true;
+    }
+
+    public LoadBalanceEventHandler getLoadBalanceEventHandler(String applicationDomain) {
+        return lbEventHandlers.get(applicationDomain);
     }
 
     public ContextManager getContextManager() {
@@ -595,9 +598,9 @@ public class TribesClusterManager implements ClusterManager {
      * Add ChannelInterceptors. The order of the interceptors that are added will depend on the
      * membership management scheme
      *
-     * @param channel           The Tribes channel
-     * @param domain            The loadBalancerDomain to which this node belongs to
-     * @param membershipScheme  The membership scheme. Only wka & multicast are valid values.
+     * @param channel          The Tribes channel
+     * @param domain           The loadBalancerDomain to which this node belongs to
+     * @param membershipScheme The membership scheme. Only wka & multicast are valid values.
      * @throws ClusteringFault If an error occurs while adding interceptors
      */
     private void addInterceptors(ManagedChannel channel,
@@ -635,7 +638,7 @@ public class TribesClusterManager implements ClusterManager {
             dfi.setDomain(domain);
             channel.addInterceptor(dfi);
         } else {
-            lbInterceptor =
+            LoadBalancerInterceptor lbInterceptor =
                     new LoadBalancerInterceptor(domain, lbEventHandlers);
             channel.addInterceptor(lbInterceptor);
         }
@@ -774,7 +777,8 @@ public class TribesClusterManager implements ClusterManager {
                             }
                         }
                         // TODO: If we do not get a response within some time, try to recover from this fault
-                    } while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);
+                    }
+                    while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);
                     ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
                     break;
                 }

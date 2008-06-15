@@ -91,6 +91,7 @@ public class Member {
     }
 
     public String toString() {
-        return hostName + ":" + port;
+        return "Host:" + hostName + ", Port: " + port +
+               ", HTTP:" + httpPort + ", HTTPS:" + httpsPort;
     }
 }
