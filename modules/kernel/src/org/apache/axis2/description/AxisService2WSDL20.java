@@ -300,7 +300,21 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 }
                 if (!endpointAlreadyAdded) {
 //                	addPolicyAsExtensibleElement(axisEndpoint, endpointElement);
-                    serviceElement.addChild(endpointElement);
+                	Parameter modifyAddressParam = axisService
+							.getParameter("modifyUserWSDLPortAddress");
+					if (modifyAddressParam != null) {
+						if (Boolean.parseBoolean((String) modifyAddressParam
+								.getValue())) {
+							String endpointURL = axisEndpoint
+									.calculateEndpointURL();
+							endpointElement
+									.getAttribute(
+											new QName(
+													WSDL2Constants.ATTRIBUTE_ADDRESS))
+									.setAttributeValue(endpointURL);
+						}
+					}
+                	serviceElement.addChild(endpointElement);
                 }
             }
             Iterator iter = bindings.iterator();

@@ -20,9 +20,12 @@
 
 package org.apache.axis2.engine;
 
+import java.util.Iterator;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisBinding;
 import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
@@ -117,13 +120,28 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                         (AxisEndpoint) msgctx.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
 
                 if (axisEndpoint != null) {
-                    AxisBindingOperation axisBindingOperation =
-                            (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
-                    if (axisBindingOperation != null) {
-                        msgctx.setProperty(Constants.AXIS_BINDING_MESSAGE,
-                                axisBindingOperation.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
-                        msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
-                    }
+                    AxisBinding axisBinding = axisEndpoint.getBinding();
+					AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding
+							.getChild(axisOperation.getName());
+					if (axisBindingOperation == null) {
+						String localName = axisOperation.getName()
+								.getLocalPart();
+						AxisBindingOperation bindingOp = null;
+						for (Iterator iterator = axisBinding.getChildren(); iterator
+								.hasNext();) {
+							bindingOp = (AxisBindingOperation) iterator.next();
+							if (localName.equals(bindingOp.getName().getLocalPart())) {
+								axisBindingOperation = bindingOp;
+								break;
+							}
+						}
+					}
+                    msgctx
+					.setProperty(
+							Constants.AXIS_BINDING_MESSAGE,
+							axisBindingOperation
+									.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                    msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
                 }
 
 

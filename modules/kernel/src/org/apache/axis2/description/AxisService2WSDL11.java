@@ -667,7 +667,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					QName qname = axisBinding.getName();
 					port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
 							+ qname.getLocalPart(), null);
-					String endpointURL = axisEndpoint.getEndpointURL();
+					String endpointURL = getEndpointURL(axisEndpoint);
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap);
@@ -709,7 +709,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					QName qname = axisBinding.getName();
 					port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
 							+ qname.getLocalPart(), null);
-					String endpointURL = axisEndpoint.getEndpointURL();
+					String endpointURL = getEndpointURL(axisEndpoint);
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap12);
@@ -746,7 +746,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 				port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
 						+ qname.getLocalPart(), null);
 				OMElement extElement = fac.createOMElement("address", http);
-				String endpointURL = axisEndpoint.getEndpointURL();
+				String endpointURL = getEndpointURL(axisEndpoint);
 				extElement.addAttribute("location", (endpointURL == null) ? ""
 						: endpointURL, null);
 				port.addChild(extElement);
@@ -1279,5 +1279,16 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			}
 		}
 		return false;
+	}
+	
+	private String getEndpointURL(AxisEndpoint axisEndpoint) {
+		Parameter modifyAddressParam = axisService
+				.getParameter("modifyUserWSDLPortAddress");
+		if (modifyAddressParam != null) {
+			if (Boolean.parseBoolean((String) modifyAddressParam.getValue())) {
+				return axisEndpoint.calculateEndpointURL();
+			}
+		}
+		return axisEndpoint.getEndpointURL();
 	}
 }

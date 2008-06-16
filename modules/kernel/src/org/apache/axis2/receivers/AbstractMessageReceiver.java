@@ -40,8 +40,10 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -85,15 +87,25 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault if a problem occurred
      */
     public void receive(final MessageContext messageCtx) throws AxisFault {
-        if (messageCtx.isPropertyTrue(DO_ASYNC)) {
-            EndpointReference replyTo = messageCtx.getReplyTo();
-            if (replyTo != null && !replyTo.hasAnonymousAddress()) {
-                AsyncMessageReceiverWorker worker = new AsyncMessageReceiverWorker(messageCtx);
-                messageCtx.getEnvelope().build();
-                messageCtx.getConfigurationContext().getThreadPool().execute(worker);
-                return;
-            }
-        }
+    	if (messageCtx.isPropertyTrue(DO_ASYNC)
+				|| JavaUtils.isTrue(messageCtx.getParameter(DO_ASYNC))) {
+			String mep = messageCtx.getAxisOperation()
+					.getMessageExchangePattern();
+			EndpointReference replyTo = messageCtx.getReplyTo();
+			// In order to invoke the service in the ASYNC mode, the request
+			// should contain ReplyTo header if the MEP of the service is not
+			// InOnly type
+			if ((!WSDLUtil.isOutputPresentForMEP(mep))
+					|| (replyTo != null && !replyTo.hasAnonymousAddress())) {
+				AsyncMessageReceiverWorker worker = new AsyncMessageReceiverWorker(
+						messageCtx);
+				messageCtx.getEnvelope().build();
+				messageCtx.getConfigurationContext().getThreadPool().execute(
+						worker);
+				return;
+			}
+		}
+
 
         ThreadContextDescriptor tc = setThreadContext(messageCtx);
         try {

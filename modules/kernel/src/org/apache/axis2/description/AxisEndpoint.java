@@ -173,7 +173,7 @@ public class AxisEndpoint extends AxisDescription {
 		this.transportInDescName = transportInDescName;
 	}
 
-	private String calculateEndpointURL() {
+	public String calculateEndpointURL() {
 		if (transportInDescName != null && parent != null) {
 			AxisConfiguration axisConfiguration = getAxisConfiguration();
 			if (axisConfiguration != null) {

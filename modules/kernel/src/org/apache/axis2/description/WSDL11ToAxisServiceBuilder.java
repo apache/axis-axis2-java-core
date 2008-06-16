@@ -569,6 +569,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
 	private void populatePortType(PortType wsdl4jPortType,
                                   Definition portTypeWSDL) throws AxisFault {
+		copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
+				axisService, PORT_TYPE);
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
         // Added to use in ?wsdl2 as the interface name
@@ -2740,55 +2742,54 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param origin
      */
     private void copyExtensionAttributes(Map extAttributes,
-                                         AxisDescription description, String origin) {
+			AxisDescription description, String origin) {
 
-        QName key;
-        QName value;
+		QName key;
+		QName value;
 
-        for (Iterator iterator = extAttributes.keySet().iterator(); iterator
-                .hasNext();) {
-            key = (QName) iterator.next();
+		for (Iterator iterator = extAttributes.keySet().iterator(); iterator
+				.hasNext();) {
+			key = (QName) iterator.next();
 
-            if (Constants.URI_POLICY_NS.equals(key.getNamespaceURI())
-                && "PolicyURIs".equals(key.getLocalPart())) {
+			if (Constants.URI_POLICY_NS.equals(key.getNamespaceURI())
+					&& "PolicyURIs".equals(key.getLocalPart())) {
 
-                value = (QName) extAttributes.get(key);
-                String policyURIs = value.getLocalPart();
+				value = (QName) extAttributes.get(key);
+				String policyURIs = value.getLocalPart();
 
-                if (policyURIs.length() != 0) {
-                    String[] uris = policyURIs.split(" ");
+				if (policyURIs.length() != 0) {
+					String[] uris = policyURIs.split(" ");
 
-                    PolicyReference ref;
-                    for (int i = 0; i < uris.length; i++) {
-                        ref = new PolicyReference();
-                        ref.setURI(uris[i]);
+					PolicyReference ref;
+					for (int i = 0; i < uris.length; i++) {
+						ref = new PolicyReference();
+						ref.setURI(uris[i]);
 
-                        if (PORT_TYPE.equals(origin)) {
-                            PolicyInclude include = description
-                                    .getPolicyInclude();
-                            include.addPolicyRefElement(
-                                    PolicyInclude.PORT_TYPE_POLICY, ref);
-                        }
-                    }
-                }
-            }
-        }
-    }
+						if (PORT_TYPE.equals(origin)) {
+							PolicySubject subject = description
+									.getPolicySubject();
+							subject.attachPolicyReference(ref);
+						}
+					}
+				}
+			}
+		}
+	}
 
     /**
-     * Process the policy definitions
-     *
-     * @param definition
-     */
+	 * Process the policy definitions
+	 * 
+	 * @param definition
+	 */
     private void processPoliciesInDefintion(Definition definition) {
         processPoliciesInDefintion(definition, new HashSet());
     }
 
     /**
-     * Process the policy definitions
-     *
-     * @param definition
-     */
+	 * Process the policy definitions
+	 * 
+	 * @param definition
+	 */
     private void processPoliciesInDefintion(Definition definition, Set visitedWSDLs) {
         visitedWSDLs.add(definition.getDocumentBaseURI());
         List extElements = definition.getExtensibilityElements();
