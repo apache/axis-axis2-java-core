@@ -107,10 +107,17 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
                 new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
                                                        member.getPort());
         Properties props = getProperties(member.getPayload());
-        int httpPort = Integer.parseInt(props.getProperty("HTTP"));
-        int httpsPort = Integer.parseInt(props.getProperty("HTTPS"));
-        axis2Member.setHttpPort(httpPort);
-        axis2Member.setHttpsPort(httpsPort);
+
+        String http = props.getProperty("HTTP");
+        if (http != null && http.trim().length() != 0) {
+            axis2Member.setHttpPort(Integer.parseInt(http));
+        }
+
+        String https = props.getProperty("HTTPS");
+        if (https != null && https.trim().length() != 0) {
+            axis2Member.setHttpsPort(Integer.parseInt(https));
+        }
+        
         return axis2Member;
     }
 

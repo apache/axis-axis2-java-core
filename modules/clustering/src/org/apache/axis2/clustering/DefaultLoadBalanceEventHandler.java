@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The default, dummy implementation of {@link LoadBalanceEventHandler}
+ * The default implementation of {@link LoadBalanceEventHandler}
  */
 public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
 
@@ -81,12 +81,16 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
             for (int retries = 30; retries > 0; retries--) {
                 try {
                     InetAddress addr = InetAddress.getByName(member.getHostName());
-                    SocketAddress httpSockaddr = new InetSocketAddress(addr,
-                                                                       member.getHttpPort());
-                    new Socket().connect(httpSockaddr, 10000);
-                    SocketAddress httpsSockaddr = new InetSocketAddress(addr,
-                                                                        member.getHttpsPort());
-                    new Socket().connect(httpsSockaddr, 10000);
+                    int httpPort = member.getHttpPort();
+                    if (httpPort != -1) {
+                        SocketAddress httpSockaddr = new InetSocketAddress(addr, httpPort);
+                        new Socket().connect(httpSockaddr, 10000);
+                    }
+                    int httpsPort = member.getHttpsPort();
+                    if (httpsPort != -1) {
+                        SocketAddress httpsSockaddr = new InetSocketAddress(addr, httpsPort);
+                        new Socket().connect(httpsSockaddr, 10000);
+                    }
                     return true;
                 } catch (IOException e) {
                     String msg = e.getMessage();

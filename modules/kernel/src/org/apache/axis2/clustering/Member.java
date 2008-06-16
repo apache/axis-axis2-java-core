@@ -28,17 +28,17 @@ public class Member {
     /**
      * The TCP port used by this member for communicating clustering messages
      */
-    private int port;
+    private int port = -1;
 
     /**
      * The HTTP port used by this member for servicing Web service requests. Used for load balancing
      */
-    private int httpPort;
+    private int httpPort = -1;
 
     /**
      * The HTTPS port used by this member for servicing Web service requests. Used for load balancing
      */
-    private int httpsPort;
+    private int httpsPort = -1;
 
     public Member(String hostName, int port) {
         this.hostName = hostName;
