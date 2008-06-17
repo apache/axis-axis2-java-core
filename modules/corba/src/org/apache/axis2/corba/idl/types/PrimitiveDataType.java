@@ -61,7 +61,13 @@ public class PrimitiveDataType extends DataType {
     }
 
     public static TypeCode getTypeCode(String typeName) {
-        return (TypeCode) PRIMITIVE_TYPES.get(typeName);
+        TypeCode typeCode = (TypeCode) PRIMITIVE_TYPES.get(typeName);
+        if (typeCode == null && typeName != null && typeName.contains("::")) {
+            String typeName2 = typeName.substring(0, typeName.indexOf("::"));
+            typeCode = (TypeCode) PRIMITIVE_TYPES.get(typeName2);
+            return typeCode;
+        }
+        return typeCode;
     }
 
     public static boolean isPrimitive(TypeCode typeCode) {
@@ -82,25 +88,30 @@ public class PrimitiveDataType extends DataType {
 
     public String getTypeName() {
         String ret = null;
-        switch(typeCode.kind().value()) {
-            case TCKind._tk_long : ret = "int"; break;
-            case TCKind._tk_ulong : ret = "int"; break;
-            case TCKind._tk_longlong : ret = "long"; break;
-            case TCKind._tk_ulonglong : ret = "long"; break;
-            case TCKind._tk_short : ret = "short"; break;
-            case TCKind._tk_ushort : ret = "short"; break;
-            case TCKind._tk_float : ret = "float"; break;
-            case TCKind._tk_double : ret = "double"; break;
-            case TCKind._tk_char : ret = "char"; break;
-            case TCKind._tk_wchar : ret = "char"; break;
-            case TCKind._tk_boolean : ret = "boolean"; break;
-            case TCKind._tk_octet : ret = "byte"; break;
-            case TCKind._tk_string : ret = "java.lang.String"; break;
-            case TCKind._tk_wstring : ret = "java.lang.String"; break;
-            case TCKind._tk_void : ret = "void"; break;
-             default:
-                log.error("Invalid primitive data type");
-                break;
+        if (typeCode != null) {
+            TCKind kind = typeCode.kind();
+            if (kind != null) {
+                switch(kind.value()) {
+                    case TCKind._tk_long : ret = "int"; break;
+                    case TCKind._tk_ulong : ret = "int"; break;
+                    case TCKind._tk_longlong : ret = "long"; break;
+                    case TCKind._tk_ulonglong : ret = "long"; break;
+                    case TCKind._tk_short : ret = "short"; break;
+                    case TCKind._tk_ushort : ret = "short"; break;
+                    case TCKind._tk_float : ret = "float"; break;
+                    case TCKind._tk_double : ret = "double"; break;
+                    case TCKind._tk_char : ret = "char"; break;
+                    case TCKind._tk_wchar : ret = "char"; break;
+                    case TCKind._tk_boolean : ret = "boolean"; break;
+                    case TCKind._tk_octet : ret = "byte"; break;
+                    case TCKind._tk_string : ret = "java.lang.String"; break;
+                    case TCKind._tk_wstring : ret = "java.lang.String"; break;
+                    case TCKind._tk_void : ret = "void"; break;
+                    default:
+                        log.error("Invalid primitive data type");
+                        break;
+                }
+            }
         }
         return ret;
     }
