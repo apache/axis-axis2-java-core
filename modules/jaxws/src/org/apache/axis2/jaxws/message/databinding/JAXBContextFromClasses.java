@@ -39,6 +39,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides a utility method, newInstance, which
@@ -69,7 +70,8 @@ public class JAXBContextFromClasses {
      * @throws JAXBException
      */
     public static JAXBContext newInstance(Class[] classArray, 
-                                   ClassLoader cl) 
+                                          ClassLoader cl,
+                                          Map<String, ?> properties) 
         throws JAXBException {
         JAXBContext jaxbContext = null;
         try {
@@ -81,7 +83,7 @@ public class JAXBContextFromClasses {
                             " input classes.");
                 }
             }
-            jaxbContext = _newInstance(classArray, cl);
+            jaxbContext = _newInstance(classArray, cl, properties);
         } catch (Throwable t) {
             // Try finding the best set of classes
             ArrayList<Class> original = new ArrayList<Class>();
@@ -89,7 +91,7 @@ public class JAXBContextFromClasses {
                 original.add(classArray[i]);
             }
             ArrayList<Class> best = new ArrayList<Class>();
-            jaxbContext = findBestSet(original, cl, best);
+            jaxbContext = findBestSet(original, cl, best, properties);
             
         }
 
@@ -106,7 +108,8 @@ public class JAXBContextFromClasses {
      * @throws Throwable
      */
     private static JAXBContext _newInstance(final Class[] classArray, 
-                                           final ClassLoader cl) 
+                                            final ClassLoader cl,
+                                            final Map<String, ?> properties) 
         throws Throwable {
         JAXBContext jaxbContext;
         try {
@@ -120,7 +123,7 @@ public class JAXBContextFromClasses {
                        ClassLoader savedClassLoader = currentThread.getContextClassLoader();
                        try {
                            currentThread.setContextClassLoader(cl);
-                           return JAXBContext.newInstance(classArray);
+                           return JAXBContext.newInstance(classArray, properties);
                        } finally {
                            currentThread.setContextClassLoader(savedClassLoader);
                        }
@@ -179,7 +182,8 @@ public class JAXBContextFromClasses {
      */
     static JAXBContext findBestSet(List<Class> original,
                                    ClassLoader cl,
-                                   List<Class> best) {
+                                   List<Class> best, 
+                                   Map<String, ?> properties) {
         JAXBContext jc = null;
         Class[] clsArray = new Class[0];
             
@@ -194,7 +198,7 @@ public class JAXBContextFromClasses {
         best.addAll(primary);
         if (best.size() > 0) {
             try {
-                jc = _newInstance(best.toArray(clsArray), cl);
+                jc = _newInstance(best.toArray(clsArray), cl, properties);
             } catch (Throwable t) {
                 return null;
             }
@@ -212,7 +216,7 @@ public class JAXBContextFromClasses {
             Class cls = secondary.get(i);
             best.add(cls);
             try {
-                jc = _newInstance(best.toArray(clsArray), cl);
+                jc = _newInstance(best.toArray(clsArray), cl, properties);
             } catch (Throwable t) {
                 if (log.isDebugEnabled()) {
                     log.debug("The following class is not a JAXB class: " +

@@ -70,9 +70,8 @@ public class TypeSubstitutionTests extends AbstractTestCase {
 
         TestLogger.logger.debug(">> Response [" + body + "]");
 
-        // XXX: the xsi:type attribute values should have namespace apparently
-        QName expectedXsiType1 = new QName(/*NS,*/ "fuji");
-        QName expectedXsiType2 = new QName(/*NS,*/ "freyburg");
+        QName expectedXsiType1 = new QName(NS, "fuji");
+        QName expectedXsiType2 = new QName(NS, "freyburg");
 
         Iterator iter;
         SOAPElement element;

@@ -209,7 +209,7 @@ public class MethodMarshallerFactory {
         Holder<JAXBUtils.CONSTRUCTION_TYPE> holder = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
         try {
             JAXBContext context = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), holder,
-                                                           marshalDesc.getPackagesKey(), cl);
+                                                           marshalDesc.getPackagesKey(), cl, null);
         } catch (JAXBException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }

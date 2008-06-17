@@ -108,6 +108,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
+            blockContext.setDefaultNamespace(ed.getTargetNamespace());
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
@@ -226,6 +227,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
+            blockContext.setDefaultNamespace(ed.getTargetNamespace());
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
@@ -389,9 +391,10 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Put the object into the message
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
+            blockContext.setDefaultNamespace(ed.getTargetNamespace());
             Block block = factory.createFrom(object,
-                                             new JAXBBlockContext(packages, packagesKey),
+                                             blockContext,
                                              wrapperQName);
             m.setBodyBlock(block);
 
@@ -489,9 +492,10 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Put the object into the message
             JAXBBlockFactory factory =
                     (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);
+            blockContext.setDefaultNamespace(ed.getTargetNamespace());
             Block block = factory.createFrom(object,
-                                             new JAXBBlockContext(packages, packagesKey),
+                                             blockContext, 
                                              wrapperQName);
             m.setBodyBlock(block);
 

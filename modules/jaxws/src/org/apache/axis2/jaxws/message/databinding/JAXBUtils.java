@@ -105,7 +105,7 @@ public class JAXBUtils {
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
         return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(), 
-                              contextPackages.toString(), null);
+                              contextPackages.toString(), null, null);
     }
 
     /**
@@ -123,14 +123,14 @@ public class JAXBUtils {
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, ClassLoader 
                                              cacheKey) throws JAXBException {
         return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(),
-                              contextPackages.toString(), cacheKey);
+                              contextPackages.toString(), cacheKey, null);
     }
     
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, 
                                              Holder<CONSTRUCTION_TYPE> constructionType,
                                              String key)
         throws JAXBException {
-        return getJAXBContext(contextPackages, constructionType, key, null);
+        return getJAXBContext(contextPackages, constructionType, key, null, null);
     }
 
     /**
@@ -148,7 +148,8 @@ public class JAXBUtils {
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages,
                                              Holder<CONSTRUCTION_TYPE> constructionType, 
                                              String key,
-                                             ClassLoader cacheKey)
+                                             ClassLoader cacheKey,
+                                             Map<String, ?> properties)
             throws JAXBException {
         // JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if (log.isDebugEnabled()) {
@@ -221,13 +222,13 @@ public class JAXBUtils {
                     TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages); 
                     
                     ClassLoader tryCl = cl;
-                    contextValue = createJAXBContextValue(validContextPackages, cl);
+                    contextValue = createJAXBContextValue(validContextPackages, cl, properties);
 
                     // If we don't get all the classes, try the cached classloader 
                     if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
                         tryCl = cacheKey;
                         validContextPackages = new TreeSet<String>(contextPackages);
-                        contextValue = createJAXBContextValue(validContextPackages, cacheKey);
+                        contextValue = createJAXBContextValue(validContextPackages, cacheKey, properties);
                     }
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
@@ -287,7 +288,8 @@ public class JAXBUtils {
      * @throws JAXBException
      */
     private static JAXBContextValue createJAXBContextValue(TreeSet<String> contextPackages,
-                                                           ClassLoader cl) throws JAXBException {
+                                                           ClassLoader cl,
+                                                           Map<String, ?> properties) throws JAXBException {
 
         JAXBContextValue contextValue = null;
         if (log.isDebugEnabled()) {
@@ -436,7 +438,7 @@ public class JAXBUtils {
             //Lets add all common array classes
             addCommonArrayClasses(fullList);
             Class[] classArray = fullList.toArray(new Class[0]);
-            JAXBContext context = JAXBContext_newInstance(classArray, cl);
+            JAXBContext context = JAXBContext_newInstance(classArray, cl, properties);
             if (context != null) {
                 contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
             }
@@ -1028,7 +1030,8 @@ public class JAXBUtils {
      * @throws Exception
      */
     private static JAXBContext JAXBContext_newInstance(final Class[] classArray, 
-                                                       final ClassLoader cl)
+                                                       final ClassLoader cl,
+                                                       Map<String, ?> properties)
     throws JAXBException {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
@@ -1043,7 +1046,7 @@ public class JAXBUtils {
         }
 
         // Get JAXBContext from classes
-        jaxbContext = JAXBContextFromClasses.newInstance(classArray, cl);
+        jaxbContext = JAXBContextFromClasses.newInstance(classArray, cl, properties);
 
         return jaxbContext;
     }

@@ -50,6 +50,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 /*
@@ -84,6 +86,7 @@ public class JAXBDSContext {
     // Please don't use "by java type" processing to get around errors.
     private Class processType = null;
     private boolean isxmlList =false;
+    private String defaultNamespace;
 
     /**
      * Full Constructor JAXBDSContext (most performant)
@@ -158,8 +161,13 @@ public class JAXBDSContext {
             }
             Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
                     new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
+            Map<String, Object> properties = null;
+            if (this.defaultNamespace != null) {
+                properties = new HashMap<String, Object>();
+                properties.put("com.sun.xml.bind.defaultNamespaceRemap", this.defaultNamespace);
+            }
             jc =
-                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl);
+                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl, properties);
             constructionType = constructType.value;
             autoJAXBContext = new WeakReference<JAXBContext>(jc);
         } else {
@@ -170,6 +178,14 @@ public class JAXBDSContext {
         return jc;
     }
 
+    public void setDefaultNamespace(String namespace) {
+        this.defaultNamespace = namespace;
+    }
+    
+    public String getDefaultNamespace() {
+        return this.defaultNamespace;
+    }
+    
     /** @return RPC Declared Type */
     public Class getProcessType() {
         return processType;
