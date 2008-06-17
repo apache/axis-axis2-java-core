@@ -17,32 +17,49 @@
  * under the License.
  */
 
-package org.apache.axis2.extensions.osgi.core.web;
+package org.apache.axis2.osgi.core.web;
+
+import javax.servlet.http.HttpServlet;
+import java.util.Hashtable;
 
 /**
  *
- * WebAppDescriptor is a utility class for containing the static information
- * required by the WebApp class
+ * ServletDescriptor a utility class for describing Servlets to be deployed into a WebApp
  */
 
-public class WebAppDescriptor {
-	protected String context;
+public class ServletDescriptor {
+	protected Hashtable initParameters;
 
-	protected ServletDescriptor[] servlet;
+	protected HttpServlet servlet;
 
-    public String getContext() {
-        return context;
+	protected String subContext;
+
+	public ServletDescriptor(String subContext, HttpServlet servlet) {
+		this.subContext = subContext;
+		this.servlet = servlet;
+	}
+
+    public Hashtable getInitParameters() {
+        return initParameters;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setInitParameters(Hashtable initParameters) {
+        this.initParameters = initParameters;
     }
 
-    public ServletDescriptor[] getServlet() {
+    public HttpServlet getServlet() {
         return servlet;
     }
 
-    public void setServlet(ServletDescriptor[] servlet) {
+    public void setServlet(HttpServlet servlet) {
         this.servlet = servlet;
+    }
+
+    public String getSubContext() {
+        return subContext;
+    }
+
+    public void setSubContext(String subContext) {
+        this.subContext = subContext;
     }
 }

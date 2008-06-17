@@ -19,18 +19,22 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
         <version>SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>axis2-osgi</artifactId>
-    <name>Apache Axis2 - OSGi</name>
-    <description>OSGi for Axis 2.0</description>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.apache.axis2.osgi</artifactId>
+    <packaging>bundle</packaging>
+    <name>Apache Axis2 OSGi Integration</name>
+    <description>Apache Axis2 OSGi Integration</description>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <resources>
@@ -41,116 +45,58 @@
         </resources>
         <plugins>
             <plugin>
-              <artifactId>maven-jar-plugin</artifactId>
-              <configuration>
-                <archive>  
-                  <manifestFile>resources/META-INF/MANIFEST.MF</manifestFile>
-                </archive> 
-              </configuration>
-            </plugin>  
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-						<configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>axis2-kernel</artifactId>
-                                    <version>${version}</version>
-                                    <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                    <excludes>**/*.java,META-INF/maven/**/*.*</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>axis2-adb</artifactId>
-                                    <version>${version}</version>
-                                    <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                    <excludes>**/*.java,META-INF/maven/**/*.*</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>axis2-saaj</artifactId>
-                                    <version>${version}</version>
-                                    <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                    <excludes>**/*.java,META-INF/maven/**/*.*</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>axis2-metadata</artifactId>
-                                    <version>${version}</version>
-                                    <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                    <excludes>**/*.java,META-INF/maven/**/*.*</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.axis2</groupId>
-                                    <artifactId>axis2-jaxws</artifactId>
-                                    <version>${version}</version>
-                                    <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                    <excludes>**/*.java,META-INF/maven/**/*.*</excludes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>1.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Version>1.0.0.${pom.version}</Bundle-Version>
+                        <Bundle-Name>${pom.artifactId}</Bundle-Name>
+                        <Bundle-Vendor>WSO2 Inc</Bundle-Vendor>
+                        <Bundle-Description>${pom.description}</Bundle-Description>
+                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>
+                            !org.apache.axis2.osgi.internal,
+                            org.apache.axis2.osgi.*; version=1.0.0,
+                            org.apache.axis2.*;-split-package:=merge-last,
+                        </Export-Package>
+                        <Import-Package>
+                            !org.apache.axis2.*,
+                            javax.servlet; version=2.4.0,
+                            javax.servlet.http; version=2.4.0,
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Private-Package>
+                            org.apache.axis2.osgi.internal,
+                        </Private-Package>
+                        <Bundle-Activator>org.apache.axis2.osgi.internal.Activator</Bundle-Activator>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jaxws</artifactId>
-            <version>${version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-xjc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -158,12 +104,18 @@
             <artifactId>org.osgi.compendium</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>javax.servlet</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.osgi.foundation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
+
+
 </project>

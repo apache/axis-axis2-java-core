@@ -1,4 +1,6 @@
 /*
+*/
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/*
 
 package org.apache.axis2.extensions.osgi;
 
@@ -33,12 +36,14 @@ import javax.servlet.http.HttpServletRequest;
 
 public class OSGiAxis2Servlet extends AxisServlet {
     
-    /**
+    */
+/**
      * Set the context root if it is not set already. We are overriding AxisServlet's impl to
      * get past an issue in Felix.
      *
      * @param req
      */
+/*
     public void initContextRoot(HttpServletRequest req) {
         if (contextRoot != null && contextRoot.trim().length() != 0) {
             return;
@@ -58,3 +63,4 @@ public class OSGiAxis2Servlet extends AxisServlet {
         return configContext;
     }
 }
+*/

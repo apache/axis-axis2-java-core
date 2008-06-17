@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package org.apache.axis2.extensions.osgi.core;
+package org.apache.axis2.osgi.core;
 
-import org.apache.axis2.extensions.osgi.core.web.WebApp;
+import org.apache.axis2.osgi.core.web.WebApp;
 import org.osgi.framework.Bundle;
 
 /**
@@ -99,7 +99,7 @@ public interface SOAPProvider {
      * Deploys an Object as a WebService using the provider's default binding type.
      * The service is deployed into the specified <code>WebApp</code> context
      *
-     * @param WebApp    the target web application context
+     * @param webApp    the target web application context
      * @param srvName   the display name of the service
      * @param srvClass  the class or interface that should be exposed. Specifying an interface
      *                  allows only the desired methods of the service object to be published.
@@ -112,7 +112,7 @@ public interface SOAPProvider {
      * Deploys an Object as a WebService using a specified binding type
      * The service is deployed into the specified <code>WebApp</code> context
      *
-     * @param WebApp      the target web application context
+     * @param webApp      the target web application context
      * @param srvName     the display name of the service
      * @param bindingType the name of the desired binding type
      * @param srvClass    the class or interface that should be exposed. Specifying an interface

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.axis2.extensions.osgi.core.web;
+package org.apache.axis2.osgi.core.web;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;

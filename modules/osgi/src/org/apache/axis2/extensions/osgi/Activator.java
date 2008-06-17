@@ -1,4 +1,6 @@
 /*
+*/
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,6 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/*
 
 package org.apache.axis2.extensions.osgi;
 
@@ -41,7 +44,7 @@ public class Activator implements BundleActivator, BundleListener {
         this.context = context;
 
         logger = new Logger(context);
-        httpTracker = new HttpServiceTracker(context, servlet, logger); 
+        httpTracker = new HttpServiceTracker(context, servlet, logger);
         registry = new ServiceRegistry(servlet, logger);
 
         logger.log(LogService.LOG_INFO, "[Axis2/OSGi] Starting Bundle Listener");
@@ -85,3 +88,4 @@ public class Activator implements BundleActivator, BundleListener {
         registry.close();
     }
 }
+*/
