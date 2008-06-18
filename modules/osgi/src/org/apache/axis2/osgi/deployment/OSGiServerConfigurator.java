@@ -41,7 +41,7 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
     public OSGiServerConfigurator(BundleContext context) {
         this.context = context;
         Enumeration entries = this.context.getBundle()
-                .findEntries("org/apache/axis2.osgi/deployment", "axis2.xml", false);
+                .findEntries("org/apache/axis2/osgi/deployment", "axis2.xml", false);
         if (entries != null && entries.hasMoreElements()) {
             axis2XmlUrl = (URL)entries.nextElement();
         }
@@ -88,5 +88,9 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
         //set the AxisConfiguration as a service.
         context.registerService(AxisConfiguration.class.getName(), axisConfig, null);
         return axisConfig;
+    }
+
+    public void loadServices() {
+        //TODO; TBD
     }
 }

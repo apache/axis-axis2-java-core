@@ -53,7 +53,7 @@
                     <instructions>
                         <Bundle-Version>1.0.0.${pom.version}</Bundle-Version>
                         <Bundle-Name>${pom.artifactId}</Bundle-Name>
-                        <Bundle-Vendor>WSO2 Inc</Bundle-Vendor>
+                        <Bundle-Vendor>Apache Axis2, 2008</Bundle-Vendor>
                         <Bundle-Description>${pom.description}</Bundle-Description>
                         <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
@@ -65,7 +65,9 @@
                             !org.apache.axis2.*,
                             javax.servlet; version=2.4.0,
                             javax.servlet.http; version=2.4.0,
-                            org.osgi.framework;version=1.3.0,
+                            org.osgi.framework; version=1.3.0,
+                            org.osgi.service.http; version=1.2.0,
+                            org.osgi.util.tracker; version=1.3.1,
                             *;resolution:=optional
                         </Import-Package>
                         <Private-Package>
@@ -75,7 +77,8 @@
                             org.apache.axis2.osgi.internal.Activator
                         </Bundle-Activator>
                         <Export-Service>
-                            org.apache.axis2.engine.AxisConfiguration
+                            org.apache.axis2.engine.AxisConfiguration,
+                            org.apache.axis2.context.ConfigurationContext
                         </Export-Service>
                     </instructions>
                 </configuration>

@@ -15,21 +15,85 @@
  */
 package org.apache.axis2.osgi.internal;
 
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.osgi.InitServlet;
+import org.apache.axis2.osgi.OSGiAxisServlet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.http.HttpService;
+import org.osgi.service.http.NamespaceException;
+import org.osgi.util.tracker.ServiceTracker;
+
+import javax.servlet.ServletException;
 
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
- * TODO: TBD; yet the structure is being formed 
+ * TODO: TBD; yet the structure is being formed
  */
 public class Activator implements BundleActivator {
 
+    private HttpServiceTracker tracker;
+
 
     public void start(BundleContext context) throws Exception {
-
+        tracker = new HttpServiceTracker(context);
+        tracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
+        tracker.close();
+        //ungetService
+        ServiceReference axisConfigRef =
+                context.getServiceReference(AxisConfigurator.class.getName());
+        if (axisConfigRef != null) {
+            context.ungetService(axisConfigRef);
+        }
+        ServiceReference configCtxRef =
+                context.getServiceReference(ConfigurationContext.class.getName());
+        if (configCtxRef != null) {
+            context.ungetService(configCtxRef);
+        }
+    }
+
+    //service trackers
+
+    private static class HttpServiceTracker extends ServiceTracker {
+
+        public HttpServiceTracker(BundleContext context) {
+            super(context, HttpService.class.getName(), null);
+        }
+
+        public Object addingService(ServiceReference serviceReference) {
+            
+            HttpService httpService = (HttpService) context.getService(serviceReference);
+            try {
+                InitServlet initServlet = new InitServlet(context);
+                httpService.registerServlet("/init_servlet_not_public", initServlet, null, null);
+                OSGiAxisServlet axisServlet = new OSGiAxisServlet(context);
+                ServiceReference axisConfigRef =
+                        context.getServiceReference(AxisConfiguration.class.getName());
+                AxisConfiguration axisConfig = (AxisConfiguration)context.getService(axisConfigRef);
+                Object obj = axisConfig.getParameterValue("servicePath");
+                String servicepath = "/servicers";
+                if (obj != null) {
+                    servicepath = (String)obj;
+                    if (!servicepath.startsWith("/")) {
+                        servicepath = "/" + servicepath;
+                    }
+                }
+                httpService.registerServlet(servicepath, axisServlet, null, null);
+            } catch (ServletException e) {
+                String msg = "Error while registering servlets";
+                throw new RuntimeException(msg, e);
+            } catch (NamespaceException e) {
+                String msg = "Namespace missmatch when registering servlets";
+                throw new RuntimeException(msg, e);
+            }
+            return httpService;
+        }
 
     }
 }
