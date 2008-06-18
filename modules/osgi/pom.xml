@@ -80,7 +80,17 @@
                             org.apache.axis2.engine.AxisConfiguration,
                             org.apache.axis2.context.ConfigurationContext
                         </Export-Service>
+                        <Bundle-RequiredExecutionEnvironment>
+                            J2SE-1.5
+                        </Bundle-RequiredExecutionEnvironment>
                     </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -91,6 +101,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>

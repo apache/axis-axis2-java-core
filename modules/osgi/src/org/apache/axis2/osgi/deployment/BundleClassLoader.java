@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.osgi.util;
+package org.apache.axis2.osgi.deployment;
 
 import org.osgi.framework.Bundle;
 
@@ -37,7 +37,7 @@ public class BundleClassLoader extends ClassLoader {
         try {
             return bundle.loadClass(name);
         } catch (ClassNotFoundException e) {
-            //TODO: add the proper logging 
+            //TODO: add the proper logging
             e.printStackTrace();
             throw e;
         }
@@ -82,5 +82,4 @@ public class BundleClassLoader extends ClassLoader {
         return clazz;
     }
 }
-
 

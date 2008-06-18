@@ -20,6 +20,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.AxisFault;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Bundle;
 
 /**
  *
@@ -30,7 +31,25 @@ public class OSGiConfigurationContextFactory {
             AxisConfigurator axisConfigurator, BundleContext context) throws AxisFault {
         ConfigurationContext configCtx =
                 ConfigurationContextFactory.createConfigurationContext(axisConfigurator);
-        //TODO: TBD, add service, module listeners
+
+        // first check (bundlestarts at the end or partially) {
+        //      // loop  and add axis*
+        // } then {
+        //      // stat the bundle early
+        // }
+        Registry moduleRegistry = new ModuleRegistry(context, configCtx);
+        Bundle[] bundles = context.getBundles();
+        if (bundles != null) {
+            for (Bundle bundle : bundles) {
+                if (bundle != context.getBundle()) {
+                    moduleRegistry.register(bundle);
+                }
+            }
+        }
+        context.addBundleListener(moduleRegistry);
+
+        //TODO: TBD, service listeners
+
         return configCtx;
 
     }
