@@ -15,16 +15,13 @@
  */
 package org.apache.axis2.osgi.deployment;
 
-import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAttribute;
-
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
 
 import javax.xml.namespace.QName;
@@ -99,7 +96,7 @@ public class OSGiServiceBuilder extends ServiceBuilder {
                 String refName = moduleRefAttribute.getAttributeValue();
 
                 if (axisConfig.getModule(refName) == null) {
-                    throw new DeploymentException(MODULE_NOT_FOUND_ERROR);
+                    throw new DeploymentException(MODULE_NOT_FOUND_ERROR + refName);
                 } else {
                     operation.addModule(refName);
                 }

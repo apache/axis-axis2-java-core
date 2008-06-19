@@ -20,5 +20,5 @@ package org.apache.axis2.osgi.deployment;
  */
 public final class OSGiAxis2Constants {
 
-    public static String MODULE_NOT_FOUND_ERROR = "Error 1: Required module is not found";
+    public static String MODULE_NOT_FOUND_ERROR = "Error 1: Required module is not found. Module name : ";
 }

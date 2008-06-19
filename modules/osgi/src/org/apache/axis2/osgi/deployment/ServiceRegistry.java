@@ -15,22 +15,19 @@
  */
 package org.apache.axis2.osgi.deployment;
 
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.*;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.*;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import javax.xml.stream.XMLStreamException;
-import java.util.*;
-import java.net.URL;
 import java.io.InputStream;
-import java.io.IOException;
-
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Creates proper AxisServiceGroup/AxisService looking into bundles
@@ -72,7 +69,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                     AxisService axisService = new AxisService(bundleSymbolicName);
                     axisService.setParent(serviceGroup);
                     axisService.setClassLoader(loader);
-                    ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
+                    ServiceBuilder serviceBuilder = new OSGiServiceBuilder(configCtx, axisService);
                     serviceBuilder.setWsdlServiceMap(wsdlServicesMap);
                     AxisService service = serviceBuilder.populateService(rootElement);
                     configCtx.getAxisConfiguration().addService(service);
@@ -82,8 +79,8 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                        bundle.getSymbolicName());
                 } else if (DeploymentConstants.TAG_SERVICE_GROUP.equals(elementName)) {
                     ServiceGroupBuilder groupBuilder =
-                            new ServiceGroupBuilder(rootElement, wsdlServicesMap,
-                                                    configCtx);
+                            new OSGiServiceGroupBuilder(rootElement, wsdlServicesMap,
+                                                        configCtx);
                     ArrayList serviceList = groupBuilder.populateServiceGroup(serviceGroup);
                     DeploymentEngine.addServiceGroup(serviceGroup,
                                                      serviceList,
@@ -95,6 +92,10 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                        bundle.getSymbolicName());
                 }
                 resolvedBundles.put(bundle, serviceGroup);
+                //marked as resolved.
+                if (unreslovedBundles.contains(bundle)) {
+                    unreslovedBundles.remove(bundle);
+                }
             }
         } catch (Throwable e) {
             //TODO: TBD log

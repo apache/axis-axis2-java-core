@@ -17,15 +17,22 @@ package org.apache.axis2.osgi.deployment;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.deployment.ServiceGroupBuilder;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.i18n.Messages;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @see org.apache.axis2.deployment.ServiceGroupBuilder
@@ -35,9 +42,77 @@ import java.util.Iterator;
  */
 public class OSGiServiceGroupBuilder extends ServiceGroupBuilder {
 
-    public OSGiServiceGroupBuilder(OMElement service, HashMap wsdlServices,
+    private OMElement serviceElement;
+
+    private Map wsdlServices;
+
+    public OSGiServiceGroupBuilder(OMElement serviceElement, HashMap wsdlServices,
                                    ConfigurationContext configCtx) {
-        super(service, wsdlServices, configCtx);
+        super(serviceElement, wsdlServices, configCtx);
+        this.serviceElement = serviceElement;
+        this.wsdlServices = wsdlServices;
+    }
+
+    public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup)
+            throws DeploymentException {
+        ArrayList serviceList = new ArrayList();
+
+        try {
+
+            // Processing service level parameters
+            Iterator itr = serviceElement.getChildrenWithName(new QName(TAG_PARAMETER));
+
+            processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
+
+            Iterator moduleConfigs =
+                    serviceElement.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
+
+            processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
+                                       axisServiceGroup);
+
+            // processing service-wide modules which required to engage globally
+            Iterator moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));
+
+            processModuleRefs(moduleRefs, axisServiceGroup);
+
+            Iterator serviceitr = serviceElement.getChildrenWithName(new QName(TAG_SERVICE));
+
+            while (serviceitr.hasNext()) {
+                OMElement service = (OMElement) serviceitr.next();
+                OMAttribute serviceNameatt = service.getAttribute(new QName(ATTRIBUTE_NAME));
+                if (serviceNameatt == null) {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
+                }
+                String serviceName = serviceNameatt.getAttributeValue();
+
+                if (serviceName == null || "".equals(serviceName)) {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
+                } else {
+                    AxisService axisService = (AxisService) wsdlServices.get(serviceName);
+
+                    if (axisService == null) {
+                        axisService = new AxisService(serviceName);
+                    } else {
+                        axisService.setWsdlFound(true);
+                        axisService.setCustomWsdl(true);
+                    }
+
+                    // the service that has to be deployed
+                    axisService.setParent(axisServiceGroup);
+                    axisService.setClassLoader(axisServiceGroup.getServiceGroupClassLoader());
+
+                    ServiceBuilder serviceBuilder = new OSGiServiceBuilder(configCtx, axisService);
+                    AxisService as = serviceBuilder.populateService(service);
+                    serviceList.add(as);
+                }
+            }
+        } catch (AxisFault e) {
+            throw new DeploymentException(e);
+        }
+
+        return serviceList;
     }
 
     /**
@@ -59,7 +134,7 @@ public class OSGiServiceGroupBuilder extends ServiceGroupBuilder {
                 String refName = moduleRefAttribute.getAttributeValue();
 
                 if (axisConfig.getModule(refName) == null) {
-                    throw new DeploymentException(MODULE_NOT_FOUND_ERROR);
+                    throw new DeploymentException(MODULE_NOT_FOUND_ERROR + refName);
                 } else {
                     axisServiceGroup.addModuleref(refName);
                 }
