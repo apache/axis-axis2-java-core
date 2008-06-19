@@ -16,6 +16,7 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.ModuleBuilder;
@@ -29,6 +30,7 @@ import java.util.Enumeration;
 
 /**
  * @see org.osgi.framework.BundleListener
+ * TODO: TBD removed sout
  */
 public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
@@ -89,6 +91,11 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                             configCtx.getAxisConfiguration().getModule(axismodule.getName());
                     if (module == null) {
                         DeploymentEngine.addNewModule(axismodule, configCtx.getAxisConfiguration());
+                        //initialze the module if the module contains Module interface.
+                        Module moduleObj = axismodule.getModule();
+                        if (moduleObj != null) {
+                            moduleObj.init(configCtx, axismodule);
+                        }
                         bundleMap.put(bundle, axismodule);
                         System.out.println("[Axis2/OSGi] Starting any modules in Bundle - " +
                                            bundle.getSymbolicName());
@@ -97,7 +104,6 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                                            " is already available.");
                     }
                 }
-                //TODO init the module 
             } catch (IOException e) {
                 String msg = "Error while reading module.xml";
                 throw new AxisFault(msg, e);
