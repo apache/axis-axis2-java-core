@@ -20,6 +20,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.apache.axis2.transport.http.AxisServlet;
+import org.apache.axis2.transport.http.ListingAgent;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -55,6 +56,7 @@ public class OSGiAxisServlet extends AxisServlet {
         }
         configContext = (ConfigurationContext) context.getService(reference);
         axisConfiguration = configContext.getAxisConfiguration();
+        agent = new ListingAgent(configContext);
         initParams();
         ServletContext servletContext = servletConfig.getServletContext();
         if (servletContext != null) {

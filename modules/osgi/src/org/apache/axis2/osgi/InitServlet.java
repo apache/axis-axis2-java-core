@@ -16,6 +16,7 @@
 package org.apache.axis2.osgi;
 
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.osgi.deployment.OSGiServerConfigurator;
 import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
@@ -46,6 +47,10 @@ public class InitServlet extends HttpServlet{
             ConfigurationContext configCtx = OSGiConfigurationContextFactory
                     .createConfigurationContext(configurator, context);
             //regiser the ConfigurationContext as an service.
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configCtx);
+            listenerManager.start();
+            ListenerManager.defaultConfigurationContext = configCtx;
             context.registerService(ConfigurationContext.class.getName(), configCtx, null);
         } catch (AxisFault e) {
             String msg = "Error while creating the ConfigurationContext";
