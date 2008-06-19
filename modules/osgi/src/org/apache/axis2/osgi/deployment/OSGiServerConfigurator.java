@@ -59,6 +59,8 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
         try {
             InputStream inputStream = axis2XmlUrl.openStream();
             populateAxisConfiguration(inputStream);
+            //TODO: DeploymentEngine should be scalable enough
+            axisConfig.validateSystemPredefinedPhases();
             return axisConfig;
         } catch (IOException e) {
             String msg = "Error occured while creating axisConfiguration";
