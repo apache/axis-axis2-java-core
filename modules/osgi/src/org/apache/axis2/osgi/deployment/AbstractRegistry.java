@@ -22,6 +22,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -31,7 +33,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractRegistry<V> implements Registry {
 
-    protected Map<Bundle, V> bundleMap = new ConcurrentHashMap<Bundle, V>();
+    protected Map<Bundle, V> resolvedBundles = new ConcurrentHashMap<Bundle, V>();
+
+    protected List<Bundle> unreslovedBundles = new ArrayList<Bundle>();
 
     protected final Lock lock = new ReentrantLock();
 
@@ -61,8 +65,16 @@ public abstract class AbstractRegistry<V> implements Registry {
                     break;
             }
         } catch (AxisFault e) {
+            //TODO: TDB use, log service error instead
+            e.printStackTrace();
             String msg = "Error while registering the bundle in AxisConfiguration";
             throw new RuntimeException(msg, e);
+        }
+    }
+
+    public void resolve() throws AxisFault {
+        for (Bundle bundle : unreslovedBundles) {
+            register(bundle);
         }
     }
 }

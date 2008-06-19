@@ -27,6 +27,7 @@ import org.osgi.framework.BundleContext;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Dictionary;
 
 /**
  * @see org.osgi.framework.BundleListener
@@ -34,15 +35,18 @@ import java.util.Enumeration;
  */
 public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
+    private Registry serviceRegistry;
 
-    public ModuleRegistry(BundleContext context, ConfigurationContext configCtx) {
+    public ModuleRegistry(BundleContext context, ConfigurationContext configCtx, Registry serviceRegistry) {
         super(context, configCtx);
+        this.serviceRegistry = serviceRegistry;
     }
 
     public void register(Bundle bundle) throws AxisFault {
         lock.lock();
         try {
             addModules(bundle);
+            serviceRegistry.resolve();
         } finally {
             lock.unlock();
         }
@@ -52,9 +56,9 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
     public void unRegister(Bundle bundle) throws AxisFault {
         lock.lock();
         try {
-            AxisModule module = bundleMap.get(bundle);
+            AxisModule module = resolvedBundles.get(bundle);
             if (module != null) {
-                bundleMap.remove(bundle);
+                resolvedBundles.remove(bundle);
                 configCtx.getAxisConfiguration()
                         .removeModule(module.getName(), module.getVersion());
                 System.out.println("[Axis2/OSGi] Stopping" + module.getName() + ":" +
@@ -67,13 +71,11 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
     }
 
     private void addModules(Bundle bundle) throws AxisFault {
-        if (!bundleMap.containsKey(bundle)) {
+        if (!resolvedBundles.containsKey(bundle)) {
             try {
                 Enumeration enumeration = bundle.findEntries("META-INF", "module.xml", false);
                 while (enumeration != null && enumeration.hasMoreElements()) {
                     URL url = (URL) enumeration.nextElement();
-                    String urlString = url.toString();
-                    //                String shortFileName = urlString.substring(urlString.lastIndexOf('/'));
                     AxisModule axismodule = new AxisModule();
                     ClassLoader loader =
                             new BundleClassLoader(bundle, Registry.class.getClassLoader());
@@ -81,8 +83,12 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     ModuleBuilder builder =
                             new ModuleBuilder(url.openStream(), axismodule,
                                               configCtx.getAxisConfiguration());
-                    //                axismodule.setName(org.apache.axis2.util.Utils.getModuleName(shortFileName));
-                    //                axismodule.setVersion(org.apache.axis2.util.Utils.getModuleVersion(shortFileName));
+                    Dictionary headers = bundle.getHeaders();
+                    String bundleSymbolicName = (String)headers.get("Bundle-SymbolicName");
+                    if (bundleSymbolicName != null && bundleSymbolicName.length() != 0) {
+                        axismodule.setName(bundleSymbolicName);
+                    }
+//                                    axismodule.setVersion(org.apache.axis2.util.Utils.getModuleVersion(shortFileName));
                     builder.populateModule();
                     axismodule.setParent(configCtx.getAxisConfiguration());
                     //                axismodule.setFileName(new URL(bundle.getLocation()));
@@ -96,7 +102,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                         if (moduleObj != null) {
                             moduleObj.init(configCtx, axismodule);
                         }
-                        bundleMap.put(bundle, axismodule);
+                        resolvedBundles.put(bundle, axismodule);
                         System.out.println("[Axis2/OSGi] Starting any modules in Bundle - " +
                                            bundle.getSymbolicName());
                     } else {

@@ -37,18 +37,27 @@ public class OSGiConfigurationContextFactory {
         // } then {
         //      // stat the bundle early
         // }
-        Registry moduleRegistry = new ModuleRegistry(context, configCtx);
+        Registry servicesRegistry = new ServiceRegistry(context, configCtx);
+        Registry moduleRegistry = new ModuleRegistry(context, configCtx, servicesRegistry);
         Bundle[] bundles = context.getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
                 if (bundle != context.getBundle()) {
-                    moduleRegistry.register(bundle);
+                    if (bundle.getState() == Bundle.ACTIVE) {
+                        moduleRegistry.register(bundle);
+                    }
+                }
+            }
+            for (Bundle bundle : bundles) {
+                if (bundle != context.getBundle()) {
+                    if (bundle.getState() == Bundle.ACTIVE) {
+                        servicesRegistry.register(bundle);
+                    }
                 }
             }
         }
         context.addBundleListener(moduleRegistry);
-
-        //TODO: TBD, service listeners
+        context.addBundleListener(servicesRegistry);
 
         return configCtx;
 

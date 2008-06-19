@@ -15,19 +15,10 @@
  */
 package org.apache.axis2.osgi.deployment;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleListener;
-import org.apache.axis2.AxisFault;
-
 /**
- *  This interface will be used to register the extension/file
- * that needed be processed and create the relevant Axis* object.
+ *  Contains the list of constants
  */
-public interface Registry extends BundleListener{
+public final class OSGiAxis2Constants {
 
-    void register(Bundle bundle) throws AxisFault;
-
-    void unRegister(Bundle bundle) throws AxisFault;
-
-    void resolve() throws AxisFault;
+    public static String MODULE_NOT_FOUND_ERROR = "Error 1: Required module is not found";
 }
