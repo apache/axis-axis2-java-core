@@ -29,6 +29,8 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletException;
 
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
+
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
  * TODO: TBD; yet the structure is being formed
@@ -76,15 +78,16 @@ public class Activator implements BundleActivator {
                 ServiceReference axisConfigRef =
                         context.getServiceReference(AxisConfiguration.class.getName());
                 AxisConfiguration axisConfig = (AxisConfiguration)context.getService(axisConfigRef);
-                Object obj = axisConfig.getParameterValue("servicePath");
-                String servicepath = "/services";
-                if (obj != null) {
-                    servicepath = (String)obj;
-                    if (!servicepath.startsWith("/")) {
-                        servicepath = "/" + servicepath;
+                String propContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
+                String contextRoot = "/axis2";
+                if (propContextRoot != null && propContextRoot.length() != 0) {
+                    if (!propContextRoot.startsWith("/")) {
+                        contextRoot = "/" + propContextRoot;
+                    } else {
+                        contextRoot = propContextRoot;
                     }
                 }
-                httpService.registerServlet(servicepath, axisServlet, null, null);
+                httpService.registerServlet(contextRoot, axisServlet, null, null);
             } catch (ServletException e) {
                 String msg = "Error while registering servlets";
                 throw new RuntimeException(msg, e);

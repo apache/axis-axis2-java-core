@@ -21,4 +21,8 @@ package org.apache.axis2.osgi.deployment;
 public final class OSGiAxis2Constants {
 
     public static String MODULE_NOT_FOUND_ERROR = "Error 1: Required module is not found. Module name : ";
+
+    public static String PROTOCOL = "protocol";
+
+    public static String  AXIS2_OSGi_ROOT_CONTEXT = "axis2.osgi.root.context";
 }
