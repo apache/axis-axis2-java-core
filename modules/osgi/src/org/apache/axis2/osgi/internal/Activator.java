@@ -77,7 +77,7 @@ public class Activator implements BundleActivator {
                         context.getServiceReference(AxisConfiguration.class.getName());
                 AxisConfiguration axisConfig = (AxisConfiguration)context.getService(axisConfigRef);
                 Object obj = axisConfig.getParameterValue("servicePath");
-                String servicepath = "/servicers";
+                String servicepath = "/services";
                 if (obj != null) {
                     servicepath = (String)obj;
                     if (!servicepath.startsWith("/")) {
