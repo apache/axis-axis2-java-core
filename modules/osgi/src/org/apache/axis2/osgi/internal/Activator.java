@@ -28,6 +28,7 @@ import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletException;
+import javax.xml.namespace.QName;
 
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
@@ -39,6 +40,7 @@ public class Activator implements BundleActivator {
 
 
     public void start(BundleContext context) throws Exception {
+        QName qName = new QName("","");
         tracker = new HttpServiceTracker(context);
         tracker.open();
     }
