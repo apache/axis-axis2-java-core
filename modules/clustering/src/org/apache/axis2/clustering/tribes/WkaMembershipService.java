@@ -18,7 +18,6 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
 import org.apache.catalina.tribes.MembershipService;
-import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.util.UUIDGenerator;
 
@@ -139,9 +138,11 @@ public class WkaMembershipService implements MembershipService {
 
     public void setPayload(byte[] payload) {
         this.payload = payload;
+        ((StaticMember) membershipManager.getLocalMember()).setPayload(payload);
     }
 
     public void setDomain(byte[] domain) {
         this.domain = domain;
+        ((StaticMember) membershipManager.getLocalMember()).setDomain(domain);
     }
 }
