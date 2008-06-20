@@ -16,8 +16,8 @@
 package org.apache.axis2.osgi.internal;
 
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.osgi.InitServlet;
 import org.apache.axis2.osgi.OSGiAxisServlet;
 import org.osgi.framework.BundleActivator;
@@ -28,7 +28,6 @@ import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletException;
-import javax.xml.namespace.QName;
 
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
@@ -40,7 +39,6 @@ public class Activator implements BundleActivator {
 
 
     public void start(BundleContext context) throws Exception {
-        QName qName = new QName("","");
         tracker = new HttpServiceTracker(context);
         tracker.open();
     }
