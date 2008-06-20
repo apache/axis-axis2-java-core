@@ -346,7 +346,48 @@ public class IDLVisitor /*implements ASTVisitor*/ {
 
         DataType dataType = null;
         Map compositeDataTypes = idl.getCompositeDataTypes();
-        String typeName = getTypeName(typeNode);
+
+        String typeName;
+        if (typeNode.getType() == IDLTokenTypes.LITERAL_unsigned) {
+            AST nextNode = typeNode.getNextSibling();
+            if (nextNode == null) {
+                throw new InvalidIDLException("'unsigned' without a data type");
+            } else if (nextNode.getType() == IDLTokenTypes.LITERAL_short) {
+                typeNode.setNextSibling(nextNode.getNextSibling());
+                typeNode.setFirstChild(nextNode.getFirstChild());
+                typeName = "ushort";
+            } else if (nextNode.getType() == IDLTokenTypes.LITERAL_long) {
+                AST nextToLong = nextNode.getNextSibling();
+                if (nextToLong == null) {
+                    throw new InvalidIDLException("an identifier is required after the 'long' keyword");
+                } else if (nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
+                    typeNode.setNextSibling(nextToLong.getNextSibling());
+                    typeNode.setFirstChild(nextToLong.getFirstChild());
+                    typeName = "ulonglong";
+                } else {
+                    typeNode.setNextSibling(nextNode.getNextSibling());
+                    typeNode.setFirstChild(nextNode.getFirstChild());
+                    typeName = "ulong";
+                }
+            } else {
+                throw new InvalidIDLException("either 'long' or 'short' is expected after the 'unsigned' keyword");
+            }
+        } else if (typeNode.getType() == IDLTokenTypes.LITERAL_long) {
+            AST nextToLong = typeNode.getNextSibling();
+            if (nextToLong == null) {
+                throw new InvalidIDLException("an identifier is required after the 'long' keyword");
+            } else if (nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
+                typeNode.setNextSibling(nextToLong.getNextSibling());
+                typeNode.setFirstChild(nextToLong.getFirstChild());
+                typeName = "longlong";
+            } else {
+                typeName = "long";
+            }
+        } else {
+            typeName = getTypeName(typeNode);    
+        }
+
+
         if (compositeDataTypes!=null) {
             if (!module.equals("")) {
                 if (!typeName.startsWith(module)) {
