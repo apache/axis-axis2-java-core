@@ -1324,6 +1324,8 @@ public class AxisService extends AxisDescription {
 			Iterator portItr = serviceElement.getPorts().values().iterator();
 			while (portItr.hasNext()) {
 				Port port = (Port) portItr.next();
+				AxisEndpoint endpoint = (AxisEndpoint) endpointMap.get(port
+						.getName());
 				List list = port.getExtensibilityElements();
 				for (int i = 0; i < list.size(); i++) {
 					Object extensibilityEle = list.get(i);
@@ -1333,45 +1335,89 @@ public class AxisService extends AxisDescription {
 						if (existingAddress == null
 								|| existingAddress
 										.equals("REPLACE_WITH_ACTUAL_URL")) {
-							((SOAPAddress) extensibilityEle)
-									.setLocationURI(getEPRs()[0]);
-						} else {
-							if (requestIP == null) {
+							if (endpoint != null) {
 								((SOAPAddress) extensibilityEle)
-										.setLocationURI(getLocationURI(
-												getEPRs(), existingAddress));
+										.setLocationURI(endpoint
+												.calculateEndpointURL());
 							} else {
 								((SOAPAddress) extensibilityEle)
-										.setLocationURI(getLocationURI(
-												calculateEPRs(requestIP),
-												existingAddress));
+										.setLocationURI(getEPRs()[0]);
+							}
+						} else {
+							if (requestIP == null) {
+								if (endpoint != null) {
+									((SOAPAddress) extensibilityEle)
+											.setLocationURI(endpoint
+													.calculateEndpointURL());
+								} else {
+									((SOAPAddress) extensibilityEle)
+											.setLocationURI(getLocationURI(
+													getEPRs(), existingAddress));
+								}
+							} else {
+								if (endpoint != null) {
+									((SOAPAddress) extensibilityEle)
+											.setLocationURI(endpoint
+													.calculateEndpointURL());
+								} else {
+									((SOAPAddress) extensibilityEle)
+											.setLocationURI(getLocationURI(
+													calculateEPRs(requestIP),
+													existingAddress));
+								}
 							}
 						}
 					} else if (extensibilityEle instanceof SOAP12Address) {
 						SOAP12Address soapAddress = (SOAP12Address) extensibilityEle;
 						String exsistingAddress = soapAddress.getLocationURI();
 						if (requestIP == null) {
-							((SOAP12Address) extensibilityEle)
-									.setLocationURI(getLocationURI(getEPRs(),
-											exsistingAddress));
+							if (endpoint != null) {
+								((SOAP12Address) extensibilityEle)
+										.setLocationURI(endpoint
+												.calculateEndpointURL());
+
+							} else {
+								((SOAP12Address) extensibilityEle)
+										.setLocationURI(getLocationURI(
+												getEPRs(), exsistingAddress));
+							}
 						} else {
-							((SOAP12Address) extensibilityEle)
-									.setLocationURI(getLocationURI(
-											calculateEPRs(requestIP),
-											exsistingAddress));
+							if (endpoint != null) {
+								((SOAP12Address) extensibilityEle)
+										.setLocationURI(endpoint
+												.calculateEndpointURL());
+							} else {
+								((SOAP12Address) extensibilityEle)
+										.setLocationURI(getLocationURI(
+												calculateEPRs(requestIP),
+												exsistingAddress));
+
+							}
 						}
 					} else if (extensibilityEle instanceof HTTPAddress) {
 						HTTPAddress httpAddress = (HTTPAddress) extensibilityEle;
 						String exsistingAddress = httpAddress.getLocationURI();
 						if (requestIP == null) {
-							((HTTPAddress) extensibilityEle)
-									.setLocationURI(getLocationURI(getEPRs(),
-											exsistingAddress));
+							if (endpoint != null) {
+								((HTTPAddress) extensibilityEle)
+										.setLocationURI(endpoint
+												.calculateEndpointURL());
+							} else {
+								((HTTPAddress) extensibilityEle)
+										.setLocationURI(getLocationURI(
+												getEPRs(), exsistingAddress));
+							}
 						} else {
-							((HTTPAddress) extensibilityEle)
-									.setLocationURI(getLocationURI(
-											calculateEPRs(requestIP),
-											exsistingAddress));
+							if (endpoint != null) {
+								((HTTPAddress) extensibilityEle)
+										.setLocationURI(endpoint
+												.calculateEndpointURL());
+							} else {
+								((HTTPAddress) extensibilityEle)
+										.setLocationURI(getLocationURI(
+												calculateEPRs(requestIP),
+												exsistingAddress));
+							}
 						}
 					}
 					// TODO : change the Endpoint refrence addess as well.

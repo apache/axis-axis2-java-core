@@ -136,15 +136,16 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 							}
 						}
 					}
-                    msgctx
-					.setProperty(
-							Constants.AXIS_BINDING_MESSAGE,
-							axisBindingOperation
-									.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
-                    msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+					 if (axisBindingOperation != null) {
+						msgctx
+								.setProperty(
+										Constants.AXIS_BINDING_MESSAGE,
+										axisBindingOperation
+												.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+						msgctx.setProperty(Constants.AXIS_BINDING_OPERATION,
+								axisBindingOperation);
+					}
                 }
-
-
             }
         }
         return InvocationResponse.CONTINUE;

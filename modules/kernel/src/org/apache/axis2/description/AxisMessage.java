@@ -34,6 +34,7 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,9 +65,8 @@ public class AxisMessage extends AxisDescription {
     private boolean wrapped = true;
     
     private Policy effectivePolicy = null;
+    private Date lastPolicyCalcuatedTime = null;
     
-	private boolean policyCalculated = false;
-
     public String getMessagePartName() {
 		return messagePartName;
 	}
@@ -239,13 +239,9 @@ public class AxisMessage extends AxisDescription {
         this.wrapped = wrapped;
     }
     
-	public Policy getEffectivePolicy() {
-		if (getPolicySubject().isUpdated()) {
+    public Policy getEffectivePolicy() {
+		if (lastPolicyCalcuatedTime == null || isPolicyUpdated()) {
 			effectivePolicy = calculateEffectivePolicy();
-		} else {
-			if (effectivePolicy == null && !policyCalculated) {
-				effectivePolicy = calculateEffectivePolicy();
-			}
 		}
 		return effectivePolicy;
 	}
@@ -282,36 +278,37 @@ public class AxisMessage extends AxisDescription {
 		}
 
 		Policy result = PolicyUtil.getMergedPolicy(policyList, axisService);
-		policyCalculated = true;
+		lastPolicyCalcuatedTime = new Date();
 		return result;
 	}
-	
+
 	public boolean isPolicyUpdated() {
 		// AxisMessage
-		PolicySubject policySubject = getPolicySubject();
-		if (policySubject.isUpdated()) {
+		if (getPolicySubject().getLastUpdatedTime().after(
+				lastPolicyCalcuatedTime)) {
 			return true;
 		}
-
 		// AxisOperation
-		AxisOperation axisOperation = getAxisOperation();
+		AxisOperation axisOperation = (AxisOperation) parent;
 		if (axisOperation != null
-				&& axisOperation.getPolicySubject().isUpdated()) {
+				&& axisOperation.getPolicySubject().getLastUpdatedTime().after(
+						lastPolicyCalcuatedTime)) {
 			return true;
 		}
-
 		// AxisService
 		AxisService axisService = (axisOperation == null) ? null
 				: axisOperation.getAxisService();
-		if (axisService != null && axisService.getPolicySubject().isUpdated()) {
+		if (axisService != null
+				&& axisService.getPolicySubject().getLastUpdatedTime().after(
+						lastPolicyCalcuatedTime)) {
 			return true;
 		}
-
 		// AxisConfiguration
 		AxisConfiguration axisConfiguration = (axisService == null) ? null
 				: axisService.getAxisConfiguration();
 		if (axisConfiguration != null
-				&& axisConfiguration.getPolicySubject().isUpdated()) {
+				&& axisConfiguration.getPolicySubject().getLastUpdatedTime()
+						.after(lastPolicyCalcuatedTime)) {
 			return true;
 		}
 		return false;

@@ -1490,4 +1490,99 @@ public class Utils {
 			}
 		}
 	}
+	
+	public static boolean isSoap11Binding(AxisBinding binding) {
+		String type = binding.getType();
+		if (Java2WSDLConstants.TRANSPORT_URI.equals(type)
+				|| WSDL2Constants.URI_WSDL2_SOAP.equals(type)) {
+			String v = (String) binding
+					.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+			if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(v)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isSoap12Binding(AxisBinding binding) {
+		String type = binding.getType();
+		if (Java2WSDLConstants.TRANSPORT_URI.equals(type)
+				|| WSDL2Constants.URI_WSDL2_SOAP.equals(type)) {
+			String v = (String) binding
+					.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+			if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(v)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isHttpBinding(AxisBinding binding) {
+		String type = binding.getType();
+		if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static AxisBinding getSoap11Binding(AxisService service) {
+		for (Iterator iterator = service.getEndpoints().values().iterator(); iterator
+				.hasNext();) {
+			AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+			AxisBinding binding = endpoint.getBinding();
+
+			if (isSoap11Binding(binding)) {
+				return binding;
+			}
+		}
+		return null;
+	}
+
+	public static AxisBinding getSoap12Binding(AxisService service) {
+		for (Iterator iterator = service.getEndpoints().values().iterator(); iterator
+				.hasNext();) {
+			AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+			AxisBinding binding = endpoint.getBinding();
+
+			if (isSoap12Binding(binding)) {
+				return binding;
+			}
+		}
+		return null;
+	}
+
+	public static AxisBinding getHttpBinding(AxisService service) {
+		for (Iterator iterator = service.getEndpoints().values().iterator(); iterator
+				.hasNext();) {
+			AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+			AxisBinding binding = endpoint.getBinding();
+
+			if (isHttpBinding(binding)) {
+				return binding;
+			}
+		}
+		return null;
+	}
+	
+	public static AxisBindingOperation getBindingOperation(AxisBinding binding, AxisOperation operation) {
+		QName opName = operation.getName();
+		for (Iterator bindingOps = binding.getChildren(); bindingOps.hasNext();) {
+			AxisBindingOperation bindingOp = (AxisBindingOperation) bindingOps.next();
+			if (opName.equals(bindingOp.getName())) {
+				return bindingOp;
+			}
+		}
+		return null;
+	}
+	
+	public static AxisBindingMessage getBindingMessage(AxisBindingOperation bindingOperation, AxisMessage message) {
+		String msgName = message.getName();
+		for (Iterator bindingMessages = bindingOperation.getChildren();  bindingMessages.hasNext();) {
+			AxisBindingMessage bindingMessage = (AxisBindingMessage) bindingMessages.next();
+			if (msgName.equals(bindingMessage.getName())) {
+				return bindingMessage;
+			}
+		}
+		return null;
+	}
 }

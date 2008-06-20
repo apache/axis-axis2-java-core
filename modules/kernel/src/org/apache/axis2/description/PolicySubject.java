@@ -20,6 +20,7 @@
 package org.apache.axis2.description;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +33,8 @@ import org.apache.neethi.PolicyReference;
 public class PolicySubject {
 
 	private boolean updated = false;
-
+	private Date lastUpdatedTime = new Date();
+	
 	private HashMap attachedPolicyComponents = new HashMap();
 
 	public void attachPolicy(Policy policy) {
@@ -49,6 +51,7 @@ public class PolicySubject {
 
 	public void attachPolicyReference(PolicyReference reference) {
 		attachedPolicyComponents.put(reference.getURI(), reference);
+		setLastUpdatedTime(new Date()); 
 	}
 
 	public void attachPolicyComponents(List policyComponents) {
@@ -73,6 +76,8 @@ public class PolicySubject {
 	public void attachPolicyComponent(String key,
 			PolicyComponent policyComponent) {
 		attachedPolicyComponents.put(key, policyComponent);
+		setLastUpdatedTime(new Date());
+		
 		if (!isUpdated()) {
 			setUpdated(true);
 		}
@@ -103,6 +108,8 @@ public class PolicySubject {
 					"policy doesn't have a name or an id ");
 		}
 		attachedPolicyComponents.put(key, policy);
+		setLastUpdatedTime(new Date());
+		
 		if (!isUpdated()) {
 			setUpdated(true);
 		}
@@ -110,6 +117,7 @@ public class PolicySubject {
 
 	public void detachPolicyComponent(String key) {
 		attachedPolicyComponents.remove(key);
+		setLastUpdatedTime(new Date());
 		if (!isUpdated()) {
 			setUpdated(true);
 		}
@@ -117,8 +125,17 @@ public class PolicySubject {
 
 	public void clear() {
 		attachedPolicyComponents.clear();
+		setLastUpdatedTime(new Date());
 		if (!isUpdated()) {
 			setUpdated(true);
 		}
+	}
+
+	public Date getLastUpdatedTime() {
+		return lastUpdatedTime;
+	}
+
+	public void setLastUpdatedTime(Date lastUpdatedTime) {
+		this.lastUpdatedTime = lastUpdatedTime;
 	}
 }
