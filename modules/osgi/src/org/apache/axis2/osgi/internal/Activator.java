@@ -69,25 +69,27 @@ public class Activator implements BundleActivator {
         }
 
         public Object addingService(ServiceReference serviceReference) {
-            
+
             HttpService httpService = (HttpService) context.getService(serviceReference);
             try {
                 InitServlet initServlet = new InitServlet(context);
                 httpService.registerServlet("/init_servlet_not_public", initServlet, null, null);
                 OSGiAxisServlet axisServlet = new OSGiAxisServlet(context);
-                ServiceReference axisConfigRef =
-                        context.getServiceReference(AxisConfiguration.class.getName());
-                AxisConfiguration axisConfig = (AxisConfiguration)context.getService(axisConfigRef);
-                String propContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
-                String contextRoot = "/axis2";
-                if (propContextRoot != null && propContextRoot.length() != 0) {
-                    if (!propContextRoot.startsWith("/")) {
-                        contextRoot = "/" + propContextRoot;
+                ServiceReference configCtxRef =
+                        context.getServiceReference(ConfigurationContext.class.getName());
+                ConfigurationContext configCtx =
+                        (ConfigurationContext) context.getService(configCtxRef);
+                String propServiceContextRoot = context.getProperty(AXIS2_OSGi_ROOT_CONTEXT);
+                String serviceContextRoot = "services";
+                if (propServiceContextRoot != null && propServiceContextRoot.length() != 0) {
+                    if (propServiceContextRoot.startsWith("/")) {
+                        serviceContextRoot = propServiceContextRoot.substring(1);
                     } else {
-                        contextRoot = propContextRoot;
+                        serviceContextRoot = propServiceContextRoot;
                     }
                 }
-                httpService.registerServlet(contextRoot, axisServlet, null, null);
+                configCtx.setServicePath(serviceContextRoot);
+                httpService.registerServlet("/" + serviceContextRoot, axisServlet, null, null);
             } catch (ServletException e) {
                 String msg = "Error while registering servlets";
                 throw new RuntimeException(msg, e);
