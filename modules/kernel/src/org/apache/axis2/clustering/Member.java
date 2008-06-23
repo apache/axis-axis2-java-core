@@ -79,6 +79,8 @@ public class Member {
 
         Member member = (Member) o;
         return port == member.getPort() &&
+               httpPort == member.getHttpPort() &&
+               httpsPort == member.getHttpsPort() &&
                !(hostName != null ? !hostName.equals(member.getHostName()) :
                  member.getHostName() != null);
     }
