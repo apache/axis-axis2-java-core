@@ -23,6 +23,14 @@ public final class TribesConstants {
     // Message sending and receiving options
     public static final int MSG_ORDER_OPTION = 512;
 
+    // Option that indicates that a message is related to membership
+    public static final int MEMBERSHIP_MSG_OPTION = 1024;
+
+    // Option that indicates that a message should be processed at-most once
+    public static final int AT_MOST_ONCE_OPTION = 2048;
+
+    public static final byte[] RPC_CHANNEL_ID = "axis2.rpc.channel".getBytes();
+
     public static final String LOCAL_MEMBER_HOST = "localMemberHost";
     public static final String LOCAL_MEMBER_PORT = "localMemberPort";
 
