@@ -618,7 +618,7 @@ public class TribesClusterManager implements ClusterManager {
                                  String membershipScheme) throws ClusteringFault {
 
         if (log.isDebugEnabled()) {
-            log.debug("Adding Interceptors [STARTED]");
+            log.debug("Adding Interceptors...");
         }
         if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
@@ -690,10 +690,6 @@ public class TribesClusterManager implements ClusterManager {
             if (log.isDebugEnabled()) {
                 log.debug("Added Static Membership Interceptor");
             }
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Adding Interceptors [COMPLETED]");
         }
     }
 
