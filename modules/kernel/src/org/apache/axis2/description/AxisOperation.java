@@ -584,7 +584,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
 	public String getSoapAction() {
-		return soapAction;
+		return getInputAction();
 	}
     
  }
