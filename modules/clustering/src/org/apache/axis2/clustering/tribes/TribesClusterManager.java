@@ -645,6 +645,7 @@ public class TribesClusterManager implements ClusterManager {
 
         // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
         AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+        atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
         channel.addInterceptor(atMostOnceInterceptor);
 
         // Add the OrderInterceptor to preserve sender ordering
