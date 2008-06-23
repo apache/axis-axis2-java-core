@@ -63,11 +63,13 @@ public class ChannelSender implements MessageSender {
                     channel.send(members, toByteMessage(msg),
                                  Channel.SEND_OPTIONS_USE_ACK |
                                  Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
-                                 TribesConstants.MSG_ORDER_OPTION);
+                                 TribesConstants.MSG_ORDER_OPTION |
+                                 TribesConstants.AT_MOST_ONCE_OPTION);
                 } else {
                     channel.send(members, toByteMessage(msg),
                                  Channel.SEND_OPTIONS_ASYNCHRONOUS |
-                                 TribesConstants.MSG_ORDER_OPTION);
+                                 TribesConstants.MSG_ORDER_OPTION |
+                                 TribesConstants.AT_MOST_ONCE_OPTION);
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("Sent " + msg + " to group");
@@ -122,7 +124,10 @@ public class ChannelSender implements MessageSender {
         try {
             if (member.isReady()) {
                 channel.send(new Member[]{member}, toByteMessage(cmd),
-                             Channel.SEND_OPTIONS_USE_ACK | Channel.SEND_OPTIONS_SYNCHRONIZED_ACK);
+                             Channel.SEND_OPTIONS_USE_ACK |
+                             Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
+                             TribesConstants.MSG_ORDER_OPTION |
+                             TribesConstants.AT_MOST_ONCE_OPTION);
                 if (log.isDebugEnabled()) {
                     log.debug("Sent " + cmd + " to " + TribesUtil.getName(member));
                 }
