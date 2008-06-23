@@ -58,7 +58,10 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
         }
 
         public void run() {
-            if (!members.contains(member) && canConnect(member)) {
+            if(members.contains(member)){
+                return;
+            }
+            if (canConnect(member)) {
                 //                try
                 //                    Thread.sleep(10000);   // Sleep for sometime to allow complete initialization of the node
                 //                } catch (InterruptedException e) {
@@ -78,21 +81,33 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
          * @return true, if the member can be contacted; false, otherwise.
          */
         private boolean canConnect(Member member) {
+            if(log.isDebugEnabled()){
+                log.debug("Trying to connect to member " + member.getHostName() + "...");
+            }
             for (int retries = 30; retries > 0; retries--) {
                 try {
                     InetAddress addr = InetAddress.getByName(member.getHostName());
                     int httpPort = member.getHttpPort();
+                    if(log.isDebugEnabled()){
+                        log.debug("HTTP Port=" + httpPort);
+                    }
                     if (httpPort != -1) {
                         SocketAddress httpSockaddr = new InetSocketAddress(addr, httpPort);
                         new Socket().connect(httpSockaddr, 10000);
                     }
                     int httpsPort = member.getHttpsPort();
+                    if(log.isDebugEnabled()){
+                        log.debug("HTTPS Port=" + httpPort);
+                    }
                     if (httpsPort != -1) {
                         SocketAddress httpsSockaddr = new InetSocketAddress(addr, httpsPort);
                         new Socket().connect(httpsSockaddr, 10000);
                     }
                     return true;
                 } catch (IOException e) {
+                    if(log.isDebugEnabled()){
+                        log.debug("", e);
+                    }
                     String msg = e.getMessage();
                     if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
                         log.error("Cannot connect to member " + member, e);
