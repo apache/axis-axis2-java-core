@@ -215,7 +215,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-osgi</artifactId>
+            <artifactId>org.apache.axis2.osgi</artifactId>
             <version>${version}</version>
             <exclusions>
                 <exclusion>
