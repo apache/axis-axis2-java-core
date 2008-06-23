@@ -138,6 +138,7 @@ public class CodeGenerationUtility {
                         // then we have to find this using the file system
                         if (systemId != null){
                             returnInputSource = new InputSource(systemId);
+                            returnInputSource.setSystemId(systemId);
                         }
                     }
                     return returnInputSource;
@@ -154,7 +155,9 @@ public class CodeGenerationUtility {
 
                 SchemaCompiler sc = XJC.createSchemaCompiler();
                 if (bindingFileName != null){
-                    sc.getOptions().addBindFile(new InputSource(new FileInputStream(bindingFileName)));
+                    InputSource inputSoruce = new InputSource(new FileInputStream(bindingFileName));
+                    inputSoruce.setSystemId(new File(bindingFileName).getAbsolutePath());
+                    sc.getOptions().addBindFile(inputSoruce);
                 }
 
                 key = (XmlSchema) schemaIter.next();
