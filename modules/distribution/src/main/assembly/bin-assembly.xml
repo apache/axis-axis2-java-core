@@ -287,6 +287,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>../../modules/transports/target</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>axis2-transports-${version}.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>../../legal</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
