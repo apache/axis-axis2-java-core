@@ -61,6 +61,7 @@
                 <include>modules/soapmonitor/**</include>
                 <include>modules/spring/**</include>
                 <include>modules/tool/**</include>
+                <include>modules/transports/**</include>
                 <include>modules/webapp/**</include>
                 <include>modules/xmlbeans/**</include>                
             </includes>
