@@ -48,7 +48,7 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
 
     protected void setUp() throws Exception {
         configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+                ConfigurationContextFactory.createEmptyConfigurationContext();
         lm = new ListenerManager();
         lm.init(configContext);
         lm.start();

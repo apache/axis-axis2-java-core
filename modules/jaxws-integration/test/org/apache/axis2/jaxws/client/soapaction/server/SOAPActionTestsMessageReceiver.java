@@ -117,8 +117,7 @@ public class SOAPActionTestsMessageReceiver implements MessageReceiver {
         TestLogger.logger.debug("[server] response message [" + responseEnv.toString() + "]");
         
         response.getOperationContext().addMessageContext(response);
-        AxisEngine engine = new AxisEngine(response.getConfigurationContext());
-        engine.send(response);    
+        AxisEngine.send(response);    
     }
     
     /*

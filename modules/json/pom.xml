@@ -41,7 +41,14 @@
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
+<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transports</artifactId>
+            <version>${version}</version>
+        </dependency>
+
     </dependencies>
+
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>

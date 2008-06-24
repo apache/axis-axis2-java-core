@@ -42,7 +42,7 @@ public class ModuleDisengagementTest extends TestCase {
         String filename =
                 AbstractTestCase.basedir + "/test-resources/deployment/moduleDisEngegeRepo";
         config = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
+                createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml").getAxisConfiguration();
         AxisService testService = new AxisService();
         testService.setName(serviceName);
         AxisOperation testOperation = new InOutAxisOperation();

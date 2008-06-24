@@ -26,6 +26,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -58,6 +59,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Enumeration;
+import java.net.SocketException;
+import java.net.NetworkInterface;
+import java.net.InetAddress;
 
 public class Utils {
     private static final Log log = LogFactory.getLog(Utils.class);
@@ -556,5 +561,59 @@ public class Utils {
         	log.debug("MTOM optimized Threshold value ="+threshold);
         }
         return threshold;
+    }
+     /**
+     * Returns the ip address to be used for the replyto epr
+     * CAUTION:
+     * This will go through all the available network interfaces and will try to return an ip address.
+     * First this will try to get the first IP which is not loopback address (127.0.0.1). If none is found
+     * then this will return this will return 127.0.0.1.
+     * This will <b>not<b> consider IPv6 addresses.
+     * <p/>
+     * TODO:
+     * - Improve this logic to genaralize it a bit more
+     * - Obtain the ip to be used here from the Call API
+     *
+     * @return Returns String.
+     * @throws java.net.SocketException
+      */
+    public static String getIpAddress() throws SocketException {
+        Enumeration e = NetworkInterface.getNetworkInterfaces();
+        String address = "127.0.0.1";
+
+        while (e.hasMoreElements()) {
+            NetworkInterface netface = (NetworkInterface) e.nextElement();
+            Enumeration addresses = netface.getInetAddresses();
+
+            while (addresses.hasMoreElements()) {
+                InetAddress ip = (InetAddress) addresses.nextElement();
+                if (!ip.isLoopbackAddress() && isIP(ip.getHostAddress())) {
+                    return ip.getHostAddress();
+                }
+            }
+        }
+
+        return address;
+    }
+
+    /**
+     * First check whether the hostname parameter is there in AxisConfiguration (axis2.xml) ,
+     * if it is there then this will retun that as the host name , o.w will return the IP address.
+     */
+    public static String getIpAddress(AxisConfiguration axisConfiguration) throws SocketException {
+        if(axisConfiguration!=null){
+            Parameter param = axisConfiguration.getParameter(TransportListener.HOST_ADDRESS);
+            if (param != null) {
+                String  hostAddress = ((String) param.getValue()).trim();
+                if(hostAddress!=null){
+                    return hostAddress;
+                }
+            }
+        }
+        return getIpAddress();
+    }
+
+    private static boolean isIP(String hostAddress) {
+        return hostAddress.split("[.]").length == 4;
     }
 }

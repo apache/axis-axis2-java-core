@@ -22,6 +22,7 @@ package org.apache.axis2.clustering;
 import junit.framework.TestCase;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
@@ -37,7 +38,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.http.server.HttpUtils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -190,7 +190,7 @@ public class ContextReplicationTest extends TestCase {
             return;
         }
 
-        System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, HttpUtils.getIpAddress());
+        System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, Utils.getIpAddress());
 
         // First cluster
         configurationContext1 =

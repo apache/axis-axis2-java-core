@@ -27,18 +27,23 @@ import org.apache.axis2.engine.AxisConfiguration;
 public class ParameterEditTest extends TestCase {
 
     public void testParameterEdit() throws Exception{
-        ConfigurationContext configCtx = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ConfigurationContext configCtx = ConfigurationContextFactory.createEmptyConfigurationContext();
         AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+        Parameter parameter = new Parameter();
+        parameter.setValue("true");
+        parameter.setName("enableMTOM");
+        axisConfig.addParameter(parameter);
+        parameter.setValue("true");
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupName("testServiceGroup");
         AxisService service = new AxisService();
         service.setName("service");
         serviceGroup.addService(service);
         axisConfig.addServiceGroup(serviceGroup);
-        Parameter parameter = serviceGroup.getParameter("enableMTOM");
+        parameter = serviceGroup.getParameter("enableMTOM");
         parameter.setValue("true");
         Parameter para2= serviceGroup.getParameter("enableMTOM");
-        assertEquals(para2.getValue(),"false");
+        assertEquals(para2.getValue(),"true");
         Parameter test = new Parameter();
         test.setName("test");
         test.setValue("test");

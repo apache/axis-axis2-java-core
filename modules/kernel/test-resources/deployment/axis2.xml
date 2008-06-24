@@ -24,9 +24,7 @@
 
     <messageReceiver mep="INOUT" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 
-     <transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
-        <parameter name="PROTOCOL">HTTP/1.0</parameter>
-    </transportSender>
+    
     <phaseOrder type="InFlow">
         <!--  System pre defined phases       -->
          <phase name="Transport">

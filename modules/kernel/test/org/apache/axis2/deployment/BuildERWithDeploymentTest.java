@@ -40,7 +40,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
         try {
             String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
             AxisConfiguration er = ConfigurationContextFactory
-                    .createConfigurationContextFromFileSystem(filename, null)
+                    .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                     .getAxisConfiguration();
 
             assertNotNull(er);
@@ -59,7 +59,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
             AxisOperation op = service.getOperation(new QName("opname"));
             assertNotNull(op);
         } catch (Exception e) {
-            e.printStackTrace();
+           fail(e.getMessage());
         }
 
     }

@@ -31,7 +31,6 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
@@ -655,7 +654,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 httpMethod = HTTPConstants.HEADER_POST;
             }
             if (httpLocation != null) {
-                httpLocationMap.put(RESTUtil.getConstantFromHTTPLocation(httpLocation, httpMethod),
+                httpLocationMap.put(WSDLUtil.getConstantFromHTTPLocation(httpLocation, httpMethod),
                                     axisBindingOperation.getAxisOperation());
             }
 

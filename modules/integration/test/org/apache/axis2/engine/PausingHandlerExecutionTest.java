@@ -392,7 +392,6 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
             try {
                 System.out.println("Worker thread started");
                 Thread.sleep(5000);
-                AxisEngine axisEngine = new AxisEngine(configurationContext);
 
                 FileInputStream inStream = null;
                 ObjectInputStream objectInputStream = null;
@@ -442,7 +441,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
                 if (reconstitutedMessageContext != null) {
                     System.out.println("Worker thread resuming message context");
-                    axisEngine.resume(reconstitutedMessageContext);
+                    AxisEngine.resume(reconstitutedMessageContext);
                 } else {
                     fail("An error occurred in the worker thread - no message context");
                 }

@@ -55,12 +55,15 @@ public class LocalTestCase extends TestCase {
     /** Our client ConfigurationContext */
     protected ConfigurationContext clientCtx;
 
+    protected ConfigurationContext serverCtx;
+
     LocalTransportSender sender = new LocalTransportSender();
 
     protected void setUp() throws Exception {
         // Configuration - server side
-        serverConfig = ConfigurationContextFactory.
-                createConfigurationContextFromFileSystem(null).getAxisConfiguration();
+        serverCtx = ConfigurationContextFactory.
+                createConfigurationContextFromFileSystem(null);
+        serverConfig = serverCtx.getAxisConfiguration();
         LocalTransportReceiver.CONFIG_CONTEXT = new ConfigurationContext(serverConfig);
         LocalTransportReceiver.CONFIG_CONTEXT.setServicePath("services");
         LocalTransportReceiver.CONFIG_CONTEXT.setContextRoot("local:/");
@@ -132,6 +135,39 @@ public class LocalTestCase extends TestCase {
     }
 
     /**
+     * Deploy a class as a service.
+     *
+     * @param name the service name
+     * @param myClass the Java class to deploy (all methods exposed by default)
+     * @return a fully configured AxisService, already deployed into the server
+     * @throws Exception in case of problems
+     */
+    /**
+     * Deploy a class as a service.
+     *
+     * @param name the service name
+     * @param myClass the Java class to deploy (all methods exposed by default)
+     * @param scope the service scope
+     * @return a fully configured AxisService, already deployed into the server
+     * @throws Exception in case of problems
+     */
+    protected AxisService deployClassAsService(String name, Class myClass, String scope)
+            throws Exception {
+        AxisService service = new AxisService(name);
+        if (scope != null) service.setScope(scope);
+
+        service.addParameter(Constants.SERVICE_CLASS,
+                              myClass.getName());
+
+        Utils.fillAxisService(service, serverConfig, null, null);
+
+        serverCtx.deployService(service);
+        return service;
+    }
+
+
+
+    /**
      * Get a pre-initialized ServiceClient set up to talk to our local
      * server.  If you want to set options, call this and then use getOptions()
      * on the return.
@@ -160,7 +196,7 @@ public class LocalTestCase extends TestCase {
         client.setOptions(opts);
         return client;
     }
-    
+
     /**
      * Get a pre-initialized ServiceClient set up to talk to our local
      * server.  If you want to set options, call this and then use getOptions()

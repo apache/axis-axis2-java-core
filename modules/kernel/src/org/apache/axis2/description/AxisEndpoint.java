@@ -27,8 +27,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -182,7 +182,7 @@ public class AxisEndpoint extends AxisDescription {
 					TransportInDescription in = axisConfiguration
 							.getTransportIn(transportInDescName);
 					TransportListener listener = in.getReceiver();
-					String ip = HttpUtils.getIpAddress(axisConfiguration);
+					String ip = Utils.getIpAddress(axisConfiguration);
 					// we should pass [serviceName].[endpointName] instead of
 					// [endpointName]
 					String sDOTe = serviceName + "." + name;

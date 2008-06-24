@@ -33,7 +33,7 @@ public class ServiceGroupTest extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null)
+        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, repo + "/axis2.xml")
                 .getAxisConfiguration();
     }
 

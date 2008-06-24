@@ -60,12 +60,10 @@ public class EndpointCallback {
                                                                 axisResponseMsgCtx);
     
             //Create the AxisEngine for the reponse and send it.
-            AxisEngine engine =
-                    new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
             if (log.isDebugEnabled()) {
                 log.debug("Sending async response.");
             }
-            engine.send(axisResponseMsgCtx);
+            AxisEngine.send(axisResponseMsgCtx);
             
             //This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
@@ -107,9 +105,7 @@ public class EndpointCallback {
                 eic.getRequestMessageContext().getAxisMessageContext());
             
             //Create the AxisEngine for the reponse and send it.
-            AxisEngine engine =
-                new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
-            engine.sendFault(axisResponseMsgCtx);
+            AxisEngine.sendFault(axisResponseMsgCtx);
             
         } catch (Throwable t) {
             Throwable faultMessage = InvocationHelper.determineMappedException(t, eic);

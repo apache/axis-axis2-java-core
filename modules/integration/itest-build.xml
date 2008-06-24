@@ -270,12 +270,16 @@
 
 		<!-- Test with target resolver  -->
 		<mkdir dir="target/test-resources/deployment_repo"/>
+		<mkdir dir="target/test-resources/deployment"/>
 		<mkdir dir="target/test-resources/deployment_repo/conf"/>
 		<mkdir dir="target/test-resources/deployment_repo/services"/>
 		<mkdir dir="target/test-resources/deployment_repo/modules"/>
 
-		<copy file="test-resources/deployment/deployment.both.axis2.xml"
+		<copy file="test-resources/deployment/server-transport.xml"
+    	            	  tofile="target/test-resources/deployment/server-transport.xml"/>
+<copy file="test-resources/deployment/deployment.both.axis2.xml"
     	            	  tofile="target/test-resources/deployment_repo/conf/axis2.xml"/>
+
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	            	  tofile="target/test-resources/deployment_repo/modules/addressing-${addressing_version}.mar"/>
 

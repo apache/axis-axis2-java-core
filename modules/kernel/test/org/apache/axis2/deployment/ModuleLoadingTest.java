@@ -29,7 +29,7 @@ public class ModuleLoadingTest extends TestCase {
     public void testModuleLoading() throws Exception {
         String repoRoot = AbstractTestCase.basedir + "/test-resources/deployment/repositories/moduleLoadTest";
         AxisConfiguration ac =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoRoot)
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(repoRoot , repoRoot + "/axis2.xml")
                         .getAxisConfiguration();
 
         // Make sure we got the exploded module in the repo/modules dir

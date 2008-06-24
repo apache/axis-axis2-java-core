@@ -193,9 +193,7 @@ public class JAXWSMessageReceiver implements MessageReceiver {
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
 
                     //Create the AxisEngine for the reponse and send it.
-                    AxisEngine engine =
-                            new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
-                    engine.send(axisResponseMsgCtx);
+                    AxisEngine.send(axisResponseMsgCtx);
                     //This assumes that we are on the ultimate execution thread
                     ThreadContextMigratorUtil.performContextCleanup(
                             Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);

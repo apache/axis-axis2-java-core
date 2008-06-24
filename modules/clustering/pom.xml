@@ -38,6 +38,11 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${version}</version>
         </dependency>
+<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transports</artifactId>
+            <version>${version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tribes</artifactId>

@@ -62,12 +62,6 @@ public class AxisEngine {
     private static boolean RESUMING_EXECUTION = true;
     private static boolean NOT_RESUMING_EXECUTION = false;
 
-    /**
-     * Constructor AxisEngine
-     */
-    public AxisEngine(ConfigurationContext engineContext) {
-    }
-
     private static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
         List unprocessed = null;
         SOAPEnvelope envelope = msgContext.getEnvelope();
@@ -218,16 +212,6 @@ public class AxisEngine {
         return InvocationResponse.CONTINUE;
     }
 
-    private static void processFault(MessageContext msgContext, AxisFault e) {
-        try {
-            MessageContext faultMC = MessageContextBuilder.createFaultMessageContext(msgContext, e);
-
-            // Figure out where this goes
-            sendFault(faultMC);
-        } catch (AxisFault axisFault) {
-            log.error(axisFault.getMessage(), axisFault);
-        }
-    }
 
     /**
      * Take the execution chain from the msgContext , and then take the current Index

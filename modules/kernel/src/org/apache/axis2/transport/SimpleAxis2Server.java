@@ -21,7 +21,6 @@ package org.apache.axis2.transport;
 
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.AxisServer;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.OptionsValidator;
@@ -34,7 +33,7 @@ import java.util.Map;
 
 public class SimpleAxis2Server extends AxisServer {
 
-    private static final Log log = LogFactory.getLog(SimpleHTTPServer.class);
+    private static final Log log = LogFactory.getLog(SimpleAxis2Server.class);
 
     int port = -1;
 

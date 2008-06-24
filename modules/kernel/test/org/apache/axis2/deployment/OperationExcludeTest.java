@@ -38,7 +38,7 @@ public class OperationExcludeTest extends TestCase {
             AxisFault,
             XMLStreamException {
         String filename = AbstractTestCase.basedir + "/test-resources/deployment/exculeRepo";
-        er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
+        er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
         AxisService service = er.getService("excludeService");
         assertNotNull(service);

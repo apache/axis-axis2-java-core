@@ -79,4 +79,15 @@ public class WSDLUtil {
         return new QName(opName + suffix, partName);
     }
 
+    public static String getConstantFromHTTPLocation(String httpLocation, String httpMethod) {
+        if (httpLocation.charAt(0) != '?') {
+            httpLocation = "/" + httpLocation;
+        }
+        int index = httpLocation.indexOf("{");
+        if (index > -1) {
+            httpLocation = httpLocation.substring(0, index);
+        }
+        return httpMethod + httpLocation;
+    }
+
 }

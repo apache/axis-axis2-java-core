@@ -39,7 +39,6 @@ import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.XMLPrettyPrinter;
@@ -931,7 +930,7 @@ public class AxisService extends AxisDescription {
 
 	private String[] calculateEPRs() {
 		try {
-			String requestIP = HttpUtils.getIpAddress(getAxisConfiguration());
+			String requestIP = org.apache.axis2.util.Utils.getIpAddress(getAxisConfiguration());
 			return calculateEPRs(requestIP);
 		} catch (SocketException e) {
 			log.error("Cannot get local IP address", e);
@@ -3064,7 +3063,6 @@ public class AxisService extends AxisDescription {
     
     /**
      * Signal an Attach Envelope Event
-     * @param sc ServiceContext
      * @param mc MessageContext
      */
     public void attachEnvelopeEvent(MessageContext mc) {

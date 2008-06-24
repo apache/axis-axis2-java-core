@@ -32,7 +32,7 @@ public class SOAPRoleConfigurationTest extends TestCase{
 		String filename =
             AbstractTestCase.basedir + "/test-resources/deployment/soaproleconfiguration";
 		AxisConfiguration axisConfig = ConfigurationContextFactory
-            .createConfigurationContextFromFileSystem(filename)
+            .createConfigurationContextFromFileSystem(filename , filename + "/axis2.xml")
             .getAxisConfiguration();
 		RolePlayer rolePlayer = (RolePlayer)axisConfig.getParameterValue(Constants.SOAP_ROLE_PLAYER_PARAMETER);
 		assertNotNull(rolePlayer);

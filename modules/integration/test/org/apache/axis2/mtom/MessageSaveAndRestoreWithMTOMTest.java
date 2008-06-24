@@ -238,14 +238,13 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase
             try {
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Worker thread started");
                 Thread.sleep(5000);
-                AxisEngine axisEngine = new AxisEngine(configurationContext);
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Resuming processing");
                 ObjectInputStream objectInputStream =
                         new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
                 MessageContext reconstitutedMessageContext =
                         (MessageContext)objectInputStream.readObject();
                 reconstitutedMessageContext.activate(configurationContext);
-                axisEngine.resume(reconstitutedMessageContext);
+                AxisEngine.resume(reconstitutedMessageContext);
             }
             catch (Exception e) {
                 e.printStackTrace();

@@ -36,7 +36,7 @@ public class ModuleEngageTest extends TestCase {
     public void testModuleEngagement() throws AxisFault,
             XMLStreamException {
         String filename = AbstractTestCase.basedir + "/target/test-resources/deployment";
-        axisConfig = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
+        axisConfig = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
         AxisModule module = axisConfig.getModule("module1");
         assertNotNull(module);
