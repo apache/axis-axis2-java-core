@@ -21,6 +21,7 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
@@ -45,7 +46,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
@@ -452,7 +452,7 @@ public class TribesClusterManager implements ClusterManager {
         } else { // In cases where the localhost needs to be automatically figured out
             try {
                 try {
-                    host = HttpUtils.getIpAddress();
+                    host = Utils.getIpAddress();
                 } catch (SocketException e) {
                     String msg = "Could not get local IP address";
                     log.error(msg, e);
@@ -742,7 +742,7 @@ public class TribesClusterManager implements ClusterManager {
         } else {
             String host;
             try {
-                host = HttpUtils.getIpAddress();
+                host = Utils.getIpAddress();
             } catch (SocketException e) {
                 String msg = "Could not get local IP address";
                 log.error(msg, e);
