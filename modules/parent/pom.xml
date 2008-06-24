@@ -956,13 +956,16 @@
                 <groupId>org.igniterealtime</groupId>
                 <artifactId>smack</artifactId>
                 <version>${smack.version}</version>
-                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.igniterealtime</groupId>
+                <artifactId>smackx</artifactId>
+                <version>${smack.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons.lang.version}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

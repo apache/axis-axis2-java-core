@@ -109,6 +109,11 @@
             <groupId>org.igniterealtime</groupId>
             <artifactId>smack</artifactId>
         </dependency>
+        <!-- needed for xmpp transport runtime -->
+        <dependency>
+            <groupId>org.igniterealtime</groupId>
+            <artifactId>smackx</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
