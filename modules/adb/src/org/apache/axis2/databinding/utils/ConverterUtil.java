@@ -576,7 +576,7 @@ public class ConverterUtil {
         if (source.length() >= 10) {
             //first 10 numbers must give the year
             if ((source.charAt(4) != '-') || (source.charAt(7) != '-')){
-                throw new RuntimeException("invalid date format (" + source + ") wiht out - s at correct place ");
+                throw new RuntimeException("invalid date format (" + source + ") with out - s at correct place ");
             }
             year = Integer.parseInt(source.substring(0,4));
             month = Integer.parseInt(source.substring(5,7));
@@ -889,7 +889,7 @@ public class ConverterUtil {
                     (source.charAt(10) != 'T') ||
                     (source.charAt(13) != ':') ||
                     (source.charAt(16) != ':')) {
-                throw new RuntimeException("invalid date format (" + source + ") wiht out - s at correct place ");
+                throw new RuntimeException("invalid date format (" + source + ") with out - s at correct place ");
             }
             year = Integer.parseInt(source.substring(0, 4));
             month = Integer.parseInt(source.substring(5, 7));
