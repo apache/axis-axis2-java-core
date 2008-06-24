@@ -16,18 +16,24 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Dictionary;
+import java.util.*;
+
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 
 /**
  * @see org.osgi.framework.BundleListener
@@ -56,14 +62,57 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
     public void unRegister(Bundle bundle) throws AxisFault {
         lock.lock();
         try {
+            List<Long> stopBundleList = new ArrayList<Long>();
             AxisModule module = resolvedBundles.get(bundle);
+            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+            for (Iterator iterator = axisConfig.getServiceGroups();iterator.hasNext();){
+                AxisServiceGroup axisServiceGroup = (AxisServiceGroup)iterator.next();
+                if (axisServiceGroup.isEngaged(module))  {
+                    Long value = (Long)axisServiceGroup.getParameterValue(OSGi_BUNDLE_ID);
+                    if (value != null) {
+                        stopBundleList.add(value);
+                     }
+                }
+            }
+            HashMap serviceMap = axisConfig.getServices();
+            Collection values = serviceMap.values();
+            for (Object value1 : values) {
+                AxisService axisService = (AxisService) value1;
+                if (axisService.isEngaged(module)) {
+                    Long value = (Long) axisService.getParameterValue(OSGi_BUNDLE_ID);
+                    if (value != null && !stopBundleList.contains(value)) {
+                        stopBundleList.add(value);
+                    }
+                }
+                for (Iterator iterator1 = axisService.getOperations(); iterator1.hasNext();) {
+                    AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                    if (axisOperation.isEngaged(module)) {
+                        Long value = (Long) axisOperation.getParameterValue(OSGi_BUNDLE_ID);
+                        if (value != null && !stopBundleList.contains(value)) {
+                            stopBundleList.add(value);
+                        }
+                    }
+                }
+            }
             if (module != null) {
                 resolvedBundles.remove(bundle);
-                configCtx.getAxisConfiguration()
+                axisConfig
                         .removeModule(module.getName(), module.getVersion());
                 System.out.println("[Axis2/OSGi] Stopping" + module.getName() + ":" +
                                    module.getVersion() + " moduel in Bundle - " +
                                    bundle.getSymbolicName());
+            }
+            for (Long bundleId : stopBundleList) {
+                Bundle stopBundle = context.getBundle(bundleId);
+                if (stopBundle != null) {
+                    try {
+                        serviceRegistry.unRegister(bundle);
+                        stopBundle.stop();
+                    } catch (BundleException e) {
+                        String msg = "Error while stoping the bundle";
+                        //TODO; TBD; error msg.
+                    }
+                }
             }
         } finally {
             lock.unlock();

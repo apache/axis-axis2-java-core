@@ -16,12 +16,12 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.engine.ListenerManager;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.PROTOCOL;
@@ -30,9 +30,8 @@ import org.apache.axis2.transport.TransportListener;
 import org.osgi.framework.*;
 
 import java.util.Dictionary;
-import java.util.Properties;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

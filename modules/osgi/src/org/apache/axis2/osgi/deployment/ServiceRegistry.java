@@ -21,7 +21,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -91,6 +91,8 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                        serviceGroup.getServiceGroupName() + " in Bundle: " +
                                        bundle.getSymbolicName());
                 }
+                //bundle Id keeps the association between bundle and axisService group for later use
+                serviceGroup.addParameter(OSGi_BUNDLE_ID, bundle.getBundleId());
                 resolvedBundles.put(bundle, serviceGroup);
                 //marked as resolved.
                 if (unreslovedBundles.contains(bundle)) {
@@ -126,20 +128,23 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
             if (axisServiceGroup != null) {
                 resolvedBundles.remove(bundle);
                 try {
+                    for (Iterator iterator = axisServiceGroup.getServices(); iterator.hasNext();) {
+                        AxisService service = (AxisService) iterator.next();
+                        System.out.println("[Axis2/OSGi]      Service - " + service.getName());
+                    }
                     configCtx.getAxisConfiguration()
                             .removeServiceGroup(axisServiceGroup.getServiceGroupName());
                     System.out.println("[Axis2/OSGi] Stopping" +
                                        axisServiceGroup.getServiceGroupName() +
                                        " service group in Bundle - " +
                                        bundle.getSymbolicName());
-                    for (Iterator iterator = axisServiceGroup.getServices(); iterator.hasNext();) {
-                        AxisService service = (AxisService) iterator.next();
-                        System.out.println("[Axis2/OSGi]      Service - " + service.getName());
-                    }
                 } catch (AxisFault e) {
                     String msg = "Error while removing the service group";
                     throw new AxisFault(msg, e);
                 }
+            }
+            if (unreslovedBundles.contains(bundle)) {
+                unreslovedBundles.remove(bundle);
             }
         } finally {
             lock.unlock();

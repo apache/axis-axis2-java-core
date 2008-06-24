@@ -25,4 +25,6 @@ public final class OSGiAxis2Constants {
     public static String PROTOCOL = "protocol";
 
     public static String  AXIS2_OSGi_ROOT_CONTEXT = "org.axis2.osgi.service.context.root";
+
+    public static String OSGi_BUNDLE_ID = "_OSGi_BUNDLE_ID_";
 }
