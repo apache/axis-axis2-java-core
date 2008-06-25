@@ -25,7 +25,7 @@ import org.apache.axis2.context.MessageContext;
 
 /**
  * An instance of MessageReceiver can be setup to receive messages. The application logic has no impact
- * on the Axis Engine iself. It is upto the application logic to do whatever it needs. For e.g.
+ * on the Axis Engine itself. It is up to the application logic to do whatever it needs. For e.g.
  * the MessageReceiver can handle a message, send a response back and/or send other messages.
  */
 public interface MessageReceiver {
