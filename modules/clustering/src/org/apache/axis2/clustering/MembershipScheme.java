@@ -13,40 +13,25 @@
  * See the License for the specific language governing permissions and         
  * limitations under the License.                                              
  */
-package org.apache.axis2.clustering.tribes;
-
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.group.ChannelInterceptorBase;
-import org.apache.catalina.tribes.membership.Membership;
-
-import java.util.Arrays;
+package org.apache.axis2.clustering;
 
 /**
- * This interceptor is used when this member is part of a load balancer cluster.
- * This load balancer is responsible for load balancing across applications deployed in
- * another group.
+ * A representation of a membership scheme such as "multicast based" or "well-known address (WKA)
+ * based" schemes. This is directly related to the membership discovery mechanism.
  */
-public class LoadBalancerInterceptor extends ChannelInterceptorBase {
+public interface MembershipScheme {
 
     /**
-     * Represents the load balancer group
+     * Initialize this membership scheme
+     *
+     * @throws ClusteringFault If an error occurs while initializing
      */
-    protected Membership loadBalancerMembership = null;
+    void init() throws ClusteringFault;
 
     /**
-     * Represents the load balancer group
+     * JOIN the group
+     *
+     * @throws ClusteringFault If an error occurs while joining the group
      */
-    protected byte[] loadBalancerDomain = new byte[0];
-
-    public LoadBalancerInterceptor(byte[] loadBalancerDomain) {
-        this.loadBalancerDomain = loadBalancerDomain;
-    }
-
-    public void messageReceived(ChannelMessage msg) {
-        // Ignore all messages which are not intended for the load balancer group
-        if (okToProcess(msg.getOptions()) ||
-            Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
-            super.messageReceived(msg);
-        }
-    }
+    void joinGroup() throws ClusteringFault;
 }

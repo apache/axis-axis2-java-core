@@ -21,7 +21,6 @@ import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.clustering.tribes.TribesUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,24 +36,14 @@ public class MemberListCommand extends ControlCommand {
     private static final Log log = LogFactory.getLog(MemberListCommand.class);
 
     private Member[] members;
-    private Member sender;
     private MembershipManager membershipManager;
-    private StaticMembershipInterceptor staticMembershipInterceptor;
 
     public void setMembershipManager(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;
     }
 
-    public void setStaticMembershipInterceptor(StaticMembershipInterceptor staticMembershipInterceptor) {
-        this.staticMembershipInterceptor = staticMembershipInterceptor;
-    }
-
     public void setMembers(Member[] members) {
         this.members = members;
-    }
-
-    public void setSender(Member sender) {
-        this.sender = sender;
     }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
@@ -63,7 +52,6 @@ public class MemberListCommand extends ControlCommand {
         for (Member member : members) {
             addMember(localMember, member);
         }
-        addMember(localMember, sender);
     }
 
     private void addMember(Member localMember, Member member) {
@@ -72,7 +60,6 @@ public class MemberListCommand extends ControlCommand {
               localMember.getPort() == member.getPort())) {
             log.info("Added member " + TribesUtil.getName(member));
             membershipManager.memberAdded(member);
-            staticMembershipInterceptor.memberAdded(member);
         }
     }
 }

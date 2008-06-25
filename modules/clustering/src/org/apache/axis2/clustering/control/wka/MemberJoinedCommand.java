@@ -20,7 +20,6 @@ import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
-import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 
 import java.util.Arrays;
 
@@ -33,15 +32,9 @@ public class MemberJoinedCommand extends ControlCommand {
 
     private Member member;
     private MembershipManager membershipManager;
-    private StaticMembershipInterceptor staticMembershipInterceptor;
 
     public void setMembershipManager(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;
-    }
-
-    public void setStaticMembershipInterceptor(
-            StaticMembershipInterceptor staticMembershipInterceptor) {
-        this.staticMembershipInterceptor = staticMembershipInterceptor;
     }
 
     public void setMember(Member member) {
@@ -50,10 +43,9 @@ public class MemberJoinedCommand extends ControlCommand {
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         Member localMember = membershipManager.getLocalMember();
-        if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
+        if (localMember == null || !(Arrays.equals(localMember.getHost(), member.getHost()) &&
               localMember.getPort() == member.getPort())) {
             membershipManager.memberAdded(member);
-            staticMembershipInterceptor.memberAdded(member);
         }
     }
 }

@@ -15,38 +15,42 @@
  */
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.group.ChannelInterceptorBase;
-import org.apache.catalina.tribes.membership.Membership;
+import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * This interceptor is used when this member is part of a load balancer cluster.
- * This load balancer is responsible for load balancing across applications deployed in
- * another group.
+ *  Represents a member running in application mode
  */
-public class LoadBalancerInterceptor extends ChannelInterceptorBase {
+public class ApplicationMode implements Mode {
 
-    /**
-     * Represents the load balancer group
-     */
-    protected Membership loadBalancerMembership = null;
+     private static final Log log = LogFactory.getLog(LoadBalancerMode.class);
 
-    /**
-     * Represents the load balancer group
-     */
-    protected byte[] loadBalancerDomain = new byte[0];
+    private byte[] loadBalancerDomain;
 
-    public LoadBalancerInterceptor(byte[] loadBalancerDomain) {
+    public ApplicationMode(byte[] loadBalancerDomain) {
         this.loadBalancerDomain = loadBalancerDomain;
     }
 
-    public void messageReceived(ChannelMessage msg) {
-        // Ignore all messages which are not intended for the load balancer group
-        if (okToProcess(msg.getOptions()) ||
-            Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
-            super.messageReceived(msg);
+    public void addInterceptors(Channel channel) {
+        DomainFilterInterceptor dfi = new DomainFilterInterceptor();
+        dfi.setOptionFlag(TribesConstants.MEMBERSHIP_MSG_OPTION);
+        dfi.setDomain(loadBalancerDomain);
+        channel.addInterceptor(dfi);
+        if (log.isDebugEnabled()) {
+            log.debug("Added Domain Filter Interceptor");
         }
+    }
+
+    public void init(Channel channel) {
+        // Nothing to be done
+    }
+
+    public List<MembershipManager> getMembershipManagers() {
+        return new ArrayList<MembershipManager>();
     }
 }

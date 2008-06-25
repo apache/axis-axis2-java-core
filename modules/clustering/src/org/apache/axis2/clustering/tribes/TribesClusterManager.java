@@ -21,11 +21,11 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.RequestBlockingHandler;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
@@ -35,9 +35,6 @@ import org.apache.axis2.clustering.context.DefaultContextManager;
 import org.apache.axis2.clustering.control.ControlCommand;
 import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
-import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
-import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
-import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
@@ -53,28 +50,14 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
-import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
-import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
-import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
-import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
-import org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor;
-import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.MultiPointSender;
-import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +81,16 @@ public class TribesClusterManager implements ClusterManager {
     private ChannelSender channelSender;
     private MembershipManager membershipManager;
     private RpcRequestHandler rpcRequestHandler;
-    private StaticMembershipInterceptor staticMembershipInterceptor;
+    private MembershipScheme membershipScheme;
+
+    /**
+     * The mode in which this member operates such as "loadBalance" or "application"
+     */
+    private Mode mode;
+
+    /**
+     * Static members
+     */
     private List<org.apache.axis2.clustering.Member> members;
 
     private final Map<String, LoadBalanceEventHandler> lbEventHandlers =
@@ -145,30 +137,30 @@ public class TribesClusterManager implements ClusterManager {
     public void init() throws ClusteringFault {
         log.info("Initializing cluster...");
         addRequestBlockingHandlerToInFlows();
-        membershipManager = new MembershipManager();
+        membershipManager = new MembershipManager(configurationContext);
+
         channel = new GroupChannel();
         channelSender = new ChannelSender(channel, membershipManager, synchronizeAllMembers());
         channelListener =
                 new ChannelListener(configurationContext, configurationManager, contextManager);
-
-        setMaximumRetries();
-
-        String membershipScheme = getMembershipScheme();
-        log.info("Using " + membershipScheme + " based membership management scheme");
+        channel.addChannelListener(channelListener);
 
         byte[] domain = getClusterDomain();
         log.info("Cluster domain: " + new String(domain));
+        membershipManager.setDomain(domain);
 
-        // Add all the ChannelInterceptors
-        addInterceptors(channel, domain, membershipScheme);
+        // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
+        // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
+        rpcRequestHandler = new RpcRequestHandler(configurationContext, membershipManager);
+        rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
+        if (log.isDebugEnabled()) {
+            log.debug("Created RPC Channel for domain " + new String(domain));
+        }
+        membershipManager.setRpcChannel(rpcChannel);
 
-        // Membership scheme handling
-        // If it is a WKA scheme, connect to a WKA and get a list of members. Add the members
-        // to the MembershipManager
-        configureMembershipScheme(domain, membershipScheme);
-
-        channel.addChannelListener(channelListener);
-
+        setMaximumRetries();
+        configureMode(domain);
+        configureMembershipScheme(domain, mode.getMembershipManagers());
         setMemberTransportInfo();
 
         TribesMembershipListener membershipListener = new TribesMembershipListener(membershipManager);
@@ -188,72 +180,10 @@ public class TribesClusterManager implements ClusterManager {
             throw new ClusteringFault(msg, e);
         }
 
-        // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
-        // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
-        rpcRequestHandler = new RpcRequestHandler(configurationContext,
-                                                  membershipManager,
-                                                  staticMembershipInterceptor);
-        rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
-        membershipManager.setRpcChannel(rpcChannel);
-
-
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
         TribesUtil.printMembers(membershipManager);
 
-        // If a WKA scheme is used, JOIN the group and get the member list
-        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)
-            && membershipManager.getMembers().length > 0) {
-            log.info("Sending JOIN message to WKA members...");
-            Member[] wkaMembers = membershipManager.getMembers(); // The well-known members
-            try {
-                Thread.sleep(3000); // Wait for sometime so that the WKA members can receive the MEMBER_LIST message, if they have just joined the group
-            } catch (InterruptedException ignored) {
-            }
-            Response[] responses = null;
-            do {
-                try {
-                    responses = rpcChannel.send(wkaMembers,
-                                                new JoinGroupCommand(),
-                                                RpcChannel.ALL_REPLY,
-                                                Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                10000);
-                    if (responses.length == 0) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException ignored) {
-                        }
-                    }
-                } catch (Exception e) {
-                    String msg = "Error occurred while trying to send JOIN request to WKA members";
-                    log.error(msg, e);
-                }
-
-                // TODO: If we do not get a response within some time, try to recover from this fault
-            }
-            while (responses == null || responses.length == 0);  // Wait until we've received at least one response
-
-            for (Response response : responses) {
-                MemberListCommand command = (MemberListCommand) response.getMessage();
-                command.setMembershipManager(membershipManager);
-                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
-                command.setSender(response.getSource());
-                command.execute(configurationContext);
-            }
-
-            if (membershipManager.getMembers().length > 0) {
-                log.info("Sending MEMBER_JOINED to group...");
-                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                memberJoinedCommand.setMember(membershipManager.getLocalMember());
-                try {
-                    rpcChannel.send(membershipManager.getMembers(), memberJoinedCommand,
-                                    RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
-                } catch (ChannelException e) {
-                    String msg = "Could not send MEMBER_JOINED message to group";
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
-                }
-            }
-        }
+        membershipScheme.joinGroup();
 
         // If configuration management is enabled, get the latest config from a neighbour
         if (configurationManager != null) {
@@ -409,362 +339,42 @@ public class TribesClusterManager implements ClusterManager {
         }
     }
 
+    private void configureMode(byte[] domain) {
+        if (loadBalanceMode) {
+            mode = new LoadBalancerMode(domain, lbEventHandlers);
+        } else {
+            mode = new ApplicationMode(domain);
+        }
+        mode.init(channel);
+    }
+
     /**
      * Handle specific configurations related to different membership management schemes.
      *
-     * @param domain           The clustering loadBalancerDomain to which this member belongs to
-     * @param membershipScheme The membership scheme. Only wka & multicast are valid values.
+     * @param domain             The clustering loadBalancerDomain to which this member belongs to
+     * @param membershipManagers MembershipManagers for different domains
      * @throws ClusteringFault If the membership scheme is invalid, or if an error occurs
      *                         while configuring membership scheme
      */
-    private void configureMembershipScheme(byte[] domain, String membershipScheme)
+    private void configureMembershipScheme(byte[] domain,
+                                           List<MembershipManager> membershipManagers)
             throws ClusteringFault {
-
-        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-            configureWkaBasedMembership(domain);
-        } else if (membershipScheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
-            configureMulticastBasedMembership(channel, domain);
+        String scheme = getMembershipScheme();
+        log.info("Using " + scheme + " based membership management scheme");
+        if (scheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
+            membershipScheme = new WkaBasedMembershipScheme(channel, mode,
+                                                            membershipManagers,
+                                                            rpcChannel, membershipManager,
+                                                            parameters, domain, members);
+        } else if (scheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
+            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters, domain);
         } else {
-            String msg = "Invalid membership scheme '" + membershipScheme +
+            String msg = "Invalid membership scheme '" + scheme +
                          "'. Supported schemes are multicast & wka";
             log.error(msg);
             throw new ClusteringFault(msg);
         }
-    }
-
-    /**
-     * Configure the membership related to the WKA based scheme
-     *
-     * @param domain The loadBalancerDomain to which the members belong to
-     * @throws ClusteringFault If an error occurs while configuring this scheme
-     */
-    private void configureWkaBasedMembership(byte[] domain) throws ClusteringFault {
-        channel.setMembershipService(new WkaMembershipService(membershipManager));
-        StaticMember localMember = new StaticMember();
-        membershipManager.setLocalMember(localMember);
-        ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-
-        // ------------ START: Configure and add the local member ---------------------
-        Parameter localHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
-        String host;
-        if (localHost != null) {
-            host = ((String) localHost.getValue()).trim();
-        } else { // In cases where the localhost needs to be automatically figured out
-            try {
-                try {
-                    host = Utils.getIpAddress();
-                } catch (SocketException e) {
-                    String msg = "Could not get local IP address";
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
-                }
-            } catch (Exception e) {
-                String msg = "Could not get the localhost name";
-                log.error(msg, e);
-                throw new ClusteringFault(msg, e);
-            }
-        }
-        receiver.setAddress(host);
-        try {
-            localMember.setHostname(host);
-        } catch (IOException e) {
-            String msg = "Could not set the local member's name";
-            log.error(msg, e);
-            throw new ClusteringFault(msg, e);
-        }
-
-        Parameter localPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
-        int port;
-        try {
-            if (localPort != null) {
-                port = Integer.parseInt(((String) localPort.getValue()).trim());
-                port = getLocalPort(new ServerSocket(), localMember.getHostname(), port, 4000, 100);
-            } else { // In cases where the localport needs to be automatically figured out
-                port = getLocalPort(new ServerSocket(), localMember.getHostname(), -1, 4000, 100);
-            }
-        } catch (IOException e) {
-            String msg =
-                    "Could not allocate the specified port or a port in the range 4000-4100 " +
-                    "for local host " + localMember.getHostname() +
-                    ". Check whether the IP address specified or inferred for the local " +
-                    "member is correct.";
-            log.error(msg, e);
-            throw new ClusteringFault(msg, e);
-        }
-
-        byte[] payload = "ping".getBytes();
-        localMember.setPayload(payload);
-        receiver.setPort(port);
-        localMember.setPort(port);
-        localMember.setDomain(domain);
-        staticMembershipInterceptor.setLocalMember(localMember);
-
-        // ------------ END: Configure and add the local member ---------------------
-
-        // ------------ START: Add other members ---------------------
-        for (org.apache.axis2.clustering.Member member : members) {
-            StaticMember tribesMember;
-            try {
-                tribesMember = new StaticMember(member.getHostName(), member.getPort(),
-                                                0, payload);
-            } catch (IOException e) {
-                String msg = "Could not add static member " +
-                             member.getHostName() + ":" + member.getPort();
-                log.error(msg, e);
-                throw new ClusteringFault(msg, e);
-            }
-
-            // Do not add the local member to the list of members
-            if (!(Arrays.equals(localMember.getHost(), tribesMember.getHost()) &&
-                  localMember.getPort() == tribesMember.getPort())) {
-                tribesMember.setDomain(domain);
-
-                // We will add the member even if it is offline at this moment. When the
-                // member comes online, it will be detected by the GMS
-                staticMembershipInterceptor.addStaticMember(tribesMember);
-                membershipManager.addWellKnownMember(tribesMember);
-                if (canConnect(member)) {
-                    membershipManager.memberAdded(tribesMember);
-                    log.info("Added static member " + TribesUtil.getName(tribesMember));
-                } else {
-                    log.info("Could not connect to member " + TribesUtil.getName(tribesMember));
-                }
-            }
-        }
-    }
-
-    /**
-     * Before adding a static member, we will try to verify whether we can connect to it
-     *
-     * @param member The member whose connectvity needs to be verified
-     * @return true, if the member can be contacted; false, otherwise.
-     */
-    private boolean canConnect(org.apache.axis2.clustering.Member member) {
-        for (int retries = 5; retries > 0; retries--) {
-            try {
-                InetAddress addr = InetAddress.getByName(member.getHostName());
-                SocketAddress sockaddr = new InetSocketAddress(addr,
-                                                               member.getPort());
-                new Socket().connect(sockaddr, 500);
-                return true;
-            } catch (IOException e) {
-                String msg = e.getMessage();
-                if (msg.indexOf("Connection refused") == -1 && msg.indexOf("connect timed out") == -1) {
-                    log.error("Cannot connect to member " +
-                              member.getHostName() + ":" + member.getPort(), e);
-                }
-            }
-        }
-        return false;
-    }
-
-    protected int getLocalPort(ServerSocket socket, String hostname,
-                               int preferredPort, int portstart, int retries) throws IOException {
-        if (preferredPort != -1) {
-            try {
-                return getLocalPort(socket, hostname, preferredPort);
-            } catch (IOException ignored) {
-                // Fall through and try a default port
-            }
-        }
-        InetSocketAddress addr = null;
-        if (retries > 0) {
-            try {
-                return getLocalPort(socket, hostname, portstart);
-            } catch (IOException x) {
-                retries--;
-                if (retries <= 0) {
-                    log.error("Unable to bind server socket to:" + addr + " throwing error.");
-                    throw x;
-                }
-                portstart++;
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
-                }
-                getLocalPort(socket, hostname, portstart, retries, -1);
-            }
-        }
-        return portstart;
-    }
-
-    private int getLocalPort(ServerSocket socket, String hostname, int port) throws IOException {
-        InetSocketAddress addr;
-        addr = new InetSocketAddress(hostname, port);
-        socket.bind(addr);
-        log.info("Receiver Server Socket bound to:" + addr);
-        socket.setSoTimeout(5);
-        socket.close();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ignored) {
-            ignored.printStackTrace();
-        }
-        return port;
-    }
-
-    /**
-     * Add ChannelInterceptors. The order of the interceptors that are added will depend on the
-     * membership management scheme
-     *
-     * @param channel          The Tribes channel
-     * @param domain           The loadBalancerDomain to which this node belongs to
-     * @param membershipScheme The membership scheme. Only wka & multicast are valid values.
-     * @throws ClusteringFault If an error occurs while adding interceptors
-     */
-    private void addInterceptors(ManagedChannel channel,
-                                 byte[] domain,
-                                 String membershipScheme) throws ClusteringFault {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Adding Interceptors...");
-        }
-        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-            TcpPingInterceptor tcpPingInterceptor = new TcpPingInterceptor();
-            tcpPingInterceptor.setInterval(100);
-            channel.addInterceptor(tcpPingInterceptor);
-            if (log.isDebugEnabled()) {
-                log.debug("Added TCP Ping Interceptor");
-            }
-        }
-
-        // Add the NonBlockingCoordinator. This is used for leader election
-        /*nbc = new NonBlockingCoordinator() {
-            public void fireInterceptorEvent(InterceptorEvent event) {
-                String status = event.getEventTypeDesc();
-                System.err.println("$$$$$$$$$$$$ NBC status=" + status);
-                int type = event.getEventType();
-            }
-        };
-        nbc.setPrevious(dfi);
-        channel.addInterceptor(nbc);*/
-
-        // Add a reliable failure detector
-        TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
-//        tcpFailureDetector.setPrevious(dfi); //TODO: check this
-//        tcpFailureDetector.setReadTestTimeout(30000);
-        tcpFailureDetector.setConnectTimeout(30000);
-        channel.addInterceptor(tcpFailureDetector);
-        if (log.isDebugEnabled()) {
-            log.debug("Added TCP Failure Detector");
-        }
-
-        // Add a DomainFilterInterceptor
-        channel.getMembershipService().setDomain(domain);
-        if (!loadBalanceMode) {
-            DomainFilterInterceptor dfi = new DomainFilterInterceptor();
-            dfi.setDomain(domain);
-            channel.addInterceptor(dfi);
-            if (log.isDebugEnabled()) {
-                log.debug("Added Domain Filter Interceptor");
-            }
-        } else {
-            LoadBalancerInterceptor lbInterceptor =
-                    new LoadBalancerInterceptor(domain, lbEventHandlers);
-            channel.addInterceptor(lbInterceptor);
-            if (log.isDebugEnabled()) {
-                log.debug("Added Load Balancer Interceptor");
-            }
-        }
-
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
-        channel.addInterceptor(atMostOnceInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added At-most-once Interceptor");
-        }
-
-        // Add the OrderInterceptor to preserve sender ordering
-        OrderInterceptor orderInterceptor = new OrderInterceptor();
-        orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
-        channel.addInterceptor(orderInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added Message Order Interceptor");
-        }
-
-        if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-            staticMembershipInterceptor = new StaticMembershipInterceptor();
-            channel.addInterceptor(staticMembershipInterceptor);
-            if (log.isDebugEnabled()) {
-                log.debug("Added Static Membership Interceptor");
-            }
-        }
-    }
-
-    /**
-     * If a multicast based membership management scheme is used, configure the multicasting related
-     * parameters
-     *
-     * @param channel The Tribes channel
-     * @param domain  The clustering loadBalancerDomain to which this node belongs to
-     * @throws ClusteringFault If an error occurs while obtaining the local host address
-     */
-    private void configureMulticastBasedMembership(ManagedChannel channel,
-                                                   byte[] domain) throws ClusteringFault {
-        Properties mcastProps = channel.getMembershipService().getProperties();
-        Parameter mcastAddress = getParameter(TribesConstants.MCAST_ADDRESS);
-        if (mcastAddress != null) {
-            mcastProps.setProperty(TribesConstants.MCAST_ADDRESS,
-                                   ((String) mcastAddress.getValue()).trim());
-        }
-        Parameter mcastBindAddress = getParameter(TribesConstants.MCAST_BIND_ADDRESS);
-        if (mcastBindAddress != null) {
-            mcastProps.setProperty(TribesConstants.MCAST_BIND_ADDRESS,
-                                   ((String) mcastBindAddress.getValue()).trim());
-        }
-
-        Parameter mcastPort = getParameter(TribesConstants.MCAST_PORT);
-        if (mcastPort != null) {
-            mcastProps.setProperty(TribesConstants.MCAST_PORT,
-                                   ((String) mcastPort.getValue()).trim());
-        }
-        Parameter mcastFrequency = getParameter(TribesConstants.MCAST_FREQUENCY);
-        if (mcastFrequency != null) {
-            mcastProps.setProperty(TribesConstants.MCAST_FREQUENCY,
-                                   ((String) mcastFrequency.getValue()).trim());
-        }
-        Parameter mcastMemberDropTime = getParameter(TribesConstants.MEMBER_DROP_TIME);
-        if (mcastMemberDropTime != null) {
-            mcastProps.setProperty(TribesConstants.MEMBER_DROP_TIME,
-                                   ((String) mcastMemberDropTime.getValue()).trim());
-        }
-
-        // Set the IP address that will be advertised by this node
-        ReceiverBase receiver = (ReceiverBase) channel.getChannelReceiver();
-        Parameter tcpListenHost = getParameter(TribesConstants.LOCAL_MEMBER_HOST);
-        if (tcpListenHost != null) {
-            String host = ((String) tcpListenHost.getValue()).trim();
-            mcastProps.setProperty(TribesConstants.TCP_LISTEN_HOST, host);
-            mcastProps.setProperty(TribesConstants.BIND_ADDRESS, host);
-            receiver.setAddress(host);
-        } else {
-            String host;
-            try {
-                host = Utils.getIpAddress();
-            } catch (SocketException e) {
-                String msg = "Could not get local IP address";
-                log.error(msg, e);
-                throw new ClusteringFault(msg, e);
-            }
-            mcastProps.setProperty(TribesConstants.TCP_LISTEN_HOST, host);
-            mcastProps.setProperty(TribesConstants.BIND_ADDRESS, host);
-            receiver.setAddress(host);
-        }
-        String localIP = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
-        if (localIP != null) {
-            receiver.setAddress(localIP);
-        }
-
-        Parameter tcpListenPort = getParameter(TribesConstants.LOCAL_MEMBER_PORT);
-        if (tcpListenPort != null) {
-            String port = ((String) tcpListenPort.getValue()).trim();
-            mcastProps.setProperty(TribesConstants.TCP_LISTEN_PORT, port);
-            receiver.setPort(Integer.parseInt(port));
-        }
-
-        mcastProps.setProperty(TribesConstants.MCAST_CLUSTER_DOMAIN, new String(domain));
+        membershipScheme.init();
     }
 
     /**

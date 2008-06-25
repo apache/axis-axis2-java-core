@@ -82,7 +82,7 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
          */
         private boolean canConnect(Member member) {
             if(log.isDebugEnabled()){
-                log.debug("Trying to connect to member " + member.getHostName() + "...");
+                log.debug("Trying to connect to member " + member + "...");
             }
             for (int retries = 30; retries > 0; retries--) {
                 try {

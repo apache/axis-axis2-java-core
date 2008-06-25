@@ -32,7 +32,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
-import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,14 +45,11 @@ public class RpcRequestHandler implements RpcCallback {
     private static Log log = LogFactory.getLog(RpcRequestHandler.class);
     private ConfigurationContext configurationContext;
     private MembershipManager membershipManager;
-    private StaticMembershipInterceptor staticMembershipInterceptor;
 
     public RpcRequestHandler(ConfigurationContext configurationContext,
-                             MembershipManager membershipManager,
-                             StaticMembershipInterceptor staticMembershipInterceptor) {
+                             MembershipManager membershipManager) {
         this.configurationContext = configurationContext;
         this.membershipManager = membershipManager;
-        this.staticMembershipInterceptor = staticMembershipInterceptor;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
@@ -104,27 +100,17 @@ public class RpcRequestHandler implements RpcCallback {
             }
         } else if (msg instanceof JoinGroupCommand) {
             log.info("Received JOIN message from " + TribesUtil.getName(invoker));
-            MemberListCommand memListCmd;
-            try {
-                // Add the member
-                staticMembershipInterceptor.memberAdded(invoker);
-                membershipManager.memberAdded(invoker);
+            membershipManager.memberAdded(invoker);
 
-                // Return the list of current members to the caller
-                memListCmd = new MemberListCommand();
-                memListCmd.setMembers(membershipManager.getMembers());
-            } catch (Exception e) {
-                String errMsg = "Cannot handle JOIN request";
-                log.error(errMsg, e);
-                throw new RemoteProcessException(errMsg, e);
-            }
+            // Return the list of current members to the caller
+            MemberListCommand memListCmd = new MemberListCommand();
+            memListCmd.setMembers(membershipManager.getMembers());
             return memListCmd;
         } else if (msg instanceof MemberJoinedCommand) {
             log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(invoker));
             try {
                 MemberJoinedCommand command = (MemberJoinedCommand) msg;
                 command.setMembershipManager(membershipManager);
-                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
                 command.execute(configurationContext);
             } catch (ClusteringFault e) {
                 String errMsg = "Cannot handle MEMBER_JOINED notification";
@@ -135,8 +121,6 @@ public class RpcRequestHandler implements RpcCallback {
             try {                    //TODO: What if we receive more than one member list message?
                 MemberListCommand command = (MemberListCommand) msg;
                 command.setMembershipManager(membershipManager);
-                command.setStaticMembershipInterceptor(staticMembershipInterceptor);
-                command.setSender(invoker);
                 command.execute(configurationContext);
 
                 //TODO Send MEMBER_JOINED messages to all nodes

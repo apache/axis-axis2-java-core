@@ -15,38 +15,28 @@
  */
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.catalina.tribes.ChannelMessage;
-import org.apache.catalina.tribes.group.ChannelInterceptorBase;
-import org.apache.catalina.tribes.membership.Membership;
+import org.apache.catalina.tribes.Channel;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
- * This interceptor is used when this member is part of a load balancer cluster.
- * This load balancer is responsible for load balancing across applications deployed in
- * another group.
+ * The mode in which this member is running such a loadBalance or application
  */
-public class LoadBalancerInterceptor extends ChannelInterceptorBase {
+public interface Mode {
 
     /**
-     * Represents the load balancer group
+     * Add channel interecptors
+     *
+     * @param channel The Channel to which interceptors need to be added
      */
-    protected Membership loadBalancerMembership = null;
+    public void addInterceptors(Channel channel);
 
     /**
-     * Represents the load balancer group
+     * Initialize this mode
+     *
+     * @param channel The channel related to this member
      */
-    protected byte[] loadBalancerDomain = new byte[0];
+    void init(Channel channel);
 
-    public LoadBalancerInterceptor(byte[] loadBalancerDomain) {
-        this.loadBalancerDomain = loadBalancerDomain;
-    }
-
-    public void messageReceived(ChannelMessage msg) {
-        // Ignore all messages which are not intended for the load balancer group
-        if (okToProcess(msg.getOptions()) ||
-            Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
-            super.messageReceived(msg);
-        }
-    }
+    List<MembershipManager> getMembershipManagers();
 }

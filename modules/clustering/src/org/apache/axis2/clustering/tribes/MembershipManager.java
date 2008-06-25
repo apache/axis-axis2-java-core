@@ -19,17 +19,25 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.clustering.LoadBalanceEventHandler;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcChannel;
+import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 /**
@@ -40,12 +48,41 @@ public class MembershipManager {
     private static final Log log = LogFactory.getLog(MembershipManager.class);
 
     private RpcChannel rpcChannel;
+    private StaticMembershipInterceptor staticMembershipInterceptor;
+
+    /**
+     * The domain corresponding to the membership handled by this MembershipManager
+     */
+    private byte[] domain;
+    private LoadBalanceEventHandler loadBalanceEventHandler;
+    private ConfigurationContext configContext;
+
+    public MembershipManager(ConfigurationContext configContext) {
+        this.configContext = configContext;
+    }
 
     public MembershipManager() {
     }
 
     public void setRpcChannel(RpcChannel rpcChannel) {
         this.rpcChannel = rpcChannel;
+    }
+
+    public void setStaticMembershipInterceptor(
+            StaticMembershipInterceptor staticMembershipInterceptor) {
+        this.staticMembershipInterceptor = staticMembershipInterceptor;
+    }
+
+    public void setLoadBalanceEventHandler(LoadBalanceEventHandler loadBalanceEventHandler) {
+        this.loadBalanceEventHandler = loadBalanceEventHandler;
+    }
+
+    public void setDomain(byte[] domain) {
+        this.domain = domain;
+    }
+
+    public byte[] getDomain() {
+        return domain;
     }
 
     /**
@@ -84,19 +121,47 @@ public class MembershipManager {
      * A new member is added
      *
      * @param member The new member that joined the cluster
-     * @return true - if the member was added to the <code>members</code> array; false, otherwise.
+     * @return true  If the member was added to the <code>members</code> array; false, otherwise.
      */
     public synchronized boolean memberAdded(Member member) {
-        if (!members.contains(member)) {
-            if (rpcChannel != null && wkaMembers.contains(member)) { // if it is a well-known member
+
+        // If this member already exists or if the member belongs to another domain,
+        // there is no need to add it
+        if(members.contains(member) || !Arrays.equals(domain, member.getDomain())){
+            return false;
+        }
+
+        if (staticMembershipInterceptor != null) { // this interceptor is null when multicast based scheme is used
+            staticMembershipInterceptor.addStaticMember(member);
+            if (log.isDebugEnabled()) {
+                log.debug("Added static member " + TribesUtil.getName(member) +
+                          " from domain " + new String(member.getDomain()));
+            }
+        }
+
+        boolean shouldAddMember = localMember == null ||
+                                  Arrays.equals(localMember.getDomain(), member.getDomain());
+
+        // If this member is a load balancer, notify the respective load balance event handler?
+        if (loadBalanceEventHandler != null) {
+            log.info("Application member " + TribesUtil.getName(member) + " joined group " +
+                     new String(member.getDomain()));
+            loadBalanceEventHandler.applicationMemberAdded(toAxis2Member(member));
+        }
+
+        if (shouldAddMember) {
+            if (rpcChannel != null && isLocalMemberInitialized() &&
+                wkaMembers.contains(member)) { // if it is a well-known member
 
                 log.info("A WKA member " + TribesUtil.getName(member) +
                          " just joined the group. Sending MEMBER_LIST message.");
-                // send the memeber list to it
+                // send the member list to it
                 MemberListCommand memListCmd;
                 try {
                     memListCmd = new MemberListCommand();
-                    memListCmd.setMembers(getMembers());
+                    List<Member> members = new ArrayList<Member>(this.members);
+                    members.add(localMember); // Need to set the local member too
+                    memListCmd.setMembers(members.toArray(new Member[members.size()]));
                     rpcChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
                                     Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
                 } catch (Exception e) {
@@ -107,9 +172,53 @@ public class MembershipManager {
                 }
             }
             members.add(member);
+            if (log.isDebugEnabled()) {
+                log.debug("Added group member " + TribesUtil.getName(member) + " to domain " +
+                          new String(member.getDomain()));
+            }
             return true;
         }
         return false;
+    }
+
+    private org.apache.axis2.clustering.Member toAxis2Member(Member member) {
+        org.apache.axis2.clustering.Member axis2Member =
+                new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                       member.getPort());
+        Properties props = getProperties(member.getPayload());
+
+        String http = props.getProperty("HTTP");
+        if (http != null && http.trim().length() != 0) {
+            axis2Member.setHttpPort(Integer.parseInt(http));
+        }
+
+        String https = props.getProperty("HTTPS");
+        if (https != null && https.trim().length() != 0) {
+            axis2Member.setHttpsPort(Integer.parseInt(https));
+        }
+
+        return axis2Member;
+    }
+
+    private Properties getProperties(byte[] payload) {
+        Properties props = null;
+        try {
+            ByteArrayInputStream bin = new ByteArrayInputStream(payload);
+            props = new Properties();
+            props.load(bin);
+        } catch (IOException ignored) {
+            // This error will never occur
+        }
+        return props;
+    }
+
+    private boolean isLocalMemberInitialized() {
+        if (configContext == null) {
+            return false;
+        }
+        Object clusterInitialized =
+                configContext.getPropertyNonReplicable(ClusteringConstants.CLUSTER_INITIALIZED);
+        return clusterInitialized != null && clusterInitialized.equals("true");
     }
 
     /**
@@ -119,6 +228,11 @@ public class MembershipManager {
      */
     public synchronized void memberDisappeared(Member member) {
         members.remove(member);
+
+        // Is this an application domain member?
+        if (loadBalanceEventHandler != null) {
+            loadBalanceEventHandler.applicationMemberRemoved(toAxis2Member(member));
+        }
     }
 
     /**
