@@ -138,7 +138,8 @@
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
         <stax.impl.version>3.2.4</stax.impl.version>
         <tomcat.version>6.0.16</tomcat.version>
-        <woden.version>1.0M8</woden.version>
+        <!--<woden.version>1.0M8</woden.version>-->
+        <woden.version>1.0-SNAPSHOT</woden.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
         <xerces.version>2.8.1</xerces.version>
@@ -149,6 +150,8 @@
         <xmlunit.version>1.1</xmlunit.version>
         <smack.version>3.0.4</smack.version>
         <commons.lang.version>2.3</commons.lang.version>
+        <javax.mail.version>1.4</javax.mail.version>
+        <axis2.jws.version>1.3</axis2.jws.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>

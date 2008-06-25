@@ -38,13 +38,13 @@
       <library name="lib/ant-@ant.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-api-@axiom.version@.jar">
+      <library name="./lib/axiom-api-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-dom-@axiom.version@.jar">
+      <library name="./lib/axiom-dom-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-impl-@axiom.version@.jar">
+      <library name="./lib/axiom-impl-@axiom.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/commons-logging-@commons.logging.version@.jar">
@@ -87,6 +87,12 @@
          <export name="*"/>
       </library>
       <library name="lib/jibx-run-@jibx.version@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/mail-@javax.mail.version@.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/axis2-jws-api-@axis2.jws.version@.jar">
          <export name="*"/>
       </library>
    </runtime>
