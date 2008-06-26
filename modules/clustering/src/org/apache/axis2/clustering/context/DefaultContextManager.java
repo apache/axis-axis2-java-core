@@ -32,7 +32,6 @@ import org.apache.axis2.description.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,11 +40,11 @@ public class DefaultContextManager implements ContextManager {
     private ConfigurationContext configContext;
     private ContextManagerListener listener;
 
-    private Map parameters = new HashMap();
+    private Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 
     private ChannelSender sender;
 
-    private Map excludedReplicationPatterns = new HashMap();
+    private Map<String, List> excludedReplicationPatterns = new HashMap<String, List>();
 
     //TODO: Try how to use an interface
     public void setSender(ChannelSender sender) {
@@ -124,13 +123,13 @@ public class DefaultContextManager implements ContextManager {
     }
 
     public Parameter getParameter(String name) {
-        return (Parameter) parameters.get(name);
+        return parameters.get(name);
     }
 
     public ArrayList getParameters() {
-        ArrayList list = new ArrayList();
-        for (Iterator iter = parameters.keySet().iterator(); iter.hasNext();) {
-            list.add(parameters.get(iter.next()));
+        ArrayList<Parameter> list = new ArrayList<Parameter>();
+        for (String msg : parameters.keySet()) {
+            list.add(parameters.get(msg));
         }
         return list;
     }
