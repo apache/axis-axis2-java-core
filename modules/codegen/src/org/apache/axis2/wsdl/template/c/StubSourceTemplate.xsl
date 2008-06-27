@@ -294,6 +294,10 @@
               </xsl:if>
               axis2_options_set_action( options, env, NULL);
             }
+            if(soap_act)
+            {
+              axutil_string_free(soap_act, env);
+            }
 
             <!-- extract out the headers at this point -->
             <xsl:if test="output/param[@location='soap_header']">
