@@ -54,17 +54,10 @@
 	        </includes>
 	</dependencySet> 
 	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${version}.${extension}</outputFileNameMapping>
+		<outputFileNameMapping>${artifactId}-${axis2.version}.${extension}</outputFileNameMapping>
 	        <outputDirectory>lib</outputDirectory>
 	        <includes>
 	        	<include>org.apache.axis2:axis2:jar</include>
-	        </includes>
-	</dependencySet> 
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${stax.impl.version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>org.codehaus.woodstox:wstx-asl:jar</include>
 	        </includes>
 	</dependencySet> 
 	<dependencySet>
@@ -75,10 +68,10 @@
 	        </includes>
 	</dependencySet> 
 	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${stax.api.version}.${extension}</outputFileNameMapping>
+		<outputFileNameMapping>${artifactId}-${geronimo.spec.stax.version}.${extension}</outputFileNameMapping>
 	        <outputDirectory>lib</outputDirectory>
 	        <includes>
-	        	<include>stax:stax-api:jar</include>
+	        	<include>org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:jar</include>
 	        </includes>
 	</dependencySet> 
 	<dependencySet>
@@ -136,13 +129,6 @@
 	        <includes>
                 	<include>jibx:jibx-bind:jar</include>
                 	<include>jibx:jibx-run:jar</include>
-	        </includes>
-	</dependencySet> 
-	<dependencySet>
-		<outputFileNameMapping>${artifactId}-${ant.version}.${extension}</outputFileNameMapping>
-	        <outputDirectory>lib</outputDirectory>
-	        <includes>
-	        	<include>org.apache.ant:ant:jar</include>
 	        </includes>
 	</dependencySet> 
 	</dependencySets>

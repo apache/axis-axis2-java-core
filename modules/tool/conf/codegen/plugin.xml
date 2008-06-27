@@ -34,8 +34,7 @@
       <library name="lib/geronimo-activation_1.1_spec-@geronimo.spec.activation.version@.jar">
          <export name="*"/>
       </library>
-     
-      <library name="lib/ant-@ant.version@.jar">
+      <library name="lib/geronimo-stax-api_1.0_spec-@geronimo.spec.stax.version@.jar">
          <export name="*"/>
       </library>
       <library name="./lib/axiom-api-@axiom.version@.jar">
@@ -59,13 +58,7 @@
       <library name="lib/neethi-@neethi.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/stax-api-@stax.api.version@.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/wsdl4j-@wsdl4j.version@.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/wstx-asl-@stax.impl.version@.jar">
          <export name="*"/>
       </library>
       <library name="lib/xmlbeans-@xmlbeans.version@.jar">

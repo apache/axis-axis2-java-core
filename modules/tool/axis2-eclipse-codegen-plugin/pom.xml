@@ -182,9 +182,9 @@
             <version>${version}</version>
         </dependency>
         <dependency>
-            <groupId>${stax.impl.groupid}</groupId>
-            <artifactId>${stax.impl.artifact}</artifactId>
-            <version>${stax.impl.version}</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+            <version>${geronimo.spec.stax.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
@@ -201,6 +201,12 @@
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
             <version>${xmlbeans.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
@@ -355,18 +361,17 @@
                                 <mkdir dir="./target/plugin/${codegen.plugin.version}"/>
                                 <delete dir="./target/dist"/>
                                 <mkdir dir="./target/dist"/>
-                                <!--Filter tockens for the copy command to filter the versions of external dependencies -->
+                                <!--Filter tokens for the copy command to filter the versions of external dependencies -->
                                 <filter token="eclipse.plugins.version" value="${eclipse.plugins.version}"/>
                                 <filter token="version" value="${version}"/>
                                 <filter token="geronimo.spec.activation.version"
                                         value="${geronimo.spec.activation.version}"/>
-                                <filter token="annogen.version" value="${annogen.version}"/>
+                                <filter token="geronimo.spec.stax.version"
+                                        value="${geronimo.spec.stax.version}"/>
                                 <filter token="ant.version" value="${ant.version}"/>
                                 <filter token="axiom.version" value="${axiom.version}"/>
                                 <filter token="commons.logging.version" value="${commons.logging.version}"/>
                                 <filter token="neethi.version" value="${neethi.version}"/>
-                                <filter token="stax.api.version" value="${stax.api.version}"/>
-                                <filter token="stax.impl.version" value="${stax.impl.version}"/>
                                 <filter token="xmlbeans.version" value="${xmlbeans.version}"/>
                                 <filter token="xmlschema.version" value="${xmlschema.version}"/>
                                 <filter token="log4j.version" value="${log4j.version}"/>

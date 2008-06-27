@@ -19,7 +19,7 @@
 
 <project basedir="." default="help">
 
-    <!--Set your elcipse home directory  -->
+    <!--Set your eclipse home directory  -->
     <property environment="env" />
     <property name="eclipse.home" value="${env.ECLIPSE_HOME}"></property>
 	
@@ -52,7 +52,7 @@
     <property name="codegen.help.images.dir" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/images"></property>
     <property name="axis2.lib.dir" value="../../../target/lib"></property>
 
-    <!--Filter tockens for the copy command to filter the versions of external dependencies -->
+    <!--Filter tokens for the copy command to filter the versions of external dependencies -->
      <filter token="version_number" value="${version_number}" />
      <filter token="activation.version" value="${activation.version}" />
 
@@ -61,7 +61,6 @@
      <filter token="commons.logging.version" value="${commons.logging.version}" />
      <filter token="neethi.version" value="${neethi.version}" />
      <filter token="stax.api.version" value="${stax.api.version}" />
-     <filter token="stax.impl.version" value="${stax.impl.version}" />
      <filter token="xmlbeans.version" value="${xmlbeans.version}" />
      <filter token="XmlSchema.version" value="${XmlSchema.version}" />
      <filter token="log4j.version" value="${log4j.version}" />
@@ -70,12 +69,14 @@
      <filter token="commons.httpclient.version" value="${commons.httpclient.version}" />
      <filter token="commons.codec.version" value="${commons.codec.version}" />
      <filter token="jibx.version" value="${jibx.version}" />
+     <filter token="geronimo.spec.stax.version" value="${geronimo.spec.stax.version}" />
+     <filter token="geronimo.spec.activation.version" value="${geronimo.spec.activation.version}" />
 
 
      <!--Codegen wizard libraries -->
      <fileset id="codegen.libs" dir="${axis2.lib.dir}">
- 		<include name="activation-${activation.version}.jar" />
-
+ 		<include name="geronimo-activation_1.1_spec-${geronimo.spec.activation.version}.jar" />
+ 		<include namo="geronimo-stax-api_1.0_spec-${geronimo.spec.stax.version}.jar" />
 		<include name="ant-${ant.version}.jar" />
 		<include name="axiom-api-${axiom.version}.jar" />
 		<include name="axiom-dom-${axiom.version}.jar" />
@@ -84,9 +85,7 @@
 		<include name="commons-logging-${commons.logging.version}.jar" />
 		<include name="log4j-${log4j.version}.jar" />
 		<include name="neethi-${neethi.version}.jar" />
-		<include name="stax-api-${stax.api.version}.jar" />
 		<include name="wsdl4j-${wsdl4j.version}.jar" />
-		<include name="wstx-${stax.impl.version}.jar" />
 		<include name="xmlbeans-${xmlbeans.version}.jar" />
 		<include name="XmlSchema-${XmlSchema.version}.jar" />
 		<include name="woden-${woden.version}.jar" />
