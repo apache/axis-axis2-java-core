@@ -109,7 +109,7 @@ public class CTypeMap implements TypeMap{
 
         // a xsd:unsignedByte
         CTypeMap.addTypemapping(SchemaConstants.XSD_UNSIGNEDBYTE,
-                                 "axis2_byte_t");
+                                 "axis2_unsigned_byte_t");
 
         // a xsd:nonNegativeInteger
         CTypeMap.addTypemapping(SchemaConstants.XSD_NONNEGATIVEINTEGER,
