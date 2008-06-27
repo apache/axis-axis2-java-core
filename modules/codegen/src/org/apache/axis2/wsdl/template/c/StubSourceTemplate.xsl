@@ -117,7 +117,7 @@
            op = axis2_op_create_with_qname(env, op_qname);
            <xsl:choose>
              <xsl:when test="@mep='10'">
-               axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_IN_ONLY);
+               axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_ONLY);
              </xsl:when>
              <xsl:otherwise>
                axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_IN);
