@@ -16,17 +16,23 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfigurator;
 import org.apache.axis2.engine.ListenerManager;
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.PROTOCOL;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.MessageReceiver;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 import org.apache.axis2.osgi.tx.HttpListener;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportSender;
 import org.osgi.framework.*;
 
 import java.util.Dictionary;
@@ -76,6 +82,7 @@ public class OSGiConfigurationContextFactory {
         context.addBundleListener(moduleRegistry);
         context.addBundleListener(servicesRegistry);
         context.addServiceListener(new AxisConfigServiceListener(configCtx, context));
+        context.addServiceListener(new WSListener(configCtx, context));
 
         Dictionary prop = new Properties();
         prop.put(PROTOCOL, "http");
@@ -86,9 +93,18 @@ public class OSGiConfigurationContextFactory {
 
     }
 
+    /**
+     * @see org.osgi.framework.ServiceListener
+     *      <p/>
+     *      AxisConfigServiceListener is a ServiceListener. This class listen to OSGi services and
+     *      build the appropriate AxisConfiguration plugins. These plugins include, message receivers,
+     *      transport listeners, transport senders, message formatters & builders, etc.
+     */
     private static class AxisConfigServiceListener implements ServiceListener {
 
         private ConfigurationContext configCtx;
+
+        private AxisConfiguration axisConfig;
 
         private BundleContext context;
 
@@ -97,6 +113,7 @@ public class OSGiConfigurationContextFactory {
         public AxisConfigServiceListener(ConfigurationContext configCtx, BundleContext context) {
             this.configCtx = configCtx;
             this.context = context;
+            this.axisConfig = configCtx.getAxisConfiguration();
         }
 
         public void serviceChanged(ServiceEvent event) {
@@ -140,15 +157,11 @@ public class OSGiConfigurationContextFactory {
                         //Now update the AxisService endpoint map
                         lock.lock();
                         try {
-                            for (Iterator iterator =
-                                    configCtx.getAxisConfiguration().getServices().keySet()
-                                            .iterator();
+                            for (Iterator iterator = axisConfig.getServices().keySet().iterator();
                                  iterator.hasNext();) {
                                 String serviceName = (String) iterator.next();
-                                AxisService axisService =
-                                        configCtx.getAxisConfiguration().getService(serviceName);
-                                Utils.addEndpointsToService(axisService,
-                                                            configCtx.getAxisConfiguration());
+                                AxisService axisService = axisConfig.getService(serviceName);
+                                Utils.addEndpointsToService(axisService, axisConfig);
                             }
                         } finally {
                             lock.unlock();
@@ -159,8 +172,80 @@ public class OSGiConfigurationContextFactory {
                     }
                 }
 
+            } else if (service instanceof Builder) {
+                String contextType = (String) reference.getProperty(CONTENT_TYPE);
+                if (contextType == null || contextType.length() == 0) {
+                    throw new RuntimeException(CONTENT_TYPE + " is missing from builder object");
+                }
+                if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
+                                                                  ServiceEvent.MODIFIED) {
+                    Builder builder = (Builder) service;
+                    lock.lock();
+                    try {
+                        axisConfig.addMessageBuilder(contextType, builder);
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+            } else if (service instanceof MessageFormatter) {
+                String contextType = (String) reference.getProperty(CONTENT_TYPE);
+                if (contextType == null || contextType.length() == 0) {
+                    throw new RuntimeException(CONTENT_TYPE + " is missing from formatter object");
+                }
+                if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
+                                                                  ServiceEvent.MODIFIED) {
+                    MessageFormatter formatter = (MessageFormatter) service;
+                    lock.lock();
+                    try {
+                        axisConfig.addMessageFormatter(contextType, formatter);
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+            } else if (service instanceof Deployer) {
+                // TODO: TBD, there is no Axis2 API yet available to add deployers.
+            } else if (service instanceof MessageReceiver) {
+                String mep = (String)reference.getProperty(MEP);
+                if (mep == null || mep.length() == 0) {
+                    throw new RuntimeException(MEP + " is missing from message receiver object");
+                }
+                if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
+                                                                  ServiceEvent.MODIFIED) {
+                    MessageReceiver mr = (MessageReceiver) service;
+                    lock.lock();
+                    try {
+                        axisConfig.addMessageReceiver(mep, mr);
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+            } else if (service instanceof TransportSender) {
+                //TODO: TBD
             }
+        }
+    }
 
+    /**
+     * TODO: TBD, purpose of this listener is to listen to OSGi services that needed to be set as WS
+     */
+    private static class WSListener implements ServiceListener  {
+
+        private ConfigurationContext configCtx;
+
+        private AxisConfiguration axisConfig;
+
+        private BundleContext context;
+
+        private Lock lock = new ReentrantLock();
+
+        public WSListener(ConfigurationContext configCtx, BundleContext context) {
+            this.configCtx = configCtx;
+            this.context = context;
+            this.axisConfig = configCtx.getAxisConfiguration();
+        }
+
+        public void serviceChanged(ServiceEvent event) {
+            //TODO; TBD
         }
     }
 
