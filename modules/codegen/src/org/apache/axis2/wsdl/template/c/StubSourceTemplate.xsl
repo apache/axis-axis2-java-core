@@ -106,6 +106,7 @@
 
          svc_qname = axutil_qname_create(env,"<xsl:value-of select="@servicename"/>" ,NULL, NULL);
          axis2_svc_set_qname (svc, env, svc_qname);
+		 axutil_qname_free(svc_qname,env);
 
          /* creating the operations*/
 
