@@ -164,18 +164,20 @@ public class AxisServiceTopElementSchemaGenerator {
             axisOperation = (AxisOperation) operationIter.next();
             for (Iterator messageIter = axisOperation.getMessages(); messageIter.hasNext();) {
                 axisMessage = (AxisMessage) messageIter.next();
-                topElement = new TopElement(axisMessage.getElementQName());
-                xmlSchemaElement = axisMessage.getSchemaElement();
-                topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
-                topSchemaElements.add(topElement);
-                // adding header messages
-                for (Iterator soapHeaderIter = axisMessage.getSoapHeaders().iterator(); soapHeaderIter.hasNext();) {
-                    soapHeaderMessage = (SOAPHeaderMessage) soapHeaderIter.next();
-                    topElement = new TopElement(soapHeaderMessage.getElement());
-                    topSchemaElements.add(topElement);
-                    xmlSchemaElement = getSchemaElement(soapHeaderMessage.getElement());
+                if (axisMessage.getElementQName() != null) {
+                    topElement = new TopElement(axisMessage.getElementQName());
+                    xmlSchemaElement = axisMessage.getSchemaElement();
                     topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
                     topSchemaElements.add(topElement);
+                    // adding header messages
+                    for (Iterator soapHeaderIter = axisMessage.getSoapHeaders().iterator(); soapHeaderIter.hasNext();) {
+                        soapHeaderMessage = (SOAPHeaderMessage) soapHeaderIter.next();
+                        topElement = new TopElement(soapHeaderMessage.getElement());
+                        topSchemaElements.add(topElement);
+                        xmlSchemaElement = getSchemaElement(soapHeaderMessage.getElement());
+                        topElement.setTypeQName(xmlSchemaElement.getSchemaTypeName());
+                        topSchemaElements.add(topElement);
+                    }
                 }
             }
 
