@@ -65,4 +65,12 @@ public class TribesUtil {
     public static String getLocalHost(Channel channel) {
         return getName(channel.getLocalMember(true));
     }
+
+    public static byte[] getRpcMembershipChannelId(byte[] domain) {
+       return (new String(domain) + TribesConstants.RPC_MEMBERSHIP_CHANNEL).getBytes();
+    }
+
+    public static byte[] getRpcInitChannelId(byte[] domain) {
+        return (new String(domain) + TribesConstants.RPC_INIT_CHANNEL).getBytes();
+    }
 }

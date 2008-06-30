@@ -48,12 +48,12 @@ public class GetStateCommand extends ControlCommand {
         ContextManager contextManager = clusterManager.getContextManager();
         if (contextManager != null) {
             Map excludedPropPatterns = contextManager.getReplicationExcludePatterns();
-            List cmdList = new ArrayList();
+            List<ContextClusteringCommand> cmdList = new ArrayList<ContextClusteringCommand>();
 
             // Add the service group contexts, service contexts & their respective properties
             String[] sgCtxIDs = configCtx.getServiceGroupContextIDs();
-            for (int i  = 0; i < sgCtxIDs.length; i ++) {
-                ServiceGroupContext sgCtx = configCtx.getServiceGroupContext(sgCtxIDs[i]);
+            for (String sgCtxID : sgCtxIDs) {
+                ServiceGroupContext sgCtx = configCtx.getServiceGroupContext(sgCtxID);
                 ContextClusteringCommand updateServiceGroupCtxCmd =
                         ContextClusteringCommandFactory.getUpdateCommand(sgCtx,
                                                                          excludedPropPatterns,
@@ -83,8 +83,7 @@ public class GetStateCommand extends ControlCommand {
                 cmdList.add(updateCmd);
             }
             if (!cmdList.isEmpty()) {
-                commands = (ContextClusteringCommand[]) cmdList.
-                        toArray(new ContextClusteringCommand[cmdList.size()]);
+                commands = cmdList.toArray(new ContextClusteringCommand[cmdList.size()]);
             }
         }
     }

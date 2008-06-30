@@ -20,6 +20,17 @@ package org.apache.axis2.clustering.tribes;
  */
 public final class TribesConstants {
 
+    /**
+     * The ID of the RPC initialization message channel
+     */
+    public static final String RPC_INIT_CHANNEL = "rpc.init.channel";
+
+    /**
+     * The ID of the RPC membership message channel. This channel is only used when WKA
+     * membership discovery mechanism is used
+     */
+    public static final String RPC_MEMBERSHIP_CHANNEL = "rpc.membership.channel";
+
     // Message sending and receiving options
     public static final int MSG_ORDER_OPTION = 512;
 

@@ -25,9 +25,6 @@ import org.apache.axis2.clustering.control.GetConfigurationCommand;
 import org.apache.axis2.clustering.control.GetConfigurationResponseCommand;
 import org.apache.axis2.clustering.control.GetStateCommand;
 import org.apache.axis2.clustering.control.GetStateResponseCommand;
-import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
-import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
-import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
@@ -40,16 +37,13 @@ import java.io.Serializable;
 /**
  * Handles RPC Channel requests from members
  */
-public class RpcRequestHandler implements RpcCallback {
+public class RpcInitializationRequestHandler implements RpcCallback {
 
-    private static Log log = LogFactory.getLog(RpcRequestHandler.class);
+    private static Log log = LogFactory.getLog(RpcInitializationRequestHandler.class);
     private ConfigurationContext configurationContext;
-    private MembershipManager membershipManager;
 
-    public RpcRequestHandler(ConfigurationContext configurationContext,
-                             MembershipManager membershipManager) {
+    public RpcInitializationRequestHandler(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        this.membershipManager = membershipManager;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
@@ -57,6 +51,9 @@ public class RpcRequestHandler implements RpcCallback {
     }
 
     public Serializable replyRequest(Serializable msg, Member invoker) {
+        if (log.isDebugEnabled()) {
+            log.debug("Initialization request received by RpcInitializationRequestHandler");
+        }
         if (msg instanceof GetStateCommand) {
             // If a GetStateRequest is received by a node which has not yet initialized
             // this node cannot send a response to the state requester. So we simply return.
@@ -98,38 +95,7 @@ public class RpcRequestHandler implements RpcCallback {
                 log.error(errMsg, e);
                 throw new RemoteProcessException(errMsg, e);
             }
-        } else if (msg instanceof JoinGroupCommand) {
-            log.info("Received JOIN message from " + TribesUtil.getName(invoker));
-            membershipManager.memberAdded(invoker);
-
-            // Return the list of current members to the caller
-            MemberListCommand memListCmd = new MemberListCommand();
-            memListCmd.setMembers(membershipManager.getMembers());
-            return memListCmd;
-        } else if (msg instanceof MemberJoinedCommand) {
-            log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(invoker));
-            try {
-                MemberJoinedCommand command = (MemberJoinedCommand) msg;
-                command.setMembershipManager(membershipManager);
-                command.execute(configurationContext);
-            } catch (ClusteringFault e) {
-                String errMsg = "Cannot handle MEMBER_JOINED notification";
-                log.error(errMsg, e);
-                throw new RemoteProcessException(errMsg, e);
-            }
-        } else if (msg instanceof MemberListCommand) {
-            try {                    //TODO: What if we receive more than one member list message?
-                MemberListCommand command = (MemberListCommand) msg;
-                command.setMembershipManager(membershipManager);
-                command.execute(configurationContext);
-
-                //TODO Send MEMBER_JOINED messages to all nodes
-            } catch (ClusteringFault e) {
-                String errMsg = "Cannot handle MEMBER_LIST message";
-                log.error(errMsg, e);
-                throw new RemoteProcessException(errMsg, e);
-            }
-        }
+        } 
         return null;
     }
 

@@ -47,7 +47,7 @@ public class MembershipManager {
 
     private static final Log log = LogFactory.getLog(MembershipManager.class);
 
-    private RpcChannel rpcChannel;
+    private RpcChannel rpcMembershipChannel;
     private StaticMembershipInterceptor staticMembershipInterceptor;
 
     /**
@@ -64,8 +64,8 @@ public class MembershipManager {
     public MembershipManager() {
     }
 
-    public void setRpcChannel(RpcChannel rpcChannel) {
-        this.rpcChannel = rpcChannel;
+    public void setRpcMembershipChannel(RpcChannel rpcMembershipChannel) {
+        this.rpcMembershipChannel = rpcMembershipChannel;
     }
 
     public void setStaticMembershipInterceptor(
@@ -150,7 +150,7 @@ public class MembershipManager {
         }
 
         if (shouldAddMember) {
-            if (rpcChannel != null && isLocalMemberInitialized() &&
+            if (rpcMembershipChannel != null && isLocalMemberInitialized() &&
                 wkaMembers.contains(member)) { // if it is a well-known member
 
                 log.info("A WKA member " + TribesUtil.getName(member) +
@@ -162,7 +162,7 @@ public class MembershipManager {
                     List<Member> members = new ArrayList<Member>(this.members);
                     members.add(localMember); // Need to set the local member too
                     memListCmd.setMembers(members.toArray(new Member[members.size()]));
-                    rpcChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
+                    rpcMembershipChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
                                     Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
                 } catch (Exception e) {
                     String errMsg = "Could not send MEMBER_LIST to well-known member " +

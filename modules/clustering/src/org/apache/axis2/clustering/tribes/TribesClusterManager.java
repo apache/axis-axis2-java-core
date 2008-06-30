@@ -75,12 +75,13 @@ public class TribesClusterManager implements ClusterManager {
 
     private HashMap<String, Parameter> parameters;
     private ManagedChannel channel;
-    private RpcChannel rpcChannel;
+    private RpcChannel initRpcChannel;
+    private RpcChannel membershipRpcChannel;
     private ConfigurationContext configurationContext;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
     private MembershipManager membershipManager;
-    private RpcRequestHandler rpcRequestHandler;
+    private RpcInitializationRequestHandler rpcInitRequestHandler;
     private MembershipScheme membershipScheme;
 
     /**
@@ -151,12 +152,13 @@ public class TribesClusterManager implements ClusterManager {
 
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
-        rpcRequestHandler = new RpcRequestHandler(configurationContext, membershipManager);
-        rpcChannel = new RpcChannel(domain, channel, rpcRequestHandler);
+        rpcInitRequestHandler = new RpcInitializationRequestHandler(configurationContext);
+        initRpcChannel =
+                new RpcChannel(TribesUtil.getRpcInitChannelId(domain),
+                               channel, rpcInitRequestHandler);
         if (log.isDebugEnabled()) {
             log.debug("Created RPC Channel for domain " + new String(domain));
         }
-        membershipManager.setRpcChannel(rpcChannel);
 
         setMaximumRetries();
         configureMode(domain);
@@ -351,12 +353,12 @@ public class TribesClusterManager implements ClusterManager {
     /**
      * Handle specific configurations related to different membership management schemes.
      *
-     * @param domain             The clustering loadBalancerDomain to which this member belongs to
+     * @param localDomain        The clustering loadBalancerDomain to which this member belongs to
      * @param membershipManagers MembershipManagers for different domains
      * @throws ClusteringFault If the membership scheme is invalid, or if an error occurs
      *                         while configuring membership scheme
      */
-    private void configureMembershipScheme(byte[] domain,
+    private void configureMembershipScheme(byte[] localDomain,
                                            List<MembershipManager> membershipManagers)
             throws ClusteringFault {
         String scheme = getMembershipScheme();
@@ -364,10 +366,10 @@ public class TribesClusterManager implements ClusterManager {
         if (scheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             membershipScheme = new WkaBasedMembershipScheme(channel, mode,
                                                             membershipManagers,
-                                                            rpcChannel, membershipManager,
-                                                            parameters, domain, members);
+                                                            membershipManager,
+                                                            parameters, localDomain, members);
         } else if (scheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
-            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters, domain);
+            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters, localDomain);
         } else {
             String msg = "Invalid membership scheme '" + scheme +
                          "'. Supported schemes are multicast & wka";
@@ -410,11 +412,11 @@ public class TribesClusterManager implements ClusterManager {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses;
                     do {
-                        responses = rpcChannel.send(new Member[]{member},
-                                                    command,
-                                                    RpcChannel.FIRST_REPLY,
-                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                    10000);
+                        responses = initRpcChannel.send(new Member[]{member},
+                                                        command,
+                                                        RpcChannel.FIRST_REPLY,
+                                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                        10000);
                         if (responses.length == 0) {
                             try {
                                 Thread.sleep(500);
@@ -493,7 +495,7 @@ public class TribesClusterManager implements ClusterManager {
         log.debug("Enter: TribesClusterManager::shutdown");
         if (channel != null) {
             try {
-                channel.removeChannelListener(rpcChannel);
+                channel.removeChannelListener(initRpcChannel);
                 channel.removeChannelListener(channelListener);
                 channel.stop(Channel.DEFAULT);
             } catch (ChannelException e) {
@@ -510,8 +512,8 @@ public class TribesClusterManager implements ClusterManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-        if (rpcRequestHandler != null) {
-            rpcRequestHandler.setConfigurationContext(configurationContext);
+        if (rpcInitRequestHandler != null) {
+            rpcInitRequestHandler.setConfigurationContext(configurationContext);
         }
         if (channelListener != null) {
             channelListener.setConfigurationContext(configurationContext);
