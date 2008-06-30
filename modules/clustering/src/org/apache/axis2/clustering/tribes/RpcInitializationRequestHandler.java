@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.Serializable;
 
 /**
- * Handles RPC Channel requests from members
+ * Handles RPC initialization requests from members
  */
 public class RpcInitializationRequestHandler implements RpcCallback {
 
