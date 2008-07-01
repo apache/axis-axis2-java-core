@@ -264,6 +264,31 @@
                                 <filter token="ant.version" value="${ant.version}"/>
                                 <filter token="commons.logging.version" value="${commons.logging.version}"/>
                                 <filter token="log4j.version" value="${log4j.version}"/>
+                                
+                                <!--
+								  If it is neccessary to create the eclipse project manually without using "mvn eclipse:eclipse" command uncomment the following section which copies 
+								  the required jars to the the project lib folder
+								  -->
+
+                                
+                                <property name="m2.local.repo" value="${settings.localRepository}"/>
+                                <mkdir dir="./lib"/>
+                                <copy todir="./lib" file="${m2.local.repo}/org/apache/ant/ant/${ant.version}/ant-${ant.version}.jar" />
+                                <copy todir="./lib" file="${m2.local.repo}/commons-logging/commons-logging/${commons.logging.version}/commons-logging-${commons.logging.version}.jar" />
+                                <copy todir="./lib" file="${m2.local.repo}/log4j/log4j/${log4j.version}/log4j-${log4j.version}.jar" />
+                                <copy todir="./lib" file="${m2.local.repo}/org/apache/axis2/axis2/${version}/axis2-${version}.jar" />
+                                
+                                <mkdir dir="./icons"/>
+                                <copy todir="./icons" overwrite="true">
+                                    <fileset dir="../conf/service/icons" />
+                                </copy>
+                                <copy todir="." file="../conf/service/build.properties" overwrite="true" filtering="on"/>
+                                <copy todir="." file="../conf/service/help_toc.xml" overwrite="true"/>
+                                <copy todir="." file="../conf/service/plugin.xml" overwrite="true" filtering="on"/>
+                                <copy todir="." file="../conf/service/.classpath" overwrite="true" filtering="on"/>
+                                <copy todir="." file="../conf/service/.project" overwrite="true" filtering="on"/>
+                                <copy todir="." file="../conf/service/readme.txt" overwrite="true"/>
+
                                 <delete dir="./target/plugin/${service.plugin.version}"/>
                                 <mkdir dir="./target/plugin/${service.plugin.version}"/>
                                 <delete dir="./target/dist"/>
