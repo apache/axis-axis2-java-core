@@ -28,5 +28,12 @@ public class Constants {
         public static final int GENERAL_BUTTON_WIDTH=80;
 
         public static final int GENERAL_COMP_HEIGHT=20;
+    
+    }
+    
+    public class ServiceConstants{
+    	public static final String RESOURCE_FOLDER="resources";						
+    	public static final String SERVICES_XSD_SCHEMA_NAME="services.xsd";				
+    	public static final String XML_SCHEMA="http://www.w3.org/2001/XMLSchema";	
     }
 }

@@ -19,8 +19,11 @@
 
 package org.apache.axis2.tool.service.eclipse.ui;
 
+import java.io.File;
+
 import org.apache.axis2.tool.service.bean.Page2Bean;
 import org.apache.axis2.tool.service.eclipse.plugin.ServiceArchiver;
+import org.apache.axis2.tool.util.ServicePluginUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -38,7 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
    
-    private static final String SERVICES_XML_NAME = "services.xml";
+    private static final String SERVICES_XML_NAME = "*.xml";
     private Text serviceXMLText;
     private Label manualSelectionLabel;
     private Label recommendationTextLable;
@@ -168,12 +171,14 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
     }
     
     private void handleModify(){
-        String serviceXMLString =serviceXMLText.getText().trim().toLowerCase(); 
+        String serviceXMLString =serviceXMLText.getText().trim(); 
         settings.put(PREF_SERVICE_XML_FILE,serviceXMLString);
         if (serviceXMLString.equals("")){
-           this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenameempty")); 
-        }else if(!serviceXMLString.endsWith(SERVICES_XML_NAME)){
-            this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenamewrong"));  
+           this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenameempty"));
+        }else if (!(new File(serviceXMLString)).exists()){
+        	this.updateStatus(ServiceArchiver.getResourceString("page2.error.servicenotexist"));
+        }else if(!ServicePluginUtils.isServicesXMLValid(serviceXMLString)){
+            this.updateStatus(ServiceArchiver.getResourceString("page2.error.serviceselectedinvalid"));  
         }else{
             this.updateStatus(null);
         }
