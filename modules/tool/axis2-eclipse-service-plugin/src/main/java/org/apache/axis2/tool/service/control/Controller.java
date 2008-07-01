@@ -160,35 +160,40 @@ public class Controller {
         String wsdlFilter = ".wsdl";
 
         try {
+        	String metaInfFolderName="META-INF";
+        	String libFolderName="lib";
+        	
             //create a temporary directory and copy the files
-            tempFileFolder = new File("Service-copy");
+            tempFileFolder = File.createTempFile("temp",".tmp");
+            tempFileFolder.deleteOnExit();
             if (tempFileFolder.exists()){deleteDir(tempFileFolder);}
             tempFileFolder.mkdir();
             
-            File metaInfFolder = new File(tempFileFolder, "META-INF");
+            File metaInfFolder = new File(tempFileFolder, metaInfFolderName);
             metaInfFolder.mkdir();
             
-            File libFolder = new File(tempFileFolder,"lib");
+            File libFolder = new File(tempFileFolder,libFolderName);
             libFolder.mkdir();
             
             FileCopier classFilecopier = new FileCopier();
             //copy the classes
             classFilecopier.copyFiles(classFileFolder, tempFileFolder,page1Bean.getFilter());
-            
+           
             //copy the service.xml
             FileCopier serviceXMLcopier = new FileCopier();
             serviceXMLcopier.copyFiles(serviceFile, metaInfFolder,xmlFilter);
-            
+           
             //copy the libs
             FileCopier libCopier = new FileCopier();
             for (int i=0;i < fileList.size();i++){
-            	libCopier.copyFiles((File)fileList.get(i),libFolder,null); 
+            	libCopier.copyFiles((File)fileList.get(i),libFolder,null);
             }
             
             if (isWSDLAvailable){
                 new FileCopier().copyFiles(wsdlFile, metaInfFolder,wsdlFilter);
             }
             //jar the temp directory. the output folder will be created if missing
+            
             new JarFileWriter().writeJarFile(outputFolder,
                     outputFileName,
                     tempFileFolder);
@@ -198,8 +203,6 @@ public class Controller {
             deleteDir(tempFileFolder);
              if (isServiceCreated)
                 serviceFile.delete();
-
-
         }
 
     }
