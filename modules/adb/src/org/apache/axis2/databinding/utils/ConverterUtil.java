@@ -160,7 +160,7 @@ public class ConverterUtil {
     }
 
     public static void appendTimeZone(Calendar calendar, StringBuffer dateString) {
-        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET);
+        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
         int timezoneOffSetInMinits = timezoneOffSet / 60000;
         if (timezoneOffSetInMinits < 0){
             dateString.append("-");
