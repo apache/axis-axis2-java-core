@@ -99,11 +99,13 @@ public class Time implements java.io.Serializable {
         source = source.trim();
 
         Calendar calendar = Calendar.getInstance();
+        int dsTimeOffset = calendar.get(Calendar.DST_OFFSET);
         calendar.clear();
         int hour = 0;
         int minite = 0;
         int second = 0;
         int miliSecond = 0;
+
         int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
          int milliSecondPartLength = 0;
         if (source.length() >= 8) {
@@ -195,7 +197,8 @@ public class Time implements java.io.Serializable {
         }
         calendar.set(Calendar.MILLISECOND, miliSecond);
 
-        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet - dsTimeOffset);
+        calendar.set(Calendar.DST_OFFSET, dsTimeOffset);
 
         return calendar;
     }
