@@ -88,7 +88,7 @@ public class LoadBalancerMode implements Mode {
         return membershipManagers;
     }
 
-    public void notifyMemberJoin(final Member member) { //TODO: ### rename this method
+    public void notifyMemberJoin(final Member member) { 
 
         if (Arrays.equals(loadBalancerDomain, member.getDomain())) {  // A peer load balancer has joined. Need to send it the entire member lists
             for (MembershipManager manager : membershipManagers) {
@@ -105,12 +105,15 @@ public class LoadBalancerMode implements Mode {
                             MemberJoinedCommand cmd = new MemberJoinedCommand();
                             cmd.setMember(member);
                             try {
-                                manager.getRpcMembershipChannel().send(primaryMembershipManager.getMembers(),
-                                                                       cmd,
-                                                                       RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                                       10000);
+                                RpcChannel rpcChannel = manager.getRpcMembershipChannel();
+                                rpcChannel.send(primaryMembershipManager.getMembers(),
+                                                cmd,
+                                                RpcChannel.ALL_REPLY,
+                                                Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                10000);
                             } catch (ChannelException e) {
-                                String errMsg = "Could not send MEMBER_JOINED[" + TribesUtil.getName(member) +
+                                String errMsg = "Could not send MEMBER_JOINED[" +
+                                                TribesUtil.getName(member) +
                                                 "] to all load balancer members ";
                                 log.error(errMsg, e);
                                 throw new RemoteProcessException(errMsg, e);
