@@ -48,6 +48,9 @@ public class MemberListCommand extends ControlCommand {
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         log.info("Received MEMBER_LIST message");
+        if(log.isDebugEnabled()){
+            log.debug("MembershipManager#domain: " + new String(membershipManager.getDomain()));
+        }
         Member localMember = membershipManager.getLocalMember();
         for (Member member : members) {
             addMember(localMember, member);
@@ -56,8 +59,9 @@ public class MemberListCommand extends ControlCommand {
 
     private void addMember(Member localMember, Member member) {
         log.info("Trying to add member " + TribesUtil.getName(member) + "...");
-        if (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
-              localMember.getPort() == member.getPort())) {
+        if (localMember == null ||
+            (!(Arrays.equals(localMember.getHost(), member.getHost()) &&
+              localMember.getPort() == member.getPort()))) {
             log.info("Added member " + TribesUtil.getName(member));
             membershipManager.memberAdded(member);
         }

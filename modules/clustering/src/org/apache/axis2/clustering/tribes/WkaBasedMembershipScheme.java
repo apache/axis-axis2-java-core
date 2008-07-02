@@ -19,13 +19,11 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
-import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.clustering.control.wka.RpcMembershipRequestHandler;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
@@ -354,9 +352,10 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             // Create an RpcChannel for each localDomain
             String domain = new String(appDomainMembershipManager.getDomain());
             RpcChannel rpcMembershipChannel =
-                    new RpcChannel(TribesUtil.getRpcMembershipChannelId(appDomainMembershipManager.getDomain()), 
+                    new RpcChannel(TribesUtil.getRpcMembershipChannelId(appDomainMembershipManager.getDomain()),
                                    channel,
-                                   new RpcMembershipRequestHandler(appDomainMembershipManager));
+                                   new RpcMembershipRequestHandler(appDomainMembershipManager,
+                                                                   this));
             appDomainMembershipManager.setRpcMembershipChannel(rpcMembershipChannel);
             if (log.isDebugEnabled()) {
                 log.debug("Created RPC Channel for application domain " + domain);
@@ -366,7 +365,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         // Create a Membership channel for handling membership requests
         RpcChannel rpcMembershipChannel =
                 new RpcChannel(TribesUtil.getRpcMembershipChannelId(localDomain),
-                               channel, new RpcMembershipRequestHandler(primaryMembershipManager));
+                               channel, new RpcMembershipRequestHandler(primaryMembershipManager,
+                                                                        this));
         primaryMembershipManager.setRpcMembershipChannel(rpcMembershipChannel);
 
         // Send JOIN message to a WKA member
@@ -388,7 +388,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                                                           10000);
                     if (responses.length == 0) {
                         try {
-                            if(log.isDebugEnabled()){
+                            if (log.isDebugEnabled()) {
                                 log.debug("No responses received");
                             }
                             Thread.sleep(500);
@@ -409,8 +409,6 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             }
             while (responses == null || responses.length == 0);  // Wait until we've received at least one response
 
-            //TODO: ######## If this node is a LB, it needs to get the entire localDomain to member-list map
-
             for (Response response : responses) {
                 MemberListCommand command = (MemberListCommand) response.getMessage();
                 command.setMembershipManager(primaryMembershipManager);
@@ -427,27 +425,19 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                     }
                 }
             }
-
-            // Send MEMBER_JOINED to the group
-            if (primaryMembershipManager.getMembers().length > 0) {
-                log.info("Sending MEMBER_JOINED to group...");
-                MemberJoinedCommand memberJoinedCommand = new MemberJoinedCommand();
-                memberJoinedCommand.setMember(primaryMembershipManager.getLocalMember());
-                try {
-                    rpcMembershipChannel.send(primaryMembershipManager.getMembers(),
-                                              memberJoinedCommand,
-                                              RpcChannel.ALL_REPLY,
-                                              Channel.SEND_OPTIONS_ASYNCHRONOUS |
-                                              TribesConstants.MEMBERSHIP_MSG_OPTION,
-                                              10000);
-                } catch (ChannelException e) {
-                    String msg = "Could not send MEMBER_JOINED message to group";
-                    log.error(msg, e);
-                    throw new ClusteringFault(msg, e);
-                }
-            }
         }
     }
+
+    /**
+     * When a JOIN message is received from some other member, it is notified using this method,
+     * so that membership scheme specific processing can be carried out
+     *
+     * @param member The member who just joined
+     */
+    public void processJoin(org.apache.catalina.tribes.Member member) {
+        mode.notifyMemberJoin(member);
+    }
+
 
     public Parameter getParameter(String name) {
         return parameters.get(name);

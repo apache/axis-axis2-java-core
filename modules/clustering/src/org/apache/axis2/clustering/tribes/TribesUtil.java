@@ -44,7 +44,7 @@ public class TribesUtil {
     }
 
     public static String getName(Member member) {
-        return getHost(member) + ":" + member.getPort();
+        return getHost(member) + ":" + member.getPort() + "(" + new String(member.getDomain())+ ")";
     }
 
     public static String getHost(Member member) {

@@ -41,6 +41,10 @@ public class MemberJoinedCommand extends ControlCommand {
         this.member = member;
     }
 
+    public Member getMember() {
+        return member;
+    }
+
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
         Member localMember = membershipManager.getLocalMember();
         if (localMember == null || !(Arrays.equals(localMember.getHost(), member.getHost()) &&

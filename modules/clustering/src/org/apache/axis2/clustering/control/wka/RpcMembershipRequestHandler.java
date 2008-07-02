@@ -20,8 +20,10 @@
 package org.apache.axis2.clustering.control.wka;
 
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.clustering.tribes.TribesUtil;
+import org.apache.axis2.clustering.tribes.WkaBasedMembershipScheme;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
 import org.apache.catalina.tribes.group.RpcCallback;
@@ -38,32 +40,47 @@ public class RpcMembershipRequestHandler implements RpcCallback {
 
     private static Log log = LogFactory.getLog(RpcMembershipRequestHandler.class);
     private MembershipManager membershipManager;
+    private WkaBasedMembershipScheme membershipScheme;
 
-    public RpcMembershipRequestHandler(MembershipManager membershipManager) {
+    public RpcMembershipRequestHandler(MembershipManager membershipManager,
+                                       WkaBasedMembershipScheme membershipScheme) {
         this.membershipManager = membershipManager;
+        this.membershipScheme = membershipScheme;
     }
 
     public Serializable replyRequest(Serializable msg, Member sender) {
         String domain = new String(sender.getDomain());
+
         if (log.isDebugEnabled()) {
             log.debug("Membership request received by RpcMembershipRequestHandler for domain " +
                       domain);
+            log.debug("local domain: " + new String(membershipManager.getDomain()));
         }
 
         if (msg instanceof JoinGroupCommand) {
-            log.info("Received JOIN message from " + TribesUtil.getName(sender) +
-                     TribesUtil.getName(sender) + " in domain " + domain);
+            log.info("Received JOIN message from " + TribesUtil.getName(sender));
             membershipManager.memberAdded(sender);
+
+            // do something specific for the membership scheme
+            membershipScheme.processJoin(sender);
 
             // Return the list of current members to the caller
             MemberListCommand memListCmd = new MemberListCommand();
             memListCmd.setMembers(membershipManager.getMembers());
+            if(log.isDebugEnabled()){
+                log.debug("Sent MEMBER_LIST to " + TribesUtil.getName(sender));
+            }
             return memListCmd;
         } else if (msg instanceof MemberJoinedCommand) {
-            log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(sender) +
-                     TribesUtil.getName(sender) + " in domain " + domain);
+            log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(sender));
+            MemberJoinedCommand command = (MemberJoinedCommand) msg;
+
+            // do something specific for the membership scheme
+            if (sender.equals(command.getMember())) { // only if the sender is the member who joine, we need to do some special processing
+                membershipScheme.processJoin(sender);  //TODO: This may not be necessary
+            }
+
             try {
-                MemberJoinedCommand command = (MemberJoinedCommand) msg;
                 command.setMembershipManager(membershipManager);
                 command.execute(null);
             } catch (ClusteringFault e) {

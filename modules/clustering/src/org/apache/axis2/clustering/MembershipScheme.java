@@ -34,4 +34,5 @@ public interface MembershipScheme {
      * @throws ClusteringFault If an error occurs while joining the group
      */
     void joinGroup() throws ClusteringFault;
+
 }

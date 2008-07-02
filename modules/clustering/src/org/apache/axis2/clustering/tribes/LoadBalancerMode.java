@@ -16,12 +16,18 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.MembershipListener;
+import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +41,14 @@ public class LoadBalancerMode implements Mode {
     private byte[] loadBalancerDomain;
     private Map<String, LoadBalanceEventHandler> lbEventHandlers;
     private List<MembershipManager> membershipManagers = new ArrayList<MembershipManager>();
+    private MembershipManager primaryMembershipManager;
 
     public LoadBalancerMode(byte[] loadBalancerDomain,
-                            Map<String, LoadBalanceEventHandler> lbEventHandlers) {
+                            Map<String, LoadBalanceEventHandler> lbEventHandlers,
+                            MembershipManager primaryMembershipManager) {
         this.loadBalancerDomain = loadBalancerDomain;
         this.lbEventHandlers = lbEventHandlers;
+        this.primaryMembershipManager = primaryMembershipManager;
     }
 
     public void addInterceptors(Channel channel) {
@@ -77,5 +86,41 @@ public class LoadBalancerMode implements Mode {
 
     public List<MembershipManager> getMembershipManagers() {
         return membershipManagers;
+    }
+
+    public void notifyMemberJoin(final Member member) { //TODO: ### rename this method
+
+        if (Arrays.equals(loadBalancerDomain, member.getDomain())) {  // A peer load balancer has joined. Need to send it the entire member lists
+            for (MembershipManager manager : membershipManagers) {
+                manager.sendMemberList(member);
+            }
+        } else { // An application member has joined.
+
+            // Need to notify all members in the group of the new app member
+            Thread th = new Thread() {
+                public void run() {
+                    for (MembershipManager manager : membershipManagers) {
+                        if (Arrays.equals(manager.getDomain(), member.getDomain())) {
+                            manager.sendMemberJoinedToAll(member);
+                            MemberJoinedCommand cmd = new MemberJoinedCommand();
+                            cmd.setMember(member);
+                            try {
+                                manager.getRpcMembershipChannel().send(primaryMembershipManager.getMembers(),
+                                                                       cmd,
+                                                                       RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                                       10000);
+                            } catch (ChannelException e) {
+                                String errMsg = "Could not send MEMBER_JOINED[" + TribesUtil.getName(member) +
+                                                "] to all load balancer members ";
+                                log.error(errMsg, e);
+                                throw new RemoteProcessException(errMsg, e);
+                            }
+                            break;
+                        }
+                    }
+                }
+            };
+            th.start();
+        }
     }
 }

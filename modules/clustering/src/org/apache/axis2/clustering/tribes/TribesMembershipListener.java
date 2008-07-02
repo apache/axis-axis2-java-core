@@ -24,7 +24,7 @@ import org.apache.catalina.tribes.MembershipListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**                                                                          
+/**
  * Membership changes are notified using this class
  */
 public class TribesMembershipListener implements MembershipListener {
@@ -40,7 +40,7 @@ public class TribesMembershipListener implements MembershipListener {
         if (membershipManager.memberAdded(member)) {
             log.info("New member " + TribesUtil.getName(member) + " joined cluster.");
         }
-       //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
+        //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 
     public void memberDisappeared(Member member) {

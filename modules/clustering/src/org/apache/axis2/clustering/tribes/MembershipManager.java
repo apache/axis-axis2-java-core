@@ -21,6 +21,7 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Channel;
@@ -66,6 +67,10 @@ public class MembershipManager {
 
     public void setRpcMembershipChannel(RpcChannel rpcMembershipChannel) {
         this.rpcMembershipChannel = rpcMembershipChannel;
+    }
+
+    public RpcChannel getRpcMembershipChannel() {
+        return rpcMembershipChannel;
     }
 
     public void setStaticMembershipInterceptor(
@@ -127,15 +132,14 @@ public class MembershipManager {
 
         // If this member already exists or if the member belongs to another domain,
         // there is no need to add it
-        if(members.contains(member) || !Arrays.equals(domain, member.getDomain())){
+        if (members.contains(member) || !Arrays.equals(domain, member.getDomain())) {
             return false;
         }
 
         if (staticMembershipInterceptor != null) { // this interceptor is null when multicast based scheme is used
             staticMembershipInterceptor.addStaticMember(member);
             if (log.isDebugEnabled()) {
-                log.debug("Added static member " + TribesUtil.getName(member) +
-                          " from domain " + new String(member.getDomain()));
+                log.debug("Added static member " + TribesUtil.getName(member));
             }
         }
 
@@ -163,7 +167,7 @@ public class MembershipManager {
                     members.add(localMember); // Need to set the local member too
                     memListCmd.setMembers(members.toArray(new Member[members.size()]));
                     rpcMembershipChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
-                                    Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                                              Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
                 } catch (Exception e) {
                     String errMsg = "Could not send MEMBER_LIST to well-known member " +
                                     TribesUtil.getName(member);
@@ -179,6 +183,58 @@ public class MembershipManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Send the list of members to the <code>member</code>
+     *
+     * @param member The member to whom the member list has to be sent
+     */
+    public void sendMemberList(Member member) {
+        try {
+            MemberListCommand memListCmd = new MemberListCommand();
+            List<Member> members = new ArrayList<Member>(this.members);
+            memListCmd.setMembers(members.toArray(new Member[members.size()]));
+            rpcMembershipChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
+                                      Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+            if (log.isDebugEnabled()) {
+                log.debug("Sent MEMBER_LIST to " + TribesUtil.getName(member));
+            }
+        } catch (Exception e) {
+            String errMsg = "Could not send MEMBER_LIST to member " + TribesUtil.getName(member);
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
+        }
+    }
+
+    /**
+     * Inform all members that a particular member just joined
+     *
+     * @param member The member who just joined
+     */
+    public void sendMemberJoinedToAll(Member member) {
+        try {
+
+            MemberJoinedCommand cmd = new MemberJoinedCommand();
+            cmd.setMember(member);
+            ArrayList<Member> membersToSend = (ArrayList<Member>) (((ArrayList) members).clone());
+            membersToSend.remove(member); // Do not send MEMBER_JOINED to the new member who just joined
+
+            if (membersToSend.size() > 0) {
+                rpcMembershipChannel.send(membersToSend.toArray(new Member[membersToSend.size()]), cmd,
+                                          RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                          10000);
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent MEMBER_JOINED[" + TribesUtil.getName(member) +
+                              "] to all members in domain " + new String(domain));
+                }
+            }
+        } catch (Exception e) {
+            String errMsg = "Could not send MEMBER_JOINED[" + TribesUtil.getName(member) +
+                            "] to all members ";
+            log.error(errMsg, e);
+            throw new RemoteProcessException(errMsg, e);
+        }
     }
 
     private org.apache.axis2.clustering.Member toAxis2Member(Member member) {

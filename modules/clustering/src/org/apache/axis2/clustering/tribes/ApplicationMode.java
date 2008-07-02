@@ -16,6 +16,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.interceptors.DomainFilterInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +32,11 @@ public class ApplicationMode implements Mode {
      private static final Log log = LogFactory.getLog(LoadBalancerMode.class);
 
     private byte[] loadBalancerDomain;
+    private MembershipManager membershipManager;
 
-    public ApplicationMode(byte[] loadBalancerDomain) {
+    public ApplicationMode(byte[] loadBalancerDomain, MembershipManager membershipManager) {
         this.loadBalancerDomain = loadBalancerDomain;
+        this.membershipManager = membershipManager;
     }
 
     public void addInterceptors(Channel channel) {
@@ -52,5 +55,14 @@ public class ApplicationMode implements Mode {
 
     public List<MembershipManager> getMembershipManagers() {
         return new ArrayList<MembershipManager>();
+    }
+
+    public void notifyMemberJoin(final Member member) {
+        Thread th = new Thread(){
+            public void run() {
+                membershipManager.sendMemberJoinedToAll(member);
+            }
+        };
+        th.start();
     }
 }

@@ -80,7 +80,7 @@ public class TribesClusterManager implements ClusterManager {
     private ConfigurationContext configurationContext;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
-    private MembershipManager membershipManager;
+    private MembershipManager primaryMembershipManager;
     private RpcInitializationRequestHandler rpcInitRequestHandler;
     private MembershipScheme membershipScheme;
 
@@ -138,17 +138,17 @@ public class TribesClusterManager implements ClusterManager {
     public void init() throws ClusteringFault {
         log.info("Initializing cluster...");
         addRequestBlockingHandlerToInFlows();
-        membershipManager = new MembershipManager(configurationContext);
+        primaryMembershipManager = new MembershipManager(configurationContext);
 
         channel = new GroupChannel();
-        channelSender = new ChannelSender(channel, membershipManager, synchronizeAllMembers());
+        channelSender = new ChannelSender(channel, primaryMembershipManager, synchronizeAllMembers());
         channelListener =
                 new ChannelListener(configurationContext, configurationManager, contextManager);
         channel.addChannelListener(channelListener);
 
         byte[] domain = getClusterDomain();
         log.info("Cluster domain: " + new String(domain));
-        membershipManager.setDomain(domain);
+        primaryMembershipManager.setDomain(domain);
 
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
@@ -165,7 +165,7 @@ public class TribesClusterManager implements ClusterManager {
         configureMembershipScheme(domain, mode.getMembershipManagers());
         setMemberTransportInfo();
 
-        TribesMembershipListener membershipListener = new TribesMembershipListener(membershipManager);
+        TribesMembershipListener membershipListener = new TribesMembershipListener(primaryMembershipManager);
         channel.addMembershipListener(membershipListener);
         try {
             channel.start(Channel.DEFAULT); // At this point, this member joins the group
@@ -183,7 +183,7 @@ public class TribesClusterManager implements ClusterManager {
         }
 
         log.info("Local Member " + TribesUtil.getLocalHost(channel));
-        TribesUtil.printMembers(membershipManager);
+        TribesUtil.printMembers(primaryMembershipManager);
 
         membershipScheme.joinGroup();
 
@@ -343,9 +343,9 @@ public class TribesClusterManager implements ClusterManager {
 
     private void configureMode(byte[] domain) {
         if (loadBalanceMode) {
-            mode = new LoadBalancerMode(domain, lbEventHandlers);
+            mode = new LoadBalancerMode(domain, lbEventHandlers, primaryMembershipManager);
         } else {
-            mode = new ApplicationMode(domain);
+            mode = new ApplicationMode(domain, primaryMembershipManager);
         }
         mode.init(channel);
     }
@@ -366,7 +366,7 @@ public class TribesClusterManager implements ClusterManager {
         if (scheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             membershipScheme = new WkaBasedMembershipScheme(channel, mode,
                                                             membershipManagers,
-                                                            membershipManager,
+                                                            primaryMembershipManager,
                                                             parameters, localDomain, members);
         } else if (scheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
             membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters, localDomain);
@@ -397,15 +397,15 @@ public class TribesClusterManager implements ClusterManager {
         // Do not send another request to these members
         List<String> sentMembersList = new ArrayList<String>();
         sentMembersList.add(TribesUtil.getLocalHost(channel));
-        Member[] members = membershipManager.getMembers();
+        Member[] members = primaryMembershipManager.getMembers();
         if (members.length == 0) {
             return;
         }
 
         while (members.length > 0 && numberOfTries < 5) {
             Member member = (numberOfTries == 0) ?
-                            membershipManager.getLongestLivingMember() : // First try to get from the longest member alive
-                            membershipManager.getRandomMember(); // Else get from a random member
+                            primaryMembershipManager.getLongestLivingMember() : // First try to get from the longest member alive
+                            primaryMembershipManager.getRandomMember(); // Else get from a random member
             String memberHost = TribesUtil.getName(member);
             log.info("Trying to send intialization request to " + memberHost);
             try {
@@ -440,7 +440,7 @@ public class TribesClusterManager implements ClusterManager {
                 }
             }
             numberOfTries++;
-            members = membershipManager.getMembers();
+            members = primaryMembershipManager.getMembers();
             if (numberOfTries >= members.length) {
                 break;
             }

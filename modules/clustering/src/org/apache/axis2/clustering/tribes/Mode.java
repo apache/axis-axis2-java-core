@@ -16,6 +16,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.catalina.tribes.Channel;
+import org.apache.catalina.tribes.Member;
 
 import java.util.List;
 
@@ -38,5 +39,17 @@ public interface Mode {
      */
     void init(Channel channel);
 
+    /**
+     * Get all the membership managers associated with a particular mode
+     *
+     * @return membership managers associated with a particular mode
+     */
     List<MembershipManager> getMembershipManagers();
+
+    /**
+     * Notify to the relevant parties that a member <code>member</code> joined
+     *
+     * @param member The member to whom this member lists have to be sent
+     */
+    void notifyMemberJoin(Member member);
 }
