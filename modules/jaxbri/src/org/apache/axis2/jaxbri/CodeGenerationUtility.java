@@ -27,6 +27,7 @@ import com.sun.tools.xjc.api.Property;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
+import com.sun.tools.xjc.BadCommandLineException;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -57,11 +58,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.net.URLClassLoader;
+import java.net.URL;
 
 public class CodeGenerationUtility {
     private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
@@ -104,7 +103,7 @@ public class CodeGenerationUtility {
                 //here we have to set a proper system ID. otherwise when processing the
                 // included schaemas for this schema we have a problem
                 // it creates the system ID using this target namespace value
-                
+
                 inputSource.setSystemId(baseURI + "xsd" + i + ".xsd");
                 inputSource.setPublicId(schema.getTargetNamespace());
                 schemaToInputSourceMap.put(schema,inputSource);
@@ -155,9 +154,14 @@ public class CodeGenerationUtility {
 
                 SchemaCompiler sc = XJC.createSchemaCompiler();
                 if (bindingFileName != null){
-                    InputSource inputSoruce = new InputSource(new FileInputStream(bindingFileName));
-                    inputSoruce.setSystemId(new File(bindingFileName).getAbsolutePath());
-                    sc.getOptions().addBindFile(inputSoruce);
+                    if (bindingFileName.endsWith(".jar")) {
+                        scanEpisodeFile(new File(bindingFileName), sc);
+                    } else {
+                        InputSource inputSoruce = new InputSource(new FileInputStream(bindingFileName));
+                        inputSoruce.setSystemId(new File(bindingFileName).getAbsolutePath());
+                        sc.getOptions().addBindFile(inputSoruce);
+                    }
+
                 }
 
                 key = (XmlSchema) schemaIter.next();
@@ -170,7 +174,7 @@ public class CodeGenerationUtility {
                         String pkg = (String)nsMap.get(namespace);
                         registerNamespace(sc, namespace, pkg);
                     }
-                } 
+                }
 
                 sc.setEntityResolver(resolver);
 
@@ -313,6 +317,19 @@ public class CodeGenerationUtility {
             throw new RuntimeException(e);
         }
     }
+
+    private static void scanEpisodeFile(File jar, SchemaCompiler sc)
+            throws BadCommandLineException, IOException {
+
+        URLClassLoader ucl = new URLClassLoader(new URL[]{jar.toURL()});
+        Enumeration<URL> resources = ucl.findResources("META-INF/sun-jaxb.episode");
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            sc.getOptions().addBindFile(new InputSource(url.toExternalForm()));
+        }
+
+    }
+
 
     private static void registerNamespace(SchemaCompiler sc, String namespace, String pkgName) throws Exception {
         Document doc = XMLUtils.newDocument();
