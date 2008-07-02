@@ -75,7 +75,7 @@ public class TribesClusterManager implements ClusterManager {
 
     private HashMap<String, Parameter> parameters;
     private ManagedChannel channel;
-    private RpcChannel initRpcChannel;
+    private RpcChannel rpcInitChannel;
     private RpcChannel membershipRpcChannel;
     private ConfigurationContext configurationContext;
     private ChannelListener channelListener;
@@ -153,7 +153,7 @@ public class TribesClusterManager implements ClusterManager {
         // RpcChannel is a ChannelListener. When the reply to a particular request comes back, it
         // picks it up. Each RPC is given a UUID, hence can correlate the request-response pair
         rpcInitRequestHandler = new RpcInitializationRequestHandler(configurationContext);
-        initRpcChannel =
+        rpcInitChannel =
                 new RpcChannel(TribesUtil.getRpcInitChannelId(domain),
                                channel, rpcInitRequestHandler);
         if (log.isDebugEnabled()) {
@@ -412,7 +412,7 @@ public class TribesClusterManager implements ClusterManager {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses;
                     do {
-                        responses = initRpcChannel.send(new Member[]{member},
+                        responses = rpcInitChannel.send(new Member[]{member},
                                                         command,
                                                         RpcChannel.FIRST_REPLY,
                                                         Channel.SEND_OPTIONS_ASYNCHRONOUS,
@@ -495,7 +495,7 @@ public class TribesClusterManager implements ClusterManager {
         log.debug("Enter: TribesClusterManager::shutdown");
         if (channel != null) {
             try {
-                channel.removeChannelListener(initRpcChannel);
+                channel.removeChannelListener(rpcInitChannel);
                 channel.removeChannelListener(channelListener);
                 channel.stop(Channel.DEFAULT);
             } catch (ChannelException e) {

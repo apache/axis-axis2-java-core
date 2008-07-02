@@ -376,10 +376,10 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         if (primaryMembershipManager.getMembers().length > 0) {
             log.info("Sending JOIN message to WKA members...");
             org.apache.catalina.tribes.Member[] wkaMembers = primaryMembershipManager.getMembers(); // The well-known members
-            try {
+            /*try {
                 Thread.sleep(3000); // Wait for sometime so that the WKA members can receive the MEMBER_LIST message, if they have just joined the group
             } catch (InterruptedException ignored) {
-            }
+            }*/   //TODO: #### Need to double check whether this sleep is necessary
             Response[] responses = null;
             do {
                 try {
