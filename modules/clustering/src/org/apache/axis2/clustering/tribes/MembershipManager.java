@@ -27,6 +27,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.RemoteProcessException;
+import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.membership.MemberImpl;
@@ -35,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -166,8 +168,27 @@ public class MembershipManager {
                     List<Member> members = new ArrayList<Member>(this.members);
                     members.add(localMember); // Need to set the local member too
                     memListCmd.setMembers(members.toArray(new Member[members.size()]));
-                    rpcMembershipChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
-                                              Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+
+                    Response[] responses =
+                            rpcMembershipChannel.send(new Member[]{member}, memListCmd,
+                                                      RpcChannel.ALL_REPLY,
+                                                      Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                                      TribesConstants.MEMBERSHIP_MSG_OPTION, 10000);
+
+                    // Once a response is received from the WKA member to the MEMBER_LIST message,
+                    // if it does not belong to this domain, simply remove it from the members
+                    if(responses != null && responses.length > 0 && responses[0] != null){
+                        Member source = responses[0].getSource();
+                        if(!Arrays.equals(source.getDomain(), member.getDomain())){
+                            if(log.isDebugEnabled()){
+                                log.debug("Member " + TribesUtil.getName(source) +
+                                          " does not belong to local domain " + new String(domain)+
+                                          ". Hence removing it from the list.");
+                            }
+                            members.remove(member);
+                            return false;
+                        }
+                    }
                 } catch (Exception e) {
                     String errMsg = "Could not send MEMBER_LIST to well-known member " +
                                     TribesUtil.getName(member);
@@ -196,7 +217,8 @@ public class MembershipManager {
             List<Member> members = new ArrayList<Member>(this.members);
             memListCmd.setMembers(members.toArray(new Member[members.size()]));
             rpcMembershipChannel.send(new Member[]{member}, memListCmd, RpcChannel.ALL_REPLY,
-                                      Channel.SEND_OPTIONS_ASYNCHRONOUS, 10000);
+                                      Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                      TribesConstants.MEMBERSHIP_MSG_OPTION, 10000);
             if (log.isDebugEnabled()) {
                 log.debug("Sent MEMBER_LIST to " + TribesUtil.getName(member));
             }
@@ -222,7 +244,9 @@ public class MembershipManager {
 
             if (membersToSend.size() > 0) {
                 rpcMembershipChannel.send(membersToSend.toArray(new Member[membersToSend.size()]), cmd,
-                                          RpcChannel.ALL_REPLY, Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                          RpcChannel.ALL_REPLY,
+                                          Channel.SEND_OPTIONS_ASYNCHRONOUS |
+                                          TribesConstants.MEMBERSHIP_MSG_OPTION,
                                           10000);
                 if (log.isDebugEnabled()) {
                     log.debug("Sent MEMBER_JOINED[" + TribesUtil.getName(member) +

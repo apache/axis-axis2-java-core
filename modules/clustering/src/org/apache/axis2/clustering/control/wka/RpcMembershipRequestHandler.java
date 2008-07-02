@@ -75,11 +75,6 @@ public class RpcMembershipRequestHandler implements RpcCallback {
             log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(sender));
             MemberJoinedCommand command = (MemberJoinedCommand) msg;
 
-            // do something specific for the membership scheme
-            if (sender.equals(command.getMember())) { // only if the sender is the member who joine, we need to do some special processing
-                membershipScheme.processJoin(sender);  //TODO: This may not be necessary
-            }
-
             try {
                 command.setMembershipManager(membershipManager);
                 command.execute(null);
@@ -90,13 +85,16 @@ public class RpcMembershipRequestHandler implements RpcCallback {
             }
         } else if (msg instanceof MemberListCommand) {
             try {                    //TODO: What if we receive more than one member list message?
+                log.info("Received MEMBER_LIST message from " + TribesUtil.getName(sender));
                 MemberListCommand command = (MemberListCommand) msg;
                 command.setMembershipManager(membershipManager);
                 command.execute(null);
 
+                return "Processed MEMBER_LIST message";
                 //TODO Send MEMBER_JOINED messages to all nodes
             } catch (ClusteringFault e) {
-                String errMsg = "Cannot handle MEMBER_LIST message";
+                String errMsg = "Cannot handle MEMBER_LIST message from " +
+                                TribesUtil.getName(sender);
                 log.error(errMsg, e);
                 throw new RemoteProcessException(errMsg, e);
             }

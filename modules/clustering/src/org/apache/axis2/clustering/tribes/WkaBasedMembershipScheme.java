@@ -358,7 +358,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                                                                    this));
             appDomainMembershipManager.setRpcMembershipChannel(rpcMembershipChannel);
             if (log.isDebugEnabled()) {
-                log.debug("Created RPC Channel for application domain " + domain);
+                log.debug("Created RPC Membership Channel for application domain " + domain);
             }
         }
 
@@ -367,6 +367,9 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                 new RpcChannel(TribesUtil.getRpcMembershipChannelId(localDomain),
                                channel, new RpcMembershipRequestHandler(primaryMembershipManager,
                                                                         this));
+        if(log.isDebugEnabled()){
+            log.debug("Created primary membership channel " + new String(localDomain));
+        }
         primaryMembershipManager.setRpcMembershipChannel(rpcMembershipChannel);
 
         // Send JOIN message to a WKA member

@@ -47,7 +47,6 @@ public class MemberListCommand extends ControlCommand {
     }
 
     public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
-        log.info("Received MEMBER_LIST message");
         if(log.isDebugEnabled()){
             log.debug("MembershipManager#domain: " + new String(membershipManager.getDomain()));
         }
