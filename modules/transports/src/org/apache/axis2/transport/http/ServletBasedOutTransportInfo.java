@@ -38,4 +38,8 @@ public class ServletBasedOutTransportInfo implements OutTransportInfo {
     public void addHeader(String headerName, String headerValue) {
         response.addHeader(headerName, headerValue);
     }
+
+    public void setStatus(int status) {
+        response.setStatus(status);
+    }
 }
