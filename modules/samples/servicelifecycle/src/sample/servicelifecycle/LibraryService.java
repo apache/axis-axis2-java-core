@@ -22,6 +22,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+
+import sample.servicelifecycle.LibraryConstants;
 import sample.servicelifecycle.bean.Book;
 import sample.servicelifecycle.bean.BookList;
 import sample.servicelifecycle.bean.User;
@@ -52,7 +54,7 @@ public class LibraryService {
     }
 
     public Book lendBook(String isbn, String userName) throws AxisFault {
-        if (isLooged(userName)) {
+        if (isLogged(userName)) {
             Book book = availableBookList.getBook(isbn);
             if (book == null) {
                 book = lendBookList.getBook(isbn);
@@ -75,7 +77,7 @@ public class LibraryService {
         lendBookList.removeBook(tempBook);
     }
 
-    private boolean isLooged(String userName) {
+    private boolean isLogged(String userName) {
         return userList.isLogged(userName);
     }
 

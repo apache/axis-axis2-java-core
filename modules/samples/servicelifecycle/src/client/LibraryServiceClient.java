@@ -41,8 +41,8 @@ public class LibraryServiceClient {
         client.runClient();
     }
 
-    public void runClient() throws Exception {
-        System.out.println("=====Welcome to Libraray client======");
+    public void showOptions() {
+    	System.out.println("=====Welcome to Libraray client======");
         System.out.println("                                     ");
         System.out.println(" To list All books type 1");
         System.out.println(" To list Available books type 2");
@@ -54,7 +54,10 @@ public class LibraryServiceClient {
         System.out.println(" To exit type -1 ");
         System.out.println("                                      ");
         System.out.println("                                      ");
-        System.out.println("Enter service epr address :          ");
+       
+    }
+    public void runClient() throws Exception {
+    	System.out.println("Enter service epr address :          ");
         String epr = getInput();
         RPCServiceClient rpcClient = new RPCServiceClient();
         Options opts = new Options();
@@ -62,12 +65,20 @@ public class LibraryServiceClient {
         rpcClient.setOptions(opts);
         LibraryServiceClient client = new LibraryServiceClient();
         while (true) {
+        	showOptions();
             System.out.println("Type your command here : ");
             String commandsParms = getInput();
             if (commandsParms != null) {
                 String[] args = commandsParms.split(" ");
                 String firstarg = args[0];
-                int command = Integer.parseInt(firstarg);
+                int command;
+                try {
+                	command = Integer.parseInt(firstarg);
+                }
+                catch (NumberFormatException e) {
+                	System.out.println("Illegal argument entered.\n");
+                	continue;
+				}
                 switch (command) {
                     case 1 : {
                         client.listAllBook(rpcClient);
@@ -154,6 +165,10 @@ public class LibraryServiceClient {
                     }
                     case -1 : {
                         System.exit(0);
+                    }
+                    default: {
+                    	System.out.println("Wrong argument.\n");
+                    	break;
                     }
                 }
             }
