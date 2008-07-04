@@ -248,7 +248,8 @@ public class CodeGenWizard extends Wizard implements INewWizard, Java2WSDLConsta
                                                                                                 optionsPage.getSelectedLanguage(),
                                                                                                 outputPage.getOutputLocation(),
                                                                                                 optionsPage.getNs2PkgMapping(),
-                                                                                                isGenerateServerSideInterface);
+                                                                                                isGenerateServerSideInterface,
+                                                                                                optionsPage.getAdvanceOptions());
 
                  //Fix for the CodeGenConfiguration Contructor Change
                  //CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);

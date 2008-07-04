@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -66,7 +67,8 @@ public class WSDL2JavaGenerator {
             		  String selectedLanguage,
             		  String outputLocation,
             		  String namespace2packageList,
-            		  boolean isServerSideInterface
+            		  boolean isServerSideInterface,
+            		  HashMap advanceOptions
             		  )
     {
        Map optionMap = new HashMap();
@@ -143,6 +145,19 @@ public class WSDL2JavaGenerator {
 	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new CommandLineOption(
 	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new String[0]));
        }
+       
+       if (advanceOptions != null) {
+			for (Iterator iterator = advanceOptions.keySet().iterator(); iterator
+					.hasNext();) {
+				String type = (String) iterator.next();
+				String[] parameters;
+				if (advanceOptions.get(type) == null)
+					parameters = new String[0];
+				else
+					parameters = (String[]) advanceOptions.get(type);
+				optionMap.put(type, new CommandLineOption(type, parameters));
+			}
+		}
        return optionMap;
        
     }
