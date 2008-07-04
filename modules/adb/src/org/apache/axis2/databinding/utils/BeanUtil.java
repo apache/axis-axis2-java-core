@@ -31,6 +31,7 @@ import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.ExcludeInfo;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.FieldComparator;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -86,6 +87,13 @@ public class BeanUtil {
             if (MessageContext.getCurrentMessageContext() != null) {
                 axisService = MessageContext.getCurrentMessageContext().getAxisService();
             }
+            boolean sortAttributes = true;
+            if (axisService != null) {
+                Parameter sortAtt = axisService.getParameter("SortAttributes");
+                if (sortAtt !=null && "false".equals(sortAtt.getValue())){
+                    sortAttributes = false;
+                }
+            }
             BeanExcludeInfo beanExcludeInfo = null;
             Class beanClass = beanObject.getClass();
             if (axisService != null && axisService.getExcludeInfo() != null) {
@@ -124,7 +132,9 @@ public class BeanUtil {
                 Field jProperty = (Field)propertyList.get(i);
                 properties[i] = jProperty;
             }
-            Arrays.sort(properties , new FieldComparator());
+            if (sortAttributes) {
+                Arrays.sort(properties , new FieldComparator());
+            }
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
             HashMap propertMap = new HashMap();

@@ -22,10 +22,7 @@ package org.apache.axis2.description.java2wsdl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -112,6 +109,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     //To check whether we need to generate Schema element for Exception
     protected boolean generateBaseException;
 
+    protected boolean sortAttributes = true;
+
     public NamespaceGenerator getNsGen() throws Exception {
         if (nsGen == null) {
             nsGen = new DefaultNamespaceGenerator();
@@ -152,6 +151,12 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             this.schema_namespace_prefix = schematargetNamespacePrefix;
         } else {
             this.schema_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
+        }
+        if (service !=null ) {
+            Parameter sortAtt = service.getParameter("SortAttributes");
+            if (sortAtt !=null && "false".equals(sortAtt.getValue())){
+                sortAttributes = false;
+            }
         }
     }
 
@@ -546,7 +551,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 }
             }
             Field[] properties = (Field[]) propertiesSet.toArray(new Field[0]);
-            Arrays.sort(properties, new FieldComparator());
+            if (sortAttributes) {
+                Arrays.sort(properties, new FieldComparator());
+            }
             for (int i = 0; i < properties.length; i++) {
                 Field property = properties[i];
                 boolean isArryType = property.getType().isArray();
@@ -593,7 +600,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             // end patch for Annogen -21
 
             Field[] froperties = (Field[]) FieldMap.values().toArray(new Field[0]);
-            Arrays.sort(froperties);
+            if (sortAttributes) {
+                Arrays.sort(froperties);
+            }
 
             for (int i = 0; i < froperties.length; i++) {
                 Field field = froperties[i];
