@@ -77,10 +77,10 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
     /**
      * The mode in which this member operates such as "loadBalance" or "application"
      */
-    private Mode mode;
+    private OperationMode mode;
 
     public WkaBasedMembershipScheme(ManagedChannel channel,
-                                    Mode mode,
+                                    OperationMode mode,
                                     List<MembershipManager> applicationDomainMembershipManagers,
                                     MembershipManager primaryMembershipManager,
                                     Map<String, Parameter> parameters,
@@ -418,8 +418,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                 command.execute(null); // Set the list of current members
 
                 // If the WKA member is not part of this group, remove it
-                if (!Arrays.equals(response.getSource().getDomain(),
-                                   primaryMembershipManager.getLocalMember().getDomain())) {
+                if (!TribesUtil.areInSameDomain(response.getSource(),
+                                                primaryMembershipManager.getLocalMember())) {
                     primaryMembershipManager.memberDisappeared(response.getSource());
                     if (log.isDebugEnabled()) {
                         log.debug("Removed member " + TribesUtil.getName(response.getSource()) +

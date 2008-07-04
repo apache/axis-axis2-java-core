@@ -53,10 +53,10 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
     /**
      * The mode in which this member operates such as "loadBalance" or "application"
      */
-    private Mode mode;
+    private OperationMode mode;
 
     public MulticastBasedMembershipScheme(ManagedChannel channel,
-                                          Mode mode,
+                                          OperationMode mode,
                                           Map<String, Parameter> parameters,
                                           byte[] domain) {
         this.channel = channel;

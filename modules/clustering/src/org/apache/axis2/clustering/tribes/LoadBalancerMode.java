@@ -27,14 +27,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Represents a member running in load balance mode
  */
-public class LoadBalancerMode implements Mode {
+public class LoadBalancerMode implements OperationMode {
 
     private static final Log log = LogFactory.getLog(LoadBalancerMode.class);
 
@@ -88,9 +87,14 @@ public class LoadBalancerMode implements Mode {
         return membershipManagers;
     }
 
-    public void notifyMemberJoin(final Member member) { 
+    public void notifyMemberJoin(final Member member) {
 
-        if (Arrays.equals(loadBalancerDomain, member.getDomain())) {  // A peer load balancer has joined. Need to send it the entire member lists
+        if (TribesUtil.isInDomain(member, loadBalancerDomain)) {  // A peer load balancer has joined
+
+            // Notify all members in the LB group
+            primaryMembershipManager.sendMemberJoinedToAll(member);
+
+            // Send the MEMBER_LISTS of all the groups to the the new LB member
             for (MembershipManager manager : membershipManagers) {
                 manager.sendMemberList(member);
             }
@@ -100,26 +104,40 @@ public class LoadBalancerMode implements Mode {
             Thread th = new Thread() {
                 public void run() {
                     for (MembershipManager manager : membershipManagers) {
-                        if (Arrays.equals(manager.getDomain(), member.getDomain())) {
+                        if (TribesUtil.isInDomain(member, manager.getDomain())) {
+
+                            // Send MEMBER_JOINED to the group of the new member
                             manager.sendMemberJoinedToAll(member);
-                            MemberJoinedCommand cmd = new MemberJoinedCommand();
-                            cmd.setMember(member);
-                            try {
-                                RpcChannel rpcChannel = manager.getRpcMembershipChannel();
-                                rpcChannel.send(primaryMembershipManager.getMembers(),
-                                                cmd,
-                                                RpcChannel.ALL_REPLY,
-                                                Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                10000);
-                            } catch (ChannelException e) {
-                                String errMsg = "Could not send MEMBER_JOINED[" +
-                                                TribesUtil.getName(member) +
-                                                "] to all load balancer members ";
-                                log.error(errMsg, e);
-                                throw new RemoteProcessException(errMsg, e);
-                            }
+
+                            // Send MEMBER_JOINED to the load balancer group
+                            sendMemberJoinedToLoadBalancerGroup(manager.getRpcMembershipChannel(),
+                                                                member);
                             break;
                         }
+                    }
+                }
+
+                /**
+                 * Send MEMBER_JOINED to the load balancer group
+                 * @param rpcChannel The RpcChannel corresponding to the member's group
+                 * @param member  The member who joined
+                 */
+                private void sendMemberJoinedToLoadBalancerGroup(RpcChannel rpcChannel,
+                                                                 Member member) {
+                    MemberJoinedCommand cmd = new MemberJoinedCommand();
+                    cmd.setMember(member);
+                    try {
+                        rpcChannel.send(primaryMembershipManager.getMembers(),
+                                        cmd,
+                                        RpcChannel.ALL_REPLY,
+                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                        10000);
+                    } catch (ChannelException e) {
+                        String errMsg = "Could not send MEMBER_JOINED[" +
+                                        TribesUtil.getName(member) +
+                                        "] to all load balancer members ";
+                        log.error(errMsg, e);
+                        throw new RemoteProcessException(errMsg, e);
                     }
                 }
             };

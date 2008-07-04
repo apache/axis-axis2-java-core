@@ -21,9 +21,9 @@ import org.apache.catalina.tribes.Member;
 import java.util.List;
 
 /**
- * The mode in which this member is running such a loadBalance or application
+ * The mode in which this member is operating such a loadBalance or application
  */
-public interface Mode {
+public interface OperationMode {
 
     /**
      * Add channel interecptors

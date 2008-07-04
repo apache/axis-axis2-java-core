@@ -21,6 +21,7 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
+import org.apache.catalina.tribes.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,5 +73,13 @@ public class TribesUtil {
 
     public static byte[] getRpcInitChannelId(byte[] domain) {
         return (new String(domain) + ":" + TribesConstants.RPC_INIT_CHANNEL).getBytes();
+    }
+
+    public static boolean isInDomain(Member member, byte[] domain){
+        return Arrays.equals(domain, member.getDomain());
+    }
+
+    public static boolean areInSameDomain(Member member1, Member member2){
+        return Arrays.equals(member1.getDomain(), member2.getDomain());
     }
 }

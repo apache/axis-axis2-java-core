@@ -87,7 +87,7 @@ public class TribesClusterManager implements ClusterManager {
     /**
      * The mode in which this member operates such as "loadBalance" or "application"
      */
-    private Mode mode;
+    private OperationMode mode;
 
     /**
      * Static members

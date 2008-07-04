@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
  *  Represents a member running in application mode
  */
-public class ApplicationMode implements Mode {
+public class ApplicationMode implements OperationMode {
 
      private static final Log log = LogFactory.getLog(LoadBalancerMode.class);
 

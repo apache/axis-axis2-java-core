@@ -134,7 +134,7 @@ public class MembershipManager {
 
         // If this member already exists or if the member belongs to another domain,
         // there is no need to add it
-        if (members.contains(member) || !Arrays.equals(domain, member.getDomain())) {
+        if (members.contains(member) || !TribesUtil.isInDomain(member, domain)) {
             return false;
         }
 
@@ -146,7 +146,7 @@ public class MembershipManager {
         }
 
         boolean shouldAddMember = localMember == null ||
-                                  Arrays.equals(localMember.getDomain(), member.getDomain());
+                                  TribesUtil.areInSameDomain(localMember, member);
 
         // If this member is a load balancer, notify the respective load balance event handler?
         if (loadBalanceEventHandler != null) {
@@ -179,9 +179,9 @@ public class MembershipManager {
                     // if it does not belong to this domain, simply remove it from the members
                     if(responses != null && responses.length > 0 && responses[0] != null){
                         Member source = responses[0].getSource();
-                        if(!Arrays.equals(source.getDomain(), member.getDomain())){
+                        if(!TribesUtil.areInSameDomain(source, member)){
                             if(log.isDebugEnabled()){
-                                log.debug("Member " + TribesUtil.getName(source) +
+                                log.debug("WKA Member " + TribesUtil.getName(source) +
                                           " does not belong to local domain " + new String(domain)+
                                           ". Hence removing it from the list.");
                             }

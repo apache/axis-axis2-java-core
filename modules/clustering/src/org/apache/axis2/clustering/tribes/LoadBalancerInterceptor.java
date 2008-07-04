@@ -19,8 +19,6 @@ import org.apache.catalina.tribes.ChannelMessage;
 import org.apache.catalina.tribes.group.ChannelInterceptorBase;
 import org.apache.catalina.tribes.membership.Membership;
 
-import java.util.Arrays;
-
 /**
  * This interceptor is used when this member is part of a load balancer cluster.
  * This load balancer is responsible for load balancing across applications deployed in
@@ -43,9 +41,10 @@ public class LoadBalancerInterceptor extends ChannelInterceptorBase {
     }
 
     public void messageReceived(ChannelMessage msg) {
-        // Ignore all messages which are not intended for the load balancer group
+        // Ignore all messages which are not intended for the load balancer group or which are not
+        // membership messages
         if (okToProcess(msg.getOptions()) ||
-            Arrays.equals(msg.getAddress().getDomain(), loadBalancerDomain)) {
+            TribesUtil.isInDomain(msg.getAddress(), loadBalancerDomain)) {
             super.messageReceived(msg);
         }
     }
