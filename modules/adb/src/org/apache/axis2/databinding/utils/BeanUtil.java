@@ -114,7 +114,10 @@ public class BeanUtil {
             Class supClass = beanClass.getSuperclass();
             while (!getQualifiedName(supClass.getPackage()).startsWith("java.")) {
                 properties = supClass.getDeclaredFields();
-                ExcludeInfo excludeInfo = axisService.getExcludeInfo();
+                ExcludeInfo excludeInfo = null;
+                if (axisService !=null) {
+                    excludeInfo = axisService.getExcludeInfo();
+                }
                 if (excludeInfo != null) {
                     beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getName());
                 }
