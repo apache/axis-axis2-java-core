@@ -2824,7 +2824,7 @@
                         }
                         else
                         {
-                          qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_STRING);
+                          qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_KEY_STRING);
                           if(qname_prefix != NULL)
                           {
                               text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, 
@@ -2990,7 +2990,7 @@
                       }
                       else
                       {
-                        qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_STRING);
+                        qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_KEY_STRING);
                         if(qname_prefix != NULL)
                         {
                             tmp_value = axutil_qname_get_localpart(element, env);
@@ -3225,6 +3225,7 @@
                 {
                 <xsl:choose>
                 <xsl:when test="$nativePropertyType='axiom_attribute_t*' and @isarray"><!-- for anyAttribute -->
+                    int i = 0;
                     for( i = 0; i &lt; axutil_array_list_size(<xsl:value-of select="$parentPropertyInstanceName"/>, env); i ++)
                     {
                         axiom_attribute_t *the_attrib = NULL;
@@ -3597,6 +3598,7 @@
                        {
                        <xsl:choose>
                        <xsl:when test="$nativePropertyType='axiom_attribute_t*' and @isarray"><!-- for anyAttribute -->
+                        int i = 0;
                         for( i = 0; i &lt; axutil_array_list_size(<xsl:value-of select="$parentPropertyInstanceName"/>, env); i ++)
                         {
                             axiom_attribute_t *the_attrib = NULL;
