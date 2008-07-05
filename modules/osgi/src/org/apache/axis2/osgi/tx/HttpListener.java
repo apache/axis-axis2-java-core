@@ -74,7 +74,7 @@ public class HttpListener implements TransportListener {
     private EndpointReference calculateEndpoint(String protocol, String serviceName, String ip) {
         String portS = context.getProperty("org.osgi.service.http.port");
         int port = 80;
-        if (portS != null || portS.length() != 0) {
+        if (portS != null && portS.length() != 0) {
             try {
                 port = Integer.parseInt(portS);
             } catch (NumberFormatException e) {//ignore
