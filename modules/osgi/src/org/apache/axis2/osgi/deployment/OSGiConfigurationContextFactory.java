@@ -24,10 +24,7 @@ import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.engine.AxisConfigurator;
-import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.*;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 import org.apache.axis2.osgi.tx.HttpListener;
 import org.apache.axis2.transport.TransportListener;
@@ -202,10 +199,8 @@ public class OSGiConfigurationContextFactory {
                         lock.unlock();
                     }
                 }
-            } else if (service instanceof Deployer) {
-                // TODO: TBD, there is no Axis2 API yet available to add deployers.
             } else if (service instanceof MessageReceiver) {
-                String mep = (String)reference.getProperty(MEP);
+                String mep = (String) reference.getProperty(MEP);
                 if (mep == null || mep.length() == 0) {
                     throw new RuntimeException(MEP + " is missing from message receiver object");
                 }
@@ -219,8 +214,22 @@ public class OSGiConfigurationContextFactory {
                         lock.unlock();
                     }
                 }
+            } else if (service instanceof AxisObserver) {
+                if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
+                                                                  ServiceEvent.MODIFIED) {
+                    AxisObserver axisObserver = (AxisObserver) service;
+                    lock.lock();
+                    try {
+                        axisObserver.init(axisConfig);
+                        axisConfig.addObservers(axisObserver);
+                    } finally {
+                        lock.unlock();
+                    }
+                }
             } else if (service instanceof TransportSender) {
                 //TODO: TBD
+            } else if (service instanceof Deployer) {
+                // TODO: TBD, there is no Axis2 API yet available to add deployers.
             }
         }
     }
