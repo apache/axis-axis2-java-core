@@ -31,6 +31,8 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportSender;
 import org.osgi.framework.*;
+import org.osgi.service.cm.ManagedService;
+import org.osgi.service.cm.ConfigurationException;
 
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -39,18 +41,36 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
+ * OSGiConfigurationContextFactory creates ConfigurationContext, which is the ultimate Axis2 environment.
+ * This creation is handled as a ManagedService service, thus, Configuraiton Admin has control over it.
  */
-public class OSGiConfigurationContextFactory {
+public class OSGiConfigurationContextFactory implements ManagedService {
 
-    public static ConfigurationContext createConfigurationContext(
-            AxisConfigurator axisConfigurator, BundleContext context) throws AxisFault {
+    private BundleContext context;
+
+    private ServiceRegistration registration;
+
+    public synchronized void start(BundleContext context) {
+        this.context = context;
+        Dictionary props = new Properties();
+        props.put(Constants.SERVICE_PID, "org.apache.axis2.osgi");
+        registration = context.registerService(ManagedService.class.getName(), this, props);
+    }
+
+    public synchronized void stop() {
+        registration.unregister();
+    }
+
+    public synchronized void startConfigurationContext(Dictionary dictionary) throws AxisFault {
+        AxisConfigurator configurator = new OSGiServerConfigurator(context);
         ConfigurationContext configCtx =
-                ConfigurationContextFactory.createConfigurationContext(axisConfigurator);
+                ConfigurationContextFactory.createConfigurationContext(configurator);
         ListenerManager listenerManager = new ListenerManager();
         listenerManager.init(configCtx);
         listenerManager.start();
         ListenerManager.defaultConfigurationContext = configCtx;
+        //register ConfigurationContext as a OSGi serivce
+        context.registerService(ConfigurationContext.class.getName(), configCtx, null);
 
         // first check (bundlestarts at the end or partially) {
         //      // loop  and add axis*
@@ -85,8 +105,15 @@ public class OSGiConfigurationContextFactory {
         prop.put(PROTOCOL, "http");
         //adding the default listener
         context.registerService(TransportListener.class.getName(), new HttpListener(context), prop);
+    }
 
-        return configCtx;
+    public void updated(Dictionary dictionary) throws ConfigurationException {
+        try {
+            startConfigurationContext(dictionary);
+        } catch (AxisFault e) {
+            String msg = "Error while creating ConfigurationContext";
+            throw new ConfigurationException(msg, msg, e);
+        }
 
     }
 
@@ -237,7 +264,7 @@ public class OSGiConfigurationContextFactory {
     /**
      * TODO: TBD, purpose of this listener is to listen to OSGi services that needed to be set as WS
      */
-    private static class WSListener implements ServiceListener  {
+    private static class WSListener implements ServiceListener {
 
         private ConfigurationContext configCtx;
 

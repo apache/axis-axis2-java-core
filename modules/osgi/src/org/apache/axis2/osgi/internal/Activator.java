@@ -16,10 +16,9 @@
 package org.apache.axis2.osgi.internal;
 
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisConfigurator;
-import org.apache.axis2.osgi.InitServlet;
 import org.apache.axis2.osgi.OSGiAxisServlet;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.AXIS2_OSGi_ROOT_CONTEXT;
+import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -29,30 +28,31 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import javax.servlet.ServletException;
 
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
-
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
- * TODO: TBD; yet the structure is being formed
  */
 public class Activator implements BundleActivator {
 
     private HttpServiceTracker tracker;
 
+    private final OSGiConfigurationContextFactory managedService;
+
+    public Activator() {
+        managedService = new OSGiConfigurationContextFactory();
+    }
+
 
     public void start(BundleContext context) throws Exception {
+        managedService.start(context);
+        managedService.updated(null);
         tracker = new HttpServiceTracker(context);
         tracker.open();
     }
 
     public void stop(BundleContext context) throws Exception {
         tracker.close();
-        //ungetService
-        ServiceReference axisConfigRef =
-                context.getServiceReference(AxisConfigurator.class.getName());
-        if (axisConfigRef != null) {
-            context.ungetService(axisConfigRef);
-        }
+        managedService.stop();
+        //ungetService ConfigurationContext.class.getName()
         ServiceReference configCtxRef =
                 context.getServiceReference(ConfigurationContext.class.getName());
         if (configCtxRef != null) {
@@ -60,9 +60,9 @@ public class Activator implements BundleActivator {
         }
     }
 
-    //service trackers
+    //HttpServiceTracker
 
-    private static class HttpServiceTracker extends ServiceTracker {
+    class HttpServiceTracker extends ServiceTracker {
 
         public HttpServiceTracker(BundleContext context) {
             super(context, HttpService.class.getName(), null);
@@ -72,8 +72,6 @@ public class Activator implements BundleActivator {
 
             HttpService httpService = (HttpService) context.getService(serviceReference);
             try {
-                InitServlet initServlet = new InitServlet(context);
-                httpService.registerServlet("/init_servlet_not_public", initServlet, null, null);
                 OSGiAxisServlet axisServlet = new OSGiAxisServlet(context);
                 ServiceReference configCtxRef =
                         context.getServiceReference(ConfigurationContext.class.getName());

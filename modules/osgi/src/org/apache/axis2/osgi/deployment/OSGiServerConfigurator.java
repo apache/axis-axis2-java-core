@@ -30,7 +30,7 @@ import java.util.Enumeration;
 
 /**
  * This is the heart of the OSGi deployment.
- * TODO: TBD
+ * 
  */
 public class OSGiServerConfigurator extends DeploymentEngine implements AxisConfigurator {
 
@@ -59,7 +59,6 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
         try {
             InputStream inputStream = axis2XmlUrl.openStream();
             populateAxisConfiguration(inputStream);
-            //TODO: DeploymentEngine should be scalable enough
             axisConfig.validateSystemPredefinedPhases();
             return axisConfig;
         } catch (IOException e) {
@@ -87,8 +86,6 @@ public class OSGiServerConfigurator extends DeploymentEngine implements AxisConf
             throw new DeploymentException(msg, e);
         }
         //TODO: if module deployer neede to set it should be set here.
-        //set the AxisConfiguration as a service.
-        context.registerService(AxisConfiguration.class.getName(), axisConfig, null);
         return axisConfig;
     }
 
