@@ -120,14 +120,15 @@ public abstract class BaseHandlerResolver implements HandlerResolver {
         if (pattern == null)
             return true;
         // build up the strings according to the regular expression defined at http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
-        String portInfoNamespaceURI = portInfoQName.getNamespaceURI();
+        // use the prefix, not the literal namespace
+        String portInfoPrefix = portInfoQName.getPrefix();
         String portInfoLocalPart = portInfoQName.getLocalPart();
-        String portInfoString = ((portInfoNamespaceURI == null) || (portInfoNamespaceURI.equals(""))) ? "" : portInfoNamespaceURI + ":";
+        String portInfoString = ((portInfoPrefix == null) || (portInfoPrefix.equals(""))) ? "" : portInfoPrefix + ":";
         portInfoString += portInfoLocalPart;
         
-        String patternStringNamespaceURI = pattern.getNamespaceURI();
+        String patternStringPrefix = pattern.getPrefix();
         String patternInfoLocalPart = pattern.getLocalPart();
-        String patternString = ((patternStringNamespaceURI == null) || (patternStringNamespaceURI.equals(""))) ? "" : patternStringNamespaceURI + ":";
+        String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";
         patternString += patternInfoLocalPart;
 
         /*
