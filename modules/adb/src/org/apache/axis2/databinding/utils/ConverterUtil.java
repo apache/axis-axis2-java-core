@@ -608,14 +608,13 @@ public class ConverterUtil {
         }
 
         Calendar calendar = Calendar.getInstance();
-        int dsTimeOffset = calendar.get(Calendar.DST_OFFSET);
         calendar.clear();
         calendar.set(Calendar.YEAR, year);
         //xml month stars from the 1 and calendar month is starts with 0
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet - dsTimeOffset);
-        calendar.set(Calendar.DST_OFFSET, dsTimeOffset);
+        calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+        calendar.set(Calendar.DST_OFFSET, 0);
         calendar.getTimeInMillis();
         if (bc){
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
@@ -868,7 +867,6 @@ public class ConverterUtil {
         // '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
         Date date = null;
         Calendar calendar = Calendar.getInstance();
-        int dsTimeOffset = calendar.get(Calendar.DST_OFFSET);
         calendar.clear();
 
 
@@ -984,10 +982,7 @@ public class ConverterUtil {
                 }
             }
             calendar.set(Calendar.MILLISECOND, miliSecond);
-            calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet - dsTimeOffset);
-            calendar.set(Calendar.DST_OFFSET, dsTimeOffset);
-
-
+            calendar.set(Calendar.DST_OFFSET, 0);
 
         } else {
             throw new NumberFormatException("date string can not be less than 19 charactors");
