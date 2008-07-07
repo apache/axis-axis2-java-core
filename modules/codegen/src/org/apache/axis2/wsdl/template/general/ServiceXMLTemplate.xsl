@@ -65,7 +65,7 @@
             <parameter name="modifyUserWSDLPortAddress">true</parameter>
             <xsl:for-each select="method">
 				<operation>
-					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
+					<xsl:attribute name="name"><xsl:value-of select="@originalName"/></xsl:attribute>
 					<xsl:attribute name="mep"><xsl:value-of select="@mepURI"/></xsl:attribute>
 					<xsl:attribute name="namespace"><xsl:value-of select="@namespace"/></xsl:attribute>
 					<actionMapping>

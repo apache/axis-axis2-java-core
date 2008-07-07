@@ -2188,6 +2188,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = axisOperation.getName().getLocalPart();
 
         addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
+        addAttribute(doc, "originalName", localPart, methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
                 WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
