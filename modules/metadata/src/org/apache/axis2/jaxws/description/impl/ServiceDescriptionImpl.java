@@ -49,6 +49,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xml.resolver.Catalog;
@@ -69,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -127,10 +129,7 @@ class ServiceDescriptionImpl
     // RUNTIME INFORMATION
     Map<String, ServiceRuntimeDescription> runtimeDescMap =
             new ConcurrentHashMap<String, ServiceRuntimeDescription>();
-            //Collections.synchronizedMap(new HashMap<String, ServiceRuntimeDescription>());
-
-    
-    
+    private static final String JAXWS_DYNAMIC_ENDPOINTS = "jaxws.dynamic.endpoints";
 
     /**
      * Create a service-requester side (aka client-side) service description.
@@ -534,18 +533,33 @@ class ServiceDescriptionImpl
     }
 
     private EndpointDescriptionImpl createEndpointDescriptionImpl(Class sei, QName portQName, String bindingId, String endpointAddress) {
-        EndpointDescriptionImpl endpointDescription;
-        Parameter parameter = configContext.getAxisConfiguration().getParameter("jaxws.dynamic.endpoints");
-        WeakHashMap<String, EndpointDescriptionImpl> cachedDescriptions = (WeakHashMap<String, EndpointDescriptionImpl>)
+        if (log.isDebugEnabled()) {
+            log.debug("Calling createEndpointDescriptionImpl : ("
+                      + portQName + "," + bindingId + "," + endpointAddress + ")");
+        }
+        EndpointDescriptionImpl endpointDescription = null;
+        AxisConfiguration configuration = configContext.getAxisConfiguration();
+        if (log.isDebugEnabled()) {
+            log.debug("looking for " + JAXWS_DYNAMIC_ENDPOINTS + " in AxisConfiguration : " + configuration);
+        }
+        Parameter parameter = configuration.getParameter(JAXWS_DYNAMIC_ENDPOINTS);
+        HashMap cachedDescriptions = (HashMap)
                 ((parameter == null) ? null : parameter.getValue());
         if(cachedDescriptions == null) {
-            cachedDescriptions = new WeakHashMap<String, EndpointDescriptionImpl>();
+            cachedDescriptions = new HashMap();
             try {
-                configContext.getAxisConfiguration().addParameter("jaxws.dynamic.endpoints", cachedDescriptions);
+                configuration.addParameter(JAXWS_DYNAMIC_ENDPOINTS, cachedDescriptions);
             } catch (AxisFault axisFault) {
                 throw new RuntimeException(axisFault);
             }
-            configContext.setProperty("jaxws.dynamic.endpoints", cachedDescriptions);
+            if (log.isDebugEnabled()) {
+                log.debug("Added new instance of cachedDescriptions : " + cachedDescriptions);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("found old jaxws.dynamic.endpoints cache in AxisConfiguration ("  +  cachedDescriptions + ") with size : ("
+                          + cachedDescriptions.size() + ")");
+            }
         }
 
         StringBuffer key = new StringBuffer();
@@ -555,12 +569,24 @@ class ServiceDescriptionImpl
         key.append(':');
         key.append(endpointAddress == null ? "NULL" : endpointAddress);
         synchronized(cachedDescriptions) {
-            endpointDescription = cachedDescriptions.get(key.toString());
+            WeakReference ref = (WeakReference) cachedDescriptions.get(key.toString());
+            if (ref != null) {
+                endpointDescription = (EndpointDescriptionImpl) ref.get();
+            }
         }
         if(endpointDescription == null) {
             endpointDescription = new EndpointDescriptionImpl(sei, portQName, true, this);
             synchronized(cachedDescriptions) {
-                cachedDescriptions.put(key.toString(), endpointDescription);
+                if (log.isDebugEnabled()) {
+                    log.debug("Calling cachedDescriptions.put : ("
+                              + key.toString() + ") : size - " + cachedDescriptions.size());
+                }
+                cachedDescriptions.put(key.toString(), new WeakReference(endpointDescription));
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("found old entry for endpointDescription in jaxws.dynamic.endpoints cache : ("
+                          + cachedDescriptions.size() + ")");
             }
         }
         return endpointDescription;

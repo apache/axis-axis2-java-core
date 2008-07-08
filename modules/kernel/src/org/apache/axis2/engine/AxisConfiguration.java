@@ -347,7 +347,17 @@ public class AxisConfiguration extends AxisDescription {
                 Iterator endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
                     String endpointName = (String) endpointNameIter.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding service to allEndpoints map: ("
+                                  + serviceName + "," + endpointName + ") ");
+                    }
+
                     allEndpoints.put(serviceName + "." + endpointName, axisService);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("After adding to allEndpoints map, size is "
+                              + allEndpoints.size(), 
+                              new Exception("AxisConfiguration.addServiceGroup called from"));
                 }
             }
 
@@ -364,7 +374,16 @@ public class AxisConfiguration extends AxisDescription {
         String serviceName = axisService.getName();
         AxisService oldService = (AxisService) allServices.get(serviceName);
         if (oldService == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Adding service to allServices map: [" + serviceName + "] ");
+            }
             allServices.put(serviceName, axisService);
+            if (log.isDebugEnabled()) {
+                log.debug("After adding to allServices map, size is "
+                          + allServices.size(), 
+                          new Exception("AxisConfiguration.addToAllServicesMap called from"));
+            }
+
         } else {
             // If we were already there, that's fine.  If not, fault!
             if (oldService != axisService) {
