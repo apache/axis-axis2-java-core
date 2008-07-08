@@ -143,7 +143,12 @@ public class ContextUtils {
                 log.debug("SERVLET_REQUEST Set");
             }
 
-            String pathInfo = req.getPathInfo();
+            String pathInfo = null;
+            try {
+                pathInfo = req.getPathInfo();
+            } catch (Throwable t){
+                log.debug("exception in getPathInfo", t);
+            }
             soapMessageContext.put(javax.xml.ws.handler.MessageContext.PATH_INFO, pathInfo);
             soapMessageContext
                     .setScope(javax.xml.ws.handler.MessageContext.PATH_INFO, Scope.APPLICATION);
