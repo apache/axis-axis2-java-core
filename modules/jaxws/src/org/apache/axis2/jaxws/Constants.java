@@ -47,4 +47,6 @@ public interface Constants {
      */
     public static final String JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING = 
         "org.apache.axis2.jaxws.enableJAXBPayloadStreaming";
+    public static final String MEP_CONTEXT = 
+        "org.apache.axis2.jaxws.handler.MEPContext";
 }

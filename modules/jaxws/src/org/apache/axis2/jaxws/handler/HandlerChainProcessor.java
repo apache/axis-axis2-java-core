@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
 import org.apache.axis2.jaxws.handler.factory.HandlerPostInvokerFactory;
@@ -340,6 +341,11 @@ public class HandlerChainProcessor {
             if (log.isDebugEnabled()) {
                 log.debug("Invoking handleMessage on: " + handler.getClass().getName()); 
             }
+            
+            // The pre and post invokers will likely need more than just the handler message context.
+            // They may need access to the axis service object or description objects.
+            currentMC.put(Constants.MEP_CONTEXT, mepCtx);
+
             getPreInvoker().preInvoke(currentMC);
             boolean success = handler.handleMessage(currentMC);
             getPostInvoker().postInvoke(currentMC);
