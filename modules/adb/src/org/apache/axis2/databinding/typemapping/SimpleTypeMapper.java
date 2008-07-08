@@ -288,19 +288,9 @@ public class SimpleTypeMapper {
             zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
             return zulu.format(((Calendar)obj).getTime());
         } else if (obj instanceof Date) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.clear();
-            calendar.setTime((Date)obj);
-            if (!calendar.isSet(Calendar.ZONE_OFFSET)){
-                calendar.setTimeZone(TimeZone.getDefault());
-            }
-            StringBuffer dateString = new StringBuffer(16);
-            ConverterUtil.appendDate(dateString, calendar);
-            ConverterUtil.appendTimeZone(calendar, dateString);
-            return dateString.toString();
-//            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
 //            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-//            return zulu.format(obj);
+            return zulu.format(obj);
         }
         return obj.toString();
     }
