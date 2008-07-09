@@ -86,7 +86,8 @@ public class JAXBDSContext {
     // Please don't use "by java type" processing to get around errors.
     private Class processType = null;
     private boolean isxmlList =false;
-    private String defaultNamespace;
+    
+    private String webServiceNamespace;
 
     /**
      * Full Constructor JAXBDSContext (most performant)
@@ -162,12 +163,30 @@ public class JAXBDSContext {
             Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
                     new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
             Map<String, Object> properties = null;
-            if (this.defaultNamespace != null) {
+            
+            /*
+             * We set the default namespace to the web service namespace to fix an
+             * obscur bug.
+             * 
+             * If the class representing a JAXB data object does not define a namespace
+             * (via an annotation like @XmlType or via ObjectFactory or schema gen information)
+             * then the namespace information is defaulted.
+             * 
+             * The xjc tool defaults the namespace information to unqualified.
+             * However the wsimport tool defaults the namespace to the namespace of the
+             * webservice.
+             * 
+             * To "workaround" this issue, a default namespace equal to the webservice
+             * namespace is set on the JAXB marshaller.  This has the effect of changing the
+             * "unqualified namespaces" into the namespace used by the webservice.
+             * 
+             */
+            if (this.webServiceNamespace != null) {
                 properties = new HashMap<String, Object>();
-                properties.put("com.sun.xml.bind.defaultNamespaceRemap", this.defaultNamespace);
+                properties.put("com.sun.xml.bind.defaultNamespaceRemap", this.webServiceNamespace);
             }
-            jc =
-                    JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey, cl, properties);
+            jc = JAXBUtils.getJAXBContext(contextPackages, constructType, 
+                                          contextPackagesKey, cl, properties);
             constructionType = constructType.value;
             autoJAXBContext = new WeakReference<JAXBContext>(jc);
         } else {
@@ -178,12 +197,8 @@ public class JAXBDSContext {
         return jc;
     }
 
-    public void setDefaultNamespace(String namespace) {
-        this.defaultNamespace = namespace;
-    }
-    
-    public String getDefaultNamespace() {
-        return this.defaultNamespace;
+    public void setWebServiceNamespace(String namespace) {
+        this.webServiceNamespace = namespace;
     }
     
     /** @return RPC Declared Type */

@@ -212,6 +212,12 @@
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
                                 </java>
+                                <echo>Generating java from greeterTypes.xsd</echo>
+                                <java classname="com.sun.tools.xjc.Driver" fork="true">
+                                    <classpath refid="maven.runtime.classpath"/>
+                                    <classpath location="${compiled.classes.dir}"/>
+                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
+                                </java>
                                 <echo>Generating java from ProxyDocLitWrapped.wsdl</echo>
                                 <java classname="com.sun.tools.xjc.Driver" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
@@ -320,12 +326,7 @@
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
                                 </java>
-                                <echo>Generating java from greeterTypes.xsd</echo>
-                                <java classname="com.sun.tools.xjc.Driver" fork="true">
-                                    <classpath refid="maven.runtime.classpath"/>
-                                    <classpath location="${compiled.classes.dir}"/>
-                                    <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
-                                </java>
+                                
                                 <echo>Generating java from EchoMessage.wsdl for javabean endpoint
                                     support
                                 </echo>
@@ -334,6 +335,7 @@
                                     <classpath location="${compiled.classes.dir}"/>
                                     <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
                                 </java>
+                                
                                 <echo>Generating java from resourceinjection.wsdl for javabean
                                     endpoint Resource Injection support
                                 </echo>
@@ -882,6 +884,7 @@
                                      basedir="${pom.basedir}/target/test-classes/servicejars/AddressBookService"
                                         />
                                 <delete dir="target/test-classes/servicejars/AddressBookService"/>
+
 
                                 <copy toDir="target/test-classes/servicejars/AppleFinderService/">
                                     <fileset dir="target/test-classes">
