@@ -64,6 +64,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                 String elementName = rootElement.getLocalName();
                 Dictionary headers = bundle.getHeaders();
                 String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
+                serviceGroup.setServiceGroupName(bundleSymbolicName);
                 HashMap wsdlServicesMap = new HashMap();
                 if (DeploymentConstants.TAG_SERVICE.equals(elementName)) {
                     AxisService axisService = new AxisService(bundleSymbolicName);
@@ -72,7 +73,13 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                     ServiceBuilder serviceBuilder = new OSGiServiceBuilder(configCtx, axisService);
                     serviceBuilder.setWsdlServiceMap(wsdlServicesMap);
                     AxisService service = serviceBuilder.populateService(rootElement);
-                    configCtx.getAxisConfiguration().addService(service);
+                    ArrayList serviceList = new ArrayList();
+                    serviceList.add(service);
+                    DeploymentEngine.addServiceGroup(serviceGroup,
+                                                     serviceList,
+                                                     null,
+                                                     null,
+                                                     configCtx.getAxisConfiguration());
                     //TODO: use OSGi log service from compendum.
                     System.out.println("[Axis2/OSGi] Deployed axis2 service:" + service.getName() +
                                        " in Bundle: " +
