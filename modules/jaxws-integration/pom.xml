@@ -883,7 +883,15 @@
                                         />
                                 <delete dir="target/test-classes/servicejars/AddressBookService"/>
 
-                                                                                            
+                                <copy toDir="target/test-classes/servicejars/AppleFinderService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/type_substitution/*"/>
+                                        <include name="org/apache/axis2/jaxws/type_substitution/jaxws/*"/>
+                                    </fileset>
+                                </copy>
+                                <zip destfile="target/test-classes/servicejars/AppleFinderService.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/AppleFinderService"/>
+                                <delete dir="target/test-classes/servicejars/AppleFinderService"/>
 
                                 <copy toDir="target/test-classes/servicejars/MtomSampleService/">
                                     <fileset dir="target/test-classes">
@@ -1335,6 +1343,7 @@
                         <include>**/SWAMTOMTests.java</include>
                         <include>**/RuntimeExceptionsAsyncMepTest.java</include>
                         <include>**/AddressingProviderTests.java</include>
+                        <include>**/TypeSubstitutionTests.java</include>
                     </includes>
                     <systemProperties>
                         <property>
