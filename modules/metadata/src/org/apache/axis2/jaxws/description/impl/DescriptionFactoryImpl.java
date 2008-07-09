@@ -51,6 +51,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of WSDL, Java classes
@@ -238,25 +239,68 @@ public class DescriptionFactoryImpl {
             DescriptionBuilderComposite serviceImplComposite = nameIter.next();
             if (isImpl(serviceImplComposite)) {
                 // process this impl class
-                ServiceDescriptionImpl serviceDescription = new ServiceDescriptionImpl(
-                        dbcMap, serviceImplComposite, configContext);
-                ServiceDescriptionValidator validator =
-                        new ServiceDescriptionValidator(serviceDescription);
-                if (validator.validate()) {
-                    serviceDescriptionList.add(serviceDescription);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Service Description created from DescriptionComposite: " +
-                                serviceDescription);
+                
+                // the implementation class represented by this DBC represents a single wsdl:service 
+                Set<QName> sQNames = serviceImplComposite.getServiceQNames();
+                if(sQNames == null
+                        ||
+                        sQNames.isEmpty()) {
+                    
+                    if(log.isDebugEnabled()) {
+                        log.debug("Adding ServiceDescription instances from composite");
                     }
-                } else {
+                    ServiceDescriptionImpl serviceDescription = new ServiceDescriptionImpl(
+                                                                                           dbcMap, serviceImplComposite, configContext);
+                    ServiceDescriptionValidator validator =
+                        new ServiceDescriptionValidator(serviceDescription);
+                    if (validator.validate()) {
+                        serviceDescriptionList.add(serviceDescription);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Service Description created from DescriptionComposite: " +
+                                      serviceDescription);
+                        }
+                    } else {
 
-                    String msg = Messages.getMessage("createSrvcDescrDBCMapErr",
-                    		                         validator.toString(),
-                    		                         serviceImplComposite.toString(),
-                    		                         serviceDescription.toString());
-                    throw ExceptionFactory.makeWebServiceException(msg);
+                        String msg = Messages.getMessage("createSrvcDescrDBCMapErr",
+                                                         validator.toString(),
+                                                         serviceImplComposite.toString(),
+                                                         serviceDescription.toString());
+                        throw ExceptionFactory.makeWebServiceException(msg);
+                    }
                 }
-            } else {
+                
+                // the implementation class represented by this DBC represents multiple wsdl:services
+                else {
+                    Iterator<QName> sQNameIter = sQNames.iterator();
+                    while(sQNameIter.hasNext()) {
+                        QName sQName = sQNameIter.next();
+                        if(log.isDebugEnabled()) {
+                            log.debug("Adding ServiceDescription from service QName set for : " + sQName);
+                        }
+                        ServiceDescriptionImpl serviceDescription = new ServiceDescriptionImpl(dbcMap, 
+                                                                                               serviceImplComposite, 
+                                                                                               configContext,
+                                                                                               sQName);
+                        ServiceDescriptionValidator validator =
+                            new ServiceDescriptionValidator(serviceDescription);
+                        if (validator.validate()) {
+                            serviceDescriptionList.add(serviceDescription);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Service Description created from DescriptionComposite: " +
+                                          serviceDescription);
+                            }
+                        } else {
+
+                            String msg = Messages.getMessage("createSrvcDescrDBCMapErr",
+                                                             validator.toString(),
+                                                             serviceImplComposite.toString(),
+                                                             serviceDescription.toString());
+                            throw ExceptionFactory.makeWebServiceException(msg);
+                        }
+                    }
+                }
+            } 
+            else {
                 if (log.isDebugEnabled()) {
                     log.debug("DBC is not a service impl: " + serviceImplComposite.toString());
                 }

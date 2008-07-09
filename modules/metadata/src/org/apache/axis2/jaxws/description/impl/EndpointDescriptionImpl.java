@@ -318,7 +318,19 @@ class EndpointDescriptionImpl
         this.parentServiceDescription = parent;
         this.serviceImplName = serviceImplName;
 
-        composite = getServiceDescriptionImpl().getDescriptionBuilderComposite(portCompositeIndex);
+        // if the ServiceDescription's service QName is specified, let's use that to get the
+        // correct DescriptionBuilderComposite
+        if(parent.getServiceQName() != null) {
+            composite = getServiceDescriptionImpl().getDescriptionBuilderComposite(parent.getServiceQName(),
+                                                                                   portCompositeIndex); 
+        }
+        
+        // otherwise we will get the DescriptionBuilderComposite by the current index
+        else {
+            composite = getServiceDescriptionImpl().getDescriptionBuilderComposite(null,
+                                                                                   portCompositeIndex);
+        }
+        
         if (composite == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("endpointDescriptionErr3"));
         }

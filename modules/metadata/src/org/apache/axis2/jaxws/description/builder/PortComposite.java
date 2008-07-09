@@ -19,14 +19,14 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import java.util.Iterator;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
@@ -69,7 +69,6 @@ public class PortComposite extends DescriptionBuilderComposite {
     
     public PortComposite(DescriptionBuilderComposite baseDBC) {
         this.baseDBC = baseDBC;
-        this.baseDBC.addPortComposite(this);
     }
     
     
@@ -239,6 +238,30 @@ public class PortComposite extends DescriptionBuilderComposite {
     
     public Definition getWsdlDefinition() {
         return baseDBC.getWsdlDefinition();
+    }
+    
+    public Set<QName> getServiceQNames() {
+        return baseDBC.getServiceQNames();
+    }
+
+    public Definition getWsdlDefinition(QName serviceQName) {
+        return baseDBC.getWsdlDefinition(serviceQName);
+    }
+
+    public void setServiceQNames(Set<QName> serviceQNames) {
+        baseDBC.setServiceQNames(serviceQNames);
+    }
+
+    public void setWsdlDefinition(QName serviceQName, Definition definition) {
+        baseDBC.setWsdlDefinition(serviceQName, definition);
+    }
+    
+    public void setwsdlURL(QName serviceQName, URL url) {
+        baseDBC.setwsdlURL(serviceQName, url);
+    }
+    
+    public URL getWsdlURL(QName serviceQName) {
+        return baseDBC.getWsdlURL(serviceQName);
     }
     
     

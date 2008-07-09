@@ -256,6 +256,12 @@ class ServiceDescriptionImpl
         this(dbcMap, composite, null);
     }
     
+    ServiceDescriptionImpl(HashMap<String, DescriptionBuilderComposite> dbcMap,
+                           DescriptionBuilderComposite composite,
+                           ConfigurationContext configContext) {
+        this(dbcMap, composite, configContext, null);
+    }
+    
     /**
      * Create a service-provider side Service description hierachy.  The hierachy is created entirely
      * from composite.  All relevant classes and interfaces referenced from the class represented by
@@ -266,7 +272,8 @@ class ServiceDescriptionImpl
     ServiceDescriptionImpl(
             HashMap<String, DescriptionBuilderComposite> dbcMap,
             DescriptionBuilderComposite composite, 
-            ConfigurationContext configContext) {
+            ConfigurationContext configContext, 
+            QName serviceQName) {
         this.composite = composite;
         
         this.configContext = configContext;
@@ -278,6 +285,21 @@ class ServiceDescriptionImpl
 
         this.dbcMap = dbcMap;
         this.isServerSide = true;
+        this.serviceQName = serviceQName;
+        
+        
+        // if the ServiceDescriptionImpl was constructed with a specific service QName
+        // we should use that to retrieve the potential list of PortComposite objects
+        List<PortComposite> portComposites = null;
+        
+        if(this.serviceQName != null) {
+            portComposites = composite.getPortComposites(this.serviceQName);
+        }
+        else {
+            portComposites = composite.getPortComposites();
+        }
+        
+        
         
         //capture the WSDL, if there is any...to be used for later processing
         setupWsdlDefinition();
@@ -290,7 +312,7 @@ class ServiceDescriptionImpl
         // It will be set by the EndpointDescriptionImpl since it is the one that knows
         // how to process the annotations and the defaults.
 
-        List<PortComposite> portComposites = composite.getPortComposites();
+        
         
         // If PortComposite instances were specified on the DBC we are currently processing
         // we want to switch the context of processing to the PortComposites
@@ -729,7 +751,7 @@ class ServiceDescriptionImpl
     }
     
     public DescriptionBuilderComposite getDescriptionBuilderComposite() {
-        return getDescriptionBuilderComposite(null);
+        return getDescriptionBuilderComposite(null, null);
     }
 
     /**
@@ -738,17 +760,38 @@ class ServiceDescriptionImpl
      * then the indiciated PortComposite will be returned. Otherwise, the instance DBC
      * will be returned.
      */
-    public DescriptionBuilderComposite getDescriptionBuilderComposite(Integer portCompositeIndex) {
+    public DescriptionBuilderComposite getDescriptionBuilderComposite(QName serviceQName, 
+                                                                      Integer portCompositeIndex) {
+        
+        DescriptionBuilderComposite dbc = null;
+        
+        // if the service QName was specified let's attempt to get the correct 
+        // PortComposite list
+        if(serviceQName != null
+                &&
+                composite.getServiceQNames() != null
+                &&
+                !composite.getServiceQNames().isEmpty()
+                &&
+                portCompositeIndex != null) {
+            List<PortComposite> pcList = composite.getPortComposites(serviceQName);
+            if(pcList != null) {
+                dbc = pcList.get(portCompositeIndex);
+            }
+            else {
+                dbc = composite;
+            }
+        }
         
         // ignore null values or values that would cause an IndexOutOfBoundsException
-        if(portCompositeIndex == null 
+        else if(portCompositeIndex == null 
                 || 
                 composite.getPortComposites() == null
                 ||
                 portCompositeIndex < 0
                 ||
                 portCompositeIndex >= composite.getPortComposites().size()) {
-            return composite;  
+            dbc = composite;  
         }
         
         // return the appropriate PortComposite instance
@@ -757,8 +800,10 @@ class ServiceDescriptionImpl
                 log.debug("Returning PortComposite at index: " + portCompositeIndex + 
                           " from ServiceDescriptionImpl: " + this.hashCode());
             }
-            return composite.getPortComposites().get(portCompositeIndex);
+            dbc = composite.getPortComposites().get(portCompositeIndex);
         }
+        
+        return dbc;
     }
 
     /* (non-Javadoc)
@@ -801,12 +846,40 @@ class ServiceDescriptionImpl
         }
         
         if (composite.isServiceProvider()) {
-
+            
             //  Currently, there is a bug which allows the wsdlDefinition to be placed
             //  on either the impl class composite or the sei composite, or both. We need to
             //  look in both places and find the correct one, if it exists.
+            
+            if(serviceQName != null
+                    &&
+                    composite.getWsdlDefinition(serviceQName) != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Found WSDL definition by service QName");
+                }
+                Definition def = composite.getWsdlDefinition(serviceQName);
+                URL url = composite.getWsdlURL(serviceQName);
+                this.wsdlURL = url != null ? url.toString() : null;
+                try {
+                    if (log.isDebugEnabled() ) {
+                        if (configContext != null) {
+                            log.debug("new WSDL4JWrapper-ConfigContext not null1"); 
+                        } else {
+                            log.debug("new WSDL4JWrapper-ConfigContext null1"); 
+                        }
+                    }
 
-            if (((composite.getWebServiceAnnot() != null) &&
+                    this.wsdlWrapper = new WSDL4JWrapper(url,
+                                                         def, 
+                                                         configContext,
+                                                         this.catalogManager);
+                } catch (WSDLException e) {
+                    throw ExceptionFactory.makeWebServiceException(
+                            Messages.getMessage("wsdlException", e.getMessage()), e);
+                }
+            }
+
+            else if (((composite.getWebServiceAnnot() != null) &&
                     DescriptionUtils.isEmpty(composite.getWebServiceAnnot().endpointInterface()))
                     ||
                     (!(composite.getWebServiceProviderAnnot() == null))) {
@@ -839,7 +912,7 @@ class ServiceDescriptionImpl
                 	if(wsdlLocation != null
                 			&&
                 			!"".equals(wsdlLocation)) {
-                		setWSDLDefinitionOnDBC(wsdlLocation);
+                	    setWSDLDefinitionOnDBC(wsdlLocation);
                 	}
                 }
 
@@ -880,6 +953,7 @@ class ServiceDescriptionImpl
                                                   this.catalogManager);
                             
                     } else if (composite.getWsdlDefinition() != null) {
+                        
                         //set the wsdl def from the impl. class composite
                         if (log.isDebugEnabled()) {
                             log.debug("Get the wsdl definition from the impl class composite.");
@@ -909,7 +983,7 @@ class ServiceDescriptionImpl
                     	    }
                     	    wsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
                     	}
-                    	
+                    	                    	
                     	// now check the impl
                     	if(wsdlLocation == null
                     	        ||
@@ -926,8 +1000,9 @@ class ServiceDescriptionImpl
                     	    if (log.isDebugEnabled()) {
                     	        log.debug("wsdl location =" + wsdlLocation);
                     	    }
-                            this.wsdlURL = wsdlLocation;
-                            setWSDLDefinitionOnDBC(wsdlLocation);
+                    	    
+                    	    this.wsdlURL = wsdlLocation;
+                    	    setWSDLDefinitionOnDBC(wsdlLocation);
                     	}
                     }
                 } catch (WSDLException e) {
