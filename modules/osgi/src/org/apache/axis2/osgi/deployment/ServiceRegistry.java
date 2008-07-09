@@ -22,6 +22,8 @@ import org.apache.axis2.deployment.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -33,6 +35,8 @@ import java.util.*;
  * Creates proper AxisServiceGroup/AxisService looking into bundles
  */
 public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
+
+    private static Log log = LogFactory.getLog(ServiceRegistry.class);
 
     public ServiceRegistry(BundleContext context, ConfigurationContext configCtx) {
         super(context, configCtx);
@@ -47,93 +51,124 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
         }
     }
 
-    private void addServices(Bundle bundle) throws AxisFault {
-        try {
+    /**
+     * When a bundle is started this method will look for xml files that suffix with "services.xml".
+     * Thus, a given bundle can have n number of *services.xml.
+     * Ex: my1services.xml and my2_services.xml.
+     * <p/>
+     * Due to security consideration, if one *services.xml fail, all the services will treated as fail.
+     *
+     * @param bundle registered bundle
+     */
+    private void addServices(Bundle bundle) {
+        if (!resolvedBundles.containsKey(bundle)) {
             Enumeration enumeration = bundle.findEntries("META-INF", "services.xml", false);
-            while (enumeration != null && enumeration.hasMoreElements()) {
-                URL url = (URL) enumeration.nextElement();
-                AxisServiceGroup serviceGroup =
-                        new AxisServiceGroup(configCtx.getAxisConfiguration());
-                serviceGroup.addParameter("last.updated", bundle.getLastModified());
-                ClassLoader loader =
-                        new BundleClassLoader(bundle, Registry.class.getClassLoader());
-                serviceGroup.setServiceGroupClassLoader(loader);
-                InputStream inputStream = url.openStream();
-                DescriptionBuilder builder = new DescriptionBuilder(inputStream, configCtx);
-                OMElement rootElement = builder.buildOM();
-                String elementName = rootElement.getLocalName();
-                Dictionary headers = bundle.getHeaders();
-                String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
-                serviceGroup.setServiceGroupName(bundleSymbolicName);
-                HashMap wsdlServicesMap = new HashMap();
-                if (DeploymentConstants.TAG_SERVICE.equals(elementName)) {
-                    AxisService axisService = new AxisService(bundleSymbolicName);
-                    axisService.setParent(serviceGroup);
-                    axisService.setClassLoader(loader);
-                    ServiceBuilder serviceBuilder = new OSGiServiceBuilder(configCtx, axisService);
-                    serviceBuilder.setWsdlServiceMap(wsdlServicesMap);
-                    AxisService service = serviceBuilder.populateService(rootElement);
-                    ArrayList serviceList = new ArrayList();
-                    serviceList.add(service);
-                    DeploymentEngine.addServiceGroup(serviceGroup,
-                                                     serviceList,
-                                                     null,
-                                                     null,
-                                                     configCtx.getAxisConfiguration());
-                    //TODO: use OSGi log service from compendum.
-                    System.out.println("[Axis2/OSGi] Deployed axis2 service:" + service.getName() +
-                                       " in Bundle: " +
-                                       bundle.getSymbolicName());
-                } else if (DeploymentConstants.TAG_SERVICE_GROUP.equals(elementName)) {
-                    ServiceGroupBuilder groupBuilder =
-                            new OSGiServiceGroupBuilder(rootElement, wsdlServicesMap,
-                                                        configCtx);
-                    ArrayList serviceList = groupBuilder.populateServiceGroup(serviceGroup);
-                    DeploymentEngine.addServiceGroup(serviceGroup,
-                                                     serviceList,
-                                                     null,
-                                                     null,
-                                                     configCtx.getAxisConfiguration());
-                    System.out.println("[Axis2/OSGi] Deployed axis2 service group:" +
-                                       serviceGroup.getServiceGroupName() + " in Bundle: " +
-                                       bundle.getSymbolicName());
-                }
-                //bundle Id keeps the association between bundle and axisService group for later use
-                serviceGroup.addParameter(OSGi_BUNDLE_ID, bundle.getBundleId());
-                resolvedBundles.put(bundle, serviceGroup);
-                //marked as resolved.
-                if (unreslovedBundles.contains(bundle)) {
-                    unreslovedBundles.remove(bundle);
-                }
+            int i = 0;
+            List<AxisServiceGroup> axisServiceGroupList = null;
+            if (enumeration != null) {
+                axisServiceGroupList = new ArrayList<AxisServiceGroup>();
             }
-        } catch (Throwable e) {
-            //TODO: TBD log
-            String msg = "Error while reading from the bundle";
-            if (e instanceof DeploymentException) {
-                String message = e.getMessage();
-                if (message != null && message.length() != 0) {
-                    if (message.indexOf(MODULE_NOT_FOUND_ERROR) > -1) {
-                        if (!unreslovedBundles.contains(bundle)) {
-                            unreslovedBundles.add(bundle);
+            while (enumeration != null && enumeration.hasMoreElements()) {
+                try {
+                    URL url = (URL) enumeration.nextElement();
+                    AxisServiceGroup serviceGroup =
+                            new AxisServiceGroup(configCtx.getAxisConfiguration());
+                    serviceGroup.addParameter("last.updated", bundle.getLastModified());
+                    ClassLoader loader =
+                            new BundleClassLoader(bundle, Registry.class.getClassLoader());
+                    serviceGroup.setServiceGroupClassLoader(loader);
+                    InputStream inputStream = url.openStream();
+                    DescriptionBuilder builder = new DescriptionBuilder(inputStream, configCtx);
+                    OMElement rootElement = builder.buildOM();
+                    String elementName = rootElement.getLocalName();
+                    Dictionary headers = bundle.getHeaders();
+                    String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
+                    bundleSymbolicName = bundleSymbolicName + "_" + i;
+                    serviceGroup.setServiceGroupName(bundleSymbolicName);
+                    HashMap wsdlServicesMap = new HashMap();
+                    if (DeploymentConstants.TAG_SERVICE.equals(elementName)) {
+                        AxisService axisService = new AxisService(bundleSymbolicName);
+                        axisService.setParent(serviceGroup);
+                        axisService.setClassLoader(loader);
+                        ServiceBuilder serviceBuilder =
+                                new OSGiServiceBuilder(configCtx, axisService);
+                        serviceBuilder.setWsdlServiceMap(wsdlServicesMap);
+                        AxisService service = serviceBuilder.populateService(rootElement);
+                        ArrayList serviceList = new ArrayList();
+                        serviceList.add(service);
+                        DeploymentEngine.addServiceGroup(serviceGroup,
+                                                         serviceList,
+                                                         null,
+                                                         null,
+                                                         configCtx.getAxisConfiguration());
+                        log.info("[Axis2/OSGi] Deployed axis2 service:" + service.getName() +
+                                 " in Bundle: " +
+                                 bundle.getSymbolicName());
+                    } else if (DeploymentConstants.TAG_SERVICE_GROUP.equals(elementName)) {
+                        ServiceGroupBuilder groupBuilder =
+                                new OSGiServiceGroupBuilder(rootElement, wsdlServicesMap,
+                                                            configCtx);
+                        ArrayList serviceList = groupBuilder.populateServiceGroup(serviceGroup);
+                        DeploymentEngine.addServiceGroup(serviceGroup,
+                                                         serviceList,
+                                                         null,
+                                                         null,
+                                                         configCtx.getAxisConfiguration());
+                        log.info("[Axis2/OSGi] Deployed axis2 service group:" +
+                                 serviceGroup.getServiceGroupName() + " in Bundle: " +
+                                 bundle.getSymbolicName());
+                    }
+                    //bundle Id keeps the association between bundle and axisService group for later use
+                    serviceGroup.addParameter(OSGi_BUNDLE_ID, bundle.getBundleId());
+                    axisServiceGroupList.add(serviceGroup);
+                    //marked as resolved.
+                    if (unreslovedBundles.contains(bundle)) {
+                        unreslovedBundles.remove(bundle);
+                    }
+                    i++;
+                } catch (Throwable e) {
+                    String msg = "Error while reading from the bundle";
+                    if (e instanceof DeploymentException) {
+                        String message = e.getMessage();
+                        if (message != null && message.length() != 0) {
+                            if (message.indexOf(MODULE_NOT_FOUND_ERROR) > -1) {
+                                if (!unreslovedBundles.contains(bundle)) {
+                                    log.info("A service being found with unmeant module " +
+                                             "dependency. Hence, moved it to UNRESOLVED state.");
+                                    unreslovedBundles.add(bundle);
+                                }
+                            } else {
+                                log.error(msg, e);
+                                break;
+                            }
+                        } else {
+                            log.error(msg, e);
+                            break;
                         }
                     } else {
-                        throw new AxisFault(msg, e);
+                        log.error(msg, e);
+                        break;
                     }
-                } else {
-                    throw new AxisFault(msg, e);
                 }
-            } else {
-                throw new AxisFault(msg, e);
+            }
+            if (axisServiceGroupList != null && axisServiceGroupList.size() > 0) {
+                resolvedBundles.put(bundle, axisServiceGroupList);
             }
         }
+
     }
 
     public void unRegister(Bundle bundle) throws AxisFault {
         lock.lock();
         try {
-            AxisServiceGroup axisServiceGroup = resolvedBundles.get(bundle);
-            if (axisServiceGroup != null) {
-                resolvedBundles.remove(bundle);
+            List<AxisServiceGroup> axisServiceGroupList = resolvedBundles.get(bundle);
+            for (AxisServiceGroup axisServiceGroup : axisServiceGroupList) {
+                if (resolvedBundles.containsKey(bundle)) {
+                    resolvedBundles.remove(bundle);
+                }
+                if (unreslovedBundles.contains(bundle)) {
+                    unreslovedBundles.remove(bundle);
+                }
                 try {
                     for (Iterator iterator = axisServiceGroup.getServices(); iterator.hasNext();) {
                         AxisService service = (AxisService) iterator.next();
@@ -147,11 +182,9 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                        bundle.getSymbolicName());
                 } catch (AxisFault e) {
                     String msg = "Error while removing the service group";
-                    throw new AxisFault(msg, e);
+                    log.error(msg, e);
                 }
-            }
-            if (unreslovedBundles.contains(bundle)) {
-                unreslovedBundles.remove(bundle);
+
             }
         } finally {
             lock.unlock();

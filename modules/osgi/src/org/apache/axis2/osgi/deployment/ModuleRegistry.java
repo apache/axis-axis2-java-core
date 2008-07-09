@@ -34,16 +34,20 @@ import java.net.URL;
 import java.util.*;
 
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @see org.osgi.framework.BundleListener
- * TODO: TBD removed sout
  */
 public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
+    private static Log log = LogFactory.getLog(ModuleRegistry.class);
+
     private Registry serviceRegistry;
 
-    public ModuleRegistry(BundleContext context, ConfigurationContext configCtx, Registry serviceRegistry) {
+    public ModuleRegistry(BundleContext context, ConfigurationContext configCtx,
+                          Registry serviceRegistry) {
         super(context, configCtx);
         this.serviceRegistry = serviceRegistry;
     }
@@ -59,58 +63,64 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
     }
 
-    public void unRegister(Bundle bundle) throws AxisFault {
+    public void unRegister(Bundle bundle) {
         lock.lock();
         try {
             List<Long> stopBundleList = new ArrayList<Long>();
-            AxisModule module = resolvedBundles.get(bundle);
-            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
-            for (Iterator iterator = axisConfig.getServiceGroups();iterator.hasNext();){
-                AxisServiceGroup axisServiceGroup = (AxisServiceGroup)iterator.next();
-                if (axisServiceGroup.isEngaged(module))  {
-                    Long value = (Long)axisServiceGroup.getParameterValue(OSGi_BUNDLE_ID);
-                    if (value != null) {
-                        stopBundleList.add(value);
-                     }
-                }
-            }
-            HashMap serviceMap = axisConfig.getServices();
-            Collection values = serviceMap.values();
-            for (Object value1 : values) {
-                AxisService axisService = (AxisService) value1;
-                if (axisService.isEngaged(module)) {
-                    Long value = (Long) axisService.getParameterValue(OSGi_BUNDLE_ID);
-                    if (value != null && !stopBundleList.contains(value)) {
-                        stopBundleList.add(value);
-                    }
-                }
-                for (Iterator iterator1 = axisService.getOperations(); iterator1.hasNext();) {
-                    AxisOperation axisOperation = (AxisOperation) iterator1.next();
-                    if (axisOperation.isEngaged(module)) {
-                        Long value = (Long) axisOperation.getParameterValue(OSGi_BUNDLE_ID);
-                        if (value != null && !stopBundleList.contains(value)) {
+            List<AxisModule> moduleList = resolvedBundles.get(bundle);
+            for (AxisModule module : moduleList) {
+                AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+                for (Iterator iterator = axisConfig.getServiceGroups(); iterator.hasNext();) {
+                    AxisServiceGroup axisServiceGroup = (AxisServiceGroup) iterator.next();
+                    if (axisServiceGroup.isEngaged(module)) {
+                        Long value = (Long) axisServiceGroup.getParameterValue(OSGi_BUNDLE_ID);
+                        if (value != null) {
                             stopBundleList.add(value);
                         }
                     }
                 }
-            }
-            if (module != null) {
-                resolvedBundles.remove(bundle);
-                axisConfig
-                        .removeModule(module.getName(), module.getVersion());
-                System.out.println("[Axis2/OSGi] Stopping" + module.getName() + ":" +
-                                   module.getVersion() + " moduel in Bundle - " +
-                                   bundle.getSymbolicName());
+                //
+                HashMap serviceMap = axisConfig.getServices();
+                Collection values = serviceMap.values();
+                for (Object value1 : values) {
+                    AxisService axisService = (AxisService) value1;
+                    if (axisService.isEngaged(module)) {
+                        Long value = (Long) axisService.getParameterValue(OSGi_BUNDLE_ID);
+                        if (value != null && !stopBundleList.contains(value)) {
+                            stopBundleList.add(value);
+                        }
+                    }
+                    for (Iterator iterator1 = axisService.getOperations(); iterator1.hasNext();) {
+                        AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                        if (axisOperation.isEngaged(module)) {
+                            Long value = (Long) axisOperation.getParameterValue(OSGi_BUNDLE_ID);
+                            if (value != null && !stopBundleList.contains(value)) {
+                                stopBundleList.add(value);
+                            }
+                        }
+                    }
+                }
+                axisConfig.removeModule(module.getName(), module.getVersion());
+                if (resolvedBundles.containsKey(bundle)) {
+                    resolvedBundles.remove(bundle);
+                }
+                log.info("[Axis2/OSGi] Stopping" + module.getName() + ":" +
+                         module.getVersion() + " moduel in Bundle - " +
+                         bundle.getSymbolicName());
             }
             for (Long bundleId : stopBundleList) {
                 Bundle stopBundle = context.getBundle(bundleId);
                 if (stopBundle != null) {
                     try {
-                        serviceRegistry.unRegister(bundle);
+                        serviceRegistry.unRegister(stopBundle);
                         stopBundle.stop();
                     } catch (BundleException e) {
-                        String msg = "Error while stoping the bundle";
-                        //TODO; TBD; error msg.
+                        String msg = "Error while stopping the bundle";
+                        log.error(msg, e);
+                    } catch (AxisFault e) {
+                        String msg = "Erro while stopping the bundle";
+                        log.error(msg, e);
+
                     }
                 }
             }
@@ -119,11 +129,27 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
         }
     }
 
-    private void addModules(Bundle bundle) throws AxisFault {
+    /**
+     * When the bundle is activated, this method will look for xml files that ends with "module.xml".
+     * Thus, a given bundle can have n number of Axis2 modules with differen names suffixed with module.xml.
+     * Ex: rampart_module.xml; rahas_module.xml addressingmodule.xml
+     * <p/>
+     * <p/>
+     * If there are n number of *module.xml and out of which failed modules will be ignored and and all the
+     * successful *module.xml files will use to crate the proper AxisModule. It is utmost important that
+     * that if n number of *module.xml files are present, module should be give a proper name.
+     *
+     * @param bundle started bundle
+     */
+    private void addModules(Bundle bundle) {
         if (!resolvedBundles.containsKey(bundle)) {
-            try {
-                Enumeration enumeration = bundle.findEntries("META-INF", "module.xml", false);
-                while (enumeration != null && enumeration.hasMoreElements()) {
+            Enumeration enumeration = bundle.findEntries("META-INF", "*module.xml", false);
+            List<AxisModule> moduleList = null;
+            if (enumeration != null) {
+                moduleList = new ArrayList<AxisModule>();
+            }
+            while (enumeration != null && enumeration.hasMoreElements()) {
+                try {
                     URL url = (URL) enumeration.nextElement();
                     AxisModule axismodule = new AxisModule();
                     ClassLoader loader =
@@ -133,7 +159,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                             new ModuleBuilder(url.openStream(), axismodule,
                                               configCtx.getAxisConfiguration());
                     Dictionary headers = bundle.getHeaders();
-                    String bundleSymbolicName = (String)headers.get("Bundle-SymbolicName");
+                    String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
                     if (bundleSymbolicName != null && bundleSymbolicName.length() != 0) {
                         axismodule.setName(bundleSymbolicName);
                     }
@@ -141,7 +167,6 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     builder.populateModule();
                     axismodule.setParent(configCtx.getAxisConfiguration());
                     //                axismodule.setFileName(new URL(bundle.getLocation()));
-                    //TODO this logic needed to be revised. remove sout
                     AxisModule module =
                             configCtx.getAxisConfiguration().getModule(axismodule.getName());
                     if (module == null) {
@@ -151,18 +176,22 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                         if (moduleObj != null) {
                             moduleObj.init(configCtx, axismodule);
                         }
-                        resolvedBundles.put(bundle, axismodule);
-                        System.out.println("[Axis2/OSGi] Starting any modules in Bundle - " +
-                                           bundle.getSymbolicName());
+                        moduleList.add(axismodule);
+                        log.info("[Axis2/OSGi] Starting any modules in Bundle - " +
+                                 bundle.getSymbolicName());
                     } else {
-                        System.out.println("[ModuleRegistry] Module : " + axismodule.getName() +
-                                           " is already available.");
+                        log.info("[ModuleRegistry] Module : " + axismodule.getName() +
+                                 " is already available.");
                     }
+                } catch (IOException e) {
+                    String msg = "Error while reading module.xml";
+                    log.error(msg, e);
                 }
-            } catch (IOException e) {
-                String msg = "Error while reading module.xml";
-                throw new AxisFault(msg, e);
             }
+            if (moduleList != null && moduleList.size() > 0) {
+                resolvedBundles.put(bundle, moduleList);
+            }
+
         }
 
     }

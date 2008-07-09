@@ -33,7 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractRegistry<V> implements Registry {
 
-    protected Map<Bundle, V> resolvedBundles = new ConcurrentHashMap<Bundle, V>();
+    protected Map<Bundle, List<V>> resolvedBundles = new ConcurrentHashMap<Bundle, List<V>>();
 
     protected List<Bundle> unreslovedBundles = new ArrayList<Bundle>();
 
