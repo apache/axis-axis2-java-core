@@ -19,20 +19,22 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.deployment.Deployer;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.*;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 import org.apache.axis2.osgi.tx.HttpListener;
-import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.*;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
 
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -46,72 +48,100 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class OSGiConfigurationContextFactory implements ManagedService {
 
+    private static Log log = LogFactory.getLog(OSGiConfigurationContextFactory.class);
+
     private BundleContext context;
 
-    private ServiceRegistration registration;
+    private ServiceRegistration mngServiceRegistration;
 
-    public synchronized void start(BundleContext context) {
+    private ConfigurationContext configCtx;
+
+    private ServiceRegistration configCtxServiceRegistration;
+
+
+    public synchronized void init(BundleContext context) {
         this.context = context;
         Dictionary props = new Properties();
         props.put(Constants.SERVICE_PID, "org.apache.axis2.osgi");
-        registration = context.registerService(ManagedService.class.getName(), this, props);
+        mngServiceRegistration =
+                context.registerService(ManagedService.class.getName(), this, props);
     }
 
     public synchronized void stop() {
-        registration.unregister();
+        if (mngServiceRegistration != null) {
+            mngServiceRegistration.unregister();
+        }
+        if (configCtx != null) {
+            try {
+                configCtx.terminate();
+                configCtx = null;
+            } catch (AxisFault e) {
+                String msg = "Error while ConfigurationContext is terminated";
+                log.error(msg, e);
+            }
+        }
+        log.info("Axis2 environment has stopped");
     }
 
     public synchronized void startConfigurationContext(Dictionary dictionary) throws AxisFault {
         AxisConfigurator configurator = new OSGiServerConfigurator(context);
-        ConfigurationContext configCtx =
-                ConfigurationContextFactory.createConfigurationContext(configurator);
+        configCtx = ConfigurationContextFactory.createConfigurationContext(configurator);
         ListenerManager listenerManager = new ListenerManager();
         listenerManager.init(configCtx);
         listenerManager.start();
         ListenerManager.defaultConfigurationContext = configCtx;
-        //register ConfigurationContext as a OSGi serivce
-        context.registerService(ConfigurationContext.class.getName(), configCtx, null);
-
-        // first check (bundlestarts at the end or partially) {
-        //      // loop  and add axis*
-        // } then {
-        //      // stat the bundle early
-        // }
-        Registry servicesRegistry = new ServiceRegistry(context, configCtx);
-        Registry moduleRegistry = new ModuleRegistry(context, configCtx, servicesRegistry);
-        Bundle[] bundles = context.getBundles();
-        if (bundles != null) {
-            for (Bundle bundle : bundles) {
-                if (bundle != context.getBundle()) {
-                    if (bundle.getState() == Bundle.ACTIVE) {
-                        moduleRegistry.register(bundle);
-                    }
-                }
-            }
-            for (Bundle bundle : bundles) {
-                if (bundle != context.getBundle()) {
-                    if (bundle.getState() == Bundle.ACTIVE) {
-                        servicesRegistry.register(bundle);
-                    }
-                }
-            }
-        }
-        context.addBundleListener(moduleRegistry);
-        context.addBundleListener(servicesRegistry);
-        context.addServiceListener(new AxisConfigServiceListener(configCtx, context));
-        context.addServiceListener(new WSListener(configCtx, context));
-
-        Dictionary prop = new Properties();
-        prop.put(PROTOCOL, "http");
-        //adding the default listener
-        context.registerService(TransportListener.class.getName(), new HttpListener(context), prop);
     }
 
     public void updated(Dictionary dictionary) throws ConfigurationException {
         try {
             startConfigurationContext(dictionary);
+            if (configCtxServiceRegistration != null) {
+                configCtxServiceRegistration.unregister();
+            }
+            //register ConfigurationContext as a OSGi serivce
+            configCtxServiceRegistration =
+                    context.registerService(ConfigurationContext.class.getName(), configCtx, null);
+
+            // first check (bundlestarts at the end or partially) {
+            //      // loop  and add axis*
+            // } then {
+            //      // stat the bundle early
+            // }
+            Registry servicesRegistry = new ServiceRegistry(context, configCtx);
+            Registry moduleRegistry = new ModuleRegistry(context, configCtx, servicesRegistry);
+            Bundle[] bundles = context.getBundles();
+            if (bundles != null) {
+                for (Bundle bundle : bundles) {
+                    if (bundle != context.getBundle()) {
+                        if (bundle.getState() == Bundle.ACTIVE) {
+                            moduleRegistry.register(bundle);
+                        }
+                    }
+                }
+                for (Bundle bundle : bundles) {
+                    if (bundle != context.getBundle()) {
+                        if (bundle.getState() == Bundle.ACTIVE) {
+                            servicesRegistry.register(bundle);
+                        }
+                    }
+                }
+            }
+            context.addBundleListener(moduleRegistry);
+            context.addBundleListener(servicesRegistry);
+            context.addServiceListener(new AxisConfigServiceListener(configCtx, context));
+            context.addServiceListener(new WSListener(configCtx, context));
+
+            Dictionary prop = new Properties();
+            prop.put(PROTOCOL, "http");
+            //adding the default listener
+            context.registerService(TransportListener.class.getName(), new HttpListener(context),
+                                    prop);
+
+
+            log.info("Axis2 environment has started.");
         } catch (AxisFault e) {
             String msg = "Error while creating ConfigurationContext";
+            log.error(msg, e);
             throw new ConfigurationException(msg, msg, e);
         }
 
@@ -146,8 +176,9 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             if (service instanceof TransportListener) {
                 String protocol = (String) reference.getProperty(PROTOCOL);
                 if (protocol == null || protocol.length() == 0) {
-                    throw new RuntimeException(
-                            "Protocol is not found for the trnasport object");
+                    String msg = "Protocol is not found for the trnasport object";
+                    log.error(msg);
+                    throw new RuntimeException(msg);
                 }
                 if (event.getType() == ServiceEvent.REGISTERED) {
                     TransportListener txListener =
@@ -172,6 +203,7 @@ public class OSGiConfigurationContextFactory implements ManagedService {
                             } catch (AxisFault e) {
                                 String msg = "Error while reading transport properties from :" +
                                              txListener.toString();
+                                log.error(msg, e);
                                 throw new RuntimeException(msg, e);
                             }
                         }
@@ -192,6 +224,7 @@ public class OSGiConfigurationContextFactory implements ManagedService {
                         }
                     } catch (AxisFault e) {
                         String msg = "Error while intiating and starting the listener";
+                        log.error(msg, e);
                         throw new RuntimeException(msg, e);
                     }
                 }
@@ -199,7 +232,9 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             } else if (service instanceof Builder) {
                 String contextType = (String) reference.getProperty(CONTENT_TYPE);
                 if (contextType == null || contextType.length() == 0) {
-                    throw new RuntimeException(CONTENT_TYPE + " is missing from builder object");
+                    String msg = CONTENT_TYPE + " is missing from builder object";
+                    log.error(msg);
+                    throw new RuntimeException(msg);
                 }
                 if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
                                                                   ServiceEvent.MODIFIED) {
@@ -214,7 +249,9 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             } else if (service instanceof MessageFormatter) {
                 String contextType = (String) reference.getProperty(CONTENT_TYPE);
                 if (contextType == null || contextType.length() == 0) {
-                    throw new RuntimeException(CONTENT_TYPE + " is missing from formatter object");
+                    String msg = CONTENT_TYPE + " is missing from formatter object";
+                    log.error(msg);
+                    throw new RuntimeException(msg);
                 }
                 if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
                                                                   ServiceEvent.MODIFIED) {
@@ -229,7 +266,9 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             } else if (service instanceof MessageReceiver) {
                 String mep = (String) reference.getProperty(MEP);
                 if (mep == null || mep.length() == 0) {
-                    throw new RuntimeException(MEP + " is missing from message receiver object");
+                    String msg = MEP + " is missing from message receiver object";
+                    log.error(msg);
+                    throw new RuntimeException(msg);
                 }
                 if (event.getType() == ServiceEvent.REGISTERED || event.getType() ==
                                                                   ServiceEvent.MODIFIED) {

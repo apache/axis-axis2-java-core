@@ -104,7 +104,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                 if (resolvedBundles.containsKey(bundle)) {
                     resolvedBundles.remove(bundle);
                 }
-                log.info("[Axis2/OSGi] Stopping" + module.getName() + ":" +
+                log.info("[Axis2/OSGi] Stopping :" + module.getName() + " : " +
                          module.getVersion() + " moduel in Bundle - " +
                          bundle.getSymbolicName());
             }

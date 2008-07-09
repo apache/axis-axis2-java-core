@@ -19,9 +19,9 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.osgi.OSGiAxisServlet;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.AXIS2_OSGi_ROOT_CONTEXT;
 import org.apache.axis2.osgi.deployment.OSGiConfigurationContextFactory;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.osgi.framework.*;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
@@ -31,11 +31,16 @@ import javax.servlet.ServletException;
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
  */
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator, FrameworkListener {
+
+    private static Log log = LogFactory.getLog(Activator.class);
 
     private HttpServiceTracker tracker;
 
     private final OSGiConfigurationContextFactory managedService;
+
+    private BundleContext context;
+
 
     public Activator() {
         managedService = new OSGiConfigurationContextFactory();
@@ -43,13 +48,15 @@ public class Activator implements BundleActivator {
 
 
     public void start(BundleContext context) throws Exception {
-        managedService.start(context);
+        context.addFrameworkListener(this);
+        this.context = context;
+        managedService.init(context);
         managedService.updated(null);
         tracker = new HttpServiceTracker(context);
         tracker.open();
     }
 
-    public void stop(BundleContext context) throws Exception {
+    public void stop(BundleContext context) {
         tracker.close();
         managedService.stop();
         //ungetService ConfigurationContext.class.getName()
@@ -58,6 +65,30 @@ public class Activator implements BundleActivator {
         if (configCtxRef != null) {
             context.ungetService(configCtxRef);
         }
+    }
+
+    public void frameworkEvent(FrameworkEvent event) {
+        if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
+            try {
+                Runnable thread = new Runnable() {
+                    public void run() {
+                        Bundle thisBundle = context.getBundle();
+                        try {
+                            thisBundle.stop();
+                            thisBundle.start();
+                        } catch (BundleException e) {
+                            String msg = "Error while refreshing the bundle";
+                            log.error(msg, e);
+                        }
+                    }
+                };
+                new Thread(thread).start();
+            } catch (Exception e) {
+                String msg = "Error while FrameworkEvent.PACKAGES_REFRESHED";
+                log.error(msg, e);
+            }
+        }
+
     }
 
     //HttpServiceTracker
@@ -87,13 +118,15 @@ public class Activator implements BundleActivator {
                     }
                 }
                 configCtx.setServicePath(serviceContextRoot);
-                httpService.registerServlet("/" + serviceContextRoot, axisServlet, null, null);
+                String contextRoot = "/" + serviceContextRoot;
+                log.info("Registering SOAP message listener servlet to context : " + contextRoot);
+                httpService.registerServlet(contextRoot, axisServlet, null, null);
             } catch (ServletException e) {
                 String msg = "Error while registering servlets";
-                throw new RuntimeException(msg, e);
+                log.error(msg, e);
             } catch (NamespaceException e) {
                 String msg = "Namespace missmatch when registering servlets";
-                throw new RuntimeException(msg, e);
+                log.error(msg, e);
             }
             return httpService;
         }

@@ -62,7 +62,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
      */
     private void addServices(Bundle bundle) {
         if (!resolvedBundles.containsKey(bundle)) {
-            Enumeration enumeration = bundle.findEntries("META-INF", "services.xml", false);
+            Enumeration enumeration = bundle.findEntries("META-INF", "*services.xml", false);
             int i = 0;
             List<AxisServiceGroup> axisServiceGroupList = null;
             if (enumeration != null) {
@@ -172,11 +172,11 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                 try {
                     for (Iterator iterator = axisServiceGroup.getServices(); iterator.hasNext();) {
                         AxisService service = (AxisService) iterator.next();
-                        System.out.println("[Axis2/OSGi]      Service - " + service.getName());
+                        System.out.println("[Axis2/OSGi] Service - " + service.getName());
                     }
                     configCtx.getAxisConfiguration()
                             .removeServiceGroup(axisServiceGroup.getServiceGroupName());
-                    System.out.println("[Axis2/OSGi] Stopping" +
+                    System.out.println("[Axis2/OSGi] Stopping " +
                                        axisServiceGroup.getServiceGroupName() +
                                        " service group in Bundle - " +
                                        bundle.getSymbolicName());
