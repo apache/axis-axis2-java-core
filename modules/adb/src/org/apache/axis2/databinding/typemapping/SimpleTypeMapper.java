@@ -295,7 +295,6 @@ public class SimpleTypeMapper {
             MessageContext messageContext = MessageContext.getCurrentMessageContext();
             AxisService axisServce = messageContext.getAxisService();
             // if the user has given a pirticualr timezone we use it.
-            System.out.println("TimZone ==> " + axisServce.getParameterValue("TimeZone"));
             if (axisServce.getParameter("TimeZone") != null){
                zulu.setTimeZone(TimeZone.getTimeZone((String)axisServce.getParameter("TimeZone").getValue()));
             }
