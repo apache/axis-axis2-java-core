@@ -24,6 +24,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axis2.databinding.utils.ConverterUtil;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -289,7 +291,15 @@ public class SimpleTypeMapper {
             return zulu.format(((Calendar)obj).getTime());
         } else if (obj instanceof Date) {
             SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
-//            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+            MessageContext messageContext = MessageContext.getCurrentMessageContext();
+            AxisService axisServce = messageContext.getAxisService();
+            // if the user has given a pirticualr timezone we use it.
+            System.out.println("TimZone ==> " + axisServce.getParameterValue("TimeZone"));
+            if (axisServce.getParameter("TimeZone") != null){
+               zulu.setTimeZone(TimeZone.getTimeZone((String)axisServce.getParameter("TimeZone").getValue()));
+            }
+
             return zulu.format(obj);
         }
         return obj.toString();
