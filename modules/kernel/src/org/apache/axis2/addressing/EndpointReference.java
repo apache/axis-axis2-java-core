@@ -631,7 +631,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * OMElements/Attributes, we need to actually serialize the OM structures
      * (at least in some cases.)
      */
-    public void writeExternal(java.io.ObjectOutput o)
+    public synchronized void writeExternal(java.io.ObjectOutput o)
             throws IOException {
         SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         
