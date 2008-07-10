@@ -50,8 +50,8 @@ import java.net.URL;
  * JSON strings are really easy to use in Javascript. Eg:  &lt;out&gt;&lt;in&gt;mapped
  * JSON&lt;/in&gt;&lt;/out&gt; is converted to... {"out":{"in":"mapped JSON"}} WARNING: We do not
  * support "Mapped" JSON Strings with *namespaces* in Axis2. This convention is supported in Axis2,
- * with the aim of making Javascript users' life easy (services written in Javascript). There are no
- * namespaces used in Javascript. If you want to use JSON with namespaces, use the
+ * with the aim of making Javascript users' life easy (services written in Javascript). There are
+ * no namespaces used in Javascript. If you want to use JSON with namespaces, use the
  * JSONBadgerfishMessageForatter (for "Badgerfish" formatted JSON) which supports JSON with
  * namespaces.
  */
@@ -73,10 +73,10 @@ public class JSONMessageFormatter implements MessageFormatter {
     }
 
     /**
-     * Gives the JSON message as an array of bytes. If the payload is an OMSourcedElementImpl and it
-     * contains a JSONDataSource with a correctly formatted JSON String, gets it directly from the
-     * DataSource and returns as a byte array. If not, the OM tree is expanded and it is serialized
-     * into the output stream and byte array is returned.
+     * Gives the JSON message as an array of bytes. If the payload is an OMSourcedElementImpl and
+     * it contains a JSONDataSource with a correctly formatted JSON String, gets it directly from
+     * the DataSource and returns as a byte array. If not, the OM tree is expanded and it is
+     * serialized into the output stream and byte array is returned.
      *
      * @param msgCtxt Message context which contains the soap envelope to be written
      * @param format  format of the message, this is ignored
@@ -88,8 +88,8 @@ public class JSONMessageFormatter implements MessageFormatter {
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
-        //if the element is an OMSourcedElementImpl and it contains a JSONDataSource with correct convention,
-        //directly get the JSON string.
+        //if the element is an OMSourcedElementImpl and it contains a JSONDataSource with
+        //correct convention, directly get the JSON string.
 
         if (element instanceof OMSourcedElementImpl &&
                 getStringToWrite(((OMSourcedElementImpl)element).getDataSource()) != null) {
@@ -111,8 +111,9 @@ public class JSONMessageFormatter implements MessageFormatter {
                 throw AxisFault.makeFault(e);
             } catch (IllegalStateException e) {
                 throw new AxisFault(
-                        "Mapped formatted JSON with namespaces are not supported in Axis2. Make sure that your" +
-                                " request doesn't include namespaces or use the Badgerfish convention");
+                        "Mapped formatted JSON with namespaces are not supported in Axis2. " +
+                                "Make sure that your request doesn't include namespaces or " +
+                                "use the Badgerfish convention");
             }
         }
     }
@@ -186,8 +187,9 @@ public class JSONMessageFormatter implements MessageFormatter {
             throw AxisFault.makeFault(e);
         } catch (IllegalStateException e) {
             throw new AxisFault(
-                    "Mapped formatted JSON with namespaces are not supported in Axis2. Make sure that your" +
-                            " request doesn't include namespaces or use the Badgerfish convention");
+                    "Mapped formatted JSON with namespaces are not supported in Axis2. " +
+                            "Make sure that your request doesn't include namespaces or " +
+                            "use the Badgerfish convention");
         }
     }
 
@@ -203,9 +205,10 @@ public class JSONMessageFormatter implements MessageFormatter {
                 && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
             try {
                 String jsonString;
-                if (dataOut instanceof OMSourcedElementImpl && getStringToWrite(((OMSourcedElementImpl) dataOut).getDataSource()) != null)
-                {
-                    jsonString = getStringToWrite(((OMSourcedElementImpl) dataOut).getDataSource());
+                if (dataOut instanceof OMSourcedElementImpl && getStringToWrite(
+                        ((OMSourcedElementImpl) dataOut).getDataSource()) != null) {
+                    jsonString = getStringToWrite(((OMSourcedElementImpl)
+                            dataOut).getDataSource());
                 } else {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     XMLStreamWriter jsonWriter = getJSONWriter(out);
@@ -213,12 +216,14 @@ public class JSONMessageFormatter implements MessageFormatter {
                     jsonWriter.writeEndDocument();
                     jsonString = new String(out.toByteArray());
                 }
-                jsonString = URIEncoderDecoder.quoteIllegal(jsonString, WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
+                jsonString = URIEncoderDecoder.quoteIllegal(jsonString,
+                        WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
                 String param = "query=" + jsonString;
                 String returnURLFile = targetURL.getFile() + "?" + param;
 
 
-                return new URL(targetURL.getProtocol(), targetURL.getHost(), targetURL.getPort(), returnURLFile);
+                return new URL(targetURL.getProtocol(), targetURL.getHost(),
+                        targetURL.getPort(), returnURLFile);
             } catch (MalformedURLException e) {
                 throw AxisFault.makeFault(e);
             } catch (XMLStreamException e) {

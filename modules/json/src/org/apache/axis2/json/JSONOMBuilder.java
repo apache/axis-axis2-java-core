@@ -44,17 +44,25 @@ public class JSONOMBuilder implements Builder {
     public JSONOMBuilder() {
     }
 
-    //returns the OMSourcedElementImpl with JSONDataSource inside
+    /**
+     * gives the OMSourcedElementImpl using the incoming JSON stream
+     *
+     * @param inputStream - incoming message as an input stream
+     * @param contentType - content type of the message (eg: application/json)
+     * @param messageContext - inflow message context
+     * @return OMSourcedElementImpl with JSONDataSource inside
+     * @throws AxisFault
+     */
 
-    public OMElement processDocument(InputStream inputStream, String contentType, MessageContext messageContext) throws AxisFault {
+    public OMElement processDocument(InputStream inputStream, String contentType,
+                                     MessageContext messageContext) throws AxisFault {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
         String localName = "";
         String prefix = "";
-        OMNamespace ns = new OMNamespaceImpl("", "");
+        OMNamespace ns = factory.createOMNamespace("", "");
 
-        OMFactory factory = OMAbstractFactory.getOMFactory();
-
-        //if the input stream is null, then check whether the HTTP method is GET, if so get the JSON String which is received as a parameter, and make it an
-        //input stream
+        //if the input stream is null, then check whether the HTTP method is GET, if so get the
+        // JSON String which is received as a parameter, and make it an input stream
 
         if (inputStream == null) {
             EndpointReference endpointReference = messageContext.getTo();
@@ -71,6 +79,8 @@ public class JSONOMBuilder implements Builder {
 
             String jsonString;
             int index;
+            //As the message is received through GET, check for "=" sign and consider the second
+            //half as the incoming JSON message
             if ((index = requestURL.indexOf("=")) > 0) {
                 jsonString = requestURL.substring(index + 1);
                 inputStream = new ByteArrayInputStream(jsonString.getBytes());
@@ -79,7 +89,13 @@ public class JSONOMBuilder implements Builder {
             }
         }
 
+        /*
+        Now we have to read the localname and prefix from the input stream
+        if there is not prefix, message starts like {"foo":
+        if there is a prefix, message starts like {"prefix:foo":
+         */
         try {
+            //read the stream until we find a : symbol
             char temp = (char)inputStream.read();
             while (temp != ':') {
                 if (temp != ' ' && temp != '{') {
@@ -88,12 +104,14 @@ public class JSONOMBuilder implements Builder {
                 temp = (char)inputStream.read();
             }
 
+            //if the part we read ends with ", there is no prefix, otherwise it has a prefix
             if (localName.charAt(0) == '"') {
                 if (localName.charAt(localName.length() - 1) == '"') {
                     localName = localName.substring(1, localName.length() - 1);
                 } else {
                     prefix = localName.substring(1, localName.length()) + ":";
                     localName = "";
+                    //so far we have read only the prefix, now lets read the localname
                     temp = (char)inputStream.read();
                     while (temp != ':') {
                         if (temp != ' ') {
@@ -111,7 +129,8 @@ public class JSONOMBuilder implements Builder {
         return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
     }
 
-    protected JSONDataSource getDataSource(InputStream jsonInputStream, String prefix, String localName) {
+    protected JSONDataSource getDataSource(InputStream
+            jsonInputStream, String prefix, String localName) {
         return new JSONDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
     }
 }

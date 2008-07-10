@@ -21,6 +21,10 @@ package org.apache.axis2.json;
 
 import java.io.InputStream;
 
+/**
+ * Message builder for "Badgerfish" convention. DataSource used here is
+ * JSONBadgerfishDataSource which is specific for "Badgerfish"
+ */
 
 public class JSONBadgerfishOMBuilder extends JSONOMBuilder {
 
