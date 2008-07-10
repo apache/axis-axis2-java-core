@@ -549,6 +549,8 @@ public class AxisFault extends RemoteException {
     }
 
     class FaultReason implements Serializable{
+        
+        private static final long serialVersionUID = -8125991422614607169L;
 
         /**
          * Language of the reason.
