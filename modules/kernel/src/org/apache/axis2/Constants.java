@@ -337,6 +337,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
                 "drillDownToRootCauseForFaultReason";
 
         public static final String DISABLE_REST   = "disableREST";
+        public static final String DISABLE_SOAP11   = "disableSOAP11";
         public static final String DISABLE_SOAP12 = "disableSOAP12";
 
         // this will contain the keys of all the properties that will be in the message context

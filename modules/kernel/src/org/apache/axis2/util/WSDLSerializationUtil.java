@@ -303,10 +303,10 @@ public class WSDLSerializationUtil {
      */
     public static OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
                                                    OMNamespace tns, AxisService axisService,
-                                                   boolean disableREST, boolean disableSOAP12,
+                                                   boolean disableREST, boolean disableSOAP12,  boolean disableSOAP11,
                                                    String serviceName)
             throws AxisFault {
-        return generateServiceElement(omFactory, wsdl, tns, axisService, disableREST, disableSOAP12,
+        return generateServiceElement(omFactory, wsdl, tns, axisService, disableREST, disableSOAP12,disableSOAP11,
                                       null, serviceName);
     }
     
@@ -323,7 +323,7 @@ public class WSDLSerializationUtil {
      */
     public static OMElement generateServiceElement(OMFactory omFactory, OMNamespace wsdl,
                                                    OMNamespace tns, AxisService axisService,
-                                                   boolean disableREST, boolean disableSOAP12,
+                                                   boolean disableREST, boolean disableSOAP12, boolean disableSOAP11,
                                                    String[] eprs, String serviceName)
             throws AxisFault {
         if(eprs == null){
@@ -345,20 +345,23 @@ public class WSDLSerializationUtil {
             if (epr.startsWith("https://")) {
                 name = WSDL2Constants.DEFAULT_HTTPS_PREFIX;
             }
-            
+
             OMElement soap11EndpointElement =
-                    omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
-            soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
+                    null;
+            if (!disableSOAP11) {
+                soap11EndpointElement = omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
+                soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.ATTRIBUTE_NAME, null,
-                    name + WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME));
-            soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
+                        name + WSDL2Constants.DEFAULT_SOAP11_ENDPOINT_NAME));
+                soap11EndpointElement.addAttribute(omFactory.createOMAttribute(
                     WSDL2Constants.BINDING_LOCAL_NAME, null,
-                    tns.getPrefix() + ":" + serviceName +
-                            Java2WSDLConstants.BINDING_NAME_SUFFIX));
-            soap11EndpointElement.addAttribute(
+                        tns.getPrefix() + ":" + serviceName +
+                                Java2WSDLConstants.BINDING_NAME_SUFFIX));
+                soap11EndpointElement.addAttribute(
                     omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, epr));
-            serviceElement.addChild(soap11EndpointElement);
-            
+                serviceElement.addChild(soap11EndpointElement);
+            }
+
             OMElement soap12EndpointElement = null;
             if (!disableSOAP12) {
                 soap12EndpointElement =
@@ -392,9 +395,11 @@ public class WSDLSerializationUtil {
             }
             
             if (epr.startsWith("https://")) {
-                OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
-                soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTPS");
-                soap11EndpointElement.addChild(soap11Documentation);
+                if (!disableSOAP11) {
+                    OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTPS");
+                    soap11EndpointElement.addChild(soap11Documentation);
+                }
                 if (!disableSOAP12) {
                     OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
                     soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTPS");
@@ -407,9 +412,11 @@ public class WSDLSerializationUtil {
                     httpEndpointElement.addChild(httpDocumentation);
                 }
             } else if (epr.startsWith("http://")) {
-                OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
-                soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTP");
-                soap11EndpointElement.addChild(soap11Documentation);
+                if (!disableSOAP11) {
+                    OMElement soap11Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
+                    soap11Documentation.setText("This endpoint exposes a SOAP 11 binding over a HTTP");
+                    soap11EndpointElement.addChild(soap11Documentation);
+                }
                 if (!disableSOAP12) {
                     OMElement soap12Documentation = omFactory.createOMElement(WSDL2Constants.DOCUMENTATION, wsdl);
                     soap12Documentation.setText("This endpoint exposes a SOAP 12 binding over a HTTP");

@@ -181,7 +181,15 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			disableREST = true;
 		}
 
-		// axis2.xml indicated no SOAP 1.2 binding?
+        boolean disableSOAP11 = false;
+		Parameter disableSOAP11Parameter = axisService
+				.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
+		if (disableSOAP11Parameter != null
+				&& JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
+			disableSOAP11 = true;
+		}
+
+        // axis2.xml indicated no SOAP 1.2 binding?
 		boolean disableSOAP12 = false;
 		Parameter disableSOAP12Parameter = axisService
 				.getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
@@ -234,7 +242,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		// generateHTTPBinding(fac, ele);
 		// }
 
-		generateService(fac, ele, disableREST, disableSOAP12);
+		generateService(fac, ele, disableREST, disableSOAP12 , disableSOAP11);
 		addPoliciesToDefinitionElement(policiesInDefinitions.values()
 				.iterator(), definition);
 
@@ -475,17 +483,22 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	 *             if there's a problem
 	 */
 	public void generateService(OMFactory fac, OMElement defintions,
-			boolean disableREST, boolean disableSOAP12) throws Exception {
+			boolean disableREST, boolean disableSOAP12 , boolean  disableSOAP11) throws Exception {
 		OMElement service = fac.createOMElement(SERVICE_LOCAL_NAME, wsdl);
 		defintions.addChild(service);
 		service.addAttribute(ATTRIBUTE_NAME, serviceName, null);
-		generateSoap11Port(fac, defintions, service);
-		if (!disableSOAP12) {
+
+        if (!disableSOAP11) {
+			generateSoap11Port(fac, defintions, service);
+		}
+
+        if (!disableSOAP12) {
 			// generateSOAP12Ports(fac, service);
 			generateSoap12Port(fac, defintions, service);
 		}
 
-		addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
+
+        addPolicyAsExtElement(PolicyInclude.SERVICE_POLICY, axisService
 				.getPolicyInclude(), service);
 		// addPolicyAsExtElement(PolicyInclude.AXIS_SERVICE_POLICY, axisService.
 		// getPolicyInclude(), service);
