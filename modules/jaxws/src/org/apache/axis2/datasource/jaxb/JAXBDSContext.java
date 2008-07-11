@@ -531,24 +531,43 @@ public class JAXBDSContext {
         });
     }
 
-    private static Object unmarshalArray(XMLStreamReader reader, Unmarshaller u, 
+    private static Object unmarshalArray(final XMLStreamReader reader, 
+                                         final Unmarshaller u, 
                                          Class type)
        throws Exception {
+        try {
+            if (DEBUG_ENABLED) {
+                log.debug("Invoking unmarshalArray");
+            }
+            Object jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        return u.unmarshal(reader, String[].class);
+                    } catch (OMException e) {
+                        throw e;
+                    } catch (Throwable t) {
+                        throw new OMException(t);
+                    }
+                }
+            });
 
-        Object jaxb = u.unmarshal(reader, String[].class);
-                     
-        Object typeObj = getTypeEnabledObject(jaxb);
-        
-        // Now convert String Array in to the required Type Array.
-        if (typeObj instanceof String[]) {
-            String[] strArray = (String[]) typeObj;
-            Object obj = XSDListUtils.fromStringArray(strArray, type);
-            QName qName =
+            Object typeObj = getTypeEnabledObject(jaxb);
+
+            // Now convert String Array in to the required Type Array.
+            if (typeObj instanceof String[]) {
+                String[] strArray = (String[]) typeObj;
+                Object obj = XSDListUtils.fromStringArray(strArray, type);
+                QName qName =
                     XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
-            jaxb = new JAXBElement(qName, type, obj);
+                jaxb = new JAXBElement(qName, type, obj);
+            }
+
+            return jaxb;
+        } catch (OMException e) {
+            throw e;
+        } catch (Throwable t) {
+            throw new OMException(t);
         }
-        
-        return jaxb;
     }
    
     /**
@@ -564,22 +583,47 @@ public class JAXBDSContext {
      * @throws DatatypeConfigurationException
      * @throws InvocationTargetException
      */
-    public static Object unmarshalAsListOrArray(XMLStreamReader reader, Unmarshaller u, 
+    public static Object unmarshalAsListOrArray(final XMLStreamReader reader, 
+                                                final Unmarshaller u, 
                                                  Class type)
-        throws IllegalAccessException, ParseException,NoSuchMethodException,InstantiationException,
+        throws IllegalAccessException, ParseException,NoSuchMethodException,
+        InstantiationException,
         DatatypeConfigurationException,InvocationTargetException,JAXBException {
-        //If this is an xsd:list, we need to return the appropriate
-        // list or array (see NOTE above)
-        // First unmarshal as a String
-        Object jaxb = u.unmarshal(reader, String.class);
-        //Second convert the String into a list or array
-        if (getTypeEnabledObject(jaxb) instanceof String) {
-            QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
-            Object obj = XSDListUtils.fromXSDListString((String) getTypeEnabledObject(jaxb), type);
-            return new JAXBElement(qName, type, obj);
-        } else {
-            return jaxb;
-        }
+        
+        
+            if (DEBUG_ENABLED) {
+                log.debug("Invoking unmarshaArray");
+            }
+            
+            // If this is an xsd:list, we need to return the appropriate
+            // list or array (see NOTE above)
+            // First unmarshal as a String
+            Object jaxb = null;
+            try {
+                jaxb = AccessController.doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        try {
+                            return u.unmarshal(reader, String.class);
+                        } catch (OMException e) {
+                            throw e;
+                        } catch (Throwable t) {
+                            throw new OMException(t);
+                        }
+                    }
+                });
+            } catch (OMException e) {
+                throw e;
+            } catch (Throwable t) {
+                throw new OMException(t);
+            }
+            //Second convert the String into a list or array
+            if (getTypeEnabledObject(jaxb) instanceof String) {
+                QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
+                Object obj = XSDListUtils.fromXSDListString((String) getTypeEnabledObject(jaxb), type);
+                return new JAXBElement(qName, type, obj);
+            } else {
+                return jaxb;
+            }
 
     }
 
