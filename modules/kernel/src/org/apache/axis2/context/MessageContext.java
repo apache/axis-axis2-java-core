@@ -2839,7 +2839,11 @@ public class MessageContext extends AbstractContext
         currentPhaseIndex = 0;
         metaExecutionChain = null;
 
-        in.readUTF();
+        String marker = in.readUTF();
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read executionChain, marker is: " + marker);
+        }
         boolean gotChain = in.readBoolean();
 
         if (gotChain == ExternalizeConstants.ACTIVE_OBJECT) {
@@ -2923,6 +2927,14 @@ public class MessageContext extends AbstractContext
 
         //---------------------------------------------------------
         // LinkedList executedPhases
+        //
+        // Note that in previous versions of Axis2, this was
+        // represented by two lists: "inboundExecutedPhases", "outboundExecutedPhases",
+        // however since the message context itself represents a flow
+        // direction, one of these lists was always null.  This was changed
+        // around 2007-06-08 revision r545615.  For backward compatability
+        // with streams saved in previous versions of Axis2, we need
+        // to be able to process both the old style and new style.
         //---------------------------------------------------------
         // Restore the metadata about each member of the list
         // and the order of the list.
@@ -2950,9 +2962,40 @@ public class MessageContext extends AbstractContext
         executedPhases = null;
         metaExecuted = null;
 
-        in.readUTF();
+        marker = in.readUTF();
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read executedPhases, marker is: " + marker);
+        }
+        
+        // Previous versions of Axis2 saved two phases in the stream, although one should 
+        // always have been null.  The two phases and their associated markers are, in this order:
+        // "inboundExecutedPhases", "outboundExecutedPhases".
         boolean gotInExecList = in.readBoolean();
-
+        boolean oldStyleExecutedPhases = false;
+        if (marker.equals("inboundExecutedPhases")) {
+            oldStyleExecutedPhases = true;
+        }
+        
+        if (oldStyleExecutedPhases && (gotInExecList == ExternalizeConstants.EMPTY_OBJECT)) {
+            // There are an inboundExecutedPhases and an outboundExecutedPhases and this one
+            // is empty, so skip over it and read the next one
+            marker = in.readUTF();
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(getLogIDString() + 
+                          ": readExternal(): Skipping over oldStyle empty inboundExecutedPhases");
+                log.trace(getLogIDString() + 
+                          ": readExternal(): About to read executedPhases, marker is: " + marker);
+            }
+            gotInExecList = in.readBoolean();
+        }
+        
+        /*
+         * At this point, the stream should point to either "executedPhases" if this is the 
+         * new style of serialization.  If it is the oldStyle, it should point to whichever 
+         * of "inbound" or "outbound" executed phases contains an active object, since only one
+         * should
+         */
         if (gotInExecList == ExternalizeConstants.ACTIVE_OBJECT) {
             int expectedNumberInExecList = in.readInt();
 
@@ -3022,18 +3065,44 @@ public class MessageContext extends AbstractContext
                         adjustedNumberInExecList + "]    ");
             }
         }
-
+        
         if ((metaExecuted == null) || (metaExecuted.isEmpty())) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): meta data for executedPhases list is NULL");
             }
         }
+        
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): After reading executedPhases, marker is: " + marker);
+        }
+
+        // If this is an oldStyle that contained both an inbound and outbound executed phases, 
+        // and the outbound phases wasn't read above, then we need to skip over it
+        if (marker.equals("outboundExecutedPhases")) {
+            Boolean gotOutExecList = in.readBoolean();
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(getLogIDString() + 
+                          ": readExternal(): Skipping over outboundExecutedPhases, marker is: " + marker + 
+                          ", is list an active object: " + gotOutExecList);
+            }
+            if (gotOutExecList != ExternalizeConstants.EMPTY_OBJECT) {
+                throw new IOException("Both inboundExecutedPhases and outboundExecutedPhases had active objects");
+            }
+            
+            marker = in.readUTF();
+            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                log.trace(getLogIDString() + 
+                          ": readExternal(): After skipping ooutboundExecutePhases, marker is: " + marker);
+            }
+        }
 
         //---------------------------------------------------------
         // options
         //---------------------------------------------------------
-        in.readUTF(); // Read marker
+        
         options = (Options) in.readObject();
 
         if (options != null) {
@@ -3049,12 +3118,20 @@ public class MessageContext extends AbstractContext
 
         // axisOperation is not usable until the meta data has been reconciled
         axisOperation = null;
-        in.readUTF();  // Read Marker
+        marker = in.readUTF();  // Read Marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read axisOperation, marker is: " + marker);
+        }
         metaAxisOperation = (MetaDataEntry) in.readObject();
 
         // operation context is not usable until it has been activated
         // NOTE: expect this to be the parent
-        in.readUTF();  // Read marker
+        marker = in.readUTF();  // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read operationContext, marker is: " + marker);
+        }
         operationContext = (OperationContext) in.readObject();
 
         if (operationContext != null) {
@@ -3070,7 +3147,11 @@ public class MessageContext extends AbstractContext
 
         // axisService is not usable until the meta data has been reconciled
         axisService = null;
-        in.readUTF(); // Read marker
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read axisService, marker is: " + marker);
+        }
         metaAxisService = (MetaDataEntry) in.readObject();
 
         //-------------------------
@@ -3081,7 +3162,11 @@ public class MessageContext extends AbstractContext
         //-------------------------
         // serviceContext
         //-------------------------
-        in.readUTF(); // Read marker
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read serviceContext, marker is: " + marker);
+        }
 
         boolean servCtxActive = in.readBoolean();
 
@@ -3110,7 +3195,11 @@ public class MessageContext extends AbstractContext
 
         // axisServiceGroup is not usable until the meta data has been reconciled
         axisServiceGroup = null;
-        in.readUTF(); // Read marker
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read AxisServiceGroup, marker is: " + marker);
+        }
         metaAxisServiceGroup = (MetaDataEntry) in.readObject();
 
         //-----------------------------
@@ -3121,7 +3210,11 @@ public class MessageContext extends AbstractContext
         //-----------------------------
         // serviceGroupContext
         //-----------------------------
-        in.readUTF();
+        marker = in.readUTF();
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read ServiceGroupContext, marker is: " + marker);
+        }
 
         boolean servGrpCtxActive = in.readBoolean();
 
@@ -3150,7 +3243,11 @@ public class MessageContext extends AbstractContext
 
         // axisMessage is not usable until the meta data has been reconciled
         axisMessage = null;
-        in.readUTF();  // Read marker
+        marker = in.readUTF();  // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read AxisMessage, marker is: " + marker);
+        }
         metaAxisMessage = (MetaDataEntry) in.readObject();
         reconcileAxisMessage = (metaAxisMessage != null);
 
@@ -3193,14 +3290,22 @@ public class MessageContext extends AbstractContext
         // properties
         //---------------------------------------------------------
         // read local properties
-        in.readUTF(); // Read marker
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read properties, marker is: " + marker);
+        }
         properties  = in.readHashMap();
 
 
         //---------------------------------------------------------
         // special data
         //---------------------------------------------------------
-        in.readUTF(); // Read marker
+        marker = in.readUTF(); // Read marker
+        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            log.trace(getLogIDString() + 
+                      ": readExternal(): About to read SpecialData, marker is: " + marker);
+        }
 
         boolean gotSelfManagedData = in.readBoolean();
 
