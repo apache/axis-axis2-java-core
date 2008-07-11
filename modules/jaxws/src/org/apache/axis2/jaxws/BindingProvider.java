@@ -184,7 +184,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     */
     protected void setupSessionContext(Map<String, Object> properties) {
         String sessionKey = null;
-        String sessionValue = null;
+        Object sessionValue = null;
 
         if (properties == null) {
             return;
@@ -192,19 +192,19 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
         if (properties.containsKey(HTTPConstants.HEADER_LOCATION)) {
             sessionKey = HTTPConstants.HEADER_LOCATION;
-            sessionValue = (String)properties.get(sessionKey);
+            sessionValue = properties.get(sessionKey);
             if (sessionValue != null && !"".equals(sessionValue)) {
                 requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, sessionValue);
             }
         } else if (properties.containsKey(HTTPConstants.HEADER_COOKIE)) {
             sessionKey = HTTPConstants.HEADER_COOKIE;
-            sessionValue = (String)properties.get(sessionKey);
+            sessionValue = properties.get(sessionKey);
             if (sessionValue != null && !"".equals(sessionValue)) {
                 requestContext.put(HTTPConstants.COOKIE_STRING, sessionValue);
             }
         } else if (properties.containsKey(HTTPConstants.HEADER_COOKIE2)) {
             sessionKey = HTTPConstants.HEADER_COOKIE2;
-            sessionValue = (String)properties.get(sessionKey);
+            sessionValue = properties.get(sessionKey);
             if (sessionValue != null && !"".equals(sessionValue)) {
                 requestContext.put(HTTPConstants.COOKIE_STRING, sessionValue);
             }
