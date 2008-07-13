@@ -158,38 +158,54 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
 
     }
 
-    public void unRegister(Bundle bundle) throws AxisFault {
+    public void unRegister(Bundle bundle, boolean uninstall) throws AxisFault {
         lock.lock();
         try {
             List<AxisServiceGroup> axisServiceGroupList = resolvedBundles.get(bundle);
-            for (AxisServiceGroup axisServiceGroup : axisServiceGroupList) {
-                if (resolvedBundles.containsKey(bundle)) {
-                    resolvedBundles.remove(bundle);
-                }
-                if (unreslovedBundles.contains(bundle)) {
-                    unreslovedBundles.remove(bundle);
-                }
-                try {
-                    for (Iterator iterator = axisServiceGroup.getServices(); iterator.hasNext();) {
-                        AxisService service = (AxisService) iterator.next();
-                        System.out.println("[Axis2/OSGi] Service - " + service.getName());
+            if (axisServiceGroupList != null) {
+                for (AxisServiceGroup axisServiceGroup : axisServiceGroupList) {
+                    if (resolvedBundles.containsKey(bundle)) {
+                        resolvedBundles.remove(bundle);
                     }
-                    configCtx.getAxisConfiguration()
-                            .removeServiceGroup(axisServiceGroup.getServiceGroupName());
-                    System.out.println("[Axis2/OSGi] Stopping " +
-                                       axisServiceGroup.getServiceGroupName() +
-                                       " service group in Bundle - " +
-                                       bundle.getSymbolicName());
-                } catch (AxisFault e) {
-                    String msg = "Error while removing the service group";
-                    log.error(msg, e);
-                }
+                    if (!unreslovedBundles.contains(bundle) && !uninstall) {
+                        unreslovedBundles.add(bundle);
+                    }
+                    try {
+                        for (Iterator iterator = axisServiceGroup.getServices();
+                             iterator.hasNext();) {
+                            AxisService service = (AxisService) iterator.next();
+                            System.out.println("[Axis2/OSGi] Service - " + service.getName());
+                        }
+                        configCtx.getAxisConfiguration()
+                                .removeServiceGroup(axisServiceGroup.getServiceGroupName());
+                        System.out.println("[Axis2/OSGi] Stopping " +
+                                           axisServiceGroup.getServiceGroupName() +
+                                           " service group in Bundle - " +
+                                           bundle.getSymbolicName());
+                    } catch (AxisFault e) {
+                        String msg = "Error while removing the service group";
+                        log.error(msg, e);
+                    }
 
+                }
             }
         } finally {
             lock.unlock();
         }
     }
 
-
+    public void remove(Bundle bundle) throws AxisFault {
+        unRegister(bundle, true);
+        lock.lock();
+        try {
+            if (resolvedBundles.containsKey(bundle)) {
+                resolvedBundles.remove(bundle);
+            }
+            if (unreslovedBundles.contains(bundle)) {
+                unreslovedBundles.remove(bundle);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 }

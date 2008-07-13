@@ -27,7 +27,9 @@ public interface Registry extends BundleListener{
 
     void register(Bundle bundle) throws AxisFault;
 
-    void unRegister(Bundle bundle) throws AxisFault;
+    void unRegister(Bundle bundle, boolean uninstall) throws AxisFault;
 
     void resolve() throws AxisFault;
+
+    void remove(Bundle bundle) throws AxisFault;
 }

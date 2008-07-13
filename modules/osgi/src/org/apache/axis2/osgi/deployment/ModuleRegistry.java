@@ -16,26 +16,24 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.ModuleBuilder;
 import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.modules.Module;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.OSGi_BUNDLE_ID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @see org.osgi.framework.BundleListener
@@ -63,64 +61,75 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
     }
 
-    public void unRegister(Bundle bundle) {
+    public void unRegister(Bundle bundle, boolean uninstall) {
         lock.lock();
         try {
-            List<Long> stopBundleList = new ArrayList<Long>();
+
             List<AxisModule> moduleList = resolvedBundles.get(bundle);
-            for (AxisModule module : moduleList) {
-                AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
-                for (Iterator iterator = axisConfig.getServiceGroups(); iterator.hasNext();) {
-                    AxisServiceGroup axisServiceGroup = (AxisServiceGroup) iterator.next();
-                    if (axisServiceGroup.isEngaged(module)) {
-                        Long value = (Long) axisServiceGroup.getParameterValue(OSGi_BUNDLE_ID);
-                        if (value != null) {
-                            stopBundleList.add(value);
-                        }
-                    }
-                }
-                //
-                HashMap serviceMap = axisConfig.getServices();
-                Collection values = serviceMap.values();
-                for (Object value1 : values) {
-                    AxisService axisService = (AxisService) value1;
-                    if (axisService.isEngaged(module)) {
-                        Long value = (Long) axisService.getParameterValue(OSGi_BUNDLE_ID);
-                        if (value != null && !stopBundleList.contains(value)) {
-                            stopBundleList.add(value);
-                        }
-                    }
-                    for (Iterator iterator1 = axisService.getOperations(); iterator1.hasNext();) {
-                        AxisOperation axisOperation = (AxisOperation) iterator1.next();
-                        if (axisOperation.isEngaged(module)) {
-                            Long value = (Long) axisOperation.getParameterValue(OSGi_BUNDLE_ID);
-                            if (value != null && !stopBundleList.contains(value)) {
+            if (moduleList != null) {
+                List<Long> stopBundleList = new ArrayList<Long>();
+                for (AxisModule module : moduleList) {
+                    AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
+                    for (Iterator iterator = axisConfig.getServiceGroups(); iterator.hasNext();) {
+                        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) iterator.next();
+                        if (axisServiceGroup.isEngaged(module)) {
+                            Long value = (Long) axisServiceGroup.getParameterValue(OSGi_BUNDLE_ID);
+                            if (value != null) {
                                 stopBundleList.add(value);
                             }
                         }
                     }
+                    //
+                    HashMap serviceMap = axisConfig.getServices();
+                    Collection values = serviceMap.values();
+                    for (Object value1 : values) {
+                        AxisService axisService = (AxisService) value1;
+                        if (axisService.isEngaged(module)) {
+                            Long value = (Long) axisService.getParameterValue(OSGi_BUNDLE_ID);
+                            if (value != null && !stopBundleList.contains(value)) {
+                                stopBundleList.add(value);
+                            }
+                        }
+                        for (Iterator iterator1 = axisService.getOperations(); iterator1.hasNext();)
+                        {
+                            AxisOperation axisOperation = (AxisOperation) iterator1.next();
+                            if (axisOperation.isEngaged(module)) {
+                                Long value = (Long) axisOperation.getParameterValue(OSGi_BUNDLE_ID);
+                                if (value != null && !stopBundleList.contains(value)) {
+                                    stopBundleList.add(value);
+                                }
+                            }
+                        }
+                    }
+                    Module moduleInterface = module.getModule();
+                    if (moduleInterface != null) {
+                        try {
+                            moduleInterface.shutdown(configCtx);
+                        } catch (AxisFault e) {
+                            String msg = "Error while shutting down the module : " +
+                                         module.getName() + " : " +
+                                         module.getVersion() + " moduel in Bundle - " +
+                                         bundle.getSymbolicName();
+                            log.error(msg, e);
+                        }
+                    }
+                    axisConfig.removeModule(module.getName(), module.getVersion());
+                    if (resolvedBundles.containsKey(bundle)) {
+                        resolvedBundles.remove(bundle);
+                    }
+                    log.info("[Axis2/OSGi] Stopping :" + module.getName() + " : " +
+                             module.getVersion() + " moduel in Bundle - " +
+                             bundle.getSymbolicName());
                 }
-                axisConfig.removeModule(module.getName(), module.getVersion());
-                if (resolvedBundles.containsKey(bundle)) {
-                    resolvedBundles.remove(bundle);
-                }
-                log.info("[Axis2/OSGi] Stopping :" + module.getName() + " : " +
-                         module.getVersion() + " moduel in Bundle - " +
-                         bundle.getSymbolicName());
-            }
-            for (Long bundleId : stopBundleList) {
-                Bundle stopBundle = context.getBundle(bundleId);
-                if (stopBundle != null) {
-                    try {
-                        serviceRegistry.unRegister(stopBundle);
-                        stopBundle.stop();
-                    } catch (BundleException e) {
-                        String msg = "Error while stopping the bundle";
-                        log.error(msg, e);
-                    } catch (AxisFault e) {
-                        String msg = "Erro while stopping the bundle";
-                        log.error(msg, e);
-
+                for (Long bundleId : stopBundleList) {
+                    Bundle unRegBundle = context.getBundle(bundleId);
+                    if (unRegBundle != null) {
+                        try {
+                            serviceRegistry.unRegister(unRegBundle, false);
+                        }  catch (AxisFault e) {
+                            String msg = "Erro while stopping the bundle";
+                            log.error(msg, e);
+                        }
                     }
                 }
             }
@@ -194,5 +203,9 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
         }
 
+    }
+
+    public void remove(Bundle bundle) throws AxisFault {
+        unRegister(bundle, true);
     }
 }

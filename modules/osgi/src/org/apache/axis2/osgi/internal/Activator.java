@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 /**
  * Activator will set the necessary parameters that initiate Axis2 OSGi integration
  */
-public class Activator implements BundleActivator, FrameworkListener {
+public class Activator implements BundleActivator{
 
     private static Log log = LogFactory.getLog(Activator.class);
 
@@ -39,17 +39,11 @@ public class Activator implements BundleActivator, FrameworkListener {
 
     private final OSGiConfigurationContextFactory managedService;
 
-    private BundleContext context;
-
-
     public Activator() {
         managedService = new OSGiConfigurationContextFactory();
     }
 
-
     public void start(BundleContext context) throws Exception {
-        context.addFrameworkListener(this);
-        this.context = context;
         managedService.init(context);
         managedService.updated(null);
         tracker = new HttpServiceTracker(context);
@@ -65,30 +59,6 @@ public class Activator implements BundleActivator, FrameworkListener {
         if (configCtxRef != null) {
             context.ungetService(configCtxRef);
         }
-    }
-
-    public void frameworkEvent(FrameworkEvent event) {
-        if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
-            try {
-                Runnable thread = new Runnable() {
-                    public void run() {
-                        Bundle thisBundle = context.getBundle();
-                        try {
-                            thisBundle.stop();
-                            thisBundle.start();
-                        } catch (BundleException e) {
-                            String msg = "Error while refreshing the bundle";
-                            log.error(msg, e);
-                        }
-                    }
-                };
-                new Thread(thread).start();
-            } catch (Exception e) {
-                String msg = "Error while FrameworkEvent.PACKAGES_REFRESHED";
-                log.error(msg, e);
-            }
-        }
-
     }
 
     //HttpServiceTracker

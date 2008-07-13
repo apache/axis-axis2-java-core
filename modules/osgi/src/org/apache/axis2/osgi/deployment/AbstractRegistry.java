@@ -20,6 +20,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 import java.util.List;
@@ -32,6 +34,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see org.apache.axis2.osgi.deployment.Registry
  */
 public abstract class AbstractRegistry<V> implements Registry {
+
+    private Log log = LogFactory.getLog(AbstractRegistry.class);
 
     protected Map<Bundle, List<V>> resolvedBundles = new ConcurrentHashMap<Bundle, List<V>>();
 
@@ -60,15 +64,18 @@ public abstract class AbstractRegistry<V> implements Registry {
 
                 case BundleEvent.STOPPED:
                     if (context.getBundle() != bundle) {
-                        unRegister(event.getBundle());
+                        unRegister(event.getBundle(), false);
+                    }
+                    break;
+                case BundleEvent.UNINSTALLED:
+                    if (context.getBundle() != bundle) {
+                        remove(bundle);
                     }
                     break;
             }
         } catch (AxisFault e) {
-            //TODO: TDB use, log service error instead
-            e.printStackTrace();
             String msg = "Error while registering the bundle in AxisConfiguration";
-            throw new RuntimeException(msg, e);
+            log.error(msg, e);
         }
     }
 
