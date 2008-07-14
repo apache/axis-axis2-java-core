@@ -154,8 +154,6 @@
         _service.applyPolicy();
         </xsl:if>
 	
-        configurationContext = _serviceClient.getServiceContext().getConfigurationContext();
-
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
         _serviceClient.getOptions().setUseSeparateListener(useSeparateListener);
