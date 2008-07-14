@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.message;
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
@@ -62,14 +63,15 @@ public class JAXBCustomBuilderTests extends TestCase {
     
     public void test() throws Exception {
 
+        TreeSet<String> contextPackages = new TreeSet<String>();
+        contextPackages.add(EchoString.class.getPackage().getName());
+        /**
         // Setup: Create a jaxb object
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
         
-        // Now create a Context for this object
-        TreeSet<String> contextPackages = new TreeSet<String>();
-        contextPackages.add(EchoString.class.getPackage().getName());
+        
         JAXBContext context = JAXBUtils.getJAXBContext(contextPackages);
            
         // Write out the xml
@@ -80,7 +82,13 @@ public class JAXBCustomBuilderTests extends TestCase {
         JAXBUtils.releaseJAXBMarshaller(context, marshaller);
         writer.flush();
         sw.flush();
-        StringReader sr = new StringReader(sw.toString());
+        String outtext = sw.toString();
+        System.out.println("OUT=" + outtext);
+        StringReader sr = new StringReader(outtext);
+        **/
+        
+        String inText = "<pre:echoString xmlns:pre=\"http://test\"><pre:input>Hello World</pre:input></pre:echoString>";
+        StringReader sr = new StringReader(inText);
         
         // Read the sample text using OM backed by StAX.
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
@@ -106,6 +114,30 @@ public class JAXBCustomBuilderTests extends TestCase {
         assertTrue(jaxbObject instanceof EchoString);
         EchoString result = (EchoString) jaxbObject;
         assertTrue(result.getInput().equals("Hello World"));
+        
+        // Make sure that the local name can be obtained without expansion
+        String localName = om.getLocalName();
+        assertTrue("echoString".equals(localName));
+        ds = ((OMSourcedElement) om).getDataSource();
+        assertTrue(ds != null);
+        
+        // Make sure that the namespace uri can be obtained without expansion
+        OMNamespace omNS = om.getNamespace();
+        String uri = omNS.getNamespaceURI();
+        assertTrue("http://test".equals (uri));
+        ds = ((OMSourcedElement) om).getDataSource();
+        assertTrue(ds != null);
+        
+        // Make sure the prefix is consistent with the output
+        String prefix = omNS.getPrefix();
+        System.out.println(prefix);
+        String text = om.toString();
+        System.out.println(text);
+        String searchString = (prefix == null || prefix.length() == 0) ? 
+                    "</echoString>" :
+                    "</" + prefix + ":echoString>";
+        assertTrue(text.indexOf(searchString) > 0);
+            
     }
     
 }
