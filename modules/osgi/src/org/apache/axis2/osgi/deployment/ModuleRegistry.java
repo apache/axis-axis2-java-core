@@ -126,7 +126,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     if (unRegBundle != null) {
                         try {
                             serviceRegistry.unRegister(unRegBundle, false);
-                        }  catch (AxisFault e) {
+                        } catch (AxisFault e) {
                             String msg = "Erro while stopping the bundle";
                             log.error(msg, e);
                         }
@@ -172,10 +172,35 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     if (bundleSymbolicName != null && bundleSymbolicName.length() != 0) {
                         axismodule.setName(bundleSymbolicName);
                     }
-//                                    axismodule.setVersion(org.apache.axis2.util.Utils.getModuleVersion(shortFileName));
+                    String bundleVersion = (String) headers.get("Bundle-Version");
+                    if (bundleVersion != null && bundleVersion.length() != 0) {
+                        String moduleVersion = "SNAPSHOT";
+                        /*
+                            Bundle version is defined as
+                            version ::=
+                                major( '.' minor ( '.' micro ( '.' qualifier )? )? )?
+                                major ::= number
+                                minor ::= number
+                                micro ::= number
+                                qualifier ::= ( alphanum | ’_’ | '-' )+
+
+                            Hence, in order to sync up with Axis2 module versioning, which is a floating
+                            point number, following logic is used to create the version
+                            version := major(.minormircor)
+                         */
+                        String[] versionSplit = bundleVersion.split("\\.");
+                        if (versionSplit.length == 3) {
+                            moduleVersion =
+                                    versionSplit[0] + "." + versionSplit[1] + versionSplit[2];
+                        } else if (versionSplit.length == 2) {
+                            moduleVersion = versionSplit[0] + "." + versionSplit[1];
+                        } else if (versionSplit.length == 1) {
+                            moduleVersion = versionSplit[0];
+                        }
+                        axismodule.setVersion(moduleVersion);
+                    }
                     builder.populateModule();
                     axismodule.setParent(configCtx.getAxisConfiguration());
-                    //                axismodule.setFileName(new URL(bundle.getLocation()));
                     AxisModule module =
                             configCtx.getAxisConfiguration().getModule(axismodule.getName());
                     if (module == null) {
@@ -187,7 +212,9 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                         }
                         moduleList.add(axismodule);
                         log.info("[Axis2/OSGi] Starting any modules in Bundle - " +
-                                 bundle.getSymbolicName());
+                                 bundle.getSymbolicName() + " - Module Name : " +
+                                 axismodule.getName() + " - Module Version : " +
+                                 axismodule.getVersion());
                     } else {
                         log.info("[ModuleRegistry] Module : " + axismodule.getName() +
                                  " is already available.");
