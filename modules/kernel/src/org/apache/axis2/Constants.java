@@ -291,6 +291,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * A MessageContext property or client Option stating the JMS correlation id
      */
     public static final String JMS_COORELATION_ID = "JMS_COORELATION_ID";
+
+    public static final String MODULE_VERSION ="version";
     
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
@@ -351,7 +353,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         // if this property is set to Boolean.TRUE then the SOAPAction header, if present,
         // will NOT be set to the value of Options.getAction(). The empty value, "", will
-        // be used instead.
+        // be used instead.                            L
         public static final String DISABLE_SOAP_ACTION = "disableSoapAction";
 
         /**
@@ -394,6 +396,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * send extra messages in the backchannel.
          */
         public static final String DISABLE_RESPONSE_ACK = "DisableResponseAck";
-        
+
     }
 }

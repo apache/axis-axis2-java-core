@@ -28,14 +28,7 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ModuleDeployer;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -209,6 +202,13 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
+
+        // check whether the module version paramter is there , if so set the module version as that
+        Parameter verisonParamter = module.getParameter(org.apache.axis2.Constants.MODULE_VERSION);
+        if (verisonParamter !=null ) {
+            String version = (String) verisonParamter.getValue();
+            module.setVersion(version);
+        }
 
         if (module.getVersion() == null) {
             if (module.getName().endsWith(AxisModule.VERSION_SNAPSHOT)) {
