@@ -113,7 +113,7 @@
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.1</jaxb.api.version>
-        <jaxbri.version>2.1.6</jaxbri.version>
+        <jaxbri.version>2.1.7</jaxbri.version>
         <jaxen.version>1.1.1</jaxen.version>
         <jettison.version>1.0-RC2</jettison.version>
         <jibx.version>1.1.5</jibx.version>
