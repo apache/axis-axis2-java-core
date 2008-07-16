@@ -111,6 +111,15 @@ public class EMailSender {
             });
             MimeMessage msg = new MimeMessage(session);
 
+            // Set date - required by rfc2822
+            msg.setSentDate(new java.util.Date());
+
+            // Set from - required by rfc2822
+            String from = properties.getProperty("mail.smtp.from");
+            if( from != null ) {
+                msg.setFrom(new InternetAddress(from));
+            }
+
 
             EndpointReference epr = null;
             MailToInfo mailToInfo;
