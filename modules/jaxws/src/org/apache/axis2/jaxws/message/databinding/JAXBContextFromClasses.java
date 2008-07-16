@@ -77,13 +77,17 @@ public class JAXBContextFromClasses {
         try {
             if (log.isDebugEnabled()) {
                 if (classArray == null || classArray.length == 0) {
-                    log.debug("JAXBContext is constructed with 0 input classes.");
+                    log.debug("Try to construct JAXBContext with 0 input classes.");
                 } else {
-                    log.debug("JAXBContext is constructed with " + classArray.length +
+                    log.debug("Try to construct JAXBContext with " + classArray.length +
                             " input classes.");
                 }
             }
             jaxbContext = _newInstance(classArray, cl, properties);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully constructed JAXBContext " + jaxbContext);
+            }
         } catch (Throwable t) {
             // Try finding the best set of classes
             ArrayList<Class> original = new ArrayList<Class>();
@@ -184,6 +188,11 @@ public class JAXBContextFromClasses {
                                    ClassLoader cl,
                                    List<Class> best, 
                                    Map<String, ?> properties) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Could not construct JAXBContext with the initial list.");
+            log.debug("Now trying to construct JAXBContext with only the valid classes in the list");
+        }
         JAXBContext jc = null;
         Class[] clsArray = new Class[0];
             
@@ -200,7 +209,15 @@ public class JAXBContextFromClasses {
             try {
                 jc = _newInstance(best.toArray(clsArray), cl, properties);
             } catch (Throwable t) {
-                return null;
+                if (log.isDebugEnabled()) {
+                    log.debug("The JAXBContext creation failed with the primary list");
+                    log.debug("Will try a more brute force algorithm");
+                    log.debug("  The reason is " + t);
+                }
+                // Add all of the primary classes to the secondary list so 
+                // that we can walk them one by one.
+                secondary.addAll(primary);
+                best.clear(); // Clear out the best list
             }
         }
         
