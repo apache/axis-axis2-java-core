@@ -48,6 +48,8 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.description.AxisBindingMessage;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -184,8 +186,18 @@ public class MessageContextBuilder {
             newmsgCtx.setWSAAction(inMessageContext.getWSAAction());
         }
 
-        if (ao != null)
+        if (ao != null) {
             newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        }
+        
+        // setting the out bound binding message
+        AxisBindingMessage inboundAxisBindingMessage
+                = (AxisBindingMessage)inMessageContext.getProperty(Constants.AXIS_BINDING_MESSAGE);
+        if (inboundAxisBindingMessage != null){
+                AxisBindingOperation axisBindingOperation = inboundAxisBindingMessage.getAxisBindingOperation();
+                newmsgCtx.setProperty(Constants.AXIS_BINDING_MESSAGE,
+                        axisBindingOperation.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        }
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
         newmsgCtx.setDoingSwA(inMessageContext.isDoingSwA());
