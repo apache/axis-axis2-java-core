@@ -103,6 +103,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -177,6 +181,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -253,6 +261,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -326,6 +338,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>javax.jms</groupId>
@@ -418,6 +434,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -492,6 +512,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -568,6 +592,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -642,6 +670,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -718,6 +750,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -792,6 +828,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -869,6 +909,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -945,6 +989,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1020,6 +1068,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1098,6 +1150,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1174,6 +1230,10 @@
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
                 </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1248,6 +1308,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1324,6 +1388,10 @@
                 <exclusion>
                     <groupId>bsf</groupId>
                     <artifactId>bsf</artifactId>
+                </exclusion>
+                <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
