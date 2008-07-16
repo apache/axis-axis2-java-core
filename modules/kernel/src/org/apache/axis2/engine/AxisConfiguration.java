@@ -387,6 +387,21 @@ public class AxisConfiguration extends AxisDescription {
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
             }
+
+            //removes the endpoints to this service
+            String key = null;
+            List endPointsForThisService = new ArrayList();
+            for (Iterator iter = this.allEndpoints.keySet().iterator(); iter.hasNext();){
+                key = (String)iter.next();
+                if (key.startsWith(axisService.getName())){
+                    endPointsForThisService.add(key);
+                }
+            }
+
+            for (Iterator iter = endPointsForThisService.iterator();iter.hasNext();){
+                this.allEndpoints.remove(iter.next());
+            }
+
         }
         removeChild(serviceGroupName);
         notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
