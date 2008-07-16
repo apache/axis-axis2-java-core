@@ -124,8 +124,10 @@ public class ProviderDispatcher extends JavaDispatcher {
         Throwable fault = null;
         Object[] input = new Object[] {param};
         Object responseParamValue = null;
+        Method target = null;
         try {
-            responseParamValue = invokeTargetOperation(getJavaMethod(), input);
+            target = getJavaMethod();
+            responseParamValue = invokeTargetOperation(target, input);
         } catch (Throwable e) {
             fault = ClassUtils.getRootCause(e);
             faultThrown = true;
@@ -137,6 +139,7 @@ public class ProviderDispatcher extends JavaDispatcher {
             // If a fault was thrown, we need to create a slightly different
             // MessageContext, than in the response path.
             responseMsgCtx = createFaultResponse(request, fault);
+            setCheckedExceptionProperty(responseMsgCtx, target, fault);
         } else {
             responseMsgCtx = createResponse(request, input, responseParamValue);
         }

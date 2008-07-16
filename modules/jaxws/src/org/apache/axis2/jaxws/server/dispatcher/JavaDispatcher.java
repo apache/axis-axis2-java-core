@@ -20,16 +20,17 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.jaxws.Constants;
+import org.apache.axis2.jaxws.WebServiceExceptionLogger;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
 import org.apache.axis2.jaxws.server.InvocationHelper;
 import org.apache.axis2.jaxws.server.InvocationListener;
 import org.apache.axis2.jaxws.server.InvocationListenerBean;
 import org.apache.axis2.jaxws.utility.ClassUtils;
-import org.apache.axis2.jaxws.utility.FailureLogger;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,38 +70,23 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         return serviceImplClass;
     }
     
-    protected Object invokeTargetOperation(Method method, Object[] params) throws Throwable {
+    protected final Object invokeTargetOperation(Method method, Object[] args) throws Throwable {
         Object output = null;
         try {
-            output = method.invoke(serviceInstance, params);
+            output = method.invoke(serviceInstance, args);
         } catch (Throwable t) {
-            Throwable rootT = null;
-            if (t instanceof InvocationTargetException) {
-                rootT = ((InvocationTargetException) t).getTargetException();
-            }
             
-            // Minimal Logging to aid servicability.
-            // Only the error and the stack is logged.
-            FailureLogger.logError((rootT != null) ? rootT : t, 
-                                   false);  
-            
-            // Full logging if debug is enabled.
-            if (log.isDebugEnabled()) {
-                log.debug("Exception invoking a method of " + serviceImplClass.toString()
-                        + " of instance " + serviceInstance.toString());
-                log.debug("Exception type thrown: " + t.getClass().getName());
-                if (rootT != null) {
-                    log.debug("Root Exception type thrown: " + rootT.getClass().getName());
-                }
-                log.debug("Method = " + method.toGenericString());
-                for (int i = 0; i < params.length; i++) {
-                    String value =
-                            (params[i] == null) ? "null"
-                                    : params[i].getClass().toString();
-                    log.debug(" Argument[" + i + "] is " + value);
-                }
-            }
-            
+            // Delegate logging the exception to the WebServiceExceptionLogger.
+            // Users can specifiy debug tracing of the WebServiceExceptionLogger to see
+            // all exceptions.
+            // Otherwise the WebServiceExceptionLogger only logs errors for non-checked exceptions
+            WebServiceExceptionLogger.log(method, 
+                                          t,
+                                          false,
+                                          serviceImplClass,
+                                          serviceInstance,
+                                          args);
+                                                         
             throw t;
         }
         
@@ -172,6 +158,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                     // If a fault was thrown, we need to create a slightly different
                     // MessageContext, than in the response path.
                     response = createFaultResponse(request, fault);
+                    setCheckedExceptionProperty(response, method, fault);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("Async invocation of the endpoint was successful.  Creating response message.");
@@ -246,6 +233,28 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
              String action = operation.getFaultAction(exception.getClass().getName());
              response.getAxisMessageContext().setWSAAction(action);
          }
+    }
+    
+    /**
+     * Determine if the thrown exception is a checked exception.
+     * If so, then set the name of the checked exception on the response context
+     * @param response MessageContext
+     * @param m Method
+     * @param t Throwable
+     */
+    protected static void setCheckedExceptionProperty(MessageContext response, Method m, Throwable t) {
+        // Get the root of the exception
+        if (t instanceof InvocationTargetException) {
+            t = ((InvocationTargetException) t).getTargetException();
+        }
+        
+        // Determine if the thrown exception is checked
+        Class checkedException = JavaUtils.getCheckedException(t, m);
+        
+        // Add the property
+        if (checkedException != null) {
+            response.setProperty(Constants.CHECKED_EXCEPTION, checkedException.getCanonicalName());
+        }
     }
     
 }

@@ -49,4 +49,11 @@ public interface Constants {
         "org.apache.axis2.jaxws.enableJAXBPayloadStreaming";
     public static final String MEP_CONTEXT = 
         "org.apache.axis2.jaxws.handler.MEPContext";
+    
+    /**
+     * If a checked exception is thrown by the webservice's webmethod, then
+     * the name of the checked exception is placed in the outbound response context.
+     */
+    public static final String CHECKED_EXCEPTION =
+        "org.apache.axis2.jaxws.checkedException";
 }

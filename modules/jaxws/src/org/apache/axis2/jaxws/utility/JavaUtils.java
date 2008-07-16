@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.utility;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -201,5 +202,26 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         text = text.substring(text.indexOf("at"));
         text = replace(text, "at ", "DEBUG_FRAME = ");
         return text;
+    }
+    
+    /**
+     * Get checked exception
+     * @param throwable Throwable
+     * @param method Method
+     * @return Class of the checked exception or null
+     */
+    public static Class getCheckedException(Throwable throwable, Method method) {
+        if (method == null) {
+            return null;
+        }
+        Class[] exceptions = method.getExceptionTypes();
+        if (exceptions != null) {
+            for (int i=0; i< exceptions.length; i++ ) {
+                if (exceptions[i].isAssignableFrom(throwable.getClass())) {
+                    return exceptions[i];
+                }
+            }
+        }
+        return null;
     }
 }
