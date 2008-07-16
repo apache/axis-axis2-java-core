@@ -158,7 +158,7 @@ public class CodeGenerationUtility {
                         scanEpisodeFile(new File(bindingFileName), sc);
                     } else {
                         InputSource inputSoruce = new InputSource(new FileInputStream(bindingFileName));
-                        inputSoruce.setSystemId(new File(bindingFileName).getAbsolutePath());
+                        inputSoruce.setSystemId(new File(bindingFileName).toURI().toString());
                         sc.getOptions().addBindFile(inputSoruce);
                     }
 
