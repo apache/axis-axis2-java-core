@@ -26,6 +26,7 @@ public class FaultActionAnnot implements FaultAction {
     
     private Class className;
     private String value;
+    private String classNameString;
 
     private FaultActionAnnot() {
     }
@@ -42,6 +43,10 @@ public class FaultActionAnnot implements FaultAction {
     public static FaultActionAnnot createFaultActionAnnotImpl(Class className, String value) {
         return new FaultActionAnnot(className, value);
     }
+    
+    public void setClassName(String classNameString) {
+        this.classNameString = classNameString;
+    }
 
     public void setClassName(Class className) {
         this.className = className;
@@ -53,6 +58,10 @@ public class FaultActionAnnot implements FaultAction {
 
     public Class className() {
         return className;
+    }
+    
+    public String classNameString() {
+        return classNameString;
     }
 
     public String value() {

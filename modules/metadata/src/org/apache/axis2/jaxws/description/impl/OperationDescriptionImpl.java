@@ -41,6 +41,7 @@ import org.apache.axis2.jaxws.description.OperationRuntimeDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.FaultActionAnnot;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
@@ -532,10 +533,27 @@ class OperationDescriptionImpl
         
         if (faultActions != null) {
             for (FaultAction faultAction : faultActions) {
-                String className = faultAction.className().getName();
-                FaultDescription faultDesc = resolveFaultByExceptionName(className);
-                if (faultDesc != null)  {
-                    newAxisOperation.addFaultAction(className, faultAction.value());
+                
+                String className = null;
+                
+                if(faultAction instanceof FaultActionAnnot
+                        &&
+                        ((FaultActionAnnot) faultAction).classNameString() != null) {
+                    className = ((FaultActionAnnot) faultAction).classNameString();
+                }
+                else if(faultAction.className() != null) {
+                    className = faultAction.className().getName();
+                }
+                
+                if(className != null) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Looking for FaultDescription for class: " + className + 
+                                  " from @FaultAction annotation");
+                    }
+                    FaultDescription faultDesc = resolveFaultByExceptionName(className);
+                    if (faultDesc != null)  {
+                        newAxisOperation.addFaultAction(className, faultAction.value());
+                    }
                 }
             }
         }
