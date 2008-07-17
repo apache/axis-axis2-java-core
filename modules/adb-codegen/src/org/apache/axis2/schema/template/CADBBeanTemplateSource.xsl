@@ -1648,7 +1648,7 @@
                                      return AXIS2_FAILURE;
                                  }
                               }
-                           <xsl:if test="not(@minOccurs=0) and not($choice)">
+                           <xsl:if test="not(@nillable) and not(@minOccurs=0) and not($choice)">
                               else if(!dont_care_minoccurs)
                               {
                                   if(element_qname)
