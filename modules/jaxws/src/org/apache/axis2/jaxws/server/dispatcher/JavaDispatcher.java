@@ -70,7 +70,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         return serviceImplClass;
     }
     
-    protected final Object invokeTargetOperation(Method method, Object[] args) throws Throwable {
+    protected Object invokeTargetOperation(Method method, Object[] args) throws Throwable {
         Object output = null;
         try {
             output = method.invoke(serviceInstance, args);
