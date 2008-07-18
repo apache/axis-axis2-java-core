@@ -159,9 +159,63 @@ public class MTOMSerializationTests extends TestCase {
                
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapOM.serializeAndConsume(baos, format);
+        String outputText = baos.toString();
+        // Make sure the attachment is serialized
+        assertTrue(outputText.indexOf("Content-Type: image/jpeg") > 0);
 
         TestLogger.logger.debug("==================================");
-        TestLogger.logger.debug(baos.toString());
+        TestLogger.logger.debug(outputText);
+        TestLogger.logger.debug("==================================");
+    }
+    
+    public void testMTOMAttachmentWriter2() throws Exception {
+        TestLogger.logger.debug("---------------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+                        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        //JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        JAXBBlockContext context = new JAXBBlockContext(SendImage.class.getPackage().getName());
+        
+        //Create a request bean with imagedepot bean as value
+        ObjectFactory factory = new ObjectFactory();
+        SendImage request = factory.createSendImage();
+        request.setInput(imageDepot);
+        
+        BlockFactory blkFactory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        Block block = blkFactory.createFrom(request, context, null);
+        
+        MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+        Message msg = msgFactory.create(Protocol.soap11);
+        
+        msg.setBodyBlock(block);
+        
+        msg.setMTOMEnabled(true);
+        
+        // Convert message to SAAJ to simulate an outbound handler
+        msg.getAsSOAPMessage();
+        
+        // Now convert it back to AXIOM
+        
+        SOAPEnvelope soapOM = (SOAPEnvelope) msg.getAsOMElement();
+        
+        OMOutputFormat format = new OMOutputFormat();
+        format.setDoOptimize(true);
+        format.setSOAP11(true);
+               
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        soapOM.serializeAndConsume(baos, format);
+        String outputText = baos.toString();
+        // Make sure the attachment is serialized
+        assertTrue(outputText.indexOf("Content-Type: image/jpeg") > 0);
+
+        TestLogger.logger.debug("==================================");
+        TestLogger.logger.debug(outputText);
         TestLogger.logger.debug("==================================");
     }
     

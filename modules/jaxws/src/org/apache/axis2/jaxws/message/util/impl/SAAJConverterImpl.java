@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.util.impl;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
@@ -27,6 +28,7 @@ import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -116,18 +118,28 @@ public class SAAJConverterImpl implements SAAJConverter {
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPEnvelope)
       */
-    public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
+    public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope) {
+        return toOM(saajEnvelope, null);
+    }
+    public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope, 
+                                                   Attachments attachments)
             throws WebServiceException {
     	if (log.isDebugEnabled()) {
-    		log.debug("Converting SAAJ SOAPEnvelope to an OM SOAPEnvelope");
+    	    log.debug("Converting SAAJ SOAPEnvelope to an OM SOAPEnvelope");
     	}    	
     	
     	// Before we do the conversion, we have to fix the QNames for fault elements
         _fixFaultElements(saajEnvelope);        
         // Get a XMLStreamReader backed by a SOAPElement tree
         XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
+        
         // Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
-        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);
+        StAXSOAPModelBuilder builder = null;
+        if (attachments == null) {
+            builder = new StAXSOAPModelBuilder(reader, null);
+        } else {
+            builder = new MTOMStAXSOAPModelBuilder(reader, attachments, null);
+        }
         // Create and return the OM Envelope
         org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
         

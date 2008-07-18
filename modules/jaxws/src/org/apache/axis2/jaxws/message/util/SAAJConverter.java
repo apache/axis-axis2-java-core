@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.message.util;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 
 import javax.xml.soap.MessageFactory;
@@ -48,6 +49,18 @@ public interface SAAJConverter {
      * @throws WebServiceException
      */
     public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
+            throws WebServiceException;
+    
+    /**
+     * Convert SAAJ SOAPEnvelope to OM SOAPEnvelope
+     *
+     * @param saajEnvelope
+     * @param Attachments
+     * @return OM Envelope
+     * @throws WebServiceException
+     */
+    public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope, 
+                                                   Attachments attachments)
             throws WebServiceException;
 
     /**

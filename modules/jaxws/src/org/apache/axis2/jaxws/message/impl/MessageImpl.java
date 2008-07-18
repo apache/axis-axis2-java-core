@@ -59,6 +59,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -181,6 +182,9 @@ public class MessageImpl implements Message {
         // The real solution may involve using non-spec, implementation
         // constructors to create a Message from an Envelope
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("start getAsSOAPMessage");
+            }
             // Get OMElement from XMLPart.
             OMElement element = xmlPart.getAsOMElement();
             
@@ -190,9 +194,15 @@ public class MessageImpl implements Message {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             element.serialize(outStream);
             
+            byte[] bytes = outStream.toByteArray();
+            
+            if (log.isDebugEnabled()) {
+                String text = new String(bytes);
+                log.debug("  inputstream = " + text);
+            }
+            
             // Create InputStream
-            ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
-                    .toByteArray());
+            ByteArrayInputStream inStream = new ByteArrayInputStream(bytes);
             
             // Create MessageFactory that supports the version of SOAP in the om element
             MessageFactory mf = getSAAJConverter().createMessageFactory(ns.getNamespaceURI());
@@ -209,12 +219,20 @@ public class MessageImpl implements Message {
                     String key = (String) entry.getKey();
                     if (entry.getValue() instanceof String) {
                         // Normally there is one value per key
+                        if (log.isDebugEnabled()) {
+                            log.debug("  add transport header. header =" + key + 
+                                      " value = " + entry.getValue());
+                        }
                         defaultHeaders.addHeader(key, (String) entry.getValue());
                     } else {
                         // There may be multiple values for each key.  This code
                         // assumes the value is an array of String.
                         String values[] = (String[]) entry.getValue();
                         for (int i=0; i<values.length; i++) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("  add transport header. header =" + key + 
+                                          " value = " + values[i]);
+                            }
                             defaultHeaders.addHeader(key, values[i]);
                         }
                     }
@@ -230,7 +248,11 @@ public class MessageImpl implements Message {
             }
             
             // Override the content-type
-            defaultHeaders.setHeader("Content-type", contentType +"; charset=UTF-8");
+            String ctValue = contentType +"; charset=UTF-8";
+            defaultHeaders.setHeader("Content-type", ctValue);
+            if (log.isDebugEnabled()) {
+                log.debug("  setContentType =" + ctValue);
+            }
             SOAPMessage soapMessage = mf.createMessage(defaultHeaders, inStream);
             
             // At this point the XMLPart is still an OMElement.  
@@ -241,16 +263,53 @@ public class MessageImpl implements Message {
             // then one of the attachments is a SOAPPart.  Ignore this attachment
             String soapPartContentID = getSOAPPartContentID();  // This may be null
             
-            // Add the attachments
+            if (log.isDebugEnabled()) {
+                log.debug("  soapPartContentID =" + soapPartContentID);
+            }
+            
+            List<String> dontCopy = new ArrayList<String>();
+            if (soapPartContentID != null) {
+                dontCopy.add(soapPartContentID);
+            }
+            
+            // Add any new attachments from the SOAPMessage to this Message
+            Iterator it = soapMessage.getAttachments();
+            while (it.hasNext()) {
+                
+                AttachmentPart ap = (AttachmentPart) it.next();
+                String cid = ap.getContentId();
+                if (log.isDebugEnabled()) {
+                    log.debug("  add SOAPMessage attachment to Message.  cid = " + cid);
+                }
+                addDataHandler(ap.getDataHandler(),  cid);
+                dontCopy.add(cid);
+            }
+            
+            // Add the attachments from this Message to the SOAPMessage
             for (String cid:getAttachmentIDs()) {
                 DataHandler dh = attachments.getDataHandler(cid);
-                boolean isSOAPPart = cid.equals(soapPartContentID);
-                if (!isSOAPPart) {
+                if (!dontCopy.contains(cid)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("  add Message attachment to SoapMessage.  cid = " + cid);
+                    }
                     AttachmentPart ap = MessageUtils.createAttachmentPart(cid, dh, soapMessage);
                     soapMessage.addAttachmentPart(ap);
                 }
             }
             
+            if (log.isDebugEnabled()) {
+                log.debug("  The SOAPMessage has the following attachments");
+                Iterator it2 = soapMessage.getAttachments();
+                while (it2.hasNext()) {
+                    AttachmentPart ap = (AttachmentPart) it2.next();
+                    log.debug("    AttachmentPart cid=" + ap.getContentId());
+                    log.debug("        contentType =" + ap.getContentType());
+                }
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("end getAsSOAPMessage");
+            }
             return soapMessage;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

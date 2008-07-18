@@ -110,7 +110,7 @@ public abstract class XMLPartBase implements XMLPart {
 
     boolean consumed = false;
 
-    Message parent;
+    MessageImpl parent;
 
 
     /**
@@ -673,7 +673,7 @@ public abstract class XMLPartBase implements XMLPart {
      * Set the backpointer to this XMLPart's parent Message
      */
     public void setParent(Message p) {
-        parent = p;
+        parent = (MessageImpl) p;
     }
 
     /**
