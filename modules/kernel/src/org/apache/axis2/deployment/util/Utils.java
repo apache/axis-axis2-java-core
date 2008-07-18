@@ -37,6 +37,7 @@ import org.apache.axis2.description.java2wsdl.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -998,6 +999,9 @@ public class Utils {
 				String protocol = transportName.substring(0, 1).toUpperCase()
 						+ transportName.substring(1, transportName.length())
 								.toLowerCase();
+				
+				//TODO do we use this method , we need to disable Http, SOAP11,SOAP12
+				// Bindings according to parameters if we are using this
 				/*
 				 * populates soap11 endpoint
 				 */
@@ -1071,42 +1075,75 @@ public class Utils {
 				String protocol = transportName.substring(0, 1).toUpperCase()
 						+ transportName.substring(1, transportName.length())
 								.toLowerCase();
+				
+				
+		                // axis2.xml indicated no HTTP binding?
+		                boolean disableREST = false;
+		                Parameter disableRESTParameter = axisService
+		                                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+		                if (disableRESTParameter != null
+		                                && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+		                        disableREST = true;
+		                }
+
+		                boolean disableSOAP11 = false;
+		                Parameter disableSOAP11Parameter = axisService
+		                                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP11);
+		                if (disableSOAP11Parameter != null
+		                                && JavaUtils.isTrueExplicitly(disableSOAP11Parameter.getValue())) {
+		                        disableSOAP11 = true;
+		                }
+
+		                boolean disableSOAP12 = false;
+		                Parameter disableSOAP12Parameter = axisService
+		                                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_SOAP12);
+		                if (disableSOAP12Parameter != null
+		                                && JavaUtils
+		                                                .isTrueExplicitly(disableSOAP12Parameter.getValue())) {
+		                        disableSOAP12 = true;
+		                }
+				
+				
 				/*
 				 * populates soap11 endpoint
 				 */
-				String soap11EndpointName = serviceName + protocol
-						+ "Soap11Endpoint";
-
-				AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
-				httpSoap11Endpoint.setName(soap11EndpointName);
-				httpSoap11Endpoint.setParent(axisService);
-				httpSoap11Endpoint.setTransportInDescription(transportName);
-				populateSoap11Endpoint(axisService, httpSoap11Endpoint,
-						bindingCache);
-				axisService.addEndpoint(httpSoap11Endpoint.getName(),
-						httpSoap11Endpoint);
-				// setting soap11 endpoint as the default endpoint
-				axisService.setEndpointName(soap11EndpointName);
+		                if (!disableSOAP11) {
+        			    String soap11EndpointName = serviceName + protocol
+        			    		+ "Soap11Endpoint";
+        
+        			    AxisEndpoint httpSoap11Endpoint = new AxisEndpoint();
+        			    httpSoap11Endpoint.setName(soap11EndpointName);
+        			    httpSoap11Endpoint.setParent(axisService);
+        			    httpSoap11Endpoint.setTransportInDescription(transportName);
+        			    populateSoap11Endpoint(axisService, httpSoap11Endpoint,
+        			    		bindingCache);
+        			    axisService.addEndpoint(httpSoap11Endpoint.getName(),
+        			    		httpSoap11Endpoint);
+        			    // setting soap11 endpoint as the default endpoint
+        			    axisService.setEndpointName(soap11EndpointName);
+		                }
 
 				/*
 				 * generating Soap12 endpoint
 				 */
-				String soap12EndpointName = serviceName + protocol
-						+ "Soap12Endpoint";
-				AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
-				httpSoap12Endpoint.setName(soap12EndpointName);
-				httpSoap12Endpoint.setParent(axisService);
-				httpSoap12Endpoint.setTransportInDescription(transportName);
-				populateSoap12Endpoint(axisService, httpSoap12Endpoint,
-						bindingCache);
-				axisService.addEndpoint(httpSoap12Endpoint.getName(),
-						httpSoap12Endpoint);
+		                if (!disableSOAP12) {
+		                    String soap12EndpointName = serviceName + protocol
+				            + "Soap12Endpoint";
+				    AxisEndpoint httpSoap12Endpoint = new AxisEndpoint();
+				    httpSoap12Endpoint.setName(soap12EndpointName);
+				    httpSoap12Endpoint.setParent(axisService);
+				    httpSoap12Endpoint.setTransportInDescription(transportName);
+				    populateSoap12Endpoint(axisService, httpSoap12Endpoint,
+				            bindingCache);
+				    axisService.addEndpoint(httpSoap12Endpoint.getName(),
+					    httpSoap12Endpoint);
+		                }
 
 				/*
 				 * generating Http endpoint
 				 */
-				if ("http".equals(transportName)
-						|| "https".equals(transportName)) {
+				if (("http".equals(transportName)
+						|| "https".equals(transportName)) && !disableREST) {
 					String httpEndpointName = serviceName + protocol
 							+ "Endpoint";
 					AxisEndpoint httpEndpoint = new AxisEndpoint();
