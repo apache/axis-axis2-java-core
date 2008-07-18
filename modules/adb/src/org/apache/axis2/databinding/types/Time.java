@@ -194,8 +194,8 @@ public class Time implements java.io.Serializable {
             }
         }
         calendar.set(Calendar.MILLISECOND, miliSecond);
-
         calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+        calendar.set(Calendar.DST_OFFSET, 0);
 
         return calendar;
     }

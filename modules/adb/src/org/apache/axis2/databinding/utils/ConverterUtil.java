@@ -160,7 +160,7 @@ public class ConverterUtil {
     }
 
     public static void appendTimeZone(Calendar calendar, StringBuffer dateString) {
-        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET);
+        int timezoneOffSet = calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
         int timezoneOffSetInMinits = timezoneOffSet / 60000;
         if (timezoneOffSetInMinits < 0){
             dateString.append("-");
@@ -614,6 +614,7 @@ public class ConverterUtil {
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
         calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+        calendar.set(Calendar.DST_OFFSET, 0);
         calendar.getTimeInMillis();
         if (bc){
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
@@ -981,6 +982,7 @@ public class ConverterUtil {
             }
             calendar.set(Calendar.MILLISECOND, miliSecond);
             calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
+            calendar.set(Calendar.DST_OFFSET, 0);
 
         } else {
             throw new NumberFormatException("date string can not be less than 19 charactors");
