@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BundleTracker {
 
-    private List<Registry> registyList = new ArrayList<Registry>();
+    private List<Registry> registryList = new ArrayList<Registry>();
 
     private List<Bundle> bundleList = new ArrayList<Bundle>();
 
@@ -65,7 +65,7 @@ public class BundleTracker {
                             if (!bundleList.contains(event.getBundle())) {
                                 bundleList.add(event.getBundle());
                                 // logic
-                                for (Registry registry : registyList) {
+                                for (Registry registry : registryList) {
                                     registry.register(bundle);
                                 }
                             }
@@ -75,7 +75,7 @@ public class BundleTracker {
                                 if (bundleList.contains(event.getBundle())) {
                                     bundleList.remove(event.getBundle());
                                     //logic
-                                    for (Registry registry : registyList) {
+                                    for (Registry registry : registryList) {
                                         registry.unRegister(bundle, false);
                                     }
 
@@ -87,7 +87,7 @@ public class BundleTracker {
                                 if (bundleList.contains(event.getBundle())) {
                                     bundleList.remove(event.getBundle());
                                     //logic
-                                    for (Registry registry : registyList) {
+                                    for (Registry registry : registryList) {
                                         registry.remove(bundle);
                                     }
                                 }
@@ -105,7 +105,7 @@ public class BundleTracker {
     }
 
     public void addRegistry(Registry registry) {
-        registyList.add(registry);
+        registryList.add(registry);
     }
 
     public void open() {
@@ -118,7 +118,7 @@ public class BundleTracker {
                 for (Bundle bundle : bundles) {
                     if (bundle.getState() == Bundle.ACTIVE) {
                         bundleList.add(bundle);
-                        for (Registry registry : registyList) {
+                        for (Registry registry : registryList) {
                             registry.register(bundle);
                         }
                     }
@@ -139,7 +139,7 @@ public class BundleTracker {
                 Bundle[] bundles = bundleList.toArray(new Bundle[bundleList.size()]);
                 for (Bundle bundle : bundles) {
                     if (bundleList.remove(bundle)) {
-                        for (Registry registry : registyList) {
+                        for (Registry registry : registryList) {
                             registry.remove(bundle);
                         }
                     }
