@@ -16,20 +16,18 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleListener;
-import org.apache.axis2.AxisFault;
 
 /**
  *  This interface will be used to register the extension/file
  * that needed be processed and create the relevant Axis* object.
  */
-public interface Registry extends BundleListener{
+public interface Registry{
 
-    void register(Bundle bundle) throws AxisFault;
+    void register(Bundle bundle);
 
-    void unRegister(Bundle bundle, boolean uninstall) throws AxisFault;
+    void unRegister(Bundle bundle, boolean uninstall);
 
-    void resolve() throws AxisFault;
+    void resolve();
 
-    void remove(Bundle bundle) throws AxisFault;
+    void remove(Bundle bundle);
 }

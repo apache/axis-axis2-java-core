@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.*;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
+import org.apache.axis2.osgi.deployment.tracker.BundleTracker;
 import org.apache.axis2.osgi.tx.HttpListener;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
@@ -58,9 +59,11 @@ public class OSGiConfigurationContextFactory implements ManagedService {
 
     private ServiceRegistration configCtxServiceRegistration;
 
+    private BundleTracker bundleTracker;
 
-    public synchronized void init(BundleContext context) {
+    public synchronized void start(BundleContext context) {
         this.context = context;
+        bundleTracker = new BundleTracker(context);
         Dictionary props = new Properties();
         props.put(Constants.SERVICE_PID, "org.apache.axis2.osgi");
         mngServiceRegistration =
@@ -71,6 +74,7 @@ public class OSGiConfigurationContextFactory implements ManagedService {
         if (mngServiceRegistration != null) {
             mngServiceRegistration.unregister();
         }
+        bundleTracker.close();
         if (configCtx != null) {
             try {
                 configCtx.terminate();
@@ -102,32 +106,12 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             configCtxServiceRegistration =
                     context.registerService(ConfigurationContext.class.getName(), configCtx, null);
 
-            // first check (bundlestarts at the end or partially) {
-            //      // loop  and add axis*
-            // } then {
-            //      // stat the bundle early
-            // }
             Registry servicesRegistry = new ServiceRegistry(context, configCtx);
             Registry moduleRegistry = new ModuleRegistry(context, configCtx, servicesRegistry);
-            Bundle[] bundles = context.getBundles();
-            if (bundles != null) {
-                for (Bundle bundle : bundles) {
-                    if (bundle != context.getBundle()) {
-                        if (bundle.getState() == Bundle.ACTIVE) {
-                            moduleRegistry.register(bundle);
-                        }
-                    }
-                }
-                for (Bundle bundle : bundles) {
-                    if (bundle != context.getBundle()) {
-                        if (bundle.getState() == Bundle.ACTIVE) {
-                            servicesRegistry.register(bundle);
-                        }
-                    }
-                }
-            }
-            context.addBundleListener(moduleRegistry);
-            context.addBundleListener(servicesRegistry);
+            bundleTracker.addRegistry(servicesRegistry);
+            bundleTracker.addRegistry(moduleRegistry);
+            bundleTracker.open();
+
             context.addServiceListener(new AxisConfigServiceListener(configCtx, context));
             context.addServiceListener(new WSListener(configCtx, context));
 
@@ -136,8 +120,6 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             //adding the default listener
             context.registerService(TransportListener.class.getName(), new HttpListener(context),
                                     prop);
-
-
             log.info("Axis2 environment has started.");
         } catch (AxisFault e) {
             String msg = "Error while creating ConfigurationContext";

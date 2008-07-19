@@ -16,6 +16,7 @@
 package org.apache.axis2.osgi.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.ModuleBuilder;
@@ -50,11 +51,10 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
         this.serviceRegistry = serviceRegistry;
     }
 
-    public void register(Bundle bundle) throws AxisFault {
+    public void register(Bundle bundle) {
         lock.lock();
         try {
             addModules(bundle);
-            serviceRegistry.resolve();
         } finally {
             lock.unlock();
         }
@@ -124,12 +124,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                 for (Long bundleId : stopBundleList) {
                     Bundle unRegBundle = context.getBundle(bundleId);
                     if (unRegBundle != null) {
-                        try {
-                            serviceRegistry.unRegister(unRegBundle, false);
-                        } catch (AxisFault e) {
-                            String msg = "Erro while stopping the bundle";
-                            log.error(msg, e);
-                        }
+                        serviceRegistry.unRegister(unRegBundle, false);
                     }
                 }
             }
@@ -164,9 +159,9 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     ClassLoader loader =
                             new BundleClassLoader(bundle, Registry.class.getClassLoader());
                     axismodule.setModuleClassLoader(loader);
+                    AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
                     ModuleBuilder builder =
-                            new ModuleBuilder(url.openStream(), axismodule,
-                                              configCtx.getAxisConfiguration());
+                            new ModuleBuilder(url.openStream(), axismodule, axisConfig);
                     Dictionary headers = bundle.getHeaders();
                     String bundleSymbolicName = (String) headers.get("Bundle-SymbolicName");
                     if (bundleSymbolicName != null && bundleSymbolicName.length() != 0) {
@@ -200,11 +195,10 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                         axismodule.setVersion(moduleVersion);
                     }
                     builder.populateModule();
-                    axismodule.setParent(configCtx.getAxisConfiguration());
-                    AxisModule module =
-                            configCtx.getAxisConfiguration().getModule(axismodule.getName());
+                    axismodule.setParent(axisConfig);
+                    AxisModule module = axisConfig.getModule(axismodule.getName());
                     if (module == null) {
-                        DeploymentEngine.addNewModule(axismodule, configCtx.getAxisConfiguration());
+                        DeploymentEngine.addNewModule(axismodule, axisConfig);
                         //initialze the module if the module contains Module interface.
                         Module moduleObj = axismodule.getModule();
                         if (moduleObj != null) {
@@ -219,6 +213,9 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                         log.info("[ModuleRegistry] Module : " + axismodule.getName() +
                                  " is already available.");
                     }
+                    // set in default map if necessary
+                    Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
+                    serviceRegistry.resolve();
                 } catch (IOException e) {
                     String msg = "Error while reading module.xml";
                     log.error(msg, e);
@@ -232,7 +229,7 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
 
     }
 
-    public void remove(Bundle bundle) throws AxisFault {
+    public void remove(Bundle bundle) {
         unRegister(bundle, true);
     }
 }

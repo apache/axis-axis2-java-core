@@ -44,7 +44,7 @@ public class Activator implements BundleActivator{
     }
 
     public void start(BundleContext context) throws Exception {
-        managedService.init(context);
+        managedService.start(context);
         managedService.updated(null);
         tracker = new HttpServiceTracker(context);
         tracker.open();

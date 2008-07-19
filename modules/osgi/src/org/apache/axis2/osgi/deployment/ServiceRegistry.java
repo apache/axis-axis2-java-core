@@ -21,7 +21,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.MODULE_NOT_FOUND_ERROR;
+import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.OSGi_BUNDLE_ID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
@@ -42,7 +43,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
         super(context, configCtx);
     }
 
-    public void register(Bundle bundle) throws AxisFault {
+    public void register(Bundle bundle) {
         lock.lock();
         try {
             addServices(bundle);
@@ -94,7 +95,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                 new OSGiServiceBuilder(configCtx, axisService);
                         serviceBuilder.setWsdlServiceMap(wsdlServicesMap);
                         AxisService service = serviceBuilder.populateService(rootElement);
-                        ArrayList serviceList = new ArrayList();
+                        ArrayList<AxisService> serviceList = new ArrayList<AxisService>();
                         serviceList.add(service);
                         DeploymentEngine.addServiceGroup(serviceGroup,
                                                          serviceList,
@@ -136,6 +137,8 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                                     log.info("A service being found with unmeant module " +
                                              "dependency. Hence, moved it to UNRESOLVED state.");
                                     unreslovedBundles.add(bundle);
+                                } else {
+                                    log.info("A service being found in UNRESOLVED state.");
                                 }
                             } else {
                                 log.error(msg, e);
@@ -158,7 +161,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
 
     }
 
-    public void unRegister(Bundle bundle, boolean uninstall) throws AxisFault {
+    public void unRegister(Bundle bundle, boolean uninstall) {
         lock.lock();
         try {
             List<AxisServiceGroup> axisServiceGroupList = resolvedBundles.get(bundle);
@@ -174,14 +177,14 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
                         for (Iterator iterator = axisServiceGroup.getServices();
                              iterator.hasNext();) {
                             AxisService service = (AxisService) iterator.next();
-                            System.out.println("[Axis2/OSGi] Service - " + service.getName());
+                            log.info("[Axis2/OSGi] Service - " + service.getName());
                         }
                         configCtx.getAxisConfiguration()
                                 .removeServiceGroup(axisServiceGroup.getServiceGroupName());
-                        System.out.println("[Axis2/OSGi] Stopping " +
-                                           axisServiceGroup.getServiceGroupName() +
-                                           " service group in Bundle - " +
-                                           bundle.getSymbolicName());
+                        log.info("[Axis2/OSGi] Stopping " +
+                                 axisServiceGroup.getServiceGroupName() +
+                                 " service group in Bundle - " +
+                                 bundle.getSymbolicName());
                     } catch (AxisFault e) {
                         String msg = "Error while removing the service group";
                         log.error(msg, e);
@@ -194,7 +197,7 @@ public class ServiceRegistry extends AbstractRegistry<AxisServiceGroup> {
         }
     }
 
-    public void remove(Bundle bundle) throws AxisFault {
+    public void remove(Bundle bundle) {
         unRegister(bundle, true);
         lock.lock();
         try {

@@ -15,17 +15,14 @@
  */
 package org.apache.axis2.osgi.deployment;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -34,8 +31,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see org.apache.axis2.osgi.deployment.Registry
  */
 public abstract class AbstractRegistry<V> implements Registry {
-
-    private Log log = LogFactory.getLog(AbstractRegistry.class);
 
     protected Map<Bundle, List<V>> resolvedBundles = new ConcurrentHashMap<Bundle, List<V>>();
 
@@ -52,35 +47,10 @@ public abstract class AbstractRegistry<V> implements Registry {
         this.configCtx = configCtx;
     }
 
-    public void bundleChanged(BundleEvent event) {
-        Bundle bundle = event.getBundle();
-        try {
-            switch (event.getType()) {
-                case BundleEvent.STARTED:
-                    if (context.getBundle() != bundle) {
-                        register(event.getBundle());
-                    }
-                    break;
-
-                case BundleEvent.STOPPED:
-                    if (context.getBundle() != bundle) {
-                        unRegister(event.getBundle(), false);
-                    }
-                    break;
-                case BundleEvent.UNINSTALLED:
-                    if (context.getBundle() != bundle) {
-                        remove(bundle);
-                    }
-                    break;
-            }
-        } catch (AxisFault e) {
-            String msg = "Error while registering the bundle in AxisConfiguration";
-            log.error(msg, e);
-        }
-    }
-
-    public void resolve() throws AxisFault {
-        for (Bundle bundle : unreslovedBundles) {
+    public void resolve() {
+        //to avoid concurrent modification
+        Bundle[] bundles = unreslovedBundles.toArray(new Bundle[unreslovedBundles.size()]);
+        for (Bundle bundle : bundles) {
             register(bundle);
         }
     }
