@@ -301,7 +301,9 @@ public class AxisService extends AxisDescription {
 	private boolean customWsdl = false;
 
 	private HashMap policyMap = new HashMap();
-
+	
+	private HashMap epMap = null; 
+	
 	public AxisEndpoint getEndpoint(String key) {
 		return (AxisEndpoint) endpointMap.get(key);
 	}
@@ -3066,5 +3068,16 @@ public class AxisService extends AxisDescription {
                     attachEnvelopeEvent(mc);
             }
         }
+    }
+    
+    public HashMap getEpMap() {
+        if (epMap == null) {
+            Utils.populateEPMap(this);      
+        }
+            return epMap;
+    }
+      
+    public void setEpMap(HashMap epMap) {
+        this.epMap = epMap;
     }
 }
