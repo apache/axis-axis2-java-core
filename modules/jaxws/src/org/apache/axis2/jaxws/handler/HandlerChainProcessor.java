@@ -164,15 +164,16 @@ public class HandlerChainProcessor {
         this.mepCtx = mepCtx;
         sortChain();
         initContext(direction);
+        boolean result = true;
 
         if (direction == Direction.OUT) { // 9.3.2 outbound
             currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                             (direction == Direction.OUT));
-            callGenericHandlers(mep, expectResponse, 0, handlers.size() - 1, direction);
+            result = callGenericHandlers(mep, expectResponse, 0, handlers.size() - 1, direction);
         } else { // IN case - 9.3.2 inbound
             currentMC.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY,
                             (direction == Direction.OUT));
-            callGenericHandlers(mep, expectResponse, handlers.size() - 1, 0, direction);
+            result = callGenericHandlers(mep, expectResponse, handlers.size() - 1, 0, direction);
         }
 
         // message context may have been changed to be response, and message
@@ -180,7 +181,7 @@ public class HandlerChainProcessor {
         // according to the JAXWS spec 9.3.2.1 footnote 2
         if ((Boolean) (currentMC.get(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY)) != (direction == Direction.OUT))
             return false;
-        return true;
+        return result;
 
 	}
 
@@ -188,7 +189,7 @@ public class HandlerChainProcessor {
     /*
       * This is the implementation of JAX-WS 2.0 section 9.3.2.1
       */
-    private void callGenericHandlers(MEP mep, boolean expectResponse, int start, int end,
+    private boolean callGenericHandlers(MEP mep, boolean expectResponse, int start, int end,
                                      Direction direction) throws RuntimeException {
 
         // if this is a response message, expectResponse should always be false
@@ -228,7 +229,7 @@ public class HandlerChainProcessor {
         }
 
         if (newDirection == direction) // we didn't actually process anything, probably due to empty list
-            return;  // no need to continue
+            return true;  // no need to continue
 
         // 9.3.2.3 in all situations, we want to close as many handlers as
         // were invoked prior to completion or exception throwing
@@ -273,6 +274,8 @@ public class HandlerChainProcessor {
                 if (savedException != null) {
                     log.warn("Exception thrown by a handler in one way invocation",
                              savedException);
+                    //But do return failure so that we know not to send to server
+                    return false;
                 }
             }
             else {
@@ -293,6 +296,9 @@ public class HandlerChainProcessor {
                 }
             }
         }
+        // If we've failed before this, we would have already thrown exception
+        // or returned false, so just return true here ... don't need to check result again.
+        return true;
     }
 
     /*
