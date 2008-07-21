@@ -1584,4 +1584,65 @@ public class Utils {
 			}
 		}
 	}
+	
+	public static void populateEPMap(AxisService service) {
+	    HashMap map = new HashMap();
+	    for (Iterator iterator = service.getEndpoints().values().iterator(); iterator
+	            .hasNext();) {
+	        AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+	        String transportInDescription = endpoint
+	                .getTransportInDescription();
+	        if (transportInDescription == null) {
+	            continue;
+	        }
+	        AxisBinding binding = endpoint.getBinding();
+	        if (binding != null) {
+	            if (isSoap11Binding(binding)) {
+	                map.put(transportInDescription + ":soap11", endpoint);
+	            } else if (isSoap12Binding(binding)) {
+	                map.put(transportInDescription + ":soap12", endpoint);
+	            } else if (isHttpBinding(binding)) {
+	                map.put(transportInDescription + ":http", endpoint);
+	            }
+	        }
+	    }
+	        service.setEpMap(map);
+	}
+	
+	public static boolean isSoap11Binding(AxisBinding binding) {
+	    String type = binding.getType();
+	    if (Java2WSDLConstants.TRANSPORT_URI.equals(type)
+	            || WSDL2Constants.URI_WSDL2_SOAP.equals(type)) {
+	        String v = (String) binding
+	                .getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+	        if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(v)) {
+	            return true;
+	        }
+	    }
+	        
+	    return false;
+	}
+	        
+	public static boolean isSoap12Binding(AxisBinding binding) {
+	    String type = binding.getType();
+	    if (Java2WSDLConstants.TRANSPORT_URI.equals(type)
+	            || WSDL2Constants.URI_WSDL2_SOAP.equals(type)) {
+	        String v = (String) binding
+	            .getProperty(WSDL2Constants.ATTR_WSOAP_VERSION);
+	        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(v)) {
+	            return true;
+	        }
+	    }
+	    
+	    return false;
+	}
+	        
+	public static boolean isHttpBinding(AxisBinding binding) {
+	    String type = binding.getType();
+	    if (WSDL2Constants.URI_WSDL2_HTTP.equals(type)) {
+	        return true;
+	    }
+	    
+	    return false;
+	}
 }
