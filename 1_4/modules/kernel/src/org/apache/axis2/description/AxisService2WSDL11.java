@@ -1253,7 +1253,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 			 */
 			for (Iterator iterator = policyURIs.iterator(); iterator.hasNext();) {
 				String uri = (String) iterator.next();
-				value = (value == null) ? uri : " " + uri;
+				value = (value == null) ? uri : value + " " + uri;
 			}
 
 			OMNamespace ns = factory.createOMNamespace(
