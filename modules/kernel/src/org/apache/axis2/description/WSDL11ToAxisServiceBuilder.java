@@ -2772,10 +2772,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         ref.setURI(uris[i]);
 
                         if (PORT_TYPE.equals(origin)) {
-                            PolicyInclude include = description
-                                    .getPolicyInclude();
-                            include.addPolicyRefElement(
-                                    PolicyInclude.PORT_TYPE_POLICY, ref);
+                            PolicySubject subject = description
+                                            .getPolicySubject();
+                            subject.attachPolicyReference(ref);
                         }
                     }
                 }
