@@ -93,6 +93,7 @@ import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -1101,11 +1102,20 @@ public class Utils {
 						bindingCache);
 				axisService.addEndpoint(httpSoap12Endpoint.getName(),
 						httpSoap12Endpoint);
+				
+				
+                                boolean disableREST = false;
+                                Parameter disableRESTParameter = axisService
+                                                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+                                if (disableRESTParameter != null
+                                                && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+                                        disableREST = true;
+                                }
 
 				/*
 				 * generating Http endpoint
 				 */
-				if ("http".equals(transportName)) {
+				if ("http".equals(transportName) && !disableREST) {
 					String httpEndpointName = serviceName + protocol
 							+ "Endpoint";
 					AxisEndpoint httpEndpoint = new AxisEndpoint();
@@ -1144,6 +1154,8 @@ public class Utils {
 				String protocol = transportName.substring(0, 1).toUpperCase()
 						+ transportName.substring(1, transportName.length())
 								.toLowerCase();
+				
+				
 				/*
 				 * populates soap11 endpoint
 				 */
@@ -1175,11 +1187,20 @@ public class Utils {
 				axisService.addEndpoint(httpSoap12Endpoint.getName(),
 						httpSoap12Endpoint);
 
+                                // axis2.xml or services.xml indicated no HTTP binding?
+                                boolean disableREST = false;
+                                Parameter disableRESTParameter = axisService
+                                                .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+                                if (disableRESTParameter != null
+                                                && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+                                        disableREST = true;
+                                }
+				
 				/*
 				 * generating Http endpoint
 				 */
-				if ("http".equals(transportName)
-						|| "https".equals(transportName)) {
+				if (("http".equals(transportName)
+						|| "https".equals(transportName)) && !disableREST) {
 					String httpEndpointName = serviceName + protocol
 							+ "Endpoint";
 					AxisEndpoint httpEndpoint = new AxisEndpoint();

@@ -34,6 +34,7 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.RequestResponseTransport;
@@ -93,6 +94,8 @@ public class DispatchPhase extends Phase {
         }
 
         validateTransport(msgContext);
+        
+        validateBindings(msgContext);
 
         loadContexts(service, msgContext);
 
@@ -217,6 +220,31 @@ public class DispatchPhase extends Phase {
         EndpointReference toEPR = msgctx.getTo();
         throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
                                                 ((toEPR != null) ? toEPR.getAddress() : "")));
+    }
+    
+    /**
+     * To check whether the incoming request has come in valid binding , we check whether service
+     * author has disabled any binding using parameters
+     * <code>org.apache.axis2.Constants.Configuration.DISABLE_REST</code>
+     * @param service msgctx the current MessageContext
+     * @throws AxisFault in case of error
+     */
+    private void validateBindings(MessageContext msgctx) throws AxisFault {
+        
+        AxisService service = msgctx.getAxisService();
+        
+        boolean disableREST = false;
+        Parameter disableRESTParameter = service
+                        .getParameter(org.apache.axis2.Constants.Configuration.DISABLE_REST);
+        if (disableRESTParameter != null
+                        && JavaUtils.isTrueExplicitly(disableRESTParameter.getValue())) {
+                disableREST = true;
+        }
+        
+        if (msgctx.isDoingREST() && disableREST) {
+            throw new AxisFault(Messages.getMessage("bindingDisabled","Http"));     
+        } 
+        
     }
 
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
