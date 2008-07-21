@@ -29,6 +29,8 @@ import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.TestLogger;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
+import org.apache.axis2.jaxws.addressing.SubmissionEndpointReferenceBuilder;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
@@ -46,6 +48,9 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
+
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.TreeSet;
@@ -129,6 +134,26 @@ public class MessageTests extends TestCase {
     private static final QName sampleQName = new QName("urn://sample", "a");
 
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+    
+    private W3CEndpointReference w3cEPR;
+    private SubmissionEndpointReference subEPR;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        
+        W3CEndpointReferenceBuilder w3cBuilder = new W3CEndpointReferenceBuilder();
+        w3cBuilder = w3cBuilder.address("http://somewhere.com/somehow");
+        w3cBuilder = w3cBuilder.serviceName(new QName("http://test", "TestService"));
+        w3cBuilder = w3cBuilder.endpointName(new QName("http://test", "TestPort"));
+        w3cEPR = w3cBuilder.build();
+        
+        SubmissionEndpointReferenceBuilder subBuilder = new SubmissionEndpointReferenceBuilder();
+        subBuilder = subBuilder.address("http://somewhere.com/somehow");
+        subBuilder = subBuilder.serviceName(new QName("http://test", "TestService"));
+        subBuilder = subBuilder.endpointName(new QName("http://test", "TestPort"));
+        subEPR = subBuilder.build();
+    }
 
     public MessageTests() {
         super();
@@ -699,6 +724,75 @@ public class MessageTests extends TestCase {
         String newText = baos.toString();
         TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleJAXBText));
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+    }
+    
+    /**
+     * Create a JAXBBlock containing a JAX-B business object 
+     * and simulate a normal Dispatch<Object> output flow
+     * @throws Exception
+     */
+    public void testJAXBOutflow_W3CEndpointReference() throws Exception {
+        // Create a SOAP 1.1 Message
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(Protocol.soap11);
+        
+        // Get the BlockFactory
+        JAXBBlockFactory bf = (JAXBBlockFactory)
+            FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        // Create the JAX-B object... a W3CEndpointReference
+        W3CEndpointReference obj = w3cEPR;
+       
+        
+        // Create the JAXBContext
+        Class[] classes = new Class[] {W3CEndpointReference.class};
+        //JAXBContext jaxbContext = JAXBContext.newInstance(classes);
+        //JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
+        JAXBBlockContext context = new JAXBBlockContext("javax.xml.ws.wsaddressing");
+        
+        System.out.println("JAXBContext= " + context);
+        
+        // Create a JAXBBlock using the Echo object as the content.  This simulates
+        // what occurs on the outbound JAX-WS Dispatch<Object> client
+        Block block = bf.createFrom(obj, context, null);
+        
+        // Add the block to the message as normal body content.
+        m.setBodyBlock(block);
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SPINE".equals(m.getXMLPartContentType()));
+        
+        // On an outbound flow, we need to convert the Message 
+        // to an OMElement, specifically an OM SOAPEnvelope, 
+        // so we can set it on the Axis2 MessageContext
+        org.apache.axiom.soap.SOAPEnvelope env = 
+            (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        env.serializeAndConsume(baos, new OMOutputFormat());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains("http://somewhere.com/somehow"));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
         assertTrue(newText.contains("Body"));

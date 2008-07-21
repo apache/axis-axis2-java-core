@@ -34,11 +34,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.ws.Holder;
+import javax.xml.ws.wsaddressing.W3CEndpointReference;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.AnnotatedElement;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
@@ -46,6 +51,7 @@ import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +100,17 @@ public class JAXBUtils {
         BY_CLASS_ARRAY, BY_CONTEXT_PATH, UNKNOWN}
 
     ;
+    
+    // Some packages have a known set of classes.
+    // This map is immutable after its static creation.
+    private static final Map<String, List<Class>> specialMap = new HashMap<String, List<Class>>();
+    static {
+        // The javax.xml.ws.wsaddressing package has a single class (W3CEndpointReference)
+        List<Class> classes = new ArrayList<Class>();
+        classes.add(W3CEndpointReference.class);
+        specialMap.put("javax.xml.ws.wsaddressing", classes);
+    }
+    
     
     /**
      * Get a JAXBContext for the class
@@ -727,6 +744,12 @@ public class JAXBUtils {
         if (pkg == null) {
             return new ArrayList<Class>();
         }
+        
+        // See if this is a special package that has a set of known classes.
+        List<Class> knownClasses = specialMap.get(pkg);
+        if (knownClasses != null) {
+            return knownClasses;
+        }
 
         /*
         * This method is a best effort method.  We should always return an object.
@@ -776,10 +799,12 @@ public class JAXBUtils {
         // are acceptable.
         for (int i=0; i<list.size();) {
             Class cls = list.get(i);
-            if (!cls.isInterface() &&
-                ClassUtils.getDefaultPublicConstructor(cls) != null &&
-               !ClassUtils.isJAXWSClass(cls) &&
-               cls.getPackage().getName().equals(pkg)) {
+            if (!cls.isInterface() && 
+                    (cls.isEnum() ||
+                     getAnnotation(cls, XmlType.class) != null ||
+                     ClassUtils.getDefaultPublicConstructor(cls) != null) &&
+                !ClassUtils.isJAXWSClass(cls) &&
+                cls.getPackage().getName().equals(pkg)) {
                 i++; // Acceptable class
             } else {
                 if (log.isDebugEnabled()) {
@@ -842,6 +867,7 @@ public class JAXBUtils {
                             // by JAXB should be added.
                             if (!clazz.isInterface()
                                     && (clazz.isEnum() ||
+                                        getAnnotation(clazz, XmlType.class) != null ||
                                         ClassUtils.getDefaultPublicConstructor(clazz) != null)
                                     && !ClassUtils.isJAXWSClass(clazz)
                                     && !java.lang.Exception.class.isAssignableFrom(clazz)) {
@@ -1180,4 +1206,11 @@ public class JAXBUtils {
         }
     }
 
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
+    }
 }
