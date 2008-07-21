@@ -92,6 +92,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private boolean closeReader = true;
 
     private static final int BUFFER_SIZE = 1024 * 8;
+    
+    private boolean initCalled = false;
 
     /**
      * Implementaion of POST interface
@@ -421,6 +423,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      */
     public void init(ServletConfig config) throws ServletException {
+        
+        // prevent this method from being called more than once per instance
+        initCalled = true;
         super.init(config);
         try {
             this.servletConfig = config;
@@ -494,7 +499,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      */
     public void init() throws ServletException {
-        if (this.servletConfig != null) {
+        if (this.servletConfig != null  && !initCalled) {
             init(this.servletConfig);
         }
     }
