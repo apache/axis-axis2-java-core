@@ -689,6 +689,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 axisBindingInMessage.setAxisMessage(axisInMessage);
+                axisBindingInMessage.setName(axisInMessage.getName());
                 axisBindingInMessage.setDirection(axisInMessage.getDirection());
 
                 axisBindingInMessage.setParent(axisBindingOperation);
@@ -730,6 +731,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
 
                 axisBindingOutMessage.setAxisMessage(axisOutMessage);
+                axisBindingOutMessage.setName(axisOutMessage.getName());
                 axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
 
                 axisBindingOutMessage.setParent(axisBindingOperation);
@@ -761,6 +763,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                 axisOperation.getFaultMessages());
 
                         AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
+                        axisBindingFaultMessage.setName(faultMessage.getName());
                         addDocumentation(axisBindingFaultMessage, wsdl4jFaultMessge.getDocumentationElement());
                         axisBindingFaultMessage.setFault(true);
                         axisBindingFaultMessage.setAxisMessage(faultMessage);
