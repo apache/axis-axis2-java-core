@@ -262,7 +262,7 @@ public class WSDLSerializationUtil {
             opElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_REF, null,
                                                          tns.getPrefix() + ":" + name));
             opElement.addAttribute(fac.createOMAttribute(WSDL2Constants.ATTRIBUTE_LOCATION, whttp,
-                                                         serviceName + "/" + name));
+                                                         name));
         }
         return binding;
     }
