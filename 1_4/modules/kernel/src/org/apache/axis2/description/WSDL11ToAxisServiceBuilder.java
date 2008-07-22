@@ -1579,11 +1579,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // first see the body parts list
                     List bodyPartsList =
                             getPartsListFromSoapBody(bindingInput.getExtensibilityElements());
-                    if (bodyPartsList != null) {
                         partsCollection = message.getOrderedParts(bodyPartsList);
-                    } else {
-                        partsCollection = message.getParts().values();
-                    }
                 } else {
                     // i.e http binding
                     partsCollection = message.getParts().values();
@@ -1669,12 +1665,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // first see the body parts list
                     List bodyPartsList =
                             getPartsListFromSoapBody(bindingOutput.getExtensibilityElements());
-                    if (bodyPartsList != null) {
                         partsCollection = message.getOrderedParts(bodyPartsList);
-                    } else {
-                        // then see the parameter order
-                        partsCollection = message.getParts().values();
-                    }
                 } else {
                     // i.e if http binding
                     partsCollection = message.getParts().values();
