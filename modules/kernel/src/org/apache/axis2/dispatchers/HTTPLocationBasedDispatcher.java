@@ -21,10 +21,7 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisBinding;
-import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -67,41 +64,12 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
                         .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
                 // Here we check whether the request was dispatched to the correct endpoint. If it
                 // was we can dispatch the operation using the HTTPLocationDispatcher table of that
-                // specific endpoint. In most cases we wont be able to do this. So as a last resort
-                // iterate through the endpoint map and try to dispatch the operation.
+                // specific endpoint.
                 if (axisEndpoint != null) {
                     Map httpLocationTable = (Map) axisEndpoint.getBinding()
                             .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
                     if (httpLocationTable != null) {
                         return getOperationFromHTTPLocation(httpLocation, httpLocationTable);
-                    }
-                } else {
-                    Map endpoints = axisService.getEndpoints();
-                    if (endpoints != null) {
-                        Iterator iterator = endpoints.values().iterator();
-                        while (iterator.hasNext()) {
-                            AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
-                            Map httpLocationTable = (Map) endpoint.getBinding()
-                                    .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
-                            if (httpLocationTable != null) {
-                                AxisOperation axisOperation =
-                                        getOperationFromHTTPLocation(httpLocation,
-                                                                     httpLocationTable);
-                                if (axisOperation != null) {
-                                    messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
-                                                               endpoint);
-                                    AxisBinding axisBinding = endpoint.getBinding();
-                                    if (axisBinding != null) {
-                                        AxisBindingOperation axisBindingOperation =
-                                                (AxisBindingOperation) axisBinding
-                                                        .getChild(axisOperation.getName());
-                                        messageContext.setProperty(Constants.AXIS_BINDING_OPERATION,
-                                                                   axisBindingOperation);
-                                        return axisOperation;
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             } else {
