@@ -1399,7 +1399,7 @@ public class Utils {
                 QName operationQName = operation.getName();
                 axisBindingOperation.setName(operationQName);
 				axisBindingOperation.setAxisOperation(operation);
-                String httpLocation = serviceName + "/" + operationQName.getLocalPart();
+                String httpLocation = operationQName.getLocalPart();
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
                 axisBinding.addChild(axisBindingOperation.getName(),
 						axisBindingOperation);
