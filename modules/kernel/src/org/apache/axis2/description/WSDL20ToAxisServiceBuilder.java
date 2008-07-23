@@ -392,6 +392,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private AxisEndpoint processEndpoint(Endpoint endpoint, Interface serviceInterface) throws AxisFault {
         AxisEndpoint axisEndpoint = new AxisEndpoint();
+        axisEndpoint.setParent(axisService);
         axisEndpoint.setName(endpoint.getName().toString());
         setEndpointURL(axisEndpoint, endpoint.getAddress().toString());
         Binding binding = endpoint.getBinding();
