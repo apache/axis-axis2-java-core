@@ -1509,6 +1509,11 @@ class OperationDescriptionImpl
                 }
             }
         }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getAnnoAction: " + actionAnnotation);
+        }
+        
         return actionAnnotation;
     }
     
@@ -1518,6 +1523,10 @@ class OperationDescriptionImpl
         
         if (action != null) {
             inputAction = action.input();
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getInputAction: " + inputAction);
         }
         
         return inputAction;
@@ -1531,6 +1540,10 @@ class OperationDescriptionImpl
             outputAction = action.output();
         }
         
+        if (log.isDebugEnabled()) {
+            log.debug("getOutputAction: " + outputAction);
+        }
+        
         return outputAction;
     }
     
@@ -1540,6 +1553,10 @@ class OperationDescriptionImpl
         
         if (action !=  null) {
             faultActions = action.fault();
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getFaultActions: " + faultActions);
         }
         
         return faultActions;

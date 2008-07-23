@@ -255,7 +255,7 @@ public class AddressingHelper {
 	public static void setAddressingRequirementParemeterValue(AxisDescription axisDescription, String value) {
 		if (value == null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("getAddressingRequirementParemeterValue: value passed in is null. return");
+                log.debug("setAddressingRequirementParemeterValue: value passed in is null. return");
             }
             return;
         }

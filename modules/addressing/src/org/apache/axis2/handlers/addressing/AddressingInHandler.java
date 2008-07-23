@@ -71,6 +71,10 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
     }
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        //Set the defaults on the message context.
+        msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+        msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
+
         //Determine if we want to ignore addressing headers. This parameter must
         //be retrieved from the message context because it's value can vary on a
         //per service basis.
@@ -81,16 +85,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 log.debug(
                         "The AddressingInHandler has been disabled. No further processing will take place.");
             }
-            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
             return InvocationResponse.CONTINUE;         
         }
 
         // if there are not headers put a flag to disable addressing temporary
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         if (header == null) {
-            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
             return InvocationResponse.CONTINUE;
         }
 
@@ -117,7 +117,7 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
 
             if (!iterator.hasNext()) {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("No Headers present corresponding to " + namespace);
+                    log.debug("No headers present corresponding to " + namespace);
                 }
 
                 namespace = Submission.WSA_NAMESPACE;
@@ -126,11 +126,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
         }
         else if (Final.WSA_NAMESPACE.equals(namespace) || Submission.WSA_NAMESPACE.equals(namespace)) {
             iterator = header.getHeadersToProcess(rolePlayer, namespace);
+            
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug("The preconfigured namespace is, , " + namespace);
+            }            
         }
         else {
-            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
-            
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("The specified namespace is not supported by this handler, " + namespace);
             }            
@@ -156,14 +157,12 @@ public class AddressingInHandler extends AbstractHandler implements AddressingCo
                 extractToEprReferenceParameters(msgContext.getTo(), header, namespace);
             }
             
+            //We should only get to this point if we haven't thrown a fault.
             msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         }
         else {
-            msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.FALSE);
-
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("No Headers present corresponding to " + namespace);
+                log.debug("No headers present corresponding to " + namespace);
             }
         }
 

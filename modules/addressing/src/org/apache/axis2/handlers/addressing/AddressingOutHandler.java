@@ -158,7 +158,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         public WSAHeaderWriter(MessageContext mc, boolean isSubmissionNamespace, boolean addMU,
                                boolean replace, boolean includeOptional, String role) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug("WSAHeaderWriter: isFinal=" + isSubmissionNamespace + " addMU=" + addMU +
+                log.debug("WSAHeaderWriter: isFinal=" + !isSubmissionNamespace + " addMU=" + addMU +
                         " replace=" + replace + " includeOptional=" + includeOptional+" role="+role);
             }
 
@@ -169,7 +169,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             messageContextOptions = messageContext.getOptions();
 
             addressingNamespace =
-                    (isSubmissionNamespace ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE);
+                    isSubmissionNamespace ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
 
             header = envelope.getHeader();
             // if there is no soap header in the envelope being processed, add one.
