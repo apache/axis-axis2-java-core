@@ -103,13 +103,17 @@ public class HandlerChainsParser {
     
     private QName processPatternElement(Element el) throws Exception {
         String namePattern = el.getTextContent().trim();
+        
+        // see BaseHandlerResolver.validatePattern for valid strings
+        
         if ("*".equals(namePattern)) {
             return new QName("*");
         }
         
         if (!namePattern.contains(":")) {
-            throw new WebServiceException("Not a qname pattern");
+            return new QName("", namePattern, "");
         }
+        
         String localPart = namePattern.substring(namePattern.indexOf(':') + 1,
                                                  namePattern.length());
         String pfx = namePattern.substring(0, namePattern.indexOf(':'));
@@ -117,7 +121,9 @@ public class HandlerChainsParser {
         if (ns == null) {
             ns = pfx;
         }
-        return new QName(ns, localPart);
+        // populate prefix so BaseHandlerResolver.validatePattern can validate it
+        // QName ctor is QName(namespace, localpart, prefix)
+        return new QName(ns, localPart, pfx);
     }
     
     private HandlerType processHandlerElement(Element el) throws Exception {      

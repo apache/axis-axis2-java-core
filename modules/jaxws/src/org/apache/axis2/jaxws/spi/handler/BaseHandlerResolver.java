@@ -119,13 +119,39 @@ public abstract class BaseHandlerResolver implements HandlerResolver {
     private static boolean doesPatternMatch(QName portInfoQName, QName pattern) {
         if (pattern == null)
             return true;
+        validatePattern(pattern);
         // build up the strings according to the regular expression defined at http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
         // use the prefix, not the literal namespace
-        String portInfoPrefix = portInfoQName.getPrefix();
+        String portInfoPrefix = portInfoQName.getNamespaceURI(); //Prefix();
         String portInfoLocalPart = portInfoQName.getLocalPart();
         String portInfoString = ((portInfoPrefix == null) || (portInfoPrefix.equals(""))) ? "" : portInfoPrefix + ":";
         portInfoString += portInfoLocalPart;
         
+        String patternStringPrefix = pattern.getNamespaceURI(); //Prefix();
+        String patternInfoLocalPart = pattern.getLocalPart();
+        String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";
+        patternString += patternInfoLocalPart;
+        
+        // now match the portInfoQName to the user pattern
+        // But first, convert the user pattern to a regular expression.  Remember, the only non-QName character allowed is "*", which
+        // is a wildcard, with obvious restrictions on what characters can match (for example, a .java filename cannot contain perentheses).
+        // We'll just use part of the above reg ex to form the appropriate restrictions on the user-specified "*" character:
+        Pattern userp = Pattern.compile(patternString.replace("*", "(\\w|\\.|-|_)*"));
+        Matcher userm = userp.matcher(portInfoString);
+        boolean match = userm.matches();
+        if (log.isDebugEnabled()) {
+            if (!match) {
+                log.debug("Pattern match failed: \"" + portInfoString + "\" does not match \"" + patternString + "\"");
+            } else {
+                log.debug("Pattern match succeeded: \"" + portInfoString + "\" matches \"" + patternString + "\"");
+            }
+        }
+        return match;
+        
+    }
+    
+    
+    private static void validatePattern(QName pattern) {
         String patternStringPrefix = pattern.getPrefix();
         String patternInfoLocalPart = pattern.getLocalPart();
         String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";
@@ -147,24 +173,7 @@ public abstract class BaseHandlerResolver implements HandlerResolver {
             // pattern defined by user in handler chain xml file is illegal -- report it but continue
             log.warn("Pattern defined by user is illegal:  \"" + patternString + "\" does not match regular expression in schema http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd.  Pattern matching should now be considered \"best-effort.\"");
         }
-        // now match the portInfoQName to the user pattern
-        // But first, convert the user pattern to a regular expression.  Remember, the only non-QName character allowed is "*", which
-        // is a wildcard, with obvious restrictions on what characters can match (for example, a .java filename cannot contain perentheses).
-        // We'll just use part of the above reg ex to form the appropriate restrictions on the user-specified "*" character:
-        Pattern userp = Pattern.compile(patternString.replace("*", "(\\w|\\.|-|_)*"));
-        Matcher userm = userp.matcher(portInfoString);
-        boolean match = userm.matches();
-        if (log.isDebugEnabled()) {
-            if (!match) {
-                log.debug("Pattern match failed: \"" + portInfoString + "\" does not match \"" + patternString + "\"");
-            } else {
-                log.debug("Pattern match succeeded: \"" + portInfoString + "\" matches \"" + patternString + "\"");
-            }
-        }
-        return match;
-        
     }
-    
 
     /**
      * Return the class for this name
