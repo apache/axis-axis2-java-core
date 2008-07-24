@@ -329,14 +329,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             AxisOperation axisOperation = service.getOperation(new QName(methodName));
             if (axisOperation == null) {
                 axisOperation = Utils.getAxisOperationForJmethod(jMethod);
-                if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
-                        axisOperation.getMessageExchangePattern())){
-                    AxisMessage outMessage = axisOperation.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                    if (outMessage !=null ){
-                        outMessage.setName(methodName + RESPONSE);
-                    }
-                }
+//                if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(
+//                        axisOperation.getMessageExchangePattern())){
+//                    AxisMessage outMessage = axisOperation.getMessage(
+//                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+//                    if (outMessage !=null ){
+//                        outMessage.setName(methodName + RESPONSE);
+//                    }
+//                }
                 addToService = true;
             }
             // Maintain a list of methods we actually work with
