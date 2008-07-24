@@ -25,10 +25,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.ClientUtils;
@@ -47,7 +43,6 @@ import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HttpTransportProperties;
-import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -104,7 +99,7 @@ public class AxisInvocationController extends InvocationControllerImpl {
         Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
-            configureAsyncListener(opClient, request.getAxisMessageContext());
+            configureAsyncListener(opClient);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug(
@@ -242,7 +237,7 @@ public class AxisInvocationController extends InvocationControllerImpl {
         Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
-            configureAsyncListener(opClient, request.getAxisMessageContext());
+            configureAsyncListener(opClient);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug(
@@ -318,7 +313,7 @@ public class AxisInvocationController extends InvocationControllerImpl {
         Boolean useAsyncMep = (Boolean)request.getProperty(Constants.USE_ASYNC_MEP);
         if ((useAsyncMep != null && useAsyncMep.booleanValue())
                 || opClient.getOptions().isUseSeparateListener()) {
-            configureAsyncListener(opClient, request.getAxisMessageContext());
+            configureAsyncListener(opClient);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug(
@@ -397,17 +392,15 @@ public class AxisInvocationController extends InvocationControllerImpl {
 
         if (opClient != null) {
             Options options = opClient.getOptions();
-            EndpointReference toEPR = null;
             
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            if (axisRequest.getTo() == null) {
+            EndpointReference toEPR = axisRequest.getTo();
+
+            if (toEPR == null) {
                 String targetUrl = (String)requestMsgCtx.getProperty(
                         BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
                 toEPR = new EndpointReference(targetUrl);
-            }
-            else {
-                toEPR = axisRequest.getTo();
             }
             
             options.setTo(toEPR);
@@ -426,13 +419,6 @@ public class AxisInvocationController extends InvocationControllerImpl {
             // Use the OperationClient to send the request and put the contents
             // of the response in the response MessageContext.
             try {
-                // Setting the ServiceContext will create the association between 
-                // the OperationClient it's MessageContexts and the 
-                // AxisService/AxisOperation that they are tied to.
-                OperationContext opContext = opClient.getOperationContext();
-                ServiceContext svcContext = opContext.getServiceContext();
-                axisRequest.setServiceContext(svcContext);
-
                 // Set the Axis2 request MessageContext
                 opClient.addMessageContext(axisRequest);
             }
@@ -472,25 +458,8 @@ public class AxisInvocationController extends InvocationControllerImpl {
         }
     }
 
-    private void configureAsyncListener(OperationClient client,
-                                        org.apache.axis2.context.MessageContext mc) {
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
-        }
-
+    private void configureAsyncListener(OperationClient client) {
         client.getOptions().setUseSeparateListener(true);
-
-        //FIXME: This has to be here so the ThreadContextMigrator can pick it up.
-        //This should go away once AXIS2-978 is fixed.
-        mc.getOptions().setUseSeparateListener(true);
-
-        // Setup the response callback receiver to receive the async response
-        // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
-        AxisOperation op = client.getOperationContext().getAxisOperation();
-        MessageReceiver messageReceiver = op.getMessageReceiver();
-        if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
-            op.setMessageReceiver(new CallbackReceiver());
     }
 
     /*
@@ -606,11 +575,18 @@ public class AxisInvocationController extends InvocationControllerImpl {
                             org.apache.axis2.context.MessageContext msgContext) throws AxisFault {
         // This assumes that we are on the ultimate execution thread
 
+        //This has to be here so the ThreadContextMigrator can pick it up.
+        msgContext.getOptions().setUseSeparateListener(opClient.getOptions().isUseSeparateListener());
+
         ThreadContextMigratorUtil
                 .performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, msgContext);
+        
+        //Enable the ThreadContextMigrator to override UseSeparateListener
+        opClient.getOptions().setUseSeparateListener(msgContext.getOptions().isUseSeparateListener());
 
         if (log.isDebugEnabled()) {
             log.debug("Start OperationClient.execute(" + block + ")");
+            log.debug("UseSeparateListener: " + opClient.getOptions().isUseSeparateListener());
         }
     }
 
