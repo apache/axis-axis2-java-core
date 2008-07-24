@@ -3192,8 +3192,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //parameters in the signatures
             // in out put params we only intersted if there is only one parameter
             // otherwise we can not unwrap it.
-            if (partsList.size() == 1) {
-                QName qName = (QName) partsList.get(0);
+            // this logic handles at the template level
+             QName qName = null;
+            for (Iterator iter = partsList.iterator(); iter.hasNext();) {
+                qName = (QName) iter.next();
                 paramElement.appendChild(generateParamComponent(doc,
                         this.mapper.getParameterName(qName),
                         this.mapper.getTypeMappingName(
