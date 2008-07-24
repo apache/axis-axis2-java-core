@@ -584,7 +584,14 @@ public abstract class AxisOperation extends AxisDescription
     }
 
 	public String getSoapAction() {
-		return getInputAction();
+        /*
+         * This AxisOperation instance may be used for the client OUT-IN or for
+         * the server IN-OUT.  If the below code were changed to getInputActions, and the
+         * result of getInputAction were put in the SOAP action header on a client outbound
+         * message, the server would receive an INCORRECT SOAP action header.  We should leave
+         * this as 'return soapAction;' OR make it client/server aware.
+         */
+        return soapAction;
 	}
     
  }
