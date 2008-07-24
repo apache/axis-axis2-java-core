@@ -1609,6 +1609,43 @@ public class Utils {
 	        service.setEpMap(map);
 	}
 	
+	public static void addModuleBindingOperation(AxisService service, AxisOperation operation) {
+            ArrayList bindings = new ArrayList();
+            Map endpointsMap = service.getEndpoints();
+	        
+            for (Iterator iterator = endpointsMap.values().iterator(); iterator.hasNext();) {
+                AxisEndpoint endpoint = (AxisEndpoint) iterator.next();
+                AxisBinding binding = endpoint.getBinding();
+	        AxisBindingOperation bindingOperation = new AxisBindingOperation();
+	        bindingOperation.setName(operation.getName());
+	        bindingOperation.setAxisOperation(operation);
+	    
+	        if (!bindings.contains(binding.getName())) {
+	            if (isSoap11Binding(binding)) {
+	                String soapAction = operation.getSoapAction();
+	                if (soapAction != null) {
+	                        bindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
+	                }            
+	            } else if (isSoap12Binding(binding)) {
+	                String soapAction = operation.getSoapAction();
+	                if (soapAction != null) {
+	                    bindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
+	                }
+	        
+	            } else if (isHttpBinding(binding)) {
+	                String serviceName = service.getName();
+	                String name = serviceName + "HttpBinding";
+	                String httpLocation = serviceName + "/" + operation.getName().getLocalPart();
+	                bindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+	            }
+	        }
+	    
+	        binding.addChild(bindingOperation.getName(), bindingOperation);
+	        populateBindingOperation(service, binding, bindingOperation);
+	        
+            }
+	}
+	
 	public static boolean isSoap11Binding(AxisBinding binding) {
 	    String type = binding.getType();
 	    if (Java2WSDLConstants.TRANSPORT_URI.equals(type)
