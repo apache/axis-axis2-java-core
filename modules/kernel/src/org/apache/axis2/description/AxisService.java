@@ -604,6 +604,7 @@ public class AxisService extends AxisDescription {
 				phaseResolver.engageModuleToOperation(axisOperation, module);
 
 				this.addOperation(axisOperation);
+				Utils.addModuleBindingOperation(this, axisOperation);
 			}
 		}
 	}
