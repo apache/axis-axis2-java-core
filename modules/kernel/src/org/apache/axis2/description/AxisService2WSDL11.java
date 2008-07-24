@@ -270,7 +270,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 				AxisMessage outAxisMessage = axisOperation
 						.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -418,7 +417,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 				AxisMessage outAxisMessage = axisOperation
 						.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -853,7 +851,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
 				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
@@ -997,7 +994,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
 				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
@@ -1118,7 +1114,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					|| WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
 					|| WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP)
-					|| WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
 
 				AxisBindingMessage axisBindingOutMessage = (AxisBindingMessage) axisBindingOperation
