@@ -207,7 +207,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             if (epr != null) {
                 if (!epr.hasNoneAddress()) {
                     writeMessageWithCommons(msgContext, epr, format);
-                    TransportUtils.setResponseWritten(msgContext, true);
                 }
             } else {
                 if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
