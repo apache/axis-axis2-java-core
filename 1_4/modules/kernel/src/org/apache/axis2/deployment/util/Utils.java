@@ -1379,7 +1379,7 @@ public class Utils {
 				bindingCache.put(name, axisBinding);
 			}
 		}
-		// axisBinding.setParent(axisEndpoint);
+		axisBinding.setParent(axisEndpoint);
 		axisEndpoint.setBinding(axisBinding);
 	}
 
@@ -1427,6 +1427,7 @@ public class Utils {
 				bindingCache.put(name, axisBinding);
 			}
 		}
+		axisBinding.setParent(axisEndpoint);
 		axisEndpoint.setBinding(axisBinding);
 	}
 
@@ -1468,6 +1469,7 @@ public class Utils {
 				bindingCache.put(name, axisBinding);
 			}
 		}
+		axisBinding.setParent(axisEndpoint);
 		axisEndpoint.setBinding(axisBinding);
 	}
 
