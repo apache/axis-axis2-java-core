@@ -211,8 +211,11 @@ public class AxisBinding extends AxisDescription {
             Iterator iterator = faults.values().iterator();
             while (iterator.hasNext()) {
                 AxisBindingMessage axisBindingFault = (AxisBindingMessage)iterator.next();
+                OMElement omElement =
+                        axisBindingFault.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap);
+                omElement.setLocalName(WSDL2Constants.FAULT_LOCAL_NAME);
                 bindingElement
-                        .addChild(axisBindingFault.toWSDL20(wsdl, tns, wsoap, whttp, nameSpaceMap));
+                        .addChild(omElement);
             }
         }
 
