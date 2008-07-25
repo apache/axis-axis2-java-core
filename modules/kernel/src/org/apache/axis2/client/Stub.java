@@ -130,7 +130,7 @@ public abstract class Stub {
      * @throws AxisFault
      */
     public void cleanup() throws AxisFault {
-        _service.getAxisConfiguration().removeService(_service.getName());
+        // service is removed from the service client it self.
     }
 
     /**

@@ -400,11 +400,14 @@ public class AxisConfiguration extends AxisDescription {
                                                     serviceGroupName));
         }
         Iterator services = axisServiceGroup.getServices();
+        boolean isClientSide = false;
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
             allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
+            } else {
+                isClientSide = true;
             }
 
             //removes the endpoints to this service
@@ -423,7 +426,10 @@ public class AxisConfiguration extends AxisDescription {
 
         }
         removeChild(serviceGroupName);
-        notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
+        if (!isClientSide) {
+            notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
+        }
+
         return axisServiceGroup;
     }
 
