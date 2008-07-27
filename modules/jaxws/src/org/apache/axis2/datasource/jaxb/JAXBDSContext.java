@@ -26,6 +26,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
 import org.apache.axis2.jaxws.spi.Constants;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -338,7 +339,8 @@ public class JAXBDSContext {
                 marshalByElement(obj, 
                                  m, 
                                  writer, 
-                                 !am.isXOPPackage());
+                                 true);
+                                 //!am.isXOPPackage());
             } else {
                 marshalByType(obj,
                               m,
@@ -370,6 +372,10 @@ public class JAXBDSContext {
                 // XMLStreamWriter. 
                 // Take advantage of this optimization if there is an output stream.
                 try {
+                    if (!optimize) {
+                        log.debug(JavaUtils.stackToString());
+                        getOutputStream(writer);
+                    }
                     OutputStream os = (optimize) ? getOutputStream(writer) : null;
                     if (os != null) {
                         if (DEBUG_ENABLED) {
@@ -409,13 +415,23 @@ public class JAXBDSContext {
      * @return OutputStream or null
      */
     private static OutputStream getOutputStream(XMLStreamWriter writer) throws XMLStreamException {
+        if (log.isDebugEnabled()) {
+            log.debug("XMLStreamWriter is " + writer);
+        }
+        OutputStream os = null;
         if (writer.getClass() == MTOMXMLStreamWriter.class) {
-            return ((MTOMXMLStreamWriter) writer).getOutputStream();
+            os = ((MTOMXMLStreamWriter) writer).getOutputStream();
+            if (log.isDebugEnabled()) {
+                log.debug("OutputStream accessible from MTOMXMLStreamWriter is " + os);
+            }
         }
         if (writer.getClass() == XMLStreamWriterWithOS.class) {
-            return ((XMLStreamWriterWithOS) writer).getOutputStream();
+            os = ((XMLStreamWriterWithOS) writer).getOutputStream();
+            if (log.isDebugEnabled()) {
+                log.debug("OutputStream accessible from XMLStreamWriterWithOS is " + os);
+            }
         }
-        return null;
+        return os;
     }
     
     /**
