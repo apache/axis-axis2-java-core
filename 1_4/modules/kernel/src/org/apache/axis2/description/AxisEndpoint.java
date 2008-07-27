@@ -189,12 +189,12 @@ public class AxisEndpoint extends AxisDescription {
 					String ip = HttpUtils.getIpAddress(axisConfiguration);
 					// we should pass [serviceName].[endpointName] instead of
 					// [endpointName]
-					String sDOTe = serviceName + "." + name + "/";
+					String sDOTe = serviceName + "." + name;
 					EndpointReference[] eprsForService = listener
 							.getEPRsForService(sDOTe, ip);
 					// we consider only the first address return by the listener
 					if (eprsForService != null && eprsForService.length > 0) {
-						return eprsForService[0].getAddress();
+						return eprsForService[0].getAddress()  + "/";
 					}
 				} catch (SocketException e) {
 					logger.warn(e.getMessage(), e);
