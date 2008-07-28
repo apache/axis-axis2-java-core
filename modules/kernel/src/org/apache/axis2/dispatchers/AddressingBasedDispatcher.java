@@ -21,6 +21,7 @@ package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -30,6 +31,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +68,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      * @noinspection MethodReturnOfConcreteClass
      */
     public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
+        InvocationResponse response = InvocationResponse.CONTINUE;
+        
         // first check we can dispatch using the relates to
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
@@ -103,10 +107,39 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                                 " Dispatched successfully on the RelatesTo. operation=" +
                                 operationContext.getAxisOperation());
                     }
-                    return InvocationResponse.CONTINUE;
                 }
             }
         }
-        return super.invoke(msgctx);
+        //Else we will try to dispatch based on the WS-A Action
+        else {
+            response = super.invoke(msgctx);
+            Object flag = msgctx.getLocalProperty(IS_ADDR_INFO_ALREADY_PROCESSED);
+            if (log.isTraceEnabled()) {
+                log.trace("invoke: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+            }
+
+            if (JavaUtils.isTrueExplicitly(flag)) {
+                // If no AxisOperation has been found at the end of the dispatch phase and addressing
+                // is in use we should throw an ActionNotSupported Fault, unless we've been told
+                // not to do this check (by Synapse, for instance)
+                if (JavaUtils.isTrue(msgctx.getProperty(ADDR_VALIDATE_ACTION), true)) {
+                    checkAction(msgctx);
+                }
+            }
+        }
+        
+        return response;
+    }
+    
+    /**
+     * If addressing was found and the dispatch failed we SHOULD (and hence will) return a
+     * WS-Addressing ActionNotSupported fault. This will make more sense once the
+     * AddressingBasedDsipatcher is moved into the addressing module
+     */
+    private void checkAction(MessageContext msgContext) throws AxisFault {
+        if ((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)) {
+            AddressingFaultsHelper
+                    .triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
+        }
     }
 }

@@ -24,7 +24,7 @@
             <order phase="Addressing" before="AddressingBasedDispatcher"/>
         </handler>
         <handler name="AddressingValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingValidationHandler">
-            <order phase="Addressing" after="AddressingBasedDispatcher"/>
+            <order phase="Dispatch" after="SOAPMessageBodyBasedDispatcher"/>
         </handler>
     </InFlow>
 

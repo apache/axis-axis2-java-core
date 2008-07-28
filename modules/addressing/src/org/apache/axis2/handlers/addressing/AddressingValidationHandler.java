@@ -52,8 +52,6 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
             // is in use we should throw an ActionNotSupported Fault, unless we've been told
             // not to do this check (by Synapse, for instance)
             if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_ACTION), true)) {
-                checkAction(msgContext);
-
                 // Check if the wsa:MessageID is required or not.
                 checkMessageIDHeader(msgContext);
             }
@@ -138,18 +136,6 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         					AddressingConstants.WSA_FAULT_TO);
         		}
         	}
-        }
-    }
-
-    /**
-     * If addressing was found and the dispatch failed we SHOULD (and hence will) return a
-     * WS-Addressing ActionNotSupported fault. This will make more sense once the
-     * AddressingBasedDsipatcher is moved into the addressing module
-     */
-    private void checkAction(MessageContext msgContext) throws AxisFault {
-        if ((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)) {
-            AddressingFaultsHelper
-                    .triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
         }
     }
 
