@@ -1871,7 +1871,10 @@ class EndpointDescriptionImpl
     private WsdlComposite generateWSDL(DescriptionBuilderComposite dbc) {
 
         WsdlComposite wsdlComposite = null;
-        Definition defn = dbc.getWsdlDefinition();
+        Definition defn = dbc.getWsdlDefinition(getServiceQName());
+        if(defn == null) {
+            defn = dbc.getWsdlDefinition();
+        }
         if (defn == null || !isAxisServiceBuiltFromWSDL) {
 
             //Invoke the callback for generating the wsdl

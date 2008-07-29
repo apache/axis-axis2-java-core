@@ -1386,7 +1386,11 @@ class ServiceDescriptionImpl
                 // TODO: Validate on the class that a public constructor exists
                 // TODO: Validate on the class that a finalize() method does not exist
                 if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().wsdlLocation())) {
-                    if (composite.getWsdlDefinition() == null && composite.getWsdlURL() == null) {
+                    if (composite.getWsdlDefinition(getServiceQName()) == null
+                            &&
+                            composite.getWsdlDefinition() == null 
+                            &&
+                            composite.getWsdlURL() == null) {
                         throw ExceptionFactory.makeWebServiceException(
                         		Messages.getMessage("validateIntegrityErr7",composite.getClassName(),
                         				composite.getWebServiceAnnot().wsdlLocation()));
