@@ -387,8 +387,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					operation, fac, wsdl);
 			portType.addChild(operation);
 			operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
-			addPolicyAsExtElement(axisOperation, operation);
-
+			//addPolicyAsExtElement(axisOperation, operation);
+                        addPolicyAsExtAttribute(axisOperation, operation, fac);
+			
 			String MEP = axisOperation.getMessageExchangePattern();
 			if (WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)
 					|| WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP)
@@ -405,8 +406,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 							inaxisMessage, input, fac, wsdl);
 					input.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
 							+ ":" + inaxisMessage.getName(), null);
-					addPolicyAsExtElement(inaxisMessage, input);
-
+					//addPolicyAsExtElement(inaxisMessage, input);
+					addPolicyAsExtAttribute(inaxisMessage, input, fac);
+					
 					WSDLSerializationUtil.addWSAWActionAttribute(input,
 							axisOperation.getInputAction(), wsaw);
 					operation.addChild(input);
@@ -427,7 +429,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 							outAxisMessage, output, fac, wsdl);
 					output.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
 							+ ":" + outAxisMessage.getName(), null);
-					addPolicyAsExtElement(outAxisMessage, output);
+					//addPolicyAsExtElement(outAxisMessage, output);
+					addPolicyAsExtAttribute(outAxisMessage, output, fac);
 					WSDLSerializationUtil.addWSAWActionAttribute(output,
 							axisOperation.getOutputAction(), wsaw);
 					operation.addChild(output);
