@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.dispatchers;
 
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisOperation;
@@ -61,7 +62,7 @@ public class MustUnderstandUtils {
         }
         
         ArrayList understoodHeaderQNames = MustUnderstandUtils.getHeaderParamaterList(msgContext);
-        if (understoodHeaderQNames == null) {
+        if (understoodHeaderQNames == null || understoodHeaderQNames.isEmpty()) {
             return;
         }
         
@@ -88,42 +89,71 @@ public class MustUnderstandUtils {
      * @return ArrayList of QNames for all header parameters for an SEI and SOAP handlers.  
      *         The list may be empty but will not be null.
      */
+    static ArrayList EMPTY_LIST = new ArrayList();
     public static ArrayList getHeaderParamaterList(MessageContext msgContext) {
-        ArrayList returnList = new ArrayList();
+        ArrayList headers = null;
         // Build a list of understood headers for all the operations under the service
         AxisService axisService = msgContext.getAxisService();
         if (log.isDebugEnabled()) {
             log.debug("Building list of understood headers for all operations under " + axisService);
         }
-        if (axisService != null) {
-            ArrayList understoodHeaders;
+        if (axisService == null) {
+            headers = EMPTY_LIST;
+        } else  {
             
-            // examine SEI methods
-            Iterator operationIterator = axisService.getOperations();
-            if (operationIterator != null) {
-                while (operationIterator.hasNext()) {
-                    AxisOperation operation = (AxisOperation) operationIterator.next();
-                    understoodHeaders = getSEIMethodHeaderParameterList(operation);
-                    if (log.isDebugEnabled()) {
-                        log.debug("Adding headers from operation " + operation + "; headers = "
-                                  + understoodHeaders);
-                    }
-                    if (understoodHeaders != null && !understoodHeaders.isEmpty()) {
-                        returnList.addAll(understoodHeaders);
+            // Get the understood headers from the sei methods
+            ArrayList seiMethodHeaders = (ArrayList) 
+                axisService.getParameterValue("seiMethodHeaderParameter");
+
+            if (seiMethodHeaders == null) {
+                // examine SEI methods
+                seiMethodHeaders = new ArrayList();
+                Iterator operationIterator = axisService.getOperations();
+                if (operationIterator != null) {
+                    while (operationIterator.hasNext()) {
+                        AxisOperation operation = (AxisOperation) operationIterator.next();
+                        ArrayList list = getSEIMethodHeaderParameterList(operation);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Adding headers from operation " + operation + "; headers = "
+                                      + list);
+                        }
+                        if (list != null && !list.isEmpty()) {
+                            seiMethodHeaders.addAll(list);
+                        }
                     }
                 }
+
+                try {
+                    // Save calculated value since this won't change
+                    axisService.addParameter("seiMethodHeaderParameter", seiMethodHeaders);
+                } catch (AxisFault e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Problem caching seiMethodHeaderParameter.  " +
+                                        "Processing continues without cached value");
+                    }
+                }
+                
             }
             
-            // examine handlers
-            understoodHeaders = getHandlersHeaderParameterList(axisService);
+            // Get the understood headers from the handlers
+            ArrayList handlerHeaders = getHandlersHeaderParameterList(axisService);
             if (log.isDebugEnabled()) {
-                log.debug("Adding headers from SOAP handlers; headers = " + understoodHeaders);
+                log.debug("Adding headers from SOAP handlers; headers = " + handlerHeaders);
             }
-            if (understoodHeaders != null && !understoodHeaders.isEmpty()) {
-                returnList.addAll(understoodHeaders);
+            
+            // Make the combined headers list.
+            // The following code avoids making temporary array lists for performance/gc reasons
+            if (seiMethodHeaders == null || seiMethodHeaders.isEmpty()) {
+                headers = (handlerHeaders == null) ? EMPTY_LIST : handlerHeaders;  // Return handler headers
+            } else if (handlerHeaders == null || handlerHeaders.isEmpty()) {
+                headers = (seiMethodHeaders == null) ? EMPTY_LIST : seiMethodHeaders;  // Return sei method headers
+            } else {
+                headers = new ArrayList();
+                headers.addAll(seiMethodHeaders);
+                headers.addAll(handlerHeaders);
             }
         }
-        return returnList;
+        return headers;
     }
     
     /**
