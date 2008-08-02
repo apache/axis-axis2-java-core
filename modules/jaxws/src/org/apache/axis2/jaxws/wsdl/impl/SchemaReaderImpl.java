@@ -52,6 +52,16 @@ public class SchemaReaderImpl implements SchemaReader {
     private static String SCHEMA_TARGETNAMESPACE = "targetNamespace";
     private Definition wsdlDefinition = null;
     private static Log log = LogFactory.getLog(SchemaReaderImpl.class);
+    
+    
+    // The following list of schema should be ignored by the schema->packages
+    // algorithm.
+    private static List<String> ignoreSchema = null;
+    static {
+        ignoreSchema = new ArrayList<String>();
+        ignoreSchema.add("http://schemas.xmlsoap.org/ws/2004/08/addressing");
+        ignoreSchema.add("http://www.w3.org/2005/08/addressing");
+    }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.wsdl.SchemaReader#readPackagesFromSchema(javax.wsdl.Definition)
@@ -108,6 +118,14 @@ public class SchemaReaderImpl implements SchemaReader {
             //no Schema Binding package name found, this means no jaxb customizations in schema, lets read wsdl
             //targetnamespace. Thats what will be used by RI tooling to store java Beans
             String namespace = readSchemaTargetnamespace(schema);
+            if (ignoreSchema.contains(namespace)) {
+                // ignore this schema and its contents...continue
+                if (log.isDebugEnabled()) {
+                    log.debug("Ignoring targetnamespace " + namespace);
+                }
+                schemaList.add(schema);
+                return;
+            }
             if (namespace != null) {
                 packageString = JavaUtils.getPackageFromNamespace(namespace);
             }
