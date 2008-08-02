@@ -67,15 +67,24 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
                     jaxbComplexTypeObj.getClass().getName());
             log.debug("The input child xmlnames are: " + toString(childNames));
         }
-        // Get the PropertyDescriptorPlus map.
+        
+        // Check the PropertyDescriptorPlus map if debug is enabled.
         // The method makes sure that each child name has a matching jaxb property
-        checkPropertyDescriptorMap(jaxbComplexTypeObj.getClass(), childNames, pdMap);
+        if (log.isDebugEnabled()) {
+            checkPropertyDescriptorMap(jaxbComplexTypeObj.getClass(), childNames, pdMap);
+        }
 
         // Get the corresponsing objects from the jaxb bean
         ArrayList<Object> objList = new ArrayList<Object>();
         for (String childName : childNames) {
             PropertyDescriptorPlus propInfo = pdMap.get(childName);
             Object object = null;
+            if (propInfo == null) {
+                throw new JAXBWrapperException(
+                      Messages.getMessage("JAXBWrapperErr6", 
+                      jaxbComplexTypeObj.getClass().getName(), 
+                      childName));
+            }
             try {
                 object = propInfo.get(jaxbComplexTypeObj);
             } catch (Throwable e) {
@@ -123,8 +132,10 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
             log.debug("The input child xmlnames are: " + toString(childNames));
         }
 
-        // Just like unWrap, get the property info map
-        checkPropertyDescriptorMap(jaxbClass, childNames, pdMap);
+        // Just like unWrap, check the property descriptor map to make sure it is accurate
+        if (log.isDebugEnabled()) {
+            checkPropertyDescriptorMap(jaxbClass, childNames, pdMap);
+        }
 
         // The jaxb object always has a default constructor.  Create the object
         Object jaxbObject = null;
@@ -142,6 +153,11 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         for (String childName : childNames) {
             PropertyDescriptorPlus propInfo = pdMap.get(childName);
             Object value = childObjects.get(childName);
+            if (propInfo == null) {
+                throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr6", 
+                                                                   jaxbClass.getName(), 
+                                                                   childName));
+            }
             try {
                 propInfo.set(jaxbObject, value);
             } catch (Throwable t) {
@@ -161,32 +177,37 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         return jaxbObject;
     }
 
-    /** Makes sure that each xmlChildName is present in the odMap */
+    /** 
+     * This code checks the pdMap to make sure that a PropertyDescriptor
+     * exists for each child name.  This code should only be called when
+     * debug is enabled or an exception occurs.  (It is too slow for the mainline path) 
+     * @param jaxbClass
+     * @param xmlChildNames
+     * @param pdMap
+     * @throws JAXBWrapperException
+     */
     private void checkPropertyDescriptorMap(Class jaxbClass,
                                             List<String> xmlChildNames,
                                             Map<String, PropertyDescriptorPlus> pdMap)
-            throws JAXBWrapperException {
-        // The following code is slow, and doc/lit wrapped is in the main
-        // performance flow.  So only do this check if debug is enabled.
-        if (log.isDebugEnabled()) {
-            for (int i = 0; i < xmlChildNames.size(); i++) {
-                String xmlChildName = xmlChildNames.get(i);
-                PropertyDescriptorPlus pd = pdMap.get(xmlChildName);
-                if (pd == null) {
-                    // Each xml child name must have a matching property.  
-                    
+    throws JAXBWrapperException {
+        for (int i = 0; i < xmlChildNames.size(); i++) {
+            String xmlChildName = xmlChildNames.get(i);
+            PropertyDescriptorPlus pd = pdMap.get(xmlChildName);
+            if (pd == null) {
+                // Each xml child name must have a matching property.  
+                if (log.isDebugEnabled()) {
                     log.debug(
                     "Error occurred trying to match an xml name to a child of a jaxb object");
                     log.debug("  The JAXBClass is:" + jaxbClass.getName());
                     log.debug("  The child name that we are looking for is:" + xmlChildName);
                     log.debug("  The JAXBClass has the following child xml names:" +
-                            toString(pdMap.keySet()));
+                              toString(pdMap.keySet()));
                     log.debug("  Complete list of child names that we are looking for:" +
-                            toString(xmlChildNames));
-                    
-                    throw new JAXBWrapperException(
-                            Messages.getMessage("JAXBWrapperErr6", jaxbClass.getName(), xmlChildName));
+                              toString(xmlChildNames));
                 }
+
+                throw new JAXBWrapperException(
+                                               Messages.getMessage("JAXBWrapperErr6", jaxbClass.getName(), xmlChildName));
             }
         }
     }
