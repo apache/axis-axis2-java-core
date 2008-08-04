@@ -397,5 +397,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          */
         public static final String DISABLE_RESPONSE_ACK = "DisableResponseAck";
 
+        /**
+         * This constant is used to add an deployment life cycle listner to Axis2
+         */
+
+        public static final String DEPLOYMENT_LIFE_CYCLE_LISTENER = "deploymentLifeCycleListener";
+
     }
 }
