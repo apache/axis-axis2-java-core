@@ -89,6 +89,6 @@ public class HttpListener implements TransportListener {
             contextRoot = ""; 
         }
         return new EndpointReference(protocol + "://" + ip + ":" + port + contextRoot + "/" +
-                                     servicePath + "/" + serviceName);
+                                     servicePath + "/" + serviceName + "/");
     }
 }

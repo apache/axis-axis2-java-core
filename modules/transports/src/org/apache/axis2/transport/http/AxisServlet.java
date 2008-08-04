@@ -593,7 +593,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             endpointRefernce = endpointRefernce + '/' +
                     configContext.getServiceContextPath() + "/" + serviceName;
         }
-        EndpointReference endpoint = new EndpointReference(endpointRefernce);
+        EndpointReference endpoint = new EndpointReference(endpointRefernce + "/");
 
         return new EndpointReference[]{endpoint};
     }
