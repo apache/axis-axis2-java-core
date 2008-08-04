@@ -94,7 +94,7 @@ public class AxisConfiguration extends AxisDescription {
 
     private URL axis2Repository = null;
 
-    private HashMap allServices = new HashMap();
+    private Map allServices = new Hashtable();
     private HashMap allEndpoints = new HashMap();
 
     /**
@@ -819,7 +819,13 @@ public class AxisConfiguration extends AxisDescription {
 
     // To get all the services in the system
     public HashMap getServices() {
-        return allServices;
+        HashMap hashMap = new HashMap(this.allServices.size());
+        Object key;
+        for (Iterator iter = this.allServices.keySet().iterator(); iter.hasNext();){
+            key = iter.next();
+            hashMap.put(key, this.allServices.get(key));
+        }
+        return hashMap;
     }
 
     // The class loader which become the top most parent of all the modules and
