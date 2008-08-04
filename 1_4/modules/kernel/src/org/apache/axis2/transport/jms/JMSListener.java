@@ -350,8 +350,15 @@ public class JMSListener implements TransportListener {
         if (serviceName.indexOf('/') != -1) {
             serviceName = serviceName.substring(0, serviceName.indexOf('/'));
         }
-        return new EndpointReference[]{
-                new EndpointReference((String) serviceNameToEprMap.get(serviceName))};
+
+        String endpointName = (String) serviceNameToEprMap.get(serviceName);
+        if (endpointName == null){
+            if (serviceName.indexOf(".") != -1){
+                serviceName = serviceName.substring(0, serviceName.indexOf("."));
+                endpointName = (String) serviceNameToEprMap.get(serviceName);
+            }
+        }
+        return new EndpointReference[]{new EndpointReference(endpointName)};
     }
 
     /**

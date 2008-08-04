@@ -71,7 +71,7 @@ public class CustomListener implements TransportListener {
         if(path.charAt(0)!='/'){
             path = '/' + path;
         }
-        return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path )};
+        return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path + "/" )};
     }
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {

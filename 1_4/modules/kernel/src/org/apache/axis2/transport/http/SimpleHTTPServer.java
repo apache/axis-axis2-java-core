@@ -262,7 +262,7 @@ public class SimpleHTTPServer implements TransportListener {
                     endpointRefernce = endpointRefernce + '/' +
                             configurationContext.getServiceContextPath() + "/" + serviceName;
                 }
-                return new EndpointReference[]{new EndpointReference(endpointRefernce)};
+                return new EndpointReference[]{new EndpointReference(endpointRefernce + "/")};
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -296,7 +296,7 @@ public class SimpleHTTPServer implements TransportListener {
             }
 
 
-            return new EndpointReference[]{new EndpointReference(endpointRefernce)};
+            return new EndpointReference[]{new EndpointReference(endpointRefernce + "/")};
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }
