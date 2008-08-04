@@ -222,7 +222,7 @@ public class HttpCoreNIOListener implements TransportListener {
      * Return the EPR for the given service (implements deprecated method temporarily)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference(serviceEPRPrefix + serviceName);
+        return new EndpointReference(serviceEPRPrefix + serviceName + "/");
     }
 
     /**
@@ -234,7 +234,7 @@ public class HttpCoreNIOListener implements TransportListener {
      */
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         EndpointReference[] endpointReferences = new EndpointReference[1];
-        endpointReferences[0] = new EndpointReference(serviceEPRPrefix + serviceName);
+        endpointReferences[0] = new EndpointReference(serviceEPRPrefix + serviceName + "/");
         return endpointReferences;
     }
 
