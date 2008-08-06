@@ -194,6 +194,12 @@ public class MessageImpl implements Message {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             element.serialize(outStream);
             
+            // In some cases (usually inbound) the builder will not be closed after
+            // serialization.  In that case it should be closed manually.
+            if (element.getBuilder() != null && !element.getBuilder().isCompleted()) {
+                element.close(false);
+            }
+            
             byte[] bytes = outStream.toByteArray();
             
             if (log.isDebugEnabled()) {
