@@ -286,9 +286,8 @@ class ArtifactProcessor {
      */
     private String missingArtifact(String artifactName) {
 
-        // TODO Could we contstruct a proxy of the artifact at this point ?
         if (log.isDebugEnabled()) {
-            log.debug("The following class is missing: " + artifactName + " Processing continues.");
+            log.debug("The following class was not found: " + artifactName + " Processing continues without this class.");
         }
         return null;
     }
@@ -376,19 +375,22 @@ class ArtifactProcessor {
                         		//Lets catch NoClassDefFoundError as its part of Throwable
                         		//Any Exception that extends Exception will be handled by doPriv method.    
                         	} catch (NoClassDefFoundError e) {
-                        		// TODO Should the exception be swallowed ?
-                        		if (log.isDebugEnabled()) {
-                        			log.debug("ArtifactProcessor cannot load the following class NoClassDefFoundError:" + className);
-                        		}
-                        	}
+                        	    /**
+                        	     * In different jaxws scenarios, some classes may be missing.  So it is normal behavior
+                        	     * to get to this point.  The exception is swallowed and a null is returned.  
+                        	     * The exception is not logged...as this would give servicability folks the idea that a problem occurred.
+                        	     */
+                        	} 
                         	return cls;
                         }
                     }
             );
         } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
+            /**
+             * In different jaxws scenarios, some classes may be missing.  So it is normal behavior
+             * to get to this point. 
+             * The exception is not logged...as this would give servicability folks the idea that a problem occurred.
+             */
             throw (ClassNotFoundException)e.getException();
         }
 

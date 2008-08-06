@@ -298,9 +298,9 @@ public class AnnotationBuilder {
             //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
         } catch (Throwable e) {
-            // TODO Should the exception be swallowed ?
+            // Depending on the jaxws scenario, it is normal that some classes are not available.
             if (log.isDebugEnabled()) {
-                log.debug("PackageSetBuilder cannot load the following class:" + className);
+                log.debug("AnnotationBuilder did not find the following class:" + className);
             }
         }
         return null;
@@ -325,9 +325,9 @@ public class AnnotationBuilder {
             //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
         } catch (Throwable e) {
-            // TODO Should the exception be swallowed ?
+            // Depending on the jaxws scenario, it is normal that some classes are not available.
             if (log.isDebugEnabled()) {
-                log.debug("PackageSetBuilder cannot load the following class:" + className);
+                log.debug("AnnotationBuilder did not find the following class:" + className);
             }
         }
         return null;
@@ -356,9 +356,15 @@ public class AnnotationBuilder {
                     }
             );
         } catch (PrivilegedActionException e) {
+            /* An exception should NOT be logged.  Depending on the JAXWS scenario, certain classes 
+             * may or may not exist.  Putting an exception in the log will confuse programmers who
+             * are servicing the product
+             * 
+             
             if (log.isDebugEnabled()) {
                 log.debug("Exception thrown from AccessController: " + e);
             }
+            */
             throw (ClassNotFoundException)e.getException();
         }
 
