@@ -95,7 +95,7 @@ public class AxisConfiguration extends AxisDescription {
     private URL axis2Repository = null;
 
     private Map allServices = new Hashtable();
-    private HashMap allEndpoints = new HashMap();
+    private Map allEndpoints = new Hashtable();
 
     /**
      * Stores the module specified in the server.xml at the document parsing time.
@@ -389,17 +389,11 @@ public class AxisConfiguration extends AxisDescription {
             }
 
             //removes the endpoints to this service
+            String serviceName = axisService.getName();
             String key = null;
-            List endPointsForThisService = new ArrayList();
-            for (Iterator iter = this.allEndpoints.keySet().iterator(); iter.hasNext();){
-                key = (String)iter.next();
-                if (key.startsWith(axisService.getName())){
-                    endPointsForThisService.add(key);
-                }
-            }
-
-            for (Iterator iter = endPointsForThisService.iterator();iter.hasNext();){
-                this.allEndpoints.remove(iter.next());
+            for (Iterator iter = axisService.getEndpoints().keySet().iterator(); iter.hasNext();){
+                key = serviceName + "." + (String)iter.next();
+                this.allEndpoints.remove(key);
             }
 
         }
