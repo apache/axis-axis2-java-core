@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.client.dispatch;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -52,7 +53,17 @@ public class XMLDispatchAsyncListener extends AsyncResponse {
     }
 
     public Object getResponseValueObject(MessageContext mc) {
-        return XMLDispatch.getValue(mc.getMessage(), mode, blockFactoryType);
+        try {
+            return XMLDispatch.getValue(mc.getMessage(), mode, blockFactoryType);
+        } finally {
+            // Free incoming stream
+            try {
+                mc.freeInputStream();
+            }
+            catch (Throwable t) {
+                throw ExceptionFactory.makeWebServiceException(t);
+            }
+        }
     }
 
     public Throwable getFaultResponse(MessageContext mc) {

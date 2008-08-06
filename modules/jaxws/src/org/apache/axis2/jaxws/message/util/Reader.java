@@ -258,7 +258,7 @@ public abstract class Reader implements XMLStreamReader {
     }
 
     public Object getProperty(String arg0) throws IllegalArgumentException {
-    	debug("Entering getProperty....");
+    	debug("Entering getProperty for ..." + arg0);
     	Object o = reader.getProperty(arg0);
     	debug("reader.getProperty(arg0) = "+o);
         return o;

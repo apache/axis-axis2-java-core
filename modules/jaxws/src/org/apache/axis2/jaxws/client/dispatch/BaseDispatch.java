@@ -50,6 +50,8 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
+
+import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
@@ -165,9 +167,22 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 throw wse;
             }
 
-            Message responseMsg = responseMsgCtx.getMessage();
-            Object returnObj = getValueFromMessage(responseMsg);
-
+            // Get the return object
+            Object returnObj = null;
+            try {
+                Message responseMsg = responseMsgCtx.getMessage();
+                returnObj = getValueFromMessage(responseMsg);
+            }
+            finally {
+                // Free the incoming input stream
+                try {
+                    responseMsgCtx.freeInputStream();
+                }
+                catch (Throwable t) {
+                    throw ExceptionFactory.makeWebServiceException(t);
+                }
+            }
+           
             //Check to see if we need to maintain session state
             checkMaintainSessionState(requestMsgCtx, invocationContext);
 
@@ -424,16 +439,25 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * @return
      */
     public static WebServiceException getFaultResponse(MessageContext msgCtx) {
-        Message msg = msgCtx.getMessage();
-        if (msg != null && msg.isFault()) {
-            //XMLFault fault = msg.getXMLFault();
-            // 4.3.2 conformance bullet 1 requires a ProtocolException here
-            ProtocolException pe =
+        try {
+            Message msg = msgCtx.getMessage();
+            if (msg != null && msg.isFault()) {
+                //XMLFault fault = msg.getXMLFault();
+                // 4.3.2 conformance bullet 1 requires a ProtocolException here
+                ProtocolException pe =
                     MethodMarshallerUtils.createSystemException(msg.getXMLFault(), msg);
-            return pe;
-        } else if (msgCtx.getLocalException() != null) {
-            // use the factory, it'll throw the right thing:
-            return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+                return pe;
+            } else if (msgCtx.getLocalException() != null) {
+                // use the factory, it'll throw the right thing:
+                return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+            }
+        } finally {
+            // Free the incoming input stream
+            try {
+                msgCtx.freeInputStream();
+            } catch (IOException ioe) {
+                return ExceptionFactory.makeWebServiceException(ioe);
+            }
         }
 
         return null;

@@ -394,6 +394,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
             return object;
         } finally {
             responseMsg.close();
+            // Free incoming stream
+            try {
+                responseContext.freeInputStream();
+            }
+            catch (Throwable t) {
+                throw ExceptionFactory.makeWebServiceException(t);
+            }
         }
     }
 
@@ -405,23 +412,32 @@ public class JAXWSProxyHandler extends BindingProvider implements
         //we will fetch the OperationDescription of the sync method and this should give us the
         //correct fault description so we can throw the right user defined exception.
 
-        if (opDesc.isJAXWSAsyncClientMethod()) {
-            opDesc = opDesc.getSyncOperation();
-        }
-        if (msg != null && msg.isFault()) {
-            ClassLoader cl = (ClassLoader) msgCtx.getProperty(Constants.CACHE_CLASSLOADER);
-            Object object = MethodMarshallerFactory.getMarshaller(opDesc, true, cl)
-                    .demarshalFaultResponse(msg, opDesc);
-            if (log.isDebugEnabled() && object != null) {
-                log.debug("A fault was found and processed.");
-                log.debug("Throwing a fault of type: " + object.getClass().getName() +
-                        " back to the clent.");
+        try {
+            if (opDesc.isJAXWSAsyncClientMethod()) {
+                opDesc = opDesc.getSyncOperation();
             }
+            if (msg != null && msg.isFault()) {
+                ClassLoader cl = (ClassLoader) msgCtx.getProperty(Constants.CACHE_CLASSLOADER);
+                Object object = MethodMarshallerFactory.getMarshaller(opDesc, true, cl)
+                .demarshalFaultResponse(msg, opDesc);
+                if (log.isDebugEnabled() && object != null) {
+                    log.debug("A fault was found and processed.");
+                    log.debug("Throwing a fault of type: " + object.getClass().getName() +
+                    " back to the clent.");
+                }
 
-            return (Throwable)object;
-        } else if (msgCtx.getLocalException() != null) {
-            // use the factory, it'll throw the right thing:
-            return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+                return (Throwable)object;
+            } else if (msgCtx.getLocalException() != null) {
+                // use the factory, it'll throw the right thing:
+                return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+            }
+        } finally {
+            try {
+                msgCtx.freeInputStream();
+            }
+            catch (Throwable t) {
+                throw ExceptionFactory.makeWebServiceException(t);
+            }
         }
 
         return null;

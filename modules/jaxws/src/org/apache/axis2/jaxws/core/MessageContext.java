@@ -19,18 +19,24 @@
 
 package org.apache.axis2.jaxws.core;
 
+import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.handler.MEPContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,6 +54,8 @@ import java.util.Map;
  */
 public class MessageContext {
 
+    private static Log log = LogFactory.getLog(MessageContext.class);
+    
     private InvocationContext invocationCtx;
     private org.apache.axis2.context.MessageContext axisMsgCtx;
     private EndpointDescription endpointDesc;
@@ -313,4 +321,23 @@ public class MessageContext {
         this.isServer = isServer;
     }
 
+    /**
+     * Free the resources associated with the incoming input stream. (i.e. HTTPInputStream)
+     * This allows the transport layer to free resources and pool connections
+     */
+    public void freeInputStream() throws IOException {
+        
+        
+        // During builder processing, the original input stream was wrapped with
+        // a detachable input stream.  The detachable input stream's detach method
+        // causes the original stream to be consumed and closed.
+        DetachableInputStream is = (DetachableInputStream) 
+            getProperty(Constants.DETACHABLE_INPUT_STREAM);
+        if (is != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Detaching inbound input stream " + is);
+            }
+            is.detach();
+        }
+    }
 }
