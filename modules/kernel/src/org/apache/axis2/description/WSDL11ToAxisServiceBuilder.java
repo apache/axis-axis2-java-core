@@ -1291,7 +1291,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisOperation.setPolicyInclude(policyInclude);
         }
 
-        copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(), dif,
+        copyExtensionAttributes(wsdl4jOperation.getExtensionAttributes(), 
                                axisOperation, PORT_TYPE_OPERATION);
 
         Input wsdl4jInputMessage = wsdl4jOperation.getInput();
@@ -1303,8 +1303,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 Message message = wsdl4jInputMessage.getMessage();
                 if (null != message) {
                     inMessage.setName(message.getQName().getLocalPart());
-                    copyExtensibleElements(message.getExtensibilityElements(),
-                                           dif, inMessage, PORT_TYPE_OPERATION_INPUT);
+                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                                           inMessage, PORT_TYPE_OPERATION_INPUT);
 
                 }
                 // Check if the action is already set as we don't want to
@@ -1335,8 +1335,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (null != message) {
 
                     outMessage.setName(message.getQName().getLocalPart());
-                    copyExtensibleElements(message.getExtensibilityElements(),
-                                           dif, outMessage, PORT_TYPE_OPERATION_OUTPUT);
+                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                                           outMessage, PORT_TYPE_OPERATION_OUTPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
                 }
@@ -1367,8 +1367,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (null != message) {
 
                     inMessage.setName(message.getQName().getLocalPart());
-                    copyExtensibleElements(message.getExtensibilityElements(),
-                                           dif, inMessage, PORT_TYPE_OPERATION_OUTPUT);
+                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                                           inMessage, PORT_TYPE_OPERATION_OUTPUT);
 
                 }
                 // Check if the action is already set as we don't want to
@@ -1393,8 +1393,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (null != message) {
 
                     outMessage.setName(message.getQName().getLocalPart());
-                    copyExtensibleElements(message.getExtensibilityElements(),
-                                           dif, outMessage, PORT_TYPE_OPERATION_INPUT);
+                    copyExtensionAttributes(wsdl4jInputMessage.getExtensionAttributes(),
+                                           outMessage, PORT_TYPE_OPERATION_INPUT);
 
                     // wsdl:portType -> wsdl:operation -> wsdl:output
                 }
@@ -2767,10 +2767,18 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 						ref = new PolicyReference();
 						ref.setURI(uris[i]);
 
-						if (PORT_TYPE.equals(origin)) {
-							PolicySubject subject = description
-									.getPolicySubject();
-							subject.attachPolicyReference(ref);
+						if (PORT_TYPE.equals(origin)
+						        || PORT_TYPE_OPERATION.equals(origin)
+						        || PORT_TYPE_OPERATION_INPUT.equals(origin) 
+						        || PORT_TYPE_OPERATION_OUTPUT.equals(origin)) {
+                      
+						    if (description != null) {
+						        PolicySubject subject = description.getPolicySubject();
+                             
+						        if (subject != null) {
+						            subject.attachPolicyReference(ref);
+						        }
+						    }
 						}
 					}
 				}
