@@ -2328,6 +2328,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 String soapActionURI = soapOperation.getSoapActionURI();
                 
+                if (this.isCodegen && ((soapActionURI == null) || (soapActionURI.equals("")))) {
+                    soapActionURI = axisBindingOperation.getAxisOperation().getInputAction();
+                }
+                
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
                     log.debug("WSDL Binding Operation: " + axisBindingOperation.getName() +
                             ", SOAPAction: " + soapActionURI);
@@ -2354,6 +2358,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 String soapAction = soapOperation.getSoapActionURI();
+                if (this.isCodegen && ((soapAction == null) || (soapAction.equals("")))) {
+                    soapAction = axisBindingOperation.getAxisOperation().getInputAction();
+                }
                 
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())
                     log.debug("WSDL Binding Operation: " + axisBindingOperation.getName() +
