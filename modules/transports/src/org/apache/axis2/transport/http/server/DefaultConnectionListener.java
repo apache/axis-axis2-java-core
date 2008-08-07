@@ -70,7 +70,7 @@ public class DefaultConnectionListener implements IOProcessor {
                 try {
                     if (serversocket == null || serversocket.isClosed()) {
                         if (LOG.isInfoEnabled()) {
-                            LOG.info("Listening on port " + this.serversocket.getLocalPort());
+                            LOG.info("Listening on port " + port);
                         }
                         serversocket = new ServerSocket(port);
                         serversocket.setReuseAddress(true);
