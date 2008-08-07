@@ -27,6 +27,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.DetachableInputStream;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -61,6 +62,18 @@ public class TransportUtils {
     private static final Log log = LogFactory.getLog(TransportUtils.class);
 
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
+        return createSOAPMessage(msgContext, false);
+    }
+    
+    /**
+     * This method will create a SOAPEnvelope based on the InputStream stored on
+     * the MessageContext. The 'detach' parameter controls whether or not the 
+     * underlying DetachableInputStream is detached at the end of the method. Note,
+     * detaching the DetachableInputStream closes the underlying InputStream that
+     * is stored on the MessageContext.
+     */
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
+                                                 boolean detach) throws AxisFault {
         try {
             InputStream inStream = (InputStream) msgContext
                     .getProperty(MessageContext.TRANSPORT_IN);
@@ -85,7 +98,20 @@ public class TransportUtils {
             }
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-            return createSOAPMessage(msgContext, inStream, contentType);
+            SOAPEnvelope env = createSOAPMessage(msgContext, inStream, contentType);
+            
+            // if we were told to detach, we will make the call here, this is only applicable
+            // if a DetachableInputStream instance is found on the MessageContext
+            if(detach) {
+                DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
+                if(dis != null) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Detaching input stream after SOAPEnvelope construction");
+                    }
+                    dis.detach();
+                }
+            }
+            return env;
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
