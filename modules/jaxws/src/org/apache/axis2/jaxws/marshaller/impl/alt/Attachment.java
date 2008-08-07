@@ -95,7 +95,15 @@ class Attachment {
      */
     public DataHandler getDataHandler() {
         if (dh == null) {
-            dh = createDataHandler(sigValue, sigClass, aDesc.getMimeTypes(), getContentID());
+        	//if null DH was specified explicitly, return it, don't create something else.
+            if (sigValue == null) {
+                // Create a contentID and null DataHandler
+                getContentID(); // Force setting of content id
+                dh = (DataHandler) null;
+            } else {
+                // Normal case: create a DataHandler from the sigValue object
+                dh = createDataHandler(sigValue, sigClass, aDesc.getMimeTypes(), getContentID());
+            }
         }
         return dh;
     }
@@ -123,6 +131,11 @@ class Attachment {
         DataHandler dh = null;
         if (cls.isAssignableFrom(DataHandler.class)) {
             dh = (DataHandler) value;
+            if(dh == null)  
+            {
+                return dh; //return if DataHandler is null
+            }
+
             try {
                 Object content = dh.getContent();
                 // If the content is a Source, convert to a String due to 

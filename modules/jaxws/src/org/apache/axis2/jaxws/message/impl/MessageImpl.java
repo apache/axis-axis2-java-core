@@ -443,6 +443,10 @@ public class MessageImpl implements Message {
      * @see org.apache.axis2.jaxws.message.Message#getDataHandler(java.lang.String)
      */
     public DataHandler getDataHandler(String cid) {
+        // if null DH was specified explicitly, just return
+        if(cid == null) {
+            return (DataHandler) null;
+        }
         String bcid = getBlobCID(cid);
         return attachments.getDataHandler(bcid);
     }
