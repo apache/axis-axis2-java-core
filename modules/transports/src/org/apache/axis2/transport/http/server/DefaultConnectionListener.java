@@ -69,11 +69,11 @@ public class DefaultConnectionListener implements IOProcessor {
             while (!Thread.interrupted()) {
                 try {
                     if (serversocket == null || serversocket.isClosed()) {
-                        serversocket = new ServerSocket(port);
-                        serversocket.setReuseAddress(true);
                         if (LOG.isInfoEnabled()) {
                             LOG.info("Listening on port " + this.serversocket.getLocalPort());
                         }
+                        serversocket = new ServerSocket(port);
+                        serversocket.setReuseAddress(true);
                     }
                     LOG.debug("Waiting for incoming HTTP connection");
                     Socket socket = this.serversocket.accept();
