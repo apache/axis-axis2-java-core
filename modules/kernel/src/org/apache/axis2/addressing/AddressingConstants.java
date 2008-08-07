@@ -47,6 +47,7 @@ public interface AddressingConstants {
     static final String IS_ADDR_INFO_ALREADY_PROCESSED = "IsAddressingProcessed";
     static final String DISABLE_ADDRESSING_FOR_IN_MESSAGES = "disableAddressingForInMessages";
     static final String ADDR_VALIDATE_ACTION = "addressing.validateAction";
+    static final String ADDR_VALIDATE_INVOCATION_PATTERN = "addressing.validateInvocationPattern";
 
     // ====================== WSDL Binding Constants ========================
     static final String USING_ADDRESSING = "UsingAddressing";

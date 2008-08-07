@@ -48,24 +48,18 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         }
 
         if (JavaUtils.isTrueExplicitly(flag)) {
-            // If no AxisOperation has been found at the end of the dispatch phase and addressing
-            // is in use we should throw an ActionNotSupported Fault, unless we've been told
-            // not to do this check (by Synapse, for instance)
-            if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_ACTION), true)) {
-                // Check if the wsa:MessageID is required or not.
-                checkMessageIDHeader(msgContext);
-            }
+            // Check if the wsa:MessageID is required or not.
+            checkMessageIDHeader(msgContext);
         }
-
-        if (JavaUtils.isFalseExplicitly(flag)) {
+        else {
             // Check that if wsaddressing=required that addressing headers were found inbound
             checkUsingAddressing(msgContext);
         }
         
-        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid
-        // This method must always be called to ensure that the async required invocation pattern is
-        // enforced.
-        checkWSAMInvocationPattern(msgContext);
+        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid.
+        if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_INVOCATION_PATTERN), true)) {
+            checkWSAMInvocationPattern(msgContext);
+        }
 
         return InvocationResponse.CONTINUE;
     }
@@ -106,7 +100,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         String value =
                 AddressingHelper.getInvocationPatternParameterValue(msgContext.getAxisOperation());
         if (log.isTraceEnabled()) {
-            log.trace("checkAnonymous: value=" + value);
+            log.trace("checkWSAMInvocationPattern: value=" + value);
         }
         if(!AddressingConstants.WSAM_INVOCATION_PATTERN_BOTH.equals(value)){
         	if (WSAM_INVOCATION_PATTERN_SYNCHRONOUS.equals(value)) {
