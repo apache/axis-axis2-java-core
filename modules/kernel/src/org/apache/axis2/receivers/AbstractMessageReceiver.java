@@ -88,8 +88,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      */
     public void receive(final MessageContext messageCtx) throws AxisFault {
     	if (messageCtx.isPropertyTrue(DO_ASYNC)
-				|| JavaUtils.isTrue(messageCtx.getParameter(DO_ASYNC))) {
-			String mep = messageCtx.getAxisOperation()
+				|| ((messageCtx.getParameter(DO_ASYNC) != null) &&
+                    JavaUtils.isTrueExplicitly(messageCtx.getParameter(DO_ASYNC).getValue()))) {
+
+            String mep = messageCtx.getAxisOperation()
 					.getMessageExchangePattern();
 			EndpointReference replyTo = messageCtx.getReplyTo();
 			// In order to invoke the service in the ASYNC mode, the request

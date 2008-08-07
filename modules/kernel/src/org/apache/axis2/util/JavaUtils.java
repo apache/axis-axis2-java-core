@@ -273,7 +273,7 @@ public class JavaUtils {
         if (value instanceof String) {
             return isTrueExplicitly((String) value);
         }
-        return true;
+        return defaultVal;
     }
 
     public static boolean isTrueExplicitly(Object value) {
