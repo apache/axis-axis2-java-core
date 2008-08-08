@@ -678,12 +678,45 @@ public class CorbaUtil implements CorbaConstants {
             //case TCKind._tk_any: return new Any();
             case TCKind._tk_value: return "";
             //case TCKind._tk_objref: return new org.omg.CORBA.Object();
-            case TCKind._tk_struct: return new StructValue((Struct) type);
+            case TCKind._tk_struct:
+                Struct struct = (Struct) type;
+                StructValue value = new StructValue(struct);
+                Member[] members = struct.getMembers();
+                Object[] memberValues = new Object[members.length];
+                for (int i = 0; i < members.length; i++) {
+                    memberValues[i] = getEmptyValue(members[i].getDataType());
+                }
+                value.setMemberValues(memberValues);
+                return value;
             case TCKind._tk_enum: return new EnumValue((EnumType) type);
-            case TCKind._tk_union: return new UnionValue((UnionType) type);
-            case TCKind._tk_alias: return new AliasValue((Typedef) type);
-            case TCKind._tk_sequence: return new SequenceValue((SequenceType) type);
-            case TCKind._tk_array:  return new ArrayValue((ArrayType) type);
+            case TCKind._tk_union:
+                UnionType unionType = (UnionType) type;
+                UnionValue unionValue = new UnionValue(unionType);
+                members = unionType.getMembers();
+                unionValue.setMemberName(members[0].getName());
+                unionValue.setMemberType(members[0].getDataType());
+                unionValue.setMemberValue(getEmptyValue(members[0].getDataType()));
+                return unionValue;
+            case TCKind._tk_alias:
+                Typedef typedef = (Typedef) type;
+                AliasValue aliasValue = new AliasValue(typedef);
+                aliasValue.setValue(getEmptyValue(typedef.getDataType()));
+                return aliasValue;
+            case TCKind._tk_sequence:
+                SequenceType sequenceType = (SequenceType) type;
+                SequenceValue sequenceValue = new SequenceValue(sequenceType);
+                sequenceValue.setValues(new Object[0]);
+                return sequenceValue;
+            case TCKind._tk_array:
+                ArrayType arrayType = (ArrayType) type;
+                ArrayValue arrayValue = new ArrayValue(arrayType);
+                Object[] objects = new Object[arrayType.getElementCount()];
+                DataType arrayDataType = arrayType.getDataType();
+                for (int i = 0; i < objects.length; i++) {
+                    objects[i] = getEmptyValue(arrayDataType);
+                }
+                arrayValue.setValues(objects);
+                return arrayValue;
             default:
                 log.error("ERROR! Invalid dataType");
         }
