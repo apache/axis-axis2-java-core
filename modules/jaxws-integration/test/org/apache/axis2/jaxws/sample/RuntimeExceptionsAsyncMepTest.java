@@ -431,7 +431,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
             listenerAlreadySetup = true;
             // we want to use addressing on the client side
             String repopath = System.getProperty("basedir", ".") + "/"
-                    + System.getProperty("build.repository");
+                    + System.getProperty("build.repository", "target/client-repo");
             String axis2xmlpath = System.getProperty("basedir", ".")
                     + "/test-resources/axis2_addressing.xml";
             FileSystemConfigurator configurator = new FileSystemConfigurator(
