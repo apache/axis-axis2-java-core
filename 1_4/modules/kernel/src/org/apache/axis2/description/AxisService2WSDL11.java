@@ -607,9 +607,17 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		Policy policy;
 		OMElement policyElement;
 		OMNode firstChild;
+		ArrayList keys = new ArrayList();		
 
 		for (; iterator.hasNext();) {
 			policy = (Policy) iterator.next();
+			
+		       String key = policy.getId();
+		       if (keys.contains(key)) {
+		                continue;
+		       }
+		       keys.add(key);
+			
 			policyElement = PolicyUtil.getPolicyComponentAsOMElement(policy,
 					serializer);
 			firstChild = definition.getFirstOMChild();
