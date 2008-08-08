@@ -468,7 +468,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             Class sup = javaType.getSuperclass();
             if ((sup != null) && !("java.lang.Object".compareTo(sup.getName()) == 0) &&
                     !(getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") > 0)
-                    && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0)) {
+                    && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0))
+            {
                 String superClassName = sup.getName();
                 String superclassname = sup.getSimpleName();
                 String tgtNamespace;
@@ -559,6 +560,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 boolean isArryType = property.getType().isArray();
                 String propname = property.getName();
                 propertiesNames.add(propname);
+
+                //Place to look
                 this.generateSchemaforFieldsandProperties(xmlSchema, sequence, property.getType(),
                         propname, isArryType);
 
@@ -623,6 +626,41 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         String propertyName;
         if (isArryType) {
             propertyName = type.getComponentType().getName();
+            if (type.getComponentType().isArray()) {
+                // this is a doble array element
+                Class simpleType = type.getComponentType();
+                String simpleTypeName = "";
+                while (simpleType.isArray()) {
+                    simpleTypeName += "ArrayOf";
+                    simpleType = simpleType.getComponentType();
+                }
+                simpleTypeName += simpleType.getSimpleName();
+
+                if (xmlSchema.getTypeByName(simpleTypeName) == null) {
+                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    generateSchemaforFieldsandProperties(xmlSchema,
+                            xmlSchemaSequence, type.getComponentType(), name, true);
+
+                    xmlSchemaComplexType.setName(simpleTypeName);
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
+                }
+
+                XmlSchemaElement elt1 = new XmlSchemaElement();
+                elt1.setName(name);
+                elt1.setSchemaTypeName(new QName(xmlSchema.getTargetNamespace(), simpleTypeName));
+                sequence.getItems().add(elt1);
+                elt1.setMaxOccurs(Long.MAX_VALUE);
+                elt1.setMinOccurs(0);
+
+                if (!type.isPrimitive()) {
+                    elt1.setNillable(true);
+                }
+                return;
+            }
         } else {
             propertyName = type.getName();
         }
