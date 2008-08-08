@@ -253,6 +253,11 @@ public class AxisService2WSDL20 implements WSDL2Constants {
         // generate default endpoint elements.
         Set bindings = new HashSet();
         Map endpointMap = axisService.getEndpoints();
+        Object value = axisService.getParameterValue("isCodegen");
+        boolean isCodegen = false;
+        if (JavaUtils.isTrueExplicitly(value)) {
+           isCodegen = true;
+        }
         if (endpointMap != null && endpointMap.size() > 0) {
 
             OMElement serviceElement = getServiceElement(wsdl, tns, omFactory, interfaceName);
@@ -267,7 +272,7 @@ public class AxisService2WSDL20 implements WSDL2Constants {
                 /*
 			    * Some transports might not be active at runtime.
 			    */
-                if (!axisEndpoint.isActive()) {
+                if (!isCodegen && !axisEndpoint.isActive()) {
                     continue;
                 }
                 AxisBinding axisBinding = axisEndpoint.getBinding();

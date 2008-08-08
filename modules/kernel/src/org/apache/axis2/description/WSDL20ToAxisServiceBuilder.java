@@ -213,6 +213,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdlDescriptionParamter.setValue(description);
             axisService.addParameter(wsdlDescriptionParamter);
 
+            if (isCodegen) {
+                axisService.addParameter("isCodegen", Boolean.TRUE);
+            }
             if (description == null) {
                 return null;
             }
