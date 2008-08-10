@@ -136,6 +136,13 @@
         </fileSet>
 	<!-- copying licenses -->
         <fileSet>
+            <directory>../../release-docs</directory>
+            <outputDirectory>release-docs</outputDirectory>
+            <excludes>
+                <exclude>.svn/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
             <directory>../../legal</directory>
             <outputDirectory>legal</outputDirectory>
             <excludes>
