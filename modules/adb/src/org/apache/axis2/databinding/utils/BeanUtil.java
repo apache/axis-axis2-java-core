@@ -368,14 +368,13 @@ public class BeanUtil {
                             }
                             Object obj = deserialize(arrayClassType,
                                     omElement,
-                                    objectSupplier, null);
+                                    objectSupplier, arrayLocalName);
                             if (obj != null) {
                                 valueList.add(obj);
                             }
                         }
                     }
-                    return ConverterUtil.convertToArray(arrayClassType,
-                            valueList);
+                    return ConverterUtil.convertToArray(arrayClassType, valueList);
                 }
             } else {
                 if (SimpleTypeMapper.isSimpleType(beanClass)) {
