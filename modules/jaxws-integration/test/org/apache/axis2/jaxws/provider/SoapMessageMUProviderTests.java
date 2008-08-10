@@ -52,7 +52,7 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
     /**
      * Test soap message with no MU headers
      */
-    public void testNoMustUnderstandHeaders() {
+    public void testNoMustUnderstandHeaders() throws Exception {
         System.out.println("testNoMustUnderstandHeaders");
         // create a service
         Service svc = Service.create(serviceName);
@@ -68,22 +68,18 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnvPlain);
 
-        try {
-            SOAPMessage response = dispatch.invoke(message);
+        SOAPMessage response = dispatch.invoke(message);
 
-            String string = AttachmentUtil.toString(response);
-            assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
-                    + AttachmentUtil.msgEnvPlain));
+        String string = AttachmentUtil.toString(response);
+        assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
+                                           + AttachmentUtil.msgEnvPlain));
             
-            // Try a second time
-            response = dispatch.invoke(message);
+        // Try a second time
+        response = dispatch.invoke(message);
 
-            string = AttachmentUtil.toString(response);
-            assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
-                    + AttachmentUtil.msgEnvPlain));
-        } catch (Exception e) {
-            fail("Unexpected Exception: " + e.getMessage());
-        }
+        string = AttachmentUtil.toString(response);
+        assertTrue(string.equalsIgnoreCase(AttachmentUtil.XML_HEADER
+                                           + AttachmentUtil.msgEnvPlain));
     }
 
     /**
@@ -167,7 +163,7 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message for headers that should be understood.  Should not cause an 
      * exception.
      */
-    public void testClientRequestUnderstoodHeaders() {
+    public void testClientRequestUnderstoodHeaders() throws Exception {
         System.out.println("testClientRequestUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
@@ -184,18 +180,10 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnvMU_understood);
 
-        try {
-            dispatch.invoke(message);
-        } catch (Exception e) {
-            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
-        }
-        
+        dispatch.invoke(message);
+
         // Try a second time
-        try {
-            dispatch.invoke(message);
-        } catch (Exception e) {
-            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
-        }
+        dispatch.invoke(message);
     }
 
     /**
@@ -203,7 +191,7 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
      * outbound soap message (i.e. the inbound response to the client) for headers that
      * are understood.  Should not cause an exception.
      */
-    public void testClientResponseUnderstoodHeaders() {
+    public void testClientResponseUnderstoodHeaders() throws Exception {
         System.out.println("testClientResponseUnderstoodHeaders");
         // create a service
         Service svc = Service.create(serviceName);
@@ -220,17 +208,9 @@ public class SoapMessageMUProviderTests extends AbstractTestCase {
 
         SOAPMessage message = AttachmentUtil.toSOAPMessage(AttachmentUtil.msgEnv_understood);
 
-        try {
-            dispatch.invoke(message);
-        } catch (Exception e) {
-            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
-        }
-        
+        dispatch.invoke(message);
+
         // Try a second time
-        try {
-            dispatch.invoke(message);
-        } catch (Exception e) {
-            fail("Should not have received fault for headers that were understood.  " + e.getMessage());
-        }
+        dispatch.invoke(message);
     }
 }
