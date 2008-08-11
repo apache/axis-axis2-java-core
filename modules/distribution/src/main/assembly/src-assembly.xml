@@ -140,6 +140,14 @@
                 <exclude>.svn/**</exclude>
             </excludes>
         </fileSet>
+    <!-- copying release docs -->
+        <fileSet>
+             <directory>../../release-docs</directory>
+             <outputDirectory>release-docs</outputDirectory>
+             <excludes>
+                 <exclude>.svn/**</exclude>
+             </excludes>
+         </fileSet>    
         <fileSet>
             <directory>target/tmp-doc-distro/docs</directory>
             <outputDirectory></outputDirectory>
