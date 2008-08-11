@@ -47,6 +47,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -534,6 +535,12 @@ public abstract class AbstractHTTPSender {
             method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
                     HTTPConstants.COMPRESSION_GZIP);
         }
+        
+        if (msgContext.getProperty(HTTPConstants.HTTP_METHOD_PARAMS) != null) {
+            HttpMethodParams params = (HttpMethodParams)msgContext
+                    .getProperty(HTTPConstants.HTTP_METHOD_PARAMS);
+            method.setParams(params);
+        }
 
         String cookiePolicy = (String) msgContext.getProperty(HTTPConstants.COOKIE_POLICY);
         if (cookiePolicy != null) {
@@ -604,4 +611,5 @@ public abstract class AbstractHTTPSender {
 
         return userAgentString;
     }
+    
 }
