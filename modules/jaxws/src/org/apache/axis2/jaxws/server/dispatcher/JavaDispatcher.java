@@ -231,7 +231,9 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
          if (operation != null) {
              exception = ClassUtils.getRootCause(exception);        
              String action = operation.getFaultAction(exception.getClass().getName());
-             response.getAxisMessageContext().setWSAAction(action);
+             
+             if (action != null)
+                 response.getAxisMessageContext().setWSAAction(action);
          }
     }
     
