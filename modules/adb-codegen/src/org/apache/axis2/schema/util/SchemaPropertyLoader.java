@@ -26,9 +26,7 @@ import org.apache.axis2.schema.writer.BeanWriter;
 
 import java.util.Properties;
 
-/**
- * Loads the properties  for the schema compiler.
- */
+/** Loads the properties  for the schema compiler. */
 public class SchemaPropertyLoader {
     private static String beanTemplate = null;
     private static BeanWriter beanWriterInstance = null;
@@ -42,25 +40,29 @@ public class SchemaPropertyLoader {
             //load the properties
             Properties props = new Properties();
             String schemaPropFilename = System.getProperty(ADB_PROPERTY_FILE_KEY);
-            if (schemaPropFilename==null){
-                 // there was no system property .load the default
-                  props.load(SchemaCompiler.class.getResourceAsStream(SchemaConstants.SchemaPropertyNames.SCHEMA_COMPILER_PROPERTIES));
-            }else{
+            if (schemaPropFilename == null) {
+                // there was no system property .load the default
+                props.load(SchemaCompiler.class.getResourceAsStream(
+                        SchemaConstants.SchemaPropertyNames.SCHEMA_COMPILER_PROPERTIES));
+            } else {
                 props.load(SchemaCompiler.class.getResourceAsStream(schemaPropFilename));
             }
 
 
-            String beanWriterClassName = props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_KEY);
+            String beanWriterClassName =
+                    props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_KEY);
             if (beanWriterClassName != null) {
-                beanWriterInstance = (BeanWriter) Class.forName(beanWriterClassName).newInstance();
+                beanWriterInstance = (BeanWriter)Class.forName(beanWriterClassName).newInstance();
             }
 
-            String typeMapperClassName = props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TYPEMAP_KEY);
+            String typeMapperClassName =
+                    props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TYPEMAP_KEY);
             if (typeMapperClassName != null) {
-                typeMapperInstance = (TypeMap) Class.forName(typeMapperClassName).newInstance();
+                typeMapperInstance = (TypeMap)Class.forName(typeMapperClassName).newInstance();
             }
 
-            beanTemplate = props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY);
+            beanTemplate =
+                    props.getProperty(SchemaConstants.SchemaPropertyNames.BEAN_WRITER_TEMPLATE_KEY);
 
             //set the props as the property map
             propertyMap = props;
@@ -73,6 +75,7 @@ public class SchemaPropertyLoader {
 
     /**
      * Exposes the whole property set
+     *
      * @return Returns Properties.
      */
     public static Properties getPropertyMap() {

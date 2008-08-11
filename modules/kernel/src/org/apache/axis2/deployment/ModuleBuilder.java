@@ -356,19 +356,27 @@ public class ModuleBuilder extends DescriptionBuilder {
                 }
             }
             String flowName = element.getAttributeValue(new QName("flow"));
-            int flowIndex ;
-            if (TAG_FLOW_IN.equals(flowName)){
-                flowIndex = PhaseMetadata.IN_FLOW ;
-            } else if (TAG_FLOW_OUT.equals(flowName)) {
-                flowIndex = PhaseMetadata.OUT_FLOW ;
-            } else if (TAG_FLOW_OUT_FAULT.equals(flowName)) {
-                flowIndex = PhaseMetadata.FAULT_OUT_FLOW;
-            } else if (TAG_FLOW_IN_FAULT.equals(flowName)) {
-                flowIndex = PhaseMetadata.FAULT_IN_FLOW;
-            } else {
-                throw new DeploymentException(" Flow can not be null for the phase name " + phaseName);
+            if (flowName == null) {
+                throw new DeploymentException("Flow can not be null for the phase name " +
+                                              phaseName);
             }
-            axisConfig.insertPhase(d, flowIndex);
+            String[] flows = flowName.split(",");
+            for (int i = 0; i < flows.length; i++) {
+                String flow = flows[i];
+                int flowIndex;
+                if (TAG_FLOW_IN.equals(flowName)){
+                    flowIndex = PhaseMetadata.IN_FLOW ;
+                } else if (TAG_FLOW_OUT.equals(flowName)) {
+                    flowIndex = PhaseMetadata.OUT_FLOW ;
+                } else if (TAG_FLOW_OUT_FAULT.equals(flowName)) {
+                    flowIndex = PhaseMetadata.FAULT_OUT_FLOW;
+                } else if (TAG_FLOW_IN_FAULT.equals(flowName)) {
+                    flowIndex = PhaseMetadata.FAULT_IN_FLOW;
+                } else {
+                    throw new DeploymentException("Unknown flow name '" + flow + "'");
+                }
+                axisConfig.insertPhase(d, flowIndex);
+            }
         }
     }
 }

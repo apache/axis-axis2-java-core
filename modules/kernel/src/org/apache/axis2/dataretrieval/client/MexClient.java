@@ -75,7 +75,7 @@ public class MexClient extends ServiceClient {
 
         OMElement method = fac.createOMElement(DRConstants.SPEC.GET_METADATA, omNs);
         if (dialect != null) {
-            OMElement dialectElem = fac.createOMElement(DRConstants.SPEC.DIALET, omNs);
+            OMElement dialectElem = fac.createOMElement(DRConstants.SPEC.DIALECT, omNs);
 
             dialectElem.setText(dialect);
             method.addChild(dialectElem);

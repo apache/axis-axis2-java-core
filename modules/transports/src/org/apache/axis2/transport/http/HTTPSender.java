@@ -286,8 +286,7 @@ public class HTTPSender extends AbstractHTTPSender {
             }
             Object isTransportNonBlocking = msgContext.getProperty(
                     MessageContext.TRANSPORT_NON_BLOCKING);
-            if (isTransportNonBlocking != null &&
-                    ((Boolean) isTransportNonBlocking).booleanValue()) {
+            if (isTransportNonBlocking != null && (Boolean)isTransportNonBlocking) {
                 throw new AxisFault(Messages.getMessage("transportError",
                         String.valueOf(statusCode),
                         method.getStatusText()));

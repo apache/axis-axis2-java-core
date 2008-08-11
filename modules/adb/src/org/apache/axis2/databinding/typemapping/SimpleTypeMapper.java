@@ -83,7 +83,7 @@ public class SimpleTypeMapper {
         } else if (name.equals(INT)) {
             return new Integer(text);
         } else if (name.equals(BOOLEAN)) {
-            return new Boolean(ConverterUtil.convertToBoolean(text));
+            return ConverterUtil.convertToBoolean(text);
         } else if (name.equals(BYTE)) {
             return new Byte(text);
         } else if (name.equals(DOUBLE)) {
@@ -95,7 +95,7 @@ public class SimpleTypeMapper {
         } else if (name.equals(FLOAT)) {
             return new Float(text);
         } else if (name.equals(CHAR)) {
-            return new Character(text.toCharArray()[0]);
+            return text.toCharArray()[0];
         } else if (name.equals(W_INT)) {
             return new Integer(text);
         } else if (name.equals(W_BOOLEAN)) {
@@ -111,7 +111,7 @@ public class SimpleTypeMapper {
         } else if (name.equals(W_FLOAT)) {
             return new Float(text);
         } else if (name.equals(W_CHAR)) {
-            return new Character(text.toCharArray()[0]);
+            return text.toCharArray()[0];
         } else if (name.equals(W_CALENDAR)) {
             return makeCalendar(text);
         } else if (name.equals(W_DATE)) {
@@ -187,13 +187,7 @@ public class SimpleTypeMapper {
 
     public static boolean isSimpleType(Object obj) {
         String objClassName = obj.getClass().getName();
-        if (obj instanceof Calendar) {
-            return true;
-        } else if (obj instanceof Date) {
-            return true;
-        } else {
-            return isSimpleType(objClassName);
-        }
+        return obj instanceof Calendar || obj instanceof Date || isSimpleType(objClassName);
     }
 
     public static boolean isSimpleType(Class obj) {
@@ -250,21 +244,15 @@ public class SimpleTypeMapper {
          * consider BigDecimal, BigInteger, Day, Duration, Month
          * MonthDay, Time, Year, YearMonth as simple type
          */
-        else if(objClassName.equals(BIG_DECIMAL)
-        		|| objClassName.equals(BIG_INTEGER)
-        		|| objClassName.equals(DAY)
-        		|| objClassName.equals(DURATION)
-        		|| objClassName.equals(MONTH)
-        		|| objClassName.equals(MONTH_DAY)
-        		|| objClassName.equals(TIME)
-        		|| objClassName.equals(YEAR)
-        		|| objClassName.equals(YEAR_MONTH))
-        {
-        	return true;
-        }
-        else {
-            return objClassName.equals(W_CHAR);
-        }
+        else return objClassName.equals(BIG_DECIMAL)
+                    || objClassName.equals(BIG_INTEGER)
+                    || objClassName.equals(DAY)
+                    || objClassName.equals(DURATION)
+                    || objClassName.equals(MONTH)
+                    || objClassName.equals(MONTH_DAY)
+                    || objClassName.equals(TIME)
+                    || objClassName.equals(YEAR)
+                    || objClassName.equals(YEAR_MONTH) || objClassName.equals(W_CHAR);
     }
 
     public static String getStringValue(Object obj) {
@@ -274,7 +262,7 @@ public class SimpleTypeMapper {
             if (obj instanceof Float) {
                 data = ((Float)obj).doubleValue();
             } else {
-                data = ((Double)obj).doubleValue();
+                data = (Double)obj;
             }
             if (Double.isNaN(data)) {
                 return "NaN";
