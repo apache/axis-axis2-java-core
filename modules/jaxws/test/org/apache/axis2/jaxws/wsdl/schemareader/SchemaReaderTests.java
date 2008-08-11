@@ -20,7 +20,8 @@
 package org.apache.axis2.jaxws.wsdl.schemareader;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 

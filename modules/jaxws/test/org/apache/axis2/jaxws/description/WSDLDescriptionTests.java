@@ -22,7 +22,7 @@ package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.ws.axis2.tests.EchoPort;
+import org.apache.axis2.jaxws.unitTest.echo.EchoPort;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;

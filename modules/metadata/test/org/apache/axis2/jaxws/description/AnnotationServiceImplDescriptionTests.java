@@ -23,8 +23,8 @@ package org.apache.axis2.jaxws.description;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.echo.EchoServiceImplWithSEI;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;

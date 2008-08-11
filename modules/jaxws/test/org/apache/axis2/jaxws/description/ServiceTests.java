@@ -20,7 +20,8 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
+
+import org.apache.axis2.jaxws.description.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 import javax.xml.namespace.QName;

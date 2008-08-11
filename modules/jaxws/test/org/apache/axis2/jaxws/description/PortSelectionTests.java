@@ -20,10 +20,11 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
+
+import org.apache.axis2.jaxws.description.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.ws.axis2.tests.EchoPort;
+import org.apache.axis2.jaxws.unitTest.echo.EchoPort;
 
 import javax.wsdl.Port;
 import javax.xml.namespace.QName;

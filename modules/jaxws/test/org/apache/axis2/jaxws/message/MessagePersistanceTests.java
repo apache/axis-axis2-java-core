@@ -38,7 +38,7 @@ import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
-import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.jaxws.providerapi.DataSourceImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.SendImage;

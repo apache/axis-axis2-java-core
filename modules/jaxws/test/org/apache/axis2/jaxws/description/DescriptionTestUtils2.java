@@ -20,9 +20,9 @@
 
 package org.apache.axis2.jaxws.description;
 
-import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;

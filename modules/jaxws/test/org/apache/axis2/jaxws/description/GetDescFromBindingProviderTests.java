@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.ws.axis2.tests.EchoPort;
+import org.apache.axis2.jaxws.unitTest.echo.EchoPort;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;

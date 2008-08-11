@@ -20,10 +20,10 @@
 package org.apache.axis2.jaxws.injection;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.xml.ws.WebServiceContext;
 

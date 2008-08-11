@@ -17,37 +17,20 @@
  * under the License.
  */
 
-package org.apache.axis2.jaxws.injection;
 
-import org.apache.axis2.jaxws.unitTest.TestLogger;
+package org.apache.axis2.jaxws.description.echo;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.xml.ws.WebServiceContext;
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
 
-public class ResourceInjectionTestImpl1 {
+/**
+ * 
+ */
+@WebService(serviceName = "EchoService", endpointInterface = "org.apache.axis2.jaxws.description.echo.EchoPort")
+public class EchoServiceImplWithSEI {
+    public void echo(Holder<String> text) {
+        return;
+    }
 
-	@Resource
-	public WebServiceContext ctx = null;
-	
-	public ResourceInjectionTestImpl1() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	@PostConstruct
-	public void initialize(){
-		//Called after resource injection and before a method is called.
-        TestLogger.logger.debug("Calling PostConstruct to Initialize");
-	}
-	
-	@PreDestroy
-	public void distructor(){
-		//Called before the scope of request or session or application ends.
-
-        TestLogger.logger.debug("Calling PreDestroy ");
-		
-	}
 
 }

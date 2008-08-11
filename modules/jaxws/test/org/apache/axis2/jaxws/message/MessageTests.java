@@ -28,7 +28,6 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
-import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReferenceBuilder;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
@@ -39,6 +38,8 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
+
 import test.EchoStringResponse;
 import test.ObjectFactory;
 

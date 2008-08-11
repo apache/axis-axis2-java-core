@@ -20,7 +20,8 @@
 package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.TestLogger;
+
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
