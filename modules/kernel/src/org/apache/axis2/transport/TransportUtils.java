@@ -565,4 +565,33 @@ public class TransportUtils {
                log.debug("Exiting deleteAttachments()");
            }
        }
+       
+       /**
+        * This method can be called by components wishing to detach the DetachableInputStream
+        * object that is present on the MessageContext. This is meant to shield components
+        * from any logic that needs to be executed on the DetachableInputStream in order to 
+        * have it effectively detached. If the DetachableInputStream is not present, or if
+        * the supplied MessageContext is null, no action will be taken.
+        */
+       public static void detachInputStream(MessageContext msgContext) throws AxisFault {
+           try {
+               if(msgContext != null
+                       &&
+                       msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM) != null) {
+                   DetachableInputStream dis = (DetachableInputStream) msgContext.getProperty(Constants.DETACHABLE_INPUT_STREAM);
+                   if(log.isDebugEnabled()) {
+                       log.debug("Detaching DetachableInputStream: " + dis);
+                   }
+                   dis.detach();
+               }
+               else {
+                   if(log.isDebugEnabled()) {
+                       log.debug("Detach not performed for MessageContext: " + msgContext);
+                   }
+               }  
+           }
+           catch(Throwable t) {
+               throw AxisFault.makeFault(t);
+           }
+       }
 }
