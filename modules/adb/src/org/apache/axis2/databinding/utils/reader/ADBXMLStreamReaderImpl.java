@@ -945,17 +945,23 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             childReader.init();
         } else if (propertyValue.getClass().isArray()) {
             // this is an arrary object and we need to get the pull parser for that
-            List objects = new ArrayList();
             Object[] objectArray = (Object[]) propertyValue;
-            for (int i = 0; i < objectArray.length; i++) {
-                objects.add(propertyQName);
-                objects.add(objectArray[i]);
+            if (objectArray.length == 0) {
+                //advance the index
+                currentPropertyIndex = currentPropertyIndex + 2;
+                return processProperties();
+            } else {
+                List objects = new ArrayList();
+
+                for (int i = 0; i < objectArray.length; i++) {
+                    objects.add(propertyQName);
+                    objects.add(objectArray[i]);
+                }
+
+                ADBXMLStreamReader reader = new ADBXMLStreamReaderImpl(propertyQName,
+                        objects.toArray(), new ArrayList().toArray(), typeTable, qualified);
+                childReader = new WrappingXMLStreamReader(reader);
             }
-
-            ADBXMLStreamReader reader = new ADBXMLStreamReaderImpl(propertyQName,
-                    objects.toArray(), new ArrayList().toArray(), typeTable, qualified);
-            childReader = new WrappingXMLStreamReader(reader);
-
         } else if (propertyValue instanceof ADBBean) {
             //ADBbean has it's own method to get a reader
             XMLStreamReader reader = ((ADBBean)propertyValue).
