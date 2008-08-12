@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -85,6 +86,67 @@ public class ReleaseAxisResourcesTests extends TestCase {
         // Build up a DBC, including the WSDL Definition and the annotation information for 
         // the impl class.
         DescriptionBuilderComposite dbc = new DescriptionBuilderComposite(/*configContext*/);
+
+        URL wsdlURL = DescriptionTestUtils.getWSDLURL(wsdlFileName);
+        Definition wsdlDefn = DescriptionTestUtils.createWSDLDefinition(wsdlURL);
+        assertNotNull(wsdlDefn);
+
+        WebServiceAnnot webServiceAnnot = WebServiceAnnot.createWebServiceAnnotImpl();
+        assertNotNull(webServiceAnnot);
+        webServiceAnnot.setWsdlLocation(wsdlLocation);
+        webServiceAnnot.setTargetNamespace(targetNamespace);
+        webServiceAnnot.setServiceName("EchoMessageService");
+        webServiceAnnot.setPortName("EchoMessagePort");
+
+        MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+        mdc.setMethodName("echoMessage");
+        mdc.setReturnType("java.lang.String");
+
+        ParameterDescriptionComposite pdc1 = new ParameterDescriptionComposite();
+        pdc1.setParameterType("java.lang.String");
+
+        mdc.addParameterDescriptionComposite(pdc1);
+
+        dbc.addMethodDescriptionComposite(mdc);
+        dbc.setWebServiceAnnot(webServiceAnnot);
+        dbc.setClassName(BindingNSImpl.class.getName());
+        dbc.setwsdlURL(wsdlURL);
+
+        HashMap<String, DescriptionBuilderComposite> dbcMap =
+                new HashMap<String, DescriptionBuilderComposite>();
+        dbcMap.put(dbc.getClassName(), dbc);
+
+        List<ServiceDescription> serviceDescList =
+                DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap /*, configContext*/);
+        assertEquals(1, serviceDescList.size());
+        ServiceDescription serviceDesc = (ServiceDescription) serviceDescList.get(0);
+
+        assertNotNull(serviceDesc);
+        EndpointDescription endpointDesc = serviceDesc.getEndpointDescriptions()[0];
+        assertNotNull(endpointDesc);
+        AxisService axisService = endpointDesc.getAxisService();
+        assertNotNull(axisService);
+
+        assertNotNull(axisService.getSchema());
+        assertTrue(axisService.getSchema().size() > 0);
+    }
+    
+    /**
+     * Tests that when the DescriptionBuilderComposite sets the 'Reduce WSDL Cache' property
+     * to false that the Axis resources are not cleaned up.
+     */
+    public void testServerSideRelease_Explicit_OFF() {
+
+        
+        String wsdlRelativeLocation = "test-resources/wsdl/";
+        String wsdlFileName = "BindingNamespace.wsdl";
+        String targetNamespace = "http://nonanonymous.complextype.test.org";
+        String wsdlLocation = wsdlRelativeLocation + wsdlFileName;
+
+        // Build up a DBC, including the WSDL Definition and the annotation information for 
+        // the impl class.
+        DescriptionBuilderComposite dbc = new DescriptionBuilderComposite();
+        dbc.getProperties().put(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE, false);
 
         URL wsdlURL = DescriptionTestUtils.getWSDLURL(wsdlFileName);
         Definition wsdlDefn = DescriptionTestUtils.createWSDLDefinition(wsdlURL);
@@ -197,7 +259,68 @@ public class ReleaseAxisResourcesTests extends TestCase {
         assertNotNull(axisService.getSchema());
         assertTrue(axisService.getSchema().size() == 0);
     }
+    
+    /**
+     * This tests that when the 'Reduce WSDL cache' property is set on the DBC that
+     * the Axis resources are cleaned up.
+     */
+    public void testServerSideReleaseDBC() {
 
+        String wsdlRelativeLocation = "test-resources/wsdl/";
+        String wsdlFileName = "BindingNamespace.wsdl";
+        String targetNamespace = "http://nonanonymous.complextype.test.org";
+        String wsdlLocation = wsdlRelativeLocation + wsdlFileName;
+
+        // Build up a DBC, including the WSDL Definition and the annotation information for 
+        // the impl class.
+        DescriptionBuilderComposite dbc = new DescriptionBuilderComposite();
+        
+        // should have the same effect as the parameter set to 'true' in the axis2.xml
+        dbc.getProperties().put(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE, true);
+
+        URL wsdlURL = DescriptionTestUtils.getWSDLURL(wsdlFileName);
+        Definition wsdlDefn = DescriptionTestUtils.createWSDLDefinition(wsdlURL);
+        assertNotNull(wsdlDefn);
+
+        WebServiceAnnot webServiceAnnot = WebServiceAnnot.createWebServiceAnnotImpl();
+        assertNotNull(webServiceAnnot);
+        webServiceAnnot.setWsdlLocation(wsdlLocation);
+        webServiceAnnot.setTargetNamespace(targetNamespace);
+        webServiceAnnot.setServiceName("EchoMessageService");
+        webServiceAnnot.setPortName("EchoMessagePort");
+
+        MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+        mdc.setMethodName("echoMessage");
+        mdc.setReturnType("java.lang.String");
+
+        ParameterDescriptionComposite pdc1 = new ParameterDescriptionComposite();
+        pdc1.setParameterType("java.lang.String");
+
+        mdc.addParameterDescriptionComposite(pdc1);
+
+        dbc.addMethodDescriptionComposite(mdc);
+        dbc.setWebServiceAnnot(webServiceAnnot);
+        dbc.setClassName(BindingNSImpl.class.getName());
+        dbc.setwsdlURL(wsdlURL);
+
+        HashMap<String, DescriptionBuilderComposite> dbcMap =
+                new HashMap<String, DescriptionBuilderComposite>();
+        dbcMap.put(dbc.getClassName(), dbc);
+        List<ServiceDescription> serviceDescList =
+                DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap);
+        assertEquals(1, serviceDescList.size());
+        ServiceDescription serviceDesc = (ServiceDescription) serviceDescList.get(0);
+
+        assertNotNull(serviceDesc);
+        EndpointDescription endpointDesc = serviceDesc.getEndpointDescriptions()[0];
+        assertNotNull(endpointDesc);
+        AxisService axisService = endpointDesc.getAxisService();
+        assertNotNull(axisService);
+
+        assertNotNull(axisService.getSchema());
+        assertTrue(axisService.getSchema().size() == 0);
+    }
+    
     @WebService(serviceName = "EchoMessageService", portName = "EchoMessagePort", targetNamespace = "http://nonanonymous.complextype.test.org", wsdlLocation = "test-resources/wsdl/BindingNamespace.wsdl")
     public class BindingNSImpl {
         public String echoMessage(String arg) {

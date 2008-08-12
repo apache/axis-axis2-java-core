@@ -289,6 +289,16 @@ class EndpointDescriptionImpl
                 }
             }
         }
+        else if(composite != null) {
+            Boolean reduceCache = (Boolean) composite.getProperties().get(Constants.Configuration.REDUCE_WSDL_MEMORY_CACHE);
+            if(reduceCache != null) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Retrieved the following reduce WSDL cache value: " + reduceCache + 
+                              " from the composite: " + composite.getClassName());
+                }
+                releaseAxisServiceResources = reduceCache;
+            }
+        }
         
     }
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
