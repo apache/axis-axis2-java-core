@@ -167,6 +167,8 @@ public class SchemaGenerator implements CorbaConstants {
          * messages and port types will be creteated
          */
 
+        if (intf==null)
+            throw new SchemaGeneratorException("Interface " + interfaceName + " does not exists");
         Operation[] operations = intf.getOperations();
 
         // since we do not support overload

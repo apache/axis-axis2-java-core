@@ -38,7 +38,7 @@ public class AliasValue extends AbstractValue {
     }
 
     public void read(InputStream inputStream) {
-        value = read(((Typedef) dataType).getDataType(), inputStream);        
+        value = read(((Typedef) dataType).getDataType(), inputStream);
     }
 
     public void write(OutputStream outputStream) {
