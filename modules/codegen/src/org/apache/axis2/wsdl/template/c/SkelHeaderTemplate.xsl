@@ -90,7 +90,7 @@
                                           <xsl:variable name="inputtype">
                                              <xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if>
                                           </xsl:variable>
-                                          <xsl:value-of select="$inputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                          <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                           </xsl:for-each><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t**</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
