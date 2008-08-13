@@ -91,6 +91,9 @@
     <deployer extension=".jar" directory="servicejars" class="org.apache.axis2.jaxws.framework.JAXWSDeployer"/>
     <deployer extension=".jar" directory="transports" class="org.apache.axis2.deployment.TransportDeployer"/>
 
+    <!--CORBA deployer , this will alow users to invoke remote CORBA services through Axis2-->
+    <!--<deployer extension=".xml" directory="corba" class="org.apache.axis2.corba.deployer.CorbaDeployer"/>-->
+
     <!--<deployer extension=".jsa" directory="rmiservices" class="org.apache.axis2.rmi.deploy.RMIServiceDeployer"/>-->
 
 
