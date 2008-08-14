@@ -56,6 +56,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public class TransportUtils {
 
@@ -515,14 +516,16 @@ public class TransportUtils {
        	Attachments attachments = msgContext.getAttachmentMap();
        	LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
            if (attachments != null) {
-               String [] keys = attachments.getAllContentIDs(); 
+               // Get the list of Content IDs for the attachments...but does not try to pull the stream for new attachments.
+               // (Pulling the stream for new attachments will probably fail...the stream is probably closed)
+               List keys = attachments.getContentIDList();
                if (keys != null) {
                	String key = null;
                	File file = null;
                	DataSource dataSource = null;
-                   for (int i = 0; i < keys.length; i++) {
+                   for (int i = 0; i < keys.size(); i++) {
                        try {
-                           key = keys[i];
+                           key = (String) keys.get(i);
                            dataSource = attachments.getDataHandler(key).getDataSource();
                            if(dataSource instanceof CachedFileDataSource){
                            	file = ((CachedFileDataSource)dataSource).getFile();
