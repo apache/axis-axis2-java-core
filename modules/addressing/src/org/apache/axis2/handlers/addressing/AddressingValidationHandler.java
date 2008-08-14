@@ -148,16 +148,19 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
-        String mep = axisOperation.getMessageExchangePattern();
-        int mepConstant = Utils.getAxisSpecifMEPConstant(mep);
-
-        if (mepConstant == WSDLConstants.MEP_CONSTANT_IN_OUT ||
-                mepConstant == WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
-                mepConstant == WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY) {
-            String messageId = msgContext.getOptions().getMessageId();
-            if (messageId == null || "".equals(messageId)) {
-                AddressingFaultsHelper
-                        .triggerMessageAddressingRequiredFault(msgContext, WSA_MESSAGE_ID);
+        
+        if (axisOperation != null) {
+            String mep = axisOperation.getMessageExchangePattern();
+            int mepConstant = Utils.getAxisSpecifMEPConstant(mep);
+            
+            if (mepConstant == WSDLConstants.MEP_CONSTANT_IN_OUT ||
+                    mepConstant == WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
+                    mepConstant == WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY) {
+                String messageId = msgContext.getOptions().getMessageId();
+                if (messageId == null || "".equals(messageId)) {
+                    AddressingFaultsHelper
+                    .triggerMessageAddressingRequiredFault(msgContext, WSA_MESSAGE_ID);
+                }
             }
         }
     }
