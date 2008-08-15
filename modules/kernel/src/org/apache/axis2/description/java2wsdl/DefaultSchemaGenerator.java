@@ -722,7 +722,42 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             isArrayType = type.isArray();
         }
         if (isArrayType) {
-            type = type.getComponentType();
+            if (type.getComponentType().isArray()) {
+                // this is a doble array element
+                Class simpleType = type.getComponentType();
+                String simpleTypeName = "";
+                while (simpleType.isArray()) {
+                    simpleTypeName += "ArrayOf";
+                    simpleType = simpleType.getComponentType();
+                }
+                simpleTypeName += simpleType.getSimpleName();
+
+                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+                if (xmlSchema.getTypeByName(simpleTypeName) == null) {
+                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    generateSchemaForType(xmlSchemaSequence, type.getComponentType(), partName);
+                    xmlSchemaComplexType.setName(simpleTypeName);
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
+                }
+
+                XmlSchemaElement elt1 = new XmlSchemaElement();
+                elt1.setName(partName);
+                elt1.setSchemaTypeName(new QName(xmlSchema.getTargetNamespace(), simpleTypeName));
+                sequence.getItems().add(elt1);
+                elt1.setMaxOccurs(Long.MAX_VALUE);
+                elt1.setMinOccurs(0);
+
+                if (!type.isPrimitive()) {
+                    elt1.setNillable(true);
+                }
+                return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
+            } else {
+                type = type.getComponentType();
+            }
         }
         if (AxisFault.class.getName().equals(type)) {
             return null;
