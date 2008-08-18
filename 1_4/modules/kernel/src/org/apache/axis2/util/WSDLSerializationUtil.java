@@ -559,7 +559,7 @@ public class WSDLSerializationUtil {
 		if (description == null || description instanceof AxisService) {
 			return (AxisService) description;
 		} else {
-			return getAxisService(description);
+			return getAxisService(description.getParent());
 		}
 	}
 }
