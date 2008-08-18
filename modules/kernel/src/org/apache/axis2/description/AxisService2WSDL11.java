@@ -93,8 +93,9 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	private ExternalPolicySerializer serializer;
 
 	private HashMap messagesMap;
+	
 
-	public AxisService2WSDL11(AxisService service) throws Exception {
+        public AxisService2WSDL11(AxisService service) throws Exception {
 		this.axisService = service;
 		this.serviceName = service.getName();
 		init();
@@ -1293,10 +1294,20 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 		Parameter modifyAddressParam = axisService
 				.getParameter("modifyUserWSDLPortAddress");
 		if (modifyAddressParam != null) {
-			if (Boolean.parseBoolean((String) modifyAddressParam.getValue())) {
-				return axisEndpoint.calculateEndpointURL();
-			}
+			if (!Boolean.parseBoolean((String) modifyAddressParam.getValue())) {
+				return axisEndpoint.getEndpointURL();
+			} 
 		}
-		return axisEndpoint.getEndpointURL();
+		String hostIP = WSDLSerializationUtil.extractHostIP(axisService.getEndpointURL());
+		//TODO This is to prevent problems when JAVA2WSDL tool is used where there is no  
+		//Axis server running. calculateEndpointURL fails in this scenario, refer to 
+		// SimpleHTTPServer#getEPRsForService()
+		if (hostIP != null) {
+		    return axisEndpoint.calculateEndpointURL(hostIP);
+		} else {
+		    return axisEndpoint.getEndpointURL();
+		}
 	}
+	
+	
 }

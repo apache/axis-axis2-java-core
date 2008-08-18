@@ -174,34 +174,45 @@ public class AxisEndpoint extends AxisDescription {
 	}
 
 	public String calculateEndpointURL() {
-		if (transportInDescName != null && parent != null) {
-			AxisConfiguration axisConfiguration = getAxisConfiguration();
-			if (axisConfiguration != null) {
-				try {
-					String serviceName = ((AxisService) parent).getName();
-					TransportInDescription in = axisConfiguration
-							.getTransportIn(transportInDescName);
-					TransportListener listener = in.getReceiver();
-					String ip = Utils.getIpAddress(axisConfiguration);
-					// we should pass [serviceName].[endpointName] instead of
-					// [endpointName]
-					String sDOTe = serviceName + "." + name;
-					EndpointReference[] eprsForService = listener
-							.getEPRsForService(sDOTe, ip);
-					// we consider only the first address return by the listener
-					if (eprsForService != null && eprsForService.length > 0) {
-						return eprsForService[0].getAddress();
-					}
-				} catch (SocketException e) {
-					logger.warn(e.getMessage(), e);
-				} catch (AxisFault e) {
-					logger.warn(e.getMessage(), e);
-				}
-			}
-		}
-
-		return null;
+	    return calculateEndpointURL(null);
 	}
+	
+        public String calculateEndpointURL(String hostIP) {
+            if (transportInDescName != null && parent != null) {
+                    AxisConfiguration axisConfiguration = getAxisConfiguration();
+                    if (axisConfiguration != null) {
+                            try {
+                                    String serviceName = ((AxisService) parent).getName();
+                                    TransportInDescription in = axisConfiguration
+                                                    .getTransportIn(transportInDescName);
+                                    TransportListener listener = in.getReceiver();
+                                    String ip;
+                                    
+                                    if (hostIP != null) {
+                                        ip = hostIP;
+                                    } else {    
+                                        ip = Utils.getIpAddress(axisConfiguration);
+                                    }
+                                    
+                                    // we should pass [serviceName].[endpointName] instead of
+                                    // [endpointName]
+                                    String sDOTe = serviceName + "." + name;
+                                    EndpointReference[] eprsForService = listener
+                                                    .getEPRsForService(sDOTe, ip);
+                                    // we consider only the first address return by the listener
+                                    if (eprsForService != null && eprsForService.length > 0) {
+                                            return eprsForService[0].getAddress();
+                                    }
+                            } catch (SocketException e) {
+                                    logger.warn(e.getMessage(), e);
+                            } catch (AxisFault e) {
+                                    logger.warn(e.getMessage(), e);
+                            }
+                    }
+            }
+
+            return null;
+        }	
 
 	public boolean isActive() {
 		if (transportInDescName != null && parent != null) {

@@ -568,5 +568,31 @@ public class WSDLSerializationUtil {
 		} else {
 			return getAxisService(description.getParent());
 		}
-	}
+	}                              
+        
+	public static String extractHostIP(String serviceURL){
+            
+            String ip = null;
+            
+            if (serviceURL != null) {
+            
+                int ipindex = serviceURL.indexOf("//");
+                        
+                if (ipindex >= 0) {
+                    ip = serviceURL.substring(ipindex + 2, serviceURL.length());
+                    int seperatorIndex = ip.indexOf(":");
+                    int slashIndex = ip.indexOf("/");
+                        
+                    if (seperatorIndex >= 0) {
+                        ip = ip.substring(0, seperatorIndex);
+                    } else {
+                        ip = ip.substring(0, slashIndex);
+                    }                      
+                }
+            }
+               
+            return ip;      
+        }      
+
+	
 }
