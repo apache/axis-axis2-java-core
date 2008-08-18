@@ -34,6 +34,7 @@ import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class AxisMessage extends AxisDescription {
     
     private Policy effectivePolicy = null;
     
-	private boolean policyCalculated = false;
+    private Date lastPolicyCalcuatedTime = null;
 
     public String getMessagePartName() {
 		return messagePartName;
@@ -240,14 +241,10 @@ public class AxisMessage extends AxisDescription {
     }
     
 	public Policy getEffectivePolicy() {
-		if (getPolicySubject().isUpdated()) {
-			effectivePolicy = calculateEffectivePolicy();
-		} else {
-			if (effectivePolicy == null && !policyCalculated) {
-				effectivePolicy = calculateEffectivePolicy();
-			}
-		}
-		return effectivePolicy;
+            if (lastPolicyCalcuatedTime == null || isPolicyUpdated()) {
+                effectivePolicy = calculateEffectivePolicy();
+            }
+            return effectivePolicy;
 	}
 
 	public Policy calculateEffectivePolicy() {
@@ -282,38 +279,39 @@ public class AxisMessage extends AxisDescription {
 		}
 
 		Policy result = PolicyUtil.getMergedPolicy(policyList, axisService);
-		policyCalculated = true;
+		lastPolicyCalcuatedTime = new Date();
 		return result;
 	}
 	
 	public boolean isPolicyUpdated() {
-		// AxisMessage
-		PolicySubject policySubject = getPolicySubject();
-		if (policySubject.isUpdated()) {
-			return true;
-		}
-
-		// AxisOperation
-		AxisOperation axisOperation = getAxisOperation();
-		if (axisOperation != null
-				&& axisOperation.getPolicySubject().isUpdated()) {
-			return true;
-		}
-
-		// AxisService
-		AxisService axisService = (axisOperation == null) ? null
-				: axisOperation.getAxisService();
-		if (axisService != null && axisService.getPolicySubject().isUpdated()) {
-			return true;
-		}
-
-		// AxisConfiguration
-		AxisConfiguration axisConfiguration = (axisService == null) ? null
-				: axisService.getAxisConfiguration();
-		if (axisConfiguration != null
-				&& axisConfiguration.getPolicySubject().isUpdated()) {
-			return true;
-		}
-		return false;
+            // AxisMessage
+            if (getPolicySubject().getLastUpdatedTime().after(
+                            lastPolicyCalcuatedTime)) {
+                    return true;
+            }
+            // AxisOperation
+            AxisOperation axisOperation = (AxisOperation) parent;
+            if (axisOperation != null
+                            && axisOperation.getPolicySubject().getLastUpdatedTime().after(
+                                            lastPolicyCalcuatedTime)) {
+                    return true;
+            }
+            // AxisService
+            AxisService axisService = (axisOperation == null) ? null
+                            : axisOperation.getAxisService();
+            if (axisService != null
+                            && axisService.getPolicySubject().getLastUpdatedTime().after(
+                                            lastPolicyCalcuatedTime)) {
+                    return true;
+            }
+            // AxisConfiguration
+            AxisConfiguration axisConfiguration = (axisService == null) ? null
+                            : axisService.getAxisConfiguration();
+            if (axisConfiguration != null
+                            && axisConfiguration.getPolicySubject().getLastUpdatedTime()
+                                            .after(lastPolicyCalcuatedTime)) {
+                    return true;
+            }
+            return false;
 	}
 }
