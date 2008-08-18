@@ -45,8 +45,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.beans.BeanInfo;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
