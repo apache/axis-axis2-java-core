@@ -27,6 +27,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.*;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.*;
 import org.apache.axis2.osgi.deployment.tracker.BundleTracker;
+import org.apache.axis2.osgi.deployment.tracker.WSTracker;
 import org.apache.axis2.osgi.tx.HttpListener;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
@@ -112,8 +113,9 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             bundleTracker.addRegistry(moduleRegistry);
             bundleTracker.open();
 
+            new WSTracker(configCtx, context).open();
+
             context.addServiceListener(new AxisConfigServiceListener(configCtx, context));
-            context.addServiceListener(new WSListener(configCtx, context));
 
             Dictionary prop = new Properties();
             prop.put(PROTOCOL, "http");
@@ -281,30 +283,5 @@ public class OSGiConfigurationContextFactory implements ManagedService {
             }
         }
     }
-
-    /**
-     * TODO: TBD, purpose of this listener is to listen to OSGi services that needed to be set as WS
-     */
-    private static class WSListener implements ServiceListener {
-
-        private ConfigurationContext configCtx;
-
-        private AxisConfiguration axisConfig;
-
-        private BundleContext context;
-
-        private Lock lock = new ReentrantLock();
-
-        public WSListener(ConfigurationContext configCtx, BundleContext context) {
-            this.configCtx = configCtx;
-            this.context = context;
-            this.axisConfig = configCtx.getAxisConfiguration();
-        }
-
-        public void serviceChanged(ServiceEvent event) {
-            //TODO; TBD
-        }
-    }
-
 
 }
