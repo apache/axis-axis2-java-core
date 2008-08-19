@@ -996,14 +996,20 @@ public class CStructWriter implements BeanWriter {
             cName = xmlName;
         }
 
+        cName = cName.replace('.','_');
+        cName = cName.replace('-','_');
+
         while (listOfNames.contains(cName.toLowerCase())) {
+            if (!listOfNames.contains((cName + "E").toLowerCase())){
+                cName = cName + "E";
+            } else {
+                cName = cName + count++;
+            }
             cName = cName + CStructWriter.count++;
         }
 
-        String intName = cName.replace('.','_');
-        String outName = intName.replace('-','_');
-        listOfNames.add(outName.toLowerCase());
-        return outName;
+        listOfNames.add(cName.toLowerCase());
+        return cName;
     }
 
 
