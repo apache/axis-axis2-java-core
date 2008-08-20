@@ -220,16 +220,27 @@ public class ActivateUtils {
 
         Iterator ito = service.getOperations();
 
+        // Previous versions of Axis2 didn't use a namespace on the operation name, so they wouldn't
+        // have externalized a namespace.  If that's the case, only compare the localPart of the
+        // operation name
+        String namespace = opQName.getNamespaceURI();
+        boolean ignoreNamespace = false;
+        if (namespace == null || "".equals(namespace)) {
+            ignoreNamespace = true;
+        }
+        
         while (ito.hasNext()) {
             AxisOperation operation = (AxisOperation) ito.next();
 
             String tmpOpName = operation.getClass().getName();
             QName tmpOpQName = operation.getName();
+            
+            if ((tmpOpName.equals(opClassName)) && 
+                ((ignoreNamespace && (tmpOpQName.getLocalPart().equals(opQName.getLocalPart())) || (tmpOpQName.equals(opQName))))) {
 
-            if ((tmpOpName.equals(opClassName)) && (tmpOpQName.equals(opQName))) {
-                // trace point
                 if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:findOperation(service): returning  ["
+                    log.trace("ObjectStateUtils:findOperation(service): ignoreNamespace [" + ignoreNamespace
+                    		+ "] returning  ["
                             + opClassName + "]   [" + opQName.toString() + "]");
                 }
 
@@ -239,7 +250,8 @@ public class ActivateUtils {
 
         // trace point
         if (log.isTraceEnabled()) {
-            log.trace("ObjectStateUtils:findOperation(service): [" + opClassName + "]   ["
+            log.trace("ObjectStateUtils:findOperation(service): ignoreNamespace [" + ignoreNamespace
+                    + " classname [" + opClassName + "]  QName ["
                     + opQName.toString() + "]  returning  [null]");
         }
 
