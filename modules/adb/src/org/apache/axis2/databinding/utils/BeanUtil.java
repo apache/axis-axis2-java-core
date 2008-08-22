@@ -351,6 +351,12 @@ public class BeanUtil {
                 }
             }
 
+            // check for nil attribute:
+            QName nilAttName = new QName(Constants.XSI_NAMESPACE, Constants.NIL, "xsi");
+            if (beanElement.getAttribute(nilAttName) != null) {
+            	return null;
+            }
+            
             if (beanClass.isArray()) {
                 ArrayList valueList = new ArrayList();
                 Class arrayClassType = beanClass.getComponentType();
@@ -369,9 +375,8 @@ public class BeanUtil {
                             Object obj = deserialize(arrayClassType,
                                     omElement,
                                     objectSupplier, arrayLocalName);
-                            if (obj != null) {
-                                valueList.add(obj);
-                            }
+                            
+                            	valueList.add(obj);
                         }
                     }
                     return ConverterUtil.convertToArray(arrayClassType, valueList);
