@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-webapp</artifactId>
@@ -838,7 +838,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>soapmonitor</artifactId>
-            <version>${version}</version>
+            <version>${soapmonitor.mar.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -918,7 +918,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>addressing</artifactId>
-            <version>${version}</version>
+            <version>1.41</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -998,7 +998,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>ping</artifactId>
-            <version>${version}</version>
+            <version>${ping.mar.version}</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -1078,7 +1078,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>mex</artifactId>
-            <version>${version}</version>
+            <version>1.41</version>
             <type>jar</type>
             <classifier>impl</classifier>
             <exclusions>
@@ -1159,7 +1159,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-scripting</artifactId>
-            <version>${version}</version>
+            <version>1.41</version>
             <type>mar</type>
             <exclusions>
                 <exclusion>
@@ -1427,7 +1427,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../soapmonitor/target</directory>
+                            <directory>${basedir}/../soapmonitor/target/mar</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>soapmonitor*.mar</include>
@@ -1444,21 +1444,21 @@
                             </excludes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../mex/target</directory>
+                            <directory>${basedir}/../mex/target/mar</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>mex*.mar</include>
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../ping/target</directory>
+                            <directory>${basedir}/../ping/target/mar</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>ping*.mar</include>
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../scripting/target</directory>
+                            <directory>${basedir}/../scripting/target/mar</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>*scripting*.mar</include>

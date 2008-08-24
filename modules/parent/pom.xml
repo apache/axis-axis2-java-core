@@ -30,7 +30,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-parent</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4.1</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Parent</name>
     <inceptionYear>2004</inceptionYear>
@@ -80,17 +80,17 @@
               element, and it will need to be changed manually before a release,
               as the maven-release-plugin will not update this value.
         -->
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1</version>
 
         <!-- Version #'s for the mars that we generate -->
-        <addressing.mar.version>1.4-SNAPSHOT</addressing.mar.version>
-        <soapmonitor.mar.version>1.4-SNAPSHOT</soapmonitor.mar.version>
-        <mex.mar.version>1.4-SNAPSHOT</mex.mar.version>
-        <ping.mar.version>1.4-SNAPSHOT</ping.mar.version>
-        <scripting.mar.version>1.4-SNAPSHOT</scripting.mar.version>
+        <addressing.mar.version>1.41</addressing.mar.version>
+        <soapmonitor.mar.version>1.41</soapmonitor.mar.version>
+        <mex.mar.version>1.41</mex.mar.version>
+        <ping.mar.version>1.41</ping.mar.version>
+        <scripting.mar.version>1.41</scripting.mar.version>
 
         <!-- Version #'s of all our dependencies -->
-        <activemq.version>5.0.0</activemq.version>
+        <activemq.version>5.1.0</activemq.version>
         <activemq.version-jdk14>4.1.1</activemq.version-jdk14>
         <annogen.version>0.1.0</annogen.version>
         <ant.version>1.7.0</ant.version>
@@ -955,7 +955,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
-                <artifactId>apache-activemq</artifactId>
+                <artifactId>activemq-core</artifactId>
                 <version>${activemq.version}</version>
                 <exclusions>
                     <exclusion>
@@ -1119,6 +1119,32 @@
                     <version>${junit.version}</version>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>sign</id>
+            <activation>
+                <property>
+                    <name>sign</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.0-alpha-3</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
     <distributionManagement>

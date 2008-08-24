@@ -25,11 +25,12 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>mex</artifactId>
     <packaging>jar</packaging>
+    <version>1.41</version>
     <name>Apache Axis2 - MEX</name>
     <description>WS-Metadata Exchange implementation</description>
     <dependencies>
@@ -104,6 +105,9 @@
                         </goals>
                         <configuration>
                       <classifier>impl</classifier>
+                      <excludes>
+                      <exclude>**/module.xml</exclude>
+                      </excludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -115,6 +119,29 @@
                     <skip>false</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>process-classes</id>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${pom.basedir}/target/mar"/>
+                                <jar destfile="${pom.basedir}/target/mar/${pom.artifactId}-${mar.version}.mar"
+                                     basedir="${pom.basedir}/target/classes"/>                                       
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>                 
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <properties>
+        <mar.version>1.41</mar.version>
+    </properties>
 </project>

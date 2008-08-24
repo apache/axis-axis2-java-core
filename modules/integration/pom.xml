@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-integration</artifactId>
@@ -51,7 +51,7 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-scripting</artifactId>
             <type>mar</type>
-            <version>${version}</version>
+            <version>1.41</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.geronimo.specs</groupId>
@@ -297,7 +297,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>apache-activemq</artifactId>
+            <artifactId>activemq-core</artifactId>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
