@@ -172,4 +172,19 @@ public interface ServiceDescription {
      * @param resolvedHandlersInfo An object containing information for the resolved handlers
      */
     public void setResolvedHandlersDescription(PortInfo portInfo, ResolvedHandlersDescription resolvedHandlersInfo);
+    
+    /**
+     * Check into releasing resources related to this ServiceDescription.  Those resources include
+     * this ServiceDescription instance, the EndpointDescription instances it owns and their
+     * associated AxisService and related objects.  
+     * 
+     * NOTE: This should only be called on ServiceDescrpition instances that are owned by
+     * client ServiceDelegate instances; it SHOULD NOT be called on server-side 
+     * ServiceDescriptions since those are built during server start and their life-cycle is
+     * the life-cycle of the server.
+     * 
+     * @param delegate The ServiceDelegate instance that owns this ServiceDescription.
+     */
+    public void releaseResources(Object delegate);
+
 }

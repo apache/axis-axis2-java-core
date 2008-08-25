@@ -25,6 +25,7 @@ import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
@@ -70,7 +71,6 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.MTOMFeature;
@@ -97,6 +97,7 @@ import java.util.TreeSet;
  */
 class EndpointDescriptionImpl
         implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
+
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
     // In some environments some of the resources on an AxisService can lead to OOMs.
@@ -2101,6 +2102,28 @@ class EndpointDescriptionImpl
             currentUniqueID = System.currentTimeMillis();
         }
         return currentUniqueID++;
+    }
+        
+    /**
+     * Release the AxisService objects associated with this EndpointDescription.  Note that
+     * this should only be called by the ServiceDescription that owns this EndpointDescrition.
+     * 
+     * @param configurationContext  The Axis2 ConfigurationContext holding the AxisConfiguration
+     * from which the AxisServices should be removed.
+     */
+    void releaseResources(ConfigurationContext configurationContext) {
+        if (configurationContext != null) {
+            AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
+            AxisService axisService = getAxisService();
+            AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
+            try {
+                axisConfig.removeServiceGroup(axisServiceGroup.getServiceGroupName());
+            } catch (AxisFault e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("EndpointDescriptionImpl release resources caught exception which it is ignoring", e);
+                }
+            }
+        }
     }
 }
 

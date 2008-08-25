@@ -44,6 +44,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,10 +100,11 @@ public class DescriptionFactoryImpl {
         }
         ServiceDescription serviceDesc = null;
         synchronized(configContext) {
-            serviceDesc = cache.get(key);
             if (log.isDebugEnabled()) {
                 log.debug("Check to see if ServiceDescription is found in cache");
             }
+            serviceDesc = cache.get(key);
+
             if (serviceDesc != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDescription found in the cache");
@@ -148,6 +150,7 @@ public class DescriptionFactoryImpl {
                 ((ServiceDescriptionImpl) serviceDesc).getDescriptionBuilderComposite().
                     setSparseComposite(sparseCompositeKey, sparseComposite);
             }
+            ((ServiceDescriptionImpl) serviceDesc).registerUse();
         }
         return serviceDesc;
     }
@@ -478,4 +481,29 @@ public class DescriptionFactoryImpl {
         return new ResolvedHandlersDescriptionImpl();
     }
 
+    /**
+     * Remove the ServiceDescription instance from the client-side cache.
+     * 
+     * @param svcDesc The instance to be removed.
+     */
+    static void removeFromCache(ServiceDescription svcDesc) {
+        ConfigurationContext configContext = svcDesc.getAxisConfigContext();
+        synchronized(configContext) {
+            Set<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntrySet = 
+                cache.entrySet();
+            Iterator<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntryIterator =
+                cacheEntrySet.iterator();
+            while (cacheEntryIterator.hasNext()) {
+                Map.Entry<DescriptionKey, ServiceDescription> entry = 
+                    cacheEntryIterator.next();
+                ServiceDescription entrySvcDescValue = entry.getValue();
+                if (svcDesc == entrySvcDescValue) {
+                    cacheEntryIterator.remove();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Removed service description from cache");
+                    }
+                }
+            }
+        }
+    }
 }

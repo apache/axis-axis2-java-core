@@ -63,6 +63,7 @@ import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 import java.io.FileNotFoundException;
@@ -83,6 +84,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,6 +95,10 @@ class ServiceDescriptionImpl
     private ClientConfigurationFactory clientConfigFactory;
     private ConfigurationContext configContext;
 
+    // Number of times this instance is being used.  For service-providers, this is not decremented
+    // since the serice isn't un-used once it is created.  For service-requesters, the service
+    // is used by ServiceDelegates, and becomes un-used when the ServiceDelegate is released.
+    private int useCount = 0;
     private String wsdlURL;
     private QName serviceQName;
 
@@ -108,8 +114,11 @@ class ServiceDescriptionImpl
                 new HashMap<QName, EndpointDescription>();
 
     // Endpoints for dynamic ports
+    // This needs to be a strong reference (not Weak or Soft) so that the resource release logic
+    // in the finalizer still has a reference to the EndpointDescriptions so they can be
+    // released.  Otherwise, this collection will be null when the finalizer is called.
     private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
-                new WeakHashMap<Object, Map<QName, EndpointDescriptionImpl>>();
+                new HashMap<Object, Map<QName, EndpointDescriptionImpl>>();
 
     // Cache classes for the info for resolved handlers
     private SoftReference<Map<PortInfo, ResolvedHandlersDescription>> resolvedHandlersDescription =
@@ -2450,5 +2459,132 @@ class ServiceDescriptionImpl
         }
         return wsdlLocation;
     }
+    
+    /**
+     * Increment the use count for this ServiceDescription instance.  Note the use count is
+     * only used on the client side.
+     * @return
+     */
+    private boolean isInUse() {
+        return useCount > 0;
+    }
+    
+    /**
+     * Register that this ServiceDescription is being used by a service delegate instance.  Note
+     * this is only used on the client side (since the service delegate is what is being 
+     * registered).
+     * 
+     * Note that this is package protected since only the implementation classes should be calling
+     * it.
+     */
+    void registerUse() {
+        useCount++;
+    }
 
+    /**
+     * Deregister that this ServiceDescription is being used by a service delegate instance.  Note
+     * this is only used on the client side (since the service delegate is what is being 
+     * registered).
+
+     * Note that this is package protected since only the implementation classes should be calling
+     * it.
+     */
+    void deregisterUse() {
+        if (useCount > 0) {
+            useCount--;
+        }
+    }
+
+    public void releaseResources(Object delegate) {
+        try {
+        if (log.isDebugEnabled()) {
+            log.debug("Entry ServiceDescription release resources with delegate " + delegate);
+        }
+        if (delegate != null) {
+            deregisterUse();
+        } else {
+            // If no ServiceDelegate specified, then return
+            return;
+        }
+        if (isInUse()) {
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceDescription still in use; not released");
+            }
+            return;
+        }
+        
+        // Remove the Service Description from the cache before we release the associated 
+        // resouces.
+        DescriptionFactoryImpl.removeFromCache(this);
+        
+        // Close all the endpoint descs, both declared and dynamic
+        Collection<EndpointDescription> definedEndpoints = definedEndpointDescriptions.values(); 
+        if (definedEndpoints.size() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Releasing defined endpoints, size: " + definedEndpoints.size());
+            }
+            for (EndpointDescription endpointDesc : definedEndpoints) {
+                ((EndpointDescriptionImpl) endpointDesc).releaseResources(getAxisConfigContext());
+            }
+        }
+        definedEndpointDescriptions.clear();
+        
+        Collection<Map<QName, EndpointDescriptionImpl>> dynamicEndpointsMap = 
+            dynamicEndpointDescriptions.values();
+        if (log.isDebugEnabled()) {
+            log.debug("Releasing dynamic endpoints, size: " + dynamicEndpointsMap.size());
+        }
+        Iterator<Map<QName, EndpointDescriptionImpl>> dynamicEndpointsMapIterator = dynamicEndpointsMap.iterator();
+        while (dynamicEndpointsMapIterator.hasNext()) {
+            Map<QName, EndpointDescriptionImpl> mapEntry = dynamicEndpointsMapIterator.next();
+            Collection<EndpointDescriptionImpl> dynamicEndpoints = mapEntry.values();
+            if (dynamicEndpoints != null && dynamicEndpoints.size() > 0) {
+                for (EndpointDescription endpointDesc : dynamicEndpoints) {
+                    ((EndpointDescriptionImpl) endpointDesc).releaseResources(getAxisConfigContext());
+                    // Remove this endpoint from the list on axis config 
+                    removeFromDynamicEndpointCache(endpointDesc);
+                }
+            }
+        }
+        dynamicEndpointDescriptions.clear();
+        
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Release resorces in ServiceDesc caught throwable ", t);
+            }
+            throw ExceptionFactory.makeWebServiceException(t);
+        }
+    }
+    
+    /**
+     * Remove the endpointDescription from the list of dynamic ports held on the
+     * AxisConfiguration object.
+     * 
+     * @param endpointDesc The endpointDescription to be removed from the list.
+     */
+    private void removeFromDynamicEndpointCache(EndpointDescription endpointDesc) {
+        AxisConfiguration configuration = configContext.getAxisConfiguration();
+        Parameter parameter = configuration.getParameter(JAXWS_DYNAMIC_ENDPOINTS);
+        HashMap cachedDescriptions = (HashMap)
+                ((parameter == null) ? null : parameter.getValue());
+        if (cachedDescriptions != null) {
+            synchronized(cachedDescriptions) {
+                Set cachedDescSet = cachedDescriptions.entrySet();
+                Iterator cachedDescIterator = cachedDescSet.iterator();
+                while (cachedDescIterator.hasNext()) {
+                    Map.Entry mapEntry = (Map.Entry) cachedDescIterator.next();
+                    WeakReference weakRef = (WeakReference) mapEntry.getValue();
+                    if (weakRef != null) {
+                        EndpointDescriptionImpl checkDynamicEndpointDesc = (EndpointDescriptionImpl) weakRef.get();
+                        if (endpointDesc == checkDynamicEndpointDesc) {
+                            cachedDescIterator.remove();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Removing endpoint desc from dynamic cache on configuration");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

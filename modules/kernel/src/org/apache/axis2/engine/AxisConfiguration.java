@@ -49,6 +49,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class AxisConfiguration
@@ -88,7 +89,7 @@ public class AxisConfiguration extends AxisDescription {
     private URL axis2Repository = null;
 
     private Map allServices = new Hashtable();
-    private Map allEndpoints = new Hashtable();
+    private Map allEndpoints = new ConcurrentHashMap();
 
     /**
      * Stores the module specified in the server.xml at the document parsing time.
@@ -356,8 +357,7 @@ public class AxisConfiguration extends AxisDescription {
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("After adding to allEndpoints map, size is "
-                              + allEndpoints.size(), 
-                              new Exception("AxisConfiguration.addServiceGroup called from"));
+                              + allEndpoints.size());
                 }
             }
 
@@ -399,11 +399,12 @@ public class AxisConfiguration extends AxisDescription {
             throw new AxisFault(Messages.getMessage("invalidservicegroupname",
                                                     serviceGroupName));
         }
+
         Iterator services = axisServiceGroup.getServices();
         boolean isClientSide = false;
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            allServices.remove(axisService.getName());
+            Object value = allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
             } else {
