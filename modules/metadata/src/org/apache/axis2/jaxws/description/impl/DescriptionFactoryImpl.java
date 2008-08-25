@@ -482,28 +482,44 @@ public class DescriptionFactoryImpl {
     }
 
     /**
-     * Remove the ServiceDescription instance from the client-side cache.
+     * Remove the ServiceDescription instance from the client-side cache if there are no
+     * service delegates using it.  Note this must be done in a sync block so that a lookup 
+     * in createServiceDescription doesn't access the cache.
      * 
      * @param svcDesc The instance to be removed.
      */
-    static void removeFromCache(ServiceDescription svcDesc) {
+    static boolean removeFromCache(ServiceDescriptionImpl svcDesc) {
+        boolean svcDescRemoved = false;
         ConfigurationContext configContext = svcDesc.getAxisConfigContext();
         synchronized(configContext) {
-            Set<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntrySet = 
-                cache.entrySet();
-            Iterator<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntryIterator =
-                cacheEntrySet.iterator();
-            while (cacheEntryIterator.hasNext()) {
-                Map.Entry<DescriptionKey, ServiceDescription> entry = 
-                    cacheEntryIterator.next();
-                ServiceDescription entrySvcDescValue = entry.getValue();
-                if (svcDesc == entrySvcDescValue) {
-                    cacheEntryIterator.remove();
-                    if (log.isDebugEnabled()) {
-                        log.debug("Removed service description from cache");
+            svcDesc.deregisterUse();
+            if (svcDesc.isInUse()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription still in use; not removed from cache");
+                }
+                svcDescRemoved = false;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription not in use; will be removed from cache");
+                }
+                svcDescRemoved = true;
+                Set<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntrySet = 
+                    cache.entrySet();
+                Iterator<Map.Entry<DescriptionKey, ServiceDescription>> cacheEntryIterator =
+                    cacheEntrySet.iterator();
+                while (cacheEntryIterator.hasNext()) {
+                    Map.Entry<DescriptionKey, ServiceDescription> entry = 
+                        cacheEntryIterator.next();
+                    ServiceDescription entrySvcDescValue = entry.getValue();
+                    if (svcDesc == entrySvcDescValue) {
+                        cacheEntryIterator.remove();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Removed service description from cache");
+                        }
                     }
                 }
             }
         }
+        return svcDescRemoved;
     }
 }

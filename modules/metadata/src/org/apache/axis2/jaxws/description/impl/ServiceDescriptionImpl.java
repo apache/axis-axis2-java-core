@@ -2465,7 +2465,7 @@ class ServiceDescriptionImpl
      * only used on the client side.
      * @return
      */
-    private boolean isInUse() {
+    boolean isInUse() {
         return useCount > 0;
     }
     
@@ -2498,24 +2498,22 @@ class ServiceDescriptionImpl
     public void releaseResources(Object delegate) {
         try {
         if (log.isDebugEnabled()) {
-            log.debug("Entry ServiceDescription release resources with delegate " + delegate);
+            log.debug("ServiceDescription release resources called with delegate " + delegate);
         }
-        if (delegate != null) {
-            deregisterUse();
-        } else {
-            // If no ServiceDelegate specified, then return
-            return;
-        }
-        if (isInUse()) {
+        // If the service desc can be removed from the cache, which means no other service delegates
+        // are using it, then we will release the resources associated with it.  If it can't be 
+        // removed because it is still in use, then just return.
+        if (!DescriptionFactoryImpl.removeFromCache(this)) {
             if (log.isDebugEnabled()) {
-                log.debug("ServiceDescription still in use; not released");
+                log.debug("ServiceDesc was not removed from cache, so it will not be released");
             }
             return;
         }
         
-        // Remove the Service Description from the cache before we release the associated 
-        // resouces.
-        DescriptionFactoryImpl.removeFromCache(this);
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDesc was removed from cache, so releasing associated resources");
+        }
+                
         
         // Close all the endpoint descs, both declared and dynamic
         Collection<EndpointDescription> definedEndpoints = definedEndpointDescriptions.values(); 
