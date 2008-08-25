@@ -29,6 +29,7 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceException;
 
 import java.io.File;
@@ -133,8 +134,6 @@ public class ReleaseServiceTests extends TestCase {
                     svc1.addPort(portQN, bindingID1, epr1);
                 }
                 org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(svc1);
-                // Give the GC time to run
-                Thread.sleep(500);
             }
         } catch (Throwable t) {
             fail("Caught throwable " + t);
@@ -496,6 +495,59 @@ public class ReleaseServiceTests extends TestCase {
 
     }
 
+    static final String GENERATED_SERVICE_WSDL = "ClientMetadata.wsdl";
+    static final String GENERATED_SERVICE_NS = "http://description.jaxws.axis2.apache.org";
+    static final String GENERATED_SERVICE_LP = "svcLocalPart";
+    
+    public void testGeneratedServiceRelease() {
+        try {
+            ClientMetadataTest.installCachingFactory();
+            
+            ClientMetadataGeneratedService genSvc = new ClientMetadataGeneratedService();
+            assertNotNull(genSvc);
+            ClientMetadataPortSEI port = genSvc.getPort(ClientMetadataPortSEI.class);
+            assertNotNull(port);
+            
+            // User internal state to verify the port information before and after the close
+            ServiceDelegate delegate = DescriptionTestUtils2.getServiceDelegate(genSvc);
+            ServiceDescription svcDesc = delegate.getServiceDescription();
+            EndpointDescription[] epDescArray= svcDesc.getEndpointDescriptions();
+            assertNotNull(epDescArray);
+            assertEquals(1, epDescArray.length);
+            
+            AxisConfiguration axisConfig = svcDesc.getAxisConfigContext().getAxisConfiguration();
+            HashMap axisServices = axisConfig.getServices();
+            assertEquals(1, axisServices.size());
+
+            org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(genSvc);
+
+            axisServices = axisConfig.getServices();
+            assertEquals(0, axisServices.size());
+
+            epDescArray= svcDesc.getEndpointDescriptions();
+            assertEquals(0, epDescArray.length);                
+        } finally {
+            ClientMetadataTest.restoreOriginalFactory();
+        }
+    }
+    
+    public void testGeneratedServiceRelaseLoop() {
+        // Create a bunch of different services, make sure the service desc finalizer is called
+        try {
+            ClientMetadataTest.installCachingFactory();
+
+            for (int i = 0; i < 1000; i++) {
+                ClientMetadataGeneratedService genSvc = new ClientMetadataGeneratedService();
+                ClientMetadataPortSEI port = genSvc.getPort(ClientMetadataPortSEI.class);
+                org.apache.axis2.jaxws.spi.ServiceDelegate.releaseService(genSvc);
+            }
+        } catch (Throwable t) {
+            fail("Caught throwable " + t);
+        } finally {
+            ClientMetadataTest.restoreOriginalFactory();
+        }
+    }
+
     // =============================================================================================
     // Utility methods
     // =============================================================================================
@@ -530,7 +582,6 @@ public class ReleaseServiceTests extends TestCase {
         wsdlLocation = baseDir + "/test-resources/wsdl/" + wsdlFileName;
         return wsdlLocation;
     }
-
 }
 
 @WebService(name="EchoMessagePortType", targetNamespace="http://description.jaxws.axis2.apache.org")
@@ -538,3 +589,13 @@ interface ClientMetadataPortSEI {
     public String echoMessage(String string);
 }
 
+@WebServiceClient()
+class ClientMetadataGeneratedService extends javax.xml.ws.Service {
+    public ClientMetadataGeneratedService() {
+        super(ReleaseServiceTests.getWsdlURL(ReleaseServiceTests.GENERATED_SERVICE_WSDL),
+              new QName(ReleaseServiceTests.GENERATED_SERVICE_NS, ReleaseServiceTests.GENERATED_SERVICE_LP));
+    }
+    public ClientMetadataGeneratedService(URL wsdlLocation, QName serviceName) {
+        super(wsdlLocation, serviceName);
+    }
+}
