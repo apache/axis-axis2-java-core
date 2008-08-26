@@ -80,8 +80,14 @@ public class JAXBCustomBuilder implements CustomBuilder {
             OMNamespace ns = factory.createOMNamespace(namespace, reader.getPrefix());
             
             Object jaxb = jdsContext.unmarshal(reader);
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully unmarshalled jaxb object " + jaxb);
+            }
             
             OMDataSource ds = new JAXBDataSource(jaxb, jdsContext);
+            if (log.isDebugEnabled()) {
+                log.debug("The JAXBDataSource is " + ds);
+            }
             OMSourcedElement omse = factory.createOMElement(ds, localPart, ns);
             
             parent.addChild(omse);

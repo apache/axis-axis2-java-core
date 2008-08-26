@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -83,9 +84,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
 
             // Remember this unmarshal information so that we can speed up processing
             // the next time.
-            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
-                                                        packages,
-                                                        marshalDesc.getPackagesKey());
+            if (shouldRegisterUnmarshalInfo(operationDesc, message.getMessageContext())) {
+                MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                            packages,
+                                                            marshalDesc.getPackagesKey());
+            }
 
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
@@ -170,9 +173,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
 
             // Remember this unmarshal information so that we can speed up processing
             // the next time.
-            MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
-                                                        packages,
-                                                        marshalDesc.getPackagesKey());
+            if (shouldRegisterUnmarshalInfo(operationDesc, message.getMessageContext())) {
+                MethodMarshallerUtils.registerUnmarshalInfo(message.getMessageContext(),
+                                                            packages,
+                                                            marshalDesc.getPackagesKey());
+            }
 
             // Unmarshal the ParamValues from the message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds,
@@ -412,4 +417,33 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         }
     }
 
+    /**
+     * Registering UnmarshalInfo will cause JAXB unmarshalling to occur
+     * during StAXOMBuilder processing the next time an xml message is targered
+     * at this wsdl operation.  In some cases we want to disable this early unmarshalling.
+     * 
+     * @param OperationDescription
+     * @param MessageContext
+     * @return true or false
+     */
+    private static boolean shouldRegisterUnmarshalInfo(OperationDescription opDesc, 
+                                                       MessageContext mc) {
+        
+        ParameterDescription[] pds = opDesc.getParameterDescriptions();
+        
+        // If one or more operations have a generic type of Object, then
+        // avoid early unmarshalling
+        for (int i=0; i<pds.length; i++) {
+            ParameterDescription pd = pds[i];
+            if (pd.getParameterActualType() == null ||
+                pd.getParameterActualType().isAssignableFrom(Object.class)) {
+                return false;
+            }          
+        }
+        if (opDesc.getResultActualType() == null ||
+                opDesc.getResultActualType().isAssignableFrom(Object.class)) {
+            return false;
+        }
+        return true;
+    }
 }
