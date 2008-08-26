@@ -3102,7 +3102,7 @@
                     axis2_char_t *text_value_<xsl:value-of select="$position"/>_temp;
                     </xsl:when>
                     <xsl:otherwise>
-                    axis2_char_t text_value_<xsl:value-of select="$position"/>[64];
+                    axis2_char_t text_value_<xsl:value-of select="$position"/>[ADB_DEFAULT_DIGIT_LIMIT];
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:for-each>

@@ -46,7 +46,7 @@
         {
         #endif
 
-        #define ADB_DEFAULT_DIGIT_LIMIT 64
+        #define ADB_DEFAULT_DIGIT_LIMIT 1024
         #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
         <xsl:if test="itemtype">
         #define ADB_DEFAULT_LIST_SEPERATOR " "
@@ -90,7 +90,6 @@
        /**
         *  <xsl:value-of select="$axis2_name"/> class
         */
-        typedef struct <xsl:value-of select="$axis2_name"/><xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t;
 
         <xsl:for-each select="property">
           <xsl:if test="@ours">
@@ -126,11 +125,13 @@
         {
         #endif
 
-        #define ADB_DEFAULT_DIGIT_LIMIT 64
+        #define ADB_DEFAULT_DIGIT_LIMIT 1024
         #define ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT 64
         <xsl:if test="itemtype">
         #define ADB_DEFAULT_LIST_SEPERATOR " "
         </xsl:if>
+
+        typedef struct <xsl:value-of select="$axis2_name"/><xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t;
 
         <!-- Check if this type is a supported enum -->
         <xsl:variable name="isEnum">
