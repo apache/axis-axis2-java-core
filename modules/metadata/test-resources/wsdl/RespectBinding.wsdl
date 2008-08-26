@@ -21,6 +21,7 @@
   xmlns:tns="http://jaxws.axis2.apache.org/metadata/feature/respectbinding"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
   targetNamespace="http://jaxws.axis2.apache.org/metadata/feature/respectbinding">     
 <types>      
   <xsd:schema targetNamespace="http://jaxws.axis2.apache.org/metadata/feature/respectbinding" 
@@ -68,7 +69,9 @@
     <output>             
       <soap:body use="literal" />         
     </output>       
-  </operation>    
+  </operation>   
+
+  <wsaw:UsingAddressing required="true" /> 
 </binding>     
 
 <service name="EchoMessageService">       
@@ -76,6 +79,9 @@
     <soap:address location="http://localhost:8080/unknown"/>       
   </port>
   <port binding="tns:EchoMessageBinding" name="DisabledServicePort">          
+    <soap:address location="http://localhost:8080/unknown"/>       
+  </port>     
+  <port binding="tns:EchoMessageBinding" name="CompleteServicePort">          
     <soap:address location="http://localhost:8080/unknown"/>       
   </port>     
 </service>  

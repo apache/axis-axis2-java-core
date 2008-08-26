@@ -29,8 +29,16 @@ import org.apache.axis2.jaxws.i18n.Messages;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.spi.WebServiceFeatureAnnotation;
+
+import java.lang.annotation.Annotation;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
@@ -211,8 +219,41 @@ public class EndpointDescriptionValidator extends Validator {
                 addValidationFailure(this, "Annotation @RespectBinding requires that a WSDL file be specified.");    
                 return Validator.INVALID;
             }
+            
+            // We will validate the configured bindings based on their mapping
+            // to a known WebServiceFeature element.  If there is not a WebServiceFeature
+            // annotation for a given binding, a validation error will be returned.
+            List required = endpointDesc.getRequiredBindings();
+            if (required.size() > 0) {
+                Iterator i = required.iterator();
+                while (i.hasNext()) {
+                    QName name = (QName) i.next();
+                    String featureName = getFeatureForBinding(name);
+                    if (featureName != null && featureName.length() > 0) {
+                        EndpointDescriptionJava edj = (EndpointDescriptionJava) endpointDesc;
+                        Annotation anno = edj.getAnnoFeature(featureName);
+                        WebServiceFeatureAnnotation feature = getFeatureFromAnnotation(anno);
+                        
+                        if (feature == null) {
+                            addValidationFailure(this, "Annotation @RespectBinding was enabled, but the " +
+                                        "corresponding feature " + featureName + " was not enabled.");
+                            return Validator.INVALID;                            
+                        }
+                    }
+                    else {
+                       addValidationFailure(this, "Annotation @RespectBinding was enabled, but extensibility element " +
+                           name + " was not recognized.");
+                       return Validator.INVALID;
+                    }                    
+                }
+                 
+            }
         }        
         return Validator.VALID;
+    }
+    
+    private WebServiceFeatureAnnotation getFeatureFromAnnotation(Annotation a) {
+        return a.annotationType().getAnnotation(WebServiceFeatureAnnotation.class);
     }
     
     private static String bindingHumanReadableDescription(String ns) {
@@ -236,6 +277,15 @@ public class EndpointDescriptionValidator extends Validator {
             return "XML HTTP Binding";
         } else {
             return "Unknown Binding";
+        }
+    }
+    
+    private static String getFeatureForBinding(QName name) {
+        if (name.equals(new QName("http://www.w3.org/2006/05/addressing/wsdl", "UsingAddressing"))) {
+            return AddressingFeature.ID;
+        }
+        else {
+            return null;
         }
     }
 }

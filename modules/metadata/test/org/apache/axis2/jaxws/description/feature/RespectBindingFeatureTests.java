@@ -30,11 +30,11 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RespectBinding;
+import javax.xml.ws.soap.Addressing;
 
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RespectBindingFeatureTests extends TestCase {
 
@@ -43,15 +43,15 @@ public class RespectBindingFeatureTests extends TestCase {
     private static final String serviceName = "EchoMessageService";
     private static final String portTypeName = "EchoMessagePortType";
     
-    
     private static final String plainServicePortName = "PlainServicePort";
     private static final String disabledServicePortName = "DisabledServicePort";
     private static final String defaultServicePortName = "DefaultServicePort";
+    private static final String completeServicePortName = "CompleteServicePort";
     
     private static final String wsdlLocation = "test-resources/wsdl/RespectBinding.wsdl";
 
     /*
-     * RespectBinding should be disabled because a WSDL file was not included.
+     * RespectBinding processing should fail because a WSDL file was not included.
      */
 
     public void testPlain() throws Exception {
@@ -111,10 +111,33 @@ public class RespectBindingFeatureTests extends TestCase {
         composite.setwsdlURL(wsdlUrl);
         composite.setWsdlDefinition(wrapper.getDefinition());
         
+        List<ServiceDescription> sdList = null;
+        try {
+            sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
+        }
+        catch (Exception e) {
+            // An exception is expected.
+        }
+        
+        assertTrue("The ServiceDescriptions should not have been built.", sdList == null);
+    }
+    
+    public void testRespectBindingComplete() throws Exception {
+        JavaClassToDBCConverter converter = new JavaClassToDBCConverter(CompleteService.class);
+        HashMap<String, DescriptionBuilderComposite> map = converter.produceDBC();
+        
+        DescriptionBuilderComposite composite = map.get(CompleteService.class.getName());
+        
+        URL wsdlUrl = new URL("file:./" + wsdlLocation);
+        WSDL4JWrapper wrapper = new WSDL4JWrapper(wsdlUrl, false, 0);
+        
+        composite.setwsdlURL(wsdlUrl);
+        composite.setWsdlDefinition(wrapper.getDefinition());
+        
         List<ServiceDescription> sdList = DescriptionFactory.createServiceDescriptionFromDBCMap(map);
         ServiceDescription sd = sdList.get(0);
         
-        EndpointDescription ed = sd.getEndpointDescription(new QName(ns, defaultServicePortName));
+        EndpointDescription ed = sd.getEndpointDescription(new QName(ns, completeServicePortName));
         assertTrue("The EndpointDescription should not be null.", ed != null);
 
         boolean respect = ed.respectBinding();
@@ -148,6 +171,19 @@ public class RespectBindingFeatureTests extends TestCase {
         wsdlLocation=wsdlLocation)
     @RespectBinding(enabled=false)
     class DisabledService {
+        public String echo(String input) {
+            return "";
+        }
+    }
+    
+    @WebService(targetNamespace=ns,
+        serviceName=serviceName,
+        portName=completeServicePortName,
+        name=portTypeName,
+        wsdlLocation=wsdlLocation)
+    @RespectBinding
+    @Addressing
+    class CompleteService {
         public String echo(String input) {
             return "";
         }

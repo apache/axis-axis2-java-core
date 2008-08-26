@@ -181,6 +181,7 @@ class EndpointDescriptionImpl
     
     // ANNOTATION: @RespectBinding
     private Boolean respectBinding = false;
+    private List requiredBindings;
     
     private Integer portCompositeIndex = null;
     
@@ -1521,7 +1522,21 @@ class EndpointDescriptionImpl
     public void setRespectBinding(boolean r) {
         respectBinding = r;
     }
-    
+
+
+    public boolean addRequiredBinding(QName name) {
+        if (requiredBindings == null)
+            requiredBindings = new ArrayList();
+
+        return requiredBindings.add(name);
+    }
+
+    public List getRequiredBindings() {
+        if (requiredBindings == null)
+            requiredBindings = new ArrayList();
+        return requiredBindings;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.EndpointDescription#getMTOMThreshold()

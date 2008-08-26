@@ -30,6 +30,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 
+import java.util.List;
+
 /**
  * An EndpointDescription corresponds to a particular Service Implementation. It can correspond to
  * either either a client to that impl or the actual service impl.
@@ -188,6 +190,23 @@ public interface EndpointDescription {
      * Indicate whether or not strict binding support should be used.
      */
     public void setRespectBinding(boolean respect);
+    
+    /**
+     * Adds the QName to a list of binding types that are required to be
+     * supported by the endpoint as defined in the WSDL.
+     * 
+     * @param name
+     * @return
+     */
+    public boolean addRequiredBinding(QName name);
+    
+    /**
+     * Returns a list of all known bindings that should be supported based
+     * on the information in the WSDL.
+     * 
+     * @return
+     */
+    public List getRequiredBindings();
     
     /**
      * Return the DescriptionBuilderComposite, if any, used to build this service description.
