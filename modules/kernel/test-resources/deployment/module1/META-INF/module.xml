@@ -57,7 +57,11 @@
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
         <parameter name="para1" locked="xsd:true">10</parameter>
     </operation>
-    <phase name="NewPhase" before="Dispatch" after="Security" flow="InFlow"/>
+
+    <!-- This checks that phases can be added, that comma-separated flow lists work, -->
+    <!-- and that case-insensitive comparisons are used for flow names.              -->
+    <phase name="NewPhase" before="Dispatch" after="Security" flow="InFlow,oUtFlOw"/>
+
     <phase name="NewPhase" before="Dispatch"  flow="InFaultFlow"/>
     <phase name="Security" flow="InFlow"/> <!-- Make sure duplicates are OK -->
 </module>

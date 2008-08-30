@@ -21,7 +21,6 @@ package org.apache.axis2.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -116,8 +115,8 @@ public class DeployableChain {
         }
 
         if (myPredecessors != null) {
-            for (Iterator i = myPredecessors.iterator(); i.hasNext();) {
-                String predecessor = (String)i.next();
+            for (Object myPredecessor : myPredecessors) {
+                String predecessor = (String)myPredecessor;
                 // define relationship for each one
                 addRelationship(predecessor, name);
             }
@@ -157,8 +156,8 @@ public class DeployableChain {
         }
 
         int minIndex = -1;
-        for (Iterator i = successors.iterator(); i.hasNext();) {
-            String otherName = (String)i.next();
+        for (Object successor : successors) {
+            String otherName = (String)successor;
             int otherIdx = chain.indexOf(otherName);
             if (otherIdx > -1) {
                 if ((minIndex == -1) || (minIndex > otherIdx)) {
@@ -177,7 +176,7 @@ public class DeployableChain {
                     }
                     if (minIndex == -1) {
                         throw new Exception("Trying to put '" + name + "' before '" +
-                                otherName + "' - incompatible constraints!");
+                                            otherName + "' - incompatible constraints!");
                     }
                 }
             }

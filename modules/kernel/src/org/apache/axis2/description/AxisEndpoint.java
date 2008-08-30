@@ -27,8 +27,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,196 +38,189 @@ import java.util.Map;
 
 public class AxisEndpoint extends AxisDescription {
 
-	private static final Log logger = LogFactory.getLog(AxisEndpoint.class);
+    private static final Log logger = LogFactory.getLog(AxisEndpoint.class);
 
-	// The name of the endpoint
-	private String name;
+    // The name of the endpoint
+    private String name;
 
-	// The binding reffered to by the endpoint
-	private AxisBinding binding;
+    // The binding reffered to by the endpoint
+    private AxisBinding binding;
 
-	// The address of the endpoint
-	private String endpointURL;
+    // The address of the endpoint
+    private String endpointURL;
 
-	// The alias used for the endpoint
-	private String alias;
+    // The alias used for the endpoint
+    private String alias;
 
-	private Map options;
+    private Map options;
 
-	private String transportInDescName;
+    private String transportInDescName;
 
-	public String getEndpointURL() {
-		if (endpointURL == null) {
-			endpointURL = calculateEndpointURL();
-		}
-		return endpointURL;
-	}
+    public String getEndpointURL() {
+        if (endpointURL == null) {
+            endpointURL = calculateEndpointURL();
+        }
+        return endpointURL;
+    }
 
-	public void setEndpointURL(String endpointURL) {
-		this.endpointURL = endpointURL;
-	}
+    public void setEndpointURL(String endpointURL) {
+        this.endpointURL = endpointURL;
+    }
 
-	public AxisEndpoint() {
-		options = new HashMap();
-	}
+    public AxisEndpoint() {
+        options = new HashMap();
+    }
 
-	public void setProperty(String name, Object value) {
-		options.put(name, value);
-	}
+    public void setProperty(String name, Object value) {
+        options.put(name, value);
+    }
 
-	/**
-	 * @param name
-	 *            name of the property to search for
-	 * @return the value of the property, or null if the property is not found
-	 */
-	public Object getProperty(String name) {
-		Object obj = options.get(name);
-		if (obj != null) {
-			return obj;
-		}
+    /**
+     * @param name name of the property to search for
+     * @return the value of the property, or null if the property is not found
+     */
+    public Object getProperty(String name) {
+        Object obj = options.get(name);
+        if (obj != null) {
+            return obj;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public String getAlias() {
-		return alias;
-	}
+    public String getAlias() {
+        return alias;
+    }
 
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public AxisBinding getBinding() {
-		return binding;
-	}
+    public AxisBinding getBinding() {
+        return binding;
+    }
 
-	public void setBinding(AxisBinding binding) {
-		this.binding = binding;
-	}
+    public void setBinding(AxisBinding binding) {
+        this.binding = binding;
+    }
 
-	public Object getKey() {
-		// ToDO
-		return null; // To change body of implemented methods use File |
-		// Settings | File Templates.
-	}
+    public Object getKey() {
+        // ToDO
+        return null; // To change body of implemented methods use File |
+        // Settings | File Templates.
+    }
 
-	public void engageModule(AxisModule axisModule) throws AxisFault {
-		throw new UnsupportedOperationException("Sorry we do not support this");
-	}
+    public void engageModule(AxisModule axisModule) throws AxisFault {
+        // TODO - We totally should support this.  Endpoint Policy Subject, anyone?
+        throw new UnsupportedOperationException("Sorry we do not support this");
+    }
 
-	public boolean isEngaged(String moduleName) {
-		throw new UnsupportedOperationException(
-				"axisMessage.isEngaged() is not supported");
-	}
+    public boolean isEngaged(String moduleName) {
+        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
+    }
 
     public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns, OMNamespace whttp) {
-		String property;
-		OMFactory omFactory = OMAbstractFactory.getOMFactory();
-		OMElement endpointElement = omFactory.createOMElement(
-				WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
-		endpointElement.addAttribute(omFactory.createOMAttribute(
-				WSDL2Constants.ATTRIBUTE_NAME, null, name));
-		endpointElement.addAttribute(omFactory.createOMAttribute(
-				WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":"
-						+ getBinding().getName().getLocalPart()));
-		endpointElement.addAttribute(omFactory.createOMAttribute(
-				WSDL2Constants.ATTRIBUTE_ADDRESS, null, getEndpointURL()));
-		Object authenticationScheme = this.options
-				.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
-		if (authenticationScheme != null) {
-			endpointElement.addAttribute(omFactory.createOMAttribute(
-					WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp,
-					authenticationScheme.toString()));
-		}
-		property = (String) options
-				.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM);
-		if (property != null) {
-			endpointElement.addAttribute(omFactory.createOMAttribute(
-					WSDL2Constants.ATTRIBUTE_AUTHENTICATION_REALM, whttp,
-					property));
-		}
-		WSDLSerializationUtil.addWSDLDocumentationElement(this,
-				endpointElement, omFactory, wsdl);
-		WSDLSerializationUtil.addPoliciesAsExtensibleElement(this,
-				endpointElement);
-		return endpointElement;
-	}
+        String property;
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMElement endpointElement =
+                omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, wsdl);
+        endpointElement.addAttribute(
+                omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, name));
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.BINDING_LOCAL_NAME,
+                                                                 null, tns.getPrefix() + ":" +
+                                                                       getBinding().getName()
+                                                                               .getLocalPart()));
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS,
+                                                                 null, getEndpointURL()));
+        Object authenticationScheme =
+                this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
+        if (authenticationScheme != null) {
+            endpointElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp,
+                    authenticationScheme.toString()));
+        }
+        property = (String)options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM);
+        if (property != null) {
+            endpointElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_AUTHENTICATION_REALM, whttp, property));
+        }
+        WSDLSerializationUtil.addWSDLDocumentationElement(this, endpointElement, omFactory, wsdl);
+        WSDLSerializationUtil.addPoliciesAsExtensibleElement(this, endpointElement);
+        return endpointElement;
+    }
 
-	public AxisService getAxisService() {
-		return (AxisService) parent;
-	}
+    public AxisService getAxisService() {
+        return (AxisService)parent;
+    }
 
-	public void setParent(AxisService service) {
-		parent = service;
-	}
+    public void setParent(AxisService service) {
+        parent = service;
+    }
 
-	public void setTransportInDescription(String transportInDescName) {
-		this.transportInDescName = transportInDescName;
-	}
+    public void setTransportInDescription(String transportInDescName) {
+        this.transportInDescName = transportInDescName;
+    }
 
-	public String calculateEndpointURL() {
-	    return calculateEndpointURL(null);
-	}
-	
-        public String calculateEndpointURL(String hostIP) {
-            if (transportInDescName != null && parent != null) {
-                    AxisConfiguration axisConfiguration = getAxisConfiguration();
-                    if (axisConfiguration != null) {
-                            try {
-                                    String serviceName = ((AxisService) parent).getName();
-                                    TransportInDescription in = axisConfiguration
-                                                    .getTransportIn(transportInDescName);
-                                    TransportListener listener = in.getReceiver();
-                                    String ip;
-                                    
-                                    if (hostIP != null) {
-                                        ip = hostIP;
-                                    } else {    
-                                        ip = Utils.getIpAddress(axisConfiguration);
-                                    }
-                                    
-                                    // we should pass [serviceName].[endpointName] instead of
-                                    // [endpointName]
-                                    String sDOTe = serviceName + "." + name;
-                                    EndpointReference[] eprsForService = listener
-                                                    .getEPRsForService(sDOTe, ip);
-                                    // we consider only the first address return by the listener
-                                    if (eprsForService != null && eprsForService.length > 0) {
-                                            return eprsForService[0].getAddress();
-                                    }
-                            } catch (SocketException e) {
-                                    logger.warn(e.getMessage(), e);
-                            } catch (AxisFault e) {
-                                    logger.warn(e.getMessage(), e);
-                            }
+    public String calculateEndpointURL() {
+        return calculateEndpointURL(null);
+    }
+
+    public String calculateEndpointURL(String hostIP) {
+        if (transportInDescName != null && parent != null) {
+            AxisConfiguration axisConfiguration = getAxisConfiguration();
+            if (axisConfiguration != null) {
+                try {
+                    String serviceName = ((AxisService)parent).getName();
+                    TransportInDescription in =
+                            axisConfiguration.getTransportIn(transportInDescName);
+                    TransportListener listener = in.getReceiver();
+                    String ip;
+
+                    if (hostIP != null) {
+                        ip = hostIP;
+                    } else {
+                        ip = Utils.getIpAddress(axisConfiguration);
                     }
+
+                    // we should pass [serviceName].[endpointName] instead of
+                    // [endpointName]
+                    String sDOTe = serviceName + "." + name;
+                    EndpointReference[] eprsForService = listener.getEPRsForService(sDOTe, ip);
+                    // we consider only the first address return by the listener
+                    if (eprsForService != null && eprsForService.length > 0) {
+                        return eprsForService[0].getAddress();
+                    }
+                } catch (SocketException e) {
+                    logger.warn(e.getMessage(), e);
+                } catch (AxisFault e) {
+                    logger.warn(e.getMessage(), e);
+                }
             }
+        }
 
-            return null;
-        }	
+        return null;
+    }
 
-	public boolean isActive() {
-		if (transportInDescName != null && parent != null) {
-			AxisConfiguration axisConfiguration = getAxisConfiguration();
-			if (axisConfiguration != null) {
-				AxisService service = (AxisService) parent;
-				if (service.isEnableAllTransports()) {
-					return axisConfiguration.getTransportsIn().containsKey(
-							transportInDescName);
-				} else {
-					return service.getExposedTransports().contains(
-							transportInDescName);
-				}
-			}
-		}
-		return false;
-	}
+    public boolean isActive() {
+        if (transportInDescName != null && parent != null) {
+            AxisConfiguration axisConfiguration = getAxisConfiguration();
+            if (axisConfiguration != null) {
+                AxisService service = (AxisService)parent;
+                if (service.isEnableAllTransports()) {
+                    return axisConfiguration.getTransportsIn().containsKey(transportInDescName);
+                } else {
+                    return service.getExposedTransports().contains(transportInDescName);
+                }
+            }
+        }
+        return false;
+    }
 }

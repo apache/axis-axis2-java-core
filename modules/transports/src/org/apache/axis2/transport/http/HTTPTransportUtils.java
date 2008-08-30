@@ -58,7 +58,7 @@ public class HTTPTransportUtils {
 
 
     /**
-     * @deprecated This was used only by the now deprecated processHTTPGetRequest() method. 
+     * @deprecated This was used only by the now deprecated processHTTPGetRequest() method.
      */
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
                                                             Map map, ConfigurationContext configCtx)
@@ -113,7 +113,7 @@ public class HTTPTransportUtils {
      * message was an MTOM message.
      * </p>
      * 
-     * @param msgContext
+     * @param msgContext the active MessageContext
      * @return true if SwA needs to be enabled
      */
     public static boolean doWriteMTOM(MessageContext msgContext) {
@@ -153,7 +153,7 @@ public class HTTPTransportUtils {
      * the incoming message was SwA type.
      * </p>
      * 
-     * @param msgContext
+     * @param msgContext the active MessageContext
      * @return true if SwA needs to be enabled
      */
     public static boolean doWriteSwA(MessageContext msgContext) {
@@ -188,8 +188,8 @@ public class HTTPTransportUtils {
      * MessageContext. If it's not there look in the OpContext. Use the defualt,
      * if it's not given in either contexts.
      *
-     * @param msgContext
-     * @return CharSetEncoding
+     * @param msgContext the active MessageContext
+     * @return String the CharSetEncoding
      */
     public static String getCharSetEncoding(MessageContext msgContext) {
         String charSetEnc = (String) msgContext
@@ -390,14 +390,12 @@ public class HTTPTransportUtils {
      * <p/>
      * If the request doesnot contain a content type; this will return true.
      *
-     * @param contentType
+     * @param contentType content type to check
      * @return Boolean
      */
     public static boolean isRESTRequest(String contentType) {
-        if (contentType == null) {
-            return false;
-        }
-        return (contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+        return contentType != null &&
+               (contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
     }

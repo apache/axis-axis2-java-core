@@ -63,14 +63,21 @@ public class DeploymentTotalTest extends TestCase {
         }
 
         inFlow = axisConfig.getInFaultFlowPhases();
+        assertTrue("NewPhase wasn't found in InFaultFlow", isPhaseInFlow(inFlow, "NewPhase"));
+
+        ArrayList outFlow = axisConfig.getInFaultFlowPhases();
+        assertTrue("NewPhase wasn't found in OutFlow", isPhaseInFlow(outFlow, "NewPhase"));        
+    }
+
+    private boolean isPhaseInFlow(ArrayList inFlow, String phaseName) {
         boolean found = false;
-        for (int i = 0; i < inFlow.size(); i++) {
-            Phase phase = (Phase) inFlow.get(i);
-            if (phase.getName().equals("NewPhase")) {
+        for (Object anInFlow : inFlow) {
+            Phase phase = (Phase)anInFlow;
+            if (phase.getName().equals(phaseName)) {
                 found = true;
             }
         }
-        assertTrue("NewPhase wasn't found in InFaultFlow", found);
+        return found;
     }
 
 }

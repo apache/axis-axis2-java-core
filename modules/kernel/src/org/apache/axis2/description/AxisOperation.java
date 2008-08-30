@@ -40,8 +40,8 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -51,9 +51,7 @@ public abstract class AxisOperation extends AxisDescription
     public static final String STYLE_DOC = "doc";
 
     private static final Log log = LogFactory.getLog(AxisOperation.class);
-    /**
-     * message exchange pattern
-     */
+    /** message exchange pattern */
     private int mep = WSDLConstants.MEP_CONSTANT_INVALID;
 
     // to hide control operation , operation which added by RM like module
@@ -61,7 +59,7 @@ public abstract class AxisOperation extends AxisDescription
     private String style = STYLE_DOC;
 
     // to store mepURL
-    private String mepURI;
+    protected String mepURI;
 
     private MessageReceiver messageReceiver;
 
@@ -81,9 +79,7 @@ public abstract class AxisOperation extends AxisDescription
     private String soapAction;
 
 
-    /**
-     * constructor
-     */
+    /** Default constructor */
     public AxisOperation() {
         mepURI = WSDL2Constants.MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
@@ -102,12 +98,10 @@ public abstract class AxisOperation extends AxisDescription
     public abstract void addMessage(AxisMessage message, String label);
 
     /**
-     * Adds a message context into an operation context. Depending on MEPs, this
-     * method has to be overridden.
-     * Depending on the MEP operation description know how to fill the message context map
-     * in operationContext.
-     * As an example, if the MEP is IN-OUT then depending on messagable operation description
-     * should know how to keep them in correct locations.
+     * Adds a message context into an operation context. Depending on MEPs, this method has to be
+     * overridden. Depending on the MEP operation description know how to fill the message context
+     * map in operationContext. As an example, if the MEP is IN-OUT then depending on messagable
+     * operation description should know how to keep them in correct locations.
      *
      * @param msgContext <code>MessageContext</code>
      * @param opContext  <code>OperationContext</code>
@@ -127,18 +121,17 @@ public abstract class AxisOperation extends AxisDescription
     /**
      * Adds module configuration, if there is moduleConfig tag in operation.
      *
-     * @param moduleConfiguration
+     * @param moduleConfiguration a ModuleConfiguration which will be added (by name)
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
     /**
-     * This is called when a module is engaged on this operation.  Handle operation-specific
-     * tasks.
+     * This is called when a module is engaged on this operation.  Handle operation-specific tasks.
      *
-     * @param axisModule AxisModule
-     * @param engager
+     * @param axisModule AxisModule being engaged
+     * @param engager    the AxisDescription where the engage occurred - could be us or a parent
      * @throws AxisFault
      */
     public final void onEngage(AxisModule axisModule, AxisDescription engager) throws AxisFault {
@@ -165,7 +158,7 @@ public abstract class AxisOperation extends AxisDescription
         AxisConfiguration axisConfiguration = service.getAxisConfiguration();
         PhaseResolver phaseResolver = new PhaseResolver(axisConfiguration);
         if (!service.isEngaged(module.getName()) &&
-                (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
+            (axisConfiguration != null && !axisConfiguration.isEngaged(module.getName()))) {
             phaseResolver.disengageModuleFromGlobalChains(module);
         }
         phaseResolver.disengageModuleFromOperationChain(module, this);
@@ -175,7 +168,7 @@ public abstract class AxisOperation extends AxisDescription
         if (moduleOperations != null) {
             Iterator moduleOperations_itr = moduleOperations.values().iterator();
             while (moduleOperations_itr.hasNext()) {
-                AxisOperation operation = (AxisOperation) moduleOperations_itr.next();
+                AxisOperation operation = (AxisOperation)moduleOperations_itr.next();
                 service.removeOperation(operation.getName());
             }
         }
@@ -196,50 +189,16 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    /**
-     * Gets a copy from module operation.
-     *
-     * @param axisOperation
-     * @return Returns AxisOperation.
-     * @throws AxisFault
-     */
-    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
-        AxisOperation operation =
-                AxisOperationFactory
-                        .getOperationDescription(axisOperation.getMessageExchangePattern());
-
-        operation.setMessageReceiver(axisOperation.getMessageReceiver());
-        operation.setName(axisOperation.getName());
-
-        Iterator parameters = axisOperation.getParameters().iterator();
-
-        while (parameters.hasNext()) {
-            Parameter parameter = (Parameter) parameters.next();
-
-            operation.addParameter(parameter);
-        }
-
-        operation.setWsamappingList(axisOperation.getWSAMappingList());
-        operation.setOutputAction(axisOperation.getOutputAction());
-        String[] faultActionNames = axisOperation.getFaultActionNames();
-        for (int i = 0; i < faultActionNames.length; i++) {
-            operation.addFaultAction(faultActionNames[i],
-                                     axisOperation.getFaultAction(faultActionNames[i]));
-        }
-        operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
-        operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
-        operation.setPhasesOutFaultFlow(axisOperation.getPhasesOutFaultFlow());
-        operation.setPhasesOutFlow(axisOperation.getPhasesOutFlow());
-
-        return operation;
-    }
-
+//  Note - removed this method which was dead code.
+//    private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
 
     /**
      * Returns as existing OperationContext related to this message if one exists.
+     * <p/>
+     * TODO - why both this and findOperationContext()? (GD)
      *
-     * @param msgContext
-     * @return Returns OperationContext.
+     * @param msgContext the MessageContext for which we'd like an OperationContext
+     * @return the OperationContext, or null
      * @throws AxisFault
      */
     public OperationContext findForExistingOperationContext(MessageContext msgContext)
@@ -261,8 +220,8 @@ public abstract class AxisOperation extends AxisDescription
 
             if (null == operationContext && log.isDebugEnabled()) {
                 log.debug(msgContext.getLogIDString() +
-                        " Cannot correlate inbound message RelatesTo value [" +
-                        msgContext.getRelatesTo() + "] to in-progree MEP");
+                          " Cannot correlate inbound message RelatesTo value [" +
+                          msgContext.getRelatesTo() + "] to in-progree MEP");
             }
         }
 
@@ -270,25 +229,25 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * Finds a MEPContext for an incoming message. An incoming message can be
-     * of two states.
+     * Finds an OperationContext for an incoming message. An incoming message can be of two states.
      * <p/>
-     * 1)This is a new incoming message of a given MEP. 2)This message is a
-     * part of an MEP which has already begun.
+     * 1)This is a new incoming message of a given MEP. 2)This message is a part of an MEP which has
+     * already begun.
      * <p/>
      * The method is special cased for the two MEPs
      * <p/>
      * #IN_ONLY #IN_OUT
      * <p/>
-     * for two reasons. First reason is the wide usage and the second being that
-     * the need for the MEPContext to be saved for further incoming messages.
+     * for two reasons. First reason is the wide usage and the second being that the need for the
+     * MEPContext to be saved for further incoming messages.
      * <p/>
-     * In the event that MEP of this operation is different from the two MEPs
-     * defaulted above the decision of creating a new or this message relates
-     * to a MEP which already in business is decided by looking at the WSA
-     * Relates TO of the incoming message.
+     * In the event that MEP of this operation is different from the two MEPs defaulted above the
+     * decision of creating a new or this message relates to a MEP which already in business is
+     * decided by looking at the WSA Relates TO of the incoming message.
      *
-     * @param msgContext
+     * @param msgContext     MessageContext to search
+     * @param serviceContext ServiceContext (TODO - why pass this? (GD))
+     * @return the active OperationContext
      */
     public OperationContext findOperationContext(MessageContext msgContext,
                                                  ServiceContext serviceContext)
@@ -341,9 +300,11 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * Maps the String URI of the Message exchange pattern to a integer.
-     * Further, in the first lookup, it will cache the looked
-     * up value so that the subsequent method calls are extremely efficient.
+     * Maps the String URI of the Message exchange pattern to an integer. Further, in the first
+     * lookup, it will cache the looked up value so that the subsequent method calls are extremely
+     * efficient.
+     *
+     * @return an MEP constant from WSDLConstants
      */
     public int getAxisSpecificMEPConstant() {
         if (this.mep != WSDLConstants.MEP_CONSTANT_INVALID) {
@@ -396,7 +357,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public ModuleConfiguration getModuleConfig(String moduleName) {
-        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
+        return (ModuleConfiguration)moduleConfigmap.get(moduleName);
     }
 
     public ArrayList getModuleRefs() {
@@ -481,12 +442,13 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * 
+     * Return an OperationClient suitable for this AxisOperation.
+     *
+     * @param sc      active ServiceContext
+     * @param options active Options
+     * @return an OperationClient set up appropriately for this operation
      */
-    public OperationClient createClient(ServiceContext sc, Options options) {
-        throw new UnsupportedOperationException(
-                Messages.getMessage("mepnotyetimplemented", mepURI));
-    }
+    public abstract OperationClient createClient(ServiceContext sc, Options options);
 
     public Object getKey() {
         return this.name;
@@ -499,34 +461,34 @@ public abstract class AxisOperation extends AxisDescription
     public void setFaultMessages(AxisMessage faultMessage) {
         faultMessage.setParent(this);
         faultMessages.add(faultMessage);
-        if(getFaultAction(faultMessage.getName())==null){
-            addFaultAction(faultMessage.getName(),"urn:" + name.getLocalPart()
-                    + faultMessage.getName());
+        if (getFaultAction(faultMessage.getName()) == null) {
+            addFaultAction(faultMessage.getName(),
+                           "urn:" + name.getLocalPart() + faultMessage.getName());
         }
     }
 
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
-    
+
     /*
-     * Convenience method to access the WS-A Input Action per the
-     * WS-A spec. Effectively use the soapAction if available else
-     * use the first entry in the WSA Mapping list.
-     * 
-     * Use getSoapAction when you want to get the soap action and this
-     * when you want to get the wsa input action.
-     */
+    * Convenience method to access the WS-A Input Action per the
+    * WS-A spec. Effectively use the soapAction if available else
+    * use the first entry in the WSA Mapping list.
+    *
+    * Use getSoapAction when you want to get the soap action and this
+    * when you want to get the wsa input action.
+    */
     public String getInputAction() {
-    	String result = null;
-    	if(soapAction != null && !"".equals(soapAction)){
-    		result = soapAction;
-    	}else{
-    		if(wsamappingList != null && !wsamappingList.isEmpty()){
-    			result = (String)wsamappingList.get(0);
-    		}
-    	}
-    	return result;
+        String result = null;
+        if (soapAction != null && !"".equals(soapAction)) {
+            result = soapAction;
+        } else {
+            if (wsamappingList != null && !wsamappingList.isEmpty()) {
+                result = (String)wsamappingList.get(0);
+            }
+        }
+        return result;
     }
 
     public String getOutputAction() {
@@ -546,13 +508,13 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String getFaultAction(String faultName) {
-        return (String) faultActions.get(faultName);
+        return (String)faultActions.get(faultName);
     }
 
     public String[] getFaultActionNames() {
         Set keys = faultActions.keySet();
         String[] faultActionNames = new String[keys.size()];
-        faultActionNames = (String[]) keys.toArray(faultActionNames);
+        faultActionNames = (String[])keys.toArray(faultActionNames);
         return faultActionNames;
     }
 
@@ -560,17 +522,17 @@ public abstract class AxisOperation extends AxisDescription
         String result = null;
         Iterator iter = faultActions.values().iterator();
         if (iter.hasNext()) {
-            result = (String) iter.next();
+            result = (String)iter.next();
         }
         return result;
     }
-    
+
     /**
-     * All childerns of a AxisOperation must be Messages. So we just return it. 
-     * @return
+     * Get the messages referenced by this operation
+     *
+     * @return an Iterator of all the AxisMessages we deal with
      */
-    
-    public Iterator getMessages(){
+    public Iterator getMessages() {
         return getChildren();
     }
 
@@ -583,7 +545,7 @@ public abstract class AxisOperation extends AxisDescription
         return (AxisService)getParent();
     }
 
-	public String getSoapAction() {
+    public String getSoapAction() {
         /*
          * This AxisOperation instance may be used for the client OUT-IN or for
          * the server IN-OUT.  If the below code were changed to getInputActions, and the
@@ -592,6 +554,5 @@ public abstract class AxisOperation extends AxisDescription
          * this as 'return soapAction;' OR make it client/server aware.
          */
         return soapAction;
-	}
-    
- }
+    }
+}
