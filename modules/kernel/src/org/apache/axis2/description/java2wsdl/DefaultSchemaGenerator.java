@@ -46,6 +46,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.beans.PropertyDescriptor;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
 
 public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerator {
 
@@ -524,92 +526,30 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             // adding this type's package to the table, to support inheritance.
             typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), eltOuter.getQName());
 
-
-            Set propertiesSet = new LinkedHashSet();
-            Set propertiesNames = new LinkedHashSet();
-            Field tempProperties[] = javaType.getDeclaredFields();
             BeanExcludeInfo beanExcludeInfo = null;
             if (service.getExcludeInfo() != null) {
                 beanExcludeInfo = service.getExcludeInfo().getBeanExcludeInfoForClass(getClassName(javaType));
             }
 
-            for (int i = 0; i < tempProperties.length; i++) {
-                Field tempProperty = tempProperties[i];
-                String propertyName;
-                if (Modifier.isFinal(tempProperty.getModifiers()) ||
-                        Modifier.isStatic(tempProperty.getModifiers())) {
-//                        We do not need to expose static fields
-                    continue;
-                }
-                propertyName = tempProperty.getName();
-                if ("this$0".equals(propertyName)) {
-                    continue;
-                }
-                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
-                    propertiesSet.add(tempProperty);
-                }
-            }
-            Field[] properties = (Field[]) propertiesSet.toArray(new Field[0]);
-            if (sortAttributes) {
-                Arrays.sort(properties, new FieldComparator());
-            }
+            // we need to get properties only for this bean. hence ignore the super
+            // class properties
+            BeanInfo beanInfo = Introspector.getBeanInfo(javaType, javaType.getSuperclass());
+            PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
+            PropertyDescriptor property = null;
+            String propertyName = null;
             for (int i = 0; i < properties.length; i++) {
-                Field property = properties[i];
-                boolean isArryType = property.getType().isArray();
-                String propname = property.getName();
-                propertiesNames.add(propname);
-
-                //Place to look
-                this.generateSchemaforFieldsandProperties(xmlSchema, sequence, property.getType(),
-                        propname, isArryType);
-
-            }
-            Field[] tempFields = javaType.getDeclaredFields();
-            HashMap FieldMap = new LinkedHashMap();
-            for (int i = 0; i < tempFields.length; i++) {
-                Field tempFiled = tempFields[i];
-                // create a element for the field only if it is public
-                // and there is no property with the same name
-                if (Modifier.isPublic(tempFiled.getModifiers())) {
-                    if (Modifier.isStatic(tempFiled.getModifiers())) {
-//                        We do not need to expose static fields
-                        continue;
-                    }
-                    String propertyName = tempFiled.getName();
-                    if ("this$0".equals(propertyName)) {
-                        continue;
-                    }
+                property = properties[i];
+                propertyName = property.getName();
+                if (!property.getName().equals("class") && (property.getPropertyType() != null)) {
                     if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
-                        // skip field with same name as a property
-                        if (!propertiesNames.contains(propertyName)) {
-                            FieldMap.put(propertyName, tempFiled);
-                        }
+                        property.getPropertyType();
+                        generateSchemaforFieldsandProperties(xmlSchema,
+                                sequence,
+                                property.getPropertyType(),
+                                propertyName,
+                                property.getPropertyType().isArray());
                     }
                 }
-            }
-            // remove fields from super classes patch for defect Annogen-21
-            // getDeclaredFields is incorrectly returning fields of super classes as well
-            // getDeclaredProperties used earlier works correctly
-            Class supr = javaType.getSuperclass();
-            while (supr != null && getQualifiedName(supr.getPackage()).indexOf("java.lang.Object") < 0) {
-                Field[] suprFields = supr.getFields();
-                for (int i = 0; i < suprFields.length; i++) {
-                    FieldMap.remove(suprFields[i].getName());
-                }
-                supr = supr.getSuperclass();
-            }
-            // end patch for Annogen -21
-
-            Field[] froperties = (Field[]) FieldMap.values().toArray(new Field[0]);
-            if (sortAttributes) {
-                Arrays.sort(froperties);
-            }
-
-            for (int i = 0; i < froperties.length; i++) {
-                Field field = froperties[i];
-                boolean isArryType = field.getType().isArray();
-                this.generateSchemaforFieldsandProperties(xmlSchema, sequence, field.getType(),
-                        field.getName(), isArryType);
             }
         }
         return schemaTypeName;
