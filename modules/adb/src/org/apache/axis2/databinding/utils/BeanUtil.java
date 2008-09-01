@@ -94,71 +94,12 @@ public class BeanUtil {
                     sortAttributes = false;
                 }
             }
-            BeanExcludeInfo beanExcludeInfo = null;
             Class beanClass = beanObject.getClass();
-            if (axisService != null && axisService.getExcludeInfo() != null) {
-                beanExcludeInfo = axisService.getExcludeInfo().getBeanExcludeInfoForClass(
-                        beanClass.getName());
-            }
-            // properties from JAM
-            ArrayList propertyList = new ArrayList();
-            Field properties [] = beanClass.getDeclaredFields();
-            for (int i = 0; i < properties.length; i++) {
-                Field property = properties[i];
-                String propertyName = property.getName();
-                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)){
-                    propertyList.add(property);
-                }
 
-            }
-            Class supClass = beanClass.getSuperclass();
-            while (!getQualifiedName(supClass.getPackage()).startsWith("java.")) {
-                properties = supClass.getDeclaredFields();
-                ExcludeInfo excludeInfo = null;
-                if (axisService !=null) {
-                    excludeInfo = axisService.getExcludeInfo();
-                }
-                if (excludeInfo != null) {
-                    beanExcludeInfo = excludeInfo.getBeanExcludeInfoForClass(supClass.getName());
-                }
-                for (int i = 0; i < properties.length; i++) {
-                    Field property = properties[i];
-                    String propertyName = property.getName();
-                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
-                        propertyList.add(property);
-                    }
-                }
-                supClass = supClass.getSuperclass();
-            }
-            properties = new Field[propertyList.size()];
-            for (int i = 0; i < propertyList.size(); i++) {
-                Field jProperty = (Field)propertyList.get(i);
-                properties[i] = jProperty;
-            }
-            if (sortAttributes) {
-                Arrays.sort(properties , new FieldComparator());
-            }
-            BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
-            PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
-            HashMap propertMap = new HashMap();
-            for (int i = 0; i < propDescs.length; i++) {
-                PropertyDescriptor propDesc = propDescs[i];
-                if (propDesc.getName().equals("class")) {
-                    continue;
-                }
-                propertMap.put(propDesc.getName(), propDesc);
-            }
+            List<PropertyDescriptor> propertiesToSerialize = getPropertiesToSerialize(beanClass, axisService);
             ArrayList object = new ArrayList();
-            for (int i = 0; i < properties.length; i++) {
-                Field property = properties[i];
-                PropertyDescriptor propDesc = (PropertyDescriptor)propertMap.get(property.getName());
-                if (propDesc == null) {
-                    continue;
-                }
+            for (PropertyDescriptor propDesc : propertiesToSerialize) {
                 Class ptype = propDesc.getPropertyType();
-                if (propDesc.getName().equals("class")) {
-                    continue;
-                }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Method readMethod = propDesc.getReadMethod();
                     Object value;
@@ -297,20 +238,55 @@ public class BeanUtil {
         }
     }
 
+    /**
+     * this method recursively search for all the supper classes to exclude the exclude bean info
+     * @param beanClass
+     * @param axisService
+     * @return
+     * @throws IntrospectionException
+     */
+    private static List<PropertyDescriptor> getPropertiesToSerialize(Class beanClass,
+                                                              AxisService axisService)
+            throws IntrospectionException {
+        List<PropertyDescriptor> propertiesToSerialize = null;
+        Class supperClass = beanClass.getSuperclass();
+
+        if (!getQualifiedName(supperClass.getPackage()).startsWith("java.")){
+            propertiesToSerialize = getPropertiesToSerialize(supperClass, axisService);
+        } else {
+            propertiesToSerialize = new ArrayList<PropertyDescriptor>();
+        }
+
+        BeanExcludeInfo beanExcludeInfo = null;
+        if (axisService != null && axisService.getExcludeInfo() != null) {
+            beanExcludeInfo = axisService.getExcludeInfo().getBeanExcludeInfoForClass(beanClass.getName());
+        }
+        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, beanClass.getSuperclass());
+        PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
+        PropertyDescriptor property = null;
+        for (int i = 0; i < properties.length; i++) {
+            property = properties[i];
+            if (!property.getName().equals("class")) {
+                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(property.getName())) {
+                    propertiesToSerialize.add(property);
+                }
+            }
+        }
+        return propertiesToSerialize;
+    }
+
     private static void addTypeQname(QName elemntNameSpace,
                                      ArrayList object,
                                      PropertyDescriptor propDesc,
                                      QName beanName,
                                      boolean processingDocLitBare) {
         if (elemntNameSpace != null) {
-            object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                    getCorrectName(propDesc.getName()) , elemntNameSpace.getPrefix()));
+            object.add(new QName(elemntNameSpace.getNamespaceURI(), propDesc.getName() ,elemntNameSpace.getPrefix()));
         } else {
             if(processingDocLitBare){
-                object.add(new QName(getCorrectName(propDesc.getName())));
+                object.add(new QName(propDesc.getName()));
             } else {
-                object.add(new QName(beanName.getNamespaceURI(),
-                        getCorrectName(propDesc.getName()), beanName.getPrefix()));
+                object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
             }
 
         }
@@ -845,23 +821,6 @@ public class BeanUtil {
         return "s" + nsCount++;
     }
 
-
-    /**
-     * JAM convert first name of an attribute into UpperCase as an example if there is a instance
-     * variable called foo in a bean , then Jam give that as Foo so this method is to correct that
-     * error
-     *
-     * @param wrongName
-     * @return the right name, using english as the locale for case conversion
-     */
-    private static String getCorrectName(String wrongName) {
-        if (wrongName.length() > 1) {
-            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
-                    + wrongName.substring(1, wrongName.length());
-        } else {
-            return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH);
-        }
-    }
 
     private static String getQualifiedName(Package packagez) {
         if (packagez != null) {
