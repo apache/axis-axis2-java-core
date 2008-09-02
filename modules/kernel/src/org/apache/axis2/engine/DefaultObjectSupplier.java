@@ -21,13 +21,38 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 public class DefaultObjectSupplier implements ObjectSupplier {
 
     public Object getObject(Class clazz) throws AxisFault {
         try {
             return clazz.newInstance();
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
+        } catch (Exception exception) {
+            String className = clazz.getName();
+            // if this is an inner class then that can be a non static inner class. those classes have to be instanciate
+            // in a different way than a normal initialization
+            if (className.indexOf("$") > 0) {
+                String outerClassName = className.substring(0, className.indexOf("$"));
+                try {
+                    Class outerClass = Class.forName(outerClassName);
+                    Object outerClassObject = outerClass.newInstance();
+                    Constructor innterClassConstructor = clazz.getConstructor(new Class[]{outerClass});
+                    return innterClassConstructor.newInstance(new Object[]{outerClassObject});
+                } catch (ClassNotFoundException e) {
+                    throw AxisFault.makeFault(e);
+                } catch (IllegalAccessException e) {
+                    throw AxisFault.makeFault(e);
+                } catch (InstantiationException e) {
+                    throw AxisFault.makeFault(e);
+                } catch (NoSuchMethodException e) {
+                    throw AxisFault.makeFault(e);
+                } catch (InvocationTargetException e) {
+                    throw AxisFault.makeFault(e);
+                }
+            }
+            throw AxisFault.makeFault(exception);
         }
     }
 }
