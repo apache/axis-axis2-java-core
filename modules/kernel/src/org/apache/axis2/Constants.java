@@ -403,5 +403,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         public static final String DEPLOYMENT_LIFE_CYCLE_LISTENER = "deploymentLifeCycleListener";
 
+        public static final String GENERATE_ABSOLUTE_LOCATION_URIS = "generateAbsoluteLocationURIs";
+
     }
 }
