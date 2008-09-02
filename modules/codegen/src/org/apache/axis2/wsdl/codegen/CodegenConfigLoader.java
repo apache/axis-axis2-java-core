@@ -299,6 +299,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                                       WSDL2JavaConstants.OVERRIDE_OPTION_LONG,
                                       optionMap) != null);
 
+        config.setOverrideAbsoluteAddress(loadOption(WSDL2JavaConstants.OVERRIDE_ABSOLUTE_ADDRESS_OPTION,
+                                      WSDL2JavaConstants.OVERRIDE_ABSOLUTE_ADDRESS_OPTION_LONG,
+                                      optionMap) != null);
+
         // loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();

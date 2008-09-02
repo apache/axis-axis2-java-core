@@ -1386,7 +1386,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         axisService.setSchemaLocationsAdjusted(false);
         //when generating the code we should copy all the schemas to
         // resource folder.
-        Map changedMap = axisService.populateSchemaMappings(true);
+        Map changedMap = axisService.populateSchemaMappings(this.codeGenConfiguration.isOverrideAbsoluteAddress());
 
         // add these two attribute to use the user defined wsdl to use.
         try {
@@ -1407,12 +1407,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // then use the changedMap got above to adjust the names.
         Map schemaMappings = axisService.getSchemaMappingTable();
         Iterator keys = schemaMappings.keySet().iterator();
+        String key = null;
         while (keys.hasNext()) {
-            Object key = keys.next();
-            schemaWriter.writeSchema(
-                    (XmlSchema) schemaMappings.get(key),
-                    (String) key
-            );
+            key = (String) keys.next();
+            if (!key.startsWith("http")){
+               schemaWriter.writeSchema((XmlSchema) schemaMappings.get(key), key);
+            }
         }
 
         //switch between the correct writer
