@@ -208,7 +208,7 @@ public class BeanUtil {
             if( typeTable != null && qualified )
             {
                 QName qNamefortheType =
-                    typeTable.getQNamefortheType(beanObject.getClass().getName());
+                    typeTable.getQNamefortheType(getClassName(beanObject.getClass()));
                 if (qNamefortheType == null) {
                     // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to
                     // support polymorphism in POJO approach.
@@ -236,6 +236,14 @@ public class BeanUtil {
         } catch (java.lang.IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getClassName(Class type) {
+        String name = type.getName();
+        if (name.indexOf("$") > 0) {
+            name = name.replace('$', '_');
+        }
+        return name;
     }
 
     /**
