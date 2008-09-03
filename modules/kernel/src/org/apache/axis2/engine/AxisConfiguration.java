@@ -88,7 +88,7 @@ public class AxisConfiguration extends AxisDescription {
 
     private URL axis2Repository = null;
 
-    private Map allServices = new Hashtable();
+    private Map allServices = new ConcurrentHashMap();
     private Map allEndpoints = new ConcurrentHashMap();
 
     /**
