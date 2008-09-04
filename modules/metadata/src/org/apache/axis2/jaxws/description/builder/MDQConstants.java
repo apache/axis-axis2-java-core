@@ -54,6 +54,8 @@ public class MDQConstants {
     
     public static final String HANDLER_CHAIN_DECLARING_CLASS = "HANDLER_CHAIN_DECLARING_CLASS";
     
+    public static final String SEI_MTOM_ENABLEMENT_MAP = "org.apache.axis2.jaxws.description.builder.SEI_MTOM_ENABLEMENT_MAP";
+    
     //Represent SOAP/JMS Bindings
     //REVIEW: SOAP-JMS may be using the same NS for SOAP11 and SOAP12, 
     //  if so we could remove some duplicate values below

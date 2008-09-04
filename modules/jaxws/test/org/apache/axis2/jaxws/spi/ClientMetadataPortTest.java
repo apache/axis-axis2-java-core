@@ -24,6 +24,7 @@ import org.apache.axis2.jaxws.description.DescriptionTestUtils2;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
@@ -31,6 +32,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.soap.SOAPBinding;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -420,6 +422,71 @@ public class ClientMetadataPortTest extends TestCase {
         SOAPBinding binding2 = ((SOAPBinding) ((BindingProvider) port2).getBinding());
         assertTrue(binding2.isMTOMEnabled());
     }
+    
+    /**
+     * Validate enabling MTOM when creating the service results ports created under that service
+     * have MTOM enabled.
+     */
+    public void testEnableMTOMFromServiceDBC() {
+        QName serviceQName = new QName(namespaceURI, svcLocalPart);
+        URL wsdlUrl = ClientMetadataTest.getWsdlURL(multiPortWsdl);
+        DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+        Map<String, Boolean> seiToMTOM = new HashMap<String, Boolean>();
+        seiToMTOM.put(ClientMetadataPortSEI.class.getName(), true);
+        sparseComposite.getProperties().put(MDQConstants.SEI_MTOM_ENABLEMENT_MAP, seiToMTOM);
+        ServiceDelegate.setServiceMetadata(sparseComposite);
+        Service service = Service.create(wsdlUrl, serviceQName);
+        ClientMetadataPortSEI port = service.getPort(ClientMetadataPortSEI.class);
+        assertNotNull(port);
+        // Verify that MTOM is enabled on this port.
+        BindingProvider bindingProvider = (BindingProvider) port;
+        SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding();
+        assertTrue(binding.isMTOMEnabled());
+        
+        // Verify that specific ports under this service also have MTOM enabled
+        QName port1QN = new QName(namespaceURI, multiPortWsdl_portLocalPart1);
+        ClientMetadataPortSEI port1 = service.getPort(port1QN, ClientMetadataPortSEI.class);
+        SOAPBinding binding1 = ((SOAPBinding) ((BindingProvider) port1).getBinding());
+        assertTrue(binding1.isMTOMEnabled());
+        
+        QName port2QN = new QName(namespaceURI, multiPortWsdl_portLocalPart2);
+        ClientMetadataPortSEI port2 = service.getPort(port2QN, ClientMetadataPortSEI.class);
+        SOAPBinding binding2 = ((SOAPBinding) ((BindingProvider) port2).getBinding());
+        assertTrue(binding2.isMTOMEnabled());
+    }
+    
+    /**
+     * Validate enabling MTOM when creating the service results ports created under that service
+     * have MTOM enabled.
+     */
+    public void testDisableMTOMFromServiceDBC() {
+        QName serviceQName = new QName(namespaceURI, svcLocalPart);
+        URL wsdlUrl = ClientMetadataTest.getWsdlURL(multiPortWsdl);
+        DescriptionBuilderComposite sparseComposite = new DescriptionBuilderComposite();
+        Map<String, Boolean> seiToMTOM = new HashMap<String, Boolean>();
+        seiToMTOM.put(ClientMetadataPortSEI.class.getName(), false);
+        sparseComposite.getProperties().put(MDQConstants.SEI_MTOM_ENABLEMENT_MAP, seiToMTOM);
+        ServiceDelegate.setServiceMetadata(sparseComposite);
+        Service service = Service.create(wsdlUrl, serviceQName);
+        ClientMetadataPortSEI port = service.getPort(ClientMetadataPortSEI.class);
+        assertNotNull(port);
+        // Verify that MTOM is enabled on this port.
+        BindingProvider bindingProvider = (BindingProvider) port;
+        SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding();
+        assertTrue(!binding.isMTOMEnabled());
+        
+        // Verify that specific ports under this service also have MTOM enabled
+        QName port1QN = new QName(namespaceURI, multiPortWsdl_portLocalPart1);
+        ClientMetadataPortSEI port1 = service.getPort(port1QN, ClientMetadataPortSEI.class);
+        SOAPBinding binding1 = ((SOAPBinding) ((BindingProvider) port1).getBinding());
+        assertTrue(!binding1.isMTOMEnabled());
+        
+        QName port2QN = new QName(namespaceURI, multiPortWsdl_portLocalPart2);
+        ClientMetadataPortSEI port2 = service.getPort(port2QN, ClientMetadataPortSEI.class);
+        SOAPBinding binding2 = ((SOAPBinding) ((BindingProvider) port2).getBinding());
+        assertTrue(!binding2.isMTOMEnabled());
+    }
+    
     
     /**
      * Validate enabling MTOM when creating the service results in enablement only

@@ -1283,6 +1283,40 @@ class ServiceDescriptionImpl
     }
     
     /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#isMTOMEnabled(java.lang.Object, Class seiClass)
+     */
+    public boolean isMTOMEnabled(Object key, Class seiClass) {
+        if(log.isDebugEnabled()) {
+            log.debug("isMTOMEnabled, key= " + key + ", seiClass= " + seiClass);
+        }
+        
+        boolean mtomEnabled = false;
+        DescriptionBuilderComposite sparseComposite = getDescriptionBuilderComposite().getSparseComposite(key);
+        if(sparseComposite != null
+                &&
+                seiClass != null) {
+            Map<String, Boolean> seiToMTOM = (Map<String, Boolean>) 
+                sparseComposite.getProperties().get(MDQConstants.SEI_MTOM_ENABLEMENT_MAP);
+            if(seiToMTOM != null
+                    &&
+                    seiToMTOM.get(seiClass.getName()) != null) {
+                mtomEnabled = seiToMTOM.get(seiClass.getName());
+            }
+            else {
+                mtomEnabled = isMTOMEnabled(key);
+            }
+        }
+        else {
+            mtomEnabled = isMTOMEnabled(key);
+        }
+        
+        if(log.isDebugEnabled()) {
+            log.debug("isMTOMEnabled, key= " + key + ", seiClass= " + seiClass + ", isMTOMEnabled= " + mtomEnabled);
+        }
+        return mtomEnabled;
+    }
+    
+    /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getPreferredPort(java.lang.Object)
      */
     public QName getPreferredPort(Object key) {
@@ -2275,7 +2309,7 @@ class ServiceDescriptionImpl
             innerMap.put(endpointDescriptionImpl.getPortQName(), endpointDescriptionImpl);
         }
     }
-    
+        
     /** Return a string representing this Description object and all the objects it contains. */
     public String toString() {
         final String newline = "\n";

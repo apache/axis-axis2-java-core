@@ -144,6 +144,23 @@ public interface ServiceDescription {
      */
     public boolean isMTOMEnabled(Object key);
     
+    /**
+     * Answer if MTOM is enabled for the service represented by this Service Description  
+     * and the service-endpoint-interface indicated. This is currently only supported on the 
+     * service-requester side; it is not supported on the service-provider side.  If the key is 
+     * non-null, it is used to look up an sparse metadata that may have been specified when the 
+     * Service Description was created. If the seiClass is non-null it is used to further scope
+     * the enablement of MTOM to a specific SEI.
+     *  
+     * @param key If non-null, used to look up any sparse metadata that may have been specified
+     *     when the service was created.
+     * @param seiClass Represents client service-endpoint-interface class.
+     * 
+     * @return TRUE if mtom was enabled either in the sparse metadata or in the composite; FALSE
+     *     othewise.
+     */
+    public boolean isMTOMEnabled(Object key, Class seiClass);
+    
     public QName getPreferredPort(Object key);
     
     public JAXWSCatalogManager getCatalogManager();
