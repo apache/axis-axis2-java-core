@@ -1317,6 +1317,31 @@ class ServiceDescriptionImpl
     }
     
     /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.ServiceDescription#getBindingProperites(java.lang.Object, String key)
+     */
+    public Map<String, Object> getBindingProperties(Object serviceDelegateKey, String key) {
+        if(log.isDebugEnabled()) {
+            log.debug("getBindingProperties, serviceDelegateKey= " + serviceDelegateKey + 
+                      ", key= " + key);
+        }
+
+        Map<String, Object> bindingProps = null;
+        DescriptionBuilderComposite sparseComposite = getDescriptionBuilderComposite().getSparseComposite(serviceDelegateKey);
+        if(sparseComposite != null) {
+            Map<String, Map<String, Object>> allBindingProps = (Map<String, Map<String, Object>>) 
+                sparseComposite.getProperties().get(MDQConstants.BINDING_PROPS_MAP);
+            bindingProps = allBindingProps != null ? (Map<String, Object>) allBindingProps.get(key) : null;
+        }
+
+        if(log.isDebugEnabled()) {
+            log.debug("getBindingProperties, serviceDelegateKey= " + serviceDelegateKey + 
+                      ", key= " + key + ", propsSize= " + (bindingProps != null ? bindingProps.size() : 0));
+        }    
+
+        return bindingProps;
+    }
+
+    /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getPreferredPort(java.lang.Object)
      */
     public QName getPreferredPort(Object key) {

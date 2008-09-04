@@ -134,6 +134,25 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                 ((SOAPBinding) binding).setMTOMEnabled(true);
             }
         }
+                
+        // check for properties that need to be set on the BindingProvider
+        String seiName = null;
+        if(endpointDesc.getEndpointInterfaceDescription() != null 
+                &&
+                endpointDesc.getEndpointInterfaceDescription().getSEIClass() != null) {
+            seiName = endpointDesc.getEndpointInterfaceDescription().getSEIClass().getName();
+        }
+        String portQNameString = endpointDesc.getPortQName().toString();
+        String key = seiName + ":" + portQNameString;
+        Map<String, Object> bProps = endpointDesc.getServiceDescription().getBindingProperties(serviceDelegate, key);
+        if(bProps != null) {
+            if(log.isDebugEnabled()) {
+                log.debug("Setting binding props with size: " + bProps.size() + " on " +
+                "BindingProvider RequestContext");
+            }
+            requestContext.putAll(bProps);
+        }
+        
         binding.setHandlerChain(handlerResolver.getHandlerChain(endpointDesc.getPortInfo()));
         
         //Set JAX-WS 2.1 related properties.

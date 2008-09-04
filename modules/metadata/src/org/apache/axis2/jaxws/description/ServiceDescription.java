@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.handler.PortInfo;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A ServiceDescription corresponds to a Service under which there can be a collection of enpdoints.
@@ -203,5 +204,17 @@ public interface ServiceDescription {
      * @param delegate The ServiceDelegate instance that owns this ServiceDescription.
      */
     public void releaseResources(Object delegate);
+        
+    /**
+     * This method is responsible for querying the metadata for properties associated with
+     * a given BindingProvider instance. This is only applicable for the requestor-side, and
+     * the properties are scoped at the port level.
+     * @param serviceDelegateKey This should always be non-null when called via ServiceDelegate and is
+     *                            used to help retrieve dynamic ports per client
+     * @param key This should always be non-null and is used to retrieve properties for a given
+     *            client-side port
+     * @return 
+     */
+    public Map<String, Object> getBindingProperties(Object serviceDelegateKey, String key);
 
 }
