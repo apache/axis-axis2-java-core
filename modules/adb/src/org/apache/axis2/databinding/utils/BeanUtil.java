@@ -28,6 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
+import org.apache.axis2.databinding.utils.reader.ArrayObjectWrapper;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.java2wsdl.TypeTable;
@@ -93,43 +94,6 @@ public class BeanUtil {
             name = name.replace('$', '_');
         }
         return name;
-    }
-
-    /**
-     * this method recursively search for all the supper classes to exclude the exclude bean info
-     * @param beanClass
-     * @param axisService
-     * @return
-     * @throws IntrospectionException
-     */
-    private static List<PropertyDescriptor> getPropertiesToSerialize(Class beanClass,
-                                                              AxisService axisService)
-            throws IntrospectionException {
-        List<PropertyDescriptor> propertiesToSerialize = null;
-        Class supperClass = beanClass.getSuperclass();
-
-        if (!getQualifiedName(supperClass.getPackage()).startsWith("java.")){
-            propertiesToSerialize = getPropertiesToSerialize(supperClass, axisService);
-        } else {
-            propertiesToSerialize = new ArrayList<PropertyDescriptor>();
-        }
-
-        BeanExcludeInfo beanExcludeInfo = null;
-        if (axisService != null && axisService.getExcludeInfo() != null) {
-            beanExcludeInfo = axisService.getExcludeInfo().getBeanExcludeInfoForClass(beanClass.getName());
-        }
-        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, beanClass.getSuperclass());
-        PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
-        PropertyDescriptor property = null;
-        for (int i = 0; i < properties.length; i++) {
-            property = properties[i];
-            if (!property.getName().equals("class")) {
-                if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(property.getName())) {
-                    propertiesToSerialize.add(property);
-                }
-            }
-        }
-        return propertiesToSerialize;
     }
 
     private static List getPropertyQnameList(Object beanObject,
@@ -368,12 +332,13 @@ public class BeanUtil {
                         Object objValue = parts.next();
                         if (objValue instanceof OMElement) {
                             omElement = (OMElement)objValue;
-                            if (!arrayLocalName.equals(omElement.getLocalName())) {
+                            if ((arrayLocalName != null) && !arrayLocalName.equals(omElement.getLocalName())) {
                                 continue;
                             }
+                            // this is a multi dimentional array so always inner element is array
                             Object obj = deserialize(arrayClassType,
                                     omElement,
-                                    objectSupplier, arrayLocalName);
+                                    objectSupplier, "array");
                             
                             	valueList.add(obj);
                         }
@@ -737,39 +702,46 @@ public class BeanUtil {
                 objects.add(arg);
                 continue;
             }
-            //todo if the request parameter has name other than argi (0<i<n) , there should be a
-            //way to do that , to solve that problem we need to have RPCRequestParameter
-            //note that The value of request parameter can either be simple type or JavaBean
+
             if (arg instanceof Object[]) {
-                Object array [] = (Object[])arg;
-                for (int j = 0; j < array.length; j++) {
-                    Object o = array[j];
-                    if (o == null) {
-                        objects.add("item" + argCount);
-                        objects.add(o);
-                    } else {
-                        if (SimpleTypeMapper.isSimpleType(o)) {
+                // at the client side the partname is always null. At client side this means user try to
+                // invoke a service with an array argument.
+                if (partName == null) {
+                    Object array [] = (Object[]) arg;
+                    for (int j = 0; j < array.length; j++) {
+                        Object o = array[j];
+                        if (o == null) {
                             objects.add("item" + argCount);
-                            objects.add(SimpleTypeMapper.getStringValue(o));
+                            objects.add(o);
                         } else {
-                            objects.add(new QName("item" + argCount));
-                            if (o instanceof OMElement) {
-                                OMFactory fac = OMAbstractFactory.getOMFactory();
-                                OMElement wrappingElement;
-                                if (partName == null) {
-                                    wrappingElement = fac.createOMElement("item" + argCount, null);
-                                    wrappingElement.addChild((OMElement)o);
-                                } else {
-                                    wrappingElement = fac.createOMElement(partName, null);
-                                    wrappingElement.addChild((OMElement)o);
-                                }
-                                objects.add(wrappingElement);
+                            if (SimpleTypeMapper.isSimpleType(o)) {
+                                objects.add("item" + argCount);
+                                objects.add(SimpleTypeMapper.getStringValue(o));
                             } else {
-                                objects.add(o);
+                                objects.add(new QName("item" + argCount));
+                                if (o instanceof OMElement) {
+                                    OMFactory fac = OMAbstractFactory.getOMFactory();
+                                    OMElement wrappingElement;
+                                    if (partName == null) {
+                                        wrappingElement = fac.createOMElement("item" + argCount, null);
+                                        wrappingElement.addChild((OMElement) o);
+                                    } else {
+                                        wrappingElement = fac.createOMElement(partName, null);
+                                        wrappingElement.addChild((OMElement) o);
+                                    }
+                                    objects.add(wrappingElement);
+                                } else {
+                                    objects.add(o);
+                                }
                             }
                         }
                     }
+                } else {
+                    // this happens at the server side. this means it is an multidimentional array.
+                    objects.add(partName);
+                    objects.add(arg);
                 }
+
             } else {
                 if (SimpleTypeMapper.isSimpleType(arg)) {
                     if (partName == null) {

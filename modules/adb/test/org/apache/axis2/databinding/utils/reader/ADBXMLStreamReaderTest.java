@@ -424,10 +424,10 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         try {
             String expectedXML =
                     "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<StringInfo><StringInfo>Some Text 0</StringInfo>" +
-                            "<StringInfo>Some Text 1</StringInfo>" +
-                            "<StringInfo>Some Text 2</StringInfo>" +
-                            "<StringInfo>Some Text 3</StringInfo></StringInfo>" +
+                            "<StringInfo><array>Some Text 0</array>" +
+                            "<array>Some Text 1</array>" +
+                            "<array>Some Text 2</array>" +
+                            "<array>Some Text 3</array></StringInfo>" +
                             "</ns1:TestComplexStringArrayScenario>";
 
             ArrayList propertyList = new ArrayList();
@@ -465,10 +465,10 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
         try {
             String expectedXML =
                     "<ns1:TestComplexStringArrayScenario xmlns:ns1=\"http://testComplexStringArrayScenario.org\">" +
-                            "<StringInfo><StringInfo>Some Text 0</StringInfo>" +
-                            "<StringInfo xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
-                            "<StringInfo>Some Text 2</StringInfo>" +
-                            "<StringInfo>Some Text 3</StringInfo></StringInfo>" +
+                            "<StringInfo><array>Some Text 0</array>" +
+                            "<array xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>" +
+                            "<array>Some Text 2</array>" +
+                            "<array>Some Text 3</array></StringInfo>" +
                             "</ns1:TestComplexStringArrayScenario>";
 
             ArrayList propertyList = new ArrayList();
@@ -515,10 +515,10 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
                             "<Age>25</Age>" +
                             "<Sex>Male</Sex>" +
                             "</Dependent>" +
-                            "<StringInfo><StringInfo>Some Text 0</StringInfo>" +
-                            "<StringInfo>Some Text 1</StringInfo>" +
-                            "<StringInfo>Some Text 2</StringInfo>" +
-                            "<StringInfo>Some Text 3</StringInfo></StringInfo>" +
+                            "<StringInfo><array>Some Text 0</array>" +
+                            "<array>Some Text 1</array>" +
+                            "<array>Some Text 2</array>" +
+                            "<array>Some Text 3</array></StringInfo>" +
                             "<Bar>Some More Text</Bar>" +
                             "</ns1:TestComplexStringArrayScenario>";
 
@@ -567,11 +567,11 @@ public class ADBXMLStreamReaderTest extends XMLTestCase {
             String expectedXML = "<ns1:TestComplexStringArrayScenario " +
                     "xmlns:ns1=\"http://testComplexStringArrayScenario.org\" " +
                     ">" +
-                    "<StringInfo><StringInfo>Some Text 0</StringInfo>" +
-                    "<StringInfo xsi:nil=\"true\" " +
-                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></StringInfo>" +
-                    "<StringInfo>Some Text 2</StringInfo>" +
-                    "<StringInfo>Some Text 3</StringInfo></StringInfo>" +
+                    "<StringInfo><array>Some Text 0</array>" +
+                    "<array xsi:nil=\"true\" " +
+                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"></array>" +
+                    "<array>Some Text 2</array>" +
+                    "<array>Some Text 3</array></StringInfo>" +
                     "</ns1:TestComplexStringArrayScenario>";
 
             ArrayList propertyList = new ArrayList();

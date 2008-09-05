@@ -954,7 +954,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                 List objects = new ArrayList();
 
                 for (int i = 0; i < objectArray.length; i++) {
-                    objects.add(propertyQName);
+                    //for innter Arrary Complex types we use the special local name array
+                    objects.add(new QName(propertyQName.getNamespaceURI(), "array"));
                     objects.add(objectArray[i]);
                 }
 
