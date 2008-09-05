@@ -579,7 +579,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
                     xmlSchemaComplexType.setParticle(xmlSchemaSequence);
                     generateSchemaforFieldsandProperties(xmlSchema,
-                            xmlSchemaSequence, type.getComponentType(), name, true);
+                            xmlSchemaSequence, type.getComponentType(), "array", true);
 
                     xmlSchemaComplexType.setName(simpleTypeName);
                     xmlSchema.getItems().add(xmlSchemaComplexType);
@@ -675,7 +675,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
                     XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
                     xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    generateSchemaForType(xmlSchemaSequence, type.getComponentType(), partName);
+                    generateSchemaForType(xmlSchemaSequence, type.getComponentType(), "array");
                     xmlSchemaComplexType.setName(simpleTypeName);
                     xmlSchema.getItems().add(xmlSchemaComplexType);
                     xmlSchema.getSchemaTypes().add(
