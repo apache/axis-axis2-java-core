@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -223,5 +225,48 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             }
         }
         return null;
+    }
+        
+    /**
+     * Convert a String to a URI, handling special characters in the String such as
+     * spaces.
+     * 
+     * @param pathString The String to be converted to a URI
+     * @return a URI or null if the String can't be converted.
+     */
+    public static URI createURI(String pathString) {
+        URI pathURI = null;
+        if (pathString == null || "".equals(pathString)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Path string argument is invalid [" + pathString + "]; returning null");
+            }
+            return null;
+        }
+
+        try {
+            pathURI = new URI(pathString);
+        }
+        catch (URISyntaxException ex1) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to create URI from [" + pathString + 
+                          "], trying alternative approach");
+            }
+            /*
+             * The URI creation requires special characters, such as spaces, be escaped or
+             * converted.  The 5 argument constuctor will do that for us.
+             */
+            try {
+                pathURI = new URI(null, null, pathString, null);
+            } catch (URISyntaxException ex2) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to create URI using alternative approach; returning null.  Exception caught during inital attempt: " 
+                              + JavaUtils.stackToString(ex1));
+                    log.debug("Exception caught during alternet attemt " 
+                              + JavaUtils.stackToString(ex2));
+                }
+                log.error(ex2.toString(), ex2);
+            }
+        }
+        return pathURI;
     }
 }

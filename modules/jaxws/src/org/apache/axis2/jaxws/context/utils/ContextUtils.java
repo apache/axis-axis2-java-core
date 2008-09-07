@@ -29,6 +29,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,13 +72,10 @@ public class ContextUtils {
             if (sd != null) {
                 String wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
                 if (wsdlLocation != null && !"".equals(wsdlLocation)) {
-                    URI wsdlLocationURI = null;
-                    try {
-                        wsdlLocationURI = new URI(wsdlLocation);
-                    }
-                    catch (URISyntaxException ex) {
+                    URI wsdlLocationURI = JavaUtils.createURI(wsdlLocation);
+                    if (wsdlLocationURI == null) {
                         log.warn(Messages.getMessage("addPropertiesErr",
-                        		wsdlLocation.toString(),description.getServiceQName().toString()), ex);
+                                 wsdlLocation.toString(),description.getServiceQName().toString()));
                     }
                     soapMessageContext
                             .put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
