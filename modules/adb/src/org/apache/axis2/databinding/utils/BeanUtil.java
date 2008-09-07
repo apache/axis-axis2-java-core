@@ -28,7 +28,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
-import org.apache.axis2.databinding.utils.reader.ArrayObjectWrapper;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.java2wsdl.TypeTable;
@@ -102,7 +101,7 @@ public class BeanUtil {
                                              TypeTable typeTable,
                                              boolean qualified,
                                              boolean processingDocLitBare) {
-        List propertyQnameValueList = null;
+        List propertyQnameValueList;
         Class supperClass = beanClass.getSuperclass();
 
         if (!getQualifiedName(supperClass.getPackage()).startsWith("java.")) {
@@ -137,11 +136,12 @@ public class BeanUtil {
             }
             BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, beanClass.getSuperclass());
             PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
-            PropertyDescriptor property = null;
-            for (int i = 0; i < properties.length; i++) {
-                property = properties[i];
+            PropertyDescriptor property;
+            for (PropertyDescriptor property1 : properties) {
+                property = property1;
                 if (!property.getName().equals("class")) {
-                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(property.getName())) {
+                    if ((beanExcludeInfo == null) ||
+                        !beanExcludeInfo.isExcludedProperty(property.getName())) {
                         Class ptype = property.getPropertyType();
                         if (SimpleTypeMapper.isSimpleType(ptype)) {
                             Method readMethod = property.getReadMethod();
@@ -150,11 +150,14 @@ public class BeanUtil {
                                 readMethod.setAccessible(true);
                                 value = readMethod.invoke(beanObject, null);
                             } else {
-                                throw new AxisFault("can not find read method for : " + property.getName());
+                                throw new AxisFault(
+                                        "can not find read method for : " + property.getName());
                             }
 
-                            addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
-                            propertyQnameValueList.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
+                            addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                         beanName, processingDocLitBare);
+                            propertyQnameValueList.add(
+                                    value == null ? null : SimpleTypeMapper.getStringValue(value));
                         } else if (ptype.isArray()) {
                             if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                                 Method readMethod = property.getReadMethod();
@@ -163,41 +166,47 @@ public class BeanUtil {
                                     readMethod.setAccessible(true);
                                     value = readMethod.invoke(beanObject, null);
                                 } else {
-                                    throw new AxisFault("can not find read method for : " + property.getName());
+                                    throw new AxisFault(
+                                            "can not find read method for : " + property.getName());
                                 }
                                 if (value != null) {
                                     if ("byte".equals(ptype.getComponentType().getName())) {
-                                        addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
-                                        propertyQnameValueList.add(Base64.encode((byte[]) value));
+                                        addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                     property, beanName, processingDocLitBare);
+                                        propertyQnameValueList.add(Base64.encode((byte[])value));
                                     } else {
                                         int i1 = Array.getLength(value);
                                         for (int j = 0; j < i1; j++) {
                                             Object o = Array.get(value, j);
-                                            addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
-                                            propertyQnameValueList.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
+                                            addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                         property, beanName, processingDocLitBare);
+                                            propertyQnameValueList.add(o == null ? null :
+                                                    SimpleTypeMapper.getStringValue(o));
                                         }
                                     }
                                 } else {
-                                    addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                    addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                                 beanName, processingDocLitBare);
                                     propertyQnameValueList.add(value);
                                 }
                             } else {
                                 Method readMethod = property.getReadMethod();
-                                Object value [] = null;
+                                Object value[] = null;
                                 if (readMethod != null) {
                                     readMethod.setAccessible(true);
-                                    value = (Object[]) property.getReadMethod().invoke(beanObject,
-                                            null);
+                                    value = (Object[])property.getReadMethod().invoke(beanObject,
+                                                                                      null);
                                 }
 
                                 if (value != null) {
-                                    for (int j = 0; j < value.length; j++) {
-                                        Object o = value[j];
-                                        addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                    for (Object o : value) {
+                                        addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                     property, beanName, processingDocLitBare);
                                         propertyQnameValueList.add(o);
                                     }
                                 } else {
-                                    addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                    addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                                 beanName, processingDocLitBare);
                                     propertyQnameValueList.add(value);
                                 }
                             }
@@ -205,38 +214,41 @@ public class BeanUtil {
                             Method readMethod = property.getReadMethod();
                             readMethod.setAccessible(true);
                             Object value = readMethod.invoke(beanObject,
-                                    null);
-                            Collection objList = (Collection) value;
+                                                             null);
+                            Collection objList = (Collection)value;
                             if (objList != null && objList.size() > 0) {
                                 //this was given error , when the array.size = 0
                                 // and if the array contain simple type , then the ADBPullParser asked
                                 // PullParser from That simpel type
-                                for (Iterator j = objList.iterator(); j.hasNext();) {
-                                    Object o = j.next();
+                                for (Object o : objList) {
                                     if (SimpleTypeMapper.isSimpleType(o)) {
-                                        addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                        addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                     property, beanName, processingDocLitBare);
                                         propertyQnameValueList.add(o);
                                     } else {
-                                        addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                        addTypeQname(elemntNameSpace, propertyQnameValueList,
+                                                     property, beanName, processingDocLitBare);
                                         propertyQnameValueList.add(o);
                                     }
                                 }
 
                             } else {
-                                addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                                addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                             beanName, processingDocLitBare);
                                 propertyQnameValueList.add(value);
                             }
                         } else {
-                            addTypeQname(elemntNameSpace, propertyQnameValueList, property, beanName, processingDocLitBare);
+                            addTypeQname(elemntNameSpace, propertyQnameValueList, property,
+                                         beanName, processingDocLitBare);
                             Method readMethod = property.getReadMethod();
                             readMethod.setAccessible(true);
                             Object value = readMethod.invoke(beanObject,
-                                    null);
+                                                             null);
                             if ("java.lang.Object".equals(ptype.getName())) {
                                 if ((value instanceof Integer) ||
-                                        (value instanceof Short) ||
-                                        (value instanceof Long) ||
-                                        (value instanceof Float)) {
+                                    (value instanceof Short) ||
+                                    (value instanceof Long) ||
+                                    (value instanceof Float)) {
                                     propertyQnameValueList.add(value.toString());
                                     continue;
                                 }
@@ -354,14 +366,11 @@ public class BeanUtil {
                 HashMap properties = new HashMap();
                 BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
                 PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();
-                for (int i = 0; i < propDescs.length; i++) {
-                    PropertyDescriptor proprty = propDescs[i];
+                for (PropertyDescriptor proprty : propDescs) {
                     properties.put(proprty.getName(), proprty);
                 }
                 Iterator elements = beanElement.getChildren();
-                if (beanObj == null) {
-                    beanObj = objectSupplier.getObject(beanClass);
-                }
+                beanObj = objectSupplier.getObject(beanClass);
                 while (elements.hasNext()) {
                     // the beanClass could be an abstract one.
                     // so create an instance only if there are elements, in
@@ -382,7 +391,7 @@ public class BeanUtil {
                     PropertyDescriptor prty = (PropertyDescriptor)properties.remove(partsLocalName);
                     if (prty != null) {
                         Class parameters = prty.getPropertyType();
-                        if (prty.equals("class"))
+                        if (prty.getName().equals("class"))
                             continue;
 
                         Object partObj;
@@ -453,7 +462,7 @@ public class BeanUtil {
                         partsLocalName.toLowerCase());
                 if (prty != null) {
                     Class parameters = prty.getPropertyType();
-                    if (prty.equals("class"))
+                    if (prty.getName().equals("class"))
                         continue;
                     Object partObj;
                     OMAttribute attr = MultirefHelper.processRefAtt(parts);
