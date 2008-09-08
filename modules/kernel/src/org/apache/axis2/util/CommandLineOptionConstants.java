@@ -51,6 +51,8 @@ public interface CommandLineOptionConstants {
         String OUTPUT_LOCATION_OPTION_LONG = "output";
         String OVERRIDE_OPTION = "or";
         String OVERRIDE_OPTION_LONG = "over-ride";
+        String EXCEPTION_BASE_CLASS_OPTION = "ebc";
+        String EXCEPTION_BASE_CLASS_OPTION_LONG = "exception-base-class";
         String OVERRIDE_ABSOLUTE_ADDRESS_OPTION = "oaa";
         String OVERRIDE_ABSOLUTE_ADDRESS_OPTION_LONG = "override-absolute-address";
         String PACKAGE_OPTION = "p";
