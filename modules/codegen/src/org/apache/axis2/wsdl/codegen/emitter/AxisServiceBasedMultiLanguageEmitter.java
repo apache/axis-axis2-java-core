@@ -1051,6 +1051,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     (String) faultClassNameMap.get(key),
                     faultElement);
 
+            //added the base exception class name
+            if (this.codeGenConfiguration.getExceptionBaseClassName() != null) {
+                addAttribute(doc, "exceptionBaseClass",
+                        this.codeGenConfiguration.getExceptionBaseClassName(), faultElement);
+            } else {
+                addAttribute(doc, "exceptionBaseClass", Exception.class.getName(), faultElement);
+            }
+
             //the type represents the type that will be wrapped by this
             //name
             String typeMapping =

@@ -63,6 +63,8 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
                     WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.OVERRIDE_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.OVERRIDE_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.EXCEPTION_BASE_CLASS_OPTION.equalsIgnoreCase(optionType) ||
+                    WSDL2JavaConstants.EXCEPTION_BASE_CLASS_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.OVERRIDE_ABSOLUTE_ADDRESS_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.OVERRIDE_ABSOLUTE_ADDRESS_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.PACKAGE_OPTION.equalsIgnoreCase(optionType) ||

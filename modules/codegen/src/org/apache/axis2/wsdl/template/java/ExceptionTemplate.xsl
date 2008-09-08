@@ -29,7 +29,7 @@
 
 package <xsl:value-of select="@package"/>;
 
-public class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
+public class <xsl:value-of select="@shortName"/> extends <xsl:value-of select="@exceptionBaseClass"/>{
     
     private <xsl:value-of select="@type"/> faultMessage;
     
