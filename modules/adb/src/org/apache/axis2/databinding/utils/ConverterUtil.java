@@ -1521,7 +1521,7 @@ public class ConverterUtil {
                 NamespaceContext namespaceContext = xmlStreamReader.getNamespaceContext();
                 String attributeNameSpace = namespaceContext.getNamespaceURI(attributeTypePrefix);
 
-                if (attributeNameSpace.equals(Constants.XSD_NAMESPACE)) {
+                if (Constants.XSD_NAMESPACE.equals(attributeNameSpace)) {
                     if ("base64Binary".equals(attributeType)) {
                         xmlStreamReader.next();
                         returnObject = getDataHandlerObject(xmlStreamReader);
