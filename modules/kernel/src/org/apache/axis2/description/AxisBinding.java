@@ -223,6 +223,13 @@ public class AxisBinding extends AxisDescription {
         Iterator iterator = this.getChildren();
         while (iterator.hasNext()) {
             AxisBindingOperation axisBindingOperation = (AxisBindingOperation)iterator.next();
+            AxisOperation axisOperation = axisBindingOperation.getAxisOperation();
+
+            // If the axisOperation corresponding to this is a control operation we do not want to
+            // have it listed in the WSDL
+            if (axisOperation != null && axisOperation.isControlOperation()) {
+                continue;
+            }
             bindingElement.addChild(axisBindingOperation.toWSDL20(wsdl, tns, wsoap, whttp, type,
                                                                   nameSpaceMap, serviceName));
         }
