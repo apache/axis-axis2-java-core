@@ -161,30 +161,37 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
      * @return the SAAJ Node corresponding to the domNode
      */
     javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
+        return toSAAJNode(domNode, this);
+    }
+    
+    /**
+     * Converts or extracts the SAAJ node from the given DOM Node (domNode)
+     *
+     * @param domNode
+     * @return the SAAJ Node corresponding to the domNode
+     */
+    static javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode, Node parentNode) {
         if (domNode == null) {
             return null;
         }
+        Node saajNode = (Node)((NodeImpl)domNode).getUserData(SAAJ_NODE);
+        if (saajNode == null) {  // if SAAJ node has not been set in userData, try to construct it
+            return toSAAJNode2(domNode, parentNode);
+        }
+        // update siblings for text nodes
         if (domNode instanceof org.w3c.dom.Text || domNode instanceof org.w3c.dom.Comment) {
             org.w3c.dom.Node prevSiblingDOMNode = domNode.getPreviousSibling();
             org.w3c.dom.Node nextSiblingDOMNode = domNode.getNextSibling();
-
-            TextImplEx saajTextNode = (TextImplEx)((NodeImpl)domNode).getUserData(SAAJ_NODE);
-            if (saajTextNode == null) {
-                // if SAAJ node has not been set in userData, try to construct it
-                return toSAAJNode2(domNode);
-            }
+            
+            TextImplEx saajTextNode = (TextImplEx)saajNode;
+            
             saajTextNode.setPreviousSibling(prevSiblingDOMNode);
             saajTextNode.setNextSibling(nextSiblingDOMNode);
-            return saajTextNode;
-        }
-        Node saajNode = (Node)((NodeImpl)domNode).getUserData(SAAJ_NODE);
-        if (saajNode == null) {  // if SAAJ node has not been set in userData, try to construct it
-            return toSAAJNode2(domNode);
         }
         return saajNode;
     }
 
-    private javax.xml.soap.Node toSAAJNode2(org.w3c.dom.Node domNode) {
+    private static javax.xml.soap.Node toSAAJNode2(org.w3c.dom.Node domNode, Node parentNode) {
         if (domNode == null) {
             return null;
         }
@@ -260,13 +267,13 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
         } else if (domNode instanceof org.apache.axiom.om.impl.dom.DocumentImpl) {
             
             // Must be a SOAPEnvelope
-            if (!(this instanceof org.apache.axis2.saaj.SOAPEnvelopeImpl)) {
+            if (!(parentNode instanceof org.apache.axis2.saaj.SOAPEnvelopeImpl)) {
                 return null;
             }
             org.apache.axiom.om.impl.dom.DocumentImpl doomDocument
                 = (org.apache.axiom.om.impl.dom.DocumentImpl)domNode;
             org.apache.axis2.saaj.SOAPEnvelopeImpl saajEnv = 
-                (org.apache.axis2.saaj.SOAPEnvelopeImpl) this;
+                (org.apache.axis2.saaj.SOAPEnvelopeImpl) parentNode;
             javax.xml.soap.SOAPPart saajSOAPPart = null;
             if (saajEnv.getSOAPPartParent() != null) {
                 // return existing SOAPPart

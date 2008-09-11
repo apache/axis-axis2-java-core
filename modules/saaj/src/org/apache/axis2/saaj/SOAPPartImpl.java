@@ -844,7 +844,7 @@ public class SOAPPartImpl extends SOAPPart {
      * been removed from the tree, this is <code>null</code>.
      */
     public Node getParentNode() {
-        return document.getParentNode();
+        return toSAAJNode(document.getParentNode());
     }
 
     /**
@@ -852,17 +852,22 @@ public class SOAPPartImpl extends SOAPPart {
      * this is a <code>NodeList</code> containing no nodes.
      */
     public NodeList getChildNodes() {
-        return document.getChildNodes();
+        NodeList childNodes = document.getChildNodes();
+        NodeListImpl nodes = new NodeListImpl();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            nodes.addNode(toSAAJNode(childNodes.item(i)));
+        }
+        return nodes;
     }
 
     /** The first child of this node. If there is no such node, this returns <code>null</code>. */
     public Node getFirstChild() {
-        return document.getFirstChild();
+        return toSAAJNode(document.getFirstChild());
     }
 
     /** The last child of this node. If there is no such node, this returns <code>null</code>. */
     public Node getLastChild() {
-        return document.getLastChild();
+        return toSAAJNode(document.getLastChild());
     }
 
     /**
@@ -870,7 +875,7 @@ public class SOAPPartImpl extends SOAPPart {
      * <code>null</code>.
      */
     public Node getPreviousSibling() {
-        return document.getPreviousSibling();
+        return toSAAJNode(document.getPreviousSibling());
     }
 
     /**
@@ -878,7 +883,7 @@ public class SOAPPartImpl extends SOAPPart {
      * <code>null</code>.
      */
     public Node getNextSibling() {
-        return document.getNextSibling();
+        return toSAAJNode(document.getNextSibling());
     }
 
     /**
@@ -957,6 +962,11 @@ public class SOAPPartImpl extends SOAPPart {
      *                      this node.
      */
     public Node removeChild(Node oldChild) throws DOMException {
+        if (oldChild instanceof SOAPElementImpl) {
+            oldChild = ((SOAPElementImpl)oldChild).getElement();
+        } else if (oldChild instanceof TextImplEx) {
+            // TODO: handle text nodes somehow
+        }
         return document.removeChild(oldChild);
     }
 
@@ -1224,5 +1234,9 @@ public class SOAPPartImpl extends SOAPPart {
 
     public void setValue(String value) {
     	throw new IllegalStateException("Cannot set value of SOAPPart.");
+    }
+    
+    javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node domNode) {
+        return NodeImplEx.toSAAJNode(domNode, this);
     }
 }

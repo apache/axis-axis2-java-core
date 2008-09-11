@@ -866,6 +866,15 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return element.toString();
     }
         
+    public Node removeChild(Node oldChild) throws DOMException {
+        if (oldChild instanceof SOAPElementImpl) {
+            oldChild = ((SOAPElementImpl)oldChild).getElement();
+        } else if (oldChild instanceof TextImplEx) {
+            // TODO: handle text nodes somehow
+        }
+        return element.removeChild(oldChild);
+    }
+    
     public Node appendChild(Node child) throws DOMException {        
         if (getOwnerDocument() != child.getOwnerDocument()) {
             throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "Wrong document");

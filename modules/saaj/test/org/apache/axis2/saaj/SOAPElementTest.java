@@ -819,4 +819,34 @@ public class SOAPElementTest extends TestCase {
         assertEquals("DEF", text.getData());
         assertFalse(iter.hasNext());               
     }
+    
+    public void testRemoveChild() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPBody soapBody = message.getSOAPBody();
+
+        assertFalse(soapBody.getChildElements().hasNext());
+        
+        QName qname1 = new QName("http://wombat.ztrade.com",
+                                 "GetLastTradePrice", "ztrade");
+        SOAPElement child = soapBody.addChildElement(qname1);
+        child.addTextNode("foo");
+        
+        assertTrue(child.getChildElements().hasNext());
+        
+        Node textNode = (Node)child.getChildElements().next();
+        assertTrue(textNode instanceof Text);
+        
+        /* 
+        child.removeChild(textNode);
+        
+        assertFalse(child.getChildElements().hasNext());
+        */
+        
+        assertTrue(soapBody.getChildElements().hasNext());
+        
+        soapBody.removeChild(child);
+        
+        assertFalse(soapBody.getChildElements().hasNext());
+    }
 }
