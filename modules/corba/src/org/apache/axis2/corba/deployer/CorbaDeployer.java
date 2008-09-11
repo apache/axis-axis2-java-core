@@ -89,19 +89,21 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
     }
 
     public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
+        String name = null;
         try {
             deploymentFileData.setClassLoader(axisConfig.getServiceClassLoader());
             AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
             serviceGroup.setServiceGroupClassLoader(deploymentFileData.getClassLoader());
             ArrayList serviceList = processService(deploymentFileData, serviceGroup, configCtx);
             DeploymentEngine.addServiceGroup(serviceGroup, serviceList, deploymentFileData.getFile().toURL(), deploymentFileData, axisConfig);
-            log.info("Deploying " + deploymentFileData.getName());
+            name = deploymentFileData.getName();
+            log.info("Deploying " + name);
         } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
+            log.error("Error while deploying " + name, axisFault);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.error("Error while deploying " + name, e);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while deploying " + name, e);
         }
     }
 
@@ -324,7 +326,7 @@ public class CorbaDeployer implements Deployer, DeploymentConstants, CorbaConsta
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()), axisFault);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new DeploymentException(e);
         }
     }
 
