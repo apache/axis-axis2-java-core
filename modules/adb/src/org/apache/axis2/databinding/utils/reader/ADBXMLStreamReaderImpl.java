@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.util.OMSerializerUtil;
 import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.description.java2wsdl.TypeTable;
@@ -35,6 +36,7 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.util.*;
+import java.lang.reflect.Array;
 
 /**
  * This is the new implementation of the ADBpullaparser. The approach here is simple When the pull
@@ -945,18 +947,23 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             childReader.init();
         } else if (propertyValue.getClass().isArray()) {
             // this is an arrary object and we need to get the pull parser for that
-            Object[] objectArray = (Object[]) propertyValue;
-            if (objectArray.length == 0) {
+            int length = Array.getLength(propertyValue);
+            if (length == 0) {
                 //advance the index
                 currentPropertyIndex = currentPropertyIndex + 2;
                 return processProperties();
             } else {
                 List objects = new ArrayList();
-
-                for (int i = 0; i < objectArray.length; i++) {
+                Object valueObject = null;
+                for (int i = 0; i < length; i++) {
                     //for innter Arrary Complex types we use the special local name array
                     objects.add(new QName(propertyQName.getNamespaceURI(), "array"));
-                    objects.add(objectArray[i]);
+                    valueObject = Array.get(propertyValue, i);
+                    if ((valueObject != null) && SimpleTypeMapper.isSimpleType(valueObject)){
+                        objects.add(SimpleTypeMapper.getStringValue(valueObject));
+                    } else {
+                        objects.add(valueObject);
+                    }
                 }
 
                 ADBXMLStreamReader reader = new ADBXMLStreamReaderImpl(propertyQName,
