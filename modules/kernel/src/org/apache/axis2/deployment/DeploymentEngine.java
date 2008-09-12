@@ -24,6 +24,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -59,12 +60,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class DeploymentEngine implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
@@ -174,6 +174,71 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         }
     }
 
+    private void loadCustomServices(URL repoURL){
+        Map directoryToExtensionMappingMap = getDirectoryToExtensionMappingMap();
+        if (directoryToExtensionMappingMap.size() > 0) {
+            Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
+            while (keys.hasNext()) {
+                try {
+                    String directory = (String)keys.next();
+                    ArrayList list = (ArrayList)directoryToExtensionMappingMap.get(directory);
+                    String listName;
+                    if (!directory.endsWith("/")) {
+                        listName = directory + ".list";
+                        directory += "/";
+                    } else {
+                        listName = directory.replaceAll("/","") + ".list";
+                    }
+                    String repoPath = repoURL.getPath();
+                    if (!repoPath.endsWith("/")) {
+                        repoPath += "/";
+                        repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
+                    }
+
+                    URL servicesDir = new URL(repoURL, directory);
+                    URL filelisturl = new URL(servicesDir, listName);
+                    ArrayList files = getFileList(filelisturl);
+                    for (int i = 0; i < files.size(); i++) {
+                        String fileName = (String) files.get(i);
+                        Deployer deployer = getDeployerForExtension(getExtension(fileName));
+                        URL servicesURL = new URL(servicesDir, fileName);
+
+                        // We are calling reflection code here , to avoid changes to the interface
+                        Class classToLoad = deployer.getClass();
+                        // We can not call classToLoad.getDeclaredMethed() , since there
+                        //  can be insatnce where mutiple services extends using one class
+                        // just for init and other reflection methods
+                        Method method =
+                                null;
+                        try {
+                            method = classToLoad.getMethod("deployFromURL", new Class[]{URL.class});
+                        } catch (Exception e) {
+                            //We do not need to inform this to user , since this something
+                            // Axis2 is checking to support Session. So if the method is
+                            // not there we should ignore that
+                        }
+                        if (method != null) {
+                            try {
+                                method.invoke(deployer, new Object[]{servicesURL});
+                            } catch (Exception e) {
+                                log.info("Exception trying to call " + "deployFromURL for the deployer" + deployer.getClass() , e);
+                            }
+                        }
+                    }
+
+                } catch (MalformedURLException e) {
+                    //I am just ignoring the error at the moment , but need to think how to handle this
+                }
+
+            }
+        }
+    }
+
+    private String getExtension(String fileName){
+        int lastIndex = fileName.lastIndexOf(".");
+        return fileName.substring(lastIndex +1);
+    }
+
     public void loadServicesFromUrl(URL repoURL) {
         try {
             String path = servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath;
@@ -205,6 +270,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                  servicesURL.toString()));
                 }
             }
+            //Loading other type of services such as custom deployers
+            loadCustomServices(repoURL);
         } catch (MalformedURLException e) {
             log.error(e.getMessage(), e);
         } catch (IOException e) {
