@@ -245,8 +245,91 @@
             return <xsl:value-of select="$name"/>;
         }
 
+        <xsl:variable name="arg_list">
+            <xsl:for-each select="property">
+                <xsl:variable name="propertyType">
+                <xsl:choose>
+                    <xsl:when test="@isarray">axutil_array_list_t*</xsl:when>
+                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                    <xsl:when test="@ours">adb_<xsl:value-of select="@type"/>_t*</xsl:when>
+                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+                </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="CName">_<xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
+                <xsl:text>,
+                </xsl:text><xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$CName"/>
+            </xsl:for-each>
+        </xsl:variable>
+
+        <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_create_with_values(
+            const axutil_env_t *env<xsl:value-of select="$arg_list"/>)
+        {
+            <xsl:value-of select="$axis2_name"/>_t* adb_obj = NULL;
+            axis2_status_t status = AXIS2_SUCCESS;
+
+            adb_obj = <xsl:value-of select="$axis2_name"/>_create(env);
+
+            <xsl:for-each select="property">
+              <xsl:variable name="CName">_<xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
+              status = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="@cname"/>(
+                                     adb_obj,
+                                     env,
+                                     <xsl:value-of select="$CName"/>);
+              if(status == AXIS2_FAILURE) {
+                  <xsl:value-of select="$axis2_name"/>_free (adb_obj, env);
+                  return NULL;
+              }
+            </xsl:for-each>
+            
+
+            return adb_obj;
+        }
+      
+        <xsl:choose>
+            <xsl:when test="count(property)">
+                <xsl:variable name="firstProperty" select="property"/>
+                <xsl:variable name="propertyType">
+                <xsl:choose>
+                    <xsl:when test="$firstProperty/@isarray">axutil_array_list_t*</xsl:when>
+                    <xsl:when test="not($firstProperty/@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                    <xsl:when test="$firstProperty/@ours">adb_<xsl:value-of select="$firstProperty/@type"/>_t*</xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$firstProperty/@type"/></xsl:otherwise>
+                </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="CName"><xsl:value-of select="$firstProperty/@cname"></xsl:value-of></xsl:variable>
+
+                <xsl:value-of select="$propertyType"/> AXIS2_CALL
+                <xsl:value-of select="$axis2_name"/>_free_popping_value(
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                        const axutil_env_t *env)
+                {
+                    <xsl:value-of select="$propertyType"/> value;
+                    
+                    value = <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>;
+
+                    <xsl:if test="@ours or $propertyType='axis2_char_t*' or $propertyType='axutil_qname_t*' or $propertyType='axutil_duration_t*' or $propertyType='axutil_uri_t*' or $propertyType='axutil_date_time_t*' or $propertyType='axutil_base64_binary_t*'">
+                      <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = NULL;
+                    </xsl:if>
+                    <xsl:value-of select="$axis2_name"/>_free(<xsl:value-of select="$name"/>, env);
+
+                    return value;
+                }
+            </xsl:when>
+            <xsl:otherwise>
+                void* AXIS2_CALL
+                <xsl:value-of select="$axis2_name"/>_free_popping_value(
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                        const axutil_env_t *env)
+                {
+                    <xsl:value-of select="$axis2_name"/>_free(<xsl:value-of select="$name"/>, env);
+                    return NULL;
+                }
+            </xsl:otherwise>
+        </xsl:choose>
+
         axis2_status_t AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_free (
+        <xsl:value-of select="$axis2_name"/>_free(
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env)
         {
@@ -4468,6 +4551,18 @@
             </xsl:variable>
 
             /**
+             * Getter for <xsl:value-of select="$propertyName"/> by  Property Number <xsl:value-of select="position()"/>
+             */
+            <xsl:value-of select="$propertyType"/> AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_get_property<xsl:value-of select="position()"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env)
+            {
+                return <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                             env);
+            }
+
+            /**
              * getter for <xsl:value-of select="$propertyName"/>.
              */
             <xsl:value-of select="$propertyType"/> AXIS2_CALL
@@ -5627,6 +5722,18 @@
                 return AXIS2_SUCCESS;
         }
 
+        /**
+         * Getter for <xsl:value-of select="$propertyName"/> by  Property Number <xsl:value-of select="position()"/>
+         */
+        <xsl:value-of select="$propertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_property<xsl:value-of select="position()"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env)
+        {
+            return <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                        const axutil_env_t *env);
+        }
+
 
         /**
          * Getter for <xsl:value-of select="$propertyName"/>.
@@ -5689,6 +5796,7 @@
                 return AXIS2_SUCCESS;
             
         }
+        
 
         /**
          * Resetter for <xsl:value-of select="$propertyName"/>
