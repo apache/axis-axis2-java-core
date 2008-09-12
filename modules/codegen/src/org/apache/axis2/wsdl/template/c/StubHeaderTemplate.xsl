@@ -93,8 +93,19 @@
         <xsl:for-each select="method">
           <xsl:if test="@mep='10' or @mep='12'">
             <xsl:variable name="outputours"><xsl:value-of select="output/param/@ours"></xsl:value-of></xsl:variable>
+            <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
             <xsl:variable name="outputtype">
                 <xsl:choose>
+                    <xsl:when test="$isUnwrapParameters">
+                        <xsl:choose>
+                            <xsl:when test="output/param/param/@ours">
+                                <xsl:text>adb_</xsl:text><xsl:value-of select="output/param/param/@type"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="output/param/param/@type"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
                     <xsl:when test="output/param/@ours=''">axis2_status_t</xsl:when>
                     <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"></xsl:value-of>_t*</xsl:when>
                     <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
@@ -104,68 +115,106 @@
              * Auto generated function declaration
              * for "<xsl:value-of select="@qname"/>" operation.
              * @param stub The stub (axis2_stub_t)
-             * @param env environment ( mandatory)
-             *<xsl:for-each select="input/param[@type!='']"><xsl:text>
-             </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each>
+             * @param env environment ( mandatory)<xsl:if test="not($isUnwrapParameters)"><xsl:for-each select="input/param[@type!='']"><xsl:text>
+             </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each></xsl:if>
+             <xsl:if test="$isUnwrapParameters"><xsl:for-each select="input/param/param[@type!='']"><xsl:text>
+             </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each></xsl:if>
              *<xsl:for-each select="output/param[@location='soap_header']"><xsl:text>
              </xsl:text>* @param dp_<xsl:value-of select="@name"/> - output header</xsl:for-each>
              * @return <xsl:value-of select="$outputtype"/>
              */
 
+            <xsl:variable name="inputparams">
+                <xsl:choose>
+                <xsl:when test="$isUnwrapParameters">
+                                              <xsl:for-each select="input/param/param[@type!='']">,
+                                                  <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                              </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                                              <xsl:for-each select="input/param[@type!='']">,
+                                                  <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                              </xsl:for-each>
+                </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
 
             <xsl:choose>
             <xsl:when test="$outputtype=''">axis2_status_t</xsl:when>
             <xsl:when test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:when>
             </xsl:choose>
             <xsl:text> </xsl:text>
-            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
-                                                        <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
-                                                        <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
-                                                    </xsl:for-each><xsl:for-each select="output/param[@location='soap_header']">,
+            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>( axis2_stub_t *stub, const axutil_env_t *env</xsl:text>
+                                                    <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                         <xsl:variable name="outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t**</xsl:if></xsl:variable>
                                                         <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
                                                     </xsl:for-each>);
           </xsl:if>
-        </xsl:for-each>
-        </xsl:if>  <!--close for  test="$isSync='1'-->
+    </xsl:for-each>
+    </xsl:if>  <!--close for  test="$isSync='1'-->
 
-        <!-- Async method prototype generation -->
-        <xsl:if test="$isAsync='1'">
-        <xsl:for-each select="method">
+    <!-- Async method prototype generation -->
+    <xsl:if test="$isAsync='1'">
+    <xsl:for-each select="method">
         
         <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-
+        <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
         <xsl:variable name="outputtype">
-          <xsl:choose>
-            <xsl:when test="output/param/@ours">
-                <xsl:choose>
-                        <xsl:when test="not(@type='char' or @type='bool' or @type='date_time' or @type='duration')">adb_<xsl:value-of select="output/param/@type"/>_t*</xsl:when>
-                        <xsl:when test="@type='duration' or @type='date_time' or @type='uri' or @type='qname' or @type='base64_binary'">axutil_<xsl:value-of select="@type"/>_t*</xsl:when>
-                        <xsl:otherwise>axis2_<xsl:value-of select="output/param/@type"/>_t*</xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
-          </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="$isUnwrapParameters">
+                    <xsl:choose>
+                        <xsl:when test="output/param/param/@ours">
+                            <xsl:text>adb_</xsl:text><xsl:value-of select="output/param/param/@type"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="output/param/param/@type"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:when test="output/param/@ours=''">axis2_status_t</xsl:when>
+                <xsl:when test="output/param/@ours">adb_<xsl:value-of select="output/param/@type"></xsl:value-of>_t*</xsl:when>
+                <xsl:otherwise><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
+
         <xsl:if test="$mep='12'">
+
+        <xsl:variable name="inputparams">
+            <xsl:choose>
+            <xsl:when test="$isUnwrapParameters">
+                                              <xsl:for-each select="input/param/param[@type!='']">,
+                                                  <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                              </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                                              <xsl:for-each select="input/param[@type!='']">,
+                                                  <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
+                                              </xsl:for-each>
+            </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
 
         /**
          * Auto generated function for asynchronous invocations
-         * for "<xsl:value-of select="@qname"/>" operation.
+         * for "<xsl:value-of select="@qname"/><xsl:text>" operation.
          * @param stub The stub
-         * @param env environment ( mandatory)
+         * @param env environment ( mandatory)</xsl:text>
          <!--  select only the body parameters  -->
-         <xsl:for-each select="input/param[@type!='']">* @param _<xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each>
+         <xsl:if test="not($isUnwrapParameters)"><xsl:for-each select="input/param[@type!='']"><xsl:text>
+         * @param _</xsl:text><xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each></xsl:if>
+         <xsl:if test="$isUnwrapParameters"><xsl:for-each select="input/param/param[@type!='']"><xsl:text>
+         * @param _</xsl:text><xsl:value-of select="@name"/> of the <xsl:if test="@ours"> adb type adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:for-each></xsl:if>
          * @param user_data user data to be accessed by the callbacks
          * @param on_complete callback to handle on complete
          * @param on_error callback to handle on error
          */
 
 
-        void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:for-each select="input/param[@type!='']">,
-                                                    <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
-                                                    <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each>,
+        void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:value-of select="$inputparams"/>,
                                                   void *user_data,
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>

@@ -107,14 +107,14 @@
 
             <xsl:if test="input/param[@location='soap_header']">
              void
-             axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+             axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                      <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                      </xsl:for-each>);
             </xsl:if>
             <xsl:if test="output/param[@location='soap_header']">
              void
-             axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+             axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:variable name="outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                      <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                      </xsl:for-each>);
@@ -191,7 +191,7 @@
      <xsl:for-each select="method">
         <xsl:if test="input/param[@location='soap_header']">
          void
-         axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+         axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="inputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                  </xsl:for-each>)
@@ -222,7 +222,7 @@
      <xsl:for-each select="method">
         <xsl:if test="output/param[@location='soap_header']">
          void
-         axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+         axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="outputtype"><xsl:if test="@ours">adb_</xsl:if><xsl:value-of select="@type"/><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                                  <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
                                                  </xsl:for-each>)
@@ -430,9 +430,11 @@
                 <xsl:variable name="outputCapsType"><xsl:value-of select="output/param/@caps-type"/> </xsl:variable>
                 <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
                 <xsl:variable name="inputtype"><xsl:value-of select="input/param/@type"/></xsl:variable>
+                <xsl:variable name="isUnwrapParameters" select="input/param[@location='body' and @type!='']/@unwrappParameters"/>
 
                 if ( axutil_strcmp(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
                 {
+
                     <xsl:if test="input/param/@type!=''">
                     input_val<xsl:value-of select="$position"/> = <xsl:choose>
                         <xsl:when test="input/param/@ours">
@@ -479,7 +481,7 @@
                         AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "Response header <xsl:value-of select="@name"/> is NULL");
                         <xsl:if test="@ours">
                         /* you can't have a response header NULL, just free things and exit */
-                        axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="../../input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                        axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="../../input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:text>_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                      </xsl:for-each>);
                         adb_<xsl:value-of select="$inputtype"/>_free(input_val<xsl:value-of select="$position"/>, env);
@@ -499,7 +501,7 @@
                             }
                             AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the <xsl:value-of select="@type"/>_deserialize: "
                                                                     "This should be due to an invalid input header");
-                            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="../../input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                            axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="../../input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                           <xsl:text>_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             adb_<xsl:value-of select="$inputtype"/>_free(input_val<xsl:value-of select="$position"/>, env);
@@ -514,12 +516,44 @@
                     </xsl:for-each>
 
 
-                    ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:if test="input/param/@type!=''">,</xsl:if>
+                    <xsl:choose>
+                    <xsl:when test="$isUnwrapParameters">
+                        <xsl:variable name="inputparam_values">
+                                                <xsl:for-each select="input/param/param[@type!='']">,
+                                                     adb_<xsl:value-of select="$inputtype"/>_property<xsl:value-of select="position()"/>(input_val<xsl:value-of select="$position"/><xsl:text>, env)</xsl:text>
+                                                </xsl:for-each>
+                        </xsl:variable>
+                        <xsl:variable name="outputparam_types">
+                            <xsl:choose>
+                                <xsl:when test="output/param/param/@ours">
+                                    <xsl:text>adb_</xsl:text><xsl:value-of select="output/param/param/@type"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="output/param/param/@type"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        {
+                           <xsl:value-of select="$outputparam_types"/> ret_unwrapped = <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
+                                                <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
+                                                    <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
+                                                </xsl:for-each>);
+                           ret_val<xsl:value-of select="$position"/> = adb_<xsl:value-of select="output/param/@type"/>_create_with_values(env, ret_unwrapped);
+                        }
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:variable name="inputparam_values">
+                                                <xsl:if test="input/param/@type!=''">,</xsl:if>
                                                     <xsl:if test="input/param/@type!=''">input_val<xsl:value-of select="$position"/></xsl:if><xsl:for-each select="input/param[@location='soap_header']">,
                                                     <xsl:text>_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each><xsl:for-each select="output/param[@location='soap_header']">,
+                                                </xsl:for-each>
+                        </xsl:variable>
+                        ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
+                                                <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each>    );
+                                                </xsl:for-each>);
+                    </xsl:otherwise>
+                    </xsl:choose>
                     <xsl:choose>
                     <xsl:when test="output/param/@type">
                         if ( NULL == ret_val<xsl:value-of select="$position"/> )
@@ -530,12 +564,12 @@
                                 adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
                             </xsl:if>
                             <xsl:if test="input/param/@location='soap_header'">
-                                axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text>_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
                             <xsl:if test="output/param/@location='soap_header'">
-                                axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
@@ -561,12 +595,12 @@
                         {
                             AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "response evelope is NULL");
                             <xsl:if test="input/param/@location='soap_header'">
-                            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                            axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
                             <xsl:if test="output/param/@location='soap_header'">
-                                axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
@@ -582,12 +616,12 @@
                         if(!header_base_node)
                         {
                             <xsl:if test="input/param/@location='soap_header'">
-                            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                            axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
                             <xsl:if test="output/param/@location='soap_header'">
-                                axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                                axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                          <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                          </xsl:for-each>);
                             </xsl:if>
@@ -609,12 +643,12 @@
                         </xsl:for-each>
 
                         <xsl:if test="input/param/@location='soap_header'">
-                        axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                        axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                      </xsl:for-each>);
                         </xsl:if>
                         <xsl:if test="output/param/@location='soap_header'">
-                            axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                            axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_output_headers(env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                      </xsl:for-each>);
                         </xsl:if>
@@ -630,7 +664,7 @@
                            adb_<xsl:value-of select="input/param/@type"/>_free(input_val<xsl:value-of select="$position"/>, env);
                         </xsl:if>
                         <xsl:if test="input/param/@location='soap_header'">
-                        axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
+                        axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="$method-name"/>_free_input_headers(env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                      <xsl:text> _</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="position()"/>
                                                      </xsl:for-each>);
                         return NULL;
