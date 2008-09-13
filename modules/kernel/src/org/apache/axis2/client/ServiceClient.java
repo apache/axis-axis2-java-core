@@ -150,6 +150,7 @@ public class ServiceClient {
             if (ListenerManager.defaultConfigurationContext == null) {
                 configContext = ConfigurationContextFactory.
                         createConfigurationContextFromFileSystem(null, null);
+                ListenerManager.defaultConfigurationContext = configContext;
                 createConfigCtx = true;
             } else {
                 configContext = ListenerManager.defaultConfigurationContext;

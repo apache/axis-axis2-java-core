@@ -44,13 +44,13 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MultipleEntryHashMap;
@@ -77,11 +77,10 @@ import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
 import java.util.Map;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
-import java.security.PrivilegedActionException;
 
 public class BuilderUtil {
     private static final Log log = LogFactory.getLog(BuilderUtil.class);
@@ -94,109 +93,113 @@ public class BuilderUtil {
 
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         SOAPBody body = soapEnvelope.getBody();
-        XmlSchemaElement xmlSchemaElement = null;
+        XmlSchemaElement xmlSchemaElement;
         AxisOperation axisOperation = messageContext.getAxisOperation();
         if (axisOperation != null) {
             AxisMessage axisMessage =
                     axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             xmlSchemaElement = axisMessage.getSchemaElement();
 
-        if (xmlSchemaElement == null) {
-            OMElement bodyFirstChild =
-                            soapFactory.createOMElement(messageContext.getAxisOperation().getName(), body);
+            if (xmlSchemaElement == null) {
+                OMElement bodyFirstChild =
+                        soapFactory
+                                .createOMElement(messageContext.getAxisOperation().getName(), body);
 
-            // if there is no schema its piece of cake !! add these to the soap body in any order you like.
-            // Note : if there are parameters in the path of the URL, there is no way this can add them
-            // to the message.
-            createSOAPMessageWithoutSchema(soapFactory, messageContext, bodyFirstChild, requestParameterMap);
-        } else {
-
-            // first get the target namespace from the schema and the wrapping element.
-            // create an OMElement out of those information. We are going to extract parameters from
-            // url, create OMElements and add them as children to this wrapping element.
-            String targetNamespace = xmlSchemaElement.getQName().getNamespaceURI();
-            QName bodyFirstChildQName;
-            if (targetNamespace != null && !"".equals(targetNamespace)) {
-                bodyFirstChildQName = new QName(targetNamespace, xmlSchemaElement.getName());
+                // if there is no schema its piece of cake !! add these to the soap body in any order you like.
+                // Note : if there are parameters in the path of the URL, there is no way this can add them
+                // to the message.
+                createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild, requestParameterMap);
             } else {
-                bodyFirstChildQName = new QName(xmlSchemaElement.getName());
-            }
-            OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
 
-            // Schema should adhere to the IRI style in this. So assume IRI style and dive in to
-            // schema
-            XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
-            if (schemaType instanceof XmlSchemaComplexType) {
-                XmlSchemaComplexType complexType = ((XmlSchemaComplexType) schemaType);
-                XmlSchemaParticle particle = complexType.getParticle();
-                if (particle instanceof XmlSchemaSequence || particle instanceof XmlSchemaAll) {
-                    XmlSchemaGroupBase xmlSchemaGroupBase = (XmlSchemaGroupBase) particle;
-                    Iterator iterator = xmlSchemaGroupBase.getItems().getIterator();
+                // first get the target namespace from the schema and the wrapping element.
+                // create an OMElement out of those information. We are going to extract parameters from
+                // url, create OMElements and add them as children to this wrapping element.
+                String targetNamespace = xmlSchemaElement.getQName().getNamespaceURI();
+                QName bodyFirstChildQName;
+                if (targetNamespace != null && !"".equals(targetNamespace)) {
+                    bodyFirstChildQName = new QName(targetNamespace, xmlSchemaElement.getName());
+                } else {
+                    bodyFirstChildQName = new QName(xmlSchemaElement.getName());
+                }
+                OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
 
-                    // now we need to know some information from the binding operation.
+                // Schema should adhere to the IRI style in this. So assume IRI style and dive in to
+                // schema
+                XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
+                if (schemaType instanceof XmlSchemaComplexType) {
+                    XmlSchemaComplexType complexType = ((XmlSchemaComplexType)schemaType);
+                    XmlSchemaParticle particle = complexType.getParticle();
+                    if (particle instanceof XmlSchemaSequence || particle instanceof XmlSchemaAll) {
+                        XmlSchemaGroupBase xmlSchemaGroupBase = (XmlSchemaGroupBase)particle;
+                        Iterator iterator = xmlSchemaGroupBase.getItems().getIterator();
 
-                    while (iterator.hasNext()) {
-                        XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
-                        QName qName = innerElement.getQName();
-                        if (qName ==null && innerElement.getSchemaTypeName().equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
-                            createSOAPMessageWithoutSchema(soapFactory, messageContext, bodyFirstChild, requestParameterMap);
-                            break;
-                        }
-                        long minOccurs = innerElement.getMinOccurs();
-                        boolean nillable = innerElement.isNillable();
-                        String name =
-                                qName != null ? qName.getLocalPart() : innerElement.getName();
+                        // now we need to know some information from the binding operation.
+
+                        while (iterator.hasNext()) {
+                            XmlSchemaElement innerElement = (XmlSchemaElement)iterator.next();
+                            QName qName = innerElement.getQName();
+                            if (qName == null && innerElement.getSchemaTypeName()
+                                    .equals(org.apache.ws.commons.schema.constants.Constants.XSD_ANYTYPE)) {
+                                createSOAPMessageWithoutSchema(soapFactory, bodyFirstChild,
+                                                               requestParameterMap);
+                                break;
+                            }
+                            long minOccurs = innerElement.getMinOccurs();
+                            boolean nillable = innerElement.isNillable();
+                            String name =
+                                    qName != null ? qName.getLocalPart() : innerElement.getName();
                             Object value;
-                        OMNamespace ns = (qName == null ||
-                                qName.getNamespaceURI() == null
-                                || qName.getNamespaceURI().length() == 0) ?
-                                null : soapFactory.createOMNamespace(
-                                qName.getNamespaceURI(), null);
+                            OMNamespace ns = (qName == null ||
+                                              qName.getNamespaceURI() == null
+                                              || qName.getNamespaceURI().length() == 0) ?
+                                    null : soapFactory.createOMNamespace(
+                                    qName.getNamespaceURI(), null);
 
                             // FIXME changed
                             while ((value = requestParameterMap.get(name)) != null) {
                                 addRequestParameter(soapFactory,
-                                        bodyFirstChild, ns, name, value);
-                            minOccurs--;
-                        }
-                        if (minOccurs > 0) {
-                            if (nillable) {
+                                                    bodyFirstChild, ns, name, value);
+                                minOccurs--;
+                            }
+                            if (minOccurs > 0) {
+                                if (nillable) {
 
-                                OMNamespace xsi = soapFactory.createOMNamespace(
-                                        Constants.URI_DEFAULT_SCHEMA_XSI,
-                                        Constants.NS_PREFIX_SCHEMA_XSI);
-                                OMAttribute omAttribute =
-                                        soapFactory.createOMAttribute("nil", xsi, "true");
-                                soapFactory.createOMElement(name, ns,
-                                                            bodyFirstChild)
-                                        .addAttribute(omAttribute);
+                                    OMNamespace xsi = soapFactory.createOMNamespace(
+                                            Constants.URI_DEFAULT_SCHEMA_XSI,
+                                            Constants.NS_PREFIX_SCHEMA_XSI);
+                                    OMAttribute omAttribute =
+                                            soapFactory.createOMAttribute("nil", xsi, "true");
+                                    soapFactory.createOMElement(name, ns,
+                                                                bodyFirstChild)
+                                            .addAttribute(omAttribute);
 
-                            } else {
-                                throw new AxisFault("Required element " + qName +
-                                        " defined in the schema can not be found in the request");
+                                } else {
+                                    throw new AxisFault("Required element " + qName +
+                                                        " defined in the schema can not be" +
+                                                        " found in the request");
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
         return soapEnvelope;
     }
 
     private static void createSOAPMessageWithoutSchema(SOAPFactory soapFactory,
-                                                       MessageContext messageContext, OMElement bodyFirstChild,
+                                                       OMElement bodyFirstChild,
                                                        MultipleEntryHashMap requestParameterMap) {
 
         // first add the parameters in the URL
         if (requestParameterMap != null) {
             Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
             while (requestParamMapIter.hasNext()) {
-                String key = (String) requestParamMapIter.next();
+                String key = (String)requestParamMapIter.next();
                 Object value = requestParameterMap.get(key);
                 if (value != null) {
                     addRequestParameter(soapFactory, bodyFirstChild, null, key,
-                            value);
+                                        value);
                 }
 
             }
@@ -231,19 +234,21 @@ public class BuilderUtil {
     }
 
     /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to
-     * default encoding specified
+     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding
+     * specified
      *
-     * @param is
-     * @param charSetEncoding
+     * @param is              the InputStream of a message
+     * @param charSetEncoding default character set encoding
+     * @return a Reader with the correct encoding already set
      * @throws java.io.IOException
      */
-    public static Reader getReader(final InputStream is, final String charSetEncoding) throws IOException {
+    public static Reader getReader(final InputStream is, final String charSetEncoding)
+            throws IOException {
         final PushbackInputStream is2 = getPushbackInputStream(is);
         final String encoding = getCharSetEncoding(is2, charSetEncoding);
-        InputStreamReader inputStreamReader = null;
+        InputStreamReader inputStreamReader;
         try {
-            inputStreamReader = (InputStreamReader) AccessController.doPrivileged(
+            inputStreamReader = (InputStreamReader)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws UnsupportedEncodingException {
                             return new InputStreamReader(is2, encoding);
@@ -251,62 +256,66 @@ public class BuilderUtil {
                     }
             );
         } catch (PrivilegedActionException e) {
-            throw (UnsupportedEncodingException) e.getException();
+            throw (UnsupportedEncodingException)e.getException();
         }
         return new BufferedReader(inputStreamReader);
     }
 
     /**
      * Convenience method to get a PushbackInputStream so that we can read the BOM
-     * @param is
-     * @return PushbackInputStream
+     *
+     * @param is a regular InputStream
+     * @return a PushbackInputStream wrapping the passed one
      */
     public static PushbackInputStream getPushbackInputStream(InputStream is) {
         return new PushbackInputStream(is, BOM_SIZE);
     }
 
     /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to
-     * default encoding specified
+     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding
+     * specified
      *
-     * @param is2 PushBackInputStream (it must be a pushback input stream so that we can unread the BOM)
-     * @param defaultEncoding
+     * @param is2             PushBackInputStream (it must be a pushback input stream so that we can
+     *                        unread the BOM)
+     * @param defaultEncoding default encoding style if no BOM
+     * @return the selected character set encoding
      * @throws java.io.IOException
      */
-    public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding) throws IOException {
+    public static String getCharSetEncoding(PushbackInputStream is2, String defaultEncoding)
+            throws IOException {
         String encoding;
         byte bom[] = new byte[BOM_SIZE];
         int n, unread;
 
         n = is2.read(bom, 0, bom.length);
 
-        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
+        if ((bom[0] == (byte)0xEF) && (bom[1] == (byte)0xBB) && (bom[2] == (byte)0xBF)) {
             encoding = "UTF-8";
             if (log.isDebugEnabled()) {
                 log.debug("char set encoding set from BOM =" + encoding);
             }
             unread = n - 3;
-        } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
+        } else if ((bom[0] == (byte)0xFE) && (bom[1] == (byte)0xFF)) {
             encoding = "UTF-16BE";
             if (log.isDebugEnabled()) {
                 log.debug("char set encoding set from BOM =" + encoding);
             }
             unread = n - 2;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
+        } else if ((bom[0] == (byte)0xFF) && (bom[1] == (byte)0xFE)) {
             encoding = "UTF-16LE";
             if (log.isDebugEnabled()) {
                 log.debug("char set encoding set from BOM =" + encoding);
             }
             unread = n - 2;
-        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE)
-                && (bom[3] == (byte) 0xFF)) {
+        } else if ((bom[0] == (byte)0x00) && (bom[1] == (byte)0x00) && (bom[2] == (byte)0xFE)
+                   && (bom[3] == (byte)0xFF)) {
             encoding = "UTF-32BE";
             if (log.isDebugEnabled()) {
                 log.debug("char set encoding set from BOM =" + encoding);
             }
             unread = n - 4;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00)
-                && (bom[3] == (byte) 0x00)) {
+        } else if ((bom[0] == (byte)0xFF) && (bom[1] == (byte)0xFE) && (bom[2] == (byte)0x00)
+                   && (bom[3] == (byte)0x00)) {
             encoding = "UTF-32LE";
             if (log.isDebugEnabled()) {
                 log.debug("char set encoding set from BOM =" + encoding);
@@ -344,12 +353,12 @@ public class BuilderUtil {
     }
 
     /**
-     * Extracts and returns the character set encoding from the
-     * Content-type header
-     * Example:
-     * Content-Type: text/xml; charset=utf-8
+     * Extracts and returns the character set encoding from the Content-type header
+     * <p/>
+     * Example: "Content-Type: text/xml; charset=utf-8" would return "utf-8"
      *
-     * @param contentType
+     * @param contentType a content-type (from HTTP or MIME, for instance)
+     * @return the character set encoding if found, or MessageContext.DEFAULT_CHAR_SET_ENCODING
      */
     public static String getCharSetEncoding(String contentType) {
         if (log.isDebugEnabled()) {
@@ -358,7 +367,8 @@ public class BuilderUtil {
         if (contentType == null) {
             // Using the default UTF-8
             if (log.isDebugEnabled()) {
-                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING + ")");
+                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING +
+                          ")");
             }
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
@@ -368,7 +378,8 @@ public class BuilderUtil {
         if (index == -1) {    // Charset encoding not found in the content-type header
             // Using the default UTF-8
             if (log.isDebugEnabled()) {
-                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING + ")");
+                log.debug("CharSetEncoding defaulted (" + MessageContext.DEFAULT_CHAR_SET_ENCODING +
+                          ")");
             }
             return MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
@@ -408,7 +419,7 @@ public class BuilderUtil {
         String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
 
         if ((charSetEncoding == null)
-                || "null".equalsIgnoreCase(charSetEncoding)) {
+            || "null".equalsIgnoreCase(charSetEncoding)) {
             charSetEncoding = MessageContext.UTF_8;
         }
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
@@ -422,7 +433,6 @@ public class BuilderUtil {
         } catch (IOException e) {
             throw new XMLStreamException(e);
         }
-
 
         //  Put a reference to Attachments Map in to the message context For
         // backword compatibility with Axis2 1.0 
@@ -453,17 +463,12 @@ public class BuilderUtil {
         }
         // To handle REST XOP case
         else {
-            if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.MTOM_TYPE)) {
-                XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(
-                        streamReader, attachments);
-                builder = stAXOMBuilder;
+            if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {
+                builder = new XOPAwareStAXOMBuilder(streamReader, attachments);
 
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE)) {
+            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
                 builder = new StAXOMBuilder(streamReader);
-            } else if (attachments.getAttachmentSpecType().equals(
-                    MTOMConstants.SWA_TYPE_12)) {
+            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE_12)) {
                 builder = new StAXOMBuilder(streamReader);
             }
         }
@@ -484,12 +489,12 @@ public class BuilderUtil {
                     .getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
 
             if (attachmentRepoDirProperty != null) {
-                attachmentRepoDir = (String) attachmentRepoDirProperty;
+                attachmentRepoDir = (String)attachmentRepoDirProperty;
             } else {
                 Parameter attachmentRepoDirParameter = msgContext
                         .getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
                 attachmentRepoDir =
-                        (attachmentRepoDirParameter != null) ? (String) attachmentRepoDirParameter
+                        (attachmentRepoDirParameter != null) ? (String)attachmentRepoDirParameter
                                 .getValue()
                                 : null;
             }
@@ -497,8 +502,8 @@ public class BuilderUtil {
             Object attachmentSizeThresholdProperty = msgContext
                     .getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
             if (attachmentSizeThresholdProperty != null
-                    && attachmentSizeThresholdProperty instanceof String) {
-                attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
+                && attachmentSizeThresholdProperty instanceof String) {
+                attachmentSizeThreshold = (String)attachmentSizeThresholdProperty;
             } else {
                 Parameter attachmentSizeThresholdParameter = msgContext
                         .getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
@@ -509,15 +514,17 @@ public class BuilderUtil {
 
         // Get the content-length if it is available
         int contentLength = 0;
-        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+        Map headers = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
         if (headers != null) {
-            String contentLengthValue = (String) headers.get(HTTPConstants.HEADER_CONTENT_LENGTH);
+            String contentLengthValue = (String)headers.get(HTTPConstants.HEADER_CONTENT_LENGTH);
             if (contentLengthValue != null) {
                 try {
-                    contentLength = new Integer(contentLengthValue).intValue();
+                    contentLength = new Integer(contentLengthValue);
                 } catch (NumberFormatException e) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Content-Length is not a valid number.  Will assume it is not set:" + e);
+                        log.debug(
+                                "Content-Length is not a valid number.  Will assume it is not set:" +
+                                e);
                     }
                 }
             }
@@ -530,78 +537,74 @@ public class BuilderUtil {
             }
         }
         return createAttachments(msgContext,
-                inStream,
-                contentTypeString,
-                fileCacheForAttachments,
-                attachmentRepoDir,
-                attachmentSizeThreshold,
-                contentLength);
+                                 inStream,
+                                 contentTypeString,
+                                 fileCacheForAttachments,
+                                 attachmentRepoDir,
+                                 attachmentSizeThreshold,
+                                 contentLength);
     }
 
     public static boolean isAttachmentsCacheEnabled(MessageContext msgContext) {
         Object cacheAttachmentProperty = msgContext
                 .getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
-        String cacheAttachmentString = null;
+        String cacheAttachmentString;
         boolean fileCacheForAttachments;
 
-        if (cacheAttachmentProperty != null
-                && cacheAttachmentProperty instanceof String) {
-            cacheAttachmentString = (String) cacheAttachmentProperty;
-            fileCacheForAttachments = (Constants.VALUE_TRUE
-                    .equals(cacheAttachmentString));
+        if (cacheAttachmentProperty != null && cacheAttachmentProperty instanceof String) {
+            cacheAttachmentString = (String)cacheAttachmentProperty;
         } else {
-            Parameter parameter_cache_attachment = msgContext
-                    .getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
-            cacheAttachmentString =
-                    (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
-                            .getValue()
-                            : null;
+            Parameter parameter_cache_attachment =
+                    msgContext.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
+            cacheAttachmentString = (parameter_cache_attachment != null) ?
+                    (String)parameter_cache_attachment.getValue() : null;
         }
-        fileCacheForAttachments = (Constants.VALUE_TRUE
-                .equals(cacheAttachmentString));
+        fileCacheForAttachments = (Constants.VALUE_TRUE.equals(cacheAttachmentString));
         return fileCacheForAttachments;
     }
 
-    public static Attachments createAttachments(MessageContext msgContext, 
-                                                 InputStream inStream,
-                                                 String contentTypeString,
-                                                 boolean fileCacheForAttachments,
-                                                 String attachmentRepoDir,
-                                                 String attachmentSizeThreshold,
-                                                 int contentLength) {
+    public static Attachments createAttachments(MessageContext msgContext,
+                                                InputStream inStream,
+                                                String contentTypeString,
+                                                boolean fileCacheForAttachments,
+                                                String attachmentRepoDir,
+                                                String attachmentSizeThreshold,
+                                                int contentLength) {
         LifecycleManager manager = null;
         try {
             AxisConfiguration configuration = msgContext.getRootContext().getAxisConfiguration();
-            manager = (LifecycleManager) configuration
+            manager = (LifecycleManager)configuration
                     .getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
-            if(manager == null){
+            if (manager == null) {
                 manager = new LifecycleManagerImpl();
-                configuration.addParameter(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER, manager);
+                configuration.addParameter(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER,
+                                           manager);
             }
-        } catch (Exception e){
-            if(log.isDebugEnabled()){
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
                 log.debug("Exception getting Attachments LifecycleManager", e);
             }
         }
-        return new Attachments(manager, 
-                            inStream,
-                            contentTypeString,
-                            fileCacheForAttachments,
-                            attachmentRepoDir,
-                            attachmentSizeThreshold,
-                            contentLength);
+        return new Attachments(manager,
+                               inStream,
+                               contentTypeString,
+                               fileCacheForAttachments,
+                               attachmentRepoDir,
+                               attachmentSizeThreshold,
+                               contentLength);
     }
 
     /**
-     * @param in
-     * @return
+     * Utility method to get a StAXBuilder
+     *
+     * @param in an InputStream
+     * @return a StAXSOAPModelBuilder for the given InputStream
      * @throws XMLStreamException
      * @deprecated If some one really need this method, please shout.
      */
     public static StAXBuilder getBuilder(Reader in) throws XMLStreamException {
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
-        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
-        return builder;
+        return new StAXSOAPModelBuilder(xmlreader, null);
     }
 
     /**
@@ -628,13 +631,14 @@ public class BuilderUtil {
             throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
         try {
-            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
-            return builder;
-        } catch (OMException e){
+            return new StAXSOAPModelBuilder(xmlReader);
+        } catch (OMException e) {
             log.info("OMException in getSOAPBuilder", e);
             try {
-                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc)+ "]");
+                log.info("Remaining input stream :[" +
+                         new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc) + "]");
             } catch (IOException e1) {
+                // Nothing here?
             }
             throw e;
         }
@@ -650,13 +654,14 @@ public class BuilderUtil {
     public static StAXBuilder getSOAPBuilder(InputStream inStream) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
         try {
-            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
-            return builder;
-        } catch (OMException e){
+            return new StAXSOAPModelBuilder(xmlReader);
+        } catch (OMException e) {
             log.info("OMException in getSOAPBuilder", e);
             try {
-                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream))+ "]");
+                log.info("Remaining input stream :[" +
+                         new String(IOUtils.getStreamAsByteArray(inStream)) + "]");
             } catch (IOException e1) {
+                // Nothing here?
             }
             throw e;
         }
@@ -674,13 +679,14 @@ public class BuilderUtil {
             throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
         try {
-            StAXBuilder builder =  new StAXSOAPModelBuilder(xmlReader);
-            return builder;
-        } catch (OMException e){
+            return new StAXSOAPModelBuilder(xmlReader);
+        } catch (OMException e) {
             log.info("OMException in getSOAPBuilder", e);
             try {
-                log.info("Remaining input stream :[" + new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc)+ "]");
+                log.info("Remaining input stream :[" +
+                         new String(IOUtils.getStreamAsByteArray(inStream), charSetEnc) + "]");
             } catch (IOException e1) {
+                // Nothing here?
             }
             throw e;
         }
@@ -695,12 +701,12 @@ public class BuilderUtil {
     }
 
     /**
-     * Initial work for a builder selector which selects the builder for a given
-     * message format based on the the content type of the recieved message.
-     * content-type to builder mapping can be specified through the Axis2.xml.
+     * Initial work for a builder selector which selects the builder for a given message format
+     * based on the the content type of the recieved message. content-type to builder mapping can be
+     * specified through the Axis2.xml.
      *
-     * @param type
-     * @param msgContext
+     * @param type       content-type
+     * @param msgContext the active MessageContext
      * @return the builder registered against the given content-type
      * @throws AxisFault
      */
@@ -709,8 +715,7 @@ public class BuilderUtil {
 
         AxisConfiguration configuration =
                 msgContext.getConfigurationContext().getAxisConfiguration();
-        Builder builder = configuration
-                .getMessageBuilder(type);
+        Builder builder = configuration.getMessageBuilder(type);
         if (builder != null) {
             // Check whether the request has a Accept header if so use that as the response
             // message type.
@@ -722,21 +727,23 @@ public class BuilderUtil {
             Object contentNegotiation = configuration
                     .getParameterValue(Constants.Configuration.ENABLE_HTTP_CONTENT_NEGOTIATION);
             if (JavaUtils.isTrueExplicitly(contentNegotiation)) {
-                Map transportHeaders = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+                Map transportHeaders =
+                        (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
                 if (transportHeaders != null) {
-                    String acceptHeader = (String) transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
+                    String acceptHeader = (String)transportHeaders.get(HTTPConstants.HEADER_ACCEPT);
                     if (acceptHeader != null) {
                         int index = acceptHeader.indexOf(";");
                         if (index > 0) {
                             acceptHeader = acceptHeader.substring(0, index);
                         }
                         String[] strings = acceptHeader.split(",");
-                        for (int i = 0; i < strings.length; i++) {
-                            String accept = strings[i].trim();
+                        for (String string : strings) {
+                            String accept = string.trim();
                             // We dont want dynamic content negotoatin to work on text.xml as its
                             // ambiguos as to whether the user requests SOAP 1.1 or POX response
-                            if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) && configuration.getMessageFormatter(accept) != null) {
-                                type = strings[i];
+                            if (!HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(accept) &&
+                                configuration.getMessageFormatter(accept) != null) {
+                                type = string;
                                 break;
                             }
                         }
@@ -757,8 +764,8 @@ public class BuilderUtil {
             if (!(soapNamespaceURIFromTransport.equals(namespaceName))) {
                 throw new SOAPProcessingException(
                         "Transport level information does not match with SOAP" +
-                                " Message namespace URI", envelopeNamespace.getPrefix() + ":" +
-                        SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
+                        " Message namespace URI", envelopeNamespace.getPrefix() + ":" +
+                                                  SOAPConstants.FAULT_CODE_VERSION_MISMATCH);
             }
         }
     }
@@ -767,11 +774,10 @@ public class BuilderUtil {
                                                String charsetEncodingFromXML,
                                                String soapNamespaceURI) throws AxisFault {
         if ((charsetEncodingFromXML != null)
-                && !"".equals(charsetEncodingFromXML)
-                && (charsetEncodingFromTransport != null)
-                && !charsetEncodingFromXML.equalsIgnoreCase(charsetEncodingFromTransport)
-                && !isValidPair(charsetEncodingFromXML, charsetEncodingFromTransport))
-        {
+            && !"".equals(charsetEncodingFromXML)
+            && (charsetEncodingFromTransport != null)
+            && !charsetEncodingFromXML.equalsIgnoreCase(charsetEncodingFromTransport)
+            && !compatibleEncodings(charsetEncodingFromXML, charsetEncodingFromTransport)) {
             String faultCode;
 
             if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespaceURI)) {
@@ -781,19 +787,22 @@ public class BuilderUtil {
             }
 
             throw new AxisFault("Character Set Encoding from "
-                    + "transport information [" + charsetEncodingFromTransport + "] does not match with "
-                    + "character set encoding in the received SOAP message [" + charsetEncodingFromXML + "]", faultCode);
+                                + "transport information [" + charsetEncodingFromTransport +
+                                "] does not match with "
+                                + "character set encoding in the received SOAP message [" +
+                                charsetEncodingFromXML + "]", faultCode);
         }
     }
 
     /**
-     * check if the pair is [UTF-16,UTF-16LE] [UTF-32, UTF-32LE],[UTF-16,UTF-16BE] [UTF-32, UTF-32BE] etc.
-     * 
-     * @param enc1
-     * @param enc2
-     * @return
+     * check if the pair is [UTF-16,UTF-16LE] [UTF-32, UTF-32LE],[UTF-16,UTF-16BE] [UTF-32,
+     * UTF-32BE] etc.
+     *
+     * @param enc1 encoding style
+     * @param enc2 encoding style
+     * @return true if the encoding styles are compatible, or false otherwise
      */
-    private static boolean isValidPair(String enc1, String enc2) {
+    private static boolean compatibleEncodings(String enc1, String enc2) {
         enc1 = enc1.toLowerCase();
         enc2 = enc2.toLowerCase();
         if (enc1.endsWith("be") || enc1.endsWith("le")) {
