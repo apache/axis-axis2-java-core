@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
     protected static final String C_SKEL_PREFIX = "axis2_skel_";
@@ -293,7 +295,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         /////////////////////////////////////////////////////
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        // System.out.println(DOM2Writer.nodeToString(rootElement));
         /////////////////////////////////////////////////////
 
 
@@ -679,8 +681,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
 
         if (!paramType.equals("") && !paramType.equals("void") &&
-                !paramType.equals("org.apache.axiom.om.OMElement") &&
-                !typeMappingStr.equals(C_DEFAULT_TYPE)) {
+                !typeMappingStr.equals(C_DEFAULT_TYPE) && typeMappingStr.contains("adb_")) {
             addAttribute(doc, "ours", "yes", param);
         }
     }

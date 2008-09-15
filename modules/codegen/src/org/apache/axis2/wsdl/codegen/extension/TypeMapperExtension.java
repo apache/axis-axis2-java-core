@@ -23,6 +23,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.databinding.CTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,7 +64,14 @@ public class TypeMapperExtension implements CodeGenExtension {
             TypeMapper mapper = configuration.getTypeMapper();
             // there is no mapper present - so just create a new one
             if (mapper == null) {
-                mapper = new DefaultTypeMapper();
+                if (configuration.getOutputLanguage() != null &&
+                    !configuration.getOutputLanguage().trim().equals("") &&
+                    configuration.getOutputLanguage().toLowerCase().equals("c")) {
+                    mapper = new CTypeMapper();
+    
+                }  else {
+                    mapper = new DefaultTypeMapper();
+                }
             }
 
             //read the file as a DOM
