@@ -49,7 +49,9 @@ public class SourceProvider implements Provider<Source> {
 
         TestLogger.logger.debug(">> SourceProvider: Request received.\n");
     	if (source == null) {
-    	    return source;
+            ByteArrayInputStream stream = new ByteArrayInputStream(" ".getBytes());
+            Source srcStream = new StreamSource((InputStream) stream);
+            return srcStream;
         }
         
         // Non-null source
@@ -71,7 +73,15 @@ public class SourceProvider implements Provider<Source> {
     	
     	if (text != null && text.contains("throwWebServiceException")) {
     	    throw new WebServiceException("provider");
+    	}  else if (text != null && text.contains("throwUserGeneratedFault")) {
+    	    String userFault = "<soapenv:Fault xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+    	    "<faultcode>soapenv:Receiver</faultcode>" +
+    	    "<faultstring>userGeneratedFaultTest</faultstring>" +
+    	    "<detail>sample SOAP Fault details</detail>" +
+    	    "</soapenv:Fault>";
+    	    text = userFault;
     	}
+        
     	
     	ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
     	Source srcStream = new StreamSource((InputStream) stream);

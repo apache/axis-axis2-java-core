@@ -39,7 +39,7 @@ public class StringProvider implements Provider<String> {
     public String invoke(String text) {
         TestLogger.logger.debug("StringProvider invoke received the message [" + text + "]");
         if (text == null) {
-            return null;
+            return " ";
         } else if (text.contains("throwWebServiceException")) {
             throw new WebServiceException("provider");
         } else if (text.contains("<Code>") && text.contains("SOAPFaultProviderTests")) { 

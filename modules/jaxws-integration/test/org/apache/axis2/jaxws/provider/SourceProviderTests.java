@@ -314,6 +314,24 @@ public class SourceProviderTests extends ProviderTestCase {
         }
     }
     
+    public void testUserGeneratedSOAPFault() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<Source> dispatch = getDispatch();
+        String request = "<test>throwUserGeneratedFault</test>";
+        try {
+            Source requestSource = getSource(request);
+            Source responseSource = dispatch.invoke(requestSource);
+            String response = getString(responseSource);
+            fail("Expected Exception");
+        } catch (SOAPFaultException e) {
+            SOAPFault sf = e.getFault();
+            assertTrue(sf.getFaultString().equals("userGeneratedFaultTest"));
+        }
+    }
+
+    
     public void testProviderSource(){
         try{
             String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();

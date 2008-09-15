@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
@@ -480,7 +481,20 @@ public class ProviderDispatcher extends JavaDispatcher {
                 }
                 Block block = factory.createFrom(value, null, null);
                 message = msgFactory.create(protocol);
-                message.setBodyBlock(block);
+                
+                if (XMLFaultUtils.containsFault(block)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("The response block created contained a fault.  Converting to an XMLFault object.");
+                    }
+                    // If the Provider returned a fault, then let's correct the output and 
+                    // put an XMLFault on the Message.  This makes it easier for downstream 
+                    // consumers to get the SOAPFault from the OM SOAPEnvelope.
+                    XMLFault fault = XMLFaultUtils.createXMLFault(block, message.getProtocol());
+                    message.setXMLFault(fault);
+                }
+                else {
+                    message.setBodyBlock(block);
+                }
             }
         }
 
