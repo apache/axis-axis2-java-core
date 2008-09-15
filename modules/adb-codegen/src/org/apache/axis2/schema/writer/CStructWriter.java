@@ -55,6 +55,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 /**
  * Java Bean writer for the schema compiler.
  */
@@ -78,7 +80,8 @@ public class CStructWriter implements BeanWriter {
     private Document globalWrappedHeaderDocument;
 
     private Map modelMap = new HashMap();
-    private static final String DEFAULT_PACKAGE = "adb";
+    private static final String ADB_CLASS_PREFIX = "adb_";
+    private static final String ADB_CLASS_POSTFIX = "_t*";
     private static final String DEFAULT_C_CLASS_NAME = "axiom_node_t*";
 
     private Map baseTypeMap = new JavaTypeMap().getTypeMap();
@@ -87,10 +90,10 @@ public class CStructWriter implements BeanWriter {
     // useful when  only a list of external elements need to be processed
 
     public static final String DEFAULT_CLASS_NAME = "axiom_node_t*";
-    public static final String DEFAULT_CLASS_ARRAY_NAME = "axiom_node_t*";
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "axutil_array_list_t*";
 
     public static final String DEFAULT_ATTRIB_CLASS_NAME = "axiom_attribute_t*";
-    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axiom_attribute_t*";
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axutil_array_list_t*";
 
     public static final String DEFAULT_TYPE_NS = "http://www.w3.org/2001/XMLSchema";
 
@@ -241,7 +244,6 @@ public class CStructWriter implements BeanWriter {
      * @return Returns String.
      * @throws org.apache.axis2.schema.SchemaCompilationException
      *
-     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType,
                         Map typeMap,
@@ -291,8 +293,9 @@ public class CStructWriter implements BeanWriter {
     public String makeFullyQualifiedClassName(QName qName) {
 
         String originalName = qName.getLocalPart();
+        String modifiedName = ADB_CLASS_PREFIX  + originalName + ADB_CLASS_POSTFIX;
 
-        return makeUniqueCStructName(this.namesList, originalName);
+        return makeUniqueCStructName(this.namesList, modifiedName);
     }
 
     /**
@@ -354,8 +357,9 @@ public class CStructWriter implements BeanWriter {
 
             if (writeClasses) {
                 //create the file
-                File outSource = createOutFile(className, ".c");
-                File outHeader = createOutFile(className, ".h");
+                String fileName = className.substring(4, className.length() -3);
+                File outSource = createOutFile(fileName, ".c");
+                File outHeader = createOutFile(fileName, ".h");
                 //parse with the template and create the files
                 parseSource(modelSource, outSource);
                 parseHeader(modelHeader, outHeader);
@@ -408,14 +412,14 @@ public class CStructWriter implements BeanWriter {
      throws SchemaCompilationException {
 
         Element rootElt = XSLTUtils.getElement(model, "class");
-        XSLTUtils.addAttribute(model, "name", className, rootElt);
-        XSLTUtils.addAttribute(model, "caps-name", className.toUpperCase(), rootElt);
+        String strippedClassName = className.substring(4, className.length() -3);
+        XSLTUtils.addAttribute(model, "name", strippedClassName, rootElt);
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
         XSLTUtils.addAttribute(model, "nsprefix", getPrefixForURI(qName.getNamespaceURI(), qName.getPrefix()), rootElt);
 
         /* use caps for macros */
-        String capsName = className.toUpperCase();
+        String capsName = strippedClassName.toUpperCase();
         XSLTUtils.addAttribute(model, "caps-name", capsName, rootElt);
 
 
