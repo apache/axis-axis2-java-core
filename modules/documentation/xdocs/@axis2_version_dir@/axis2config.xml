@@ -309,7 +309,7 @@ service archive file needs to have a services.xml in order to be a valid
 service and it should be available in the META-INF directory of the archive
 file. A very simple services.xml is shown below:</font></p>
 <source><pre>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
-    &lt;description&gt; The description of the service  &lt;/description&gt;  
+    &lt;Description&gt; The description of the service  &lt;/Description&gt;  
 
     &lt;transports&gt; 
        &lt;transport&gt;HTTP&lt;/transport&gt;
@@ -350,7 +350,7 @@ of the service. This value will be used when generating the WSDL. If you do
 not specify this value, the value will be calculated from the package name of
 the service impl class.</p>
 
-<p><font><strong>description</strong>: (Optional) If you want to display any
+<p><font><strong>Description</strong>: (Optional) If you want to display any
 description about the service via Axis2 web-admin module, then the
 description can be specified here.</font></p>
 
