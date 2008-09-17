@@ -572,7 +572,7 @@ public class OperationContext extends AbstractContext
         // properties
         //---------------------------------------------------------
         in.readUTF(); // read marker
-        properties = in.readHashMap();
+        properties = in.readMap(new ConcurrentHashMapNullSemantics());
 
         //---------------------------------------------------------
         // axis operation meta data

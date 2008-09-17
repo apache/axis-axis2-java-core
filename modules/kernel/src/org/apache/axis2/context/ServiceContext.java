@@ -434,7 +434,7 @@ public class ServiceContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        properties = in.readHashMap();
+        properties = in.readMap(new ConcurrentHashMapNullSemantics());
 
         //---------------------------------------------------------
         // AxisService

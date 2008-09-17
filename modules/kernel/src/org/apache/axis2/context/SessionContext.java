@@ -275,7 +275,7 @@ public class SessionContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        properties = in.readHashMap();
+        properties = in.readMap(new ConcurrentHashMapNullSemantics());
 
         //---------------------------------------------------------
         // "nested"

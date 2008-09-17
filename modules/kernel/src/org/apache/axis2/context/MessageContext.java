@@ -3295,7 +3295,7 @@ public class MessageContext extends AbstractContext
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read properties, marker is: " + marker);
         }
-        properties  = in.readHashMap();
+        properties = in.readMap(new ConcurrentHashMapNullSemantics());
 
 
         //---------------------------------------------------------
