@@ -85,10 +85,6 @@ public class ConfigurationContextFactory {
         }
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
 
-        if (axisConfig.getClusterManager() != null) {
-            configContext.initCluster();
-        }
-
         if (axisConfigurator instanceof DeploymentEngine) {
             ((DeploymentEngine) axisConfigurator).setConfigContext(configContext);
         }
@@ -106,6 +102,12 @@ public class ConfigurationContextFactory {
         if (deploymentLifeCycleListener != null){
             deploymentLifeCycleListener.postDeploy(configContext);
         }
+
+        // Finally initialize the cluster
+        if (axisConfig.getClusterManager() != null) {
+            configContext.initCluster();
+        }
+        
         return configContext;
     }
 
