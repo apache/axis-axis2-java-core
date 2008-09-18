@@ -392,6 +392,12 @@
             <organization>Purdue University, USA</organization>
         </developer>
         <developer>
+            <name>Eranga Jayasundera</name>
+            <id>eranga</id>
+            <email>eranga AT apache.org</email>
+            <organization></organization>
+        </developer>
+        <developer>
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
             <email>sanjiva AT wso2.com</email>
