@@ -158,7 +158,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                     // If a fault was thrown, we need to create a slightly different
                     // MessageContext, than in the response path.
                     response = createFaultResponse(request, fault);
-                    setCheckedExceptionProperty(response, method, fault);
+                    setExceptionProperties(response, method, fault);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("Async invocation of the endpoint was successful.  Creating response message.");
@@ -257,6 +257,37 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
         if (checkedException != null) {
             response.setProperty(Constants.CHECKED_EXCEPTION, checkedException.getCanonicalName());
         }
+    }
+    
+    /**
+     * Store the actual exception on the response context
+     * @param response MessageContext
+     * @param t Throwable
+     */
+    protected static void setWebMethodExceptionProperty(MessageContext response, 
+                                                        Throwable t) {
+        // Get the root of the exception
+        if (t instanceof InvocationTargetException) {
+            t = ((InvocationTargetException) t).getTargetException();
+        }
+        
+        // Add the property
+        if (t != null) {
+            response.setProperty(Constants.JAXWS_WEBMETHOD_EXCEPTION, t);
+        }
+    }
+    
+    /**
+     * Information about the exception is stored on the outbound response context
+     * @param response MessageContext
+     * @param m Method
+     * @param t Throwable
+     */
+    protected static void setExceptionProperties(MessageContext response, 
+                                                 Method m, 
+                                                 Throwable t) {
+        setCheckedExceptionProperty(response, m, t);
+        setWebMethodExceptionProperty(response, t);
     }
     
 }

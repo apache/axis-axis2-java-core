@@ -20,11 +20,13 @@
 package org.apache.axis2.jaxws.sample.addnumbershandler;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.TestLogger;
 
 import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -48,6 +50,26 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
     
     public boolean handleFault(SOAPMessageContext messagecontext) {
         tracker.handleFault((Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
+        
+        try {
+            SOAPFault fault = messagecontext.getMessage().getSOAPBody().getFault();
+            String faultString = fault.getFaultString();
+            Throwable webmethodException = (Throwable)
+                messagecontext.get("jaxws.outbound.response.webmethod.exception");
+            
+            // Update the fault string with the stack trace
+            if (webmethodException != null) {
+                TestLogger.logger.debug("The webmethod exception is available...setting the fault string");
+                faultString += "stack = " +  stackToString(webmethodException);
+                fault.setFaultString(faultString);
+            } else {
+                TestLogger.logger.debug("The webmethod exception was not available");
+            }
+        } catch (Exception e) {
+            tracker.log("Exception occurred:" + e.getMessage(),
+                        (Boolean) messagecontext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
+        }
+        
         return true;
     }
 
@@ -109,4 +131,12 @@ public class AddNumbersProtocolHandler implements javax.xml.ws.handler.soap.SOAP
     	}
     }
 
+    private static String stackToString(Throwable e) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
+        java.io.PrintWriter pw = new java.io.PrintWriter(bw);
+        e.printStackTrace(pw);
+        pw.close();
+        return sw.getBuffer().toString();
+    }
 }

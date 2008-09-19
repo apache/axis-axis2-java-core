@@ -140,7 +140,7 @@ public class ProviderDispatcher extends JavaDispatcher {
             // If a fault was thrown, we need to create a slightly different
             // MessageContext, than in the response path.
             responseMsgCtx = createFaultResponse(request, fault);
-            setCheckedExceptionProperty(responseMsgCtx, target, fault);
+            setExceptionProperties(responseMsgCtx, target, fault);
         } else {
             responseMsgCtx = createResponse(request, input, responseParamValue);
         }

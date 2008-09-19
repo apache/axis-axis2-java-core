@@ -107,7 +107,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             return null;
         } else if (faultThrown) {
             response = createFaultResponse(mc, mc.getMessage().getProtocol(), fault);
-            setCheckedExceptionProperty(response, target, fault);
+            setExceptionProperties(response, target, fault);
         } else {
             response = createResponse(mc, mc.getMessage().getProtocol(), methodInputParams, output);
         }

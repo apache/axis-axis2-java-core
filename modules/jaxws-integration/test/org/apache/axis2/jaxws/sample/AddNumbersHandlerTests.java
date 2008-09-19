@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPFault;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -59,6 +60,7 @@ import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHa
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler3;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientLogicalHandler4;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersClientProtocolHandler;
+import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerFault_Exception;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerPortType;
 import org.apache.axis2.jaxws.sample.addnumbershandler.AddNumbersHandlerService;
 import org.test.addnumbershandler.AddNumbersHandlerResponse;
@@ -142,6 +144,191 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
 			fail(e.getMessage());
 		}
 	}
+    
+    /**
+     * Client app sends MAXVALUE, MAXVALUE as params to add.
+     * No client-side handlers are configured for this scenario.  
+     * The endpoint method (addNumbersHandler) will detect the possible overflow and
+     * throw an application exception, AddNumbersHandleFault_Exception.
+     * 
+     * The server-side AddNumbersProtocolHandler will
+     * access the thrown exception using the "jaxws.webmethod.exception"
+     * property and add the stack trace string to fault string.
+     * 
+     * The client should receive a AddNumbersHandlerFault_Exception that has a stack
+     * trace as part of the message.
+     * This test verifies the following:
+     * 
+     * 1)  Proper exception/fault processing when handlers are installed.
+     * 2)  Access to the special "jaxws.webmethod.exception"
+     * 3)  Proper exception call flow when an application exception is thrown.
+     */
+    public void testAddNumbersHandler_WithCheckedException() throws Exception {
+
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+
+        AddNumbersHandlerService service = new AddNumbersHandlerService();
+        AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        AddNumbersHandlerFault_Exception expectedException = null;
+        Throwable t = null;
+        try {
+            proxy.addNumbersHandler(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            
+        } catch (Throwable e) {
+            // An exception is expected
+            t = e;
+            
+        } 
+        
+        // Make sure the proper exception is thrown
+        if (t == null) {
+            fail("Expected AddNumbersHandlerFault_Exception to be thrown");
+        }
+        if (t instanceof AddNumbersHandlerFault_Exception) {
+            expectedException = (AddNumbersHandlerFault_Exception) t;
+        } else {
+            fail("Expected AddNumbersHandlerFault_Exception to be thrown, " +
+                        "but the exception is: " + t);
+        }
+       
+        // also confirm that @PreDestroy method is called.  Since it only makes sense to call it on the managed
+        // (server) side and just before the handler instance goes out of scope, we are creating a file in the
+        // @PreDestroy method, and will check for its existance here.  If the file does not exist, it means
+        // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
+        File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
+        assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+
+        String log = readLogFile();
+        String expected_calls =
+            "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+            + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+            + "AddNumbersProtocolHandler GET_HEADERS\n"
+            + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersLogicalHandler2 HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersProtocolHandler2 HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersProtocolHandler HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersLogicalHandler CLOSE\n"
+            + "AddNumbersLogicalHandler2 CLOSE\n"
+            + "AddNumbersProtocolHandler2 CLOSE\n"
+            + "AddNumbersProtocolHandler CLOSE\n"
+            + "AddNumbersProtocolHandler PRE_DESTROY\n";
+        
+        assertEquals(expected_calls, log);
+        
+        TestLogger.logger.debug("Expected Exception is " + 
+                                expectedException.getMessage());
+        
+        // The outbound service handler adds the stack trace to the 
+        // message.  Make sure the stack trace contains the AddNumbersHandlerPortTypeImpl
+        assertTrue("A stack trace was not present in the returned exception's message:" + 
+                   expectedException.getMessage(),
+                   expectedException.getMessage().indexOf("AddNumbersHandlerPortTypeImpl") > 0);
+
+        TestLogger.logger.debug("----------------------------------");
+        
+    }
+    
+    /**
+     * Client app sends MAXVALUE, MAXVALUE as params to add.
+     * No client-side handlers are configured for this scenario.  
+     * The endpoint method (addNumbersHandler) will detect the possible overflow and
+     * throw an unchecked exception, NullPointerException.
+     * 
+     * The server-side AddNumbersProtocolHandler will
+     * access the thrown exception using the "jaxws.webmethod.exception"
+     * property and add the stack trace string to fault string.
+     * 
+     * The client should receive a SOAPFaultException that has a stack
+     * trace as part of the message.
+     * This test verifies the following:
+     * 
+     * 1)  Proper exception/fault processing when handlers are installed.
+     * 2)  Access to the special "jaxws.webmethod.exception"
+     * 3)  Proper exception call flow when an unchecked exception is thrown.
+     */
+    public void testAddNumbersHandler_WithUnCheckedException() throws Exception {
+
+        TestLogger.logger.debug("----------------------------------");
+        TestLogger.logger.debug("test: " + getName());
+
+        AddNumbersHandlerService service = new AddNumbersHandlerService();
+        AddNumbersHandlerPortType proxy = service.getAddNumbersHandlerPort();
+
+        BindingProvider p = (BindingProvider)proxy;
+        p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, axisEndpoint);
+        SOAPFaultException expectedException = null;
+        Throwable t = null;
+        try {
+            proxy.addNumbersHandler(-1000, Integer.MIN_VALUE);
+            
+        } catch (Throwable e) {
+            // An exception is expected
+            t = e;
+            
+        } 
+        
+        // Make sure the proper exception is thrown
+        if (t == null) {
+            fail("Expected AddNumbersHandlerFault_Exception to be thrown");
+        }
+        if (t instanceof SOAPFaultException) {
+            expectedException = (SOAPFaultException) t;
+        } else {
+            fail("Expected SOAPFaultException to be thrown, " +
+                        "but the exception is: " + t);
+        }
+       
+        // also confirm that @PreDestroy method is called.  Since it only makes sense to call it on the managed
+        // (server) side and just before the handler instance goes out of scope, we are creating a file in the
+        // @PreDestroy method, and will check for its existance here.  If the file does not exist, it means
+        // @PreDestroy method was never called.  The file is set to .deleteOnExit(), so no need to delete it.
+        File file = new File("AddNumbersProtocolHandler.preDestroy.txt");
+        assertTrue("File AddNumbersProtocolHandler.preDestroy.txt does not exist, meaning the @PreDestroy method was not called.", file.exists());
+
+        String log = readLogFile();
+        String expected_calls =
+            "AddNumbersLogicalHandler2 POST_CONSTRUCT\n"
+            + "AddNumbersProtocolHandler2 GET_HEADERS\n"
+            + "AddNumbersProtocolHandler GET_HEADERS\n"
+            + "AddNumbersProtocolHandler HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersProtocolHandler2 HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler2 HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler HANDLE_MESSAGE_INBOUND\n"
+            + "AddNumbersLogicalHandler HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersLogicalHandler2 HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersProtocolHandler2 HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersProtocolHandler HANDLE_FAULT_OUTBOUND\n"
+            + "AddNumbersLogicalHandler CLOSE\n"
+            + "AddNumbersLogicalHandler2 CLOSE\n"
+            + "AddNumbersProtocolHandler2 CLOSE\n"
+            + "AddNumbersProtocolHandler CLOSE\n"
+            + "AddNumbersProtocolHandler PRE_DESTROY\n";
+        
+        assertEquals(expected_calls, log);
+        
+        // The outbound service handler adds the stack trace to the 
+        // message.  Make sure the stack trace contains the AddNumbersHandlerPortTypeImpl
+        
+        TestLogger.logger.debug("Expected Exception is " + 
+                                expectedException.getMessage());
+        
+        SOAPFault fault = expectedException.getFault();
+        assertTrue("A stack trace was not present in the returned exception's message:" + 
+                   fault.getFaultString(),
+                   fault.getFaultString().indexOf("AddNumbersHandlerPortTypeImpl") > 0);
+                   
+
+        TestLogger.logger.debug("----------------------------------");
+        
+    }
     
     public void testAddNumbersHandlerDispatch() {
         try {
@@ -511,9 +698,9 @@ public class AddNumbersHandlerTests extends AbstractTestCase {
             e.printStackTrace();
             assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
             //AXIS2-2417 - assertEquals(((SOAPFaultException)e).getMessage(), "AddNumbersLogicalHandler2 was here");
-            assertEquals(((SOAPFaultException)e).getMessage(), "Got value 101.  " +
+            assertTrue(((SOAPFaultException)e).getMessage().contains("Got value 101.  " +
             		"AddNumbersHandlerPortTypeImpl.addNumbersHandler method is " +
-            		"correctly throwing this exception as part of testing");
+            		"correctly throwing this exception as part of testing"));
             
             String log = readLogFile();
             String expected_calls = "AddNumbersClientLogicalHandler HANDLE_MESSAGE_OUTBOUND\n"

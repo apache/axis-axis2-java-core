@@ -286,6 +286,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     // Keys to access JAXWS Request and Response SOAP Headers
     public static final String JAXWS_OUTBOUND_SOAP_HEADERS  = "jaxws.binding.soap.headers.outbound";
     public static final String JAXWS_INBOUND_SOAP_HEADERS = "jaxws.binding.soap.headers.inbound";
+    
+    // If the JAXWS WebMethod throws an exception on the server, the exception is
+    // stored on the server outbound MessageContext.  This is the key to access that Throwable object.
+    public static final String JAXWS_WEBMETHOD_EXCEPTION = 
+        "jaxws.outbound.response.webmethod.exception";
 
     /**
      * A MessageContext property or client Option stating the JMS correlation id

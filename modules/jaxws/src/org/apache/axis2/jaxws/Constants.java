@@ -56,4 +56,11 @@ public interface Constants {
      */
     public static final String CHECKED_EXCEPTION =
         "org.apache.axis2.jaxws.checkedException";
+    
+    /**
+     * If an exception is thrown by the JAXWS webservice's webmethod, the 
+     * Throwable object is placed in the service outbound response context.
+     */
+    public static final String JAXWS_WEBMETHOD_EXCEPTION = 
+        org.apache.axis2.Constants.JAXWS_WEBMETHOD_EXCEPTION;
 }

@@ -30,6 +30,7 @@ import org.apache.axiom.om.OMXMLStreamReader;
 import org.apache.axiom.om.util.CopyUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -122,6 +123,12 @@ public class MessagePersistanceTests extends TestCase {
         org.apache.axis2.context.MessageContext axisMC = jaxwsMC.getAxisMessageContext();
         MessageUtils.putMessageOnMessageContext(m, jaxwsMC.getAxisMessageContext());
         
+        // Add other properties to the MessageContext
+        axisMC.setProperty(Constants.JAXWS_WEBMETHOD_EXCEPTION, new NullPointerException());
+        axisMC.setProperty("keyString", "valueString");
+        axisMC.setProperty("keyInteger", new Integer(5));
+        
+        
         // Make sure the Axiom structure is intact
         SOAPEnvelope env = axisMC.getEnvelope();
         SOAPBody body = env.getBody();
@@ -204,6 +211,23 @@ public class MessagePersistanceTests extends TestCase {
         
         // At this point in time, the restoredMessage will be a full tree.
         // TODO If this changes, please add more assertions here.
+        
+        // Check persisted properties
+        
+        // The exception might be persisted....but in the very least it should
+        // not cause an exception.
+        Throwable t = (Throwable) restoredMC.getProperty(Constants.JAXWS_WEBMETHOD_EXCEPTION);
+        assertTrue(t == null || t instanceof NullPointerException);
+        
+        // Make sure the keyString property was persisted
+        String valueString =  (String) restoredMC.getProperty("keyString");
+        assertTrue("valueString".equals(valueString));
+        
+        // Make sure the keyInteger property was persisted.
+        Integer valueInteger =  (Integer) restoredMC.getProperty("keyInteger");
+        assertTrue(valueInteger == 5);
+        
+        axisMC.setProperty("keyInteger", new Integer(5));
         
         // Simulate transport
         baos = new ByteArrayOutputStream();
