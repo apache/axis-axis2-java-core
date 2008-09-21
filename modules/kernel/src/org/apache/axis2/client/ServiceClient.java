@@ -126,6 +126,8 @@ public class ServiceClient {
     
     private int hashCode;
 
+    private boolean removeAxisService;
+
     /**
      * Create a service client configured to work with a specific AxisService.
      * If this service is already in the world that's handed in (in the form of
@@ -168,17 +170,20 @@ public class ServiceClient {
 
         // save the axisConfig and service
         axisConfig = configContext.getAxisConfiguration();
+
         if (axisService == null) {
             axisService = createAnonymousService();
         }
         this.axisService = axisService;
+        // axis service is removed from the configuration context
+        // only if user has not added it to configuration context.
         if (axisConfig.getService(axisService.getName()) == null) {
             axisService.setClientSide(true);
             axisConfig.addService(axisService);
+            removeAxisService = true;
         } else {
-            throw new AxisFault(Messages.getMessage(
-                    "twoservicecannothavesamename",
-                    axisService.getName()));
+            axisService.setClientSide(true);
+            removeAxisService = false;
         }
         AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
         ServiceGroupContext sgc = configContext.createServiceGroupContext(axisServiceGroup);
@@ -811,7 +816,7 @@ public class ServiceClient {
             String serviceGroupName = axisService.getAxisServiceGroup().getServiceGroupName();
             AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
             AxisServiceGroup asg = axisConfiguration.getServiceGroup(serviceGroupName);
-            if (asg != null) {
+            if ((asg != null) && removeAxisService) {
                 axisConfiguration.removeServiceGroup(serviceGroupName);
             }
         } else {
