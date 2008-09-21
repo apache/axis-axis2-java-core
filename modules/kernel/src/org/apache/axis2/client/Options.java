@@ -569,6 +569,10 @@ public class Options implements Externalizable, SafeSerializable {
      * @param parent (<code>null</code> if none)
      */
     public void setParent(Options parent) {
+        if (this == parent) {
+            throw new IllegalArgumentException("Invalid parent Options: they cannot be the same object");
+        }
+
         this.parent = parent;
     }
 
