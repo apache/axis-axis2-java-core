@@ -20,12 +20,19 @@
 
 package org.apache.axis2.policy.builders;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.policy.model.MTOMAssertion;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
+import org.apache.neethi.Constants;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
 
 import javax.xml.namespace.QName;
@@ -37,13 +44,27 @@ public class MTOMAssertionBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory)
             throws IllegalArgumentException {
+        
         MTOMAssertion mtomAssertion = new MTOMAssertion();
+        
+        processMTOMAssertion(element, mtomAssertion);
+       
         return mtomAssertion;
     }
 
     public QName[] getKnownElements() {
         return new QName[] {
                 new QName(MTOMAssertion.NS, MTOMAssertion.MTOM_SERIALIZATION_CONFIG_LN) };
+    }
+    
+    private void processMTOMAssertion(OMElement element, MTOMAssertion mtomAssertion) {
+        
+        //Checking wsp:Optional attribute
+        String value = element.getAttributeValue(Constants.Q_ELEM_OPTIONAL_ATTR);
+        boolean isOptional = JavaUtils.isTrueExplicitly(value); 
+        
+        mtomAssertion.setOptional(isOptional);
+        
     }
 
 
