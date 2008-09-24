@@ -58,6 +58,30 @@ public class MTOMAssertionTest extends TestCase {
             fail(e.getMessage());
         }
     }
+    
+    public void testOptionalAttribute() {
+        try {
+            Policy p = this.getPolicy(System.getProperty("basedir", ".") +
+                    "/test-resources/policy-mtom-optional.xml");
+            List assertions = (List)p.getAlternatives().next();
+
+            for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+                Assertion assertion = (Assertion)iter.next();
+                if (assertion instanceof MTOMAssertion) {
+                    MTOMAssertion mtomModel = (MTOMAssertion)assertion;
+                    assertEquals("wsp:Optional attribute is not processed", true,
+                                 mtomModel.isOptional());
+                    System.out.println(mtomModel.isOptional());
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+
+    }
 
 
     private Policy getPolicy(String filePath) throws Exception {
