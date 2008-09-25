@@ -596,26 +596,30 @@ public class CodeGenerationUtility {
                 systemId = systemId.substring("project://local/".length());
             }
 
-            StringTokenizer pathElements = new StringTokenizer(systemId, "/");
-            Stack pathElementStack = new Stack();
-            while (pathElements.hasMoreTokens()) {
-                String pathElement = pathElements.nextToken();
-                if (".".equals(pathElement)) {
-                } else if ("..".equals(pathElement)) {
-                    if (!pathElementStack.isEmpty())
-                        pathElementStack.pop();
-                } else {
-                    pathElementStack.push(pathElement);
+            // if the system id has // final system id gives only one / after tokenizing process
+            // to avoid this we check whether it is started with http:// or not
+            if (!systemId.startsWith("http://")) {
+                StringTokenizer pathElements = new StringTokenizer(systemId, "/");
+                Stack pathElementStack = new Stack();
+                while (pathElements.hasMoreTokens()) {
+                    String pathElement = pathElements.nextToken();
+                    if (".".equals(pathElement)) {
+                    } else if ("..".equals(pathElement)) {
+                        if (!pathElementStack.isEmpty())
+                            pathElementStack.pop();
+                    } else {
+                        pathElementStack.push(pathElement);
+                    }
                 }
+                StringBuffer pathBuilder = new StringBuffer();
+                for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
+                    pathBuilder.append(File.separator + iter.next());
+                }
+                systemId = pathBuilder.toString().substring(1);
             }
-            StringBuffer pathBuilder = new StringBuffer();
-            for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
-                pathBuilder.append(File.separator + iter.next());
-            }
-            systemId = pathBuilder.toString().substring(1);
+            
 
-            log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId +
-                    "]");
+            log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId + "]");
             try {
                 for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
