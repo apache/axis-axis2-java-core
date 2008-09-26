@@ -156,6 +156,13 @@ public class ConverterUtilTest extends TestCase {
         System.out.println("String   ==> " + "2007-02-15-12:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(date));
         System.out.println("calendar ==> " + ConverterUtil.convertToString(date));
+
+        TimeZone timeZone = TimeZone.getTimeZone("Australia/Perth");
+        Calendar c = Calendar.getInstance(timeZone);
+        c.clear();
+        c.set(2008, Calendar.JANUARY, 1);
+        TestCase.assertTrue(ConverterUtil.convertToString(c).endsWith("+08:00"));
+        
     }
 
 }

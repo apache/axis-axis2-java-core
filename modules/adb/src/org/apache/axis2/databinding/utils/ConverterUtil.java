@@ -234,7 +234,7 @@ public class ConverterUtil {
             return invokeToStringMethod(value,Calendar.class);
         } else {
             // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-            if (!value.isSet(Calendar.ZONE_OFFSET)){
+            if (value.get(Calendar.ZONE_OFFSET) == -1){
                 value.setTimeZone(TimeZone.getDefault());
             }
             StringBuffer dateString = new StringBuffer(28);
