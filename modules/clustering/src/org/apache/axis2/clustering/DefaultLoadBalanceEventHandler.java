@@ -97,7 +97,7 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
                     }
                     int httpsPort = member.getHttpsPort();
                     if(log.isDebugEnabled()){
-                        log.debug("HTTPS Port=" + httpPort);
+                        log.debug("HTTPS Port=" + httpsPort);
                     }
                     if (httpsPort != -1) {
                         SocketAddress httpsSockaddr = new InetSocketAddress(addr, httpsPort);
