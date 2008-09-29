@@ -42,16 +42,16 @@ public class MTOMAssertionTest extends TestCase {
 
             for (Iterator iter = assertions.iterator(); iter.hasNext();) {
                 Assertion assertion = (Assertion)iter.next();
-                if (assertion instanceof MTOMAssertion) {
+                if (assertion instanceof MTOM10Assertion) {
                     isMTOMAssertionFound = true;
-                    MTOMAssertion mtomModel = (MTOMAssertion)assertion;
+                    MTOM10Assertion mtomModel = (MTOM10Assertion)assertion;
                     assertEquals("MIME Serialization assertion not processed", false,
                                  mtomModel.isOptional());
                 }
 
             }
             //The Asymm binding mean is not built in the policy processing :-(
-            assertTrue("MTOM Assertion not found.", isMTOMAssertionFound);
+            assertTrue("MTOM10 Assertion not found.", isMTOMAssertionFound);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,7 +59,8 @@ public class MTOMAssertionTest extends TestCase {
         }
     }
     
-    public void testOptionalAttribute() {
+    public void testMTOM10Optional() {
+        //Testing the wsp:Optional attribute in WS-MTOMPolicy 1.0 assertion
         try {
             Policy p = this.getPolicy(System.getProperty("basedir", ".") +
                     "/test-resources/policy-mtom-optional.xml");
@@ -67,11 +68,10 @@ public class MTOMAssertionTest extends TestCase {
 
             for (Iterator iter = assertions.iterator(); iter.hasNext();) {
                 Assertion assertion = (Assertion)iter.next();
-                if (assertion instanceof MTOMAssertion) {
-                    MTOMAssertion mtomModel = (MTOMAssertion)assertion;
+                if (assertion instanceof MTOM10Assertion) {
+                    MTOM10Assertion mtomModel = (MTOM10Assertion)assertion;
                     assertEquals("wsp:Optional attribute is not processed", true,
                                  mtomModel.isOptional());
-                    System.out.println(mtomModel.isOptional());
                 }
 
             }
@@ -82,11 +82,80 @@ public class MTOMAssertionTest extends TestCase {
         }
 
     }
+    
+    public void testMTOM11Assertion () {
+        // Testing the WS-MTOMPolicy 1.1 assertion
+        try {
+            Policy p = this.getPolicy(System.getProperty("basedir", ".") +
+                    "/test-resources/policy-mtom11.xml");
+            List assertions = (List)p.getAlternatives().next();
 
+            boolean isMTOMAssertionFound = false;
+
+            for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+                Assertion assertion = (Assertion)iter.next();
+                if (assertion instanceof MTOM11Assertion) {
+                    isMTOMAssertionFound = true;
+                    MTOM11Assertion mtomModel = (MTOM11Assertion)assertion;
+                }
+
+            }
+            assertTrue("MTOM11 Assertion not found.", isMTOMAssertionFound);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        
+    }
+    
+    public void testMTOM11AssertionOptional() {
+      //Testing the wsp:Optional attribute in WS-MTOMPolicy 1.0 assertion
+        try {
+            Policy p = this.getPolicy(System.getProperty("basedir", ".") +
+                    "/test-resources/policy-mtom11-optional.xml");
+            List assertions = (List)p.getAlternatives().next();
+
+            for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+                Assertion assertion = (Assertion)iter.next();
+                if (assertion instanceof MTOM10Assertion) {
+                    MTOM10Assertion mtomModel = (MTOM10Assertion)assertion;
+                    assertEquals("wsp:Optional attribute is not processed", true,
+                                 mtomModel.isOptional());
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
+    public void testMTOMAssertionInheritance() {
+        
+        //Testing the MTOM10Assertion, MTOM11Assertion should be sub classes of MTOMAssertion
+        
+        boolean isSubclass;
+        
+        MTOM10Assertion mtom10 = new MTOM10Assertion();
+        isSubclass = mtom10 instanceof MTOMAssertion;
+        
+        assertEquals("MTOM10Assertions is not subclass of MTOMAssertion",true, isSubclass);
+        
+        MTOM11Assertion mtom11 = new MTOM11Assertion();
+        isSubclass = mtom11 instanceof MTOMAssertion;
+        
+        assertEquals("MTOM10Assertions is not subclass of MTOMAssertion",true, isSubclass);
+
+    }
+    
 
     private Policy getPolicy(String filePath) throws Exception {
         StAXOMBuilder builder = new StAXOMBuilder(filePath);
         OMElement elem = builder.getDocumentElement();
         return PolicyEngine.getPolicy(elem);
     }
+    
+    
 }
