@@ -17,13 +17,13 @@
  * under the License.
  */
 
-
 package org.apache.axis2.policy.builders;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.policy.model.MTOM10Assertion;
 import org.apache.axis2.policy.model.MTOMAssertion;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -37,47 +37,39 @@ import org.apache.neethi.builders.AssertionBuilder;
 
 import javax.xml.namespace.QName;
 
-/** The builder will be picked by the "org.apache.neethi.AssertionBuilderFactory". */
-public class MTOMAssertionBuilder implements AssertionBuilder {
+/**
+ * The builder will be picked by the
+ * "org.apache.neethi.AssertionBuilderFactory".
+ */
+public class MTOM10AssertionBuilder implements AssertionBuilder {
 
-    private static Log log = LogFactory.getLog(MTOMAssertionBuilder.class);
+    private static Log log = LogFactory.getLog(MTOM10AssertionBuilder.class);
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory)
             throws IllegalArgumentException {
-        
-        MTOMAssertion mtomAssertion = new MTOMAssertion();
-        
-        processMTOMAssertion(element, mtomAssertion);
-       
+
+        MTOM10Assertion mtomAssertion = new MTOM10Assertion();
+
+        processMTOM10Assertion(element, mtomAssertion);
+
         return mtomAssertion;
     }
 
     public QName[] getKnownElements() {
-        return new QName[] {
-                new QName(MTOMAssertion.NS, MTOMAssertion.MTOM_SERIALIZATION_CONFIG_LN) };
-    }
-    
-    private void processMTOMAssertion(OMElement element, MTOMAssertion mtomAssertion) {
-        
-        //Checking wsp:Optional attribute
-        String value = element.getAttributeValue(Constants.Q_ELEM_OPTIONAL_ATTR);
-        boolean isOptional = JavaUtils.isTrueExplicitly(value); 
-        
-        mtomAssertion.setOptional(isOptional);
-        
+        return new QName[] { new QName(MTOM10Assertion.NS,
+                MTOM10Assertion.MTOM_SERIALIZATION_CONFIG_LN) };
     }
 
+    private void processMTOM10Assertion(OMElement element,
+            MTOM10Assertion mtomAssertion) {
+
+        // Checking wsp:Optional attribute
+        String value = element
+                .getAttributeValue(Constants.Q_ELEM_OPTIONAL_ATTR);
+        boolean isOptional = JavaUtils.isTrueExplicitly(value);
+
+        mtomAssertion.setOptional(isOptional);
+
+    }
 
 }
-
-
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	
