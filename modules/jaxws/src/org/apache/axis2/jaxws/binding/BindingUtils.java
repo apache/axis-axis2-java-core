@@ -33,7 +33,7 @@ public class BindingUtils {
      */
     public static Binding createBinding(EndpointDescription ed) {
         if (ed == null) {
-            // Do we default to the SOAPBinding?            
+            throw new NullPointerException("EndpointDescription is null");          
         }
         
         String bindingType = 
@@ -55,17 +55,7 @@ public class BindingUtils {
     }
     
     public static boolean isSOAPBinding(String url) {
-        if (url != null && (url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
-                url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                url.equals(SOAPBinding.SOAP12HTTP_BINDING)|| 
-                url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING) ||
-                url.equals(MDQConstants.SOAP11JMS_BINDING) ||
-                url.equals(MDQConstants.SOAP11JMS_MTOM_BINDING) ||
-                url.equals(MDQConstants.SOAP12JMS_BINDING) ||
-                url.equals(MDQConstants.SOAP12JMS_MTOM_BINDING) )) {
-            return true;
-        }
-        return false;
+        return (isSOAP11Binding(url) || isSOAP12Binding(url));
     }
     
     public static boolean isSOAP11Binding(String url) {

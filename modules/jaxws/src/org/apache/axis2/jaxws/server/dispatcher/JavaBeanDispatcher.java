@@ -205,13 +205,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         return;
     }
-
-    protected Object invokeService(MessageContext ctx,
-                                   Method method, 
-                                   Object obj,
-                                   Object args[]) throws Exception {
-        return method.invoke(obj, args);
-    }
     
     private void initialize(MessageContext mc) {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
