@@ -260,9 +260,8 @@
             <version>${javax.mail.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-jws-api</artifactId>
-            <version>${axis2.jws.version}</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
         </dependency>
     </dependencies>
     <distributionManagement>
@@ -381,7 +380,7 @@
                                 <filter token="commons.codec.version" value="${commons.codec.version}"/>
                                 <filter token="jibx.version" value="${jibx.version}"/>
                                 <filter token="javax.mail.version" value="${javax.mail.version}"/>
-                                <filter token="axis2.jws.version" value="${axis2.jws.version}"/>
+                                <filter token="geronimo.spec.metadata.version" value="${geronimo.spec.metadata.version}"/>
                                 <filter token="geronimo.spec.javamail.version" value="${geronimo.spec.javamail.version}"/>
                                 <filter token="stax.impl.version" value="${stax.impl.version}"/>                                
                 
@@ -413,7 +412,7 @@
                                 <copy todir="./lib" file="${m2.local.repo}/org/apache/axis2/axis2/${version}/axis2-${version}.jar" />
                                 <copy todir="./lib" file="${m2.local.repo}/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/${geronimo.spec.javamail.version}/geronimo-javamail_1.4_spec-${geronimo.spec.javamail.version}.jar" />
                                 <copy todir="./lib" file="${m2.local.repo}/javax/mail/mail/${javax.mail.version}/mail-${javax.mail.version}.jar" />
-                                <copy todir="./lib" file="${m2.local.repo}/org/apache/axis2/axis2-jws-api/${axis2.jws.version}/axis2-jws-api-${axis2.jws.version}.jar" />
+                                <copy todir="./lib" file="${m2.local.repo}/org/apache/geronimo/specs/geronimo-ws-metadata_2.0_spec/${geronimo.spec.metadata.version}/geronimo-ws-metadata_2.0_spec-${geronimo.spec.metadata.version}.jar" />
                                 -->
                                         
                                 <mkdir dir="./icons"/>

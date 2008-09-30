@@ -23,6 +23,6 @@
 	<classpathentry kind="lib" path="./lib/axis2-@version@.jar" />
 	<classpathentry kind="lib" path="./lib/geronimo-javamail_1.4_spec-@geronimo.spec.javamail.version@.jar" />
 	<classpathentry kind="lib" path="./lib/mail-@javax.mail.version@.jar" />
-	<classpathentry kind="lib" path="./lib/axis2-jws-api-@axis2.jws.version@.jar" />
+        <classpathentry kind="lib" path="./lib/geronimo-ws-metadata_2.0_spec-@geronimo.spec.metadata.version@.jar" />
 </classpath>
 

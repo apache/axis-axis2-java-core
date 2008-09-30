@@ -85,7 +85,7 @@
       <library name="lib/mail-@javax.mail.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-jws-api-@axis2.jws.version@.jar">
+      <library name="lib/geronimo-ws-metadata_2.0_spec-@geronimo.spec.metadata.version@.jar">
          <export name="*"/>
       </library>
    </runtime>
