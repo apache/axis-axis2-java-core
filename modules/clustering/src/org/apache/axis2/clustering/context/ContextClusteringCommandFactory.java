@@ -205,8 +205,10 @@ public final class ContextClusteringCommandFactory {
                         log.debug("sending property =" + key + "-" + prop);
                     }
                     PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                    diff.setValue(prop);
-                    updateCmd.addProperty(diff);
+                    if (diff != null) {
+                        diff.setValue(prop);
+                        updateCmd.addProperty(diff);
+                    }
                 } else {
                     String msg =
                             "Trying to replicate non-serializable property " + key +
