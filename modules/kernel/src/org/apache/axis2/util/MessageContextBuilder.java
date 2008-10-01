@@ -373,7 +373,7 @@ public class MessageContextBuilder {
                 if (!responseEPR.hasAnonymousAddress() && !responseEPR.hasNoneAddress()) {
                     URI uri = new URI(responseEPR.getAddress());
                     String scheme = uri.getScheme();
-                    if (!transportOut.getName().equals(scheme)) {
+                    if ((transportOut == null) || !transportOut.getName().equals(scheme)) {
                         ConfigurationContext configurationContext =
                                 context.getConfigurationContext();
                         transportOut = configurationContext.getAxisConfiguration()
