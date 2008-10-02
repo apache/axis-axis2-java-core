@@ -42,12 +42,21 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-saaj_1.3_spec</artifactId>
         </dependency>
-<dependency>
+         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transports</artifactId>
+            <artifactId>axis2-transport-http</artifactId>
             <version>${version}</version>
         </dependency>
-
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-tcp</artifactId>
+            <version>${version}</version>
+        </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>${version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
