@@ -74,6 +74,18 @@
     </modules>
     <profiles>
         <profile>
+            <id>transport</id>
+            <activation>
+      	        <file>
+                    <exists>../transport</exists>
+      	        </file>
+            </activation>
+            <modules>
+                <module>../transport</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
             <activation>
                 <property>
                     <name>release</name>
