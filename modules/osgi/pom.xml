@@ -33,7 +33,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.apache.axis2.osgi</artifactId>
     <packaging>bundle</packaging>
-    <name>Apache Axis2 OSGi Integration</name>
+    <name>Apache Axis2 - OSGi Integration</name>
     <description>Apache Axis2 OSGi Integration</description>
     <build>
         <sourceDirectory>src</sourceDirectory>
