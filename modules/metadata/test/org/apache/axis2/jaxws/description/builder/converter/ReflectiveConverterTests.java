@@ -258,12 +258,14 @@ class ChildClass extends ParentClass implements ServiceInterface, CommonService 
     public void doAbstract() {
     }
 
-    ;
-
     public void extraMethod() {
     }
-
-    ;
+    
+    protected void protectedChildMethod() {        
+    }
+    
+    private void privateChildMethod() {        
+    }
 }
 
 @WebService(serviceName = "InhertianceTestParent")
@@ -274,7 +276,11 @@ class ParentClass extends AbstractService implements ParentServiceInterface {
     public void doParentAbstract() {
     }
 
-    ;
+    protected void protectedParentMethod() {        
+    }
+    
+    private void privateParentMethod() {        
+    }
 }
 
 interface ServiceInterface {
@@ -292,7 +298,5 @@ interface ParentServiceInterface {
 class AbstractService {
     public void someAbstractMethod() {
     }
-
-    ;
 }
 

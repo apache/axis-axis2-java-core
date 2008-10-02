@@ -39,6 +39,7 @@ import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebEndpoint;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -58,8 +59,8 @@ public class JavaMethodsToMDCConverter {
     }
 
     /**
-     * This will drive the creation of a <code>MethodDescriptionComposite</code> for every Java Method
-     * in the methods array and every Java Constructor in the constructors array.
+     * This will drive the creation of a <code>MethodDescriptionComposite</code> for every public 
+     * Java Method in the methods array and every Java Constructor in the constructors array.
      *
      * @return - <code>List</code>
      */
@@ -67,7 +68,8 @@ public class JavaMethodsToMDCConverter {
         List<MethodDescriptionComposite> mdcList = new
                 ArrayList<MethodDescriptionComposite>();
         for (Method method : methods) {
-            if (!ConverterUtils.isInherited(method, declaringClass)) {
+            if (!ConverterUtils.isInherited(method, declaringClass) 
+                && Modifier.isPublic(method.getModifiers())) {
                 MethodDescriptionComposite mdc = new MethodDescriptionComposite();
                 setExceptionList(mdc, method);
                 mdc.setMethodName(method.getName());
