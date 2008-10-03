@@ -52,11 +52,11 @@ public final class ContextClusteringCommandFactory {
     getCommandCollection(AbstractContext[] contexts,
                          Map excludedReplicationPatterns) {
 
-        ArrayList commands = new ArrayList(contexts.length);
+        ArrayList<ContextClusteringCommand> commands = new ArrayList<ContextClusteringCommand>(contexts.length);
         ContextClusteringCommandCollection collection =
                 new ContextClusteringCommandCollection(commands);
-        for (int i = 0; i < contexts.length; i++) {
-            ContextClusteringCommand cmd = getUpdateCommand(contexts[i],
+        for (AbstractContext context : contexts) {
+            ContextClusteringCommand cmd = getUpdateCommand(context,
                                                             excludedReplicationPatterns,
                                                             false);
             if (cmd != null) {
@@ -150,8 +150,8 @@ public final class ContextClusteringCommandFactory {
         if (!includeAllProperties) {
             synchronized (context) {
                 Map diffs = context.getPropertyDifferences();
-                for (Iterator iter = diffs.keySet().iterator(); iter.hasNext();) {
-                    String key = (String) iter.next();
+                for (Object o : diffs.keySet()) {
+                    String key = (String) o;
                     PropertyDifference diff = (PropertyDifference) diffs.get(key);
                     Object value = diff.getValue();
 
@@ -195,8 +195,7 @@ public final class ContextClusteringCommandFactory {
                                        String[] propertyNames) throws ClusteringFault {
         synchronized (context) {
             Map diffs = context.getPropertyDifferences();
-            for (int i = 0; i < propertyNames.length; i++) {
-                String key = propertyNames[i];
+            for (String key : propertyNames) {
                 Object prop = context.getPropertyNonReplicable(key);
 
                 // First check whether it is serializable
@@ -242,8 +241,8 @@ public final class ContextClusteringCommandFactory {
     }
 
     private static boolean isExcluded(List list, String propertyName) {
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            String pattern = (String) iter.next();
+        for (Object aList : list) {
+            String pattern = (String) aList;
             if (pattern.startsWith("*")) {
                 pattern = pattern.replaceAll("\\*", "");
                 if (propertyName.endsWith(pattern)) {
