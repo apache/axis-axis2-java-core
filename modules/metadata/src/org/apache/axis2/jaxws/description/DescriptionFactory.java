@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.JAXWSRIWSDLGenerator;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
+import org.apache.ws.commons.schema.SchemaBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -456,7 +457,10 @@ public class DescriptionFactory {
      */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
             HashMap<String, DescriptionBuilderComposite> dbcMap) {
-        return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
+        SchemaBuilder.initCache();  // turn on static XmlSchema object caching in SchemaBuilder
+        List<ServiceDescription> listSD = DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap, null);
+        SchemaBuilder.clearCache();  // turn off caching so we don't break everybody else
+        return listSD;
     }
 
     /**
