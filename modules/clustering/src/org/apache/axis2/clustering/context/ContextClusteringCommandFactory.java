@@ -87,10 +87,6 @@ public final class ContextClusteringCommandFactory {
                 cmd = null;
             }
         }
-
-        synchronized (context) {
-            context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
-        }
         return cmd;
     }
 
@@ -104,11 +100,7 @@ public final class ContextClusteringCommandFactory {
             fillProperties(cmd, context, propertyNames);
             if (cmd.isPropertiesEmpty()) {
                 cmd = null;
-            } 
-        }
-
-        synchronized (context) {
-            context.clearPropertyDifferences(); // Once we send the diffs, we should clear the diffs
+            }
         }
         return cmd;
     }
@@ -174,7 +166,7 @@ public final class ContextClusteringCommandFactory {
                 for (Iterator iter = context.getPropertyNames(); iter.hasNext();) {
                     String key = (String) iter.next();
                     Object value = context.getPropertyNonReplicable(key);
-                    if (value instanceof Serializable) { 
+                    if (value instanceof Serializable) {
 
                         // Next check whether it matches an excluded pattern
                         if (!isExcluded(key, context.getClass().getName(), excludedPropertyPatterns)) {
@@ -193,27 +185,28 @@ public final class ContextClusteringCommandFactory {
     private static void fillProperties(UpdateContextCommand updateCmd,
                                        AbstractContext context,
                                        String[] propertyNames) throws ClusteringFault {
-        synchronized (context) {
-            Map diffs = context.getPropertyDifferences();
-            for (String key : propertyNames) {
-                Object prop = context.getPropertyNonReplicable(key);
+        Map diffs = context.getPropertyDifferences();
+        for (String key : propertyNames) {
+            Object prop = context.getPropertyNonReplicable(key);
 
-                // First check whether it is serializable
-                if (prop instanceof Serializable) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("sending property =" + key + "-" + prop);
-                    }
-                    PropertyDifference diff = (PropertyDifference) diffs.get(key);
-                    if (diff != null) {
-                        diff.setValue(prop);
-                        updateCmd.addProperty(diff);
-                    }
-                } else {
-                    String msg =
-                            "Trying to replicate non-serializable property " + key +
-                            " in context " + context;
-                    throw new ClusteringFault(msg);
+            // First check whether it is serializable
+            if (prop instanceof Serializable) {
+                if (log.isDebugEnabled()) {
+                    log.debug("sending property =" + key + "-" + prop);
                 }
+                PropertyDifference diff = (PropertyDifference) diffs.get(key);
+                if (diff != null) {
+                    diff.setValue(prop);
+                    updateCmd.addProperty(diff);
+
+                    // Remove the diff?
+                    diffs.remove(key);
+                }
+            } else {
+                String msg =
+                        "Trying to replicate non-serializable property " + key +
+                        " in context " + context;
+                throw new ClusteringFault(msg);
             }
         }
     }
@@ -232,7 +225,7 @@ public final class ContextClusteringCommandFactory {
         if (!isExcluded) {
             // check in the default excludes
             List defaultExcludes =
-                (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
+                    (List) excludedPropertyPatterns.get(DeploymentConstants.TAG_DEFAULTS);
             if (defaultExcludes != null) {
                 isExcluded = isExcluded(defaultExcludes, propertyName);
             }
