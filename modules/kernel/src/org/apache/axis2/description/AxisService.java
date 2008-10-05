@@ -918,7 +918,7 @@ public class AxisService extends AxisDescription {
 		this.eprs = eprs;
 	}
 
-	public String[] getEPRs() throws AxisFault {
+	public String[] getEPRs() {
 		if (eprs != null && eprs.length != 0) {
 			return eprs;
 		}
@@ -1174,7 +1174,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    private String getServiceEPR() throws AxisFault {
+    private String getServiceEPR() {
         String serviceEPR = null;
         Parameter parameter = this.getParameter(Constants.Configuration.GENERATE_ABSOLUTE_LOCATION_URIS);
         if ((parameter != null) && JavaUtils.isTrueExplicitly(parameter.getValue())) {
@@ -2604,7 +2604,7 @@ public class AxisService extends AxisDescription {
 
             String newscheamlocation = customSchemaNamePrefix == null ?
                     // use the default mode
-                    (getName() + "?xsd=" + getScheamLocationWithDot(
+                    (this.getServiceEPR() + "?xsd=" + getScheamLocationWithDot(
                             sourceURIToNewLocationMap, s))
                     :
                     // custom prefix is present - add the custom prefix
