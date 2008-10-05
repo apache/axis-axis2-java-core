@@ -206,7 +206,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return;
     }
     
-    private void initialize(MessageContext mc) {
+    protected void initialize(MessageContext mc) {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         mc.setOperationDescription(Utils.getOperationDescription(mc));
         endpointDesc = mc.getEndpointDescription();

@@ -638,7 +638,7 @@ public class ProviderDispatcher extends JavaDispatcher {
         return m;
     }
     
-    private void initialize(MessageContext mc) {
+    protected void initialize(MessageContext mc) {
 
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
 
