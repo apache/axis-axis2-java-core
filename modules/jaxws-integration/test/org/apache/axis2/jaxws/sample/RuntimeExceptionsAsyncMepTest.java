@@ -27,6 +27,8 @@ import java.util.concurrent.Future;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.Test;
@@ -72,9 +74,13 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
     }
 
     private AsyncPort getPort() {
+        return getPort(null);
+    }
+    
+    private AsyncPort getPort(WebServiceFeature... features) {
 
         AsyncService service = new AsyncService();
-        AsyncPort port = service.getAsyncPort();
+        AsyncPort port = service.getAsyncPort(features);
         assertNotNull("Port is null", port);
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
@@ -353,7 +359,7 @@ public class RuntimeExceptionsAsyncMepTest extends AbstractTestCase {
     public void testAsyncCallback_asyncMEP_asyncWire_Addressing_WebServiceException()
             throws Exception {
         setupAddressingAndListener();
-        AsyncPort port = getPort();
+        AsyncPort port = getPort(new AddressingFeature());
 
         Map<String, Object> rc = ((BindingProvider) port).getRequestContext();
         rc.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,

@@ -89,7 +89,7 @@ public class DispatchSubmissionAddressingFeatureTest extends InterceptableClient
         Boolean disabled = (Boolean) request.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         
         assertNull(version);
-        assertNull(disabled);
+        assertTrue(disabled);
         
         org.apache.axis2.context.MessageContext axis2Request =
             request.getAxisMessageContext();
