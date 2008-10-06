@@ -76,7 +76,6 @@ public class TribesClusterManager implements ClusterManager {
     private HashMap<String, Parameter> parameters;
     private ManagedChannel channel;
     private RpcChannel rpcInitChannel;
-    private RpcChannel membershipRpcChannel;
     private ConfigurationContext configurationContext;
     private ChannelListener channelListener;
     private ChannelSender channelSender;
