@@ -21,8 +21,10 @@ import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.ManagedChannel;
+import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
+import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -157,6 +159,10 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
             log.debug("Added TCP Failure Detector");
         }
 
+        // Add the NonBlockingCoordinator.
+        NonBlockingCoordinator nbc = new Axis2Coordinator();
+        channel.addInterceptor(nbc);
+        
         channel.getMembershipService().setDomain(domain);
         mode.addInterceptors(channel);
 

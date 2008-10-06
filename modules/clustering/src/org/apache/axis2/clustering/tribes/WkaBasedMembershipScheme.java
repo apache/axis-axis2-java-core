@@ -25,12 +25,14 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ManagedChannel;
+import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor;
+import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
 import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.commons.logging.Log;
@@ -288,17 +290,6 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             log.debug("Added TCP Ping Interceptor");
         }
 
-        // Add the NonBlockingCoordinator. This is used for leader election
-        /*nbc = new NonBlockingCoordinator() {
-            public void fireInterceptorEvent(InterceptorEvent event) {
-                String status = event.getEventTypeDesc();
-                System.err.println("$$$$$$$$$$$$ NBC status=" + status);
-                int type = event.getEventType();
-            }
-        };
-        nbc.setPrevious(dfi);
-        channel.addInterceptor(nbc);*/
-
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
 //        tcpFailureDetector.setPrevious(dfi); //TODO: check this
@@ -309,6 +300,10 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
             log.debug("Added TCP Failure Detector");
         }
 
+        // Add the NonBlockingCoordinator.
+        NonBlockingCoordinator nbc = new Axis2Coordinator();
+        channel.addInterceptor(nbc);
+        
         staticMembershipInterceptor = new StaticMembershipInterceptor();
         staticMembershipInterceptor.setLocalMember(primaryMembershipManager.getLocalMember());
         primaryMembershipManager.setStaticMembershipInterceptor(staticMembershipInterceptor);
