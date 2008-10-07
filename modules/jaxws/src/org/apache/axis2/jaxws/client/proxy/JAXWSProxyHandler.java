@@ -39,6 +39,7 @@ import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -202,6 +203,25 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
         requestIC.setRequestMessageContext(request);
         requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
+        
+        /*
+         * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
+         * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
+         * server would reply with a "Set-Cookie" header, which is copied as a "Cookie"-keyed property to the service context during response.
+         * In this case, if we succeed in using an existing server session, no "Set-Cookie" header will be returned, and therefore no
+         * "Cookie"-keyed property would be set on the service context.  So, let's copy our request context HEADER_COOKIE key to the service
+         * context now to prevent the "no cookie" exception in BindingProvider.setupSessionContext.  It is possible the server does not support
+         * sessions, in which case no error occurs, but the client app would assume it is participating in a session.
+         */
+        if ((requestContext.containsKey(BindingProvider.SESSION_MAINTAIN_PROPERTY)) && ((Boolean)requestContext.get(BindingProvider.SESSION_MAINTAIN_PROPERTY))) {
+            if ((requestContext.containsKey(HTTPConstants.HEADER_COOKIE)) && (requestContext.get(HTTPConstants.HEADER_COOKIE) != null)) {
+                requestIC.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
+                if (log.isDebugEnabled()) {
+                    log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
+                            "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                }
+            }
+        }
         
         // Migrate the properties from the client request context bag to
         // the request MessageContext.
