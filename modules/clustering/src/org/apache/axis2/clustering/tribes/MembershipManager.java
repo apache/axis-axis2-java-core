@@ -255,42 +255,7 @@ public class MembershipManager {
             throw new RemoteProcessException(errMsg, e);
         }
     }
-
-    /*private org.apache.axis2.clustering.Member toAxis2Member(Member member) {
-        org.apache.axis2.clustering.Member axis2Member =
-                new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
-                                                       member.getPort());
-        Properties props = getProperties(member.getPayload());
-
-        String http = props.getProperty("HTTP");
-        if (http != null && http.trim().length() != 0) {
-            axis2Member.setHttpPort(Integer.parseInt(http));
-        }
-
-        String https = props.getProperty("HTTPS");
-        if (https != null && https.trim().length() != 0) {
-            axis2Member.setHttpsPort(Integer.parseInt(https));
-        }
-
-        String isActive = props.getProperty("IS_ACTIVE");
-        if(isActive != null && isActive.trim().length() != 0){
-            axis2Member.setActive(Boolean.valueOf(isActive));
-        }
-        return axis2Member;
-    }
-
-    private Properties getProperties(byte[] payload) {
-        Properties props = null;
-        try {
-            ByteArrayInputStream bin = new ByteArrayInputStream(payload);
-            props = new Properties();
-            props.load(bin);
-        } catch (IOException ignored) {
-            // This error will never occur
-        }
-        return props;
-    }*/
-
+    
     private boolean isLocalMemberInitialized() {
         if (configContext == null) {
             return false;
