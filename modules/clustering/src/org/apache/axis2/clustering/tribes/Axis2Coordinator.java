@@ -41,8 +41,19 @@ public class Axis2Coordinator extends NonBlockingCoordinator {
         super.memberDisappeared(member);
         if (isCoordinator()) {
             if (TribesUtil.toAxis2Member(member).isActive()) {
-                //TODO If an ACTIVE member disappeared, activate a passive member
 
+                // If the local member is PASSIVE, we try to activate it
+                if (!TribesUtil.toAxis2Member(getLocalMember(true)).isActive()) {
+                    //TODO: ACTIVATE local member
+                    
+                } else {
+                    Member[] members = getMembers();
+                    for (Member aMember : members) {
+                        if (!TribesUtil.toAxis2Member(member).isActive()) {
+                            // TODO: Send ACTIVATE message to this passive member
+                        }
+                    }
+                }
             } else {
                 //TODO If a PASSIVE member disappeared, we may need to startup another
                 // passive node
