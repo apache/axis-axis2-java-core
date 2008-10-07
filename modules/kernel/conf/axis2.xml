@@ -266,6 +266,12 @@
         <parameter name="AvoidInitiation">true</parameter>
 
         <!--
+           Indicates whether this member is active or not. This will be useful in a setup where
+           members are deployed in ACTIVE and/or PASSIVE configuration 
+        -->
+        <parameter name="isActive">true</parameter>
+
+        <!--
            The membership scheme used in this setup. The only values supported at the moment are
            "multicast" and "wka"
 

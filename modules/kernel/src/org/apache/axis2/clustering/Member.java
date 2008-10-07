@@ -40,6 +40,11 @@ public class Member {
      */
     private int httpsPort = -1;
 
+    /**
+     * Indicates whether this member is ACTIVE or PASSIVE
+     */
+    private boolean isActive = true;
+
     public Member(String hostName, int port) {
         this.hostName = hostName;
         this.port = port;
@@ -69,6 +74,14 @@ public class Member {
         this.httpPort = httpPort;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -94,6 +107,6 @@ public class Member {
 
     public String toString() {
         return "Host:" + hostName + ", Port: " + port +
-               ", HTTP:" + httpPort + ", HTTPS:" + httpsPort;
+               ", HTTP:" + httpPort + ", HTTPS:" + httpsPort +", ACTIVE:" + isActive;
     }
 }

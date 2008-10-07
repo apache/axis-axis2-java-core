@@ -34,11 +34,8 @@ import org.apache.catalina.tribes.membership.MemberImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 /**
@@ -150,7 +147,7 @@ public class MembershipManager {
         if (loadBalanceEventHandler != null) {
             log.info("Application member " + TribesUtil.getName(member) + " joined group " +
                      new String(member.getDomain()));
-            loadBalanceEventHandler.applicationMemberAdded(toAxis2Member(member));
+            loadBalanceEventHandler.applicationMemberAdded(TribesUtil.toAxis2Member(member));
         }
 
         if (shouldAddMember) {
@@ -259,7 +256,7 @@ public class MembershipManager {
         }
     }
 
-    private org.apache.axis2.clustering.Member toAxis2Member(Member member) {
+    /*private org.apache.axis2.clustering.Member toAxis2Member(Member member) {
         org.apache.axis2.clustering.Member axis2Member =
                 new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
                                                        member.getPort());
@@ -275,6 +272,10 @@ public class MembershipManager {
             axis2Member.setHttpsPort(Integer.parseInt(https));
         }
 
+        String isActive = props.getProperty("IS_ACTIVE");
+        if(isActive != null && isActive.trim().length() != 0){
+            axis2Member.setActive(Boolean.valueOf(isActive));
+        }
         return axis2Member;
     }
 
@@ -288,7 +289,7 @@ public class MembershipManager {
             // This error will never occur
         }
         return props;
-    }
+    }*/
 
     private boolean isLocalMemberInitialized() {
         if (configContext == null) {
@@ -309,7 +310,7 @@ public class MembershipManager {
 
         // Is this an application domain member?
         if (loadBalanceEventHandler != null) {
-            loadBalanceEventHandler.applicationMemberRemoved(toAxis2Member(member));
+            loadBalanceEventHandler.applicationMemberRemoved(TribesUtil.toAxis2Member(member));
         }
     }
 

@@ -162,7 +162,7 @@ public class TribesClusterManager implements ClusterManager {
         setMaximumRetries();
         configureMode(domain);
         configureMembershipScheme(domain, mode.getMembershipManagers());
-        setMemberTransportInfo();
+        setMemberInfo();
 
         TribesMembershipListener membershipListener = new TribesMembershipListener(primaryMembershipManager);
         channel.addMembershipListener(membershipListener);
@@ -206,26 +206,32 @@ public class TribesClusterManager implements ClusterManager {
         log.info("Cluster initialization completed.");
     }
 
-    private void setMemberTransportInfo() throws ClusteringFault {
-        Properties transportInfo = new Properties();
+    private void setMemberInfo() throws ClusteringFault {
+        Properties memberInfo = new Properties();
         AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
         TransportInDescription httpTransport = axisConfig.getTransportIn("http");
         if (httpTransport != null) {
             Parameter port = httpTransport.getParameter("port");
             if (port != null) {
-                transportInfo.put("HTTP", port.getValue());
+                memberInfo.put("HTTP", port.getValue());
             }
         }
         TransportInDescription httpsTransport = axisConfig.getTransportIn("https");
         if (httpsTransport != null) {
             Parameter port = httpsTransport.getParameter("port");
             if (port != null) {
-                transportInfo.put("HTTPS", port.getValue());
+                memberInfo.put("HTTPS", port.getValue());
             }
+        }
+        Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
+        if(isActiveParam != null){
+            System.out.println("##### isActive=" + isActiveParam.getValue());
+            memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
+                                   (String)isActiveParam.getValue());
         }
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
-            transportInfo.store(bout, "");
+            memberInfo.store(bout, "");
         } catch (IOException e) {
             String msg = "Cannot store member transport properties in the ByteArrayOutputStream";
             log.error(msg, e);

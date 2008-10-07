@@ -24,6 +24,11 @@ import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.clustering.ClusteringConstants;
+
+import java.util.Properties;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class TribesUtil {
 
@@ -45,7 +50,7 @@ public class TribesUtil {
     }
 
     public static String getName(Member member) {
-        return getHost(member) + ":" + member.getPort() + "(" + new String(member.getDomain())+ ")";
+        return getHost(member) + ":" + member.getPort() + "(" + new String(member.getDomain()) + ")";
     }
 
     public static String getHost(Member member) {
@@ -68,18 +73,53 @@ public class TribesUtil {
     }
 
     public static byte[] getRpcMembershipChannelId(byte[] domain) {
-       return (new String(domain) + ":" + TribesConstants.RPC_MEMBERSHIP_CHANNEL).getBytes();
+        return (new String(domain) + ":" + TribesConstants.RPC_MEMBERSHIP_CHANNEL).getBytes();
     }
 
     public static byte[] getRpcInitChannelId(byte[] domain) {
         return (new String(domain) + ":" + TribesConstants.RPC_INIT_CHANNEL).getBytes();
     }
 
-    public static boolean isInDomain(Member member, byte[] domain){
+    public static boolean isInDomain(Member member, byte[] domain) {
         return Arrays.equals(domain, member.getDomain());
     }
 
-    public static boolean areInSameDomain(Member member1, Member member2){
+    public static boolean areInSameDomain(Member member1, Member member2) {
         return Arrays.equals(member1.getDomain(), member2.getDomain());
+    }
+
+    public static org.apache.axis2.clustering.Member toAxis2Member(Member member) {
+        org.apache.axis2.clustering.Member axis2Member =
+                new org.apache.axis2.clustering.Member(TribesUtil.getHost(member),
+                                                       member.getPort());
+        Properties props = getProperties(member.getPayload());
+
+        String http = props.getProperty("HTTP");
+        if (http != null && http.trim().length() != 0) {
+            axis2Member.setHttpPort(Integer.parseInt(http));
+        }
+
+        String https = props.getProperty("HTTPS");
+        if (https != null && https.trim().length() != 0) {
+            axis2Member.setHttpsPort(Integer.parseInt(https));
+        }
+
+        String isActive = props.getProperty(ClusteringConstants.Parameters.IS_ACTIVE);
+        if (isActive != null && isActive.trim().length() != 0) {
+            axis2Member.setActive(Boolean.valueOf(isActive));
+        }
+        return axis2Member;
+    }
+
+    private static Properties getProperties(byte[] payload) {
+        Properties props = null;
+        try {
+            ByteArrayInputStream bin = new ByteArrayInputStream(payload);
+            props = new Properties();
+            props.load(bin);
+        } catch (IOException ignored) {
+            // This error will never occur
+        }
+        return props;
     }
 }

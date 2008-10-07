@@ -21,6 +21,7 @@ import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
  *  The non-blocking coordinator interceptor 
  */
 public class Axis2Coordinator extends NonBlockingCoordinator {
+
     public void fireInterceptorEvent(InterceptorEvent event) {
         int type = event.getEventType();
         if (type == CoordinationEvent.EVT_CONF_RX && isCoordinator()) {

@@ -98,6 +98,11 @@ public final class ClusteringConstants {
          * the cluster.
          */
         public static final String AVOID_INITIATION = "AvoidInitiation";
+
+        /**
+         * Indicates whether this member is ACTIVE or PASSIVE
+         */
+        public static final String IS_ACTIVE = "isActive";
     }
 
     public static final class MembershipScheme {
