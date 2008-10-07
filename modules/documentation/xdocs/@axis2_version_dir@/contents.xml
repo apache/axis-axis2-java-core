@@ -146,6 +146,8 @@ use Axis2 with the Spring Framework</li>
 <li><a href="json_support.html">JSON Support</a> - This document
 explains how to use JSON support implementation in Axis2. Includes
 details on test cases and samples</li>
+<li><a href="corba-deployer.html">Exposing CORBA Services as Web Services</a> - This guide explains how to expose a CORBA Services as a Web Services in Axis2
+using an example</li>
 <li><a href="ejb-provider.html">Guide to using EJB Provider in
 Axis2</a> - This guide explains how to use an EJB provider in Axis2
 using an example</li>

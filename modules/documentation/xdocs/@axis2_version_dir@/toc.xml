@@ -116,6 +116,7 @@ Support</a></li>
 <li><a href="rest-ws.html" target="mainFrame">REST Support</a></li>
 <li><a href="json_support.html" target="mainFrame">JSON
 Support</a></li>
+<li><a href="corba-deployer.html" target="mainFrame">Exposing CORBA Services as Web Services</a></li>
 <li><a href="ejb-provider.html" target="mainFrame">Guide to using
 EJB Provider in Axis2</a></li>
 <li><a href="soapmonitor-module.html" target="mainFrame">SOAP
