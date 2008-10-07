@@ -402,6 +402,12 @@
             <email>sanjiva AT wso2.com</email>
             <organization>WSO2</organization>
         </developer>
+        <developer>
+            <name>Keith Chapman</name>
+            <id>keithc</id>
+            <email>keith AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
     </developers>
     <contributors>
         <contributor>
