@@ -18,6 +18,7 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.MembershipScheme;
+import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.ManagedChannel;
@@ -57,14 +58,18 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
      */
     private OperationMode mode;
 
+    private MembershipListener membershipListener;
+
     public MulticastBasedMembershipScheme(ManagedChannel channel,
                                           OperationMode mode,
                                           Map<String, Parameter> parameters,
-                                          byte[] domain) {
+                                          byte[] domain,
+                                          MembershipListener membershipListener) {
         this.channel = channel;
         this.mode = mode;
         this.parameters = parameters;
         this.domain = domain;
+        this.membershipListener = membershipListener;
     }
 
     public void init() throws ClusteringFault {
@@ -160,9 +165,8 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
         }
 
         // Add the NonBlockingCoordinator.
-        NonBlockingCoordinator nbc = new Axis2Coordinator();
-        channel.addInterceptor(nbc);
-        
+        channel.addInterceptor(new Axis2Coordinator(membershipListener));
+
         channel.getMembershipService().setDomain(domain);
         mode.addInterceptors(channel);
 

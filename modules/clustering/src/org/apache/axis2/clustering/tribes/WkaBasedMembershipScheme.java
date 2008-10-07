@@ -18,6 +18,7 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.MembershipScheme;
+import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.clustering.control.wka.RpcMembershipRequestHandler;
@@ -81,13 +82,16 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
      */
     private OperationMode mode;
 
+    private MembershipListener membershipListener;
+
     public WkaBasedMembershipScheme(ManagedChannel channel,
                                     OperationMode mode,
                                     List<MembershipManager> applicationDomainMembershipManagers,
                                     MembershipManager primaryMembershipManager,
                                     Map<String, Parameter> parameters,
                                     byte[] domain,
-                                    List<Member> members) {
+                                    List<Member> members,
+                                    MembershipListener membershipListener) {
         this.channel = channel;
         this.mode = mode;
         this.applicationDomainMembershipManagers = applicationDomainMembershipManagers;
@@ -95,6 +99,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         this.parameters = parameters;
         this.localDomain = domain;
         this.members = members;
+        this.membershipListener = membershipListener;
     }
 
     /**
@@ -301,8 +306,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         }
 
         // Add the NonBlockingCoordinator.
-        NonBlockingCoordinator nbc = new Axis2Coordinator();
-        channel.addInterceptor(nbc);
+        channel.addInterceptor(new Axis2Coordinator(membershipListener));
         
         staticMembershipInterceptor = new StaticMembershipInterceptor();
         staticMembershipInterceptor.setLocalMember(primaryMembershipManager.getLocalMember());

@@ -103,6 +103,11 @@ public final class ClusteringConstants {
          * Indicates whether this member is ACTIVE or PASSIVE
          */
         public static final String IS_ACTIVE = "isActive";
+
+        /**
+         * The implementaion of
+         */
+        public static final String MEMBERSHIP_LISTENER = "membershipListener";
     }
 
     public static final class MembershipScheme {

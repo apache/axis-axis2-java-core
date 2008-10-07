@@ -272,6 +272,14 @@
         <parameter name="isActive">true</parameter>
 
         <!--
+           An implementation of org.apache.axis2.clustering.MembershipListener
+           which will be called on membership changes
+        -->
+        <!--
+        <parameter name="membershipListener">org.apache.axis2.clustering.MembershipListenerImpl</parameter>
+         -->
+        
+        <!--
            The membership scheme used in this setup. The only values supported at the moment are
            "multicast" and "wka"
 

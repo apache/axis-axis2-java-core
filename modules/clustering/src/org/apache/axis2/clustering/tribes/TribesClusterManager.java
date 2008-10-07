@@ -27,6 +27,7 @@ import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
 import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.RequestBlockingHandler;
+import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ClusteringContextListener;
@@ -366,15 +367,30 @@ public class TribesClusterManager implements ClusterManager {
     private void configureMembershipScheme(byte[] localDomain,
                                            List<MembershipManager> membershipManagers)
             throws ClusteringFault {
+        MembershipListener membershipListener = null;
+        Parameter parameter = getParameter(ClusteringConstants.Parameters.MEMBERSHIP_LISTENER);
+        if(parameter != null){
+            String clazz = ((String) parameter.getValue()).trim();
+            try {
+                membershipListener = (MembershipListener) Class.forName(clazz).newInstance();
+            } catch (Exception e) {
+                String msg = "Cannot instantiate MembershipListener " + clazz;
+                log.error(msg, e);
+                throw new ClusteringFault(msg, e);
+            }
+        }
+
         String scheme = getMembershipScheme();
         log.info("Using " + scheme + " based membership management scheme");
         if (scheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
             membershipScheme = new WkaBasedMembershipScheme(channel, mode,
                                                             membershipManagers,
                                                             primaryMembershipManager,
-                                                            parameters, localDomain, members);
+                                                            parameters, localDomain, members,
+                                                            membershipListener);
         } else if (scheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
-            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters, localDomain);
+            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters,
+                                                                  localDomain, membershipListener);
         } else {
             String msg = "Invalid membership scheme '" + scheme +
                          "'. Supported schemes are multicast & wka";

@@ -48,9 +48,6 @@ public class TribesMembershipListener implements MembershipListener {
 
     public void memberDisappeared(Member member) {
         log.info("Member " + TribesUtil.getName(member) + " left cluster");
-        if (TribesUtil.toAxis2Member(member).isActive()) {
-        } else {
-        }
 //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
     }
 }
