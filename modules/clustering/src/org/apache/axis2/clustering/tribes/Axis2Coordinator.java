@@ -32,20 +32,24 @@ public class Axis2Coordinator extends NonBlockingCoordinator {
 
     public void memberAdded(Member member) {
         super.memberAdded(member);
-        if (membershipListener != null) {
+        if (membershipListener != null &&
+            TribesUtil.areInSameDomain(getLocalMember(true), member)) {
             membershipListener.memberAdded(TribesUtil.toAxis2Member(member), isCoordinator());
         }
     }
 
     public void memberDisappeared(Member member) {
         super.memberDisappeared(member);
+        if(!TribesUtil.areInSameDomain(getLocalMember(true), member)){
+            return;
+        }
         if (isCoordinator()) {
             if (TribesUtil.toAxis2Member(member).isActive()) {
 
                 // If the local member is PASSIVE, we try to activate it
                 if (!TribesUtil.toAxis2Member(getLocalMember(true)).isActive()) {
                     //TODO: ACTIVATE local member
-                    
+
                 } else {
                     Member[] members = getMembers();
                     for (Member aMember : members) {
