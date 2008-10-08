@@ -1,0 +1,6 @@
+<module name="mtompolicy" class="org.apache.axis2.mtompolicy.MTOMPolicy">
+    <Description>
+      fill in the description
+    </Description>
+</module>
+
