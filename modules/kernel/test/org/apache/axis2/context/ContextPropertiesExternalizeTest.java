@@ -41,7 +41,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         mc.setProperty("key4_nullValue", null);
         mc.setProperty("key5", "value5");
         
-        assertTrue(mc.properties instanceof ConcurrentHashMapNullSemantics);
+        assertTrue(mc.properties instanceof HashMapUpdateLockable);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -63,7 +63,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", mcRead.getProperty(null));
             assertNull(mcRead.getProperty("key4_nullValue"));
             assertEquals("value5", mcRead.getProperty("key5"));
-            assertTrue(mcRead.properties instanceof ConcurrentHashMapNullSemantics);
+            assertTrue(mcRead.properties instanceof HashMapUpdateLockable);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -82,7 +82,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof ConcurrentHashMapNullSemantics);
+        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -104,7 +104,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof ConcurrentHashMapNullSemantics);
+            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -121,7 +121,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof ConcurrentHashMapNullSemantics);
+        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -143,7 +143,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof ConcurrentHashMapNullSemantics);
+            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -160,7 +160,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof ConcurrentHashMapNullSemantics);
+        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -182,7 +182,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof ConcurrentHashMapNullSemantics);
+            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -199,7 +199,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof ConcurrentHashMapNullSemantics);
+        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -221,7 +221,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof ConcurrentHashMapNullSemantics);
+            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
             
         } catch (Exception ex) {
             ex.printStackTrace();
