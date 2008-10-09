@@ -20,6 +20,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
@@ -56,6 +57,7 @@ import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +65,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Iterator;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * The main ClusterManager class for the Tribes based clustering implementation
@@ -225,10 +230,10 @@ public class TribesClusterManager implements ClusterManager {
             }
         }
         Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
-        if(isActiveParam != null){
+        if (isActiveParam != null) {
             System.out.println("##### isActive=" + isActiveParam.getValue());
             memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
-                                   (String)isActiveParam.getValue());
+                                   (String) isActiveParam.getValue());
         }
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
@@ -369,14 +374,27 @@ public class TribesClusterManager implements ClusterManager {
             throws ClusteringFault {
         MembershipListener membershipListener = null;
         Parameter parameter = getParameter(ClusteringConstants.Parameters.MEMBERSHIP_LISTENER);
-        if(parameter != null){
-            String clazz = ((String) parameter.getValue()).trim();
+        if (parameter != null) {
+            OMElement paramEle = parameter.getParameterElement();
+            String clazz =
+                    paramEle.getFirstChildWithName(new QName("class")).getText().trim();
             try {
                 membershipListener = (MembershipListener) Class.forName(clazz).newInstance();
             } catch (Exception e) {
                 String msg = "Cannot instantiate MembershipListener " + clazz;
                 log.error(msg, e);
                 throw new ClusteringFault(msg, e);
+            }
+            OMElement propsEle = paramEle.getFirstChildWithName(new QName("properties"));
+            if (propsEle != null) {
+                for (Iterator iter = propsEle.getChildElements(); iter.hasNext();) {
+                    OMElement propEle = (OMElement) iter.next();
+                    OMAttribute nameAttrib = propEle.getAttribute(new QName("name"));
+                    if (nameAttrib != null) {
+                        String name = nameAttrib.getAttributeValue();
+                        setInstanceProperty(name, propEle.getText().trim(), membershipListener);
+                    }
+                }
             }
         }
 
@@ -398,6 +416,86 @@ public class TribesClusterManager implements ClusterManager {
             throw new ClusteringFault(msg);
         }
         membershipScheme.init();
+    }
+
+    /**
+     * Find and invoke the setter method with the name of form setXXX passing in the value given
+     * on the POJO object
+     * @param name name of the setter field
+     * @param val value to be set
+     * @param obj POJO instance
+     * @throws ClusteringFault If an error occurs while setting the property
+     */
+    public void setInstanceProperty(String name, Object val, Object obj) throws ClusteringFault {
+
+        String mName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        Method method;
+        try {
+            Method[] methods = obj.getClass().getMethods();
+            boolean invoked = false;
+            for (Method method1 : methods) {
+                if (mName.equals(method1.getName())) {
+                    Class[] params = method1.getParameterTypes();
+                    if (params.length != 1) {
+                        handleException("Did not find a setter method named : " + mName +
+                                        "() that takes a single String, int, long, float, double " +
+                                        "or boolean parameter");
+                    } else if (val instanceof String) {
+                        String value = (String) val;
+                        if (params[0].equals(String.class)) {
+                            method = obj.getClass().getMethod(mName, String.class);
+                            method.invoke(obj, new String[]{value});
+                        } else if (params[0].equals(int.class)) {
+                            method = obj.getClass().getMethod(mName, int.class);
+                            method.invoke(obj, new Integer[]{new Integer(value)});
+                        } else if (params[0].equals(long.class)) {
+                            method = obj.getClass().getMethod(mName, long.class);
+                            method.invoke(obj, new Long[]{new Long(value)});
+                        } else if (params[0].equals(float.class)) {
+                            method = obj.getClass().getMethod(mName, float.class);
+                            method.invoke(obj, new Float[]{new Float(value)});
+                        } else if (params[0].equals(double.class)) {
+                            method = obj.getClass().getMethod(mName, double.class);
+                            method.invoke(obj, new Double[]{new Double(value)});
+                        } else if (params[0].equals(boolean.class)) {
+                            method = obj.getClass().getMethod(mName, boolean.class);
+                            method.invoke(obj, new Boolean[]{Boolean.valueOf(value)});
+                        } else {
+                            handleException("Did not find a setter method named : " + mName +
+                                            "() that takes a single String, int, long, float, double " +
+                                            "or boolean parameter");
+                        }
+                    } else {
+                        if (params[0].equals(OMElement.class)) {
+                            method = obj.getClass().getMethod(mName, OMElement.class);
+                            method.invoke(obj, new OMElement[]{(OMElement) val});
+                        }
+                    }
+                    invoked = true;
+                }
+            }
+
+            if (!invoked) {
+                handleException("Did not find a setter method named : " + mName +
+                    "() that takes a single String, int, long, float, double " +
+                    "or boolean parameter");
+            }
+
+        } catch (Exception e) {
+            handleException("Error invoking setter method named : " + mName +
+                "() that takes a single String, int, long, float, double " +
+                "or boolean parameter", e);
+        }
+    }
+
+    private void handleException(String msg, Exception e) throws ClusteringFault {
+        log.error(msg, e);
+        throw new ClusteringFault(msg, e);
+    }
+
+    private void handleException(String msg) throws ClusteringFault {
+        log.error(msg);
+        throw new ClusteringFault(msg);
     }
 
     /**
