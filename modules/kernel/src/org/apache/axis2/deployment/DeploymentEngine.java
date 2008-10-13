@@ -22,6 +22,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -1200,6 +1201,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * Clean up the mess
      */
     public void cleanup() {
+        if (axisConfig.getModuleClassLoader() instanceof JarFileClassLoader) {
+            ((JarFileClassLoader)axisConfig.getModuleClassLoader()).destroy();
+        }
+        if (axisConfig.getServiceClassLoader() instanceof JarFileClassLoader) {
+            ((JarFileClassLoader)axisConfig.getServiceClassLoader()).destroy();
+        }
+        if (axisConfig.getSystemClassLoader() instanceof JarFileClassLoader) {
+            ((JarFileClassLoader)axisConfig.getSystemClassLoader()).destroy();
+        }
         if (scheduler != null) {
             scheduler.cleanup();
         }

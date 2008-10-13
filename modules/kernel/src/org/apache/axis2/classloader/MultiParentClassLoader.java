@@ -128,6 +128,24 @@ public class MultiParentClassLoader extends URLClassLoader {
         nonOverridableResources = toResources(nonOverridableClasses);
     }
 
+    public MultiParentClassLoader(MultiParentClassLoader source) {
+        this(source.getURLs(), deepCopyParents(source.parents), source.inverseClassLoading, source.hiddenClasses, source.nonOverridableClasses);
+    }
+
+    static ClassLoader copy(ClassLoader source) {
+        if (source instanceof MultiParentClassLoader) {
+            return new MultiParentClassLoader((MultiParentClassLoader) source);
+        } else if (source instanceof URLClassLoader) {
+            return new URLClassLoader(((URLClassLoader) source).getURLs(), source.getParent());
+        } else {
+            return new URLClassLoader(new URL[0], source);
+        }
+    }
+
+    ClassLoader copy() {
+        return MultiParentClassLoader.copy(this);
+    }
+
     private String[] toResources(String[] classes) {
         String[] resources = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
@@ -162,6 +180,21 @@ public class MultiParentClassLoader extends URLClassLoader {
             ClassLoader parent = parents[i];
             if (parent == null) {
                 throw new RuntimeException("parent[" + i + "] is null");
+            }
+            newParentsArray[i] = parent;
+        }
+        return newParentsArray;
+    }
+
+    private static ClassLoader[] deepCopyParents(ClassLoader[] parents) {
+        ClassLoader[] newParentsArray = new ClassLoader[parents.length];
+        for (int i = 0; i < parents.length; i++) {
+            ClassLoader parent = parents[i];
+            if (parent == null) {
+                throw new RuntimeException("parent[" + i + "] is null");
+            }
+            if (parent instanceof MultiParentClassLoader) {
+                parent = ((MultiParentClassLoader) parent).copy();
             }
             newParentsArray[i] = parent;
         }

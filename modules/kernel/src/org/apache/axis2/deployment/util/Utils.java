@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
@@ -339,7 +340,11 @@ public class Utils {
             classLoader = (URLClassLoader)AccessController
                     .doPrivileged(new PrivilegedAction() {
                         public Object run() {
-                            return new URLClassLoader(urllist, parent);
+                            if (useJarFileClassLoader()) {
+                                return new JarFileClassLoader(urllist, parent);
+                            } else {
+                                return new URLClassLoader(urllist, parent);
+                            }
                         }
                     });
             return classLoader;
@@ -348,6 +353,20 @@ public class Utils {
         }
     }
 
+    private static boolean useJarFileClassLoader() {
+        // The JarFileClassLoader was created to address a locking problem seen only on Windows platforms.
+        // It carries with it a slight performance penalty that needs to be addressed.  Rather than make
+        // *nix OSes carry this burden we'll engage the JarFileClassLoader for Windows or if the user 
+        // specifically requests it.
+        boolean useJarFileClassLoader = false;
+        if (System.getProperty("org.apache.axis2.classloader.JarFileClassLoader") == null) {
+            useJarFileClassLoader = System.getProperty("os.name").startsWith("Windows");
+        } else {
+            useJarFileClassLoader = Boolean.getBoolean("org.apache.axis2.classloader.JarFileClassLoader");
+        }
+        return useJarFileClassLoader;
+    }
+    
     private static boolean addFiles(ArrayList urls, final File libfiles)
             throws MalformedURLException {
         Boolean exists = (Boolean)org.apache.axis2.java.security.AccessController
