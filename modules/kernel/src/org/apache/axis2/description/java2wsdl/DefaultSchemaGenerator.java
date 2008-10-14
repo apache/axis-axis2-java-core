@@ -20,6 +20,7 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
@@ -111,6 +112,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected boolean sortAttributes = true;
 
+    protected boolean isGenerateWrappedArrayTypes = false;
+
     public NamespaceGenerator getNsGen() throws Exception {
         if (nsGen == null) {
             nsGen = new DefaultNamespaceGenerator();
@@ -157,7 +160,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             if (sortAtt !=null && "false".equals(sortAtt.getValue())){
                 sortAttributes = false;
             }
+
+            Parameter generateWrappedArrayTypes = service.getParameter("generateWrappedArrayTypes");
+            if ((generateWrappedArrayTypes != null) && JavaUtils.isTrue(generateWrappedArrayTypes.getValue())){
+               isGenerateWrappedArrayTypes = true;
+            }
         }
+
+
     }
 
     //This will locad the custom schema file and add that into the schema map
@@ -726,10 +736,46 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
 
         } else {
-            addContentToMethodSchemaType(sequence,
-                    schemaTypeName,
-                    partName,
-                    isArrayType);
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName("arrayWrapper");
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName = schemaTypeName.getLocalPart() + "Wrapper";
+                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+
+                XmlSchemaComplexType xmlSchemaComplexType = null;
+                if (xmlSchema.getTypeByName(complexTypeName) == null) {
+                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(schemaTypeName.getLocalPart() + "Wrapper");
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addContentToMethodSchemaType(xmlSchemaSequence,
+                        schemaTypeName,
+                        "array",
+                        isArrayType);
+                } else {
+                   xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
+                }
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+
+
+            } else {
+                addContentToMethodSchemaType(sequence,
+                        schemaTypeName,
+                        partName,
+                        isArrayType);
+            }
+
         }
         addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
         return schemaTypeName;
@@ -745,6 +791,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                                                 boolean isArray) {
         XmlSchemaElement elt1 = new XmlSchemaElement();
         elt1.setName(paraName);
+
         elt1.setSchemaTypeName(schemaTypeName);
         if (sequence != null) {
             sequence.getItems().add(elt1);
