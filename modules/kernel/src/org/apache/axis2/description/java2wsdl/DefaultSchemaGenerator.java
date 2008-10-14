@@ -42,7 +42,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -569,10 +568,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     // moved code common to Fields & properties out of above method
     protected void generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
                                                         XmlSchemaSequence sequence, Class type,
-                                                        String name, boolean isArryType)
+                                                        String name, boolean isArrayType)
             throws Exception {
         String propertyName;
-        if (isArryType) {
+        if (isArrayType) {
             propertyName = type.getComponentType().getName();
             if (type.getComponentType().isArray()) {
                 // this is a doble array element
@@ -597,54 +596,146 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                             new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
                 }
 
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(name);
-                elt1.setSchemaTypeName(new QName(xmlSchema.getTargetNamespace(), simpleTypeName));
-                sequence.getItems().add(elt1);
-                elt1.setMaxOccurs(Long.MAX_VALUE);
-                elt1.setMinOccurs(0);
+                if (isGenerateWrappedArrayTypes) {
+                    XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                    xmlSchemaElement.setName( name + "Wrapper");
+                    xmlSchemaElement.setNillable(true);
+                    sequence.getItems().add(xmlSchemaElement);
 
-                if (!type.isPrimitive()) {
-                    elt1.setNillable(true);
+                    String complexTypeName = simpleTypeName + "Wrapper";
+
+                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(complexTypeName);
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addContentToMethodSchemaType(xmlSchemaSequence,
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                            "array",
+                            true);
+
+                    xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                    xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace,
+                            xmlSchemaComplexType.getName()));
+
+                } else {
+                    addContentToMethodSchemaType(sequence,
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                            name,
+                            true);
+
                 }
                 return;
             }
         } else {
             propertyName = type.getName();
         }
-        if (isArryType && "byte".equals(propertyName)) {
+        if (isArrayType && "byte".equals(propertyName)) {
             propertyName = "base64Binary";
         }
         if (isDataHandler(type)) {
             propertyName = "base64Binary";
         }
         if (typeTable.isSimpleType(propertyName)) {
-            XmlSchemaElement elt1 = new XmlSchemaElement();
-            elt1.setName(name);
-            elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
-            sequence.getItems().add(elt1);
-            if (isArryType && (!propertyName.equals("base64Binary"))) {
-                elt1.setMaxOccurs(Long.MAX_VALUE);
+
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName( name + "Wrapper");
+                xmlSchemaElement.setNillable(true);
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName =
+                        typeTable.getSimpleSchemaTypeName(propertyName).getLocalPart() + "Wrapper";
+
+                XmlSchemaComplexType xmlSchemaComplexType = null;
+                if (xmlSchema.getTypeByName(complexTypeName) == null) {
+                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(complexTypeName);
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addElementToSequence("array",
+                        typeTable.getSimpleSchemaTypeName(propertyName),
+                        xmlSchemaSequence,
+                        propertyName.equals("base64Binary"),
+                        isArrayType,
+                        type.isPrimitive());
+                } else {
+                   xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
+                }
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+
+
+            } else {
+                addElementToSequence(name,
+                        typeTable.getSimpleSchemaTypeName(propertyName),
+                        sequence,
+                        propertyName.equals("base64Binary"),
+                        isArrayType,
+                        type.isPrimitive());
             }
-            elt1.setMinOccurs(0);
-            if (!type.isPrimitive()) {
-                elt1.setNillable(true);
-            }
+
         } else {
-            if (isArryType) {
+            if (isArrayType) {
                 generateSchema(type.getComponentType());
             } else {
                 generateSchema(type);
             }
-            XmlSchemaElement elt1 = new XmlSchemaElement();
-            elt1.setName(name);
-            elt1.setSchemaTypeName(typeTable.getComplexSchemaType(propertyName));
-            sequence.getItems().add(elt1);
-            if (isArryType) {
-                elt1.setMaxOccurs(Long.MAX_VALUE);
+
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName(name + "Wrapper");
+                xmlSchemaElement.setNillable(true);
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName =
+                        typeTable.getSimpleSchemaTypeName(propertyName).getLocalPart() + "Wrapper";
+
+                XmlSchemaComplexType xmlSchemaComplexType = null;
+                if (xmlSchema.getTypeByName(complexTypeName) == null) {
+                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(complexTypeName);
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addElementToSequence("array",
+                            typeTable.getSimpleSchemaTypeName(propertyName),
+                            xmlSchemaSequence,
+                            propertyName.equals("base64Binary"),
+                            isArrayType,
+                            type.isPrimitive());
+                } else {
+                    xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
+                }
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+
+
+            } else {
+                addElementToSequence(name,
+                        typeTable.getComplexSchemaType(propertyName),
+                        sequence,
+                        false,
+                        isArrayType,
+                        type.isPrimitive());
             }
-            elt1.setMinOccurs(0);
-            elt1.setNillable(true);
 
             if (typeTable.getComplexSchemaType(propertyName) != null && !((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                     contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
@@ -659,6 +750,25 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
 
 
+    }
+
+    private void addElementToSequence(String name,
+                                      QName propertyQName,
+                                      XmlSchemaSequence sequence,
+                                      boolean isBase64Binary,
+                                      boolean isArryType,
+                                      boolean isPrimitive) {
+        XmlSchemaElement elt1 = new XmlSchemaElement();
+        elt1.setName(name);
+        elt1.setSchemaTypeName(propertyQName);
+        sequence.getItems().add(elt1);
+        if (isArryType && !isBase64Binary) {
+            elt1.setMaxOccurs(Long.MAX_VALUE);
+        }
+        elt1.setMinOccurs(0);
+        if (!isPrimitive) {
+            elt1.setNillable(true);
+        }
     }
 
 
@@ -694,7 +804,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
                 if (isGenerateWrappedArrayTypes) {
                     XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
-                    xmlSchemaElement.setName("arrayWrapper");
+                    xmlSchemaElement.setName(partName + "Wrapper");
                     xmlSchemaElement.setNillable(true);
                     sequence.getItems().add(xmlSchemaElement);
 
@@ -750,10 +860,46 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
         if (schemaTypeName == null) {
             schemaTypeName = generateSchema(type);
-            addContentToMethodSchemaType(sequence,
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName(partName + "Wrapper");
+                xmlSchemaElement.setNillable(true);
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName = schemaTypeName.getLocalPart() + "Wrapper";
+                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+
+                XmlSchemaComplexType xmlSchemaComplexType = null;
+                if (xmlSchema.getTypeByName(complexTypeName) == null) {
+                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(complexTypeName);
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addContentToMethodSchemaType(xmlSchemaSequence,
+                        schemaTypeName,
+                        "array",
+                        isArrayType);
+                } else {
+                   xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
+                }
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+
+
+            } else {
+                addContentToMethodSchemaType(sequence,
                     schemaTypeName,
                     partName,
                     isArrayType);
+            }
+
             String schemaNamespace;
             schemaNamespace = resolveSchemaNamespace(getQualifiedName(type.getPackage()));
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
@@ -761,9 +907,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         } else {
             if (isGenerateWrappedArrayTypes && isArrayType) {
 
-
                 XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
-                xmlSchemaElement.setName("arrayWrapper");
+                xmlSchemaElement.setName(partName +"Wrapper");
                 xmlSchemaElement.setNillable(true);
                 sequence.getItems().add(xmlSchemaElement);
 
