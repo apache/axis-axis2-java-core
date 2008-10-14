@@ -692,17 +692,40 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                             new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
                 }
 
-                XmlSchemaElement elt1 = new XmlSchemaElement();
-                elt1.setName(partName);
-                elt1.setSchemaTypeName(new QName(xmlSchema.getTargetNamespace(), simpleTypeName));
-                sequence.getItems().add(elt1);
-                elt1.setMaxOccurs(Long.MAX_VALUE);
-                elt1.setMinOccurs(0);
+                if (isGenerateWrappedArrayTypes) {
+                    XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                    xmlSchemaElement.setName("arrayWrapper");
+                    xmlSchemaElement.setNillable(true);
+                    sequence.getItems().add(xmlSchemaElement);
 
-                if (!type.isPrimitive()) {
-                    elt1.setNillable(true);
+                    String complexTypeName = simpleTypeName + "Wrapper";
+
+                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                    xmlSchemaComplexType.setName(complexTypeName);
+
+                    xmlSchema.getItems().add(xmlSchemaComplexType);
+                    xmlSchema.getSchemaTypes().add(
+                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                            xmlSchemaComplexType);
+                    addContentToMethodSchemaType(xmlSchemaSequence,
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                            "array",
+                            true);
+
+                    xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                    xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+                    return new QName(xmlSchema.getTargetNamespace(), complexTypeName);
+                } else {
+                    addContentToMethodSchemaType(sequence,
+                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                            partName,
+                            true);
+                    return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
                 }
-                return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
+
+
             } else {
                 type = type.getComponentType();
             }
@@ -741,6 +764,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
                 XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
                 xmlSchemaElement.setName("arrayWrapper");
+                xmlSchemaElement.setNillable(true);
                 sequence.getItems().add(xmlSchemaElement);
 
                 String complexTypeName = schemaTypeName.getLocalPart() + "Wrapper";
@@ -751,7 +775,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
                     XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
                     xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    xmlSchemaComplexType.setName(schemaTypeName.getLocalPart() + "Wrapper");
+                    xmlSchemaComplexType.setName(complexTypeName);
 
                     xmlSchema.getItems().add(xmlSchemaComplexType);
                     xmlSchema.getSchemaTypes().add(
