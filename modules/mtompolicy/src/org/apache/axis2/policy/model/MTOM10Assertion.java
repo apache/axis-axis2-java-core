@@ -4,11 +4,19 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.PolicyComponent;
 
-/** Assertion to pick up the QName <wsoma:OptimizedMimeSerialization xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/> */
+/**
+ * Assertion to pick up the QName <wsoma:OptimizedMimeSerialization
+ * xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+ */
 public class MTOM10Assertion extends MTOMAssertion {
+
+    // creating a logger instance
+    private static Log log = LogFactory.getLog(MTOM10Assertion.class);
 
     public final static String NS = "http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization";
 
@@ -38,8 +46,10 @@ public class MTOM10Assertion extends MTOMAssertion {
 
         writer.writeStartElement(PREFIX, MTOM_SERIALIZATION_CONFIG_LN, NS);
 
-        if (optional)
-            writer.writeAttribute("Optional", "true");
+        if (optional) {
+            writer.writeAttribute(Constants.ATTR_WSP, null,
+                    Constants.Q_ELEM_OPTIONAL_ATTR.getLocalPart(), "true");
+        }
 
         writer.writeNamespace(PREFIX, NS);
         writer.writeEndElement();
