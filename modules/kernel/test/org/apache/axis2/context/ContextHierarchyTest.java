@@ -21,15 +21,18 @@ package org.apache.axis2.context;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
 public class ContextHierarchyTest extends TestCase {
+    private AxisMessage axisMessage;
     private AxisOperation axisOperation;
     private AxisService axisService;
     private AxisConfiguration axisConfiguration;
@@ -38,6 +41,7 @@ public class ContextHierarchyTest extends TestCase {
 
     protected void setUp() throws Exception {
         axisOperation = new InOutAxisOperation(new QName("Temp"));
+        axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         axisService = new AxisService("Temp");
         axisConfiguration = new AxisConfiguration();
         axisService.addOperation(axisOperation);
@@ -53,6 +57,7 @@ public class ContextHierarchyTest extends TestCase {
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
                                                                         serviceContext);
         axisOperation.registerOperationContext(msgctx, opContext);
+        msgctx.setAxisMessage(axisMessage);
         msgctx.setServiceContext(serviceContext);
 
         // test the complte Hierarchy built
@@ -60,24 +65,41 @@ public class ContextHierarchyTest extends TestCase {
         assertEquals(opContext.getParent(), serviceContext);
         assertEquals(serviceContext.getParent(), serviceGroupContext);
 
-        String key1 = "key1";
-        String value1 = "Val1";
-        String value2 = "value2";
-        String key2 = "key2";
-        String value3 = "value";
-        String key3 = "key3";
+        String key = "key1";
+        String paramValue1 = "paramValue1";
+        String propValue1 = "propValue1";
+        String paramValue2 = "paramValue2";
+        String propValue2 = "propValue2";
+        String paramValue3 = "paramValue3";
+        String propValue3 = "propValue3";
+        String paramValue4 = "paramValue4";
+        String propValue4 = "propValue4";
 
-        configurationContext.setProperty(key1, value1);
-        assertEquals(value1, msgctx.getProperty(key1));
+        configurationContext.setProperty(key, propValue1);
+        assertEquals(propValue1, msgctx.getProperty(key));
 
-        axisConfiguration.addParameter(new Parameter(key2, value2));
-        assertEquals(value2, msgctx.getParameter(key2).getValue());
+        axisConfiguration.addParameter(new Parameter(key, paramValue1));
+        assertEquals(paramValue1, msgctx.getParameter(key).getValue());
+        
+        serviceContext.setProperty(key, propValue2);
+        assertEquals(propValue2, msgctx.getProperty(key));
+        
+        axisService.addParameter(new Parameter(key, paramValue2));
+        assertEquals(paramValue2, msgctx.getParameter(key).getValue());
 
-        opContext.setProperty(key1, value3);
-        assertEquals(value3, msgctx.getProperty(key1));
+        opContext.setProperty(key, propValue3);
+        assertEquals(propValue3, msgctx.getProperty(key));
+        
+        axisOperation.addParameter(new Parameter(key, paramValue3));
+        assertEquals(paramValue3, msgctx.getParameter(key).getValue());
+        
+        msgctx.setProperty(key, propValue4);
+        assertEquals(propValue4, msgctx.getProperty(key));
+        
+        axisMessage.addParameter(new Parameter(key, paramValue4));
+        assertEquals(paramValue4, msgctx.getParameter(key).getValue());
 
-        serviceContext.setProperty(key3, value3);
-        assertEquals(value3, msgctx.getProperty(key3));
+        
     }
 
     public void testDisconntectedHierarchy() throws AxisFault {
@@ -95,4 +117,5 @@ public class ContextHierarchyTest extends TestCase {
         axisConfiguration.addParameter(new Parameter(key2, value2));
         assertEquals(value2, msgctx.getParameter(key2).getValue());
     }
+    
 }
