@@ -831,7 +831,9 @@ public class MessageContext extends AbstractContext
      * Retrieves configuration descriptor parameters at any level. The order of
      * search is as follows:
      * <ol>
-     * <li> Search in operation description if it exists </li>
+     * <li> Search in message description if it exists </li>
+     * <li> If parameter is not found or if axisMessage is null, search in
+     * AxisOperation </li>
      * <li> If parameter is not found or if operationContext is null, search in
      * AxisService </li>
      * <li> If parameter is not found or if axisService is null, search in
@@ -842,6 +844,11 @@ public class MessageContext extends AbstractContext
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
+        
+        if( axisMessage != null ) {
+            return axisMessage.getParameter(key);
+        }
+        
         if (axisOperation != null) {
             return axisOperation.getParameter(key);
         }
