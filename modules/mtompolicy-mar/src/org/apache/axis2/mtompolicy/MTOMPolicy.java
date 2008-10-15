@@ -57,10 +57,11 @@ public class MTOMPolicy implements Module {
         }
 
         if (isOptional) {
-            axisDescription
-                    .addParameter("enableMTOM", Constants.VALUE_OPTIONAL);
+            axisDescription.addParameter(Constants.Configuration.ENABLE_MTOM,
+                    Constants.VALUE_OPTIONAL);
         } else {
-            axisDescription.addParameter("enableMTOM", Constants.VALUE_TRUE);
+            axisDescription.addParameter(Constants.Configuration.ENABLE_MTOM,
+                    Constants.VALUE_TRUE);
         }
 
     }
