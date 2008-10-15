@@ -2,5 +2,6 @@
     <Description>
       fill in the description
     </Description>
+    <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization http://www.w3.org/2007/08/soap12-mtom-policy"/>
 </module>
 
