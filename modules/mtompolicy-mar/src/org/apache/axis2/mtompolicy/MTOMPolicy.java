@@ -55,6 +55,8 @@ public class MTOMPolicy implements Module {
         if (mtomAssertion == null) {
             return;
         }
+        
+        isOptional = mtomAssertion.isOptional();
 
         if (isOptional) {
             axisDescription.addParameter(Constants.Configuration.ENABLE_MTOM,
