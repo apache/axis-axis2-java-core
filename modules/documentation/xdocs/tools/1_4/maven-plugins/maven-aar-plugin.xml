@@ -38,14 +38,14 @@
 <p>The AAR plugin allows the packaging of an Axis 2 service aar in
 3 different modes:</p>
 <ol>
-<li><b>aar (default)</b>: generates the aar artifact</li>
-<li><b>inplace</b> : package the aar in the source tree</li>
-<li><b>exploded</b> : package an exploded aar application</li>
+<li><b>axis2-aar:aar</b>: generates the aar artifact</li>
+<li><b>axis2-aar:inplace</b> : package the aar in the source tree</li>
+<li><b>axis2-aar:exploded</b> : package an exploded aar application</li>
 </ol>
 <p>Each mode is materialized by a goal. For instance, to generate
 an exploded aar from the current project, one would type</p>
 <pre>
-mvn aar:exploded
+mvn axis2-aar:exploded
 </pre>
 <h2>Configuration</h2>
 <p>All AAR plugin goals takes the following configuration
