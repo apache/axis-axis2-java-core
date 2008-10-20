@@ -5,12 +5,16 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.policy.model.MTOMAssertion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
+
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
 
 public class MTOMPolicy implements Module {
 
@@ -48,22 +52,21 @@ public class MTOMPolicy implements Module {
                     + axisDescription.getClass().getName());
         }
 
-        boolean isOptional = false;
-
-        MTOMAssertion mtomAssertion = Utils.getMTOMAssertion(axisDescription);
-
-        if (mtomAssertion == null) {
+        AxisService axisService = Utils.locateAxisService(axisDescription);
+        
+        if (axisService == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("MTOMPolicy module couldn't find the Axis Service ");
+            }
             return;
         }
         
-        isOptional = mtomAssertion.isOptional();
-
-        if (isOptional) {
-            axisDescription.addParameter(Constants.Configuration.ENABLE_MTOM,
-                    Constants.VALUE_OPTIONAL);
-        } else {
-            axisDescription.addParameter(Constants.Configuration.ENABLE_MTOM,
-                    Constants.VALUE_TRUE);
+        Parameter param = axisService.getParameter(Constants.Configuration.ENABLE_MTOM);
+        
+        Policy mtomPolicy = Utils.getMTOMPolicy(param);
+        
+        if (mtomPolicy != null) {
+            Utils.applyPolicyToSOAPBindings(axisService, mtomPolicy);
         }
 
     }
