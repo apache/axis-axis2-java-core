@@ -14,8 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
 public class MTOMPolicy implements Module {
 
     /*
