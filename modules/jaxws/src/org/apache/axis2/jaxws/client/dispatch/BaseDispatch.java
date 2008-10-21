@@ -153,10 +153,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
              */
             if ((requestContext.containsKey(BindingProvider.SESSION_MAINTAIN_PROPERTY)) && ((Boolean)requestContext.get(BindingProvider.SESSION_MAINTAIN_PROPERTY))) {
                 if ((requestContext.containsKey(HTTPConstants.HEADER_COOKIE)) && (requestContext.get(HTTPConstants.HEADER_COOKIE) != null)) {
-                    invocationContext.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
-                    if (log.isDebugEnabled()) {
-                        log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
-                                "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                    if (invocationContext.getServiceClient().getServiceContext().getProperty(HTTPConstants.HEADER_COOKIE) == null) {
+                        invocationContext.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
+                                    "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                        }
                     }
                 }
             }

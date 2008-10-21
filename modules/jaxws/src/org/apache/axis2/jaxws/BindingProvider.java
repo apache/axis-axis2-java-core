@@ -219,10 +219,8 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         Object sessionValue = null;
 
         if (properties == null) {
-            return;
-        }
-
-        if (properties.containsKey(HTTPConstants.HEADER_LOCATION)) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NoMaintainSessionProperty"));
+        } else if (properties.containsKey(HTTPConstants.HEADER_LOCATION)) {
             sessionKey = HTTPConstants.HEADER_LOCATION;
             sessionValue = properties.get(sessionKey);
             if (sessionValue != null && !"".equals(sessionValue)) {
