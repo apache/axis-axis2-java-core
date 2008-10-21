@@ -96,7 +96,7 @@ public class ClusterBuilder extends DescriptionBuilder {
             loadApplicationDomains(clusterManager, clusterElement);
 
             // loading the members
-            loadMembers(clusterManager, clusterElement);
+            loadWellKnownMembers(clusterManager, clusterElement);
 
             //loading the ConfigurationManager
             loadConfigManager(clusterElement, clusterManager);
@@ -124,7 +124,7 @@ public class ClusterBuilder extends DescriptionBuilder {
     private void loadApplicationDomains(ClusterManager clusterManager,
                                         OMElement clusterElement) throws DeploymentException {
         OMElement lbEle = clusterElement.getFirstChildWithName(new QName("loadBalancer"));
-        if(lbEle != null){
+        if (lbEle != null) {
             if (isEnabled(lbEle)) {
                 log.info("Running in load balance mode");
             } else {
@@ -132,8 +132,8 @@ public class ClusterBuilder extends DescriptionBuilder {
                 return;
             }
 
-            for(Iterator iter= lbEle.getChildrenWithName(new QName("applicationDomain"));
-                iter.hasNext();){
+            for (Iterator iter = lbEle.getChildrenWithName(new QName("applicationDomain"));
+                 iter.hasNext();) {
                 OMElement omElement = (OMElement) iter.next();
                 String domainName = omElement.getAttributeValue(new QName("name")).trim();
                 String handlerClass = omElement.getAttributeValue(new QName("handler")).trim();
@@ -150,8 +150,8 @@ public class ClusterBuilder extends DescriptionBuilder {
             }
         }
     }
-            
-    private void loadMembers(ClusterManager clusterManager, OMElement clusterElement) {
+
+    private void loadWellKnownMembers(ClusterManager clusterManager, OMElement clusterElement) {
         clusterManager.setMembers(new ArrayList<Member>());
         Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
         if (membershipSchemeParam != null) {
@@ -161,19 +161,43 @@ public class ClusterBuilder extends DescriptionBuilder {
                 OMElement membersEle =
                         clusterElement.getFirstChildWithName(new QName("members"));
                 if (membersEle != null) {
-                    for (Iterator iter = membersEle.getChildrenWithLocalName("member"); iter.hasNext();)
-                    {
+                    for (Iterator iter = membersEle.getChildrenWithLocalName("member"); iter.hasNext();) {
                         OMElement memberEle = (OMElement) iter.next();
                         String hostName =
                                 memberEle.getFirstChildWithName(new QName("hostName")).getText().trim();
                         String port =
                                 memberEle.getFirstChildWithName(new QName("port")).getText().trim();
-                        members.add(new Member(hostName, Integer.parseInt(port)));
+                        members.add(new Member(replaceVariables(hostName),
+                                               Integer.parseInt(replaceVariables(port))));
                     }
                 }
                 clusterManager.setMembers(members);
             }
         }
+    }
+
+    private String replaceVariables(String text) {
+        int indexOfStartingChars;
+        int indexOfClosingBrace;
+
+        // The following condition deals with properties.
+        // Properties are specified as ${system.property},
+        // and are assumed to be System properties
+        if ((indexOfStartingChars = text.indexOf("${")) != -1 &&
+            (indexOfClosingBrace = text.indexOf("}")) != -1) { // Is a property used?
+            String var = text.substring(indexOfStartingChars + 2,
+                                        indexOfClosingBrace);
+
+            String propValue = System.getProperty(var);
+            if (propValue == null) {
+                propValue = System.getenv(var);
+            }
+            if (propValue != null) {
+                text = text.substring(0, indexOfStartingChars) + propValue +
+                       text.substring(indexOfClosingBrace + 1);
+            }
+        }
+        return text;
     }
 
     private void loadContextManager(OMElement clusterElement,
