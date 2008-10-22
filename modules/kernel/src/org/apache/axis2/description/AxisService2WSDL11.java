@@ -655,6 +655,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap);
+					generateEPRElement(fac, port, endpointURL);
 					addPolicyAsExtElement(axisEndpoint, port);
 					generateSoap11Binding(fac, definition, axisEndpoint
 							.getBinding());
@@ -697,6 +698,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 					WSDLSerializationUtil.addExtensionElement(fac, port,
 							SOAP_ADDRESS, LOCATION, (endpointURL == null) ? ""
 									: endpointURL, soap12);
+					generateEPRElement(fac, port, endpointURL);
 					addPolicyAsExtElement(axisEndpoint, port);
 					generateSoap12Binding(fac, definition, axisEndpoint
 							.getBinding());
@@ -1210,6 +1212,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
                     throw new RuntimeException("Cannot resolve " + uri
                                                + " to a Policy");
                 }
+                policyURIs.add(uri);
                 addPolicyToDefinitionElement(key, p);
             }
         }
@@ -1253,21 +1256,86 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	
 	private String getEndpointURL(AxisEndpoint axisEndpoint) {
 		Parameter modifyAddressParam = axisService.getParameter("modifyUserWSDLPortAddress");
-        String endpointURL = axisEndpoint.getEndpointURL();
-        if (modifyAddressParam != null &&
-            !Boolean.parseBoolean((String)modifyAddressParam.getValue())) {
-            return endpointURL;
-        }
+            String endpointURL = axisEndpoint.getEndpointURL();
+            if (modifyAddressParam != null &&
+                    !Boolean.parseBoolean((String)modifyAddressParam.getValue())) {
+                return endpointURL;
+            }
 
-        String hostIP = WSDLSerializationUtil.extractHostIP(axisService.getEndpointURL());
-
-		//TODO This is to prevent problems when JAVA2WSDL tool is used where there is no
-		//Axis server running. calculateEndpointURL fails in this scenario, refer to 
-		// SimpleHTTPServer#getEPRsForService()
-		if (hostIP != null) {
-		    return axisEndpoint.calculateEndpointURL(hostIP);
-		} else {
-		    return endpointURL;
-		}
+            String hostIP;
+    
+            // First check the hostname parameter 
+            hostIP = Utils.getHostname(axisService.getAxisConfiguration());
+        
+            //If it is not set extract the hostIP from the URL
+            if (hostIP == null) {
+                hostIP = WSDLSerializationUtil.extractHostIP(axisService.getEndpointURL());
+            }
+        
+            //TODO This is to prevent problems when JAVA2WSDL tool is used where there is no
+            //Axis server running. calculateEndpointURL fails in this scenario, refer to 
+            // SimpleHTTPServer#getEPRsForService()
+  
+            if (hostIP != null) {
+                return axisEndpoint.calculateEndpointURL(hostIP);
+            } else {
+                return endpointURL;
+            }
+	}
+	
+	/**
+	 * Generate the Identity element according to the WS-AddressingAndIdentity if the 
+	 * AddressingConstants.IDENTITY_PARAMETER parameter is set. 
+	 * http://schemas.xmlsoap.org/ws/2006/02/addressingidentity/ 
+	 */
+	
+	private void generateIdentityElement(OMFactory fac,OMElement epr, Parameter wsaIdParam) {
+	    
+	    // Create the Identity element
+	    OMElement identity = fac.createOMElement(AddressingConstants.QNAME_IDENTITY);
+	    OMElement keyInfo = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_KEY_INFO);
+	    OMElement x509Data = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_DATA);
+	    OMElement x509cert = fac.createOMElement(AddressingConstants.QNAME_IDENTITY_X509_CERT);
+	    x509cert.setText((String)wsaIdParam.getValue());
+	    
+	    x509Data.addChild(x509cert);
+	    keyInfo.addChild(x509Data);
+	    identity.addChild(keyInfo);
+	    
+	    epr.addChild(identity);
+	    
+	}
+	
+	
+	/*
+	 * Generate the EndpointReference element
+	 * <wsa:EndpointReference>
+         *    <wsa:Address>
+         *        http://some.service.epr/
+         *     </wsa:Address>
+         * </wsa:EndpointReference>
+	 * 
+	 */
+	private void generateEPRElement(OMFactory fac, OMElement port, String endpointURL){
+	    
+	    Parameter parameter = axisService.getParameter(AddressingConstants.IDENTITY_PARAMETER);
+	            
+	    // If the parameter is not set, return
+	    if (parameter == null || parameter.getValue() == null) {
+	        return;
+	    }
+	    
+	    OMElement wsaEpr = fac.createOMElement(AddressingConstants.Final.WSA_ENDPOINT_REFERENCE);
+	    
+	    OMElement address = fac.createOMElement(AddressingConstants.Final.WSA_ADDRESS);
+	    address.setText((endpointURL == null) ? "": endpointURL);
+	    
+	    wsaEpr.addChild(address);
+	    
+	    // This will generate the identity element if the service parameter is set
+	    generateIdentityElement(fac, wsaEpr, parameter);
+	    
+	    port.addChild(wsaEpr);   
+	    
 	}
 }
