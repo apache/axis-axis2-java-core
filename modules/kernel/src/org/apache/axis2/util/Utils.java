@@ -612,6 +612,25 @@ public class Utils {
         }
         return getIpAddress();
     }
+    
+    /**
+     * First check whether the hostname parameter is there in AxisConfiguration (axis2.xml) ,
+     * if it is there then this will return that as the host name , o.w will return the IP address.
+     * @param axisConfiguration
+     * @return hostname 
+     */
+    public static String getHostname(AxisConfiguration axisConfiguration) {
+        if(axisConfiguration!=null){
+            Parameter param = axisConfiguration.getParameter(TransportListener.HOST_ADDRESS);
+            if (param != null) {
+                String  hostAddress = ((String) param.getValue()).trim();
+                if(hostAddress!=null){
+                    return hostAddress;
+                }
+            }
+        }      
+        return null;
+    }
 
     private static boolean isIP(String hostAddress) {
         return hostAddress.split("[.]").length == 4;
