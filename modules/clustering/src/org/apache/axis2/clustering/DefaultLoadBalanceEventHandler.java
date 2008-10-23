@@ -58,7 +58,7 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
         }
 
         public void run() {
-            if(members.contains(member)){
+            if (members.contains(member)) {
                 return;
             }
             if (canConnect(member)) {
@@ -67,7 +67,9 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
                 //                } catch (InterruptedException e) {
                 //                    e.printStackTrace();
                 //                }
-                members.add(member);
+                if (!members.contains(member)) {
+                    members.add(member);
+                }
                 log.info("Application member " + member + " joined application cluster");
             } else {
                 log.error("Could not add application member " + member);
@@ -81,14 +83,14 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
          * @return true, if the member can be contacted; false, otherwise.
          */
         private boolean canConnect(Member member) {
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Trying to connect to member " + member + "...");
             }
             for (int retries = 30; retries > 0; retries--) {
                 try {
                     InetAddress addr = InetAddress.getByName(member.getHostName());
                     int httpPort = member.getHttpPort();
-                    if(log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug("HTTP Port=" + httpPort);
                     }
                     if (httpPort != -1) {
@@ -96,7 +98,7 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
                         new Socket().connect(httpSockaddr, 10000);
                     }
                     int httpsPort = member.getHttpsPort();
-                    if(log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug("HTTPS Port=" + httpsPort);
                     }
                     if (httpsPort != -1) {
@@ -105,7 +107,7 @@ public class DefaultLoadBalanceEventHandler implements LoadBalanceEventHandler {
                     }
                     return true;
                 } catch (IOException e) {
-                    if(log.isDebugEnabled()){
+                    if (log.isDebugEnabled()) {
                         log.debug("", e);
                     }
                     String msg = e.getMessage();
