@@ -184,7 +184,7 @@ public class JAXBDSContext {
              */
             if (this.webServiceNamespace != null) {
                 properties = new HashMap<String, Object>();
-                properties.put("com.sun.xml.bind.defaultNamespaceRemap", this.webServiceNamespace);
+                properties.put(JAXBUtils.DEFAULT_NAMESPACE_REMAP, this.webServiceNamespace);
             }
             jc = JAXBUtils.getJAXBContext(contextPackages, constructType, 
                                           contextPackagesKey, cl, properties);

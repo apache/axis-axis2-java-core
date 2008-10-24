@@ -111,6 +111,7 @@ public class JAXBUtils {
         specialMap.put("javax.xml.ws.wsaddressing", classes);
     }
     
+    public static final String DEFAULT_NAMESPACE_REMAP = getDefaultNamespaceRemapProperty();
     
     /**
      * Get a JAXBContext for the class
@@ -1212,5 +1213,40 @@ public class JAXBUtils {
                 return element.getAnnotation(annotation);
             }
         });
+    }
+    
+    private static String getDefaultNamespaceRemapProperty() {
+        String external = "com.sun.xml.bind.defaultNamespaceRemap";
+        String internal = "com.sun.xml.internal.bind.defaultNamespaceRemap";
+        
+        Boolean isExternal = testJAXBProperty(external);
+        if (Boolean.TRUE.equals(isExternal)) {
+            return external;
+        }                
+        Boolean isInternal = testJAXBProperty(internal);
+        if (Boolean.TRUE.equals(isInternal)) {
+            return internal;
+        }
+        // hmm... both properties cannot be set
+        return external;
+    }
+    
+    private static Boolean testJAXBProperty(String propName) {
+        final Map<String, String> props = new HashMap<String, String>();
+        props.put(propName, "http://test");
+        try {
+            AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws JAXBException {
+                            return JAXBContext.newInstance(new Class[] {Integer.class}, props);
+                        }
+                    });
+            return Boolean.TRUE;
+        } catch (PrivilegedActionException e) {
+            if (e.getCause() instanceof JAXBException) {
+                return Boolean.FALSE;
+            } 
+            return null;
+        }
     }
 }
