@@ -530,23 +530,25 @@ public class TribesClusterManager implements ClusterManager {
             try {
                 if (!sentMembersList.contains(memberHost)) {
                     Response[] responses;
-                    do {
-                        responses = rpcInitChannel.send(new Member[]{member},
-                                                        command,
-                                                        RpcChannel.FIRST_REPLY,
-                                                        Channel.SEND_OPTIONS_ASYNCHRONOUS,
-                                                        10000);
-                        if (responses.length == 0) {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException ignored) {
-                            }
+//                    do {
+                    responses = rpcInitChannel.send(new Member[]{member},
+                                                    command,
+                                                    RpcChannel.FIRST_REPLY,
+                                                    Channel.SEND_OPTIONS_ASYNCHRONOUS,
+                                                    10000);
+                    if (responses.length == 0) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException ignored) {
                         }
-                        // TODO: If we do not get a response within some time, try to recover from this fault
                     }
-                    while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);
-                    ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
-                    break;
+                    // TODO: If we do not get a response within some time, try to recover from this fault
+//                    }
+//                    while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);    // TODO: #### We will need to check this 
+                    if (responses.length != 0 && responses[0] != null && responses[0].getMessage() != null) {
+                        ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 log.error("Cannot get initialization information from " +
