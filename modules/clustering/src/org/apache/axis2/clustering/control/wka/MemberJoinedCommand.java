@@ -52,4 +52,8 @@ public class MemberJoinedCommand extends ControlCommand {
             membershipManager.memberAdded(member);
         }
     }
+
+    public String toString() {
+        return "MemberJoinedCommand: " + member;
+    }
 }

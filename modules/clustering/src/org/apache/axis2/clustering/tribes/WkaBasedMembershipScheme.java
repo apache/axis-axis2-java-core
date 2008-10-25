@@ -306,7 +306,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         }
 
         // Add the NonBlockingCoordinator.
-        channel.addInterceptor(new Axis2Coordinator(membershipListener));
+//        channel.addInterceptor(new Axis2Coordinator(membershipListener));
         
         staticMembershipInterceptor = new StaticMembershipInterceptor();
         staticMembershipInterceptor.setLocalMember(primaryMembershipManager.getLocalMember());

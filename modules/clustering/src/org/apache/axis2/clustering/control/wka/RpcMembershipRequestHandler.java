@@ -74,6 +74,9 @@ public class RpcMembershipRequestHandler implements RpcCallback {
         } else if (msg instanceof MemberJoinedCommand) {
             log.info("Received MEMBER_JOINED message from " + TribesUtil.getName(sender));
             MemberJoinedCommand command = (MemberJoinedCommand) msg;
+            if(log.isDebugEnabled()){
+                log.debug(command);
+            }
 
             try {
                 command.setMembershipManager(membershipManager);

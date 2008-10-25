@@ -127,6 +127,11 @@ public class MembershipManager {
      */
     public synchronized boolean memberAdded(Member member) {
 
+        if(log.isDebugEnabled()){
+            log.debug("members.contains(member) =" + members.contains(member) );
+            log.debug("Is in my domain: " + TribesUtil.isInDomain(member, domain));
+        }
+
         // If this member already exists or if the member belongs to another domain,
         // there is no need to add it
         if (members.contains(member) || !TribesUtil.isInDomain(member, domain)) {
