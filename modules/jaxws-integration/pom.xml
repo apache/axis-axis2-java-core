@@ -1292,6 +1292,7 @@
                         <include>**/InvocationControllerTest.java</include>
                         <include>**/ProxyMTOMFeatureTest.java</include>
                         <include>**/SOAP12DispatchTest.java</include>
+                        <include>**/OMElementDispatchTest.java</include>
                         <include>**/JAXBContextTest.java</include>
 
                         <include>**/StringProviderTests.java</include>

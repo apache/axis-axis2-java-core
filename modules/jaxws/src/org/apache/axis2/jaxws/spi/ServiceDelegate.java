@@ -20,6 +20,30 @@
 package org.apache.axis2.jaxws.spi;
 
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Iterator;
+import java.util.concurrent.Executor;
+
+import javax.activation.DataSource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.EndpointReference;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.handler.HandlerResolver;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.java.security.AccessController;
@@ -42,28 +66,6 @@ import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.activation.DataSource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.Source;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.EndpointReference;
-import javax.xml.ws.Service;
-import javax.xml.ws.Service.Mode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
-import javax.xml.ws.handler.HandlerResolver;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Iterator;
-import java.util.concurrent.Executor;
 
 /**
  * The ServiceDelegate serves as the backing implementation for all of the methods in the {@link
@@ -774,7 +776,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         return clazz != null && (clazz == String.class ||
                 clazz == Source.class ||
                 clazz == DataSource.class ||
-                clazz == SOAPMessage.class);
+                clazz == SOAPMessage.class ||
+                clazz == OMElement.class);
     }
 
     private boolean isValidDispatchTypeWithMode(Class clazz, Mode mode) {

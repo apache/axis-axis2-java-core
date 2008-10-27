@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.DataSourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -39,6 +40,9 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.message.databinding.OMBlock;
+import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 
 import javax.activation.DataSource;
 import javax.xml.soap.SOAPEnvelope;
@@ -178,6 +182,9 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 block = message.getBodyBlock(null, factory);
                 if (block != null) {
                     value = block.getBusinessObject(true);
+                    if (value instanceof OMBlockFactoryImpl) {
+                        value = ((OMBlock)value).getOMElement();
+                    }
                 } else {
                     // REVIEW This seems like the correct behavior.  If the body is empty, return a null
                     // Any changes here should also be made to XMLDispatch.getValue
@@ -190,12 +197,16 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
 
             } else if (mode.equals(Mode.MESSAGE)) {
                 BlockFactory factory = (BlockFactory)FactoryRegistry.getFactory(blockFactoryType);
-                value = message.getValue(null, factory);
+                if (factory instanceof OMBlockFactoryImpl) {
+                    value = (OMElement)message.getAsOMElement();
+                } else {
+                    value = message.getValue(null, factory);
+                }
                 if (value == null) {
                     if (log.isDebugEnabled()) {
                         log.debug(
                                 "There are no elements to unmarshal.  XMLDispatch returns a null value");
-                    }
+                    }   
                 }
             }
 
@@ -205,7 +216,9 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
             }
             throw ExceptionFactory.makeWebServiceException(e);
         } finally {
-            message.close();
+            if (!(value instanceof OMElement)) {
+                message.close();
+            }
         }
 
         if (log.isDebugEnabled()) {
@@ -244,6 +257,11 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 log.debug(">> returning SOAPEnvelope");
             }
             return SOAPEnvelopeBlockFactory.class;
+        } else if (OMElement.class.isAssignableFrom(o.getClass())) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning OMBlockFactory");
+            }
+            return OMBlockFactory.class;
         }
         if (log.isDebugEnabled()) {
             log.debug(">> ERROR: Factory not found");
@@ -273,6 +291,11 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 log.debug(">> returning SOAPEnvelope");
             }
             return SOAPEnvelopeBlockFactory.class;
+        } else if (OMElement.class.isAssignableFrom(type)) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning OMBlockFactory");
+            }
+            return OMBlockFactory.class;
         }
         if (log.isDebugEnabled()) {
             log.debug(">> ERROR: Factory not found");

@@ -31,9 +31,11 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.DataSourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -49,6 +51,7 @@ import org.apache.axis2.jaxws.utility.ExecutorFactory;
 import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.OMElement;
 
 import javax.activation.DataSource;
 import javax.xml.soap.SOAPMessage;
@@ -285,8 +288,11 @@ public class ProviderDispatcher extends JavaDispatcher {
                         log.debug("Number Message attachments=" + message.getAttachmentIDs().size());
                     }
                 }
-
-                requestParamValue = message.getValue(null, factory);
+                if (providerType.equals(OMElement.class)) {
+                    requestParamValue = message.getAsOMElement();
+                } else {
+                    requestParamValue = message.getValue(null, factory);
+                }
                 if (requestParamValue == null) {
                     if (log.isDebugEnabled()) {
                         log.debug(
@@ -299,6 +305,9 @@ public class ProviderDispatcher extends JavaDispatcher {
                 if (block != null) {
                     try {
                         requestParamValue = block.getBusinessObject(true);
+                        if (requestParamValue instanceof OMBlock) {
+                            requestParamValue = ((OMBlock)requestParamValue).getOMElement();
+                        }
                     } catch (WebServiceException e) {
                         throw ExceptionFactory.makeWebServiceException(e);
                     } catch (XMLStreamException e) {
@@ -527,6 +536,8 @@ public class ProviderDispatcher extends JavaDispatcher {
             provider = (Provider<SOAPMessage>)serviceInstance;
         } else if (clazz == DataSource.class) {
             provider = (Provider<DataSource>)serviceInstance;
+        } else if (clazz == OMElement.class) {
+            provider = (Provider<OMElement>)serviceInstance;
         }
 
         if (provider == null) {
@@ -578,6 +589,7 @@ public class ProviderDispatcher extends JavaDispatcher {
     *   javax.xml.transform.Source
     *   javax.xml.soap.SOAPMessage
     *   javax.activation.DataSource
+    *   org.apache.axiom.om.OMElement
     *
     * We've also added support for String types which is NOT dictated
     * by the spec.
@@ -586,7 +598,8 @@ public class ProviderDispatcher extends JavaDispatcher {
         boolean valid = clazz == String.class ||
                 clazz == SOAPMessage.class ||
                 clazz == Source.class ||
-                clazz == DataSource.class;
+                clazz == DataSource.class ||
+                clazz == OMElement.class;
 
         if (!valid) {
             if (log.isDebugEnabled()) {
@@ -617,6 +630,9 @@ public class ProviderDispatcher extends JavaDispatcher {
         } else if (type.equals(SOAPMessage.class)) {
             _blockFactory = (SOAPEnvelopeBlockFactory)FactoryRegistry.getFactory(
                     SOAPEnvelopeBlockFactory.class);
+        } else if (type.equals(OMElement.class)) {
+            _blockFactory = (OMBlockFactory)FactoryRegistry.getFactory(
+                    OMBlockFactory.class);
         } else {
             throw ExceptionFactory.makeWebServiceException(
             		Messages.getMessage("bFactoryErr",type.getName()));

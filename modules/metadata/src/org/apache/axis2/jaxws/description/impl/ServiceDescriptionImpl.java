@@ -1403,7 +1403,8 @@ class ServiceDescriptionImpl
             if (interfaceString.equals(MDQConstants.PROVIDER_SOURCE)
                     || interfaceString.equals(MDQConstants.PROVIDER_SOAP)
                     || interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)
-                    || interfaceString.equals(MDQConstants.PROVIDER_STRING)) {
+                    || interfaceString.equals(MDQConstants.PROVIDER_STRING)
+                    || interfaceString.equals(MDQConstants.PROVIDER_OMELEMENT)) {
                 providerInterfaceValid = true;
                 //This is a provider based endpoint, make sure the annotation exists
                 if (composite.getWebServiceProviderAnnot() == null) {

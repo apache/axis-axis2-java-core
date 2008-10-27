@@ -38,6 +38,7 @@ public class MDQConstants {
     public static final String PROVIDER_DATASOURCE =
             "javax.xml.ws.Provider<javax.activation.DataSource>";
     public static final String PROVIDER_STRING = "javax.xml.ws.Provider<java.lang.String>";
+    public static final String PROVIDER_OMELEMENT = "javax.xml.ws.Provider<org.apache.axiom.om.OMElement>";
 
     public static final String WSDL_FILE_NAME = "WSDL_FILE_NAME";
     public static final String SCHEMA_DOCS = "SCHEMA_DOCS";
