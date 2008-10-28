@@ -26,14 +26,12 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ManagedChannel;
-import org.apache.catalina.tribes.ChannelInterceptor;
 import org.apache.catalina.tribes.group.Response;
 import org.apache.catalina.tribes.group.RpcChannel;
 import org.apache.catalina.tribes.group.interceptors.OrderInterceptor;
 import org.apache.catalina.tribes.group.interceptors.StaticMembershipInterceptor;
 import org.apache.catalina.tribes.group.interceptors.TcpFailureDetector;
 import org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor;
-import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
 import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.ReceiverBase;
 import org.apache.commons.logging.Log;
@@ -82,7 +80,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
      */
     private OperationMode mode;
 
-    private MembershipListener membershipListener;
+    private boolean atmostOnceMessageSemantics;
+    private boolean preserverMsgOrder;
 
     public WkaBasedMembershipScheme(ManagedChannel channel,
                                     OperationMode mode,
@@ -91,7 +90,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                                     Map<String, Parameter> parameters,
                                     byte[] domain,
                                     List<Member> members,
-                                    MembershipListener membershipListener) {
+                                    boolean atmostOnceMessageSemantics,
+                                    boolean preserverMsgOrder) {
         this.channel = channel;
         this.mode = mode;
         this.applicationDomainMembershipManagers = applicationDomainMembershipManagers;
@@ -99,7 +99,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         this.parameters = parameters;
         this.localDomain = domain;
         this.members = members;
-        this.membershipListener = membershipListener;
+        this.atmostOnceMessageSemantics = atmostOnceMessageSemantics;
+        this.preserverMsgOrder = preserverMsgOrder;
     }
 
     /**
@@ -298,8 +299,8 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         // Add a reliable failure detector
         TcpFailureDetector tcpFailureDetector = new TcpFailureDetector();
 //        tcpFailureDetector.setPrevious(dfi); //TODO: check this
-//        tcpFailureDetector.setReadTestTimeout(30000);
-        tcpFailureDetector.setConnectTimeout(30000);
+        tcpFailureDetector.setReadTestTimeout(120000);
+        tcpFailureDetector.setConnectTimeout(60000);
         channel.addInterceptor(tcpFailureDetector);
         if (log.isDebugEnabled()) {
             log.debug("Added TCP Failure Detector");
@@ -307,7 +308,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
 
         // Add the NonBlockingCoordinator.
 //        channel.addInterceptor(new Axis2Coordinator(membershipListener));
-        
+
         staticMembershipInterceptor = new StaticMembershipInterceptor();
         staticMembershipInterceptor.setLocalMember(primaryMembershipManager.getLocalMember());
         primaryMembershipManager.setStaticMembershipInterceptor(staticMembershipInterceptor);
@@ -319,20 +320,24 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
         channel.getMembershipService().setDomain(localDomain);
         mode.addInterceptors(channel);
 
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
-        channel.addInterceptor(atMostOnceInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added At-most-once Interceptor");
+        if (atmostOnceMessageSemantics) {
+            // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+            AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+            atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
+            channel.addInterceptor(atMostOnceInterceptor);
+            if (log.isDebugEnabled()) {
+                log.debug("Added At-most-once Interceptor");
+            }
         }
 
-        // Add the OrderInterceptor to preserve sender ordering
-        OrderInterceptor orderInterceptor = new OrderInterceptor();
-        orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
-        channel.addInterceptor(orderInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added Message Order Interceptor");
+        if (preserverMsgOrder) {
+            // Add the OrderInterceptor to preserve sender ordering
+            OrderInterceptor orderInterceptor = new OrderInterceptor();
+            orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
+            channel.addInterceptor(orderInterceptor);
+            if (log.isDebugEnabled()) {
+                log.debug("Added Message Order Interceptor");
+            }
         }
     }
 
@@ -366,7 +371,7 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
                 new RpcChannel(TribesUtil.getRpcMembershipChannelId(localDomain),
                                channel, new RpcMembershipRequestHandler(primaryMembershipManager,
                                                                         this));
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("Created primary membership channel " + new String(localDomain));
         }
         primaryMembershipManager.setRpcMembershipChannel(rpcMembershipChannel);

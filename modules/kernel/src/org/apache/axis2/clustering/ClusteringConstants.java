@@ -100,6 +100,16 @@ public final class ClusteringConstants {
         public static final String AVOID_INITIATION = "AvoidInitiation";
 
         /**
+         * Preserve message ordering. This will be done according to sender order
+         */
+        public static final String PRESERVE_MSG_ORDER = "preserveMessageOrder";
+
+        /**
+         * Maintain atmost-once message processing semantics
+         */
+        public static final String ATMOST_ONCE_MSG_SEMANTICS = "atmostOnceMessageSemantics";
+
+        /**
          * Indicates whether this member is ACTIVE or PASSIVE
          */
         public static final String IS_ACTIVE = "isActive";

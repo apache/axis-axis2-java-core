@@ -19,16 +19,16 @@
 
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.RequestBlockingHandler;
-import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.configuration.ConfigurationManager;
 import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
 import org.apache.axis2.clustering.context.ClusteringContextListener;
@@ -60,14 +60,13 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Iterator;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * The main ClusterManager class for the Tribes based clustering implementation
@@ -231,7 +230,6 @@ public class TribesClusterManager implements ClusterManager {
         }
         Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
         if (isActiveParam != null) {
-            System.out.println("##### isActive=" + isActiveParam.getValue());
             memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
                                    (String) isActiveParam.getValue());
         }
@@ -401,14 +399,19 @@ public class TribesClusterManager implements ClusterManager {
         String scheme = getMembershipScheme();
         log.info("Using " + scheme + " based membership management scheme");
         if (scheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
-            membershipScheme = new WkaBasedMembershipScheme(channel, mode,
-                                                            membershipManagers,
-                                                            primaryMembershipManager,
-                                                            parameters, localDomain, members,
-                                                            membershipListener);
+            membershipScheme =
+                    new WkaBasedMembershipScheme(channel, mode,
+                                                 membershipManagers,
+                                                 primaryMembershipManager,
+                                                 parameters, localDomain, members,
+                                                 getBooleanParam(ClusteringConstants.Parameters.ATMOST_ONCE_MSG_SEMANTICS),
+                                                 getBooleanParam(ClusteringConstants.Parameters.PRESERVE_MSG_ORDER));
         } else if (scheme.equals(ClusteringConstants.MembershipScheme.MULTICAST_BASED)) {
-            membershipScheme = new MulticastBasedMembershipScheme(channel, mode, parameters,
-                                                                  localDomain, membershipListener);
+            membershipScheme =
+                    new MulticastBasedMembershipScheme(channel, mode, parameters,
+                                                       localDomain,
+                                                       getBooleanParam(ClusteringConstants.Parameters.ATMOST_ONCE_MSG_SEMANTICS),
+                                                       getBooleanParam(ClusteringConstants.Parameters.PRESERVE_MSG_ORDER));
         } else {
             String msg = "Invalid membership scheme '" + scheme +
                          "'. Supported schemes are multicast & wka";
@@ -418,15 +421,28 @@ public class TribesClusterManager implements ClusterManager {
         membershipScheme.init();
     }
 
+    private boolean getBooleanParam(String name) {
+        boolean result = false;
+        Parameter parameter = getParameter(name);
+        if (parameter != null) {
+            Object value = parameter.getValue();
+            if (value != null) {
+                result = Boolean.valueOf(((String) value).trim());
+            }
+        }
+        return result;
+    }
+
     /**
      * Find and invoke the setter method with the name of form setXXX passing in the value given
      * on the POJO object
+     *
      * @param name name of the setter field
-     * @param val value to be set
-     * @param obj POJO instance
+     * @param val  value to be set
+     * @param obj  POJO instance
      * @throws ClusteringFault If an error occurs while setting the property
      */
-    public void setInstanceProperty(String name, Object val, Object obj) throws ClusteringFault {
+    private void setInstanceProperty(String name, Object val, Object obj) throws ClusteringFault {
 
         String mName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
         Method method;
@@ -477,14 +493,14 @@ public class TribesClusterManager implements ClusterManager {
 
             if (!invoked) {
                 handleException("Did not find a setter method named : " + mName +
-                    "() that takes a single String, int, long, float, double " +
-                    "or boolean parameter");
+                                "() that takes a single String, int, long, float, double " +
+                                "or boolean parameter");
             }
 
         } catch (Exception e) {
             handleException("Error invoking setter method named : " + mName +
-                "() that takes a single String, int, long, float, double " +
-                "or boolean parameter", e);
+                            "() that takes a single String, int, long, float, double " +
+                            "or boolean parameter", e);
         }
     }
 

@@ -58,18 +58,22 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
      */
     private OperationMode mode;
 
-    private MembershipListener membershipListener;
+    //    private MembershipListener membershipListener;
+    private boolean atmostOnceMessageSemantics;
+    private boolean preserverMsgOrder;
 
     public MulticastBasedMembershipScheme(ManagedChannel channel,
                                           OperationMode mode,
                                           Map<String, Parameter> parameters,
                                           byte[] domain,
-                                          MembershipListener membershipListener) {
+                                          boolean atmostOnceMessageSemantics,
+                                          boolean preserverMsgOrder) {
         this.channel = channel;
         this.mode = mode;
         this.parameters = parameters;
         this.domain = domain;
-        this.membershipListener = membershipListener;
+        this.atmostOnceMessageSemantics = atmostOnceMessageSemantics;
+        this.preserverMsgOrder = preserverMsgOrder;
     }
 
     public void init() throws ClusteringFault {
@@ -165,25 +169,29 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
         }
 
         // Add the NonBlockingCoordinator.
-        channel.addInterceptor(new Axis2Coordinator(membershipListener));
+//        channel.addInterceptor(new Axis2Coordinator(membershipListener));
 
         channel.getMembershipService().setDomain(domain);
         mode.addInterceptors(channel);
 
-        // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
-        AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
-        atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
-        channel.addInterceptor(atMostOnceInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added At-most-once Interceptor");
+        if (atmostOnceMessageSemantics) {
+            // Add a AtMostOnceInterceptor to support at-most-once message processing semantics
+            AtMostOnceInterceptor atMostOnceInterceptor = new AtMostOnceInterceptor();
+            atMostOnceInterceptor.setOptionFlag(TribesConstants.AT_MOST_ONCE_OPTION);
+            channel.addInterceptor(atMostOnceInterceptor);
+            if (log.isDebugEnabled()) {
+                log.debug("Added At-most-once Interceptor");
+            }
         }
 
-        // Add the OrderInterceptor to preserve sender ordering
-        OrderInterceptor orderInterceptor = new OrderInterceptor();
-        orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
-        channel.addInterceptor(orderInterceptor);
-        if (log.isDebugEnabled()) {
-            log.debug("Added Message Order Interceptor");
+        if (preserverMsgOrder) {
+            // Add the OrderInterceptor to preserve sender ordering
+            OrderInterceptor orderInterceptor = new OrderInterceptor();
+            orderInterceptor.setOptionFlag(TribesConstants.MSG_ORDER_OPTION);
+            channel.addInterceptor(orderInterceptor);
+            if (log.isDebugEnabled()) {
+                log.debug("Added Message Order Interceptor");
+            }
         }
     }
 

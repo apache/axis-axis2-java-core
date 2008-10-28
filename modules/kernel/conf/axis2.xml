@@ -359,6 +359,16 @@
         <parameter name="localMemberPort">4000</parameter>
 
         <!--
+        Preserve message ordering. This will be done according to sender order.
+        -->
+        <parameter name="preserveMessageOrder">true</parameter>
+
+        <!--
+        Maintain atmost-once message processing semantics
+        -->
+        <parameter name="atmostOnceMessageSemantics">true</parameter>
+
+        <!--
            The list of static or well-known members. These entries will only be valid if the
            "membershipScheme" above is set to "wka"
         -->
