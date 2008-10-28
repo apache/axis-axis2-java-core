@@ -52,10 +52,17 @@ public class SAAJResultTest extends TestCase {
         headerEle.setActor("actor-URI");
     }
 
-
+    /*
     public void testGetResult() throws Exception{
-    	SAAJResult sr = new SAAJResult();
+        SAAJResult sr = new SAAJResult();
+        Node node = sr.getResult();
+        assertNotNull(node);
+    }
+    */
+
+    public void testGetResultSOAPMessage() throws Exception{
+    	SAAJResult sr = new SAAJResult(msg);
     	Node node = sr.getResult();
-    	assertNull(node);
+    	assertNotNull(node);
     }
 }
