@@ -1336,6 +1336,16 @@ public class AxisService extends AxisDescription {
 		printWSDL(out, null);
 	}
 
+        private AxisEndpoint getAxisEndpoint(String port) {
+            // if service has a single endpoint, this will cause the [serviceName] address
+            // to be used in wsdl instead of the [serviceName].[endpointName]
+            if (endpointMap.size() == 1 && endpointMap.containsKey(getEndpointName())) {
+                return null;
+            } else {
+                return (AxisEndpoint)endpointMap.get(port);
+            }
+        }
+
 	private void setPortAddress(Definition definition, String requestIP)
 			throws AxisFault {
 		Iterator serviceItr = definition.getServices().values().iterator();
@@ -1344,8 +1354,7 @@ public class AxisService extends AxisDescription {
 			Iterator portItr = serviceElement.getPorts().values().iterator();
 			while (portItr.hasNext()) {
 				Port port = (Port) portItr.next();
-				AxisEndpoint endpoint = (AxisEndpoint) endpointMap.get(port
-						.getName());
+				AxisEndpoint endpoint = getAxisEndpoint(port.getName());
 				List list = port.getExtensibilityElements();
 				for (int i = 0; i < list.size(); i++) {
 					Object extensibilityEle = list.get(i);
