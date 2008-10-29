@@ -1336,6 +1336,10 @@
             <artifactId>axis2-mtompolicy</artifactId>
             <version>${version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${version}</finalName>
