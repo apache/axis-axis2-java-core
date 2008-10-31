@@ -240,17 +240,11 @@ public class RepositoryListener implements DeploymentConstants {
     //This will load the files from the directories
     // specified by axis2.xml (As <deployer>)
     private void loadOtherDirectories() {
-        Map directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
-        if (directoryToExtensionMappingMap.size() > 0) {
-            Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
-            while (keys.hasNext()) {
-                String s = (String)keys.next();
-                ArrayList list = (ArrayList)directoryToExtensionMappingMap.get(s);
-                for (int i = 0; i < list.size(); i++) {
-                    String extension = (String)list.get(i);
-                    findFileForGivenDirectory(s, extension);
-                }
-
+        for (Map.Entry<String, Map<String, Deployer>> entry : deploymentEngine.getDeployers().entrySet()) {
+            String directory = entry.getKey();
+            Map<String, Deployer> extensionMap = entry.getValue();
+            for (String extension : extensionMap.keySet()) {
+                findFileForGivenDirectory(directory, extension);
             }
         }
     }
@@ -274,7 +268,7 @@ public class RepositoryListener implements DeploymentConstants {
                         if (!file.isDirectory() && extension
                                 .equals(DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
-                                            deploymentEngine.getDeployerForExtension(extension),
+                                            deploymentEngine.getDeployer(dir, extension),
                                             WSInfo.TYPE_CUSTOM);
                         }
                     }

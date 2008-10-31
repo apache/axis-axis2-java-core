@@ -121,12 +121,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     //To deploy modules (both mar and expanded)
     protected ModuleDeployer moduleDeployer;
 
-    //To keep the mapping that which directory will contain which type ,
-    // for exmaple directory services will contains .aar
-    private HashMap directoryToExtensionMappingMap = new HashMap();
     //to keep map of which deployer can process which file extension ,
     // for example ServiceDeployer will process .aar file
     private HashMap extensionToDeployerMappingMap = new HashMap();
+    
+    private Map<String, Map<String, Deployer>> deployerMap = new HashMap<String, Map<String, Deployer>>();
 
     public void loadServices() {
         repoListener.checkServices();
@@ -176,62 +175,61 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     private void loadCustomServices(URL repoURL){
-        Map directoryToExtensionMappingMap = getDirectoryToExtensionMappingMap();
-        if (directoryToExtensionMappingMap.size() > 0) {
-            Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
-            while (keys.hasNext()) {
-                try {
-                    String directory = (String)keys.next();
-                    ArrayList list = (ArrayList)directoryToExtensionMappingMap.get(directory);
-                    String listName;
-                    if (!directory.endsWith("/")) {
-                        listName = directory + ".list";
-                        directory += "/";
-                    } else {
-                        listName = directory.replaceAll("/","") + ".list";
-                    }
-                    String repoPath = repoURL.getPath();
-                    if (!repoPath.endsWith("/")) {
-                        repoPath += "/";
-                        repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
-                    }
-
-                    URL servicesDir = new URL(repoURL, directory);
-                    URL filelisturl = new URL(servicesDir, listName);
-                    ArrayList files = getFileList(filelisturl);
-                    for (int i = 0; i < files.size(); i++) {
-                        String fileName = (String) files.get(i);
-                        Deployer deployer = getDeployerForExtension(getExtension(fileName));
-                        URL servicesURL = new URL(servicesDir, fileName);
-
-                        // We are calling reflection code here , to avoid changes to the interface
-                        Class classToLoad = deployer.getClass();
-                        // We can not call classToLoad.getDeclaredMethed() , since there
-                        //  can be insatnce where mutiple services extends using one class
-                        // just for init and other reflection methods
-                        Method method =
-                                null;
-                        try {
-                            method = classToLoad.getMethod("deployFromURL", new Class[]{URL.class});
-                        } catch (Exception e) {
-                            //We do not need to inform this to user , since this something
-                            // Axis2 is checking to support Session. So if the method is
-                            // not there we should ignore that
-                        }
-                        if (method != null) {
-                            try {
-                                method.invoke(deployer, new Object[]{servicesURL});
-                            } catch (Exception e) {
-                                log.info("Exception trying to call " + "deployFromURL for the deployer" + deployer.getClass() , e);
-                            }
-                        }
-                    }
-
-                } catch (MalformedURLException e) {
-                    //I am just ignoring the error at the moment , but need to think how to handle this
+        for (Map.Entry<String, Map<String, Deployer>> entry : getDeployers().entrySet()) {
+            String directory = entry.getKey();
+            Map<String, Deployer> extensionMap = entry.getValue();
+            try {
+                String listName;
+                if (!directory.endsWith("/")) {
+                    listName = directory + ".list";
+                    directory += "/";
+                } else {
+                    listName = directory.replaceAll("/","") + ".list";
+                }
+                String repoPath = repoURL.getPath();
+                if (!repoPath.endsWith("/")) {
+                    repoPath += "/";
+                    repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
                 }
 
+                URL servicesDir = new URL(repoURL, directory);
+                URL filelisturl = new URL(servicesDir, listName);
+                ArrayList files = getFileList(filelisturl);
+                for (int i = 0; i < files.size(); i++) {
+                    String fileName = (String) files.get(i);
+                    String extension = getExtension(fileName);
+                    Deployer deployer = extensionMap.get(extension);
+                    if (deployer == null) {
+                        continue;
+                    }
+                    URL servicesURL = new URL(servicesDir, fileName);
+
+                    // We are calling reflection code here , to avoid changes to the interface
+                    Class classToLoad = deployer.getClass();
+                    // We can not call classToLoad.getDeclaredMethed() , since there
+                    //  can be insatnce where mutiple services extends using one class
+                    // just for init and other reflection methods
+                    Method method = null;
+                    try {
+                        method = classToLoad.getMethod("deployFromURL", new Class[]{URL.class});
+                    } catch (Exception e) {
+                        //We do not need to inform this to user , since this something
+                        // Axis2 is checking to support Session. So if the method is
+                        // not there we should ignore that
+                    }
+                    if (method != null) {
+                        try {
+                            method.invoke(deployer, new Object[]{servicesURL});
+                        } catch (Exception e) {
+                            log.info("Exception trying to call " + "deployFromURL for the deployer" + deployer.getClass() , e);
+                        }
+                    }
+                }
+
+            } catch (MalformedURLException e) {
+                //I am just ignoring the error at the moment , but need to think how to handle this
             }
+
         }
     }
 
@@ -989,14 +987,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     private void initializeDeployers(ConfigurationContext configContext) {
         serviceDeployer = new ServiceDeployer();
-        serviceDeployer.init(configContext);
-        Iterator deployers = extensionToDeployerMappingMap.values().iterator();
-        while (deployers.hasNext()) {
-            Deployer deployer = (Deployer) deployers.next();
-            deployer.init(configContext);
+        serviceDeployer.init(configContext);        
+        for (Map<String, Deployer> extensionMap : deployerMap.values()) {
+            for (Deployer deployer : extensionMap.values()) {
+                deployer.init(configContext);
+            }
         }
     }
-
+    
     /**
      * Builds an AxisModule for a given module archive file. This does not
      * called the init method since there is no reference to configuration context
@@ -1170,16 +1168,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public void setExtensionToDeployerMappingMap(HashMap extensionToDeployerMappingMap) {
         this.extensionToDeployerMappingMap = extensionToDeployerMappingMap;
     }
-
-    public void setDirectoryToExtensionMappingMap(HashMap directoryToExtensionMappingMap) {
-        this.directoryToExtensionMappingMap = directoryToExtensionMappingMap;
+    
+    public void setDeployers(Map<String, Map<String, Deployer>> deployerMap) {
+        this.deployerMap = deployerMap;
+    }    
+    
+    public Map<String, Map<String, Deployer>> getDeployers() {
+        return this.deployerMap;
     }
-
-
-    public HashMap getDirectoryToExtensionMappingMap() {
-        return directoryToExtensionMappingMap;
-    }
-
+    
     public RepositoryListener getRepoListener() {
         return repoListener;
     }
@@ -1192,7 +1189,12 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public ModuleDeployer getModuleDeployer() {
         return moduleDeployer;
     }
-
+    
+    public Deployer getDeployer(String directory, String extension) {
+        Map<String, Deployer> extensionMap = deployerMap.get(directory);
+        return (extensionMap != null) ? extensionMap.get(extension) : null;
+    }
+    
     public Deployer getDeployerForExtension(String extension) {
         return (Deployer) extensionToDeployerMappingMap.get(extension);
     }

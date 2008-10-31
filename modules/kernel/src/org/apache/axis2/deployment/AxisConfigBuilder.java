@@ -67,6 +67,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
@@ -354,19 +355,20 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
     
     private void processDeployers(Iterator deployerItr) {
-        HashMap directoryToExtensionMappingMap = new HashMap();
         HashMap extensionToDeployerMappingMap = new HashMap();
+        Map<String, Map<String, Deployer>> deployers = new HashMap<String, Map<String, Deployer>>();
         while (deployerItr.hasNext()) {
             OMElement element = (OMElement) deployerItr.next();
             String directory = element.getAttributeValue(new QName(DIRECTORY));
             if (directory == null) {
                 log.error("Deployer missing 'directory' attribute : " + element.toString());
+                continue;
             }
 
             String extension = element.getAttributeValue(new QName(EXTENSION));
             if (extension == null) {
                 log.error("Deployer missing 'extension' attribute : " + element.toString());
-                return;
+                continue;
             }
 
             // A leading dot is redundant, so strip it.  So we allow either ".foo" or "foo", either
@@ -388,19 +390,18 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
             deployer.setDirectory(directory);
             deployer.setExtension(extension);
-            if (directory != null) {
-                ArrayList extensionList = (ArrayList) directoryToExtensionMappingMap.get(directory);
-                if (extensionList == null) {
-                    extensionList = new ArrayList();
-                }
-                extensionList.add(extension);
-                directoryToExtensionMappingMap.put(directory, extensionList);
+            
+            Map<String, Deployer> extensionMap = deployers.get(directory);
+            if (extensionMap == null) {
+                extensionMap = new HashMap<String, Deployer>();
+                deployers.put(directory, extensionMap);
             }
+            extensionMap.put(extension, deployer);
             extensionToDeployerMappingMap.put(extension, deployer);
         }
         if (deploymentEngine != null) {
-            deploymentEngine.setDirectoryToExtensionMappingMap(directoryToExtensionMappingMap);
             deploymentEngine.setExtensionToDeployerMappingMap(extensionToDeployerMappingMap);
+            deploymentEngine.setDeployers(deployers);
         }
     }
 
