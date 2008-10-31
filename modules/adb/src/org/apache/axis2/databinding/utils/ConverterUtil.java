@@ -609,6 +609,7 @@ public class ConverterUtil {
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
+        calendar.setLenient(false);
         calendar.set(Calendar.YEAR, year);
         //xml month stars from the 1 and calendar month is starts with 0
         calendar.set(Calendar.MONTH, month - 1);
@@ -868,6 +869,7 @@ public class ConverterUtil {
         Date date = null;
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
+        calendar.setLenient(false);
 
 
         if (source.startsWith("-")) {

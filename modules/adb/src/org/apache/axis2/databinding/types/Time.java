@@ -100,6 +100,7 @@ public class Time implements java.io.Serializable {
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
+        calendar.setLenient(false);
         int hour = 0;
         int minite = 0;
         int second = 0;
