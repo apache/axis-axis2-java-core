@@ -451,6 +451,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 this.axisService = (AxisService) axisServicesIter.next();
                 //we have to generate the code for each bininding
                 //for the moment lets genrate the stub name with the service name and end point name
+                this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
 
                 if (!codeGenConfiguration.isPackClasses()) {
                     // write the call back handlers
