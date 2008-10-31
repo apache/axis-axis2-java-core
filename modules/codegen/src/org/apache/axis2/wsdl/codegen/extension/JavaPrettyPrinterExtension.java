@@ -47,8 +47,10 @@ public class JavaPrettyPrinterExtension extends AbstractPrettyPrinterExtension {
             prettifyFile(file);
         } else if (file.isDirectory()) {
             File[] childFiles = file.listFiles();
-            for (int i = 0; i < childFiles.length; i++) {
-                prettify(childFiles[i], configuration);
+            if (childFiles != null) {
+                for (int i = 0; i < childFiles.length; i++) {
+                    prettify(childFiles[i], configuration);
+                }
             }
         }
     }
