@@ -111,7 +111,6 @@ interface with the following methods.</p>
 public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;//Initialize the module
 public void shutdown(ConfigurationContext configurationContext) throws AxisFault;//End of module processing
 public void engageNotify(AxisDescription axisDescription) throws AxisFault;
-public String[] getPolicyNamespaces() throws AxisFault;
 public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault ;
 public boolean canSupportAssertion(Assertion assertion) ;
 </pre>
