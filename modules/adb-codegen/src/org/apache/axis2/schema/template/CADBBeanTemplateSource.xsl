@@ -283,7 +283,7 @@
       
         <xsl:choose>
             <xsl:when test="count(property)">
-                <xsl:variable name="firstProperty" select="property"/>
+                <xsl:variable name="firstProperty" select="property[1]"/>
                 <xsl:variable name="propertyType">
                 <xsl:choose>
                     <xsl:when test="$firstProperty/@isarray">axutil_array_list_t*</xsl:when>
