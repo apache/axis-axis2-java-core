@@ -38,7 +38,10 @@ import org.apache.axis2.context.externalize.MessageExternalizeUtils;
 import org.apache.axis2.context.externalize.SafeObjectInputStream;
 import org.apache.axis2.context.externalize.SafeObjectOutputStream;
 import org.apache.axis2.context.externalize.SafeSerializable;
+import org.apache.axis2.description.AxisBinding;
 import org.apache.axis2.description.AxisBindingMessage;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -57,6 +60,8 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.SelfManagedDataHolder;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -1571,15 +1576,55 @@ public class MessageContext extends AbstractContext
         AxisBindingMessage bindingMessage = 
         	(AxisBindingMessage) getProperty(Constants.AXIS_BINDING_MESSAGE);
         
+        // If AxisBindingMessage is not set, try to find the binding message from the AxisService
+        if (bindingMessage == null) {
+        	bindingMessage = findBindingMessage();
+        } 
+        
         if (bindingMessage != null) {
-        	return bindingMessage.getEffectivePolicy();
-        } else {
-        	if (axisMessage != null) {
+            return bindingMessage.getEffectivePolicy();
+        // If we can't find the AxisBindingMessage, then try the AxisMessage   
+        } else if (axisMessage != null) {
         		return axisMessage.getEffectivePolicy();        		
-        	} else {
+        } else {
         		return null;
-        	}
         }
+    }
+ 
+    private AxisBindingMessage findBindingMessage() {
+    	if (axisService != null) {
+			if (axisService.getEndpointName() != null) {
+				AxisEndpoint axisEndpoint = axisService
+						.getEndpoint(axisService.getEndpointName());
+				if (axisEndpoint != null) {
+					AxisBinding axisBinding = axisEndpoint.getBinding();
+					AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding
+							.getChild(axisOperation.getName());
+					String direction = axisMessage.getDirection();
+					AxisBindingMessage axisBindingMessage = null;
+					if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
+							.equals(direction)
+							&& WSDLUtil
+									.isInputPresentForMEP(axisOperation
+											.getMessageExchangePattern())) {
+						axisBindingMessage = (AxisBindingMessage) axisBindingOperation
+								.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+						return axisBindingMessage;
+						
+					} else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT
+							.equals(direction)
+							&& WSDLUtil
+									.isOutputPresentForMEP(axisOperation
+											.getMessageExchangePattern())) {
+						axisBindingMessage = (AxisBindingMessage) axisBindingOperation
+								.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+						return axisBindingMessage;
+					}
+				}
+
+			}
+		}
+    	return null;
     }
 
 
