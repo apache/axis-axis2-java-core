@@ -400,6 +400,9 @@ public class BeanUtil {
                         } else {
                             if (SimpleTypeMapper.isSimpleType(parameters)) {
                                 partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
+                            }    else if (SimpleTypeMapper.isHashSet(parameters)) {
+                                partObj = SimpleTypeMapper.getHashSet((OMElement)
+                                        parts.getParent(), prty.getName());
                             } else if (SimpleTypeMapper.isCollection(parameters)) {
                                 partObj = SimpleTypeMapper.getArrayList((OMElement)
                                         parts.getParent(), prty.getName());

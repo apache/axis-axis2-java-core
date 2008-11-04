@@ -30,11 +30,7 @@ import org.apache.axis2.description.AxisService;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.TimeZone;
+import java.util.*;
 
 public class SimpleTypeMapper {
 
@@ -161,6 +157,18 @@ public class SimpleTypeMapper {
         return list;
     }
 
+    public static HashSet getHashSet(OMElement element, String localName) {
+        Iterator childitr = element.getChildrenWithName(new QName(localName));
+        final HashSet list = new HashSet();
+        while (childitr.hasNext()) {
+            OMElement o = (OMElement) childitr.next();
+            list.add(o.getText());
+        }
+        return list;
+    }
+
+
+    
     public static DataHandler getDataHandler(OMElement element) {
         OMNode node = element.getFirstOMChild();
         if (node instanceof OMText) {
@@ -198,6 +206,11 @@ public class SimpleTypeMapper {
     public static boolean isDataHandler(Class obj) {
        return obj.isAssignableFrom(DataHandler.class);
     }
+
+    public static boolean isHashSet(Class obj) {
+        return java.util.HashSet.class.isAssignableFrom(obj);
+    }
+
 
     public static boolean isCollection(Class obj) {
         return java.util.Collection.class.isAssignableFrom(obj);
