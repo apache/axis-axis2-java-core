@@ -30,6 +30,8 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PolicyEvaluator implements CodeGenExtension {
+
+    private static final Log log = LogFactory.getLog(PolicyEvaluator.class);
     
     private CodeGenConfiguration configuration;
 
@@ -100,8 +104,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             }
 
         } catch (Exception e) {
-            System.err
-                    .println("cannot create repository : policy will not be supported");
+            log.error("cannot create repository : policy will not be supported");
         }
     }
 
@@ -181,8 +184,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             PolicyExtension policyExtension = (PolicyExtension)ns2Exts.get(targetNamespace);
 
             if (policyExtension == null) {
-                System.err.println("cannot find a PolicyExtension to process "
-                        + targetNamespace + "type assertions");
+                log.warn("cannot find a PolicyExtension to process " + targetNamespace + "type assertions");
                 continue;
             }
 
