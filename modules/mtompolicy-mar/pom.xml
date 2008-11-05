@@ -28,7 +28,7 @@
         <version>SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>axis2-mtompolicy-mar</artifactId>
+    <artifactId>mtompolicy</artifactId>
     <name>Apache Axis2 - MTOM Policy module</name>
     <description>Axis2 : MTOM Policy module</description>
     <packaging>mar</packaging>
