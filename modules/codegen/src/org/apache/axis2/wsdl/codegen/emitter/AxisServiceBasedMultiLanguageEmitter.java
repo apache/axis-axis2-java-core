@@ -1967,10 +1967,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "package", "", rootElement);
         addAttribute(doc, "classpackage", codeGenConfiguration.getPackageName(), rootElement);
-        if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            addAttribute(doc, "name", className + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+        if (this.codeGenConfiguration.getSkeltonClassName() != null) {
+            addAttribute(doc, "name", this.codeGenConfiguration.getSkeltonClassName(), rootElement);
         } else {
-            addAttribute(doc, "name", className + SKELETON_CLASS_SUFFIX, rootElement);
+            if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
+                addAttribute(doc, "name", className + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+            } else {
+                addAttribute(doc, "name", className + SKELETON_CLASS_SUFFIX, rootElement);
+            }
         }
 
         if (!codeGenConfiguration.isWriteTestCase()) {
