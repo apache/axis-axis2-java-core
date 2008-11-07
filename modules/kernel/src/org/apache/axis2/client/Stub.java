@@ -131,6 +131,7 @@ public abstract class Stub {
      */
     public void cleanup() throws AxisFault {
         // service is removed from the service client it self.
+        _serviceClient.cleanup();
     }
 
     /**
