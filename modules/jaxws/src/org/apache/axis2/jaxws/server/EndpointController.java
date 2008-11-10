@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
+import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.Utils;
 import org.apache.axis2.jaxws.spi.Constants;
@@ -212,16 +213,7 @@ public class EndpointController {
             Class serviceEndpoint = getServiceImplementation(request);
             EndpointDescription endpointDesc = getEndpointDescription(request);
             request.setEndpointDescription(endpointDesc);
-            
-            // Need to make sure the protocol (envelope ns)  of the request matches the binding
-            // expected by the service description
-            if (!Utils.bindingTypesMatch(request, endpointDesc)) {
-                Protocol protocol = request.getMessage().getProtocol();
-                MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
-                eic.setResponseMessageContext(faultContext);
-                return false;
-            }
-            
+           
             //  TODO: review: make sure the handlers are set on the InvocationContext
             //  This implementation of the JAXWS runtime does not use Endpoint, which
             //  would normally be the place to initialize and store the handler list.
@@ -269,6 +261,31 @@ public class EndpointController {
                 }
                 // Set the dispatcher.
                 EndpointDispatcher dispatcher = getEndpointDispatcher(request, serviceEndpoint, serviceInstance);
+                Boolean ignoreSOAPVersion = false;
+                if(log.isDebugEnabled()){
+                	log.debug("Checking for ProviderDispatcher instance");
+                }
+                if(dispatcher instanceof ProviderDispatcher){
+                	if(log.isDebugEnabled()){
+                		log.debug("ProviderDispatcher instance Found");
+                	}
+                	String bindingType = endpointDesc.getBindingType();
+                	if(bindingType.equals(org.apache.axis2.jaxws.Constants.SOAP_HTTP_BINDING)){
+                		ignoreSOAPVersion = true;
+                	}   
+                	if(log.isDebugEnabled()){
+                		log.debug("ignoreSOAPVersion Value ="+ignoreSOAPVersion.booleanValue());
+                	}
+                }
+                //Need to make sure the protocol (envelope ns)  of the request matches the binding
+                // expected by the service description
+                if (!ignoreSOAPVersion && !Utils.bindingTypesMatch(request, endpointDesc)) {
+                	Protocol protocol = request.getMessage().getProtocol();
+                	MessageContext faultContext = Utils.createVersionMismatchMessage(request, protocol);
+                	eic.setResponseMessageContext(faultContext);
+                	return false;
+                }
+                
                 eic.setEndpointDispatcher(dispatcher);
                 return true;
             } else { // the inbound handler chain must have had a problem, and we've reversed directions
@@ -335,6 +352,25 @@ public class EndpointController {
         
         try {
             if (response != null) {
+            	//Before running inbound handlers lets make sure that the request and response have no protocol mismatch.
+            	EndpointDescription endpointDesc =request.getEndpointDescription();
+            	String bindingType = endpointDesc.getBindingType();
+            	if(bindingType.equals(org.apache.axis2.jaxws.Constants.SOAP_HTTP_BINDING)){
+            		if(log.isDebugEnabled()){
+            			log.debug("Check for protocol mismatch");
+            		}
+            		MessageContext faultContext = isProtocolMismatch(request, response);
+            		if(faultContext!=null){
+            			if(log.isDebugEnabled()){
+            				log.debug("There is a protocol mismatch, generating fault message");
+            			}
+            			eic.setResponseMessageContext(faultContext);
+            			return false;
+            		}
+            		if(log.isDebugEnabled()){
+            			log.debug("There is no protocol mismatch");
+            		}
+            	}
                // Invoke the outbound response handlers.
                // If the message is one way, we should not invoke the response handlers.  There is no response
                // MessageContext since a one way invocation is considered to have a "void" return.
@@ -646,6 +682,30 @@ public class EndpointController {
         HandlerLifecycleManagerFactory elmf = (HandlerLifecycleManagerFactory)FactoryRegistry
                 .getFactory(HandlerLifecycleManagerFactory.class);
         return elmf.createHandlerLifecycleManager();
+    }
+    
+    private MessageContext isProtocolMismatch(MessageContext request, MessageContext response){
+    	Protocol requestProtocol =request.getMessage().getProtocol();
+    	Protocol responseProtocol = response.getMessage().getProtocol();
+    	boolean protocolMismatch = false;
+    	String msg = null;
+    	if(requestProtocol.equals(Protocol.soap11)){
+    		if(!responseProtocol.equals(Protocol.soap11)){
+    			protocolMismatch = true;
+    			msg = "Request SOAP message protocol is version 1.1, but Response SOAP message is configured for SOAP 1.2.  This is not supported.";
+    		}
+    	}
+    	else if(requestProtocol.equals(Protocol.soap12)){
+    		if(!responseProtocol.equals(Protocol.soap12)){
+    			protocolMismatch = true;
+    			msg = "Request SOAP message protocol is version 1.2, but Response SOAP message is configured for SOAP 1.1.  This is not supported.";
+    		}
+    	}
+    	MessageContext msgContext = null;
+    	if(protocolMismatch){
+    		msgContext = Utils.createFaultMessage(response, msg);
+    	}
+    	return msgContext;
     }
     
 }

@@ -63,4 +63,12 @@ public interface Constants {
      */
     public static final String JAXWS_WEBMETHOD_EXCEPTION = 
         org.apache.axis2.Constants.JAXWS_WEBMETHOD_EXCEPTION;
+    
+    /**
+     * This constant introduces an extension for @BindingType annotation.
+     * When the value of BindingType annotation is set to this constant,
+     * the javax.xml.ws.Provider java endpoints will cater to SOAP11 and SOAP12
+     * messages.
+     */
+    public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
 }

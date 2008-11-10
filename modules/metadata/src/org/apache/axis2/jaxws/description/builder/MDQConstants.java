@@ -65,5 +65,5 @@ public class MDQConstants {
     public static final String SOAP12JMS_BINDING = "http://www.example.org/2006/06/soap/bindings/JMS/";
     public static final String SOAP11JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
     public static final String SOAP12JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
-
+    public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
 }

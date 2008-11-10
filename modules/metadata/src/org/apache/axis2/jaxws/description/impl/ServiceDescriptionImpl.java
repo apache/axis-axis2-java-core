@@ -1611,7 +1611,9 @@ class ServiceDescriptionImpl
 							&& !bindingType
 									.equals(MDQConstants.SOAP12JMS_BINDING)
 							&& !bindingType
-									.equals(MDQConstants.SOAP12JMS_MTOM_BINDING))
+									.equals(MDQConstants.SOAP12JMS_MTOM_BINDING)
+							&& !bindingType
+							        .equals(MDQConstants.SOAP_HTTP_BINDING))
 
 						throw ExceptionFactory.makeWebServiceException(Messages
 								.getMessage("validatePIsErr2", composite

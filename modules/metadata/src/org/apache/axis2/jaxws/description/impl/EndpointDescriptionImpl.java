@@ -656,7 +656,8 @@ class EndpointDescriptionImpl
             String bindingType = getBindingType();
             if (javax.xml.ws.http.HTTPBinding.HTTP_BINDING.equals(bindingType)||
                     SOAPBinding.SOAP11HTTP_BINDING.equals(bindingType)||
-                    SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType)) {
+                    SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType)||
+                    MDQConstants.SOAP_HTTP_BINDING.equals(bindingType)) {
                 endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(composite, this);
             }
         }

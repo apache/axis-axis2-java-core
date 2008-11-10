@@ -111,11 +111,18 @@ public class EndpointDescriptionValidator extends Validator {
                 !MDQConstants.SOAP11JMS_MTOM_BINDING.equals(bindingType) &&
                 !MDQConstants.SOAP12JMS_BINDING.equals(bindingType) &&
                 !MDQConstants.SOAP12JMS_MTOM_BINDING.equals(bindingType) &&
-                !HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+                !HTTPBinding.HTTP_BINDING.equals(bindingType) &&
+                !MDQConstants.SOAP_HTTP_BINDING.equals(bindingType)) {
             
             addValidationFailure(this,
                                  "Invalid annotation binding value specified: " + bindingType);
             isBindingValid = false;
+        }
+        else if(bindingType.equals(MDQConstants.SOAP_HTTP_BINDING) && endpointDesc.isEndpointBased()){
+        	addValidationFailure(this,
+                    "A SOAP_HTTP_BINDING was found on a @Bindingtype SEI based Endpoint." +
+                    " SOAP_HTTP_BINDING is supported on Provider Endpoints only.");
+        	isBindingValid = false;
         }
         // If there's no WSDL, then there will be no WSDL Binding Type to validate against
         else if (wsdlBindingType == null) {
@@ -150,7 +157,14 @@ public class EndpointDescriptionValidator extends Validator {
                                  "This is not supported.  " +
                                  "An HTTPBinding must use an @WebServiceProvider endpoint.");
             isBindingValid = false;
-        } else {
+        }
+        // If wsdl binding is not HTTP binding and BindingType annotation is SOAP_HTTP_BINDING then
+        // wsdl is valid and JAX-WS needs to support both soap 11 and soap 12 on Provider endpoints.
+        else if(!wsdlBindingType.equals(HTTPBinding.HTTP_BINDING) 
+            && bindingType.equals(MDQConstants.SOAP_HTTP_BINDING) && endpointDesc.isProviderBased()){
+            isBindingValid = true;
+        }
+        else {
             
             // Mismatched bindings 
             String wsdlInsert = "[" + bindingHumanReadableDescription(wsdlBindingType) + "]" +

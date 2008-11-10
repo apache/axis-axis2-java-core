@@ -1220,7 +1220,54 @@
                                      basedir="${pom.basedir}/target/test-classes/servicejars/StringListService"
                                         />
                                 <delete dir="target/test-classes/servicejars/StringListService"/>
-
+                                
+								<copy toDir="target/test-classes/servicejars/SOAPBindingProviderService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/SOAPBindingProvider**"/>
+									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/META-INF/services.xml" />
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding">
+									   <include name="META-INF/**"/>
+									   <exclude name = "services.xml" />
+									</fileset>
+								</copy>
+								<zip destfile="target/test-classes/servicejars/SOAPBindingProviderService.jar"
+						             basedir="${pom.basedir}/target/test-classes/servicejars/SOAPBindingProviderService"
+						        />
+						        
+						        <delete dir="target/test-classes/servicejars/SOAPBindingProviderService"/>
+						        
+								<copy toDir="target/test-classes/servicejars/SOAPBindingStringProviderService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/string/**"/>
+									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/string/META-INF/services.xml" />
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/string">
+									   <include name="META-INF/**"/>
+									    <exclude name = "services.xml" />
+									</fileset>
+								</copy>
+								
+								<zip destfile="target/test-classes/servicejars/SOAPBindingStringProviderService.jar"
+						             basedir="${pom.basedir}/target/test-classes/servicejars/SOAPBindingStringProviderService"
+						        />
+						        <delete dir="target/test-classes/servicejars/SOAPBindingStringProviderService"/>
+						        
+								<copy toDir="target/test-classes/servicejars/SoapMessageProviderService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/**"/>
+									   <exclude name="org/apache/axis2/jaxws/provider/soapbinding/soapmsg/META-INF/services.xml" />
+									</fileset>
+									<fileset dir="test/org/apache/axis2/jaxws/provider/soapbinding/soapmsg">
+									   <include name="META-INF/**"/>
+									    <exclude name = "services.xml" />
+									</fileset>
+								</copy>
+								<zip destfile="target/test-classes/servicejars/SoapMessageProviderService.jar"
+						             basedir="${pom.basedir}/target/test-classes/servicejars/SoapMessageProviderService"
+						        />
+						        <delete dir="target/test-classes/servicejars/SoapMessageProviderService"/>
+						        
 								<copy toDir="target/test-classes/servicejars/HandlerHeaderService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/handler/header/**"/>
@@ -1242,7 +1289,7 @@
 									basedir="${pom.basedir}/target/test-classes/servicejars/HandlerHeaderService"
 								/>
 								<delete dir="target/test-classes/servicejars/HandlerHeaderService"/>
-
+								
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
                                         <include name="**/*.properties"/>
@@ -1355,6 +1402,10 @@
                         <include>**/RuntimeExceptionsAsyncMepTest.java</include>
                         <include>**/AddressingProviderTests.java</include>
                         <include>**/TypeSubstitutionTests.java</include>
+                        <include>**/SOAPBindingProviderTests.java</include>
+                        <include>**/SoapMessageProviderTests.java</include>
+                        <include>**/StringProviderTests.java</include>
+                        
                     </includes>
                     <systemProperties>
                         <property>
