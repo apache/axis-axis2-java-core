@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 public class StringProviderTests extends AbstractTestCase {
-	private String endpointUrl = "http://localhost:7777/axis2/services/SOAPBindingStringProviderService.SOAPBindingStringProviderPort";
+	private String endpointUrl = "http://localhost:6060/axis2/services/SOAPBindingStringProviderService.SOAPBindingStringProviderPort";
 	private QName serviceName = new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderService");
 	private QName portName =  new QName("http://StringProvider.soapbinding.provider.jaxws.axis2.apache.org", "SOAPBindingStringProviderPort");
 
