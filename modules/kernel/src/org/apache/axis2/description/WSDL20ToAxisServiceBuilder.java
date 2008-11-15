@@ -1220,7 +1220,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
         if (log.isDebugEnabled()) {
             log.debug("Reading 2.0 WSDL with wsdl uri = " + wsdlURI);
-            log.debug("  the stack at this point is: " + stackToString());
+            log.trace("  the stack at this point is: " + stackToString());
         }
         return reader.readWSDL(wsdlSource);
     }

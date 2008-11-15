@@ -749,7 +749,7 @@ public abstract class XMLPartBase implements XMLPart {
             this.consumed = true;
             if (log.isDebugEnabled()) {
                 log.debug("Debug Monitoring When Block is Consumed");
-                log.debug(JavaUtils.stackToString());
+                log.trace(JavaUtils.stackToString());
             }
         } else {
             consumed = false;

@@ -2159,7 +2159,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (log.isDebugEnabled()) {
                 log.debug("Reading 1.1 WSDL with base uri = " + getBaseUri());
                 log.debug("  the document base uri = " + getDocumentBaseUri());
-                log.debug("  the stack at this point is: " + stackToString());
+                log.trace("  the stack at this point is: " + stackToString());
             }
             def = reader.readWSDL(getBaseUri(), doc);
             def.setDocumentBaseURI(getDocumentBaseUri());

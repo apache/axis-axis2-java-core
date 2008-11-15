@@ -42,7 +42,7 @@ public class ValidationFailures {
         
         if (log.isDebugEnabled()) {
             log.debug("Adding ValidationFailure = " + vf.toString());
-            log.debug("Location of Validation Failure = " + JavaUtils.callStackToString());
+            log.trace("Location of Validation Failure = " + JavaUtils.callStackToString());
         }
     }
 

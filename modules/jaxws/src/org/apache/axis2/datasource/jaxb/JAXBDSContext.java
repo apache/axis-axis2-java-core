@@ -373,7 +373,7 @@ public class JAXBDSContext {
                 // Take advantage of this optimization if there is an output stream.
                 try {
                     if (!optimize) {
-                        log.debug(JavaUtils.stackToString());
+                        log.trace(JavaUtils.stackToString());
                         getOutputStream(writer);
                     }
                     OutputStream os = (optimize) ? getOutputStream(writer) : null;

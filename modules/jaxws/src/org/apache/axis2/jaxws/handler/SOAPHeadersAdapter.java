@@ -77,8 +77,8 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
         
         boolean isOutbound = mc.isOutbound();
        
-        if (log.isDebugEnabled()) {
-            log.debug("Installing SOAPHeadersAdapter: " + 
+        if (log.isTraceEnabled()) {
+            log.trace("Installing SOAPHeadersAdapter: " +
                       JavaUtils.callStackToString());
         }
         

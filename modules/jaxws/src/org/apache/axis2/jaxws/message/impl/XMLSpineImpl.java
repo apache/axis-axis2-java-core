@@ -620,7 +620,7 @@ class XMLSpineImpl implements XMLSpine {
                     // Log and continue
                     if (log.isDebugEnabled()) {
                         log.debug("Builder next error:" + e.getMessage());
-                        log.debug(JavaUtils.stackToString(e));
+                        log.trace(JavaUtils.stackToString(e));
                     }
                     
                 }

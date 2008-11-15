@@ -72,7 +72,7 @@ public class Options implements Externalizable, SafeSerializable {
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(Options.class);
-    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_ENABLED = log.isTraceEnabled();
     private static boolean DEBUG_PROPERTY_SET = false;
 
     private static final String myClassName = "Options";

@@ -113,7 +113,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     public WSDLWrapperReloadImpl(Definition def) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperReloadImpl(Definition def) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, null);
     }
@@ -129,7 +129,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     public WSDLWrapperReloadImpl(Definition def, URL wURL) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperReloadImpl(Definition def, URL wURL) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, wURL);
     }
@@ -590,7 +590,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
 
     public Types getTypes() {
         if (isDebugEnabled) {
-            log.debug(myClassName + ".getTypes() call stack =" + JavaUtils.callStackToString());
+            log.trace(myClassName + ".getTypes() call stack =" + JavaUtils.callStackToString());
         }
         // See if we have a soft reference to the Type
         
@@ -911,7 +911,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
     public org.w3c.dom.Element getDocumentationElement() {
 
         if (isDebugEnabled) {
-            log.debug(myClassName + ".getDocumentationElement() call stack =" + 
+            log.trace(myClassName + ".getDocumentationElement() call stack =" +
                       JavaUtils.callStackToString());
         }
         
@@ -1386,7 +1386,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
                 if (isDebugEnabled) {
                     log.debug(myClassName + ".loadDefinition(): "
                             + "Exception thrown from AccessController: " + e);
-                    log.debug("Call Stack = " + JavaUtils.callStackToString());
+                    log.trace("Call Stack = " + JavaUtils.callStackToString());
                 }
                 WSDLException we = new WSDLException("WSDLWrapperReloadImpl : ", e.getMessage(), e);
                 throw we;
@@ -1397,7 +1397,7 @@ public class WSDLWrapperReloadImpl implements WSDLWrapperImpl {
         // support can look at the trace and determine if this class is being used incorrectly.
         if (isDebugEnabled) {
             log.debug(myClassName + ".loadDefinition():  returning Definition [" + def + "]");
-            log.debug("Call Stack = " + JavaUtils.callStackToString());
+            log.trace("Call Stack = " + JavaUtils.callStackToString());
         }
         return def;
     }

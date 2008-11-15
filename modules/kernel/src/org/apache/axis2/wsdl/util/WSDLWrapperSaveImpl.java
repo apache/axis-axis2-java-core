@@ -116,7 +116,7 @@ public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
     public WSDLWrapperSaveImpl(Definition def) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperSaveImpl(Definition def) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, null);
     }
@@ -131,7 +131,7 @@ public class WSDLWrapperSaveImpl implements WSDLWrapperImpl {
     public WSDLWrapperSaveImpl(Definition def, URL wURL) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperSaveImpl(Definition def, URL wURL) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, wURL);
     }

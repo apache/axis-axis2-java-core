@@ -672,7 +672,7 @@ public class JAXBUtils {
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("ObjectFactory Class Not Found " + e);
-                log.debug("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
+                log.trace("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
             }
         }
 
@@ -686,7 +686,7 @@ public class JAXBUtils {
         } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("package-info Class Not Found " + e);
-                log.debug("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
+                log.trace("...caused by " + e.getCause() + " " + JavaUtils.stackToString(e));
             }
         }
 
@@ -901,7 +901,7 @@ public class JAXBUtils {
                                         " while constructing a JAXBContext.  This class will be skipped.  Processing Continues.");
                                 log.debug("  The reason that class could not be loaded:" +
                                         e.toString());
-                                log.debug(JavaUtils.stackToString(e));
+                                log.trace(JavaUtils.stackToString(e));
                             }
                         }
 
@@ -950,7 +950,7 @@ public class JAXBUtils {
                     log.debug("Tried to load class " + className +
                             " while constructing a JAXBContext.  This class will be skipped.  Processing Continues.");
                     log.debug("  The reason that class could not be loaded:" + e.toString());
-                    log.debug(JavaUtils.stackToString(e));
+                    log.trace(JavaUtils.stackToString(e));
                 }
             }
         }

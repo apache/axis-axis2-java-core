@@ -73,7 +73,7 @@ class JAXBXMLStreamWriterFilter implements XMLStreamWriter {
                 // This seems to be related to writing out xmlns...see below
                 if (log.isDebugEnabled()) {
                     log.debug("    WHY IS THE DEFAULT NAMESPACE WRITTEN TWICE?");
-                    log.debug(JavaUtils.stackToString());
+                    log.trace(JavaUtils.stackToString());
                 }
                 return;
             }
@@ -177,7 +177,7 @@ class JAXBXMLStreamWriterFilter implements XMLStreamWriter {
                 // Sometimes JAXB writes out the XMLNS attribute...need to find out why
                 if (log.isDebugEnabled()) {
                     log.debug("    INVALID XMLNS attribute is removed prefix=");
-                    log.debug(JavaUtils.stackToString());
+                    log.trace(JavaUtils.stackToString());
                 }
 
                 return;

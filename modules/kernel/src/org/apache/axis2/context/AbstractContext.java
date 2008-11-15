@@ -42,7 +42,7 @@ public abstract class AbstractContext {
     private static final Log log = LogFactory.getLog(AbstractContext.class);
     
     private static final int DEFAULT_MAP_SIZE = 64;
-    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_ENABLED = log.isTraceEnabled();
     private static boolean DEBUG_PROPERTY_SET = false;
     
     /**

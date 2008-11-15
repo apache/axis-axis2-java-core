@@ -82,7 +82,7 @@ public class WSDLWrapperBasicImpl implements WSDLWrapperImpl {
     public WSDLWrapperBasicImpl(Definition def) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperBasicImpl(Definition def) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, null);
     }
@@ -97,7 +97,7 @@ public class WSDLWrapperBasicImpl implements WSDLWrapperImpl {
     public WSDLWrapperBasicImpl(Definition def, URL wURL) {
         if (log.isDebugEnabled()) {
             log.debug("WSDLWrapperBasicImpl(Definition def, URL wURL) called");
-            log.debug(JavaUtils.callStackToString());
+            log.trace(JavaUtils.callStackToString());
         }
         prepare(def, wURL);
     }

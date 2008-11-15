@@ -89,8 +89,8 @@ public class JAXBUtilsMonitor {
     public static void addPackageKey(String packageKey) {
         if (isMonitoring()) {
             synchronized(semifore) {
-                if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.callStackToString());
+                if (log.isTraceEnabled()) {
+                    log.trace(JavaUtils.callStackToString());
                 }
                 if (!packageKeys.contains(packageKey)) {
                     packageKeys.add(packageKey);

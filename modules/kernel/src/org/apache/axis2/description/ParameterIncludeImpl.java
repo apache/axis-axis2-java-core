@@ -53,7 +53,7 @@ public class ParameterIncludeImpl
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(ParameterIncludeImpl.class);
-    private static boolean DEBUG_ENABLED = log.isDebugEnabled();
+    private static boolean DEBUG_ENABLED = log.isTraceEnabled();
     private static boolean DEBUG_PROPERTY_SET = log.isDebugEnabled();
 
     private static final String myClassName = "ParameterIncludeImpl";

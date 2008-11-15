@@ -258,10 +258,10 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             try {
                 pathURI = new URI(null, null, pathString, null);
             } catch (URISyntaxException ex2) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unable to create URI using alternative approach; returning null.  Exception caught during inital attempt: " 
+                if (log.isTraceEnabled()) {
+                    log.trace("Unable to create URI using alternative approach; returning null.  Exception caught during inital attempt: "
                               + JavaUtils.stackToString(ex1));
-                    log.debug("Exception caught during alternet attemt " 
+                    log.trace("Exception caught during alternet attemt "
                               + JavaUtils.stackToString(ex2));
                 }
                 log.error(ex2.toString(), ex2);

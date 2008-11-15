@@ -335,7 +335,7 @@ public abstract class BlockImpl implements Block {
             if (log.isDebugEnabled()) {
                 // The following stack trace consumes indicates where the message is consumed
                 log.debug("Message Block Monitor: Action=Consumed");
-                log.debug(JavaUtils.stackToString());
+                log.trace(JavaUtils.stackToString());
             }
         } else {
             consumed = false;
