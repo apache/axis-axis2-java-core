@@ -52,6 +52,7 @@ import org.apache.axis2.jaxws.utility.SingleThreadedExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPEnvelope;
 
 import javax.activation.DataSource;
 import javax.xml.soap.SOAPMessage;
@@ -476,6 +477,13 @@ public class ProviderDispatcher extends JavaDispatcher {
                         log.debug("Creating message from SOAPMessage");
                     }
                     message = msgFactory.createFrom((SOAPMessage)value);
+                } else if (value instanceof SOAPEnvelope) {
+                    // The value from the provider is already an SOAPEnvelope OMElement, so
+                    // it doesn't need to be parsed into one.
+                    if (log.isDebugEnabled()) {
+                        log.debug("Creating message from OMElement");
+                    }
+                    message = msgFactory.createFrom((SOAPEnvelope) value, protocol);
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debug("Creating message using " + factory);
