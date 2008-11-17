@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
     public Object wrap(Class jaxbClass,
                        List<String> childNames,
                        Map<String, Object> childObjects,
+                       Map<String, Class> declaredClassMap,
                        Map<String, PropertyDescriptorPlus> pdMap) throws JAXBWrapperException {
 
 
@@ -153,13 +155,14 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         for (String childName : childNames) {
             PropertyDescriptorPlus propInfo = pdMap.get(childName);
             Object value = childObjects.get(childName);
+            Class dclClass = declaredClassMap.get(childName);
             if (propInfo == null) {
                 throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr6", 
                                                                    jaxbClass.getName(), 
                                                                    childName));
             }
             try {
-                propInfo.set(jaxbObject, value);
+                propInfo.set(jaxbObject, value, dclClass);
             } catch (Throwable t) {
 
                 if (log.isDebugEnabled()) {
@@ -261,9 +264,9 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
             log.debug("  The JAXBClass is:" + jaxbClass.getName());
             throw new JAXBWrapperException(t);
         }
-
+        HashMap<String, Class> declaringClass = new HashMap<String, Class>();
         // Delegate
-        return wrap(jaxbClass, childNames, childObjects, pdMap);
+        return wrap(jaxbClass, childNames, childObjects, declaringClass, pdMap);
     }
 
 

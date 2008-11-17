@@ -47,7 +47,7 @@ public class PropertyDescriptorPlusTests extends TestCase {
         assertNotNull(propertyDescriptor);
         PropertyDescriptorPlus plus = new PropertyDescriptorPlus(propertyDescriptor, qName);
         byte[] testValue = {0xd, 0xe, 0xa, 0xd, 0xb, 0xe, 0xe, 0xf};
-        plus.set(object, testValue);
+        plus.set(object, testValue, null);
 
         JAXBElement<byte[]> arg0 = object.getArg0();
         assertEquals(arg0.getDeclaredType(), byte[].class);

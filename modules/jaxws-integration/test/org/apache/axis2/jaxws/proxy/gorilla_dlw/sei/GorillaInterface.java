@@ -22,12 +22,15 @@ package org.apache.axis2.jaxws.proxy.gorilla_dlw.sei;
 
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.data.Fruit;
 
+import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
@@ -301,5 +304,31 @@ public interface GorillaInterface {
         List<Object> data)
         throws AssertFault
     ;
+    /**
+     * 
+     * @param requestedTerminationTime
+     * @param requestedLifetimeDuration
+     * @return
+     *     returns javax.xml.datatype.XMLGregorianCalendar
+     */
+    @WebMethod
+    @WebResult(name = "response", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+    @RequestWrapper(localName = "echoDate", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoDate")
+    @ResponseWrapper(localName = "echoDateResponse", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoDateResponse")
+    public XMLGregorianCalendar echoDate(
+        @WebParam(name = "RequestedTerminationTime", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        XMLGregorianCalendar requestedTerminationTime,
+        @WebParam(name = "RequestedLifetimeDuration", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        Duration requestedLifetimeDuration);
 
+    /**
+     * 
+     * @param request
+     */
+    @WebMethod
+    @Oneway
+    @RequestWrapper(localName = "echoPolymorphicDate", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoPolymorphicDate")
+    public void echoPolymorphicDate(
+        @WebParam(name = "request", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        XMLGregorianCalendar request);
 }

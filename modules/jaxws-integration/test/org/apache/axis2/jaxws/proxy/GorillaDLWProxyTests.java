@@ -25,7 +25,11 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtilsMonitor;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
+import org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
@@ -34,6 +38,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class GorillaDLWProxyTests extends AbstractTestCase {
@@ -467,6 +474,39 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
             e.printStackTrace(); 
             fail("Exception received" + e);
         }
+    }
+    
+    public void testEchoDate() throws Exception{
+    	try{
+    		System.out.println("TestEchoDate");
+	    	GorillaInterface proxy = getProxy();
+	    	GregorianCalendar cal = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+	    	DatatypeFactory javaxtypeFactory = DatatypeFactory.newInstance();
+	    	DatatypeFactory xercesfactoryImpl = DatatypeFactoryImpl.newInstance();
+	    	XMLGregorianCalendar request=  javaxtypeFactory.newXMLGregorianCalendar(cal);
+	    	System.out.println("Javax Factory Clazz Name = "+request.getClass().getName());
+	    	Duration d = javaxtypeFactory.newDuration(System.currentTimeMillis());
+	    	XMLGregorianCalendar response = proxy.echoDate(request, d);
+	    	System.out.println(response.toString());
+	    	assertNotNull(response);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		fail("Exception in testEchoDate :"+e);
+    	}
+    }
+    
+    public void testPolymorphicDate() throws Exception{
+    	try{
+	    	GorillaInterface proxy = getProxy();
+	    	GregorianCalendar cal = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+	    	DatatypeFactory typeFactory = DatatypeFactory.newInstance();
+	    	XMLGregorianCalendar request =  typeFactory.newXMLGregorianCalendar(cal);
+	        proxy.echoPolymorphicDate(request);
+	    	
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		fail("Exception in testEchoDate :"+e);
+    	}
     }
     
     private boolean compareLists(List in, List out) {

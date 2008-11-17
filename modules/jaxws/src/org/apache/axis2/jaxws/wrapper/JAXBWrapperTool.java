@@ -68,6 +68,7 @@ public interface JAXBWrapperTool {
     public Object wrap(Class jaxbClass,
                        List<String> childNames,
                        Map<String, Object> childObjects,
+                       Map<String, Class> declaredClassMap,
                        Map<String, PropertyDescriptorPlus> pdMap) throws JAXBWrapperException;
 
     /**

@@ -189,6 +189,14 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+	  
+	  <s:element name="echoStringListAsLinkedListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="data" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
 
       <s:element name="echoStringListAltAsLinkedListResponse">
         <s:complexType>
@@ -360,7 +368,43 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+	  
+     <s:element name="echoDate">     	 
+           <s:complexType>
+		   <s:choice>
+				<s:element name="RequestedTerminationTime" nillable="true" type="s:dateTime" />
+				<s:element name="RequestedLifetimeDuration" type="s:duration" />
+			</s:choice>
+			
+             <!--<s:sequence>
+               <s:element name="request" nillable="true" type="s:date" />
+             </s:sequence> -->
+			 
+           </s:complexType>
+	  </s:element>
 
+	  <s:element name="echoDateResponse">
+           <s:complexType>
+             <s:sequence>
+               <s:element name="response" type="s:date" />
+             </s:sequence>
+           </s:complexType>
+	  </s:element>
+	  
+	  <s:complexType name="echoBasetype">
+	            <s:sequence>
+	               <s:element name="request" type="s:date" />
+	            </s:sequence>
+	         </s:complexType>
+			 
+	  	 <s:element name="echoPolymorphicDate">
+			 <s:complexType>
+				<s:complexContent>
+					<s:extension base="data:echoBasetype"/>
+				</s:complexContent>
+			</s:complexType>
+		 </s:element>
+		 	  
     </s:schema>
 
     <s:schema elementFormDefault="qualified" 
@@ -385,8 +429,6 @@
         </s:complexType>
     </s:schema>
  
-
-
   </types>
 
   <!-- messages -->
@@ -510,6 +552,19 @@
   <message name="echoAnyTypeArrayResponse">
     <part name="x" element="data:echoAnyTypeArrayResponse" />
   </message>
+  
+  
+   <message name="echoPolymorphicDateMessage">
+      <part name="dateRequest" element="data:echoPolymorphicDate"/>
+   </message>
+   
+   <message name="echoDateMessage">
+      <part name="dateRequest" element="data:echoDate"/>
+   </message>
+
+   <message name="echoDateResponseMessage">
+      <part name="dateResponse" element="data:echoDateResponse"/>
+   </message>
 
   <!-- operation -->
   <portType name="GorillaInterface">
@@ -605,6 +660,13 @@
       <output message="tns:echoAnyTypeArrayResponse" />
       <fault  name="assertFault" message="tns:assertFault" />
     </operation>
+    <operation name="echoPolymorphicDate">
+      <input message="tns:echoPolymorphicDateMessage" />
+    </operation>
+	<operation name="echoDate">
+      <input message="tns:echoDateMessage" />
+      <output message="tns:echoDateResponseMessage" />
+	</operation>
   </portType>
 
   <!-- binding -->
@@ -816,6 +878,21 @@
       <fault name="assertFault">
         <soap:fault name="assertFault" use="literal" />
       </fault>
+    </operation>
+    <operation name="echoDate">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="literal"/>
+      </input>
+      <output>
+         <soap:body use="literal"/>
+      </output>
+    </operation>  
+	<operation name="echoPolymorphicDate">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
     </operation>
  </binding>
 

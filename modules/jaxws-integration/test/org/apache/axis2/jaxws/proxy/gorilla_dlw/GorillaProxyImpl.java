@@ -24,6 +24,8 @@ import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.AssertFault;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
 
 import javax.jws.WebService;
+import javax.xml.datatype.Duration;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 import java.util.List;
 
@@ -135,4 +137,18 @@ public class GorillaProxyImpl implements GorillaInterface {
     public List<Fruit> echoEnumArray(List<Fruit> data) throws AssertFault {
         return data;
     }
+
+	public XMLGregorianCalendar echoDate(XMLGregorianCalendar requestedTerminationTime, Duration requestedLifetimeDuration) {
+
+		return requestedTerminationTime;
+	}
+
+
+	public void echoPolymorphicDate(XMLGregorianCalendar request) { 
+		//Test to make sure polymorpic cases can marshal on client and server.
+		if(request==null){
+			
+		}
+	}
+    
 }

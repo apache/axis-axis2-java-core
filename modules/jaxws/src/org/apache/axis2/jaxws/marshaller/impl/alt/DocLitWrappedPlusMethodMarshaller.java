@@ -468,6 +468,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
             Map<String, Object> objectList = new HashMap<String, Object>();
+            Map<String, Class> declaredClassMap = new HashMap<String, Class>();
             List<PDElement> headerPDEList = new ArrayList<PDElement>();
 
             Iterator<PDElement> it = pdeList.iterator();
@@ -478,8 +479,10 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     // Normal case
                     // The object list contains type rendered objects
                     Object value = pde.getElement().getTypeValue();
+                    Class dclClass = pde.getParam().getParameterActualType();
                     nameList.add(name);
                     objectList.put(name, value);
+                    declaredClassMap.put(name, dclClass);
                 } else {
                     // Header Case:
                     // Remove the header from the list, it will
@@ -495,8 +498,10 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
 
                 if (returnType != void.class) {
                     String name = operationDesc.getResultName();
+                    Class dclClass = operationDesc.getResultActualType();
                     nameList.add(name);
                     objectList.put(name, returnObject);
+                    declaredClassMap.put(name, dclClass);
                 }
             } else {
                 // Header Result:
@@ -533,7 +538,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
             }
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList,
+            Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap,
                                              marshalDesc.getPropertyDescriptorMap(cls));
 
             QName wrapperQName = new QName(operationDesc.getResponseWrapperTargetNamespace(),
@@ -632,6 +637,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
             Map<String, Object> objectList = new HashMap<String, Object>();
+            Map<String, Class> declardClassMap = new HashMap<String, Class>();
             List<PDElement> headerPDEList = new ArrayList<PDElement>();
 
             Iterator<PDElement> it = pdeList.iterator();
@@ -642,8 +648,10 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     // Normal case:
                     // The object list contains type rendered objects
                     Object value = pde.getElement().getTypeValue();
+                    Class dclClass = pde.getParam().getParameterActualType();
                     nameList.add(name);
                     objectList.put(name, value);
+                    declardClassMap.put(name, dclClass);
                 } else {
                     // Header Case:
                     // Remove the header from the list, it will
@@ -662,7 +670,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
             }
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList,
+            Object object = wrapperTool.wrap(cls, nameList, objectList, declardClassMap,
                                              marshalDesc.getPropertyDescriptorMap(cls));
 
             QName wrapperQName = new QName(operationDesc.getRequestWrapperTargetNamespace(),

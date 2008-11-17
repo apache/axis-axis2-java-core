@@ -345,14 +345,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
             Map<String, Object> objectList = new HashMap<String, Object>();
+            Map<String, Class>  declaredClassMap = new HashMap<String, Class>();
 
             for (PDElement pde : pdeList) {
                 String name = pde.getParam().getParameterName();
-
+                
                 // The object list contains type rendered objects
                 Object value = pde.getElement().getTypeValue();
+                Class dclClass = pde.getParam().getParameterActualType();
+                
                 nameList.add(name);
                 objectList.put(name, value);
+                declaredClassMap.put(name, dclClass);
             }
 
             // Add the return object to the nameList and objectList
@@ -372,7 +376,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
             }
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList,
+            Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap,
                                              marshalDesc.getPropertyDescriptorMap(cls));
 
             QName wrapperQName = new QName(operationDesc.getResponseWrapperTargetNamespace(),
@@ -454,14 +458,17 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
             Map<String, Object> objectList = new HashMap<String, Object>();
+            Map<String, Class> declaredClassMap = new HashMap<String, Class>();
 
             for (PDElement pv : pvList) {
                 String name = pv.getParam().getParameterName();
 
                 // The object list contains type rendered objects
                 Object value = pv.getElement().getTypeValue();
+                Class dclClass = pv.getParam().getParameterActualType();
                 nameList.add(name);
                 objectList.put(name, value);
+                declaredClassMap.put(name, dclClass);
             }
 
             // Now create the single JAXB element 
@@ -473,7 +480,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 cls = MethodMarshallerUtils.loadClass(wrapperName, endpointDesc.getAxisService().getClassLoader());
             }
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object = wrapperTool.wrap(cls, nameList, objectList,
+            Object object = wrapperTool.wrap(cls, nameList, objectList, declaredClassMap, 
                                              marshalDesc.getPropertyDescriptorMap(cls));
 
             QName wrapperQName = new QName(operationDesc.getRequestWrapperTargetNamespace(),
