@@ -650,9 +650,16 @@ class EndpointInterfaceDescriptionImpl
                 new ArrayList<MethodDescriptionComposite>();
 
         if (dbc.isInterface()) {
-
-            retrieveList.addAll(retrieveSEIMethodsChain(dbc));
-
+            if(log.isDebugEnabled()) {
+                log.debug("Removing overridden methods for interface: " + dbc.getClassName() + 
+                          " with super interface: " + dbc.getSuperClassName());
+            }
+            
+            // make sure we retrieve all the methods, then remove the overridden
+            // methods that exist in the base interface
+            retrieveList = retrieveSEIMethodsChain(dbc);
+            retrieveList = removeOverriddenMethods(retrieveList, dbc);
+            
         } else {
             //this is an implied SEI...rules are more complicated
 
@@ -729,6 +736,49 @@ class EndpointInterfaceDescriptionImpl
         }
         return hierarchyMap;
     }
+    
+    /**
+     * This method drives the establishment of the hierarchy of interfaces for an SEI.
+     */
+    private Map<String, Integer> getInterfaceHierarchy(DescriptionBuilderComposite dbc) {
+        if(log.isDebugEnabled()) {
+            log.debug("Getting interface hierarchy for: " + dbc.getClassName());
+        }
+        Map<String, Integer> hierarchyMap = new HashMap<String, Integer>();
+        hierarchyMap.put(dbc.getClassName(), 0);
+        return getInterfaceHierarchy(dbc.getInterfacesList(), 
+                                     hierarchyMap, 
+                                     1);
+    }
+
+    /**
+     * Recursive method that builds the hierarchy of interfaces. This begins with an
+     * SEI and walks all of its super interfaces.
+     */
+    private Map<String, Integer> getInterfaceHierarchy(List<String> interfaces,
+                                                           Map<String, Integer> hierarchyMap,
+                                                           int level) {
+        HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
+            getServiceDescriptionImpl().getDBCMap();
+        
+        // walk through all of the interfaces
+        if(interfaces != null
+                &&
+                !interfaces.isEmpty()) {
+            for(String interfaze : interfaces) {
+                DescriptionBuilderComposite interDBC = dbcMap.get(interfaze);
+                if(interDBC != null) {
+                    if(log.isDebugEnabled()) {
+                        log.debug("Inserting super interface " + interDBC.getClassName() + 
+                                  " at level " + level);
+                    }
+                    hierarchyMap.put(interDBC.getClassName(), level);
+                    return getInterfaceHierarchy(interDBC.getInterfacesList(), hierarchyMap, level++);
+                }
+            }
+        }
+        return hierarchyMap;
+    }
 
     /**
      * This method will loop through each method that was previously determined as being relevant to
@@ -743,7 +793,8 @@ class EndpointInterfaceDescriptionImpl
     private ArrayList<MethodDescriptionComposite> removeOverriddenMethods(
             ArrayList<MethodDescriptionComposite>
                     methodList, DescriptionBuilderComposite dbc) {
-        HashMap<String, Integer> hierarchyMap = getClassHierarchy(dbc);
+        Map<String, Integer> hierarchyMap = dbc.isInterface() ? getInterfaceHierarchy(dbc) : 
+            getClassHierarchy(dbc);
         ArrayList<MethodDescriptionComposite> returnMethods =
                 new ArrayList<MethodDescriptionComposite>();
         for (int i = 0; i < methodList.size(); i++) {
@@ -787,7 +838,7 @@ class EndpointInterfaceDescriptionImpl
     private static MethodDescriptionComposite getBaseMethod(MethodDescriptionComposite mdc,
                                                             int index,
                                                             ArrayList<MethodDescriptionComposite> methodList,
-                                                            HashMap<String, Integer>
+                                                            Map<String, Integer>
                                                                     hierarchyMap) {
         int baseLevel = hierarchyMap.get(mdc.getDeclaringClass());
         if (log.isDebugEnabled()) {
