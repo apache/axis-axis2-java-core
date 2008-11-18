@@ -56,7 +56,7 @@ public class ClassFinderImpl implements ClassFinder {
             //Read resources as URL from class loader.
             for (URL url : srcURL) {
                 if ("file".equals(url.getProtocol())) {
-                    File f = new File(url.getPath());
+                    File f = new File(url.toURI().getPath()); 
                     //If file is not of type directory then its a jar file
                     if (f.exists() && !f.isDirectory()) {
                         try {
