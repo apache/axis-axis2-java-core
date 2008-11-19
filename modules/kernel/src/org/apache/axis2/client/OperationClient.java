@@ -39,6 +39,8 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 /**
  * An operation client is the way an advanced user interacts with Axis2. Actual
  * operation clients understand a specific MEP and hence their behavior is
@@ -254,9 +256,9 @@ public abstract class OperationClient {
                 options.getParent().isManageSession())) {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
-                Map map = tepr.getAllReferenceParameters();
+                Map<QName, OMElement> map = tepr.getAllReferenceParameters();
                 if (map != null) {
-                    Iterator valuse = map.values().iterator();
+                    Iterator<OMElement> valuse = map.values().iterator();
                     while (valuse.hasNext()) {
                         Object refparaelement = valuse.next();
                         if (refparaelement instanceof OMElement) {

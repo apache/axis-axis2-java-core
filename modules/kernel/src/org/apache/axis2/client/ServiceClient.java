@@ -114,7 +114,7 @@ public class ServiceClient {
     private Options overrideOptions;
 
     // list of headers to be sent with the simple APIs
-    private ArrayList headers;
+    private ArrayList<OMElement> headers;
 
     //whether we create configctx or not
     private boolean createConfigCtx;
@@ -394,7 +394,7 @@ public class ServiceClient {
      */
     public void addHeader(OMElement header) {
         if (headers == null) {
-            headers = new ArrayList();
+            headers = new ArrayList<OMElement>();
         }
         headers.add(header);
     }
@@ -406,7 +406,7 @@ public class ServiceClient {
      */
     public void addHeader(SOAPHeaderBlock header) {
         if (headers == null) {
-            headers = new ArrayList();
+            headers = new ArrayList<OMElement>();
         }
         headers.add(header);
     }

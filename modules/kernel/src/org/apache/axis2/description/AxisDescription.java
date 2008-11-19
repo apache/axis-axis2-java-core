@@ -58,7 +58,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
 
     private Map children;
 
-    protected Map engagedModules;
+    protected Map<String, AxisModule> engagedModules;
 
     /** List of ParameterObservers who want to be notified of changes */
     protected List parameterObservers = null;
@@ -444,7 +444,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
      * @throws AxisFault if there's a problem engaging
      */
     public void engageModule(AxisModule axisModule, AxisDescription source) throws AxisFault {
-        if (engagedModules == null) engagedModules = new ConcurrentHashMap();
+        if (engagedModules == null) engagedModules = new ConcurrentHashMap<String, AxisModule>();
         String moduleName = axisModule.getName();
         for (Object o : engagedModules.values()) {
             AxisModule tempAxisModule = ((AxisModule)o);
@@ -480,9 +480,9 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         // Default version does nothing, feel free to override
     }
 
-    static Collection NULL_MODULES = new ArrayList(0);
+    static Collection<AxisModule> NULL_MODULES = new ArrayList<AxisModule>(0);
 
-    public Collection getEngagedModules() {
+    public Collection<AxisModule> getEngagedModules() {
         return engagedModules == null ? NULL_MODULES : engagedModules.values();
     }
 

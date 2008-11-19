@@ -78,7 +78,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * The list of URIs that should be considered equivalent to 
      * the WS-Addressing anonymous URI
      */
-    private static volatile List anonymousEquivalentURIs = new ArrayList();
+    private static volatile List<String> anonymousEquivalentURIs = new ArrayList<String>();
 
 
     /**
@@ -92,12 +92,12 @@ public class EndpointReference implements Externalizable, SafeSerializable {
 
     private String name;
     private String address;
-    private ArrayList addressAttributes;
-    private ArrayList metaData;
-    private ArrayList metaDataAttributes;
-    private Map referenceParameters;
-    private ArrayList extensibleElements;
-    private ArrayList attributes;
+    private ArrayList<OMAttribute> addressAttributes;
+    private ArrayList<OMNode> metaData;
+    private ArrayList<OMAttribute> metaDataAttributes;
+    private Map<QName, OMElement> referenceParameters;
+    private ArrayList<OMElement> extensibleElements;
+    private ArrayList<OMAttribute> attributes;
 
     /**
      * No-Arg Constructor
@@ -117,7 +117,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         // Avoid synchronization in hasAnonymousAddress by using the
         // technique outlined at http://is.gd/gv3
         synchronized (anonymousEquivalentURIs) {
-        	ArrayList newList = new ArrayList(anonymousEquivalentURIs);
+        	ArrayList<String> newList = new ArrayList<String>(anonymousEquivalentURIs);
         	newList.add(anonymousEquivalentURI);
             anonymousEquivalentURIs = newList;
         }
@@ -139,7 +139,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
             return;
         }
         if (referenceParameters == null) {
-            referenceParameters = new HashMap();
+            referenceParameters = new HashMap<QName, OMElement>();
         }
         referenceParameters.put(omElement.getQName(), omElement);
     }
@@ -165,7 +165,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      * @return - map of the reference parameters, where the key is the QName of the reference parameter
      *         and the value is an OMElement
      */
-    public Map getAllReferenceParameters() {
+    public Map<QName, OMElement> getAllReferenceParameters() {
         return referenceParameters;
     }
 
@@ -180,19 +180,19 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         this.address = address;
     }
 
-    public ArrayList getAddressAttributes() {
+    public ArrayList<OMAttribute> getAddressAttributes() {
         return addressAttributes;
     }
 
-    public void setAddressAttributes(ArrayList al) {
+    public void setAddressAttributes(ArrayList<OMAttribute> al) {
         addressAttributes = al;
     }
 
-    public ArrayList getMetadataAttributes() {
+    public ArrayList<OMAttribute> getMetadataAttributes() {
         return metaDataAttributes;
     }
 
-    public void setMetadataAttributes(ArrayList al) {
+    public void setMetadataAttributes(ArrayList<OMAttribute> al) {
         metaDataAttributes = al;
     }
     
@@ -226,9 +226,9 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         	// If the address is not WS-A anonymous it might still be considered anonymous
         	// Avoid synchronization by using the
             // technique outlined at http://is.gd/gv3
-        	List localList = anonymousEquivalentURIs;
+        	List<String> localList = anonymousEquivalentURIs;
         	if(!localList.isEmpty()){
-        		Iterator it = localList.iterator();
+        		Iterator<String> it = localList.iterator();
         		while(it.hasNext()){
         			result = address.startsWith((String)it.next());
         			if(result){
@@ -265,12 +265,12 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      */
     public void addAttribute(String localName, OMNamespace ns, String value) {
         if (attributes == null) {
-            attributes = new ArrayList();
+            attributes = new ArrayList<OMAttribute>();
         }
         attributes.add(OMAbstractFactory.getOMFactory().createOMAttribute(localName, ns, value));
     }
 
-    public ArrayList getAttributes() {
+    public ArrayList<OMAttribute> getAttributes() {
         return attributes;
     }
 
@@ -280,12 +280,12 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      */
     public void addAttribute(OMAttribute omAttribute) {
         if (attributes == null) {
-            attributes = new ArrayList();
+            attributes = new ArrayList<OMAttribute>();
         }
         attributes.add(omAttribute);
     }
 
-    public ArrayList getExtensibleElements() {
+    public ArrayList<OMElement> getExtensibleElements() {
         return extensibleElements;
     }
 
@@ -294,27 +294,27 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      *
      * @param extensibleElements
      */
-    public void setExtensibleElements(ArrayList extensibleElements) {
+    public void setExtensibleElements(ArrayList<OMElement> extensibleElements) {
         this.extensibleElements = extensibleElements;
     }
 
     public void addExtensibleElement(OMElement extensibleElement) {
         if (extensibleElement != null) {
             if (this.extensibleElements == null) {
-                this.extensibleElements = new ArrayList();
+                this.extensibleElements = new ArrayList<OMElement>();
             }
             this.extensibleElements.add(extensibleElement);
         }
     }
 
-    public ArrayList getMetaData() {
+    public ArrayList<OMNode> getMetaData() {
         return metaData;
     }
 
     public void addMetaData(OMNode metaData) {
         if (metaData != null) {
             if (this.metaData == null) {
-                this.metaData = new ArrayList();
+                this.metaData = new ArrayList<OMNode>();
             }
             this.metaData.add(metaData);
         }
@@ -342,7 +342,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
      *
      * @param referenceParameters
      */
-    public void setReferenceParameters(Map referenceParameters) {
+    public void setReferenceParameters(Map<QName, OMElement> referenceParameters) {
         this.referenceParameters = referenceParameters;
     }
 
@@ -389,7 +389,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         setAddress(addressElement.getText());
         Iterator allAddrAttributes = addressElement.getAllAttributes();
         if (addressAttributes == null) {
-            addressAttributes = new ArrayList();
+            addressAttributes = new ArrayList<OMAttribute>();
         }
 
         while (allAddrAttributes.hasNext()) {
@@ -555,7 +555,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
 
         // TODO: is a strict test ok to use?
 
-        ArrayList eprMetaData = epr.getMetaData();
+        ArrayList<OMNode> eprMetaData = epr.getMetaData();
 
         if ((this.metaData != null) && (eprMetaData != null)) {
             if (!this.metaData.equals(eprMetaData)) {
@@ -576,7 +576,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         }
 
 
-        ArrayList eprExtensibleElements = epr.getExtensibleElements();
+        ArrayList<OMElement> eprExtensibleElements = epr.getExtensibleElements();
 
         if ((this.extensibleElements != null) && (eprExtensibleElements != null)) {
             if (!this.extensibleElements.equals(eprExtensibleElements)) {
@@ -597,7 +597,7 @@ public class EndpointReference implements Externalizable, SafeSerializable {
         }
 
 
-        ArrayList eprAttributes = epr.getAttributes();
+        ArrayList<OMAttribute> eprAttributes = epr.getAttributes();
 
         if ((this.attributes != null) && (eprAttributes != null)) {
             if (!this.attributes.equals(eprAttributes)) {

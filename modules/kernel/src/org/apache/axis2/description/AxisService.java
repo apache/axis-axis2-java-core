@@ -592,7 +592,7 @@ public class AxisService extends AxisDescription {
             }
         }
 
-		Iterator modules = getEngagedModules().iterator();
+		Iterator<AxisModule> modules = getEngagedModules().iterator();
 
 		while (modules.hasNext()) {
 			AxisModule module = (AxisModule) modules.next();
@@ -1785,7 +1785,7 @@ public class AxisService extends AxisDescription {
 	 * 
 	 * @return Returns HashMap
 	 */
-	public Iterator getOperations() {
+	public Iterator<AxisOperation> getOperations() {
 		return getChildren();
 	}
 
