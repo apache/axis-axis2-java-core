@@ -878,7 +878,7 @@
                  */
                 <xsl:value-of select="$propertyType"/> AXIS2_CALL
                 <xsl:value-of select="$axis2_name"/>_free_popping_value(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                         const axutil_env_t *env);
             </xsl:when>
             <xsl:otherwise>
@@ -893,7 +893,7 @@
                  */
                 void* AXIS2_CALL
                 <xsl:value-of select="$axis2_name"/>_free_popping_value(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                         const axutil_env_t *env);
             </xsl:otherwise>
         </xsl:choose>

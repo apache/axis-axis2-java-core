@@ -293,9 +293,8 @@ public class CStructWriter implements BeanWriter {
     public String makeFullyQualifiedClassName(QName qName) {
 
         String originalName = qName.getLocalPart();
-        String modifiedName = ADB_CLASS_PREFIX  + originalName + ADB_CLASS_POSTFIX;
 
-        return makeUniqueCStructName(this.namesList, modifiedName);
+        return makeUniqueCStructName(this.namesList, originalName);
     }
 
     /**
@@ -510,7 +509,7 @@ public class CStructWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "type", metainf.getItemTypeClassName(), itemType);
         XSLTUtils.addAttribute(model, "nsuri", metainf.getItemTypeQName().getNamespaceURI(), itemType);
         XSLTUtils.addAttribute(model, "originalName", metainf.getItemTypeQName().getLocalPart(), itemType);
-        XSLTUtils.addAttribute(model, "cname", cName, itemType);
+        XSLTUtils.addAttribute(model, "cname", cName.substring(4, cName.length()-3), itemType);
 
         if (typeMap.containsKey(metainf.getItemTypeQName()) ||
                 groupTypeMap.containsKey(metainf.getItemTypeClassName())) {
@@ -623,7 +622,7 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
             XSLTUtils.addAttribute(model, "prefix", name.getPrefix(), property);
 
-            XSLTUtils.addAttribute(model, "cname", xmlName, property);
+            XSLTUtils.addAttribute(model, "cname", xmlName.substring(4, xmlName.length() -3), property);
 
 
             String CClassNameForElement = metainf.getClassNameForQName(name);
@@ -639,7 +638,7 @@ public class CStructWriter implements BeanWriter {
             /**
              * Caps for use in C macros
              */
-            XSLTUtils.addAttribute(model, "caps-cname", xmlName.toUpperCase(), property);
+            XSLTUtils.addAttribute(model, "caps-cname", xmlName.substring(4, xmlName.length() -3 ).toUpperCase(), property);
             XSLTUtils.addAttribute(model, "caps-type", CClassNameForElement.toUpperCase(), property);
 
             if (PrimitiveTypeFinder.isPrimitive(CClassNameForElement)) {
@@ -1013,7 +1012,9 @@ public class CStructWriter implements BeanWriter {
         }
 
         listOfNames.add(cName.toLowerCase());
-        return cName;
+
+        String modifiedCName = ADB_CLASS_PREFIX  + cName + ADB_CLASS_POSTFIX;
+        return modifiedCName;
     }
 
 

@@ -256,6 +256,7 @@
             </xsl:for-each>
         </xsl:variable>
 
+        <!-- the following two functions was added in support of the unwrapped mode -->
         <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_create_with_values(
             const axutil_env_t *env<xsl:value-of select="$arg_list"/>)
