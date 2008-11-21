@@ -378,8 +378,8 @@ public class AxisConfiguration extends AxisDescription {
                 log.debug("Adding service to allServices map: [" + serviceName + "] ");
             }
             allServices.put(serviceName, axisService);
-            if (log.isDebugEnabled()) {
-                log.debug("After adding to allServices map, size is "
+            if (log.isTraceEnabled()) {
+                log.trace("After adding to allServices map, size is "
                           + allServices.size(), 
                           new Exception("AxisConfiguration.addToAllServicesMap called from"));
             }
