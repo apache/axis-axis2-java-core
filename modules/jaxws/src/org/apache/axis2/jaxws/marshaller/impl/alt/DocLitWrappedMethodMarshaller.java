@@ -365,6 +365,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 String name = operationDesc.getResultName();
                 nameList.add(name);
                 objectList.put(name, returnObject);
+                declaredClassMap.put(name, returnType);
             }
 
             // Now create the single JAXB element
