@@ -5706,7 +5706,7 @@
             const axutil_env_t *env)
         {
             return <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                        const axutil_env_t *env);
+                                                        env);
         }
 
 
