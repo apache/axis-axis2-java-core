@@ -304,7 +304,7 @@
                     value = <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>;
 
                     <xsl:if test="$firstProperty/@ours or $firstProperty/@isarray or $propertyType='axis2_char_t*' or $propertyType='axutil_qname_t*' or $propertyType='axutil_duration_t*' or $propertyType='axutil_uri_t*' or $propertyType='axutil_date_time_t*' or $propertyType='axutil_base64_binary_t*'">
-                      <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = NULL;
+                      <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/> = (<xsl:value-of select="$propertyType"/>)NULL;
                     </xsl:if>
                     <xsl:value-of select="$axis2_name"/>_free(<xsl:value-of select="$name"/>, env);
 
@@ -370,7 +370,7 @@
             <xsl:value-of select="$axis2_name"/>_deserialize_from_string(
                             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                                             const axutil_env_t *env,
-                                            axis2_char_t *node_value,
+                                            const axis2_char_t *node_value,
                                             axiom_node_t *parent)
             {
               axis2_status_t status = AXIS2_SUCCESS;
@@ -381,7 +381,7 @@
               void *element = NULL;
             </xsl:if>
             <xsl:if test="property/@type='axutil_qname_t*' or itemtype/@type='axutil_qname_t*'">
-              axis2_char_t *cp = NULL;
+              const axis2_char_t *cp_ro = NULL;
               axis2_bool_t prefix_found = AXIS2_FALSE;
               axiom_namespace_t *qname_ns;
             </xsl:if>
@@ -390,6 +390,7 @@
                int i;
                axis2_char_t *token_value = NULL;
                axis2_char_t *original_node_value = NULL;
+               axis2_char_t *dupd_node_value = NULL;
                axis2_bool_t the_last_token = AXIS2_FALSE;
             </xsl:if>
 
@@ -460,40 +461,46 @@
 
                     <!-- add axutil_qname_t s -->
                     <xsl:when test="$nativePropertyType='axutil_qname_t*'">
-                      prefix_found = AXIS2_FALSE;
-                      for(cp = node_value; *cp; cp ++)
-                      {
-                          if(*cp == ':')
-                          {
-                              *cp = '\0';
-                              cp ++;
-                              prefix_found  = AXIS2_TRUE;
-                              break;
-                          }
-                      }
 
-                      if(prefix_found)
-                      {
-                          /* node value contain the prefix */
-                          qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, node_value, parent);
-                      }
-                      else
-                      {
-                          /* Then it is the default namespace */
-                          cp = node_value;
-                          qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
-                      }
+                        prefix_found = AXIS2_FALSE;
+                        for(cp_ro = node_value; *cp_ro; cp_ro ++)
+                        {
+                            if(*cp_ro == ':')
+                            {
+                                cp_ro ++;
+                                prefix_found  = AXIS2_TRUE;
+                                break;
+                            }
+                        }
 
-                       <!-- we are done extracting info, just set the extracted value to the qname -->
+                        if(prefix_found)
+                        {
+                            /* node value contain the prefix */
+                            char *prefix_value = AXIS2_MALLOC(env->allocator, (cp_ro - node_value - 1) + 1);
+                            strncpy(prefix, node_value, (cp_ro - node_value - 1));
+                            prefix[cp_ro - node_value - 1] = '\0';
+                            qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, prefix_value, parent);
+                            AXIS2_FREE(env->allocator, prefix_value);
+                        }
+                        else
+                        {
+                            /* Then it is the default namespace */
+                            cp_ro = node_value;
+                            qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
+                        }
 
-                       <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                      env,
-                                                      axutil_qname_create(
-                                                            env, 
-                                                            cp, /* cp contain the localname */
-                                                            axiom_namespace_get_uri(qname_ns, env),
-                                                            axiom_namespace_get_prefix(qname_ns, env)));
-                    </xsl:when>
+                         <!-- we are done extracting info, just set the extracted value to the qname -->
+
+                         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                        env,
+                                                        axutil_qname_create(
+                                                              env, 
+                                                              cp_ro, /* cp contain the localname */
+                                                              axiom_namespace_get_uri(qname_ns, env),
+                                                              axiom_namespace_get_prefix(qname_ns, env)));
+                      </xsl:when>
+
+
 
                     <!-- add axutil_uri_t s -->
                     <xsl:when test="$nativePropertyType='axutil_uri_t*'">
@@ -577,20 +584,20 @@
                 <xsl:variable name="justPropertyInstanceName">element</xsl:variable>
                 
                 /* just to make sure we are not altering the original */
-                node_value = original_node_value = (axis2_char_t*)axutil_strdup(env, node_value);
+                dupd_node_value = original_node_value = (axis2_char_t*)axutil_strdup(env, node_value);
 
-                for(token_value = node_value, the_last_token = AXIS2_FALSE; !the_last_token; node_value ++)
+                for(token_value = dupd_node_value, the_last_token = AXIS2_FALSE; !the_last_token; dupd_node_value ++)
                 {
-                    if(*node_value == ' ' || *node_value == '\t' || *node_value == '\r'
-                            || *node_value == '\n' || *node_value == '\0')
+                    if(*dupd_node_value == ' ' || *dupd_node_value == '\t' || *dupd_node_value == '\r'
+                            || *dupd_node_value == '\n' || *dupd_node_value == '\0')
                     {
-                        if(*node_value == '\0')
+                        if(*dupd_node_value == '\0')
                         {
                             the_last_token = AXIS2_TRUE;
                         }
                         else
                         {
-                            *node_value = '\0';
+                            *dupd_node_value = '\0';
                         }
                         
 
@@ -642,6 +649,7 @@
 
                   <!-- add axutil_qname_t s -->
                   <xsl:when test="$nativePropertyType='axutil_qname_t*'">
+
                     prefix_found = AXIS2_FALSE;
                     for(cp = token_value; *cp; cp ++)
                     {
@@ -677,7 +685,7 @@
                                                           axiom_namespace_get_prefix(qname_ns, env)));
                   </xsl:when>
 
-                  <!-- add axutil_uri_t s -->
+                 <!-- add axutil_uri_t s -->
                   <xsl:when test="$nativePropertyType='axutil_uri_t*'">
                      <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
                                                     env, axutil_uri_parse_string(env, token_value));
@@ -732,7 +740,7 @@
                      status = AXIS2_FAILURE;
                   </xsl:otherwise>
                 </xsl:choose>   
-                    token_value = node_value + 1;
+                    token_value = dupd_node_value + 1;
                   }
               }
               AXIS2_FREE(env->allocator, original_node_value);
@@ -767,7 +775,7 @@
 
           <!-- these two are requried -->
           <xsl:if test="count(property)!=0  or count(itemtype)!=0"> <!-- check for at least one element exists -->
-             axis2_char_t* text_value = NULL;
+             const axis2_char_t* text_value = NULL;
              axutil_qname_t *qname = NULL;
           </xsl:if>
 
@@ -779,22 +787,38 @@
             </xsl:if>
           <xsl:choose>
             <xsl:when test="@simple and (count(property)!=0 or count(itemtype)!=0)">
-            axiom_element_t *text_element = NULL;
-            axiom_node_t *text_node = NULL;
             
             status = AXIS2_FAILURE;
             if(parent)
             {
-                text_node = axiom_node_get_first_child(parent, env);
-                if (text_node &amp;&amp;
-                        axiom_node_get_node_type(text_node, env) == AXIOM_TEXT)
+                axis2_char_t *attrib_text = NULL;
+                attrib_text = axiom_element_get_attribute_value_by_name(axiom_node_get_data_element(parent, env), env, "nil");
+                if (attrib_text != NULL &amp;&amp; !axutil_strcasecmp(attrib_text, "true"))
                 {
-                    axiom_text_t *text_element = (axiom_text_t*)axiom_node_get_data_element(text_node, env);
+                  <xsl:choose>
+                   <xsl:when test="not(@nillable)">
+                    AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$originalName"/>");
+                    status = AXIS2_FAILURE;
+                   </xsl:when>
+                   <xsl:otherwise>
+                    status = <xsl:value-of select="$axis2_name"/>_set<xsl:value-of select="$name"/>_nil(<xsl:value-of select="$name"/>, env);
+                   </xsl:otherwise>
+                  </xsl:choose>
+                }
+                else
+                {
+                    axiom_node_t *text_node = NULL;
+                    text_node = axiom_node_get_first_child(parent, env);
+                    axiom_text_t *text_element = NULL;
+                    if (text_node &amp;&amp;
+                            axiom_node_get_node_type(text_node, env) == AXIOM_TEXT)
+                        text_element = (axiom_text_t*)axiom_node_get_data_element(text_node, env);
+                    text_value = "";
                     if(text_element &amp;&amp; axiom_text_get_value(text_element, env))
                     {
                         text_value = (axis2_char_t*)axiom_text_get_value(text_element, env);
-                        status = <xsl:value-of select="$axis2_name"/>_deserialize_from_string(<xsl:value-of select="$name"/>, env, text_value, parent);
                     }
+                    status = <xsl:value-of select="$axis2_name"/>_deserialize_from_string(<xsl:value-of select="$name"/>, env, text_value, parent);
                 }
             }
             </xsl:when>
@@ -1097,6 +1121,7 @@
                                                           env, attrib_text);
                         </xsl:when>
 
+
                         <!-- add axutil_qname_t s -->
                         <xsl:when test="$nativePropertyType='axutil_qname_t*'">
                           prefix_found = AXIS2_FALSE;
@@ -1110,10 +1135,10 @@
                                   break;
                               }
                           }
-                       
+
                           if(prefix_found)
                           {
-                              /* node value contain  the prefix */
+                              /* node value contain the prefix */
                               qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, attrib_text, parent);
                           }
                           else
@@ -1122,17 +1147,18 @@
                               cp = attrib_text;
                               qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
                           }
-                       
-                          <!-- we are done extracting info, just set the extracted value to the qname -->
-                       
-                          <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
-                                                    env,
-                                                    axutil_qname_create(
-                                                          env, 
-                                                          cp, /* cp contain the localname */
-                                                          axiom_namespace_get_uri(qname_ns, env),
-                                                          axiom_namespace_get_prefix(qname_ns, env)));
+
+                           <!-- we are done extracting info, just set the extracted value to the qname -->
+
+                           <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
+                                                          env,
+                                                          axutil_qname_create(
+                                                                env, 
+                                                                cp, /* cp contain the localname */
+                                                                axiom_namespace_get_uri(qname_ns, env),
+                                                                axiom_namespace_get_prefix(qname_ns, env)));
                         </xsl:when>
+
 
                         <!-- add axutil_uri_t s -->
                         <xsl:when test="$nativePropertyType='axutil_uri_t*'">

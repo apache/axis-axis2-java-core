@@ -740,7 +740,7 @@
             <xsl:value-of select="$axis2_name"/>_deserialize_from_string(
                             <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
                                             const axutil_env_t *env,
-                                            axis2_char_t *node_value,
+                                            const axis2_char_t *node_value,
                                             axiom_node_t *parent);
         </xsl:if>
         /**
