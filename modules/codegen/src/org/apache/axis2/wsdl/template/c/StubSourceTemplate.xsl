@@ -45,7 +45,7 @@
       #include &lt;neethi_engine.h&gt;
 
 
-      axiom_node_t *
+      axiom_node_t* AXIS2_CALL
       axis2_deserialize_buffer (
             const axutil_env_t * env,
             char *buffer);
@@ -54,10 +54,10 @@
        * <xsl:value-of select="@name"/> C implementation
        */
 
-      axis2_stub_t*
+      axis2_stub_t* AXIS2_CALL
       axis2_stub_create_<xsl:value-of select="$servicename"/>(const axutil_env_t *env,
-                                      axis2_char_t *client_home,
-                                      axis2_char_t *endpoint_uri)
+                                      const axis2_char_t *client_home,
+                                      const axis2_char_t *endpoint_uri)
       {
          axis2_stub_t *stub = NULL;
          axis2_endpoint_ref_t *endpoint_ref = NULL;
@@ -87,7 +87,7 @@
       }
 
 
-      void
+      void AXIS2_CALL
       axis2_stub_populate_services_for_<xsl:value-of select="$servicename"/>(axis2_stub_t *stub, const axutil_env_t *env)
       {
          axis2_svc_client_t *svc_client = NULL;
@@ -171,7 +171,7 @@
       /**
        *return end point picked from wsdl
        */
-      axis2_char_t*
+      axis2_char_t* AXIS2_CALL
       axis2_stub_get_endpoint_uri_of_<xsl:value-of select="$servicename"/>( const axutil_env_t *env )
       {
         axis2_char_t *endpoint_uri = NULL;
@@ -238,8 +238,8 @@
          </xsl:variable>
 
          <xsl:choose>
-         <xsl:when test="$outputtype=''">void</xsl:when> <!--this case is unexpected-->
-         <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise>
+         <xsl:when test="$outputtype=''">void AXIS2_CALL</xsl:when> <!--this case is unexpected-->
+         <xsl:otherwise><xsl:value-of select="$outputtype"/> AXIS2_CALL</xsl:otherwise>
          </xsl:choose>
          <xsl:text> </xsl:text>
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>( axis2_stub_t *stub, const axutil_env_t *env</xsl:text>
@@ -817,7 +817,8 @@
           * @param on_error callback to handle on error
           */
 
-         void axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:value-of select="$inputparams"/>,
+         void AXIS2_CALL
+         axis2_stub_start_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>( axis2_stub_t *stub, const axutil_env_t *env<xsl:value-of select="$inputparams"/>,
                                                   void *user_data,
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
@@ -988,7 +989,7 @@
           </xsl:text>* @param dp_<xsl:value-of select="@name"/> - output header</xsl:for-each>
           * @return <xsl:value-of select="$outputtype"/>
           */
-         axis2_status_t
+         axis2_status_t AXIS2_CALL
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>( axis2_stub_t *stub, const axutil_env_t *env</xsl:text>
                                                  <xsl:value-of select="$inputparams"/>)
          {
@@ -1120,7 +1121,7 @@
     </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="input/param[@location='soap_header']">
-         void
+         void AXIS2_CALL
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="inputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                  <xsl:value-of select="$inputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
@@ -1152,7 +1153,7 @@
     </xsl:if>
      <xsl:for-each select="method">
         <xsl:if test="output/param[@location='soap_header']">
-         void
+         void AXIS2_CALL
          axis2_stub_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                  <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
@@ -1176,7 +1177,7 @@
         </xsl:if>
      </xsl:for-each>
 
-    axiom_node_t *
+    axiom_node_t* AXIS2_CALL
     axis2_deserialize_buffer (
         const axutil_env_t * env,
         char *buffer)
