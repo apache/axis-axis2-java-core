@@ -1,0 +1,100 @@
+--050804040400010602000409
+content-id:<11.BBFC8D48A21258EBBD@apache.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+body text
+
+--050804040400010602000409
+content-id:<11.BBFC8D48A21258EBBD@apache.org1>
+Content-Type: text/csv;name="test.csv"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline;filename="test.csv"
+
+AccessMedicine Resource List,,,,,,
+(Updated August 2008),,,,,,
+
+Clinical Library,,,,,,
+
+Print ISBN,Author,Title,Print Edition,Copyright,Launch Date,URL
+ISBN: 0071410902,Brunicardi,Schwartz's Principles of Surgery,8,2005,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=50
+ISBN: 0071422803,Brunton,Goodman & Gilman's Pharmacologic Basis of Therapeutics,11,2006,'September 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=28
+ISBN: 0071427821,Cox,Williams Obstetrics 22nd Edition Study Guide ,22,2005,'July 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=49
+ISBN: 0071413154,Cunningham,Williams Obstetrics,22,2005,'July 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=46
+ISBN: 0071476911,Fauci,Harrison's Principles of Internal Medicine,17,2008,'March 2008',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=4
+ISBN: 0071499286,Fuster,Hurst's the Heart,12,2008,'January 2008',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=5
+ISBN: 0071416404,Hall,"Principles of Critical Care, 3/e",3,2005,'July 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=76
+ISBN: 0071414991,Kantarjian,M.D. Anderson Manual of Medical Oncology ,1,2006,'July 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=500
+ISBN: 0071352945,Knoop,Atlas of Emergency Medicine,2,2002,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=48
+ISBN: 0071435913,Lichtman,"Williams Hematology, 7/e",7,2006,'February 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=69
+ISBN: 0071602674,Lichtman,Lichtman's Atlas of Hematology,1,2007,'April 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=99
+ISBN: 0071494308,McPhee,CURRENT Medical Diagnosis and Treatment 2008,47,2008,'October 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=1
+ISBN: 007141620X,Ropper,Adams and Victor's Principles of Neurology,8,2005,'December 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=54
+ISBN: 0071472576,Schorge,Williams Gynecology,1,2008,June 2008',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=514
+ISBN: 0071388753,Tintinalli,Emergency Medicine: A Comprehensive Study Guide,6,2004,'June 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=40
+ISBN: 0071440194,Wolff,Fitzpatrick's Color Atlas & Synopsis of Clinical Dermatology,5,2005,'July 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=45
+ISBN: 0071466908,Wolff,Fitzpatrick's Dermatology in General Medicine,7,2008,'November 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=505
+
+Educational Library ,,,,,,
+
+Print ISBN,Author,Title,,,Launch Date,URL
+ISBN: 0071423605,Aminoff,Clinical Neurology,6,2005,'December 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=66
+ISBN: 0071423109,Barrett,Gastrointestinal Physiology,,2006,'July 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=77
+ISBN: 0071423117,Bodenheimer,Understanding Health Policy: A Clinical Approach,4,2005,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=56
+ISBN: 0071476660,Brooks,"Jawetz, Melnick, & Adelberg's Medical Microbiology",24,2007,'April 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=6
+ISBN: 0838514995,Chandrosoma,Concise Pathology,3,1998,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=7
+ISBN: 0071410260,Chen,Basic Radiology,1,2004,'April 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=75
+ISBN: 0838514731,Crawford,CURRENT Diagnosis & Treatment in Cardiology,2,2003,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=8
+ISBN: 007141018X,Dawson,Basic and Clinical Biostatistics,4,2004,'December 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=62
+ISBN: 0071439005,DeCherney,CURRENT Obstetric & Gynecologic Diagnosis & Treatment,10,2007,'November 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=83
+ISBN: 007142315X,Doherty,CURRENT Surgical Diagnosis and Treatment,12,2005,'January 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=23
+ISBN: 0071357289,Eaton,Vander's Renal Physiology,6,2004,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=57
+ISBN: 0071422925,Ebert,CURRENT Diagnosis & Treatment in Psychiatry,2,2008,'July 2008',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=10
+ISBN: 0071440402,Ganong,Review of Medical Physiology,22,2005,'July 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=11
+ISBN: 0071440119,Gardner,"Greenspan's Basic & Clinical Endocrinology, 8/e",8,2007,'February 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=13
+ISBN: 0071454284,Gomella,"Clinician's Pocket Reference, 11/e",11,2006,'February 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=93
+ISBN: 0071416374,Greenberg,Medical Epidemiology,4,2005,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=12
+ISBN: 0071402977,Greenspan,Basic & Clinical Endocrinology,7,2004,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=89
+ISBN: 0071440860,Grey,The Bioterrorism Sourcebook,1,2006,'April 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=95
+ISBN: 0071402594,Hanley,CURRENT Diagnosis & Treatment in Pulmonary Medicine,1,2003,'April 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=37
+ISBN: 0071463003,Hay,CURRENT Pediatric Diagnosis & Treatment ,18,2006,'October 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=14
+ISBN: 0071460403,Imboden,CURRENT Rheumatology Diagnosis & Treatment,2,2007,'March 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=38
+ISBN: 0071441999,Jonson,Clinical Ethics: A Practical Approach to Ethical Decisions in Clinical Medicine,1,2006,'January 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=90
+ISBN: 0071440917,Junqueira,Basic Histology Text & Atlas,11,2005,'July 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=15
+ISBN: 0071451536,Katzung,Basic and Clinical Pharmacology,10,2006,'January 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=16
+ISBN: 0071456066,Klausner,Current Diagnosis & Treatment of Sexually Transmitted Diseases,1,2007,'September 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=506
+ISBN: 0071460276,Lalwani,CURRENT  Diagnosis & Treatment in Otolaryngology—Head & Neck Surgery,2,2007,'August 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=39
+ISBN: 0071496209,Levinson,Review of Medical Microbiology and Immunology,10,2008,August 2008',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=519
+ISBN: 0071437754,Levitzky,Pulmonary Physiology,7,2007,'April 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=98
+ISBN: 007144159X,McPhee,Pathophysiology of Disease: An Introduction to Clinical Medicine,5,2005,'December 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=17
+ISBN: 0071465618,Mohrman,Cardiovascular Physiology ,6,2006,'October 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=64
+ISBN: 0071460489,Molina,Endocrine Physiology,2,2006,'October 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=81
+ISBN: 0071423583,Morgan,Clinical Anesthesiology,4,2005,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=53
+ISBN: 0071461973,Murray,Harper's Illustrated Biochemistry,27,2006,'July 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=18
+ISBN: 0071443339,Olson,Poisoning & Drug Overdose ,5,2006,'March 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=91
+ISBN: 0071443142,Riordan-Eva,Vaughan & Asbury's General Opthalmology,17,2007,'December 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=19
+ISBN: 0071438335,Skinner,CURRENT Diagnosis & Treatment in Orthopedics,4,2006,'July 2006',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=20
+ISBN: 0071461531,South-Paul,CURRENT Diagnosis & Treatment in Family Medicine,2,2007,'October 2007',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=52
+ISBN: 0071443193,Stone,CURRENT Diagnosis & Treatment Emergency Medicine,6,2008,'October 2005',http://www.accessmedicine.com/resourceTOC.aspx?resourceID=55
+ISBN: 0071457372,Tanagho,Smith's General Urology,17,2008,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=21
+ISBN: 0071392386,Waxman,Clinical Neuroanatomy,25,2003,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=22
+ISBN: 0838537480,Wilson,Histology Image Review,1,1997,,http://www.accessmedicine.com/resourceTOC.aspx?resourceID=24
+
+Guidelines,,,,,,
+ISBN: 0071496343,Gonzales,CURRENT Practice Guidelines in Primary Care 2008,,2008,'January 2008',http://www.accessmedicine.com/guidelines.aspx
+
+Quick Answers,,,,,,
+ISBN: 0071475524,Papadakis,Quick Answers to Medical Diagnosis and Therapy,,2008,June 2008',http://www.accessmedicine.com/quickAM.aspx
+
+Laboratory Values Tab,,,,,,
+ISBN: 0071489681,Nicoll,Pocket Guide to Diagnostic Tests,5,2008,'April 2008',http://www.accessmedicine.com/pocketDiagnostic.aspx
+
+LANGE Case files™,,,,,,
+ISBN: 0071437959,Toy,Case Files Emergency Medicine,,2006,'September 2006',http://www.accessmedicine.com/caseHome.aspx
+ISBN: 0071489800,Toy,Case Files Gross Anatomy,,2006,'September 2006',http://www.accessmedicine.com/caseHome.aspx
+ISBN: 0071445749,Toy,Case Files Microbiology,,2006,'September 2006',http://www.accessmedicine.com/caseHome.aspx
+ISBN: 0071486666,Toy,Case Files Pathology,,2006,'September 2006',http://www.accessmedicine.com/caseHome.aspx
+ISBN: 0071488588,Toy,Case Files Pharmacology,,2006,'September 2006',http://www.accessmedicine.com/caseHome.aspx
+ISBN: 0071445757,Toy,Case Files Physiology,,2006,'September 2006',http://www.accessmedicine.com/caseHome.asp
+
+--050804040400010602000409--
