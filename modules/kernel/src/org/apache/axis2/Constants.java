@@ -390,6 +390,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String MESSAGE_TYPE = "messageType";
         
         public static final String MESSAGE_FORMATTER = "messageFormatter";
+        
+        /**
+         * This is used to enable/disable Axis2 default fall back builder. When enabled Axis2 
+         * will build any message that has a content type which is not supported by the configured
+         * Axis2 builder will be built using this builder.
+         */
+        public static final String USE_DEFAULT_FALLBACK_BUILDER = "useDefaultFallbackBuilder";
 
         public static final String SOAP_RESPONSE_MEP = "soapResponseMEP";
         

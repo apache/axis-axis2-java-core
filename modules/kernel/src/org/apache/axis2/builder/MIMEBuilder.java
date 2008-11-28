@@ -63,8 +63,7 @@ public class MIMEBuilder implements Builder {
             ct = new ContentType(contentType);
         } catch (ParseException e) {
             throw new OMException(
-                    "Invalid Content Type Field in the Mime Message"
-                    , e);
+                    "Invalid Content Type Field in the Mime Message", e);
         }
         
         String type = ct.getParameter("type");

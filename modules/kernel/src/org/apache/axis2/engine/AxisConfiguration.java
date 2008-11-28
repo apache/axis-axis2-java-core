@@ -21,6 +21,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
 import org.apache.axis2.clustering.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
@@ -664,31 +665,43 @@ public class AxisConfiguration extends AxisDescription {
      *         the given content type.
      */
     public Builder getMessageBuilder(String contentType) {
-        if(messageBuilders.isEmpty()){
-            return null;
-        }
-        Builder builder = (Builder) messageBuilders.get(contentType);
-        if (builder == null) {
-            builder = (Builder) messageBuilders.get(contentType.toLowerCase());
-        }
-        if (builder == null) {
-            Iterator iterator = messageBuilders.entrySet().iterator();
-            while (iterator.hasNext() && builder == null) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String key = (String) entry.getKey();
-                if (contentType.matches(key)) {
-                    builder = (Builder) entry.getValue();
-                }
-            }
-        }
-        return builder;
-    }
+		Builder builder = null;
+		if (messageBuilders.isEmpty()) {
+			return null;
+		}
+		if (contentType != null) {
+			builder = (Builder) messageBuilders.get(contentType);
+			if (builder == null) {
+				builder = (Builder) messageBuilders.get(contentType
+						.toLowerCase());
+			}
+			if (builder == null) {
+				Iterator iterator = messageBuilders.entrySet().iterator();
+				while (iterator.hasNext() && builder == null) {
+					Map.Entry entry = (Map.Entry) iterator.next();
+					String key = (String) entry.getKey();
+					if (contentType.matches(key)) {
+						builder = (Builder) entry.getValue();
+					}
+				}
+			}
+		}
+		return builder;
+	}
+    
+    public Builder getMessageBuilder(String contentType, boolean defaultBuilder) {
+		Builder builder = getMessageBuilder(contentType);
+		if (builder ==null & defaultBuilder){
+			builder = new UnknownContentBuilder();
+		}
+		return builder;
+	}
 
     /**
-     * @param contentType
-     * @return the configured message formatter implementation class name
-     *         against the given content type.
-     */
+	 * @param contentType
+	 * @return the configured message formatter implementation class name
+	 *         against the given content type.
+	 */
     public MessageFormatter getMessageFormatter(String contentType) {
         return (MessageFormatter) messageFormatters.get(contentType);
     }

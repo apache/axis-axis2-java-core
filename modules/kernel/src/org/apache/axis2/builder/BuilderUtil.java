@@ -65,6 +65,8 @@ import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
+import com.sun.corba.se.impl.copyobject.FallbackObjectCopierImpl;
+
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -712,17 +714,20 @@ public class BuilderUtil {
      */
     public static Builder getBuilderFromSelector(String type, MessageContext msgContext)
             throws AxisFault {
-
+    	boolean useFallbackBuilder = false;
         AxisConfiguration configuration =
                 msgContext.getConfigurationContext().getAxisConfiguration();
-        Builder builder = configuration.getMessageBuilder(type);
+        Parameter useFallbackParameter = configuration.getParameter(Constants.Configuration.USE_DEFAULT_FALLBACK_BUILDER);
+        if (useFallbackParameter !=null){
+        	useFallbackBuilder = JavaUtils.isTrueExplicitly(useFallbackParameter.getValue(),useFallbackBuilder);
+        }
+        Builder builder = configuration.getMessageBuilder(type,useFallbackBuilder);
         if (builder != null) {
             // Check whether the request has a Accept header if so use that as the response
             // message type.
             // If thats not present,
             // Setting the received content-type as the messageType to make
-            // sure that we respond using the received message serialisation
-            // format.
+            // sure that we respond using the received message serialization format.
 
             Object contentNegotiation = configuration
                     .getParameterValue(Constants.Configuration.ENABLE_HTTP_CONTENT_NEGOTIATION);
