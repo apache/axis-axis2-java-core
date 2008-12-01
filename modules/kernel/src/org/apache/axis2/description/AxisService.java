@@ -1527,7 +1527,7 @@ public class AxisService extends AxisDescription {
 		try {
 			String wsdlntfound = "<error>"
 					+ "<description>Unable to generate WSDL 1.1 for this service</description>"
-					+ "<reason>If you wish Axis2 to automatically generate the WSDL 1.1, then please +"
+					+ "<reason>If you wish Axis2 to automatically generate the WSDL 1.1, then please "
 					+ "set useOriginalwsdl as false in your services.xml</reason>";
 			out.write(wsdlntfound.getBytes());
 			if (e != null) {
