@@ -19,11 +19,17 @@
 
 package org.apache.axis2.saaj;
 
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.MIMEOutputUtils;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axis2.transport.http.HTTPConstants;
 
+import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -33,6 +39,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,12 +48,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SOAPMessageImpl extends SOAPMessage {
 
     private SOAPPart soapPart;
-    private Collection attachmentParts = new ArrayList();
+    private Collection<AttachmentPart> attachmentParts = new ArrayList<AttachmentPart>();
     private MimeHeadersEx mimeHeaders;
 
     private Map props = new Hashtable();
@@ -288,7 +297,8 @@ public class SOAPMessageImpl extends SOAPMessage {
     public void writeTo(OutputStream out) throws SOAPException, IOException {
         try {
             OMOutputFormat format = new OMOutputFormat();
-            format.setCharSetEncoding((String)getProperty(CHARACTER_SET_ENCODING));
+            String enc = (String)getProperty(CHARACTER_SET_ENCODING);
+            format.setCharSetEncoding(enc != null ? enc : OMOutputFormat.DEFAULT_CHAR_SET_ENCODING);
             String writeXmlDecl = (String)getProperty(WRITE_XML_DECLARATION);
             if (writeXmlDecl == null || writeXmlDecl.equals("false")) {
 
@@ -296,8 +306,27 @@ public class SOAPMessageImpl extends SOAPMessage {
                 format.setIgnoreXMLDeclaration(true);
             }
 
-            //the writeTo method forces the elements to be built!!!
-            ((SOAPEnvelopeImpl)soapPart.getEnvelope()).getOMEnvelope().serialize(out, format);
+            SOAPEnvelope envelope = ((SOAPEnvelopeImpl)soapPart.getEnvelope()).getOMEnvelope();
+            if (attachmentParts.isEmpty()) {
+                envelope.serialize(out, format);
+            } else {
+                format.setSOAP11(((SOAPEnvelopeImpl)soapPart.getEnvelope()).getOMFactory()
+                        instanceof SOAP11Factory);
+                Map<String,DataHandler> attachmentsMap = new LinkedHashMap<String,DataHandler>();
+                for (AttachmentPart ap : attachmentParts) {
+                    attachmentsMap.put(ap.getContentId(), ap.getDataHandler());
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                envelope.serialize(baos);
+                String contentType =
+                        (format.isSOAP11() ? SOAP11Constants.SOAP_11_CONTENT_TYPE :
+                                             SOAP12Constants.SOAP_12_CONTENT_TYPE)
+                        + "; charset=" + format.getCharSetEncoding();
+                DataHandler rootDataHandler =
+                        new DataHandler(new ByteArrayDataSource(baos.toByteArray(), contentType));
+                MIMEOutputUtils.writeDataHandlerWithAttachmentsMessage(rootDataHandler,
+                        contentType, out, attachmentsMap, format);
+            }
             saveChanges();
         } catch (Exception e) {
             throw new SOAPException(e);
