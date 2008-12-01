@@ -72,7 +72,7 @@ public class POJODeployer implements Deployer {
                 Thread.currentThread().setContextClassLoader(classLoader);
                 String className = file.getName();
                 className = className.replaceAll(".class", "");
-                Class clazz = Class.forName(className);
+                Class clazz = Loader.loadClass(className);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
                         className,
                         deploymentFileData.getFile().getAbsolutePath()));
@@ -151,7 +151,7 @@ public class POJODeployer implements Deployer {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
-                    Class clazz = Class.forName(className);
+                    Class clazz = Loader.loadClass(className);
 
                     /**
                      * Schema generation done in two stage 1. Load all the methods and
