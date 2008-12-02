@@ -19,13 +19,21 @@
 
 package org.apache.axis2.jaxws.xmlhttp.provider.message.source;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import javax.annotation.Resource;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
+
+import org.apache.axis2.transport.http.HTTPConstants;
 
 /**
  * Sample XML/HTTP String Provider 
@@ -35,7 +43,16 @@ import javax.xml.ws.http.HTTPBinding;
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class XMessageSourceProvider implements Provider<Source> {
 
+    @Resource
+    public WebServiceContext ctx;
+    
     public Source invoke(Source input) {
+        String method = (String)ctx.getMessageContext().get(HTTPConstants.HTTP_METHOD);
+        if (input == null) {
+            String request = "<response>" + method + "</response>";
+            ByteArrayInputStream stream = new ByteArrayInputStream(request.getBytes());
+            input = new StreamSource((InputStream) stream);
+        }
         return input;
     }
 

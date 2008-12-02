@@ -162,7 +162,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
                     }
                 }
             }
-            
+                        
             // Migrate the properties from the client request context bag to
             // the request MessageContext.
             ApplicationContextMigratorUtil.performMigrationToMessageContext(
@@ -225,6 +225,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
         Message requestMsg = createRequestMessage(obj);
         setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
+        // handle HTTP_REQUEST_METHOD property
+        String method = (String)requestContext.get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
+        if (method != null) {
+            requestMsgCtx.setProperty(org.apache.axis2.Constants.Configuration.HTTP_METHOD, method);
+        }
     }
 
     public void invokeOneWay(Object obj) throws WebServiceException {
@@ -536,8 +541,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
             }
         } else {
             // In all cases (PAYLOAD and MESSAGE) we must throw a WebServiceException
-            // if the parameter is null.
-            if (object == null) {
+            // if the parameter is null and request method is POST or PUT.
+            if (object == null && isPOSTorPUTRequest()) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchNullParamHttpBinding"));
             }
         }
@@ -551,6 +556,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
         // If we've gotten this far, then all is good.
         return true;
+    }
+    
+    private boolean isPOSTorPUTRequest() {
+        String method = (String)this.requestContext.get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD);
+        // if HTTP_REQUEST_METHOD is not specified, assume it is a POST method
+        return (method == null || 
+                HTTPConstants.HEADER_POST.equalsIgnoreCase(method) || 
+                HTTPConstants.HEADER_PUT.equalsIgnoreCase(method));
     }
     
     private Message createRequestMessage(Object obj) throws WebServiceException {
