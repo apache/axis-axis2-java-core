@@ -45,11 +45,6 @@
       #include &lt;neethi_engine.h&gt;
 
 
-      axiom_node_t* AXIS2_CALL
-      axis2_deserialize_buffer (
-            const axutil_env_t * env,
-            char *buffer);
-
       /**
        * <xsl:value-of select="@name"/> C implementation
        */
@@ -150,7 +145,7 @@
            <xsl:if test="input/@policy">
            /* adding the input policies */
 
-           policy_node = axis2_deserialize_buffer(env, "<xsl:value-of select="input/@policy"/>");
+           policy_node = axiom_node_create_from_buffer(env, "<xsl:value-of select="input/@policy"/>");
            policy_root_ele = (axiom_element_t *) axiom_node_get_data_element (policy_node, env);
 
            neethi_policy = neethi_engine_get_policy (env, policy_node, policy_root_ele);
@@ -1177,51 +1172,6 @@
          }
         </xsl:if>
      </xsl:for-each>
-
-    axiom_node_t* AXIS2_CALL
-    axis2_deserialize_buffer (
-        const axutil_env_t * env,
-        char *buffer)
-    {
-        axiom_xml_reader_t *reader = NULL;
-        axiom_stax_builder_t *builder = NULL;
-        axiom_document_t *document = NULL;
-        axiom_node_t *payload = NULL;
-
-        reader = axiom_xml_reader_create_for_memory (env, buffer, axutil_strlen (buffer),
-            AXIS2_UTF_8, AXIS2_XML_PARSER_TYPE_BUFFER);
-
-        if (!reader)
-        {
-            return NULL;
-        }
-
-        builder = axiom_stax_builder_create (env, reader);
-
-        if (!builder)
-        {
-            return NULL;
-        }
-        document = axiom_stax_builder_get_document (builder, env);
-        if (!document)
-        {
-            AXIS2_LOG_ERROR (env->log, AXIS2_LOG_SI, "Document is null for deserialization");
-            return NULL;
-        }
-
-        payload = axiom_document_get_root_element (document, env);
-
-        if (!payload)
-        {
-            AXIS2_LOG_ERROR (env->log, AXIS2_LOG_SI, "Root element of the document is not found");
-            return NULL;
-        }
-        axiom_document_build_all (document, env);
-
-        axiom_stax_builder_free_self (builder, env);
-
-        return payload;
-    }
 
    </xsl:template>
 </xsl:stylesheet>
