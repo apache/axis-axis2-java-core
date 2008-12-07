@@ -358,7 +358,7 @@ public class Utils {
         // It carries with it a slight performance penalty that needs to be addressed.  Rather than make
         // *nix OSes carry this burden we'll engage the JarFileClassLoader for Windows or if the user 
         // specifically requests it.
-        boolean useJarFileClassLoader = false;
+        boolean useJarFileClassLoader;
         if (System.getProperty("org.apache.axis2.classloader.JarFileClassLoader") == null) {
             useJarFileClassLoader = System.getProperty("os.name").startsWith("Windows");
         } else {
@@ -585,11 +585,16 @@ public class Utils {
     }
 
     /**
-     * This method is to get the list of services there in a module if module want to add services
-     * then the way of doing that is 1. Add a directory called services inside the module (both in
-     * mar case and expanded case) 2. Then add a services.list file into that directory adding all
-     * the modules you want to add 3. Then put all the services into services directory in the
-     * module 4. All the class is module can be access via a the module services.
+     * Modules can contain services in some cases.  This method will deploy all the services
+     * for a given AxisModule into the current AxisConfiguration.
+     * <p>
+     * The code looks for an "aars/" directory inside the module (either .mar or exploded),
+     * and an "aars.list" file inside that to figure out which services to deploy.  Note that all
+     * services deployed this way will have access to the Module's classes.
+     * </p>
+     *
+     * @param module the AxisModule to search for services
+     * @param configCtx ConfigurationContext in which to deploy
      */
 
     public static void deployModuleServices(AxisModule module,
@@ -791,8 +796,10 @@ public class Utils {
     }
 
     /**
-     * Searches for jar files inside /lib dirctory. If there are any, the names of those jar files
-     * will be added to the array list
+     * Get names of all *.jar files inside the lib/ directory of a given jar URL
+     *
+     * @param url base URL of a JAR to search
+     * @return a List containing file names (Strings) of all files matching "[lL]ib/*.jar"
      */
     public static List findLibJars(URL url) {
         ArrayList embedded_jars = new ArrayList();
@@ -821,8 +828,10 @@ public class Utils {
     }
 
     /**
-     * To add the exclude method when generating schemas , here the exclude methods will be session
-     * releated axis2 methods
+     * Add the Axis2 lifecycle / session methods to a pre-existing list of names that will be
+     * excluded when generating schemas.
+     *
+     * @param excludeList an ArrayList containing method names - we'll add ours to this.
      */
     public static void addExcludeMethods(ArrayList excludeList) {
         excludeList.add("init");
@@ -953,11 +962,13 @@ public class Utils {
      * contains the wsdl:service name to mapp. If its not available then the default will be Simple
      * name of the class + "Service"
      *
+     * @param serviceClass the service Class
+     * @param serviceAnnotation a WebService annotation, or null
      * @return String version of the ServiceName according to the JSR 181 spec
      */
     public static String getAnnotatedServiceName(Class serviceClass, WebService serviceAnnotation) {
         String serviceName = "";
-        if (serviceAnnotation.serviceName() != null) {
+        if (serviceAnnotation != null && serviceAnnotation.serviceName() != null) {
             serviceName = serviceAnnotation.serviceName();
         }
         if (serviceName.equals("")) {

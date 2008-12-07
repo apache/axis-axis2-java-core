@@ -85,9 +85,9 @@ public class RPCMessageReceiver extends AbstractInOutMessageReceiver {
                 String methodName = op.getName().getLocalPart();
                 Method[] methods = ImplClass.getMethods();
 
-                for (int i = 0; i < methods.length; i++) {
-                    if (methods[i].getName().equals(methodName)) {
-                        method = methods[i];
+                for (Method method1 : methods) {
+                    if (method1.getName().equals(methodName)) {
+                        method = method1;
                         op.addParameter("myMethod", method);
                         break;
                     }

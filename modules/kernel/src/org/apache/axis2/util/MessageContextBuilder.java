@@ -345,8 +345,8 @@ public class MessageContextBuilder {
                 (List) processingContext.getProperty(SOAPConstants.HEADER_LOCAL_NAME);
         if (soapHeadersList != null) {
             SOAPHeader soapHeaderElement = envelope.getHeader();
-            for (int i = 0; i < soapHeadersList.size(); i++) {
-                OMElement soapHeaderBlock = (OMElement) soapHeadersList.get(i);
+            for (Object aSoapHeadersList : soapHeadersList) {
+                OMElement soapHeaderBlock = (OMElement)aSoapHeadersList;
                 soapHeaderElement.addChild(soapHeaderBlock);
             }
         }
@@ -519,11 +519,11 @@ public class MessageContextBuilder {
                 List faultSubCodes = axisFault.getFaultSubCodes();
                 
                 QName faultSubCodeQName;
-                
-                for (Iterator subCodeiter = faultSubCodes.iterator(); subCodeiter.hasNext(); ) {
-                    
-                    faultSubCodeQName = (QName) subCodeiter.next();
-                                        
+
+                for (Object faultSubCode : faultSubCodes) {
+
+                    faultSubCodeQName = (QName)faultSubCode;
+
                     SOAPFactory sf = (SOAPFactory)envelope.getOMFactory();
                     SOAPFaultSubCode soapFaultSubCode = sf.createSOAPFaultSubCode(fault.getCode());
                     SOAPFaultValue saopFaultValue = sf.createSOAPFaultValue(fault.getCode());
