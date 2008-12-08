@@ -233,6 +233,23 @@ public class TribesClusterManager implements ClusterManager {
             memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
                                    (String) isActiveParam.getValue());
         }
+
+        Parameter propsParam = getParameter("properties");
+        if(propsParam != null){
+            OMElement paramEle = propsParam.getParameterElement();
+            for(Iterator iter = paramEle.getChildrenWithLocalName("property"); iter.hasNext();){
+                OMElement propEle = (OMElement) iter.next();
+                OMAttribute nameAttrib = propEle.getAttribute(new QName("name"));
+                if(nameAttrib != null){
+                    OMAttribute valueAttrib = propEle.getAttribute(new QName("value"));
+                    if  (valueAttrib != null) {
+                        memberInfo.setProperty(nameAttrib.getAttributeValue(),
+                                               valueAttrib.getAttributeValue());
+                    }
+                }
+            }
+        }
+        
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
             memberInfo.store(bout, "");
@@ -370,7 +387,7 @@ public class TribesClusterManager implements ClusterManager {
     private void configureMembershipScheme(byte[] localDomain,
                                            List<MembershipManager> membershipManagers)
             throws ClusteringFault {
-        MembershipListener membershipListener = null;
+        MembershipListener membershipListener;
         Parameter parameter = getParameter(ClusteringConstants.Parameters.MEMBERSHIP_LISTENER);
         if (parameter != null) {
             OMElement paramEle = parameter.getParameterElement();
