@@ -83,7 +83,7 @@ public class InOnlyAxisOperation extends AxisOperation {
 
     public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault {
-        HashMap mep = opContext.getMessageContexts();
+        HashMap<String, MessageContext> mep = opContext.getMessageContexts();
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
         if (faultMessageCtxt != null) {
             throw new AxisFault(Messages.getMessage("mepcompleted"));

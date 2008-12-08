@@ -56,12 +56,12 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
 
     private PolicySubject policySubject = null;
 
-    private Map children;
+    private Map<Object, AxisDescription> children;
 
     protected Map<String, AxisModule> engagedModules;
 
     /** List of ParameterObservers who want to be notified of changes */
-    protected List parameterObservers = null;
+    protected List<ParameterObserver> parameterObservers = null;
 
     private OMFactory omFactory = OMAbstractFactory.getOMFactory();
 
@@ -73,13 +73,13 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
 
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();
-        children = new ConcurrentHashMap();
+        children = new ConcurrentHashMap<Object, AxisDescription>();
         policySubject = new PolicySubject();
     }
 
     public void addParameterObserver(ParameterObserver observer) {
         if (parameterObservers == null)
-            parameterObservers = new ArrayList();
+            parameterObservers = new ArrayList<ParameterObserver>();
         parameterObservers.add(observer);
     }
 
@@ -161,7 +161,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         return param != null && JavaUtils.isTrue(param.getValue());
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return parameterInclude.getParameters();
     }
 
@@ -255,7 +255,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         children.put(key, child);
     }
 
-    public Iterator getChildren() {
+    public Iterator<? extends AxisDescription> getChildren() {
         return children.values().iterator();
     }
 
@@ -316,19 +316,17 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
             engageModulesForPolicy(applicablePolicy, configuration);
         }
 
-        for (Iterator children = getChildren(); children.hasNext();) {
-            AxisDescription child = (AxisDescription)children.next();
+        for (Iterator<? extends AxisDescription> children = getChildren(); children.hasNext();) {
+            AxisDescription child = children.next();
             child.applyPolicy();
         }
     }
 
-    private boolean canSupportAssertion(Assertion assertion, List moduleList) {
+    private boolean canSupportAssertion(Assertion assertion, List<AxisModule> moduleList) {
 
-        AxisModule axisModule;
         Module module;
 
-        for (Object aModuleList : moduleList) {
-            axisModule = (AxisModule)aModuleList;
+        for (AxisModule axisModule : moduleList) {
             // FIXME is this step really needed ??
             // Shouldn't axisMoudle.getModule always return not-null value ??
             module = axisModule.getModule();
@@ -388,7 +386,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         engageModulesToAxisDescription(modulesToEngage, this);
     }
 
-    private void engageModulesToAxisDescription(List moduleList, AxisDescription description)
+    private void engageModulesToAxisDescription(List<AxisModule> moduleList, AxisDescription description)
             throws AxisFault {
 
         AxisModule axisModule;

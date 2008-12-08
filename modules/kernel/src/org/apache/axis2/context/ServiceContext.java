@@ -567,7 +567,7 @@ public class ServiceContext extends AbstractContext
     public void putContextProperties(ServiceContext context, boolean doParentProperties) {
         if (context != null) {
             // get the current properties on this context object
-            Map props = getProperties();
+            Map<String, Object> props = getProperties();
 
             // copy them to the specified context object
             context.mergeProperties(props);

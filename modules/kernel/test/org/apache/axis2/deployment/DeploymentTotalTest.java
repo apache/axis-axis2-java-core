@@ -31,6 +31,7 @@ import org.apache.axis2.registry.Handler3;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DeploymentTotalTest extends TestCase {
     AxisConfiguration axisConfig;
@@ -51,7 +52,7 @@ public class DeploymentTotalTest extends TestCase {
     }
 
     public void testDynamicPhase() {
-        ArrayList inFlow = axisConfig.getInFlowPhases();
+        List inFlow = axisConfig.getInFlowPhases();
         for (int i = 0; i < inFlow.size(); i++) {
             Phase phase = (Phase) inFlow.get(i);
             if (phase.getName().equals("NewPhase")) {
@@ -65,11 +66,11 @@ public class DeploymentTotalTest extends TestCase {
         inFlow = axisConfig.getInFaultFlowPhases();
         assertTrue("NewPhase wasn't found in InFaultFlow", isPhaseInFlow(inFlow, "NewPhase"));
 
-        ArrayList outFlow = axisConfig.getInFaultFlowPhases();
+        List outFlow = axisConfig.getInFaultFlowPhases();
         assertTrue("NewPhase wasn't found in OutFlow", isPhaseInFlow(outFlow, "NewPhase"));        
     }
 
-    private boolean isPhaseInFlow(ArrayList inFlow, String phaseName) {
+    private boolean isPhaseInFlow(List inFlow, String phaseName) {
         boolean found = false;
         for (Object anInFlow : inFlow) {
             Phase phase = (Phase)anInFlow;

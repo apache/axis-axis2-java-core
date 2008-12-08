@@ -52,7 +52,7 @@ public class AxisEndpoint extends AxisDescription {
     // The alias used for the endpoint
     private String alias;
 
-    private Map options;
+    private Map<String, Object> options;
 
     private String transportInDescName;
 
@@ -68,7 +68,7 @@ public class AxisEndpoint extends AxisDescription {
     }
 
     public AxisEndpoint() {
-        options = new HashMap();
+        options = new HashMap<String, Object>();
     }
 
     public void setProperty(String name, Object value) {

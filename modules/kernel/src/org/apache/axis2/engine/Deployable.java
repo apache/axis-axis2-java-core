@@ -30,8 +30,8 @@ import java.util.Set;
 public class Deployable {
     private String name;
     private String phase;
-    private Set successors;
-    private Set predecessors;
+    private Set<String> successors;
+    private Set<String> predecessors;
     
     boolean first;
     boolean last;
@@ -53,23 +53,23 @@ public class Deployable {
 
     public void addSuccessor(String name) {
         if (successors == null) {
-            successors = new HashSet();
+            successors = new HashSet<String>();
         }
         successors.add(name);
     }
 
     public void addPredecessor(String name) {
         if (predecessors == null) {
-            predecessors = new HashSet();
+            predecessors = new HashSet<String>();
         }
         predecessors.add(name);
     }
 
-    public Set getPredecessors() {
+    public Set<String> getPredecessors() {
         return predecessors;
     }
 
-    public Set getSuccessors() {
+    public Set<String> getSuccessors() {
         return successors;
     }
 

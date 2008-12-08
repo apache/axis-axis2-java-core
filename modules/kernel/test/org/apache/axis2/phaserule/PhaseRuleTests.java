@@ -19,7 +19,12 @@
 
 package org.apache.axis2.phaserule;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -31,10 +36,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseHolder;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Test various PhaseRule configurations
@@ -308,7 +309,7 @@ public class PhaseRuleTests extends TestCase {
 
     public void testPhaseRules() throws Exception {
         // TODO : What is this testing exactly?
-        ArrayList inPhase = new AxisConfiguration().getInFlowPhases();
+    	List inPhase = new AxisConfiguration().getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();

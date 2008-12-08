@@ -42,7 +42,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
 
     public static final String WSDL_PORT = "WSDL_PORT";
 
-    private ArrayList axisServices = null;
+    private ArrayList<AxisService> axisServices = null;
 
     /**
      * Class constructor.
@@ -51,17 +51,17 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
      */
     public WSDL11ToAllAxisServicesBuilder(InputStream in) {
         super(in);
-        axisServices = new ArrayList();   // create an empty ArrayList
+        axisServices = new ArrayList<AxisService>();   // create an empty ArrayList
     }
 
     public WSDL11ToAllAxisServicesBuilder(Definition def) {
         super(def, null, null);
-        axisServices = new ArrayList();   // create an empty ArrayList
+        axisServices = new ArrayList<AxisService>();   // create an empty ArrayList
     }
 
      public WSDL11ToAllAxisServicesBuilder(Definition def, String portName) {
         super(def, null, portName);
-        axisServices = new ArrayList();   // create an empty ArrayList
+        axisServices = new ArrayList<AxisService>();   // create an empty ArrayList
     }
 
 
@@ -75,7 +75,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
      *         The name of the AxisService is modified from the service name to the port name.
      * @throws AxisFault
      */
-    public List populateAllServices() throws AxisFault {
+    public List<AxisService> populateAllServices() throws AxisFault {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Entry: populateAllServices");

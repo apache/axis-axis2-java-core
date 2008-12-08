@@ -34,7 +34,7 @@ import java.util.ResourceBundle;
 public class AddressingMessages {
 
     //Only this changes from the original class
-    private static Class thisClass = AddressingMessages.class;
+    private static Class<AddressingMessages> thisClass = AddressingMessages.class;
 
     private static final String projectName = MessagesConstants.projectName;
 

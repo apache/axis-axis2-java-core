@@ -124,7 +124,7 @@ public class HandlerDescription implements ParameterInclude {
         }
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return parameterInclude.getParameters();
     }
 

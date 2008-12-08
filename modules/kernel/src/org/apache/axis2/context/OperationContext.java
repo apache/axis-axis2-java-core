@@ -120,7 +120,7 @@ public class OperationContext extends AbstractContext
     /**
      * the set of message contexts associated with this operation
      */
-    private transient HashMap messageContexts;
+    private transient HashMap<String, MessageContext> messageContexts;
 
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
@@ -186,7 +186,7 @@ public class OperationContext extends AbstractContext
      */
     public OperationContext() {
         super(null);
-        this.messageContexts = new HashMap();
+        this.messageContexts = new HashMap<String, MessageContext>();
     }
 
     /**
@@ -200,7 +200,7 @@ public class OperationContext extends AbstractContext
     public OperationContext(AxisOperation axisOperation,
                             ServiceContext serviceContext) {
         super(serviceContext);
-        this.messageContexts = new HashMap();
+        this.messageContexts = new HashMap<String, MessageContext>();
         this.axisOperation = axisOperation;
         this.setParent(serviceContext);
     }
@@ -298,7 +298,7 @@ public class OperationContext extends AbstractContext
     }
         
 
-    public HashMap getMessageContexts() {
+    public HashMap<String, MessageContext> getMessageContexts() {
         return messageContexts;
     }
 

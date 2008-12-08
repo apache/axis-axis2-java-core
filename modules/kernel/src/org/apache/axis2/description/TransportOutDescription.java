@@ -118,7 +118,7 @@ public class TransportOutDescription implements ParameterInclude {
         return paramInclude.getParameter(name);
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return paramInclude.getParameters();
     }
 

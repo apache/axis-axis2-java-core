@@ -19,6 +19,13 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -29,12 +36,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.neethi.Policy;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.neethi.PolicyComponent;
 
 /**
  * An AxisBinding represents a WSDL binding, and contains AxisBindingOperations.
@@ -45,9 +47,9 @@ public class AxisBinding extends AxisDescription {
 
     private String type;
 
-    private Map options;
+    private Map<String, Object> options;
 
-    private Map faults;
+    private Map<String, AxisBindingMessage> faults;
 
     public AxisBindingMessage getFault(String name) {
         return (AxisBindingMessage) faults.get(name);
@@ -58,8 +60,8 @@ public class AxisBinding extends AxisDescription {
     }
 
     public AxisBinding() {
-        options = new HashMap();
-        faults = new HashMap();
+        options = new HashMap<String, Object>();
+        faults = new HashMap<String, AxisBindingMessage>();
     }
 
 
@@ -208,7 +210,7 @@ public class AxisBinding extends AxisDescription {
 
         // Populate Binding faults
         if (faults != null) {
-            Iterator iterator = faults.values().iterator();
+            Iterator<AxisBindingMessage> iterator = faults.values().iterator();
             while (iterator.hasNext()) {
                 AxisBindingMessage axisBindingFault = (AxisBindingMessage)iterator.next();
                 OMElement omElement =
@@ -240,7 +242,7 @@ public class AxisBinding extends AxisDescription {
     }
     
     public Policy getEffectivePolicy() {
-        ArrayList policyList = new ArrayList();
+        ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
         policyList.addAll(getPolicyInclude().getAttachedPolicies());
      
         // AxisEndpoint
@@ -269,5 +271,9 @@ public class AxisBinding extends AxisDescription {
 
     public AxisEndpoint getAxisEndpoint() {
         return (AxisEndpoint)parent;
+    }
+    
+    public Iterator<AxisBindingOperation> getChildren(){
+    	return (Iterator<AxisBindingOperation>) super.getChildren();
     }
 }

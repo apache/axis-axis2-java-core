@@ -34,10 +34,10 @@ public class AxisServiceGroup extends AxisDescription {
     //to check whether user has put WWW dir or not
     private boolean foundWebResources;
     // to store module ref at deploy time parsing
-    private ArrayList modulesList = new ArrayList();
+    private ArrayList<String> modulesList = new ArrayList<String>();
 
     // to store modeule configuration info
-    private HashMap moduleConfigmap;
+    private HashMap<String, ModuleConfiguration> moduleConfigmap;
 
     // class loader
     private ClassLoader serviceGroupClassLoader;
@@ -46,7 +46,7 @@ public class AxisServiceGroup extends AxisDescription {
     private String serviceGroupName;
 
     public AxisServiceGroup() {
-        moduleConfigmap = new HashMap();
+        moduleConfigmap = new HashMap<String, ModuleConfiguration>();
     }
 
     public AxisServiceGroup(AxisConfiguration axisDescription) {
@@ -61,7 +61,7 @@ public class AxisServiceGroup extends AxisDescription {
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         if (moduleConfigmap == null) {
-            moduleConfigmap = new HashMap();
+            moduleConfigmap = new HashMap<String, ModuleConfiguration>();
         }
 
         moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
@@ -86,7 +86,7 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = getAxisConfiguration();
 
         if (axisConfig != null) {
-            for (Iterator iterator = getEngagedModules().iterator(); iterator.hasNext();) {
+            for (Iterator<AxisModule> iterator = getEngagedModules().iterator(); iterator.hasNext();) {
                 Object o = iterator.next();
                 AxisModule axisModule;
                 if (o instanceof AxisModule) {
@@ -129,14 +129,14 @@ public class AxisServiceGroup extends AxisDescription {
      * @throws AxisFault if there is a problem
      */
     protected void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
-        for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
+        for (Iterator<AxisService> serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
             axisService.engageModule(module, engager);
         }
     }
 
     public void onDisengage(AxisModule module) throws AxisFault {
-        for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
+        for (Iterator<AxisService> serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
             axisService.disengageModule(module);
         }
@@ -156,7 +156,7 @@ public class AxisServiceGroup extends AxisDescription {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
-    public ArrayList getModuleRefs() {
+    public ArrayList<String> getModuleRefs() {
         return modulesList;
     }
 
@@ -175,8 +175,8 @@ public class AxisServiceGroup extends AxisDescription {
         return serviceGroupName;
     }
 
-    public Iterator getServices() {
-        return getChildren();
+    public Iterator<AxisService> getServices() {
+        return (Iterator<AxisService>)getChildren();
     }
 
     public void setAxisDescription(AxisConfiguration axisDescription) {

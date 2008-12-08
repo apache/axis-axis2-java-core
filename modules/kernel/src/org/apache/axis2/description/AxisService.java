@@ -93,14 +93,14 @@ public class AxisService extends AxisDescription {
 	public static final String INCLUDE_TAG = "include";
 	public static final String SCHEMA_LOCATION = "schemaLocation";
 
-	private Map endpointMap = new HashMap();
+	private Map<String, AxisEndpoint> endpointMap = new HashMap<String, AxisEndpoint>();
 
 	/*
 	 * This is a map between the QName of the element of a message specified in
 	 * the WSDL and an Operation. It enables SOAP Body-based dispatching for
 	 * doc-literal bindings.
 	 */
-	private Map messageElementQNameToOperationMap = new HashMap();
+	private Map<QName, AxisOperation> messageElementQNameToOperationMap = new HashMap<QName, AxisOperation>();
 
 	private int nsCount = 0;
 	private static final Log log = LogFactory.getLog(AxisService.class);
@@ -108,7 +108,7 @@ public class AxisService extends AxisDescription {
 
 	// Maps httpLocations to corresponding operations. Used to dispatch rest
 	// messages.
-	private HashMap httpLocationDispatcherMap = null;
+	private HashMap<String, AxisOperation> httpLocationDispatcherMap = null;
 
 	// A map of (String alias, AxisOperation operation). The aliases might
 	// include: SOAPAction,
@@ -125,25 +125,25 @@ public class AxisService extends AxisDescription {
 	// "foo" is not unique across different operations:
 	// operation 1: action = foo, name = bar
 	// operation 2: action = bar, name = foo
-	private HashMap operationsAliasesMap = null;
+	private HashMap<String, AxisOperation> operationsAliasesMap = null;
 
 	// Collection of aliases that are invalid for this service because they are
 	// duplicated across
 	// multiple operations under this service.
-	private List invalidOperationsAliases = null;
+	private List<String> invalidOperationsAliases = null;
 	// private HashMap operations = new HashMap();
 
 	// to store module ref at deploy time parsing
-	private ArrayList moduleRefs = null;
+	private ArrayList<String> moduleRefs = null;
 
 	// to keep the time that last update time of the service
 	private long lastupdate;
-	private HashMap moduleConfigmap;
+	private HashMap<String, ModuleConfiguration> moduleConfigmap;
 	private String name;
 	private ClassLoader serviceClassLoader;
 
 	// to keep the XMLScheam getting either from WSDL or java2wsdl
-	private ArrayList schemaList;
+	private ArrayList<XmlSchema> schemaList;
 	// private XmlSchema schema;
 
 	// wsdl is there for this service or not (in side META-INF)
@@ -153,7 +153,7 @@ public class AxisService extends AxisDescription {
 	private String scope;
 
 	// to store default message receivers
-	private HashMap messageReceivers;
+	private HashMap<String, MessageReceiver> messageReceivers;
 
 	// to set the handler chain available in phase info
 	private boolean useDefaultChains = true;
@@ -173,7 +173,7 @@ public class AxisService extends AxisDescription {
 	private String schematargetNamespacePrefix = Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 
 	private boolean enableAllTransports = true;
-	private List exposedTransports = new ArrayList();
+	private List<String> exposedTransports = new ArrayList<String>();
 
 	// To keep reference to ServiceLifeCycle instance , if the user has
 	// specified in services.xml
@@ -238,7 +238,7 @@ public class AxisService extends AxisDescription {
 
 	// Data Locators for WS-Mex Support
 	private HashMap dataLocators;
-	private HashMap dataLocatorClassNames;
+	private HashMap<String, String> dataLocatorClassNames;
 	private AxisDataLocatorImpl defaultDataLocator;
 	// Define search sequence for datalocator based on Data Locator types.
 	LocatorType[] availableDataLocatorTypes = new LocatorType[] {
@@ -330,8 +330,8 @@ public class AxisService extends AxisDescription {
 		moduleRefs = new ArrayList();
 		schemaList = new ArrayList();
 		serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
-				.doPrivileged(new PrivilegedAction() {
-					public Object run() {
+				.doPrivileged(new PrivilegedAction<ClassLoader>() {
+					public ClassLoader run() {
 						return Thread.currentThread().getContextClassLoader();
 					}
 				});
@@ -531,14 +531,14 @@ public class AxisService extends AxisDescription {
 	 *             if a problem occurs
 	 */
 	void addModuleOperations(AxisModule module) throws AxisFault {
-		HashMap map = module.getOperations();
-		Collection col = map.values();
+		HashMap<QName, AxisOperation> map = module.getOperations();
+		Collection<AxisOperation> col = map.values();
 		PhaseResolver phaseResolver = new PhaseResolver(getAxisConfiguration());
-		for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+		for (Iterator<AxisOperation> iterator = col.iterator(); iterator.hasNext();) {
 			AxisOperation axisOperation = copyOperation((AxisOperation) iterator
 					.next());
 			if (this.getOperation(axisOperation.getName()) == null) {
-				ArrayList wsamappings = axisOperation.getWSAMappingList();
+				ArrayList<String> wsamappings = axisOperation.getWSAMappingList();
 				if (wsamappings != null) {
 					for (int j = 0, size = wsamappings.size(); j < size; j++) {
 						String mapping = (String) wsamappings.get(j);
@@ -645,7 +645,7 @@ public class AxisService extends AxisDescription {
 			mapActionToOperation(action, axisOperation);
 		}
 
-		ArrayList wsamappings = axisOperation.getWSAMappingList();
+		ArrayList<String> wsamappings = axisOperation.getWSAMappingList();
 		if (wsamappings != null) {
 			for (int j = 0, size = wsamappings.size(); j < size; j++) {
 				String mapping = (String) wsamappings.get(j);
@@ -693,7 +693,7 @@ public class AxisService extends AxisDescription {
 		operation.setMessageReceiver(axisOperation.getMessageReceiver());
 		operation.setName(axisOperation.getName());
 
-		Iterator parameters = axisOperation.getParameters().iterator();
+		Iterator<Parameter> parameters = axisOperation.getParameters().iterator();
 
 		while (parameters.hasNext()) {
 			Parameter parameter = (Parameter) parameters.next();
@@ -747,7 +747,7 @@ public class AxisService extends AxisDescription {
 		// adding module operations
 		addModuleOperations(axisModule);
 
-		Iterator operations = getOperations();
+		Iterator<AxisOperation> operations = getOperations();
 		while (operations.hasNext()) {
 			AxisOperation axisOperation = (AxisOperation) operations.next();
 			axisOperation.engageModule(axisModule, engager);
@@ -941,9 +941,9 @@ public class AxisService extends AxisDescription {
 		if (axisConfig == null) {
 			return null;
 		}
-		ArrayList eprList = new ArrayList();
+		ArrayList<String> eprList = new ArrayList<String>();
 		if (enableAllTransports) {
-			for (Iterator transports = axisConfig.getTransportsIn().values()
+			for (Iterator<TransportInDescription> transports = axisConfig.getTransportsIn().values()
 					.iterator(); transports.hasNext();) {
 				TransportInDescription transportIn = (TransportInDescription) transports
 						.next();
@@ -970,7 +970,7 @@ public class AxisService extends AxisDescription {
 				}
 			}
 		} else {
-			List trs = this.exposedTransports;
+			List<String> trs = this.exposedTransports;
 			for (int i = 0; i < trs.size(); i++) {
 				String trsName = (String) trs.get(i);
 				TransportInDescription transportIn = axisConfig
@@ -1227,7 +1227,7 @@ public class AxisService extends AxisDescription {
 		// call the populator
 		populateSchemaMappings();
 		Map schemaMappingtable = getSchemaMappingTable();
-		ArrayList schemas = getSchema();
+		ArrayList<XmlSchema> schemas = getSchema();
 
 		// a name is present - try to pump the requested schema
 		if (!"".equals(xsd)) {
@@ -1264,7 +1264,7 @@ public class AxisService extends AxisDescription {
 		} else {
 			// user specified no name and there is only one schema
 			// so pump that out
-			ArrayList list = getSchema();
+			ArrayList<XmlSchema> list = getSchema();
 			if (list.size() > 0) {
 				XmlSchema schema = getSchema(0);
 				if (schema != null) {
@@ -1592,9 +1592,9 @@ public class AxisService extends AxisDescription {
 	/**
 	 * Gets the control operation which are added by module like RM.
 	 */
-	public ArrayList getControlOperations() {
-		Iterator op_itr = getOperations();
-		ArrayList operationList = new ArrayList();
+	public ArrayList<AxisOperation> getControlOperations() {
+		Iterator<AxisOperation> op_itr = getOperations();
+		ArrayList<AxisOperation> operationList = new ArrayList<AxisOperation>();
 
 		while (op_itr.hasNext()) {
 			AxisOperation operation = (AxisOperation) op_itr.next();
@@ -1627,7 +1627,7 @@ public class AxisService extends AxisDescription {
 		return (ModuleConfiguration) moduleConfigmap.get(moduleName);
 	}
 
-	public ArrayList getModules() {
+	public ArrayList<String> getModules() {
 		return moduleRefs;
 	}
 
@@ -1786,7 +1786,7 @@ public class AxisService extends AxisDescription {
 	 * @return Returns HashMap
 	 */
 	public Iterator<AxisOperation> getOperations() {
-		return getChildren();
+		return (Iterator<AxisOperation>) getChildren();
 	}
 
 	/*
@@ -1798,9 +1798,9 @@ public class AxisService extends AxisDescription {
 	/**
 	 * Gets only the published operations.
 	 */
-	public ArrayList getPublishedOperations() {
-		Iterator op_itr = getOperations();
-		ArrayList operationList = new ArrayList();
+	public ArrayList<AxisOperation> getPublishedOperations() {
+		Iterator<AxisOperation> op_itr = getOperations();
+		ArrayList<AxisOperation> operationList = new ArrayList<AxisOperation>();
 
 		while (op_itr.hasNext()) {
 			AxisOperation operation = (AxisOperation) op_itr.next();
@@ -1855,7 +1855,7 @@ public class AxisService extends AxisDescription {
 		this.name = name;
 	}
 
-	public ArrayList getSchema() {
+	public ArrayList<XmlSchema> getSchema() {
 		return schemaList;
 	}
 
@@ -1868,8 +1868,8 @@ public class AxisService extends AxisDescription {
 		}
 	}
 
-	public void addSchema(Collection schemas) {
-		Iterator iterator = schemas.iterator();
+	public void addSchema(Collection<XmlSchema> schemas) {
+		Iterator<XmlSchema> iterator = schemas.iterator();
 		while (iterator.hasNext()) {
 			XmlSchema schema = (XmlSchema) iterator.next();
 			schemaList.add(schema);
@@ -2002,7 +2002,7 @@ public class AxisService extends AxisDescription {
 		eprs = calculateEPRs();
 	}
 
-	public List getExposedTransports() {
+	public List<String> getExposedTransports() {
 		return this.exposedTransports;
 	}
 
@@ -2059,9 +2059,9 @@ public class AxisService extends AxisDescription {
 	 *            the module in question
 	 */
 	private void removeModuleOperations(AxisModule module) {
-		HashMap moduleOperations = module.getOperations();
+		HashMap<QName, AxisOperation> moduleOperations = module.getOperations();
 		if (moduleOperations != null) {
-			for (Iterator modOpsIter = moduleOperations.values().iterator(); modOpsIter
+			for (Iterator<AxisOperation> modOpsIter = moduleOperations.values().iterator(); modOpsIter
 					.hasNext();) {
 				AxisOperation operation = (AxisOperation) modOpsIter.next();
 				removeOperation(operation.getName());
@@ -2182,7 +2182,7 @@ public class AxisService extends AxisDescription {
 			AxisConfiguration axisConfig) throws AxisFault {
 
 		try {
-			HashMap messageReciverMap = new HashMap();
+			HashMap<String, MessageReceiver> messageReciverMap = new HashMap<String, MessageReceiver>();
 			Class inOnlyMessageReceiver = Loader
 					.loadClass("org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
 			MessageReceiver messageReceiver = (MessageReceiver) inOnlyMessageReceiver
@@ -2281,7 +2281,7 @@ public class AxisService extends AxisDescription {
 	 */
 	public static AxisService createService(String implClass,
 			String serviceName, AxisConfiguration axisConfiguration,
-			Map messageReceiverClassMap, String targetNamespace,
+			Map<String, MessageReceiver> messageReceiverClassMap, String targetNamespace,
 			ClassLoader loader, SchemaGenerator schemaGenerator,
 			AxisService axisService) throws AxisFault {
 		Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
@@ -2369,7 +2369,7 @@ public class AxisService extends AxisDescription {
 		AxisOperation operation = getOperation(opName);
 		if (operation != null) {
 			removeChild(opName);
-			ArrayList mappingList = operation.getWSAMappingList();
+			ArrayList<String> mappingList = operation.getWSAMappingList();
 			if (mappingList != null) {
 				for (int i = 0; i < mappingList.size(); i++) {
 					String actionMapping = (String) mappingList.get(i);
@@ -2386,7 +2386,7 @@ public class AxisService extends AxisDescription {
 	 * @return a Map of prefix (String) to namespace URI (String)
 	 * @deprecated please use getNamespaceMap()
 	 */
-	public Map getNameSpacesMap() {
+	public Map<String, String> getNameSpacesMap() {
 		return namespaceMap;
 	}
 
@@ -3001,7 +3001,7 @@ public class AxisService extends AxisDescription {
 	}
 
 	// TODO : Explain what goes in this map!
-	public Map getEndpoints() {
+	public Map<String, AxisEndpoint> getEndpoints() {
 		return endpointMap;
 	}
 

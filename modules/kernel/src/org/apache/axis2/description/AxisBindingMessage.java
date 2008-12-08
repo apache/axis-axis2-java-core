@@ -42,7 +42,7 @@ public class AxisBindingMessage extends AxisDescription {
 
 	private String direction;
 
-	private Map options;
+	private Map<String, Object> options;
 
 	private AxisMessage axisMessage;
 
@@ -86,7 +86,7 @@ public class AxisBindingMessage extends AxisDescription {
 	}
 
 	public AxisBindingMessage() {
-		options = new HashMap();
+		options = new HashMap<String, Object>();
 	}
 
 	public void setProperty(String name, Object value) {
@@ -137,7 +137,7 @@ public class AxisBindingMessage extends AxisDescription {
 	 * @return The generated bindingMessage element
 	 */
 	public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
-			OMNamespace wsoap, OMNamespace whttp, Map nameSpaceMap) {
+			OMNamespace wsoap, OMNamespace whttp, Map<String, String> nameSpaceMap) {
 		String property;
 		ArrayList list;
 		OMFactory omFactory = OMAbstractFactory.getOMFactory();

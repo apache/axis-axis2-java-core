@@ -19,6 +19,14 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.OperationClient;
@@ -35,13 +43,6 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
@@ -63,18 +64,18 @@ public abstract class AxisOperation extends AxisDescription
 
     private MessageReceiver messageReceiver;
 
-    private HashMap moduleConfigmap;
+    private HashMap<String, ModuleConfiguration> moduleConfigmap;
 
     // To store deploy-time module refs
-    private ArrayList modulerefs;
+    private ArrayList<String> modulerefs;
 
-    private ArrayList faultMessages;
+    private ArrayList<AxisMessage> faultMessages;
 
     private QName name;
 
-    private ArrayList wsamappingList;
+    private ArrayList<String> wsamappingList;
     private String outputAction;
-    private LinkedHashMap faultActions = new LinkedHashMap();
+    private LinkedHashMap<String, String> faultActions = new LinkedHashMap<String, String>();
 
     private String soapAction;
 
@@ -82,9 +83,9 @@ public abstract class AxisOperation extends AxisDescription
     /** Default constructor */
     public AxisOperation() {
         mepURI = WSDL2Constants.MEP_URI_IN_OUT;
-        modulerefs = new ArrayList();
-        moduleConfigmap = new HashMap();
-        faultMessages = new ArrayList();
+        modulerefs = new ArrayList<String>();
+        moduleConfigmap = new HashMap<String, ModuleConfiguration>();
+        faultMessages = new ArrayList<AxisMessage>();
         //setup a temporary name
         QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
@@ -164,9 +165,9 @@ public abstract class AxisOperation extends AxisDescription
         phaseResolver.disengageModuleFromOperationChain(module, this);
 
         //removing operations added at the time of module engagemnt
-        HashMap moduleOperations = module.getOperations();
+        HashMap<QName, AxisOperation> moduleOperations = module.getOperations();
         if (moduleOperations != null) {
-            Iterator moduleOperations_itr = moduleOperations.values().iterator();
+            Iterator<AxisOperation> moduleOperations_itr = moduleOperations.values().iterator();
             while (moduleOperations_itr.hasNext()) {
                 AxisOperation operation = (AxisOperation)moduleOperations_itr.next();
                 service.removeOperation(operation.getName());
@@ -360,7 +361,7 @@ public abstract class AxisOperation extends AxisDescription
         return (ModuleConfiguration)moduleConfigmap.get(moduleName);
     }
 
-    public ArrayList getModuleRefs() {
+    public ArrayList<String> getModuleRefs() {
         return modulerefs;
     }
 
@@ -380,7 +381,7 @@ public abstract class AxisOperation extends AxisDescription
         return style;
     }
 
-    public ArrayList getWSAMappingList() {
+    public ArrayList<String> getWSAMappingList() {
         return wsamappingList;
     }
 
@@ -437,7 +438,7 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    public void setWsamappingList(ArrayList wsamappingList) {
+    public void setWsamappingList(ArrayList<String> wsamappingList) {
         this.wsamappingList = wsamappingList;
     }
 
@@ -454,7 +455,7 @@ public abstract class AxisOperation extends AxisDescription
         return this.name;
     }
 
-    public ArrayList getFaultMessages() {
+    public ArrayList<AxisMessage> getFaultMessages() {
         return faultMessages;
     }
 
@@ -512,7 +513,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String[] getFaultActionNames() {
-        Set keys = faultActions.keySet();
+        Set<String> keys = faultActions.keySet();
         String[] faultActionNames = new String[keys.size()];
         faultActionNames = (String[])keys.toArray(faultActionNames);
         return faultActionNames;
@@ -520,7 +521,7 @@ public abstract class AxisOperation extends AxisDescription
 
     public String getFaultAction() {
         String result = null;
-        Iterator iter = faultActions.values().iterator();
+        Iterator<String> iter = faultActions.values().iterator();
         if (iter.hasNext()) {
             result = (String)iter.next();
         }
@@ -532,8 +533,8 @@ public abstract class AxisOperation extends AxisDescription
      *
      * @return an Iterator of all the AxisMessages we deal with
      */
-    public Iterator getMessages() {
-        return getChildren();
+    public Iterator<AxisMessage> getMessages() {
+        return (Iterator<AxisMessage>)getChildren();
     }
 
     /**

@@ -19,6 +19,8 @@
 
 package org.apache.axis2.phaserule;
 
+import java.util.List;
+
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
@@ -27,8 +29,6 @@ import org.apache.axis2.engine.DispatchPhase;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
-
-import java.util.ArrayList;
 
 public class PreDispatchPhaseRuleTest extends AbstractTestCase {
 
@@ -43,7 +43,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         //TODO Fix me
         phaserul = new PreDispatchPhaseRuleTest("");
         axisSytem = new AxisConfiguration();
-        ArrayList inPhase = axisSytem.getInFlowPhases();
+        List inPhase = axisSytem.getInFlowPhases();
         Phase transportIN = new Phase("TransportIn");
         Phase preDispatch = new Phase("PreDispatch");
         DispatchPhase dispatchPhase = new DispatchPhase();

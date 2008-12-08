@@ -113,7 +113,7 @@ public class DependencyManager {
      */
     public static void initService(ServiceGroupContext serviceGroupContext) throws AxisFault {
         AxisServiceGroup serviceGroup = serviceGroupContext.getDescription();
-        Iterator serviceItr = serviceGroup.getServices();
+        Iterator<AxisService> serviceItr = serviceGroup.getServices();
         while (serviceItr.hasNext()) {
             AxisService axisService = (AxisService) serviceItr.next();
             ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);

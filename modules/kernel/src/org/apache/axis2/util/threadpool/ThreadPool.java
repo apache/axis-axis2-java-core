@@ -137,8 +137,8 @@ public class ThreadPool implements ThreadFactory {
             Thread returnThread = null;
             try {
                 returnThread = (Thread)
-                        AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() {
+                        AccessController.doPrivileged(new PrivilegedExceptionAction<Thread>() {
+                            public Thread run() {
                                 Thread newThread =
                                         new Thread(runnable, name);
                                 newThread.setDaemon(daemon);

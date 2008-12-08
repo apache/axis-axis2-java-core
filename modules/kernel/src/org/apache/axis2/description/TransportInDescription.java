@@ -20,13 +20,13 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportListener;
-
-import java.util.ArrayList;
 
 /**
  * Represents an incoming transport deployed in Axis2.
@@ -118,7 +118,7 @@ public class TransportInDescription implements ParameterInclude {
         return paramInclude.getParameter(name);
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return paramInclude.getParameters();
     }
 

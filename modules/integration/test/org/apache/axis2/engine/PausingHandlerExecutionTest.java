@@ -19,8 +19,21 @@
 
 package org.apache.axis2.engine;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -38,18 +51,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 public class PausingHandlerExecutionTest extends UtilServerBasedTestCase implements TestConstants {
     private static boolean initDone = false;
@@ -79,7 +80,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
         if (!initDone) {
             initDone = true;
-            ArrayList globalInPhases =
+            List globalInPhases =
                     UtilServer.getConfigurationContext().getAxisConfiguration().getInFlowPhases();
             for (int i = 0; i < globalInPhases.size(); i++) {
                 Phase globalInPhase = (Phase)globalInPhases.get(i);

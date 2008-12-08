@@ -31,13 +31,13 @@ public class Flow {
     /**
      * Field list
      */
-    protected final List list;
+    protected final List<HandlerDescription> list;
 
     /**
      * Constructor FlowImpl
      */
     public Flow() {
-        list = new ArrayList();
+        list = new ArrayList<HandlerDescription>();
     }
 
     /**

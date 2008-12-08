@@ -19,6 +19,16 @@
 
 package org.apache.axis2.context.externalize;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -31,14 +41,6 @@ import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
 
 
 /**
@@ -387,7 +389,7 @@ public class ActivateUtils {
      *                   (could be a derived class)
      * @return the Handler object that matches the criteria
      */
-    public static Object findHandler(ArrayList existingHandlers, MetaDataEntry metaDataEntry) //String handlerClassName)
+    public static Object findHandler(List<Handler> existingHandlers, MetaDataEntry metaDataEntry) //String handlerClassName)
     {
 
         String title = "ObjectStateUtils:findHandler(): ";

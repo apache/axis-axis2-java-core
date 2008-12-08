@@ -19,7 +19,13 @@
 
 package org.apache.axis2.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -29,9 +35,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Phase;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
 
 public class ModuleDisengagementTest extends TestCase {
     AxisConfiguration config;
@@ -61,7 +64,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
@@ -88,7 +91,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
@@ -125,7 +128,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
@@ -152,7 +155,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         predisptah = (Phase) globalinflow.get(3);
         assertNotNull(predisptah);
@@ -179,7 +182,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);
@@ -206,7 +209,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertNotNull(module);
         Phase phase;
         Phase userPhase;
-        ArrayList globalinflow = config.getInFlowPhases();
+        List globalinflow = config.getInFlowPhases();
         assertNotNull(globalinflow);
         phase = (Phase) globalinflow.get(3);
         assertNotNull(phase);

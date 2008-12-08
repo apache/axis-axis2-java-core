@@ -19,8 +19,15 @@
 
 package org.apache.axis2.engine;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
@@ -43,11 +50,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.wsdl.WSDLConstants;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.util.ArrayList;
-
 public class FaultHandlingTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected String testResourceDir = "test-resources";
@@ -58,7 +60,7 @@ public class FaultHandlingTest extends UtilServerBasedTestCase implements TestCo
 
     protected void setUp() throws Exception {
         ConfigurationContext configurationContext = UtilServer.getConfigurationContext();
-        ArrayList inPhasesUptoAndIncludingPostDispatch =
+        List inPhasesUptoAndIncludingPostDispatch =
                 configurationContext.getAxisConfiguration().getInFlowPhases();
         Phase phaseOne = (Phase)inPhasesUptoAndIncludingPostDispatch.get(0);
         phaseOne.addHandler(new FaultHandler());

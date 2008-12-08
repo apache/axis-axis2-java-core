@@ -79,7 +79,7 @@ public class ServiceGroupContext extends AbstractContext
 
     private transient AxisServiceGroup axisServiceGroup;
     private String id;
-    private Map serviceContextMap;
+    private Map<String, ServiceContext> serviceContextMap;
 
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
@@ -105,14 +105,14 @@ public class ServiceGroupContext extends AbstractContext
     // simple constructor
     public ServiceGroupContext() {
         super(null);
-        serviceContextMap = new HashMap();
+        serviceContextMap = new HashMap<String, ServiceContext>();
     }
 
 
     public ServiceGroupContext(ConfigurationContext parent, AxisServiceGroup axisServiceGroup) {
         super(parent);
         this.axisServiceGroup = axisServiceGroup;
-        serviceContextMap = new HashMap();
+        serviceContextMap = new HashMap<String, ServiceContext>();
         // initially set the id to the axisServiceGroup
         if (axisServiceGroup != null) {
             setId(axisServiceGroup.getServiceGroupName());
@@ -145,7 +145,7 @@ public class ServiceGroupContext extends AbstractContext
                                                     axisServiceGroup.getServiceGroupName()));
         }
         if (serviceContextMap == null) {
-            serviceContextMap = new HashMap();
+            serviceContextMap = new HashMap<String, ServiceContext>();
         }
         ServiceContext serviceContext = (ServiceContext) serviceContextMap.get(service.getName());
         if (serviceContext == null) {
@@ -156,9 +156,9 @@ public class ServiceGroupContext extends AbstractContext
         return serviceContext;
     }
 
-    public Iterator getServiceContexts() {
+    public Iterator<ServiceContext> getServiceContexts() {
         if (serviceContextMap == null) {
-            serviceContextMap = new HashMap();
+            serviceContextMap = new HashMap<String, ServiceContext>();
         }
         if (serviceContextMap.isEmpty()) {
             return null;
@@ -189,7 +189,7 @@ public class ServiceGroupContext extends AbstractContext
         }
 
         if (serviceContextMap == null) {
-            serviceContextMap = new HashMap();
+            serviceContextMap = new HashMap<String, ServiceContext>();
         }
 
         serviceContextMap.put(axisService.getName(), srvctx);
@@ -247,7 +247,7 @@ public class ServiceGroupContext extends AbstractContext
     public void putContextProperties(ServiceGroupContext context) {
         if (context != null) {
             // get the current properties on this context object
-            Map props = getProperties();
+            Map<String, Object> props = getProperties();
 
             // copy them to the specified context object
             context.mergeProperties(props);
@@ -401,7 +401,7 @@ public class ServiceGroupContext extends AbstractContext
         //---------------------------------------------------------
         // other
         //---------------------------------------------------------
-        serviceContextMap = new HashMap();
+        serviceContextMap = new HashMap<String, ServiceContext>();
 
         //---------------------------------------------------------
         // done

@@ -37,7 +37,7 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
     protected static final Log log =
             LogFactory.getLog(WSDL20ToAllAxisServicesBuilder.class);
 
-    private ArrayList axisServices = null;
+    private ArrayList<AxisService> axisServices = null;
 
     /**
      * Class constructor.
@@ -46,12 +46,12 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
      */
     public WSDL20ToAllAxisServicesBuilder(InputStream in) {
         super(in, null, null);
-        axisServices = new ArrayList();   // create an empty ArrayList
+        axisServices = new ArrayList<AxisService>();   // create an empty ArrayList
     }
 
     public WSDL20ToAllAxisServicesBuilder(String wsdlUri, String endpointName) throws WSDLException {
         super(wsdlUri, null, endpointName);
-        axisServices = new ArrayList();   // create an empty ArrayList
+        axisServices = new ArrayList<AxisService>();   // create an empty ArrayList
     }
 
     /**
@@ -68,7 +68,7 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
      *         pair.  The format of the name is "<wsdl service name>#<wsdl endpoint name>"
      * @throws AxisFault
      */
-    public List populateAllServices() throws AxisFault {
+    public List<AxisService> populateAllServices() throws AxisFault {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Entry: populateAllServices");

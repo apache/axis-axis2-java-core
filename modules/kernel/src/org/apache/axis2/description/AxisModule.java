@@ -66,7 +66,7 @@ public class AxisModule implements ParameterInclude {
     private String version;
 
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
-    private HashMap operations = new HashMap();
+    private HashMap<QName, AxisOperation> operations = new HashMap<QName, AxisOperation>();
     private AxisConfiguration parent;
 
     /*
@@ -164,7 +164,7 @@ public class AxisModule implements ParameterInclude {
         return name;
     }
 
-    public HashMap getOperations() {
+    public HashMap<QName, AxisOperation> getOperations() {
         return operations;
     }
 
@@ -182,7 +182,7 @@ public class AxisModule implements ParameterInclude {
         return parameters.getParameter(name);
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return parameters.getParameters();
     }
 

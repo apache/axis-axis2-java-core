@@ -35,7 +35,7 @@ public class PolicySubject {
 	private boolean updated = false;
 	private Date lastUpdatedTime = new Date();
 	
-	private HashMap attachedPolicyComponents = new HashMap();
+	private HashMap<String, PolicyComponent> attachedPolicyComponents = new HashMap<String, PolicyComponent>();
 
 	public void attachPolicy(Policy policy) {
 		String key = policy.getName();
@@ -54,8 +54,8 @@ public class PolicySubject {
 		setLastUpdatedTime(new Date()); 
 	}
 
-	public void attachPolicyComponents(List policyComponents) {
-		for (Iterator iterator = policyComponents.iterator(); iterator
+	public void attachPolicyComponents(List<PolicyComponent> policyComponents) {
+		for (Iterator<PolicyComponent> iterator = policyComponents.iterator(); iterator
 				.hasNext();) {
 			attachPolicyComponent((PolicyComponent) iterator.next());
 		}
@@ -88,7 +88,7 @@ public class PolicySubject {
 
 	}
 
-	public Collection getAttachedPolicyComponents() {
+	public Collection<PolicyComponent> getAttachedPolicyComponents() {
 		return attachedPolicyComponents.values();
 	}
 

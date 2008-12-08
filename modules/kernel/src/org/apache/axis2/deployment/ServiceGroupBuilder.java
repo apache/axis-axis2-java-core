@@ -47,7 +47,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
         this.axisConfig = this.configCtx.getAxisConfiguration();
     }
 
-    public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup)
+    public ArrayList<AxisService> populateServiceGroup(AxisServiceGroup axisServiceGroup)
             throws DeploymentException {
         ArrayList serviceList = new ArrayList();
 

@@ -265,7 +265,7 @@ public class ConfigurationContextFactory {
                 } else {
                     fileName = axisModule.getName();
                 }
-                configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule));
+                configuration.getFaultyModules().put(fileName, faultyModule.get(axisModule).toString());
                 //removing from original list
                 configuration.removeModule(axisModule.getName(), axisModule.getName());
             }

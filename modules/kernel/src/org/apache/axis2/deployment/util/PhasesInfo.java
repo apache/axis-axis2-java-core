@@ -20,6 +20,12 @@
 
 package org.apache.axis2.deployment.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
@@ -32,21 +38,17 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 public class PhasesInfo {
-    private ArrayList INPhases;
-    private ArrayList IN_FaultPhases;
-    private ArrayList OUTPhases;
-    private ArrayList OUT_FaultPhases;
+    private List<Phase> INPhases;
+    private List<Phase> IN_FaultPhases;
+    private List<Phase> OUTPhases;
+    private List<Phase> OUT_FaultPhases;
 
     public PhasesInfo() {
-        INPhases = new ArrayList();
-        IN_FaultPhases = new ArrayList();
-        OUTPhases = new ArrayList();
-        OUT_FaultPhases = new ArrayList();
+        INPhases = new ArrayList<Phase>();
+        IN_FaultPhases = new ArrayList<Phase>();
+        OUTPhases = new ArrayList<Phase>();
+        OUT_FaultPhases = new ArrayList<Phase>();
     }
 
     /**
@@ -56,7 +58,7 @@ public class PhasesInfo {
      */
     private Phase copyPhase(Phase phase) throws DeploymentException {
         Phase newPhase = new Phase(phase.getPhaseName());
-        Iterator handlers = phase.getHandlers().iterator();
+        Iterator<Handler> handlers = phase.getHandlers().iterator();
 
         while (handlers.hasNext()) {
             try {
@@ -97,8 +99,8 @@ public class PhasesInfo {
         return phase;
     }
 
-    public ArrayList getGlobalInflow() throws DeploymentException {
-        ArrayList globalphase = new ArrayList();
+    public List<Phase> getGlobalInflow() throws DeploymentException {
+        ArrayList<Phase> globalphase = new ArrayList<Phase>();
         boolean foundDispatchPhase = false;
         for (int i = 0; i < INPhases.size(); i++) {
             Phase phase = (Phase) INPhases.get(i);
@@ -117,11 +119,11 @@ public class PhasesInfo {
         return globalphase;
     }
 
-    public ArrayList getGlobalOutPhaseList() throws DeploymentException {
+    public List<Phase> getGlobalOutPhaseList() throws DeploymentException {
         /**
          * I have assumed that     PolicyDetermination and  MessageProcessing are global out phase
          */
-        ArrayList globalPhaseList = new ArrayList();
+        ArrayList<Phase> globalPhaseList = new ArrayList<Phase>();
 
         boolean messageOut = false;
         for (int i = 0; i < OUTPhases.size(); i++) {
@@ -139,24 +141,24 @@ public class PhasesInfo {
         return globalPhaseList;
     }
 
-    public ArrayList getINPhases() {
+    public List<Phase> getINPhases() {
         return INPhases;
     }
 
-    public ArrayList getIN_FaultPhases() {
+    public List<Phase> getIN_FaultPhases() {
         return IN_FaultPhases;
     }
 
-    public ArrayList getOUTPhases() {
+    public List<Phase> getOUTPhases() {
         return OUTPhases;
     }
 
-    public ArrayList getOutFaultPhaseList(){
+    public List<Phase> getOutFaultPhaseList(){
         return OUT_FaultPhases;
     }
 
-    public ArrayList getOUT_FaultPhases() throws DeploymentException {
-        ArrayList globalPhaseList = new ArrayList();
+    public List<Phase> getOUT_FaultPhases() throws DeploymentException {
+        ArrayList<Phase> globalPhaseList = new ArrayList<Phase>();
         boolean messageOut = false;
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             Phase phase = (Phase) OUT_FaultPhases.get(i);
@@ -173,8 +175,8 @@ public class PhasesInfo {
         return globalPhaseList;
     }
 
-    public ArrayList getOperationInFaultPhases() throws DeploymentException {
-        ArrayList operationINPhases = new ArrayList();
+    public List<Phase> getOperationInFaultPhases() throws DeploymentException {
+        ArrayList<Phase> operationINPhases = new ArrayList<Phase>();
         boolean foundDispathPhase = false;
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             Phase phase = (Phase) IN_FaultPhases.get(i);
@@ -189,8 +191,8 @@ public class PhasesInfo {
         return operationINPhases;
     }
 
-    public ArrayList getGlobalInFaultPhases() throws DeploymentException {
-        ArrayList globalInfaultphase = new ArrayList();
+    public List<Phase> getGlobalInFaultPhases() throws DeploymentException {
+        ArrayList<Phase> globalInfaultphase = new ArrayList<Phase>();
         boolean foundDispatchPhase = false;
         for (int i = 0; i < IN_FaultPhases.size(); i++) {
             Phase phase = (Phase) IN_FaultPhases.get(i);
@@ -210,8 +212,8 @@ public class PhasesInfo {
     }
 
 
-    public ArrayList getOperationInPhases() throws DeploymentException {
-        ArrayList operationINPhases = new ArrayList();
+    public ArrayList<Phase> getOperationInPhases() throws DeploymentException {
+        ArrayList<Phase> operationINPhases = new ArrayList<Phase>();
         boolean foundDispathPhase = false;
         for (int i = 0; i < INPhases.size(); i++) {
             Phase phase = (Phase) INPhases.get(i);
@@ -226,8 +228,8 @@ public class PhasesInfo {
         return operationINPhases;
     }
 
-    public ArrayList getOperationOutFaultPhases() throws DeploymentException {
-        ArrayList operationFaultOutPhases = new ArrayList();
+    public ArrayList<Phase> getOperationOutFaultPhases() throws DeploymentException {
+        ArrayList<Phase> operationFaultOutPhases = new ArrayList<Phase>();
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             Phase phase = (Phase) OUT_FaultPhases.get(i);
             String phaseName = phase.getPhaseName();
@@ -240,8 +242,8 @@ public class PhasesInfo {
         return operationFaultOutPhases;
     }
 
-    public ArrayList getOperationOutPhases() throws DeploymentException {
-        ArrayList oprationOUTPhases = new ArrayList();
+    public ArrayList<Phase> getOperationOutPhases() throws DeploymentException {
+        ArrayList<Phase> oprationOUTPhases = new ArrayList<Phase>();
 
         for (int i = 0; i < OUTPhases.size(); i++) {
             Phase phase = (Phase) OUTPhases.get(i);
@@ -255,19 +257,19 @@ public class PhasesInfo {
         return oprationOUTPhases;
     }
 
-    public void setINPhases(ArrayList INPhases) {
+    public void setINPhases(List<Phase> INPhases) {
         this.INPhases = INPhases;
     }
 
-    public void setIN_FaultPhases(ArrayList IN_FaultPhases) {
+    public void setIN_FaultPhases(List<Phase> IN_FaultPhases) {
         this.IN_FaultPhases = IN_FaultPhases;
     }
 
-    public void setOUTPhases(ArrayList OUTPhases) {
+    public void setOUTPhases(List<Phase> OUTPhases) {
         this.OUTPhases = OUTPhases;
     }
 
-    public void setOUT_FaultPhases(ArrayList OUT_FaultPhases) {
+    public void setOUT_FaultPhases(List<Phase> OUT_FaultPhases) {
         this.OUT_FaultPhases = OUT_FaultPhases;
     }
 
@@ -276,7 +278,7 @@ public class PhasesInfo {
             try {
                 axisOperation.setRemainingPhasesInFlow(getOperationInPhases());
                 axisOperation.setPhasesOutFlow(getOperationOutPhases());
-                axisOperation.setPhasesInFaultFlow(getOperationInFaultPhases());
+                axisOperation.setPhasesInFaultFlow(new ArrayList(getOperationInFaultPhases()));
                 axisOperation.setPhasesOutFaultFlow(getOperationOutFaultPhases());
             } catch (DeploymentException e) {
                 throw AxisFault.makeFault(e);

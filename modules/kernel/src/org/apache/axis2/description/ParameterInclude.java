@@ -54,7 +54,7 @@ public interface ParameterInclude {
      *
      * @return Returns ArrayList.
      */
-    ArrayList getParameters();
+    ArrayList<Parameter> getParameters();
 
     /**
      * Checks whether the parameter is locked at any level.

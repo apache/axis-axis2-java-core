@@ -34,7 +34,7 @@ public class SessionUtils {
      * @return scope for the service group
      */
     public static String calculateMaxScopeForServiceGroup(AxisServiceGroup axisServiceGroup) {
-        Iterator servics = axisServiceGroup.getServices();
+        Iterator<AxisService> servics = axisServiceGroup.getServices();
         int maxScope = 1;
         while (servics.hasNext()) {
             AxisService axisService = (AxisService) servics.next();

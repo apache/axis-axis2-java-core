@@ -19,6 +19,14 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -29,13 +37,7 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.neethi.PolicyComponent;
 
 /**
  * An AxisBindingOperation represents a WSDL &lt;bindingOperation&gt;
@@ -46,17 +48,17 @@ public class AxisBindingOperation extends AxisDescription {
 
 	private QName name;
 
-	private Map faults;
+	private Map<String, AxisBindingMessage> faults;
 
-	private Map options;
+	private Map<String, Object> options;
 
 	public AxisBindingOperation() {
-		options = new HashMap();
-		faults = new HashMap();
+		options = new HashMap<String, Object>();
+		faults = new HashMap<String, AxisBindingMessage>();
 	}
 
-	public ArrayList getFaults() {
-		return new ArrayList(faults.values());
+	public ArrayList<AxisBindingMessage> getFaults() {
+		return new ArrayList<AxisBindingMessage>(faults.values());
 	}
 
 	public AxisBindingMessage getFault(String name) {
@@ -137,7 +139,7 @@ public class AxisBindingOperation extends AxisDescription {
 	 */
 	public OMElement toWSDL20(OMNamespace wsdl, OMNamespace tns,
 			OMNamespace wsoap, OMNamespace whttp, String type,
-			Map namespaceMap, String serviceName) {
+			Map<String, String> namespaceMap, String serviceName) {
 		String property;
 		OMFactory omFactory = OMAbstractFactory.getOMFactory();
 		OMElement bindingOpElement = omFactory.createOMElement(
@@ -247,8 +249,8 @@ public class AxisBindingOperation extends AxisDescription {
 
 		// Add any fault elements
 		if (faults != null && faults.size() > 0) {
-			Collection faultValues = faults.values();
-			Iterator iterator = faultValues.iterator();
+			Collection<AxisBindingMessage> faultValues = faults.values();
+			Iterator<AxisBindingMessage> iterator = faultValues.iterator();
 			while (iterator.hasNext()) {
 				AxisBindingMessage faultMessage = (AxisBindingMessage) iterator
 						.next();
@@ -264,7 +266,7 @@ public class AxisBindingOperation extends AxisDescription {
 	}
 
 	public Policy getEffectivePolicy() {
-		ArrayList policyList = new ArrayList();
+		ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
 		PolicyInclude policyInclude;
 

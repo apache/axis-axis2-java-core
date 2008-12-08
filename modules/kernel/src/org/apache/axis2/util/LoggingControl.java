@@ -45,8 +45,8 @@ public class LoggingControl {
         String prop = null;
         try {
             // need doPriv to get system prop with J2S enabled
-            prop = (String) AccessController.doPrivileged(new PrivilegedAction() {
-                public Object run() {
+            prop = (String) AccessController.doPrivileged(new PrivilegedAction<String>() {
+                public String run() {
                     return System.getProperty("Axis2.prohibitDebugLogging");
                 }
             });

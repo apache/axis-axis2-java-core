@@ -20,7 +20,6 @@
 package org.apache.axis2.engine;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,18 +31,18 @@ import java.util.Set;
  * deploy() them in, then call rebuild() which will set up a chain, correctly ordered according
  * to the constraints in the Deployables.
  */
-public class DeployableChain {
+public class DeployableChain<T> {
     /** The actual things (handlers or phases) */
-    List chain = new ArrayList();
+    List<Object> chain = new ArrayList<Object>();
 
     Deployable first;
     Deployable last;
 
     /** A Map of name -> List (of Strings).  Each List contains the key's successors */
-    Map activeConstraints = new LinkedHashMap();
+    Map<String, Set<String>> activeConstraints = new LinkedHashMap<String, Set<String>>();
 
     /** A Map of name -> Deployable for all deployed items */
-    private Map deployed = new LinkedHashMap();
+    private Map<String, Deployable> deployed = new LinkedHashMap<String, Deployable>();
 
     /**
      * Deploy a Deployable into this chain.  Note that this does NOT order yet.  The idea
@@ -56,8 +55,8 @@ public class DeployableChain {
      */
     public void deploy(Deployable deployable) throws Exception {
         String name = deployable.getName();
-        Set mySuccessors = deployable.getSuccessors();
-        Set myPredecessors = deployable.getPredecessors();
+        Set<String> mySuccessors = deployable.getSuccessors();
+        Set<String> myPredecessors = deployable.getPredecessors();
 
         if (deployable.isFirst()) {
             if (first != null) {
@@ -106,9 +105,9 @@ public class DeployableChain {
         }
 
         if (mySuccessors != null && !mySuccessors.isEmpty()) {
-            Set successors = (Set)activeConstraints.get(name);
+            Set<String> successors = activeConstraints.get(name);
             if (successors == null) {
-                successors = new LinkedHashSet();
+                successors = new LinkedHashSet<String>();
                 activeConstraints.put(name, successors);
             }
             successors.addAll(mySuccessors);
@@ -139,14 +138,14 @@ public class DeployableChain {
      * @return an index >=0 or -1 if there was a dependency cycle
      * @throws Exception if there's a cyclic dependency
      */
-    private int getMinIndex(String name, Set remaining, Set seen) throws Exception {
+    private int getMinIndex(String name, Set<String> remaining, Set<String> seen) throws Exception {
         if (seen.contains(name)) {
             // We return -1 here instead of throwing the Exception so we can build a better
             // error message below.
             return -1;
         }
 
-        Collection successors = (Collection)activeConstraints.get(name);
+        Set<String> successors = activeConstraints.get(name);
         if (successors == null || successors.isEmpty()) {
             // Never put anything after the thing marked "last"...
             int index = (last == null) ? chain.size() : chain.size() - 1;
@@ -199,7 +198,7 @@ public class DeployableChain {
     public void rebuild() throws Exception {
         chain.clear();
 
-        Set keys = new LinkedHashSet();
+        Set<String> keys = new LinkedHashSet<String>();
         keys.addAll(deployed.keySet());
 
         // First goes first.
@@ -210,7 +209,7 @@ public class DeployableChain {
 
         // Last goes next, and everything else will get inserted before it if it exists.
         if (last != null) {
-            Collection afterLast = (Collection)activeConstraints.get(last.getName());
+            Set<String> afterLast = activeConstraints.get(last.getName());
             if (afterLast != null) {
                 throw new Exception("Can't have anything which goes after '" + last.getName() +
                         "', which has been declared last.");
@@ -221,7 +220,7 @@ public class DeployableChain {
 
         while (!keys.isEmpty()) {
             String name = (String)keys.iterator().next();
-            getMinIndex(name, keys, new LinkedHashSet());
+            getMinIndex(name, keys, new LinkedHashSet<String>());
         }
 
         // Now we've got a chain of names.  Convert to actual things before we return.
@@ -238,9 +237,9 @@ public class DeployableChain {
      * @param after name of the Deployable that must come later
      */
     public void addRelationship(String before, String after) {
-        Set successors = (Set)activeConstraints.get(before);
+        Set<String> successors = activeConstraints.get(before);
         if (successors == null) {
-            successors = new LinkedHashSet();
+            successors = new LinkedHashSet<String>();
             activeConstraints.put(before, successors);
         }
         successors.add(after);
@@ -251,8 +250,8 @@ public class DeployableChain {
      *
      * @return a List of target objects in the correct order
      */
-    public List getChain() {
+    public List<T> getChain() {
         // todo - should this call rebuild() automatically (if dirty flag is set)?
-        return chain;
+        return (List<T>) chain;
     }
 }

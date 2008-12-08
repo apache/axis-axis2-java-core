@@ -19,6 +19,14 @@
 
 package org.apache.axis2.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
@@ -38,18 +46,7 @@ import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Helps the AxisService to WSDL process
@@ -67,10 +64,10 @@ public class WSDLSerializationUtil {
      * @param nameSpaceMap - The namespaceMap
      * @return - The prefix of the namespace
      */
-    public static String getPrefix(String namespace, Map nameSpaceMap) {
-        Set keySet;
+    public static String getPrefix(String namespace, Map<String, String> nameSpaceMap) {
+        Set<String> keySet;
         if (nameSpaceMap != null && (keySet = nameSpaceMap.keySet()) != null) {
-            Iterator keys = keySet.iterator();
+            Iterator<String> keys = keySet.iterator();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 if (nameSpaceMap.get(key).equals(namespace)) {

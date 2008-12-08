@@ -79,7 +79,7 @@ public class PolicyInclude {
 
     private AxisDescription description;
 
-    private Hashtable wrapperElements = new Hashtable();
+    private Hashtable<String, Wrapper> wrapperElements = new Hashtable<String, Wrapper>();
 
     public PolicyInclude() {
         reg = new PolicyRegistryImpl();
@@ -192,7 +192,7 @@ public class PolicyInclude {
     private void calculatePolicy() {
 
         Policy result = null;
-        Iterator iterator = wrapperElements.values().iterator();
+        Iterator<Wrapper> iterator = wrapperElements.values().iterator();
 
         while (iterator.hasNext()) {
             Object policyElement = ((Wrapper) iterator.next()).getValue();
@@ -250,7 +250,7 @@ public class PolicyInclude {
 	 */
     public Policy getPolicy() {
     	if (description != null) {
-			ArrayList policyList = new ArrayList(description.getPolicySubject()
+			ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>(description.getPolicySubject()
 					.getAttachedPolicyComponents());
 			return PolicyUtil.getMergedPolicy(policyList, description);
 		}
@@ -284,16 +284,16 @@ public class PolicyInclude {
 	 */
     public ArrayList getPolicyElements() {
     	if (description != null) {
-			return new ArrayList(description.getPolicySubject()
+			return new ArrayList<PolicyComponent>(description.getPolicySubject()
 					.getAttachedPolicyComponents());
 		}
     	
         ArrayList policyElementsList = new ArrayList();
-        Iterator policyElementIterator = wrapperElements.values().iterator();
+        Iterator<Wrapper> policyElementIterator = wrapperElements.values().iterator();
 
         while (policyElementIterator.hasNext()) {
             policyElementsList
-                    .add(((Wrapper) policyElementIterator.next()).getValue());
+                    .add(policyElementIterator.next().getValue());
         }
         return policyElementsList;
     }
@@ -307,7 +307,7 @@ public class PolicyInclude {
 	 */
     public ArrayList getPolicyElements(int type) {
         ArrayList policyElementList = new ArrayList();
-        Iterator wrapperElementIterator = wrapperElements.values().iterator();
+        Iterator<Wrapper> wrapperElementIterator = wrapperElements.values().iterator();
         Wrapper wrapper;
 
         while (wrapperElementIterator.hasNext()) {

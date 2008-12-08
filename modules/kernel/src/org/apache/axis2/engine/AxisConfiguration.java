@@ -19,6 +19,20 @@
 
 package org.apache.axis2.engine;
 
+import java.io.File;
+import java.net.URL;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
@@ -29,7 +43,16 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ModuleDeployer;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -40,18 +63,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.net.URL;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Class AxisConfiguration
  */
@@ -61,66 +72,66 @@ public class AxisConfiguration extends AxisDescription {
     /* 
      * To store configured data locators
      */
-    private HashMap dataLocators = new HashMap();
-    private HashMap dataLocatorClassNames = new HashMap();
+    private HashMap<String, AxisDataLocator> dataLocators = new HashMap<String, AxisDataLocator>();
+    private HashMap<String, String> dataLocatorClassNames = new HashMap<String, String>();
 
     /**
      * This is a Map of String name -> AxisModule for all available Modules.
      */
-    private final HashMap allModules = new HashMap();
+    private final HashMap<String, AxisModule> allModules = new HashMap<String, AxisModule>();
 
     // To store mapping between default version and module name
-    private final HashMap nameToversionMap = new HashMap();
+    private final HashMap<String, String> nameToversionMap = new HashMap<String, String>();
 
     // private final HashMap serviceGroups = new HashMap();
-    private final HashMap transportsIn = new HashMap();
+    private final HashMap<String, TransportInDescription> transportsIn = new HashMap<String, TransportInDescription>();
 
-    private final HashMap transportsOut = new HashMap();
+    private final HashMap<String, TransportOutDescription> transportsOut = new HashMap<String, TransportOutDescription>();
 
-    private final HashMap policySupportedModules = new HashMap();
+    private final HashMap<String, List<AxisModule>> policySupportedModules = new HashMap<String, List<AxisModule>>();
 
     /**
      * Stores the QNames of local policy assertions
      */
-    private final ArrayList localPolicyAssertions = new ArrayList();
+    private final ArrayList<QName> localPolicyAssertions = new ArrayList<QName>();
 
     // to store AxisObserver Objects
-    private ArrayList observersList = null;
+    private ArrayList<AxisObserver> observersList = null;
 
     private URL axis2Repository = null;
 
-    private Map allServices = new ConcurrentHashMap();
-    private Map allEndpoints = new ConcurrentHashMap();
+    private Map<String, AxisService> allServices = new ConcurrentHashMap<String, AxisService>();
+    private Map<String, AxisService> allEndpoints = new ConcurrentHashMap<String, AxisService>();
 
     /**
      * Stores the module specified in the server.xml at the document parsing time.
      */
-    private List globalModuleList;
+    private List<String> globalModuleList;
 
-    private Hashtable faultyModules;
+    private Hashtable<String, String> faultyModules;
 
     /**
      * To store faulty services
      */
-    private Hashtable faultyServices;
+    private Hashtable<String, String> faultyServices;
 
-    private ArrayList inFaultPhases;
+    private List<Phase> inFaultPhases;
 
-    private ArrayList inPhasesUptoAndIncludingPostDispatch;
+    private List<Phase> inPhasesUptoAndIncludingPostDispatch;
 
-    private HashMap messageReceivers;
+    private HashMap<String, MessageReceiver> messageReceivers;
 
-    private HashMap messageBuilders;
+    private HashMap<String, Builder> messageBuilders;
 
-    private HashMap messageFormatters;
+    private HashMap<String, MessageFormatter> messageFormatters;
 
     private ClassLoader moduleClassLoader;
 
-    private HashMap moduleConfigmap;
+    private HashMap<String, ModuleConfiguration> moduleConfigmap;
 
-    private ArrayList outFaultPhases;
+    private List<Phase> outFaultPhases;
 
-    private ArrayList outPhases;
+    private List<Phase> outPhases;
 
     protected PhasesInfo phasesinfo;
 
@@ -131,7 +142,7 @@ public class AxisConfiguration extends AxisDescription {
     //To keep track of whether the system has started or not
     private boolean start;
 
-    private ArrayList targetResolvers;
+    private ArrayList<TargetResolver> targetResolvers;
 
     private ClusterManager clusterManager;
 
@@ -141,21 +152,21 @@ public class AxisConfiguration extends AxisDescription {
      * Constructor AxisConfiguration.
      */
     public AxisConfiguration() {
-        moduleConfigmap = new HashMap();
-        globalModuleList = new ArrayList();
-        messageReceivers = new HashMap();
-        messageBuilders = new HashMap();
-        messageFormatters = new HashMap();
-        outPhases = new ArrayList();
-        inFaultPhases = new ArrayList();
-        outFaultPhases = new ArrayList();
-        faultyServices = new Hashtable();
-        faultyModules = new Hashtable();
-        observersList = new ArrayList();
-        inPhasesUptoAndIncludingPostDispatch = new ArrayList();
+        moduleConfigmap = new HashMap<String, ModuleConfiguration>();
+        globalModuleList = new ArrayList<String>();
+        messageReceivers = new HashMap<String, MessageReceiver>();
+        messageBuilders = new HashMap<String, Builder>();
+        messageFormatters = new HashMap<String, MessageFormatter>();
+        outPhases = new ArrayList<Phase>();
+        inFaultPhases = new ArrayList<Phase>();
+        outFaultPhases = new ArrayList<Phase>();
+        faultyServices = new Hashtable<String, String>();
+        faultyModules = new Hashtable<String, String>();
+        observersList = new ArrayList<AxisObserver>();
+        inPhasesUptoAndIncludingPostDispatch = new ArrayList<Phase>();
         systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
-                .doPrivileged(new PrivilegedAction() {
-                    public Object run() {
+                .doPrivileged(new PrivilegedAction<ClassLoader>() {
+                    public ClassLoader run() {
                         return Thread.currentThread().getContextClassLoader();
                     }
                 });
@@ -163,7 +174,7 @@ public class AxisConfiguration extends AxisDescription {
         moduleClassLoader = systemClassLoader;
 
         this.phasesinfo = new PhasesInfo();
-        targetResolvers = new ArrayList();
+        targetResolvers = new ArrayList<TargetResolver>();
     }
 
     public void addMessageReceiver(String mepURL,
@@ -302,7 +313,7 @@ public class AxisConfiguration extends AxisDescription {
         notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
         AxisService axisService;
 
-        Iterator services = axisServiceGroup.getServices();
+        Iterator<AxisService> services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
             if (axisService.getSchemaTargetNamespace() == null) {
@@ -313,31 +324,31 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
             if (axisService.isUseDefaultChains()) {
-                Iterator operations = axisService.getOperations();
+                Iterator<AxisOperation> operations = axisService.getOperations();
                 while (operations.hasNext()) {
                     AxisOperation operation = (AxisOperation) operations.next();
                     phasesinfo.setOperationPhases(operation);
                 }
             }
         }
-        Iterator enModule = getEngagedModules().iterator();
+        Iterator<AxisModule> enModule = getEngagedModules().iterator();
         while (enModule.hasNext()) {
             axisServiceGroup.engageModule((AxisModule) enModule.next());
         }
         services = axisServiceGroup.getServices();
-        ArrayList servicesIAdded = new ArrayList();
+        ArrayList<AxisService> servicesIAdded = new ArrayList<AxisService>();
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
             processEndpoints(axisService, axisService.getAxisConfiguration());
 
-            Map endpoints = axisService.getEndpoints();
+            Map<String, AxisEndpoint> endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();
             try {
                 addToAllServicesMap(axisService);
             } catch (AxisFault axisFault) {
                 // Whoops, must have been a duplicate!  If we had a problem here, we have to
                 // remove all the ones we added...
-                for (Iterator i = servicesIAdded.iterator(); i.hasNext();) {
+                for (Iterator<AxisService> i = servicesIAdded.iterator(); i.hasNext();) {
                     AxisService service = (AxisService) i.next();
                     allServices.remove(service.getName());
                 }
@@ -346,7 +357,7 @@ public class AxisConfiguration extends AxisDescription {
             }
             servicesIAdded.add(axisService);
             if (endpoints != null) {
-                Iterator endpointNameIter = endpoints.keySet().iterator();
+                Iterator<String> endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
                     String endpointName = (String) endpointNameIter.next();
                     if (log.isDebugEnabled()) {
@@ -401,11 +412,11 @@ public class AxisConfiguration extends AxisDescription {
                                                     serviceGroupName));
         }
 
-        Iterator services = axisServiceGroup.getServices();
+        Iterator<AxisService> services = axisServiceGroup.getServices();
         boolean isClientSide = false;
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            Object value = allServices.remove(axisService.getName());
+            allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
             } else {
@@ -416,7 +427,7 @@ public class AxisConfiguration extends AxisDescription {
             String serviceName = axisService.getName();
             String key = null;
 
-            for (Iterator iter = axisService.getEndpoints().keySet().iterator(); iter.hasNext();){
+            for (Iterator<String> iter = axisService.getEndpoints().keySet().iterator(); iter.hasNext();){
                 key = serviceName + "." + (String)iter.next();
                 this.allEndpoints.remove(key);
             }
@@ -512,7 +523,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
-        Iterator servicegroups = getServiceGroups();
+        Iterator<AxisServiceGroup> servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
             serviceGroup.engageModule(module, engager);
@@ -529,7 +540,7 @@ public class AxisConfiguration extends AxisDescription {
         PhaseResolver phaseResolver = new PhaseResolver(this);
         phaseResolver.disengageModuleFromGlobalChains(module);
 
-        Iterator serviceGroups = getServiceGroups();
+        Iterator<AxisServiceGroup> serviceGroups = getServiceGroups();
         while (serviceGroups.hasNext()) {
             AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
             axisServiceGroup.disengageModule(module);
@@ -615,21 +626,21 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault if an individual engageModule() fails
      */
     public void engageGlobalModules() throws AxisFault {
-        for (Iterator i = globalModuleList.iterator(); i.hasNext();) {
+        for (Iterator<String> i = globalModuleList.iterator(); i.hasNext();) {
             engageModule((String) i.next());
         }
     }
 
-    public Hashtable getFaultyModules() {
+    public Hashtable<String, String> getFaultyModules() {
         return faultyModules;
     }
 
-    public Hashtable getFaultyServices() {
+    public Hashtable<String, String> getFaultyServices() {
         return faultyServices;
     }
 
     public void removeFaultyService(String key) {
-        Iterator itr = faultyServices.keySet().iterator();
+        Iterator<String> itr = faultyServices.keySet().iterator();
         while (itr.hasNext()) {
             String fullFileName = (String) itr.next();
             if (fullFileName.indexOf(key) > 0) {
@@ -640,18 +651,18 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     // to get the out flow correpodning to the global out flow;
-    public ArrayList getOutFlowPhases() {
+    public List<Phase> getOutFlowPhases() {
         return this.outPhases;
     }
 
     /**
      * @return Returns ArrayList.
      */
-    public ArrayList getInFaultFlowPhases() {
+    public List<Phase> getInFaultFlowPhases() {
         return inFaultPhases;
     }
 
-    public ArrayList getInFlowPhases() {
+    public List<Phase> getInFlowPhases() {
         return inPhasesUptoAndIncludingPostDispatch;
     }
 
@@ -664,7 +675,7 @@ public class AxisConfiguration extends AxisDescription {
      * @return the configured message builder implementation class name against
      *         the given content type.
      */
-    public Builder getMessageBuilder(String contentType) {
+     public Builder getMessageBuilder(String contentType) {
 		Builder builder = null;
 		if (messageBuilders.isEmpty()) {
 			return null;
@@ -676,19 +687,19 @@ public class AxisConfiguration extends AxisDescription {
 						.toLowerCase());
 			}
 			if (builder == null) {
-				Iterator iterator = messageBuilders.entrySet().iterator();
+				Iterator<Entry<String, Builder>> iterator = messageBuilders.entrySet().iterator();
 				while (iterator.hasNext() && builder == null) {
-					Map.Entry entry = (Map.Entry) iterator.next();
-					String key = (String) entry.getKey();
+					Entry<String, Builder> entry = iterator.next();
+					String key = entry.getKey();
 					if (contentType.matches(key)) {
-						builder = (Builder) entry.getValue();
+						builder = entry.getValue();
 					}
 				}
 			}
 		}
 		return builder;
 	}
-    
+
     public Builder getMessageBuilder(String contentType, boolean defaultBuilder) {
 		Builder builder = getMessageBuilder(contentType);
 		if (builder ==null & defaultBuilder){
@@ -696,12 +707,11 @@ public class AxisConfiguration extends AxisDescription {
 		}
 		return builder;
 	}
-
     /**
-	 * @param contentType
-	 * @return the configured message formatter implementation class name
-	 *         against the given content type.
-	 */
+     * @param contentType
+     * @return the configured message formatter implementation class name
+     *         against the given content type.
+     */
     public MessageFormatter getMessageFormatter(String contentType) {
         return (MessageFormatter) messageFormatters.get(contentType);
     }
@@ -777,7 +787,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * @return Returns HashMap.
      */
-    public HashMap getModules() {
+    public HashMap<String, AxisModule> getModules() {
         return allModules;
     }
 
@@ -787,14 +797,14 @@ public class AxisConfiguration extends AxisDescription {
      * @return the global module list.  BE CAREFUL, this list is mutable.
      * @deprecated please use addGlobalModule()
      */
-    public List getGlobalModules() {
+    public List<String> getGlobalModules() {
         return globalModuleList;
     }
 
     /**
      * @return Returns ArrayList.
      */
-    public ArrayList getOutFaultFlowPhases() {
+    public List<Phase> getOutFaultFlowPhases() {
         return outFaultPhases;
     }
 
@@ -863,16 +873,16 @@ public class AxisConfiguration extends AxisDescription {
         return (AxisServiceGroup) getChild(serviceNameAndGroupString);
     }
 
-    public Iterator getServiceGroups() {
+    public Iterator<AxisServiceGroup> getServiceGroups() {
         // return serviceGroups.values().iterator();
-        return getChildren();
+        return (Iterator<AxisServiceGroup>) getChildren();
     }
 
     // To get all the services in the system
-    public HashMap getServices() {
-        HashMap hashMap = new HashMap(this.allServices.size());
-        Object key;
-        for (Iterator iter = this.allServices.keySet().iterator(); iter.hasNext();){
+    public HashMap<String, AxisService> getServices() {
+        HashMap<String, AxisService> hashMap = new HashMap<String, AxisService>(this.allServices.size());
+        String key;
+        for (Iterator<String> iter = this.allServices.keySet().iterator(); iter.hasNext();){
             key = iter.next();
             hashMap.put(key, this.allServices.get(key));
         }
@@ -893,11 +903,11 @@ public class AxisConfiguration extends AxisDescription {
         return (TransportOutDescription) transportsOut.get(name);
     }
 
-    public HashMap getTransportsIn() {
+    public HashMap<String, TransportInDescription> getTransportsIn() {
         return transportsIn;
     }
 
-    public HashMap getTransportsOut() {
+    public HashMap<String, TransportOutDescription> getTransportsOut() {
         return transportsOut;
     }
 
@@ -934,19 +944,19 @@ public class AxisConfiguration extends AxisDescription {
         return isEngaged;
     }
 
-    public void setGlobalOutPhase(ArrayList outPhases) {
+    public void setGlobalOutPhase(List<Phase> outPhases) {
         this.outPhases = outPhases;
     }
 
     /**
      * @param list
      */
-    public void setInFaultPhases(ArrayList list) {
+    public void setInFaultPhases(List<Phase> list) {
         inFaultPhases = list;
     }
 
     public void setInPhasesUptoAndIncludingPostDispatch(
-            ArrayList inPhasesUptoAndIncludingPostDispatch) {
+    		List<Phase> inPhasesUptoAndIncludingPostDispatch) {
         this.inPhasesUptoAndIncludingPostDispatch = inPhasesUptoAndIncludingPostDispatch;
     }
 
@@ -957,7 +967,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * @param list
      */
-    public void setOutFaultPhases(ArrayList list) {
+    public void setOutFaultPhases(List<Phase> list) {
         outFaultPhases = list;
     }
 
@@ -1037,8 +1047,8 @@ public class AxisConfiguration extends AxisDescription {
         notifyObservers(AxisEvent.SERVICE_START, service);
     }
 
-    public List getModulesForPolicyNamesapce(String namesapce) {
-        return (List) policySupportedModules.get(namesapce);
+    public List<AxisModule> getModulesForPolicyNamesapce(String namesapce) {
+        return policySupportedModules.get(namesapce);
     }
 
     public void registerModulePolicySupport(AxisModule axisModule) {
@@ -1048,15 +1058,15 @@ public class AxisConfiguration extends AxisDescription {
             return;
         }
 
-        List modulesList;
+        List<AxisModule> modulesList;
 
         for (int i = 0; i < namespaces.length; i++) {
-            modulesList = (List) policySupportedModules.get(namespaces[i]);
+            modulesList = policySupportedModules.get(namespaces[i]);
 
             if (modulesList != null) {
                 modulesList.add(axisModule);
             } else {
-                modulesList = new ArrayList();
+                modulesList = new ArrayList<AxisModule>();
                 modulesList.add(axisModule);
                 policySupportedModules.put(namespaces[i], modulesList);
             }
@@ -1075,7 +1085,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public ArrayList getObserversList() {
+    public ArrayList<AxisObserver> getObserversList() {
         return observersList;
     }
 
@@ -1099,7 +1109,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         return new TargetResolver() {
             public void resolveTarget(MessageContext messageContext) {
-                Iterator iter = targetResolvers.iterator();
+                Iterator<TargetResolver> iter = targetResolvers.iterator();
                 while (iter.hasNext()) {
                     TargetResolver tr = (TargetResolver) iter.next();
                     tr.resolveTarget(messageContext);
@@ -1116,7 +1126,7 @@ public class AxisConfiguration extends AxisDescription {
         this.localPolicyAssertions.add(name);
     }
 
-    public List getLocalPolicyAssertions() {
+    public List<QName> getLocalPolicyAssertions() {
         return this.localPolicyAssertions;
     }
 
@@ -1218,34 +1228,34 @@ public class AxisConfiguration extends AxisDescription {
 
         switch (flow) {
             case PhaseMetadata.IN_FLOW : {
-                List phaseList = phasesinfo.getINPhases();
+                List<Phase> phaseList = phasesinfo.getINPhases();
                 phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setINPhases((ArrayList)phaseList);
+                    phasesinfo.setINPhases(phaseList);
                 }
                 break;
             }
             case PhaseMetadata.OUT_FLOW : {
-                List phaseList = phasesinfo.getOUTPhases();
+            	List<Phase> phaseList = phasesinfo.getOUTPhases();
                 phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setOUTPhases((ArrayList)phaseList);
+                    phasesinfo.setOUTPhases(phaseList);
                 }
                 break;
             }
             case PhaseMetadata.FAULT_OUT_FLOW : {
-                List phaseList = phasesinfo.getOutFaultPhaseList();
+            	List<Phase> phaseList = phasesinfo.getOutFaultPhaseList();
                 phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setOUT_FaultPhases((ArrayList)phaseList);
+                    phasesinfo.setOUT_FaultPhases(phaseList);
                 }
                 break;
             }
             case PhaseMetadata.FAULT_IN_FLOW : {
-                List phaseList = phasesinfo.getIN_FaultPhases();
+            	List<Phase> phaseList = phasesinfo.getIN_FaultPhases();
                 phaseList = findAndInsertPhase(d, phaseList);
                 if (phaseList != null) {
-                    phasesinfo.setIN_FaultPhases((ArrayList)phaseList);
+                    phasesinfo.setIN_FaultPhases(phaseList);
                 }
                 break;
             }
@@ -1259,10 +1269,10 @@ public class AxisConfiguration extends AxisDescription {
      * @return
      * @throws AxisFault
      */
-    private List findAndInsertPhase(Deployable d, List phaseList) throws AxisFault {
-        DeployableChain ec = new DeployableChain();
+    private List<Phase> findAndInsertPhase(Deployable d, List<Phase> phaseList) throws AxisFault {
+        DeployableChain<Phase> ec = new DeployableChain<Phase>();
         String last = null;
-        for (Iterator i = phaseList.iterator(); i.hasNext();) {
+        for (Iterator<Phase> i = phaseList.iterator(); i.hasNext();) {
             Phase phase = (Phase)i.next();
             String name = phase.getName();
             Deployable existing = new Deployable(name);
@@ -1301,7 +1311,7 @@ public class AxisConfiguration extends AxisDescription {
     
     private void processEndpoints(AxisService axisService,
     		AxisConfiguration axisConfiguration) throws AxisFault {
-        Map enspoints = axisService.getEndpoints();
+        Map<String, AxisEndpoint> enspoints = axisService.getEndpoints();
         if (enspoints == null || enspoints.size() == 0) {
 			org.apache.axis2.deployment.util.Utils.addEndpointsToService(
 					axisService, axisConfiguration);

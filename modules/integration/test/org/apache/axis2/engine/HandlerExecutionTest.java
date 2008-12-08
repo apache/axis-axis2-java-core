@@ -84,7 +84,7 @@ public class HandlerExecutionTest extends LocalTestCase {
     	super.setUp();
         testResults = new ArrayList();
 
-            ArrayList globalInPhases =
+            List globalInPhases =
                     serverConfig.getAxisConfiguration().getInFlowPhases();
             for (int i = 0; i < globalInPhases.size(); i++) {
                 Phase globalInPhase = (Phase)globalInPhases.get(i);

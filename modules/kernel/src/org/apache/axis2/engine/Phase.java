@@ -50,7 +50,7 @@ public class Phase implements Handler {
     /**
      * Field handlers
      */
-    private List handlers;
+    private List<Handler> handlers;
 
     /**
      * A handler has been marked as present in both the first phase and the last phase
@@ -85,7 +85,7 @@ public class Phase implements Handler {
      * @param phaseName the name for this Phase
      */
     public Phase(String phaseName) {
-        handlers = new CopyOnWriteArrayList();
+        handlers = new CopyOnWriteArrayList<Handler>();
         this.phaseName = phaseName;
     }
 
@@ -116,7 +116,7 @@ public class Phase implements Handler {
      * @throws PhaseException if there is a problem
      */
     public void addHandler(HandlerDescription handlerDesc) throws PhaseException {
-        Iterator handlers_itr = getHandlers().iterator();
+        Iterator<Handler> handlers_itr = getHandlers().iterator();
 
         while (handlers_itr.hasNext()) {
             Handler hand = (Handler) handlers_itr.next();
@@ -381,7 +381,7 @@ public class Phase implements Handler {
      *
      * @return Returns an ArrayList of Handlers
      */
-    public List getHandlers() {
+    public List<Handler> getHandlers() {
         return handlers;
     }
 

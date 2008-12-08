@@ -73,7 +73,7 @@ public class DispatchPhase extends Phase {
         // If we're configured to do so, check the service for a single op...
         if (operation == null &&
                 JavaUtils.isTrue(service.getParameterValue(AxisService.SUPPORT_SINGLE_OP))) {
-            Iterator ops = service.getOperations();
+            Iterator<AxisOperation> ops = service.getOperations();
             // If there's exactly one, that's the one we want.  If there's more, forget it.
             if (ops.hasNext()) {
                 operation = (AxisOperation)ops.next();

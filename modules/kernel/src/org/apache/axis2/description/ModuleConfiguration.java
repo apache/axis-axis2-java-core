@@ -75,7 +75,7 @@ public class ModuleConfiguration implements ParameterInclude {
         return parameterInclude.getParameter(name);
     }
 
-    public ArrayList getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return parameterInclude.getParameters();
     }
 

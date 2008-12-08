@@ -127,7 +127,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 						String localName = axisOperation.getName()
 								.getLocalPart();
 						AxisBindingOperation bindingOp = null;
-						for (Iterator iterator = axisBinding.getChildren(); iterator
+						for (Iterator<AxisBindingOperation> iterator = axisBinding.getChildren(); iterator
 								.hasNext();) {
 							bindingOp = (AxisBindingOperation) iterator.next();
 							if (localName.equals(bindingOp.getName().getLocalPart())) {

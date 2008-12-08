@@ -49,7 +49,7 @@ public class ListenerManager {
     }
 
     private ConfigurationContext configctx;
-    private HashMap startedTransports = new HashMap();
+    private HashMap<String, TransportListener> startedTransports = new HashMap<String, TransportListener>();
     private boolean stopped;
 
     public void init(ConfigurationContext configCtx) {
@@ -77,7 +77,7 @@ public class ListenerManager {
                 throw new AxisFault(Messages.getMessage("servicenotfoundinthesystem", serviceName));
             }
             if (service.isEnableAllTransports()) {
-                Iterator itr_st = startedTransports.values().iterator();
+                Iterator<TransportListener> itr_st = startedTransports.values().iterator();
                 while (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener)itr_st.next();
                     EndpointReference[] epRsForService =
@@ -145,9 +145,9 @@ public class ListenerManager {
         }
 
         // Stop the transport senders
-        HashMap outTransports = configctx.getAxisConfiguration().getTransportsOut();
+        HashMap<String, TransportOutDescription> outTransports = configctx.getAxisConfiguration().getTransportsOut();
         if (outTransports.size() > 0) {
-            Iterator trsItr = outTransports.values().iterator();
+            Iterator<TransportOutDescription> trsItr = outTransports.values().iterator();
             while (trsItr.hasNext()) {
                 TransportOutDescription outDescription = (TransportOutDescription)trsItr.next();
                 TransportSender sender = outDescription.getSender();
@@ -158,9 +158,9 @@ public class ListenerManager {
         }
 
         // Shut down the modules
-        HashMap modules = configctx.getAxisConfiguration().getModules();
+        HashMap<String, AxisModule> modules = configctx.getAxisConfiguration().getModules();
         if (modules != null) {
-            Iterator moduleitr = modules.values().iterator();
+            Iterator<AxisModule> moduleitr = modules.values().iterator();
             while (moduleitr.hasNext()) {
                 AxisModule axisModule = (AxisModule)moduleitr.next();
                 Module module = axisModule.getModule();

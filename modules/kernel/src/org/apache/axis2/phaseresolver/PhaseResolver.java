@@ -203,9 +203,9 @@ public class PhaseResolver {
      * @param handler
      * @param phaseList
      */
-    private void removeHandlerfromaPhase(HandlerDescription handler, ArrayList phaseList) {
+    private void removeHandlerfromaPhase(HandlerDescription handler, List<Phase> phaseList) {
         String phaseName = handler.getRules().getPhaseName();
-        Iterator phaseItr = phaseList.iterator();
+        Iterator<Phase> phaseItr = phaseList.iterator();
         while (phaseItr.hasNext()) {
             Phase phase = (Phase) phaseItr.next();
             if (phase.getPhaseName().equals(phaseName)) {

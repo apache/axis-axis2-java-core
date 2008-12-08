@@ -20,6 +20,12 @@
 
 package org.apache.axis2.engine;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
@@ -43,11 +49,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * There is one engine for the Server and the Client. the send() and receive()
  * Methods are the basic operations the Sync, Async messageing are build on top.
@@ -63,7 +64,7 @@ public class AxisEngine {
     private static boolean NOT_RESUMING_EXECUTION = false;
 
     private static void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-        List unprocessed = null;
+        List<QName> unprocessed = null;
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope.getHeader() == null) {
             return;
@@ -84,7 +85,7 @@ public class AxisEngine {
             }
             if(isReceiverMustUnderstandProcessor(msgContext)){
                 if(unprocessed == null){
-                    unprocessed = new ArrayList();
+                    unprocessed = new ArrayList<QName>();
                 }
                 if(!unprocessed.contains(headerName)){
                     unprocessed.add(headerName);
@@ -141,7 +142,7 @@ public class AxisEngine {
             log.trace(msgContext.getLogIDString() + " receive:" + msgContext.getMessageID());
         }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
-        ArrayList preCalculatedPhases;
+        List<Phase> preCalculatedPhases;
         if (msgContext.isFault() || msgContext.isProcessingFault()) {
             preCalculatedPhases = confContext.getAxisConfiguration().getInFaultFlowPhases();
             msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
@@ -152,7 +153,9 @@ public class AxisEngine {
         // Set the initial execution chain in the MessageContext to a *copy* of what
         // we got above.  This allows individual message processing to change the chain without
         // affecting later messages.
-        msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
+        ArrayList<Handler> executionChain = new ArrayList<Handler>();
+        executionChain.addAll(preCalculatedPhases);
+        msgContext.setExecutionChain(executionChain);
         try {
             InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
@@ -274,7 +277,7 @@ public class AxisEngine {
     }
 
     private static void flowComplete(MessageContext msgContext) {
-        Iterator invokedPhaseIterator = msgContext.getExecutedPhases();
+        Iterator<Handler> invokedPhaseIterator = msgContext.getExecutedPhases();
 
         while (invokedPhaseIterator.hasNext()) {
             Handler currentHandler = ((Handler) invokedPhaseIterator.next());
@@ -498,8 +501,9 @@ public class AxisEngine {
             }
         }
 
-        msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getOutFaultFlowPhases().clone());
+        ArrayList<Handler> executionChain = new ArrayList<Handler>(msgContext.getConfigurationContext()
+                .getAxisConfiguration().getOutFaultFlowPhases());
+        msgContext.setExecutionChain(executionChain);
         msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
         InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 
@@ -560,8 +564,9 @@ public class AxisEngine {
             }
         }
 
-        msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext()
-                .getAxisConfiguration().getOutFaultFlowPhases().clone());
+        ArrayList<Handler> executionChain = new ArrayList<Handler>(msgContext.getConfigurationContext()
+                .getAxisConfiguration().getOutFaultFlowPhases());
+        msgContext.setExecutionChain(executionChain);
         msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
         InvocationResponse pi = invoke(msgContext, NOT_RESUMING_EXECUTION);
 

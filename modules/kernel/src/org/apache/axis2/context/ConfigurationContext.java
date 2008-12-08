@@ -68,9 +68,9 @@ public class ConfigurationContext extends AbstractContext {
 
     private static final Log log = LogFactory.getLog(ConfigurationContext.class);
     /** Map containing <code>MessageID</code> to <code>OperationContext</code> mapping. */
-    private final ConcurrentHashMap operationContextMap = new ConcurrentHashMap();
-    private final Hashtable serviceGroupContextMap = new Hashtable();
-    private Hashtable applicationSessionServiceGroupContexts = new Hashtable();
+    private final ConcurrentHashMap<String, OperationContext> operationContextMap = new ConcurrentHashMap<String, OperationContext>();
+    private final Hashtable<String, ServiceGroupContext> serviceGroupContextMap = new Hashtable<String, ServiceGroupContext>();
+    private Hashtable<String, ServiceGroupContext> applicationSessionServiceGroupContexts = new Hashtable<String, ServiceGroupContext>();
     private AxisConfiguration axisConfiguration;
     private ThreadFactory threadPool;
     //To keep TransportManager instance
@@ -84,7 +84,7 @@ public class ConfigurationContext extends AbstractContext {
     private String servicePath;
 
     private String cachedServicePath = null;
-    protected List contextListeners;
+    protected List<ContextListener> contextListeners;
 
     /**
      * Constructor
@@ -180,7 +180,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void addContextListener(ContextListener contextListener) {
         if (contextListeners == null) {
-            contextListeners = new ArrayList();
+            contextListeners = new ArrayList<ContextListener>();
         }
         contextListeners.add(contextListener);
     }
@@ -331,8 +331,8 @@ public class ConfigurationContext extends AbstractContext {
         if (log.isDebugEnabled()) {
             log.debug("registerOperationContext (" + override + "): " +
                       mepContext + " with key: " + messageID);
-            HashMap msgContextMap = mepContext.getMessageContexts();
-            Iterator msgContextIterator = msgContextMap.values().iterator();
+            HashMap<String, MessageContext> msgContextMap = mepContext.getMessageContexts();
+            Iterator<MessageContext> msgContextIterator = msgContextMap.values().iterator();
             while (msgContextIterator.hasNext()) {
                 MessageContext msgContext = (MessageContext)msgContextIterator.next();
                 log.debug("msgContext: " + msgContext + " action: " + msgContext.getWSAAction());
@@ -384,7 +384,7 @@ public class ConfigurationContext extends AbstractContext {
     public void addServiceGroupContextIntoApplicationScopeTable
             (ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContexts == null) {
-            applicationSessionServiceGroupContexts = new Hashtable();
+            applicationSessionServiceGroupContexts = new Hashtable<String, ServiceGroupContext>();
         }
         applicationSessionServiceGroupContexts.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
@@ -444,7 +444,7 @@ public class ConfigurationContext extends AbstractContext {
         // group name is not necessarily a prereq
         // but if the group name is non-null, then it has to match
 
-        Iterator it = operationContextMap.values().iterator();
+        Iterator<OperationContext> it = operationContextMap.values().iterator();
 
         while (it.hasNext()) {
             OperationContext value = (OperationContext)it.next();
@@ -603,7 +603,7 @@ public class ConfigurationContext extends AbstractContext {
      * @return The ServiceGroupContexts
      * @deprecated Use {@link #getServiceGroupContextIDs} & {@link #getServiceGroupContext(String)}
      */
-    public Hashtable getServiceGroupContexts() {
+    public Hashtable<String, ServiceGroupContext> getServiceGroupContexts() {
         return serviceGroupContextMap;
     }
 
@@ -665,7 +665,7 @@ public class ConfigurationContext extends AbstractContext {
         long currentTime = new Date().getTime();
 
         synchronized (serviceGroupContextMap) {
-            for (Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
+            for (Iterator<String> sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
                  sgCtxtMapKeyIter.hasNext();) {
                 String sgCtxtId = (String)sgCtxtMapKeyIter.next();
                 ServiceGroupContext serviceGroupContext =
@@ -702,7 +702,7 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContext == null) {
             return;
         }
-        Iterator serviceContextIter = serviceGroupContext.getServiceContexts();
+        Iterator<ServiceContext> serviceContextIter = serviceGroupContext.getServiceContexts();
         if (serviceContextIter == null) {
             return;
         }
@@ -755,8 +755,8 @@ public class ConfigurationContext extends AbstractContext {
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
         if (tempFile == null) {
             String property = (String)AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        public Object run() {
+                    new PrivilegedAction<String>() {
+                        public String run() {
                             return System.getProperty("java.io.tmpdir");
                         }
                     }
@@ -768,16 +768,16 @@ public class ConfigurationContext extends AbstractContext {
 
     private void deleteTempFiles(final File dir) {
         Boolean isDir = (Boolean)AccessController.doPrivileged(
-                new PrivilegedAction() {
-                    public Object run() {
+                new PrivilegedAction<Boolean>() {
+                    public Boolean run() {
                         return dir.isDirectory();
                     }
                 }
         );
         if (isDir) {
             String[] children = (String[])AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        public Object run() {
+                    new PrivilegedAction<String[]>() {
+                        public String[] run() {
                             return dir.list();
                         }
                     }
@@ -787,7 +787,7 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
         AccessController.doPrivileged(
-                new PrivilegedAction() {
+                new PrivilegedAction<Object>() {
                     public Object run() {
                         dir.delete();
                         return null;
@@ -904,8 +904,8 @@ public class ConfigurationContext extends AbstractContext {
             return;
         }
 
-        ArrayList toBeRemovedList = new ArrayList();
-        Iterator serviceGroupContexts = serviceGroupContextMap.values().iterator();
+        ArrayList<String> toBeRemovedList = new ArrayList<String>();
+        Iterator<ServiceGroupContext> serviceGroupContexts = serviceGroupContextMap.values().iterator();
         while (serviceGroupContexts.hasNext()) {
             ServiceGroupContext serviceGroupContext =
                     (ServiceGroupContext)serviceGroupContexts.next();

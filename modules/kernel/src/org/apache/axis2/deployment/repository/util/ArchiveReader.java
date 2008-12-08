@@ -68,8 +68,8 @@ import java.util.zip.ZipInputStream;
 public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
-    public ArrayList buildServiceGroup(InputStream zin, DeploymentFileData currentFile,
-                                       AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
+    public ArrayList<AxisService> buildServiceGroup(InputStream zin, DeploymentFileData currentFile,
+                                       AxisServiceGroup axisServiceGroup, HashMap<String, AxisService> wsdlServices,
                                        ConfigurationContext configCtx)
             throws XMLStreamException, AxisFault {
 
@@ -101,7 +101,7 @@ public class ArchiveReader implements DeploymentConstants {
             serviceBuilder.setWsdlServiceMap(wsdlServices);
             AxisService service = serviceBuilder.populateService(rootElement);
 
-            ArrayList serviceList = new ArrayList();
+            ArrayList<AxisService> serviceList = new ArrayList<AxisService>();
             serviceList.add(service);
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {
@@ -118,15 +118,15 @@ public class ArchiveReader implements DeploymentConstants {
      * @param filename
      * @param axisServiceGroup
      * @param extractService
-     * @param wsdls
+     * @param wsdlServices
      * @param configCtx
      * @return Returns ArrayList.
      * @throws DeploymentException
      */
-    public ArrayList processServiceGroup(String filename, DeploymentFileData currentFile,
+    public ArrayList<AxisService> processServiceGroup(String filename, DeploymentFileData currentFile,
                                          AxisServiceGroup axisServiceGroup,
                                          boolean extractService,
-                                         HashMap wsdls,
+                                         HashMap<String, AxisService> wsdlServices,
                                          ConfigurationContext configCtx)
             throws AxisFault {
         // get attribute values
@@ -141,7 +141,7 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(currentFile.getName()));
-                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls,
+                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdlServices,
                                                  configCtx);
                     }
                 }
@@ -176,7 +176,7 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     in = new FileInputStream(file);
                     axisServiceGroup.setServiceGroupName(currentFile.getName());
-                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, configCtx);
+                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdlServices, configCtx);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
@@ -208,7 +208,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @return Returns AxisService.
      * @throws DeploymentException
      */
-    private List processWSDLFile(WSDLToAxisServiceBuilder axisServiceBuilder,
+    private List<AxisService> processWSDLFile(WSDLToAxisServiceBuilder axisServiceBuilder,
                                  File serviceArchiveFile,
                                  boolean isArchive, InputStream in, String baseURI)
             throws DeploymentException {
@@ -269,11 +269,11 @@ public class ArchiveReader implements DeploymentConstants {
      * @param file <code>ArchiveFileData</code>
      * @throws DeploymentException <code>DeploymentException</code>
      */
-    public HashMap processWSDLs(DeploymentFileData file)
+    public HashMap<String, AxisService> processWSDLs(DeploymentFileData file)
             throws DeploymentException {
         File serviceFile = file.getFile();
         // to store service come from wsdl files
-        HashMap servicesMap = new HashMap();
+        HashMap<String, AxisService> servicesMap = new HashMap<String, AxisService>();
         boolean isDirectory = serviceFile.isDirectory();
         if (isDirectory) {
             try {
@@ -353,7 +353,7 @@ public class ArchiveReader implements DeploymentConstants {
                             } else {
                                 throw new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
-                            List services = processWSDLFile(wsdlToAxisServiceBuilder,
+                            List<AxisService> services = processWSDLFile(wsdlToAxisServiceBuilder,
                                                             serviceFile, true,
                                                             new ByteArrayInputStream(
                                                                     out.toByteArray()),
@@ -390,7 +390,7 @@ public class ArchiveReader implements DeploymentConstants {
         return servicesMap;
     }
 
-    public List getAxisServiceFromWsdl(InputStream in,
+    public List<AxisService> getAxisServiceFromWsdl(InputStream in,
                                        ClassLoader loader, String wsdlUrl) throws Exception {
 //         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
@@ -434,7 +434,7 @@ public class ArchiveReader implements DeploymentConstants {
         return null;
     }
 
-    public void processFilesInFolder(File folder, HashMap servicesMap)
+    public void processFilesInFolder(File folder, HashMap<String, AxisService> servicesMap)
             throws FileNotFoundException, XMLStreamException, DeploymentException {
         File files[] = folder.listFiles();
         for (int i = 0; i < files.length; i++) {
@@ -466,7 +466,7 @@ public class ArchiveReader implements DeploymentConstants {
                     }
 
                     FileInputStream in3 = new FileInputStream(file1);
-                    List services = processWSDLFile(wsdlToAxisServiceBuilder, file1, false,
+                    List<AxisService> services = processWSDLFile(wsdlToAxisServiceBuilder, file1, false,
                                                     in2, file1.toURI().toString());
 
                     if (services != null) {

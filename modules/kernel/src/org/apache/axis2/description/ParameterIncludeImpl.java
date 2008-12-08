@@ -85,13 +85,13 @@ public class ParameterIncludeImpl
     /**
      * Field parmeters
      */
-    protected final HashMap parameters;
+    protected final HashMap<String, Parameter> parameters;
 
     /**
      * Constructor ParameterIncludeImpl.
      */
     public ParameterIncludeImpl() {
-        parameters = new HashMap();
+        parameters = new HashMap<String, Parameter>();
     }
 
     /**
@@ -179,11 +179,11 @@ public class ParameterIncludeImpl
         return (Parameter) parameters.get(name);
     }
 
-    public ArrayList getParameters() {
-        Collection col = parameters.values();
-        ArrayList para_list = new ArrayList();
+    public ArrayList<Parameter> getParameters() {
+        Collection<Parameter> col = parameters.values();
+        ArrayList<Parameter> para_list = new ArrayList<Parameter>();
 
-        for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+        for (Iterator<Parameter> iterator = col.iterator(); iterator.hasNext();) {
             Parameter parameter = (Parameter) iterator.next();
 
             para_list.add(parameter);

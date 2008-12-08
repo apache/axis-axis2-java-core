@@ -70,7 +70,7 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedAction,AccessControlContext)
      * @see #doPrivileged(PrivilegedExceptionAction)
      */
-    public static Object doPrivileged(PrivilegedAction action) {
+    public static <T> T doPrivileged(PrivilegedAction<T> action) {
         SecurityManager sm = System.getSecurityManager();
         if (sm == null) {
             return (action.run());
@@ -100,7 +100,7 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedAction)
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      */
-    public static Object doPrivileged(PrivilegedAction action, AccessControlContext context) {
+    public static <T> T doPrivileged(PrivilegedAction<T> action, AccessControlContext context) {
         SecurityManager sm = System.getSecurityManager();
         if (sm == null) {
             return action.run();
@@ -124,7 +124,7 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      * @see #doPrivileged(PrivilegedAction)
      */
-    public static Object doPrivileged(PrivilegedExceptionAction action)
+    public static <T> T doPrivileged(PrivilegedExceptionAction<T> action)
             throws PrivilegedActionException {
         SecurityManager sm = System.getSecurityManager();
         if (sm == null) {
@@ -163,7 +163,7 @@ public class AccessController {
      * @see #doPrivileged(PrivilegedAction)
      * @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
      */
-    public static Object doPrivileged(PrivilegedExceptionAction action,
+    public static <T> T doPrivileged(PrivilegedExceptionAction<T> action,
                                       AccessControlContext context)
             throws PrivilegedActionException {
 
