@@ -883,7 +883,7 @@ public class ConverterUtil {
         int hour = 0;
         int minite = 0;
         int second = 0;
-        int miliSecond = 0;
+        long miliSecond = 0;
         int timeZoneOffSet = TimeZone.getDefault().getRawOffset();
 
 
@@ -983,7 +983,7 @@ public class ConverterUtil {
                     miliSecond = miliSecond / 10;
                 }
             }
-            calendar.set(Calendar.MILLISECOND, miliSecond);
+            calendar.set(Calendar.MILLISECOND, (int)miliSecond);
             calendar.set(Calendar.ZONE_OFFSET, timeZoneOffSet);
             calendar.set(Calendar.DST_OFFSET, 0);
 
