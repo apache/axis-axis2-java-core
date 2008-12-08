@@ -25,6 +25,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterInclude;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -168,4 +169,12 @@ public interface ClusterManager extends ParameterInclude {
      * @return LoadBalanceEventHandler which corresponds to the <code>applicationDomain</code>
      */
     LoadBalanceEventHandler getLoadBalanceEventHandler(String applicationDomain);
+
+
+    /**
+     * Get all the domains that this ClusterManager belongs to
+     *
+     * @return the domains of this ClusterManager
+     */
+    Set<String> getDomains();
 }
