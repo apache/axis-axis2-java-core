@@ -25,10 +25,13 @@ import org.apache.catalina.tribes.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.util.Utils;
 
 import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.SocketException;
 
 public class TribesUtil {
 
@@ -72,6 +75,24 @@ public class TribesUtil {
         return getName(channel.getLocalMember(true));
     }
 
+    public static String getLocalHost(Parameter tcpListenHost){
+        String host = null;
+        if (tcpListenHost != null) {
+            host = ((String) tcpListenHost.getValue()).trim();
+        } else {
+            try {
+                host = Utils.getIpAddress();
+            } catch (SocketException e) {
+                String msg = "Could not get local IP address";
+                log.error(msg, e);
+            }
+        }
+        if (System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS) != null) {
+            host = System.getProperty(ClusteringConstants.LOCAL_IP_ADDRESS);
+        }
+        return host;
+    }
+
     public static byte[] getRpcMembershipChannelId(byte[] domain) {
         return (new String(domain) + ":" + TribesConstants.RPC_MEMBERSHIP_CHANNEL).getBytes();
     }
@@ -94,20 +115,23 @@ public class TribesUtil {
                                                        member.getPort());
         Properties props = getProperties(member.getPayload());
 
-        String http = props.getProperty("HTTP");
-        if (http != null && http.trim().length() != 0) {
-            axis2Member.setHttpPort(Integer.parseInt(http));
+        String httpPort = props.getProperty("httpPort");
+        if (httpPort != null && httpPort.trim().length() != 0) {
+            axis2Member.setHttpPort(Integer.parseInt(httpPort));
         }
 
-        String https = props.getProperty("HTTPS");
-        if (https != null && https.trim().length() != 0) {
-            axis2Member.setHttpsPort(Integer.parseInt(https));
+        String httpsPort = props.getProperty("httpsPort");
+        if (httpsPort != null && httpsPort.trim().length() != 0) {
+            axis2Member.setHttpsPort(Integer.parseInt(httpsPort));
         }
 
         String isActive = props.getProperty(ClusteringConstants.Parameters.IS_ACTIVE);
         if (isActive != null && isActive.trim().length() != 0) {
             axis2Member.setActive(Boolean.valueOf(isActive));
         }
+
+        axis2Member.setDomain(new String(member.getDomain()));
+        axis2Member.setProperties(props);
         return axis2Member;
     }
 

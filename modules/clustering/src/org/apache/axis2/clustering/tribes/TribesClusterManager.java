@@ -223,14 +223,14 @@ public class TribesClusterManager implements ClusterManager {
         if (httpTransport != null) {
             Parameter port = httpTransport.getParameter("port");
             if (port != null) {
-                memberInfo.put("HTTP", port.getValue());
+                memberInfo.put("httpPort", port.getValue());
             }
         }
         TransportInDescription httpsTransport = axisConfig.getTransportIn("https");
         if (httpsTransport != null) {
             Parameter port = httpsTransport.getParameter("port");
             if (port != null) {
-                memberInfo.put("HTTPS", port.getValue());
+                memberInfo.put("httpPort", port.getValue());
             }
         }
         Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
@@ -238,6 +238,9 @@ public class TribesClusterManager implements ClusterManager {
             memberInfo.setProperty(ClusteringConstants.Parameters.IS_ACTIVE,
                                    (String) isActiveParam.getValue());
         }
+
+        memberInfo.setProperty("hostName",
+                               TribesUtil.getLocalHost(getParameter(TribesConstants.LOCAL_MEMBER_HOST)));
 
         Parameter propsParam = getParameter("properties");
         if(propsParam != null){
@@ -248,13 +251,16 @@ public class TribesClusterManager implements ClusterManager {
                 if(nameAttrib != null){
                     OMAttribute valueAttrib = propEle.getAttribute(new QName("value"));
                     if  (valueAttrib != null) {
-                        memberInfo.setProperty(nameAttrib.getAttributeValue(),
-                                               valueAttrib.getAttributeValue());
+                        String attribVal = valueAttrib.getAttributeValue();
+                        attribVal = replaceProperty(attribVal, memberInfo);
+                        memberInfo.setProperty(nameAttrib.getAttributeValue(), attribVal);
                     }
                 }
             }
         }
-        
+
+        memberInfo.remove("hostName"); // this was needed only to populate other properties. No need to send it.
+
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
             memberInfo.store(bout, "");
@@ -264,6 +270,26 @@ public class TribesClusterManager implements ClusterManager {
             throw new ClusteringFault(msg, e);
         }
         channel.getMembershipService().setPayload(bout.toByteArray());
+    }
+
+    private static String replaceProperty(String text, Properties props) {
+        int indexOfStartingChars;
+        int indexOfClosingBrace;
+
+        // The following condition deals with properties.
+        // Properties are specified as ${system.property},
+        // and are assumed to be System properties
+        if ((indexOfStartingChars = text.indexOf("${")) != -1 &&
+            (indexOfClosingBrace = text.indexOf("}")) != -1) { // Is a property used?
+            String sysProp = text.substring(indexOfStartingChars + 2,
+                                            indexOfClosingBrace);
+            String propValue = props.getProperty(sysProp);
+            if (propValue != null) {
+                text = text.substring(0, indexOfStartingChars) + propValue +
+                       text.substring(indexOfClosingBrace + 1);
+            }
+        }
+        return text;
     }
 
     /**
@@ -582,7 +608,7 @@ public class TribesClusterManager implements ClusterManager {
                     }
                     // TODO: If we do not get a response within some time, try to recover from this fault
 //                    }
-//                    while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);    // TODO: #### We will need to check this 
+//                    while (responses.length == 0 || responses[0] == null || responses[0].getMessage() == null);    // TODO: #### We will need to check this
                     if (responses.length != 0 && responses[0] != null && responses[0].getMessage() != null) {
                         ((ControlCommand) responses[0].getMessage()).execute(configurationContext); // Do the initialization
                         break;
