@@ -230,7 +230,7 @@ public class TribesClusterManager implements ClusterManager {
         if (httpsTransport != null) {
             Parameter port = httpsTransport.getParameter("port");
             if (port != null) {
-                memberInfo.put("httpPort", port.getValue());
+                memberInfo.put("httpsPort", port.getValue());
             }
         }
         Parameter isActiveParam = getParameter(ClusteringConstants.Parameters.IS_ACTIVE);
