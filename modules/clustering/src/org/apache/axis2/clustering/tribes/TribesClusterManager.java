@@ -273,13 +273,14 @@ public class TribesClusterManager implements ClusterManager {
     }
 
     private static String replaceProperty(String text, Properties props) {
-        int indexOfStartingChars;
+        int indexOfStartingChars = -1;
         int indexOfClosingBrace;
 
         // The following condition deals with properties.
         // Properties are specified as ${system.property},
         // and are assumed to be System properties
-        if ((indexOfStartingChars = text.indexOf("${")) != -1 &&
+        while (indexOfStartingChars < text.indexOf("${") &&
+               (indexOfStartingChars = text.indexOf("${")) != -1 &&
             (indexOfClosingBrace = text.indexOf("}")) != -1) { // Is a property used?
             String sysProp = text.substring(indexOfStartingChars + 2,
                                             indexOfClosingBrace);
