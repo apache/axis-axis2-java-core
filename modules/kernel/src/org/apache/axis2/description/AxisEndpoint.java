@@ -57,10 +57,11 @@ public class AxisEndpoint extends AxisDescription {
     private String transportInDescName;
 
     public String getEndpointURL() {
-        if (endpointURL == null) {
+        AxisService axisServce = (AxisService) this.getParent();
+        if ((axisServce!= null && axisServce.isModifyUserWSDLPortAddress()) || endpointURL == null) {
             endpointURL = calculateEndpointURL();
         }
-        return endpointURL;
+		return endpointURL;
     }
 
     public void setEndpointURL(String endpointURL) {
