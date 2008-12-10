@@ -678,38 +678,38 @@ public class AxisConfiguration extends AxisDescription {
      * @return the configured message builder implementation class name against
      *         the given content type.
      */
-     public Builder getMessageBuilder(String contentType) {
-		Builder builder = null;
-		if (messageBuilders.isEmpty()) {
-			return null;
-		}
-		if (contentType != null) {
-			builder = (Builder) messageBuilders.get(contentType);
-			if (builder == null) {
-				builder = (Builder) messageBuilders.get(contentType
-						.toLowerCase());
-			}
-			if (builder == null) {
-				Iterator<Entry<String, Builder>> iterator = messageBuilders.entrySet().iterator();
-				while (iterator.hasNext() && builder == null) {
-					Entry<String, Builder> entry = iterator.next();
-					String key = entry.getKey();
-					if (contentType.matches(key)) {
-						builder = entry.getValue();
-					}
-				}
-			}
-		}
-		return builder;
-	}
+    public Builder getMessageBuilder(String contentType) {
+        Builder builder = null;
+        if (messageBuilders.isEmpty()) {
+            return null;
+        }
+        if (contentType != null) {
+            builder = (Builder) messageBuilders.get(contentType);
+            if (builder == null) {
+                builder = (Builder) messageBuilders.get(contentType.toLowerCase());
+            }
+            if (builder == null) {
+                Iterator<Entry<String, Builder>> iterator = messageBuilders.entrySet().iterator();
+                while (iterator.hasNext() && builder == null) {
+                    Entry<String, Builder> entry = iterator.next();
+                    String key = entry.getKey();
+                    if (contentType.matches(key)) {
+                        builder = entry.getValue();
+                    }
+                }
+            }
+        }
+        return builder;
+    }
 
     public Builder getMessageBuilder(String contentType, boolean defaultBuilder) {
-		Builder builder = getMessageBuilder(contentType);
-		if (builder ==null & defaultBuilder){
-			builder = new UnknownContentBuilder();
-		}
-		return builder;
-	}
+        Builder builder = getMessageBuilder(contentType);
+        if (builder == null && defaultBuilder){
+            builder = new UnknownContentBuilder();
+        }
+        return builder;
+    }
+
     /**
      * @param contentType
      * @return the configured message formatter implementation class name
