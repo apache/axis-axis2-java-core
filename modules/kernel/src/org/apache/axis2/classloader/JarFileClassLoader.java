@@ -218,8 +218,7 @@ public class JarFileClassLoader extends MultiParentClassLoader {
             return null;
         }
 
-        String path = new File(URI.create(url.toString())).getPath();
-        return path;
+        return new File(URI.create(url.toString())).getPath();
     }
 
     /**
@@ -275,8 +274,7 @@ public class JarFileClassLoader extends MultiParentClassLoader {
                     CodeSource codeSource = new CodeSource(codeSourceUrl, certificates);
 
                     // load the class into the vm
-                    Class clazz = defineClass(className, bytes, 0, bytes.length, codeSource);
-                    return clazz;
+                    return defineClass(className, bytes, 0, bytes.length, codeSource);
                 }
             }, acc);
         } catch (PrivilegedActionException e) {
@@ -342,9 +340,6 @@ public class JarFileClassLoader extends MultiParentClassLoader {
 
     private boolean isSealed(Attributes packageAttributes, Attributes mainAttributes) {
         String sealed = getAttribute(Attributes.Name.SEALED, packageAttributes, mainAttributes);
-        if (sealed == null) {
-            return false;
-        }
-        return "true".equalsIgnoreCase(sealed);
+        return sealed != null && "true".equalsIgnoreCase(sealed);
     }
 }

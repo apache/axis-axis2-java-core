@@ -221,68 +221,72 @@ public class Utils {
                                       final File tmpDir) throws IOException {
         byte data[] = new byte[2048];
         int count;
-        File f;
-        if (tmpDir == null) {
-            String directory = (String)org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
-                            return System.getProperty("java.io.tmpdir");
-                        }
-                    });
-            final File tempFile = new File(directory, "_axis2");
-            Boolean exists = (Boolean)org.apache.axis2.java.security.AccessController
-                    .doPrivileged(new PrivilegedAction() {
-                        public Object run() {
-                            return tempFile.exists();
-                        }
-                    });
-            if (!exists) {
-                Boolean mkdirs = (Boolean)org.apache.axis2.java.security.AccessController
-                        .doPrivileged(new PrivilegedAction() {
-                            public Object run() {
-                                return tempFile.mkdirs();
-                            }
-                        });
-                if (!mkdirs) {
-                    throw new IOException("Unable to create the directory");
-                }
-            }
-            try {
-                f = (File)org.apache.axis2.java.security.AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() throws IOException {
-                                return File.createTempFile("axis2", suffix,
-                                                           tempFile);
-                            }
-                        });
-            } catch (PrivilegedActionException e) {
-                throw (IOException)e.getException();
-            }
-        } else {
-            try {
-                f = (File)org.apache.axis2.java.security.AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run() throws IOException {
-                                return File.createTempFile("axis2", suffix,
-                                                           tmpDir);
-                            }
-                        });
-            } catch (PrivilegedActionException e) {
-                throw (IOException)e.getException();
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Created temporary file : " + f.getAbsolutePath());// $NON-SEC-4
-        }
-        final File f2 = f;
-        org.apache.axis2.java.security.AccessController
-                .doPrivileged(new PrivilegedAction() {
-                    public Object run() {
-                        f2.deleteOnExit();
-                        return null;
-                    }
-                });
+        File f = TempFileManager.createTempFile("axis2", suffix);
+        
+//        if (tmpDir == null) {
+//            String directory = (String)org.apache.axis2.java.security.AccessController
+//                    .doPrivileged(new PrivilegedAction() {
+//                        public Object run() {
+//                            return System.getProperty("java.io.tmpdir");
+//                        }
+//                    });
+//            final File tempFile = new File(directory, "_axis2");
+//            Boolean exists = (Boolean)org.apache.axis2.java.security.AccessController
+//                    .doPrivileged(new PrivilegedAction() {
+//                        public Object run() {
+//                            return tempFile.exists();
+//                        }
+//                    });
+//            if (!exists) {
+//                Boolean mkdirs = (Boolean)org.apache.axis2.java.security.AccessController
+//                        .doPrivileged(new PrivilegedAction() {
+//                            public Object run() {
+//                                return tempFile.mkdirs();
+//                            }
+//                        });
+//                if (!mkdirs) {
+//                    throw new IOException("Unable to create the directory");
+//                }
+//            }
+//            try {
+//                f = (File)org.apache.axis2.java.security.AccessController
+//                        .doPrivileged(new PrivilegedExceptionAction() {
+//                            public Object run() throws IOException {
+//                                return File.createTempFile("axis2", suffix,
+//                                                           tempFile);
+//                            }
+//                        });
+//                f.deleteOnExit();
+//            } catch (PrivilegedActionException e) {
+//                throw (IOException)e.getException();
+//            }
+//        } else {
+//            try {
+//                f = (File)org.apache.axis2.java.security.AccessController
+//                        .doPrivileged(new PrivilegedExceptionAction() {
+//                            public Object run() throws IOException {
+//                                return File.createTempFile("axis2", suffix,
+//                                                           tmpDir);
+//                            }
+//                        });
+//                f.deleteOnExit();
+//            } catch (PrivilegedActionException e) {
+//                throw (IOException)e.getException();
+//            }
+//        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("Created temporary file : " + f.getAbsolutePath());// $NON-SEC-4
+//        }
+//        final File f2 = f;
+//        org.apache.axis2.java.security.AccessController
+//                .doPrivileged(new PrivilegedAction() {
+//                    public Object run() {
+//                        f2.deleteOnExit();
+//                        return null;
+//                    }
+//                });
         FileOutputStream out;
+        final File f2 = f;
         try {
             out = (FileOutputStream)org.apache.axis2.java.security.AccessController
                     .doPrivileged(new PrivilegedExceptionAction() {
