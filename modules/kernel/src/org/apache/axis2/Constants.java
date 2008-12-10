@@ -298,6 +298,14 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String JMS_COORELATION_ID = "JMS_COORELATION_ID";
 
     public static final String MODULE_VERSION ="version";
+
+    /**
+     * Following constant are used for JTA transaction supporyt in Axis2
+     */
+    public static final String USER_TRANSACTION = "UserTransaction";
+    public static final String TRANSACTION_MANAGER = "TransactionManager";
+    public static final String SUSPENDED_TRANSACTION = "SuspendedTransaction";
+
     
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
@@ -419,6 +427,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String DEPLOYMENT_LIFE_CYCLE_LISTENER = "deploymentLifeCycleListener";
 
         public static final String GENERATE_ABSOLUTE_LOCATION_URIS = "generateAbsoluteLocationURIs";
+
+
 
     }
 }

@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
 import org.apache.axis2.clustering.ClusterManager;
@@ -147,6 +148,8 @@ public class AxisConfiguration extends AxisDescription {
     private ClusterManager clusterManager;
 
     private AxisConfigurator configurator;
+
+    private TransactionConfiguration transactionConfiguration;
 
     /**
      * Constructor AxisConfiguration.
@@ -1021,6 +1024,14 @@ public class AxisConfiguration extends AxisDescription {
 
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
+    }
+
+     public TransactionConfiguration getTransactionConfiguration() {
+        return transactionConfiguration;
+    }
+
+    public void setTransactionConfig(TransactionConfiguration transactionConfiguration) {
+        this.transactionConfiguration = transactionConfiguration;
     }
 
     public Object getKey() {

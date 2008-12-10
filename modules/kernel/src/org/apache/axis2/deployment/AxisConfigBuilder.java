@@ -26,6 +26,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.ApplicationXMLBuilder;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.MIMEBuilder;
@@ -35,11 +36,7 @@ import org.apache.axis2.builder.XFormURLEncodedBuilder;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -186,6 +183,24 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 clusterBuilder.buildCluster(clusterElement);
             }
 
+            //Add jta transaction  configuration
+            OMElement transactionElement = config_element
+                    .getFirstChildWithName(new QName(TAG_TRANSACTION));
+            if (transactionElement != null) {
+                ParameterInclude transactionParameters = new ParameterIncludeImpl();
+                Iterator parameters = transactionElement.getChildrenWithName(new QName(TAG_PARAMETER));
+                processParameters(parameters, transactionParameters, null);
+                TransactionConfiguration txcfg = new TransactionConfiguration(transactionParameters);
+
+                OMAttribute timeoutAttribute = transactionElement.getAttribute(new QName(TAG_TIMEOUT));
+                if(timeoutAttribute != null) {
+                    txcfg.setTransactionTimeout(Integer.parseInt(timeoutAttribute.getAttributeValue()));
+                }
+
+                axisConfig.setTransactionConfig(txcfg);
+            }
+
+                    
             /*
             * Add Axis2 default builders if they are not overidden by the config
             */

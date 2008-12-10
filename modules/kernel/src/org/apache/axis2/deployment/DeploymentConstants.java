@@ -71,6 +71,8 @@ public interface DeploymentConstants {
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
     String TAG_CLUSTER = "cluster";
+    String TAG_TRANSACTION = "transaction";
+    String TAG_TIMEOUT = "timeout";
     String TAG_MESSAGE_BUILDERS =
             "messageBuilders"; //used to add pluggable support for diffrent wire formats
     String TAG_MESSAGE_BUILDER = "messageBuilder";
