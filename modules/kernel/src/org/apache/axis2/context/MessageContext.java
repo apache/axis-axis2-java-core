@@ -1579,7 +1579,7 @@ public class MessageContext extends AbstractContext
         // If AxisBindingMessage is not set, try to find the binding message from the AxisService
         if (bindingMessage == null) {
         	bindingMessage = findBindingMessage();
-        } 
+        }
         
         if (bindingMessage != null) {
             return bindingMessage.getEffectivePolicy();
@@ -1592,15 +1592,21 @@ public class MessageContext extends AbstractContext
     }
  
     private AxisBindingMessage findBindingMessage() {
-    	if (axisService != null) {
+    	if (axisService != null && axisOperation != null ) {
 			if (axisService.getEndpointName() != null) {
 				AxisEndpoint axisEndpoint = axisService
 						.getEndpoint(axisService.getEndpointName());
 				if (axisEndpoint != null) {
 					AxisBinding axisBinding = axisEndpoint.getBinding();
-					AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding
+                    AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding
 							.getChild(axisOperation.getName());
-					String direction = axisMessage.getDirection();
+
+                    //If Binding Operation is not found, just return null
+                    if (axisBindingOperation == null) {
+                       return null;
+                    }
+
+                    String direction = axisMessage.getDirection();
 					AxisBindingMessage axisBindingMessage = null;
 					if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
 							.equals(direction)
