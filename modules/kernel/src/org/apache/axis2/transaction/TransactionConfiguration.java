@@ -20,21 +20,16 @@
 package org.apache.axis2.transaction;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.AxisConfigBuilder;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.description.ParameterInclude;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.OMElement;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.xml.namespace.QName;
+import javax.transaction.TransactionManager;
 import java.util.Hashtable;
 import java.util.Iterator;
 
