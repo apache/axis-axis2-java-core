@@ -135,7 +135,7 @@ public class PropertyDescriptorPlus {
                 throw new RuntimeException(Messages.getMessage("pDescrErr2",targetBean.getClass().getName()));
             }
             Object ret = method.invoke(targetBean, null);
-            if (method.getReturnType() == JAXBElement.class) {
+            if (ret != null && method.getReturnType() == JAXBElement.class) {
                 ret = ((JAXBElement) ret).getValue();
             }
             return ret;
