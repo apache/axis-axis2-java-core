@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-jaxws-integration</artifactId>
@@ -65,17 +65,17 @@
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>${version}</version>
+            <version>${transport.http.version}</version>
         </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-tcp</artifactId>
-            <version>${version}</version>
+            <version>${transport.tcp.version}</version>
         </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>${version}</version>
+            <version>${transport.local.version}</version>
         </dependency>
 
         <dependency>
