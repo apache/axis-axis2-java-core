@@ -1,0 +1,308 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project basedir="." default="help">
+
+    <!--Set your eclipse home directory  -->
+    <property environment="env" />
+    <property name="eclipse.home" value="${env.ECLIPSE_HOME}"></property>
+	
+    <!-- properties file to load the versions of dependencies -->
+    <property file="../../../etc/project.properties"/>
+    <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_${version_number}"></property>
+    <property name="codegen.plugin.zip.name" value="axis2-eclipse-codegen-wizard.zip"></property>
+	
+    <property name="src" value="./src"></property>
+    <property name="codegen.src.dir" value="../axis2-eclipse-codegen-plugin/src/main/java"></property>
+    <property name="output" value="../target/eclipse_plugins"></property>
+    <property name="output.target" value="${output}/release"></property>
+    <property name="plugin.output.dir" value="${output}/plugin"></property>
+    <property name="codegen.output.dir" value="${output}/code-gen"></property>
+    <property name="codegen.plugin.output.dir" value="${plugin.output.dir}/${codegen.plugin.version}"></property>
+
+    <property name="source.dir.name" value="src"></property>
+    <property name="lib.dir.name" value="lib"></property>
+    <property name="bin.dir.name" value="bin"></property>
+    <property name="help.dir.name" value="help"></property>
+    <property name="icons.dir.name" value="icons"></property>
+
+    <property name="plugin.project.file.name" value=".project"></property>
+    <property name="plugin.classpath.file.name" value=".classpath"></property>
+    <property name="plugin.help.file.name" value="help_toc.xml"></property>
+    <property name="tool_docs_version" value="1_4"></property>
+
+    <property name="codegen.resource.dir" value="../conf/codegen"></property>
+    <property name="codegen.help.resource.file" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/wsdl2java-plugin.html"></property>
+    <property name="codegen.help.images.dir" value="../../../modules/documentation/xdocs/tools/${tool_docs_version}/eclipse/images"></property>
+    <property name="axis2.lib.dir" value="../../../target/lib"></property>
+
+    <!--Filter tokens for the copy command to filter the versions of external dependencies -->
+     <filter token="version_number" value="${version_number}" />
+     <filter token="activation.version" value="${activation.version}" />
+
+     <filter token="ant.version" value="${ant.version}" />
+     <filter token="axiom.version" value="${axiom.version}" />
+     <filter token="commons.logging.version" value="${commons.logging.version}" />
+     <filter token="neethi.version" value="${neethi.version}" />
+     <filter token="stax.api.version" value="${stax.api.version}" />
+     <filter token="xmlbeans.version" value="${xmlbeans.version}" />
+     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+     <filter token="log4j.version" value="${log4j.version}" />
+     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
+     <filter token="woden.version" value="${woden.version}" />
+     <filter token="commons.httpclient.version" value="${commons.httpclient.version}" />
+     <filter token="commons.codec.version" value="${commons.codec.version}" />
+     <filter token="jibx.version" value="${jibx.version}" />
+     <filter token="geronimo.spec.stax.version" value="${geronimo.spec.stax.version}" />
+     <filter token="geronimo.spec.activation.version" value="${geronimo.spec.activation.version}" />
+
+
+     <!--Codegen wizard libraries -->
+     <fileset id="codegen.libs" dir="${axis2.lib.dir}">
+ 		<include name="geronimo-activation_1.1_spec-${geronimo.spec.activation.version}.jar" />
+ 		<include namo="geronimo-stax-api_1.0_spec-${geronimo.spec.stax.version}.jar" />
+		<include name="ant-${ant.version}.jar" />
+		<include name="axiom-api-${axiom.version}.jar" />
+		<include name="axiom-dom-${axiom.version}.jar" />
+		<include name="axiom-impl-${axiom.version}.jar" />
+	        <include name="axis2-${version_number}.jar" />
+		<include name="commons-logging-${commons.logging.version}.jar" />
+		<include name="log4j-${log4j.version}.jar" />
+		<include name="neethi-${neethi.version}.jar" />
+		<include name="wsdl4j-${wsdl4j.version}.jar" />
+		<include name="xmlbeans-${xmlbeans.version}.jar" />
+		<include name="XmlSchema-${XmlSchema.version}.jar" />
+		<include name="woden-${woden.version}.jar" />
+		<include name="commons-httpclient-${commons.httpclient.version}.jar" />
+		<include name="commons-codec-${commons.codec.version}.jar" />
+		<include name="axis2-jibx-${version_number}.jar" />
+		<include name="jibx-bind-${jibx.version}.jar" />
+		<include name="jibx-run-${jibx.version}.jar" />
+    </fileset>
+	
+    <!-- Default target to generate all the services -->
+    <target name="all">
+    	<antcall target="clean" />
+        <antcall target="generate-codegen-plugin"/>
+        <antcall target="release-plugin"/>
+    </target>
+
+    <!-- init-->
+    <target name="init">
+        <mkdir dir="${output}"></mkdir>
+        <mkdir dir="${codegen.output.dir}"></mkdir>
+    </target>
+
+  <!-- Codegen Project -->
+
+
+          <!-- Generete the Codegen Project that can be imported as a readymade eclipse project in to workspace -->
+            <target name="generate-codegen-project">
+                <delete file="plugin.xml" />
+                <delete file="build.properties" />
+                <delete file=".project" />
+                <delete file=".classpath" />
+                <delete dir="icons" />
+                <delete dir="help" />
+                <delete dir="lib" />
+
+                <!-- Copy to the same position with the filtering on-->
+                <copy todir="." filtering="on" >
+                    <fileset dir="${codegen.resource.dir}">
+                        <include name="plugin.xml" />
+                        <include name="build.properties" />
+                        <include name="${plugin.classpath.file.name}" />
+                    </fileset>
+                </copy>
+
+                <!-- copy the libs -->
+                <mkdir dir="${lib.dir.name}" />
+                <copy todir="${lib.dir.name}">
+                    <fileset refid="codegen.libs" />
+                </copy>
+                <!-- copy the  icons-->
+                <mkdir dir="${icons.dir.name}" />
+                <copy todir="${icons.dir.name}">
+                        <fileset dir="${codegen.resource.dir}/${icons.dir.name}" />
+                </copy>
+                <!-- copy the other project files-->
+                <copy todir=".">
+                        <fileset file="${codegen.resource.dir}/${plugin.project.file.name}" />
+                        <fileset file="${codegen.resource.dir}/${plugin.help.file.name}" />
+                </copy>
+
+            </target>
+
+    <!--create the codegen project-->
+    <target name="create-codegen-project" depends="init">
+        <!-- copy the source  -->
+        <copy todir="${codegen.output.dir}/${source.dir.name}">
+            <fileset dir="${codegen.src.dir}" excludes="**/service/**/*.java"/>
+        </copy>
+        <!-- Copy the other stuff -->
+        <copy todir="${codegen.output.dir}" filtering="on" >
+            <fileset dir="${codegen.resource.dir}" excludes="**/*.gif"></fileset>
+        </copy>
+        <!-- Copy the icons dir -->
+        <copy todir="${codegen.output.dir}">
+            <fileset dir="${codegen.resource.dir}" includes="**/*.gif"></fileset>
+        </copy>
+        <!-- create bin directory -->
+	    <mkdir dir="${codegen.output.dir}/${bin.dir.name}"></mkdir>
+        <!-- create the help directory -->
+        <mkdir dir="${codegen.output.dir}/${help.dir.name}"></mkdir>
+	    <!-- copy the help directory -->
+        <copy todir="${codegen.output.dir}/${help.dir.name}">
+            <fileset file="${codegen.help.resource.file}"></fileset>
+        </copy>
+        <!-- copy the libraries to the plugin-->
+        <copy todir="${codegen.output.dir}/${lib.dir.name}">
+            <fileset refid="codegen.libs" />
+        </copy>
+        <available property="images.dir" file="${codegen.help.images.dir}" type="dir" value="${codegen.help.images.dir}"/>
+          <copy todir="${codegen.output.dir}/${help.dir.name}/images">
+            <fileset dir="${images.dir}"/>
+         </copy>
+
+    </target>
+    
+    <!--Generate the codegen plugin -->	
+    <target name="generate-codegen-plugin" depends="create-codegen-project">
+        <mkdir dir="${codegen.plugin.output.dir}"></mkdir>
+        <!-- copy the plugin.xml and help_toc.xml -->
+        <copy todir="${codegen.plugin.output.dir}">
+            <fileset dir="${codegen.output.dir}" >
+		<include name="plugin.xml" />
+		<include name="help_toc.xml" />
+		<include name="build.properties" />
+		<include name="**/ServiceResources.properties" />
+	    </fileset>
+        </copy>
+        <!-- copy the help directory-->
+        <copy todir="${codegen.plugin.output.dir}/help">
+            <fileset dir="${codegen.output.dir}/help" />
+        </copy>
+        <!-- copy the icons directory-->
+        <copy todir="${codegen.plugin.output.dir}/icons">
+            <fileset dir="${codegen.output.dir}/icons" />
+        </copy>
+        <!-- copy the libraries to the plugin-->
+        <copy todir="${codegen.plugin.output.dir}/${lib.dir.name}">
+            <fileset refid="codegen.libs" />
+        </copy>
+        <!-- copy the sources to the plugin-->
+        <copy todir="${codegen.plugin.output.dir}/${source.dir.name}">
+	    <fileset dir="${codegen.output.dir}/${source.dir.name}">
+		    <include name="org/**" />
+            </fileset>
+        </copy>
+
+	<!-- compile the plugin java files -->
+	<delete dir="${codegen.plugin.output.dir}/class"></delete>
+ 	<mkdir dir="${codegen.plugin.output.dir}/class"></mkdir>
+	<javac srcdir="${codegen.output.dir}/${source.dir.name}" 
+               destdir="${codegen.plugin.output.dir}/class" 
+               includes="org/apache/axis2/**">
+		<classpath>
+     			<fileset dir="${codegen.plugin.output.dir}/lib">
+        			<include name="**/*.jar" />
+     			</fileset>
+       			 <fileset dir="${eclipse.home}/plugins/">
+				<include name="**/*.jar" />
+     			</fileset>
+    		</classpath>	
+	</javac>
+	
+	<!--Make available the resources for the plugin -->
+        <copy todir="${codegen.plugin.output.dir}/class">
+            <fileset dir="${codegen.output.dir}/${source.dir.name}" >
+		<include name="**/Codegen.properties" />
+		<exclude name="**/*.class" />
+	    </fileset>
+        </copy>
+      
+	<!-- create the Axis2CodegenWizard.jar -->
+        <jar destfile="${codegen.plugin.output.dir}/Axis2CodegenWizard.jar" 
+	       basedir="${codegen.plugin.output.dir}/class"
+           includes="org/apache/**"
+          />
+	<delete dir="${codegen.plugin.output.dir}/src"></delete>
+	<delete dir="${codegen.plugin.output.dir}/class"></delete>
+    </target>
+
+    <!--Install the codegen plugin -->
+    <target name="install-codegen-plugin" depends="init,generate-codegen-project,generate-codegen-plugin">
+        <delete dir="${eclipse.home}/plugins/${codegen.plugin.version}"></delete>
+          <copy todir="${eclipse.home}/plugins">
+    		<fileset dir="${plugin.output.dir}"/>
+          </copy>
+    </target>
+    
+    <!--Relese the plugins (this will install the plugins and build the zip version)-->
+    <target name="release-plugin">
+    	<mkdir dir="${output.target}" />
+    	<mkdir dir="${output.target}/codegen/${codegen.plugin.version}" />
+    	
+        <antcall target="generate-codegen-plugin"/>
+    	
+        <copy todir="${output.target}/codegen/${codegen.plugin.version}">
+              <fileset dir="${plugin.output.dir}/${codegen.plugin.version}"/>
+        </copy>
+    	
+    	<!--Zip the eclipse plugins to eclipse_plugins/target -->
+    	<zip destfile="${output.target}/${codegen.plugin.zip.name}"
+    	       basedir="${output.target}/codegen"
+    	       update="true"
+    	/>
+    	<delete dir="${output.target}/codegen" />
+    </target>
+
+
+    <!-- Clean the directory -->
+    <target name="clean">
+	<delete dir="${codegen.output.dir}"></delete>
+        <delete dir="${plugin.output.dir}/${codegen.plugin.version}"></delete>
+        <delete file="${output.taget}/${codegen.file.zip.name}"></delete>
+    </target>
+
+	<!-- help, list of targets -->
+    <target name="help">
+	    <echo message="****************************************************************************" />
+	    <echo message="**                 Eclipse Codegen Plugin Build                           **" />
+	    <echo message="**  pre-requisit            : env.ECLIPSE_HOME                            **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  build eclipse projecti   : generate-codegen-project                   **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  build eclipse plugin    : generate-codegen-plugin                     **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  install plugin          : install-codegen-plugin                      **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  release eclipse plugin  : release-plugin                              **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="****************************************************************************" />
+
+    </target>
+	
+
+</project>
+
+
+
