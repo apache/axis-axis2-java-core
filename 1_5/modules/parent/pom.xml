@@ -30,7 +30,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Parent</name>
     <inceptionYear>2004</inceptionYear>
@@ -80,14 +80,14 @@
               element, and it will need to be changed manually before a release,
               as the maven-release-plugin will not update this value.
         -->
-        <version>SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
 
         <!-- Version #'s for the mars that we generate -->
-        <addressing.mar.version>SNAPSHOT</addressing.mar.version>
-        <soapmonitor.mar.version>SNAPSHOT</soapmonitor.mar.version>
-        <mex.mar.version>SNAPSHOT</mex.mar.version>
-        <ping.mar.version>SNAPSHOT</ping.mar.version>
-        <scripting.mar.version>SNAPSHOT</scripting.mar.version>
+        <addressing.mar.version>1.5-SNAPSHOT</addressing.mar.version>
+        <soapmonitor.mar.version>1.5-SNAPSHOT</soapmonitor.mar.version>
+        <mex.mar.version>1.5-SNAPSHOT</mex.mar.version>
+        <ping.mar.version>1.5-SNAPSHOT</ping.mar.version>
+        <scripting.mar.version>1.5-SNAPSHOT</scripting.mar.version>
 
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
@@ -151,6 +151,9 @@
         <smack.version>3.0.4</smack.version>
         <commons.lang.version>2.3</commons.lang.version>
         <javax.mail.version>1.4</javax.mail.version>
+        <transport.http.version>SNAPSHOT</transport.http.version>
+        <transport.tcp.version>SNAPSHOT</transport.tcp.version>
+        <transport.local.version>SNAPSHOT</transport.local.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
