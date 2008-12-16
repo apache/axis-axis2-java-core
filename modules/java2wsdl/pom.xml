@@ -40,18 +40,15 @@
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>${transport.http.version}</version>
-        </dependency>
+                    </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-tcp</artifactId>
-            <version>${transport.tcp.version}</version>
-        </dependency>
+                   </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>${transport.local.version}</version>
-        </dependency>
+                    </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
