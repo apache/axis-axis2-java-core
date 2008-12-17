@@ -90,6 +90,8 @@ public interface CommandLineOptionConstants {
         String SKELTON_INTERFACE_NAME_OPTION_LONG = "skelton-interface-name";
         String SKELTON_CLASS_NAME_OPTION = "scn";
         String SKELTON_CLASS_NAME_OPTION_LONG = "skelton-class-name";
+        String LOWER_CASE_METHOD_NAME = "lcmn";
+        String LOWER_CASE_METHOD_NAME_LONG = "lower-case-method-name";
 
         String INVALID_OPTION = "INVALID_OPTION";
         String EXTRA_OPTIONTYPE_PREFIX = "E";
