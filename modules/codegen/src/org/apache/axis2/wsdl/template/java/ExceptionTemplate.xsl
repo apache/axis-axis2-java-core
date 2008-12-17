@@ -32,19 +32,33 @@ package <xsl:value-of select="@package"/>;
 public class <xsl:value-of select="@shortName"/> extends <xsl:value-of select="@exceptionBaseClass"/>{
     
     private <xsl:value-of select="@type"/> faultMessage;
-    
-    public <xsl:value-of select="@shortName"/>() {
-        super("<xsl:value-of select="@shortName"/>");
-    }
-           
-    public <xsl:value-of select="@shortName"/>(java.lang.String s) {
-       super(s);
-    }
-    
-    public <xsl:value-of select="@shortName"/>(java.lang.String s, java.lang.Throwable ex) {
-      super(s, ex);
-    }
-    
+
+    <xsl:variable name="classShortName" select="@shortName"/>
+    <xsl:if test="count(constructor) > 0">
+        <xsl:for-each select="constructor">
+             public <xsl:value-of select="$classShortName"/>(<xsl:for-each select="param"><xsl:if test="position() > 1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/></xsl:for-each>) {
+                super(<xsl:for-each select="param"><xsl:if test="position() > 1">,</xsl:if><xsl:value-of select="@name"/></xsl:for-each>);
+            }
+        </xsl:for-each>
+    </xsl:if>
+    <xsl:if test="count(constructor) = 0">
+        public <xsl:value-of select="@shortName"/>() {
+            super("<xsl:value-of select="@shortName"/>");
+        }
+
+        public <xsl:value-of select="@shortName"/>(java.lang.String s) {
+           super(s);
+        }
+
+        public <xsl:value-of select="@shortName"/>(java.lang.String s, java.lang.Throwable ex) {
+          super(s, ex);
+        }
+
+        public <xsl:value-of select="@shortName"/>(java.lang.Throwable cause) {
+            super(cause);
+        }
+    </xsl:if>
+
     public void setFaultMessage(<xsl:value-of select="@type"/> msg){
        faultMessage = msg;
     }

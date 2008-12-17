@@ -67,7 +67,7 @@
         }
 
         java.lang.String methodName;
-        if((op.getName() != null) &amp;&amp; ((methodName = org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(op.getName().getLocalPart())) != null)){
+        if((op.getName() != null) &amp;&amp; ((methodName = <xsl:if test="@isLowerCaseMethodName">org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(</xsl:if>op.getName().getLocalPart()<xsl:if test="@isLowerCaseMethodName">)</xsl:if>) != null)){
 
         <xsl:for-each select="method">
             <xsl:if test="position() > 1">} else </xsl:if>
@@ -358,7 +358,7 @@
         }
 
         java.lang.String methodName;
-        if((op.getName() != null) &amp;&amp; ((methodName = org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(op.getName().getLocalPart())) != null)){
+        if((op.getName() != null) &amp;&amp; ((methodName = <xsl:if test="@isLowerCaseMethodName">org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(</xsl:if>op.getName().getLocalPart()<xsl:if test="@isLowerCaseMethodName">)</xsl:if>) != null)){
 
         <xsl:for-each select="method">
 
@@ -496,7 +496,7 @@
         }
 
         java.lang.String methodName;
-        if((op.getName() != null) &amp;&amp; ((methodName = org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(op.getName().getLocalPart())) != null)){
+        if((op.getName() != null) &amp;&amp; ((methodName = <xsl:if test="@isLowerCaseMethodName">org.apache.axis2.util.JavaUtils.xmlNameToJavaIdentifier(</xsl:if>op.getName().getLocalPart()<xsl:if test="@isLowerCaseMethodName">)</xsl:if>) != null)){
 
         <xsl:for-each select="method">
             <xsl:if test="position() > 1">} else </xsl:if>
