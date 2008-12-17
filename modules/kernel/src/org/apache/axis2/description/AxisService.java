@@ -2374,9 +2374,11 @@ public class AxisService extends AxisDescription {
 				for (int i = 0; i < mappingList.size(); i++) {
 					String actionMapping = (String) mappingList.get(i);
 					operationsAliasesMap.remove(actionMapping);
+					invalidOperationsAliases.remove(actionMapping);
 				}
 			}
 			operationsAliasesMap.remove(operation.getName().getLocalPart());
+			invalidOperationsAliases.remove(operation.getName().getLocalPart());
 		}
 	}
 
