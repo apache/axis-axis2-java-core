@@ -1562,6 +1562,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
 
         addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
+
+        if (this.codeGenConfiguration.isLowerCaseMethodName()){
+           addAttribute(doc, "isLowerCaseMethodName", "true", rootElement); 
+        }
         //add backwordcompatibility attribute
         addAttribute(doc, "isbackcompatible",
                 String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
@@ -2230,8 +2234,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         List soapHeaderOutputParameterList = new ArrayList();
         methodElement = doc.createElement("method");
         String localPart = axisOperation.getName().getLocalPart();
-
-        addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
+        if (this.codeGenConfiguration.isLowerCaseMethodName()){
+            addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
+        } else {
+            addAttribute(doc, "name", localPart, methodElement);
+        }
         addAttribute(doc, "originalName", localPart, methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
