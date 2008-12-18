@@ -894,7 +894,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
             } else {
-                throw new AxisFault("No service was not found in the WSDL at " +
+                throw new AxisFault("No services found in the WSDL at " +
                                     definition.getDocumentBaseURI()
                                     + " with targetnamespace "
                                     + definition.getTargetNamespace());

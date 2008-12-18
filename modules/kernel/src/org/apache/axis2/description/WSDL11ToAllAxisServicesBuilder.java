@@ -112,7 +112,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                     portName = null;
                 }
             } else {
-                throw new AxisFault("No service was not found in the WSDL at " +
+                throw new AxisFault("No services found in the WSDL at " +
                         wsdl4jDefinition.getDocumentBaseURI()
                         + " with targetnamespace "
                         + wsdl4jDefinition.getTargetNamespace());
