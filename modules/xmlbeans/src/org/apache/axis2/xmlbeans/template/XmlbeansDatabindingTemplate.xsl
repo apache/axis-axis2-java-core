@@ -65,59 +65,18 @@
             private org.apache.axiom.om.OMElement toOM(final <xsl:value-of select="@type"/> param)
                     throws org.apache.axis2.AxisFault {
 
-                final javax.xml.stream.XMLStreamReader xmlReader = param.newXMLStreamReader();
-                while (!xmlReader.isStartElement()) {
-                    try {
-                        xmlReader.next();
-                    } catch (javax.xml.stream.XMLStreamException e) {
-                        throw org.apache.axis2.AxisFault.makeFault(e);
-                    }
+                org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
+                org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
+                xmlOptions.setSaveNoXmlDecl();
+                xmlOptions.setSaveAggressiveNamespaces();
+                xmlOptions.setSaveNamespacesFirst();
+                try {
+                   param.save(builder, builder, xmlOptions);
+                   org.apache.axiom.om.OMElement element = builder.getRootElement();
+                   return element;
+                } catch (java.lang.Exception e) {
+                    throw org.apache.axis2.AxisFault.makeFault(e);
                 }
-
-                org.apache.axiom.om.OMDataSource omDataSource = new org.apache.axiom.om.OMDataSource() {
-
-                    public void serialize(java.io.OutputStream outputStream, org.apache.axiom.om.OMOutputFormat omOutputFormat)
-                            throws javax.xml.stream.XMLStreamException {
-                        try {
-                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
-                            param.save(outputStream,xmlOptions.setSaveNoXmlDecl());
-                        } catch (java.io.IOException e) {
-                            throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
-                        }
-                    }
-
-                    public void serialize(java.io.Writer writer, org.apache.axiom.om.OMOutputFormat omOutputFormat)
-                            throws javax.xml.stream.XMLStreamException {
-                        try {
-                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
-                            param.save(writer,xmlOptions.setSaveNoXmlDecl());
-                        } catch (java.io.IOException e) {
-                            throw new javax.xml.stream.XMLStreamException("Problem with saving document",e);
-                        }
-                    }
-
-                    public void serialize(javax.xml.stream.XMLStreamWriter xmlStreamWriter)
-                            throws javax.xml.stream.XMLStreamException {
-                        org.apache.axiom.om.impl.MTOMXMLStreamWriter mtomxmlStreamWriter =
-                                                        (org.apache.axiom.om.impl.MTOMXMLStreamWriter) xmlStreamWriter;
-                        try {
-                            org.apache.xmlbeans.XmlOptions xmlOptions = new org.apache.xmlbeans.XmlOptions();
-                            param.save(mtomxmlStreamWriter.getOutputStream(),xmlOptions.setSaveNoXmlDecl());
-                            mtomxmlStreamWriter.getOutputStream().flush();
-                        } catch (java.io.IOException e) {
-                            throw new javax.xml.stream.XMLStreamException("Problem with saving document", e);
-                        }
-                    }
-
-                    public javax.xml.stream.XMLStreamReader getReader()
-                            throws javax.xml.stream.XMLStreamException {
-                        return param.newXMLStreamReader();
-                    }
-                };
-            
-                return  new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(xmlReader.getName(),
-                        org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
-                        omDataSource);
             }
         </xsl:for-each>
 
