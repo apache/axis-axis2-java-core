@@ -133,6 +133,8 @@ public class ListenerManager {
 
         shutdownHookThread = new ListenerManagerShutdownThread(this);
         Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+        
+        stopped = false;
     }
 
     public synchronized void startSystem(ConfigurationContext configurationContext) {
