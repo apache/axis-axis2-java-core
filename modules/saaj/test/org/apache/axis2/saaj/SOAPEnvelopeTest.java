@@ -603,7 +603,7 @@ public class SOAPEnvelopeTest extends TestCase {
         obj = iter.next();
         assertTrue(obj instanceof SOAPElement);  
         soapElement = (SOAPElement)obj;
-        assertEquals("", soapElement.getNamespaceURI());
+        assertNull(soapElement.getNamespaceURI());
         assertEquals("symbol", soapElement.getLocalName());
         assertFalse(iter.hasNext());
         
