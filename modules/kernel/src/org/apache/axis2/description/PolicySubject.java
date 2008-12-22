@@ -19,23 +19,23 @@
 
 package org.apache.axis2.description;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.neethi.PolicyReference;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PolicySubject {
 
 	private boolean updated = false;
 	private Date lastUpdatedTime = new Date();
 	
-	private HashMap<String, PolicyComponent> attachedPolicyComponents = new HashMap<String, PolicyComponent>();
+	private ConcurrentHashMap<String, PolicyComponent> attachedPolicyComponents = new ConcurrentHashMap<String, PolicyComponent>();
 
 	public void attachPolicy(Policy policy) {
 		String key = policy.getName();
