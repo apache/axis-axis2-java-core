@@ -45,7 +45,7 @@ import org.apache.axis2.dataretrieval.client.MexClient;
 
 public class DemoDefaultDataLocator {
 
-   private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/DefaultAxisDataLocatorDemoService");
+   private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/DefaultAxis2DataLocatorDemoService");
 
     public static void main(String[] args) {
         try {

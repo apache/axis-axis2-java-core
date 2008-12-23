@@ -60,6 +60,9 @@
             <fileset dir="${classes.dir}">
                 <include name="userguide/mex/services/example2/**/*.class"/>
             </fileset>
+		<fileset dir="${classes.dir}">
+                <include name="userguide/mex/datalocators/*.class"/>
+            </fileset>
         </jar>
         <copy file="build/ServiceLevelDataLocatorDemoService.aar" tofile="../../repository/services/ServiceLevelDataLocatorDemoService.aar" overwrite="true"/>
         <jar destfile="build/WSDLDataLocatorDemoService.aar">
@@ -68,6 +71,9 @@
             </fileset>
             <fileset dir="${classes.dir}">
                 <include name="userguide/mex/services/example3/**/*.class"/>
+            </fileset>
+		<fileset dir="${classes.dir}">
+                <include name="userguide/mex/datalocators/*.class"/>
             </fileset>
         </jar>
         <copy file="build/WSDLDataLocatorDemoService.aar" tofile="../../repository/services/WSDLDataLocatorDemoService.aar" overwrite="true"/>
