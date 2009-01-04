@@ -110,7 +110,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     public static String ID = "helloWorld123";
 
     public static String MTOM_REF = "<data>" + 
-        "<xop:Include href='" + ID + "' xmlns:xop='http://www.w3.org/2004/08/xop/include' />" +
+        "<xop:Include href='cid:" + ID + "' xmlns:xop='http://www.w3.org/2004/08/xop/include' />" +
             "</data>";
     public static String SWAREF_REF = "<data>" + 
         "cid:" + ID +
