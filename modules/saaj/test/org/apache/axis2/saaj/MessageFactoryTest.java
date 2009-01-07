@@ -21,11 +21,17 @@ package org.apache.axis2.saaj;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * 
@@ -127,4 +133,60 @@ public class MessageFactoryTest extends XMLTestCase {
             fail("Exception: " + e);
         }
     }
+
+    // Unit tests for (unresolved) issue AXIS2-4189
+/*    
+    public void testParseMTOMMessage() throws Exception {
+        SAAJTestUtil.execute(new SAAJTestUtil.Test() {
+            public void execute(MessageFactory mf) throws Exception {
+                MimeHeaders headers = new MimeHeaders();
+                headers.addHeader("Content-Type",
+                        "multipart/related; " +
+                        "boundary=\"MIMEBoundaryurn:uuid:F02ECC18873CFB73E211412748909307\"; " +
+                        "type=\"application/xop+xml\"; " +
+                        "start=\"<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>\"; " +
+                        "start-info=\"text/xml\"; " +
+                        "charset=UTF-8;" +
+                        "action=\"mtomSample\"");
+                InputStream in = new FileInputStream(System.getProperty("basedir", ".")
+                        + "/test-resources/message.bin");
+                SOAPMessage message = mf.createMessage(headers, in);
+                SOAPPart soapPart = message.getSOAPPart();
+                assertEquals("<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>",
+                        soapPart.getContentId());
+                Iterator attachments = message.getAttachments();
+                assertTrue(attachments.hasNext());
+                AttachmentPart ap = (AttachmentPart)attachments.next();
+                assertEquals("<1.urn:uuid:F02ECC18873CFB73E211412748909349@apache.org>",
+                        ap.getContentId());
+                assertFalse(attachments.hasNext());
+            }
+        });
+    }
+
+    public void testParseSwAMessage() throws Exception {
+        SAAJTestUtil.execute(new SAAJTestUtil.Test() {
+            public void execute(MessageFactory mf) throws Exception {
+                MimeHeaders headers = new MimeHeaders();
+                headers.addHeader("Content-Type",
+                        "multipart/related; " +
+                        "boundary=MIMEBoundaryurn_uuid_E3F7CE4554928DA89B1231365678616; " +
+                        "type=\"text/xml\"; " +
+                        "start=\"<0.urn:uuid:E3F7CE4554928DA89B1231365678617@apache.org>\"");
+                InputStream in = new FileInputStream(System.getProperty("basedir", ".")
+                        + "/test-resources/SwAmessage.bin");
+                SOAPMessage message = mf.createMessage(headers, in);
+                SOAPPart soapPart = message.getSOAPPart();
+                assertEquals("<0.urn:uuid:E3F7CE4554928DA89B1231365678617@apache.org>",
+                        soapPart.getContentId());
+                Iterator attachments = message.getAttachments();
+                assertTrue(attachments.hasNext());
+                AttachmentPart ap = (AttachmentPart)attachments.next();
+                assertEquals("<urn:uuid:E3F7CE4554928DA89B1231365678347>",
+                        ap.getContentId());
+                assertFalse(attachments.hasNext());
+            }
+        });
+    }
+*/
 }
