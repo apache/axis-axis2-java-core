@@ -125,6 +125,8 @@
                                          "<xsl:value-of select="@namespace"/>",
                                          NULL);
            op = axis2_op_create_with_qname(env, op_qname);
+           axutil_qname_free(op_qname,env);
+
            <xsl:choose>
              <xsl:when test="@mep='10'">
                axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_ONLY);
