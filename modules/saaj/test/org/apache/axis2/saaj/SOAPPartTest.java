@@ -115,12 +115,10 @@ public class SOAPPartTest extends TestCase {
 
 
     public void testAddSource2() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
-        javax.xml.soap.SOAPEnvelope soapEnv =
-                soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
-        javax.xml.soap.SOAPBody body = soapEnv.getBody();
+        SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
+        SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
+        SOAPHeader header = soapEnv.getHeader();
+        SOAPBody body = soapEnv.getBody();
 
         assertTrue(header.addChildElement("ebxmlms1", "ch2",
                                           "http://test.apache.org") instanceof SOAPHeaderElement);
@@ -132,8 +130,7 @@ public class SOAPPartTest extends TestCase {
         body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
         soapMessage.saveChanges();
 
-        javax.xml.soap.SOAPMessage soapMessage2 =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        SOAPMessage soapMessage2 = MessageFactory.newInstance().createMessage();
         SOAPPart soapPart = soapMessage2.getSOAPPart();
         soapPart.setContent(soapMessage.getSOAPPart().getContent());
         soapMessage2.saveChanges();
@@ -141,12 +138,10 @@ public class SOAPPartTest extends TestCase {
     }
 
     public void testAddSource3() throws Exception {
-        javax.xml.soap.SOAPMessage soapMessage =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
-        javax.xml.soap.SOAPEnvelope soapEnv =
-                soapMessage.getSOAPPart().getEnvelope();
-        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
-        javax.xml.soap.SOAPBody body = soapEnv.getBody();
+        SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
+        SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
+        SOAPHeader header = soapEnv.getHeader();
+        SOAPBody body = soapEnv.getBody();
 
         assertTrue(header.addChildElement("ebxmlms1", "ch2",
                                           "http://test.apache.org") instanceof SOAPHeaderElement);
@@ -158,8 +153,7 @@ public class SOAPPartTest extends TestCase {
         body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
         soapMessage.saveChanges();
 
-        javax.xml.soap.SOAPMessage soapMessage2 =
-                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        SOAPMessage soapMessage2 = MessageFactory.newInstance().createMessage();
         SOAPPart soapPart = soapMessage2.getSOAPPart();
         soapPart.setContent(soapMessage.getSOAPPart().getContent());
         soapMessage2.saveChanges();
