@@ -73,7 +73,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
@@ -84,8 +83,6 @@ public class SOAPPartImpl extends SOAPPart {
     private SOAPMessage soapMessage;
     private SOAPEnvelopeImpl envelope;
     private MimeHeadersEx mimeHeaders = new MimeHeadersEx();
-
-    private Source source;
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
@@ -128,18 +125,13 @@ public class SOAPPartImpl extends SOAPPart {
         XMLStreamReader xmlReader = null;
       
         
-        InputStream modifiedInputStream = null;
         StAXSOAPModelBuilder builder = null;
-        InputStreamReader isReader = null;
 
         if (contentType.indexOf("multipart/related") == 0) {
             //This contains attachements
             try {
                 Attachments attachments =
                         new Attachments(inputStream, fullContentTypeStr, false, "", "");
-                modifiedInputStream = attachments.getSOAPPartInputStream();
-               	isReader = new InputStreamReader(modifiedInputStream);
-               
 
                 String soapEnvelopeNamespaceURI =
                         BuilderUtil.getEnvelopeNamespace(fullContentTypeStr);
@@ -180,15 +172,13 @@ public class SOAPPartImpl extends SOAPPart {
                 throw new SOAPException(e);
             }
         } else {
-            modifiedInputStream = inputStream;
             try {
-                isReader = new InputStreamReader(modifiedInputStream);
                 XMLStreamReader streamReader = null;
                 
                 if(knownEncoding != null){
-                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream, knownEncoding);
+                	streamReader = StAXUtils.createXMLStreamReader(inputStream, knownEncoding);
                 }else{
-                	streamReader = StAXUtils.createXMLStreamReader(modifiedInputStream);                	
+                	streamReader = StAXUtils.createXMLStreamReader(inputStream);                	
                 }
 
                 if (HTTPConstants.MEDIA_TYPE_TEXT_XML.equals(contentType)) {
@@ -221,9 +211,6 @@ public class SOAPPartImpl extends SOAPPart {
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
             envelope.setSOAPPartParent(this);
-            javax.xml.transform.Source xmlSource =
-                    new javax.xml.transform.stream.StreamSource( isReader);
-            this.source = xmlSource;
         } catch (Exception e) {
             throw new SOAPException(e);
         }
@@ -370,7 +357,6 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     public void setContent(Source source) throws SOAPException {
-        this.source = source;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -422,9 +408,7 @@ public class SOAPPartImpl extends SOAPPart {
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
-        DOMSource domSource = new DOMSource(this.document);
-        this.source = domSource;
-        return source;
+        return new DOMSource(this.document);
     }
 
     /**
