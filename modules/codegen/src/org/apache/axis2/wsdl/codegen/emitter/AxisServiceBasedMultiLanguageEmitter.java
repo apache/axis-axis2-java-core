@@ -1110,28 +1110,35 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Element constructorElement = doc.createElement("constructor");
             faultElement.appendChild(constructorElement);
             Class[] parameters = constructors[i].getParameterTypes();
+            List existingParamNames = new ArrayList();
             for (int j = 0; j < parameters.length; j++){
                 Element parameterElement = doc.createElement("param");
                 constructorElement.appendChild(parameterElement);
                 addAttribute(doc, "type",
                         getTypeName(parameters[j]), parameterElement);
                 addAttribute(doc, "name",
-                        getParameterName(parameters[j]), parameterElement);
+                        getParameterName(parameters[j], existingParamNames), parameterElement);
 
             }
         }
     }
 
-    private String getParameterName(Class type) {
+    private String getParameterName(Class type, List existingParamNames) {
+        String paramName = null;
         if (type.isArray()) {
-            return getParameterName(type.getComponentType());
+            paramName = getParameterName(type.getComponentType(), existingParamNames);
         } else {
             String className = type.getName();
             if (className.lastIndexOf(".") > 0) {
                 className = className.substring(className.lastIndexOf(".") + 1);
             }
-            return JavaUtils.xmlNameToJavaIdentifier(className);
+            paramName = JavaUtils.xmlNameToJavaIdentifier(className);
+            if (existingParamNames.contains(paramName)){
+               paramName = paramName + existingParamNames.size();
+            }
+            existingParamNames.add(paramName);
         }
+        return paramName;
     }
 
     private String getTypeName(Class type){
