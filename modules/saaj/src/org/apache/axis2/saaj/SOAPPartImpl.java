@@ -191,10 +191,6 @@ public class SOAPPartImpl extends SOAPPart {
                                                        new SOAP12Factory(),
                                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
-                } else if (HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED.equals(contentType)) {
-                    builder = new StAXSOAPModelBuilder(streamReader,
-                                                       new SOAP11Factory(),
-                                                       null);
                 } else {
                     builder = new StAXSOAPModelBuilder(streamReader,
                                                        new SOAP11Factory(),
