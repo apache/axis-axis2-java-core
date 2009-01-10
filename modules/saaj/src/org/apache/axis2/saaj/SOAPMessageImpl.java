@@ -62,24 +62,13 @@ public class SOAPMessageImpl extends SOAPMessage {
     private boolean saveRequired;
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
-        String contentType = null;
-
-
-        if (mimeHeaders != null) {
-            String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
-            contentType = (contentTypes != null) ? contentTypes[0] : null;
-        } else {
-            this.mimeHeaders = new MimeHeaders();
-            if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
-                contentType = HTTPConstants.MEDIA_TYPE_TEXT_XML;
-                this.mimeHeaders.addHeader("content-type", contentType);
-            } else if (soapEnvelope.getOMFactory() instanceof SOAP12Factory) {
-                contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML;
-                this.mimeHeaders.addHeader("content-type", contentType);
-            }
+        this.mimeHeaders = new MimeHeaders();
+        if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
+            this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_TEXT_XML);
+        } else if (soapEnvelope.getOMFactory() instanceof SOAP12Factory) {
+            this.mimeHeaders.addHeader("content-type",
+                    HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         }
-
-        initCharsetEncodingFromContentType(contentType);
         soapPart = new SOAPPartImpl(this, soapEnvelope);
     }
 
