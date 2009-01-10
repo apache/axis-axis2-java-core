@@ -78,7 +78,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             }
         }
 
-        setCharsetEncoding(contentType);
+        initCharsetEncodingFromContentType(contentType);
         soapPart = new SOAPPartImpl(this, soapEnvelope);
     }
 
@@ -99,9 +99,7 @@ public class SOAPMessageImpl extends SOAPMessage {
                 }
             }
         }
-        //Setting the whole content-type string to CharsetEncoding.
-        //Is this correct?
-        setCharsetEncoding(tmpContentType);
+        initCharsetEncodingFromContentType(tmpContentType);
         if (contentType != null) {
             soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
         } else {
@@ -487,7 +485,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *
      * @param contentType
      */
-    private void setCharsetEncoding(final String contentType) {
+    private void initCharsetEncodingFromContentType(final String contentType) {
         if (contentType != null) {
             int delimiterIndex = contentType.lastIndexOf("charset");
             if (delimiterIndex > 0) {
