@@ -82,13 +82,13 @@ public class SOAPPartImpl extends SOAPPart {
     private Document document;
     private SOAPMessage soapMessage;
     private SOAPEnvelopeImpl envelope;
-    private MimeHeadersEx mimeHeaders = new MimeHeadersEx();
+    private MimeHeaders mimeHeaders = new MimeHeaders();
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, IDGenerator.generateID());
         //setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, "text/xml");
-        this.mimeHeaders = (MimeHeadersEx)parentSoapMsg.getMimeHeaders();
+        this.mimeHeaders = parentSoapMsg.getMimeHeaders();
         soapMessage = parentSoapMsg;
         envelope = soapEnvelope;
         document = soapEnvelope.getOwnerDocument();

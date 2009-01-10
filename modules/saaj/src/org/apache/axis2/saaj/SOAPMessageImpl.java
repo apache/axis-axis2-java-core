@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.activation.DataHandler;
@@ -55,7 +56,7 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     private SOAPPart soapPart;
     private Collection<AttachmentPart> attachmentParts = new ArrayList<AttachmentPart>();
-    private MimeHeadersEx mimeHeaders;
+    private MimeHeaders mimeHeaders;
 
     private Map props = new Hashtable();
     private boolean saveRequired;
@@ -68,7 +69,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             contentType = (contentTypes != null) ? contentTypes[0] : null;
         } else {
-            this.mimeHeaders = new MimeHeadersEx();
+            this.mimeHeaders = new MimeHeaders();
             if (soapEnvelope.getOMFactory() instanceof SOAP11Factory) {
                 contentType = HTTPConstants.MEDIA_TYPE_TEXT_XML;
                 this.mimeHeaders.addHeader("content-type", contentType);
@@ -107,8 +108,8 @@ public class SOAPMessageImpl extends SOAPMessage {
         }
 
         this.mimeHeaders = (mimeHeaders == null) ?
-                new MimeHeadersEx() :
-                new MimeHeadersEx(mimeHeaders);
+                new MimeHeaders() :
+                SAAJUtil.copyMimeHeaders(mimeHeaders);
     }
 
     /**
