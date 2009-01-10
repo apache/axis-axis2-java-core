@@ -498,6 +498,8 @@ public class HTTPConstants {
     public static final String HTTP_METHOD_GET = "GET";
     public static final String HTTP_METHOD_POST = "POST";
 
+    // FIXME: the comment below is incorrect (or at least misleading)
+    //        since Constants.Configuration.CONTENT_TYPE has a different value!!!
     /**
      * @deprecated Please use Constants.Configuration.CONTENT_TYPE
      */
