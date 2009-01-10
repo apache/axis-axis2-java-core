@@ -91,13 +91,7 @@ public class SOAPMessageImpl extends SOAPMessage {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 tmpContentType = contentTypes[0];
-                //tmpContentType can be like 'application/soap+xml; charset=UTF-8;'
-                //Only the first part is important
-                if (tmpContentType.indexOf(";") > -1) {
-                    contentType = tmpContentType.substring(0, tmpContentType.indexOf(";"));
-                } else {
-                    contentType = tmpContentType;
-                }
+                contentType = SAAJUtil.normalizeContentType(tmpContentType);
             }
         }
         initCharsetEncodingFromContentType(tmpContentType);

@@ -151,4 +151,16 @@ public class SAAJUtil {
         }
         return result;
     }
+
+    /**
+     * Normalize a content type specification. This removes all parameters
+     * from the content type and converts it to lower case.
+     * 
+     * @param contentType the content type to normalize
+     * @return the normalized content type
+     */
+    public static String normalizeContentType(String contentType) {
+        int idx = contentType.indexOf(";");
+        return (idx == -1 ? contentType : contentType.substring(idx)).toLowerCase();
+    }
 }

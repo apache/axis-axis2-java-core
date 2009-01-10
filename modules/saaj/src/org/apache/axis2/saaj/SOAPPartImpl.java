@@ -31,6 +31,7 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.saaj.util.IDGenerator;
+import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,7 +110,7 @@ public class SOAPPartImpl extends SOAPPart {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 fullContentTypeStr = contentTypes[0];
-                contentType = extractFirstPart(fullContentTypeStr);
+                contentType = SAAJUtil.normalizeContentType(fullContentTypeStr);
             }
         }
 
@@ -211,18 +212,6 @@ public class SOAPPartImpl extends SOAPPart {
             throw new SOAPException(e);
         }
     }
-
-    private String extractFirstPart(String fullContentTypeStr) {
-        String contentType;//tmpContentType can be like 'application/soap+xml; charset=UTF-8;'
-        //Only the first part is important
-        if (fullContentTypeStr.indexOf(";") > -1) {
-            contentType = fullContentTypeStr.substring(0, fullContentTypeStr.indexOf(";"));
-        } else {
-            contentType = fullContentTypeStr;
-        }
-        return contentType;
-    }
-
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         InputStream inputStream) throws SOAPException {
