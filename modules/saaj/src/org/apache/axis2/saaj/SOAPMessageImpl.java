@@ -58,7 +58,7 @@ public class SOAPMessageImpl extends SOAPMessage {
     private Collection<AttachmentPart> attachmentParts = new ArrayList<AttachmentPart>();
     private MimeHeaders mimeHeaders;
 
-    private Map props = new Hashtable();
+    private Map<String,Object> props = new Hashtable<String,Object>();
     private boolean saveRequired;
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
@@ -175,7 +175,7 @@ public class SOAPMessageImpl extends SOAPMessage {
      *         header that matches one of the given headers
      */
     public Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
-        Collection matchingAttachmentParts = new ArrayList();
+        Collection<AttachmentPart> matchingAttachmentParts = new ArrayList<AttachmentPart>();
         Iterator iterator = getAttachments();
         {
             AttachmentPartImpl part;
@@ -421,14 +421,10 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @since SAAJ 1.3
      */
     public void removeAttachments(MimeHeaders headers) {
-        Collection newAttachmentParts = new ArrayList();
-        Iterator attachmentPartsItr = attachmentParts.iterator();
-        for (Iterator iter = attachmentPartsItr; iter.hasNext();) {
-            AttachmentPart attachmentPart = (AttachmentPart)iter.next();
-
+        Collection<AttachmentPart> newAttachmentParts = new ArrayList<AttachmentPart>();
+        for (AttachmentPart attachmentPart : attachmentParts) {
             //Get all the headers
-            Iterator allMIMEHeaders = headers.getAllHeaders();
-            for (Iterator iterator = allMIMEHeaders; iterator.hasNext();) {
+            for (Iterator iterator = headers.getAllHeaders(); iterator.hasNext();) {
                 MimeHeader mimeHeader = (MimeHeader)iterator.next();
                 String[] headerValues = attachmentPart.getMimeHeader(mimeHeader.getName());
                 //if values for this header name, do not remove it
