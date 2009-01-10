@@ -53,7 +53,6 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
 
-import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
@@ -83,7 +82,7 @@ public class SOAPPartImpl extends SOAPPart {
     private Document document;
     private SOAPMessage soapMessage;
     private SOAPEnvelopeImpl envelope;
-    private MimeHeaders mimeHeaders = new MimeHeaders();
+    private final MimeHeaders mimeHeaders;
 
     public SOAPPartImpl(SOAPMessageImpl parentSoapMsg,
                         SOAPEnvelopeImpl soapEnvelope) {
@@ -103,23 +102,18 @@ public class SOAPPartImpl extends SOAPPart {
         String fullContentTypeStr = "";
         if (mimeHeaders == null) {
             //TODO : read string from constants
-            mimeHeaders = new MimeHeaders();
-            mimeHeaders.addHeader("Content-ID", IDGenerator.generateID());
-            mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
+            this.mimeHeaders = new MimeHeaders();
+            this.mimeHeaders.addHeader("Content-ID", IDGenerator.generateID());
+            this.mimeHeaders.addHeader("content-type", HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML);
         } else {
             String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             if (contentTypes != null && contentTypes.length > 0) {
                 fullContentTypeStr = contentTypes[0];
                 contentType = SAAJUtil.normalizeContentType(fullContentTypeStr);
             }
+            this.mimeHeaders = SAAJUtil.copyMimeHeaders(mimeHeaders);
         }
 
-        Iterator mimeHeaderIterator = mimeHeaders.getAllHeaders();
-        while (mimeHeaderIterator.hasNext()) {
-            MimeHeader mimeHeader = (MimeHeader)mimeHeaderIterator.next();
-            String value = mimeHeader.getValue();
-            setMimeHeader(mimeHeader.getName(), value);
-        }
         soapMessage = parentSoapMsg;
 
         String knownEncoding = (String) soapMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
