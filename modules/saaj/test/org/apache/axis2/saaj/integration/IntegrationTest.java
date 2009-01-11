@@ -192,8 +192,7 @@ public class IntegrationTest extends TestCase {
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
 
-        int attachmentCount = response.countAttachments();
-        assertTrue(attachmentCount == 2);
+        assertEquals(2, response.countAttachments());
 
         Iterator attachIter = response.getAttachments();
 
@@ -250,8 +249,7 @@ public class IntegrationTest extends TestCase {
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
 
-        int attachmentCount = response.countAttachments();
-        assertTrue(attachmentCount == 2);
+        assertEquals(2, response.countAttachments());
 
         Iterator attachIter = response.getAttachments();
 
