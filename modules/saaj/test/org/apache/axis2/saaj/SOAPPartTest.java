@@ -46,43 +46,37 @@ import java.util.Iterator;
  */
 public class SOAPPartTest extends TestCase {
 
-    public void testAddSource() {
-        DOMSource domSource;
-        try {
-            /*
-            FileReader testFile = new FileReader(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
-            StAXOMBuilder stAXOMBuilder =
-                    OMXMLBuilderFactory.createStAXOMBuilder(
-                            OMAbstractFactory.getSOAP11Factory(),
-                            XMLInputFactory.newInstance().createXMLStreamReader(
-                                    testFile));
-            */
+    public void testAddSource() throws Exception {
+        /*
+        FileReader testFile = new FileReader(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
+        StAXOMBuilder stAXOMBuilder =
+                OMXMLBuilderFactory.createStAXOMBuilder(
+                        OMAbstractFactory.getSOAP11Factory(),
+                        XMLInputFactory.newInstance().createXMLStreamReader(
+                                testFile));
+        */
 
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(new File(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "soap-part.xml"));
-            domSource = new DOMSource(document);
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.parse(new File(System.getProperty("basedir", ".") +
+                "/test-resources" + File.separator + "soap-part.xml"));
+        DOMSource domSource = new DOMSource(document);
 
-            SOAPMessage message = MessageFactory.newInstance().createMessage();
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
 
-            // Get the SOAP part and set its content to domSource
-            SOAPPart soapPart = message.getSOAPPart();
-            soapPart.setContent(domSource);
-            message.saveChanges();
+        // Get the SOAP part and set its content to domSource
+        SOAPPart soapPart = message.getSOAPPart();
+        soapPart.setContent(domSource);
+        message.saveChanges();
 
-            SOAPHeader header = message.getSOAPHeader();
-            if (header != null) {
-                Iterator iter1 = header.getChildElements();
-                getContents(iter1, "");
-            }
-
-            SOAPBody body = message.getSOAPBody();
-            Iterator iter2 = body.getChildElements();
-            getContents(iter2, "");
-
-        } catch (Exception e) {
-            fail("Unexpected Exception : " + e);
+        SOAPHeader header = message.getSOAPHeader();
+        if (header != null) {
+            Iterator iter1 = header.getChildElements();
+            getContents(iter1, "");
         }
+
+        SOAPBody body = message.getSOAPBody();
+        Iterator iter2 = body.getChildElements();
+        getContents(iter2, "");
     }
 
     public void getContents(Iterator iterator, String indent) {
@@ -161,28 +155,24 @@ public class SOAPPartTest extends TestCase {
     }
 
 
-    public void _testInputEncoding() {
-        try {
-            DOMSource domSource;
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(new File(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "soap-part.xml"));
-            domSource = new DOMSource(document);
+    public void _testInputEncoding() throws Exception {
+        DOMSource domSource;
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.parse(new File(System.getProperty("basedir", ".") +
+                "/test-resources" + File.separator + "soap-part.xml"));
+        domSource = new DOMSource(document);
 
-            SOAPMessage message = MessageFactory.newInstance().createMessage();
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
 
-            // Get the SOAP part and set its content to domSource
-            SOAPPart soapPart = message.getSOAPPart();
-            soapPart.setContent(domSource);
-            message.saveChanges();
+        // Get the SOAP part and set its content to domSource
+        SOAPPart soapPart = message.getSOAPPart();
+        soapPart.setContent(domSource);
+        message.saveChanges();
 
-            SOAPPart sp = message.getSOAPPart();
+        SOAPPart sp = message.getSOAPPart();
 
 //            String inputEncoding = sp.getInputEncoding();
 //            assertNotNull(inputEncoding);
-        } catch (Exception e) {
-            fail("Unexpected Exception " + e);
-        }
     }
     
     /**
