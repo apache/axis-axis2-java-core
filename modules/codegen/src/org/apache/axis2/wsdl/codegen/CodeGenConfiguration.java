@@ -630,15 +630,4 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setExceptionBaseClassName(String exceptionBaseClassName) {
         this.exceptionBaseClassName = exceptionBaseClassName;
     }
-
-    private boolean isLowerCaseMethodName;
-
-    public boolean isLowerCaseMethodName() {
-        return isLowerCaseMethodName;
-    }
-
-    public void setLowerCaseMethodName(boolean lowerCaseMethodName) {
-        isLowerCaseMethodName = lowerCaseMethodName;
-    }
-
 }

@@ -102,8 +102,6 @@ public class WSDL2JavaOptionsValidator implements CommandLineOptionConstants, Op
                     WSDL2JavaConstants.SKELTON_INTERFACE_NAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION.equalsIgnoreCase(optionType) ||
                     WSDL2JavaConstants.SKELTON_CLASS_NAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                    WSDL2JavaConstants.LOWER_CASE_METHOD_NAME.equalsIgnoreCase(optionType) ||
-                    WSDL2JavaConstants.LOWER_CASE_METHOD_NAME_LONG.equalsIgnoreCase(optionType) ||
                     XMLBeansExtension.XSDCONFIG_OPTION.equalsIgnoreCase(optionType) ||
                     XMLBeansExtension.XSDCONFIG_OPTION_LONG.equalsIgnoreCase(optionType)
             );
