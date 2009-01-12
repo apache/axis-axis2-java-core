@@ -1110,23 +1110,45 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Element constructorElement = doc.createElement("constructor");
             faultElement.appendChild(constructorElement);
             Class[] parameters = constructors[i].getParameterTypes();
+            List existingParamNames = new ArrayList();
             for (int j = 0; j < parameters.length; j++){
                 Element parameterElement = doc.createElement("param");
                 constructorElement.appendChild(parameterElement);
                 addAttribute(doc, "type",
-                        parameters[j].getName(), parameterElement);
+                        getTypeName(parameters[j]), parameterElement);
                 addAttribute(doc, "name",
-                        getParameterName(parameters[j].getName()), parameterElement);
+                        getParameterName(parameters[j], existingParamNames), parameterElement);
 
             }
         }
     }
 
-    private String getParameterName(String className){
-       if (className.lastIndexOf(".") > 0){
-           className = className.substring(className.lastIndexOf(".") + 1);
-       }
-       return JavaUtils.xmlNameToJavaIdentifier(className);
+    private String getParameterName(Class type, List existingParamNames) {
+        String paramName = null;
+        if (type.isArray()) {
+            paramName = getParameterName(type.getComponentType(), existingParamNames);
+        } else {
+            String className = type.getName();
+            if (className.lastIndexOf(".") > 0) {
+                className = className.substring(className.lastIndexOf(".") + 1);
+            }
+            paramName = JavaUtils.xmlNameToJavaIdentifier(className);
+            if (existingParamNames.contains(paramName)){
+               paramName = paramName + existingParamNames.size();
+            }
+            existingParamNames.add(paramName);
+        }
+        return paramName;
+    }
+
+    private String getTypeName(Class type){
+        String typeName = null;
+        if (type.isArray()){
+            typeName = getTypeName(type.getComponentType()) + "[]";
+        } else {
+            typeName = type.getName();
+        }
+        return typeName;
     }
 
     /**
@@ -2237,7 +2259,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (this.codeGenConfiguration.isLowerCaseMethodName()){
             addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
         } else {
-            addAttribute(doc, "name", localPart, methodElement);
+            addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
         }
         addAttribute(doc, "originalName", localPart, methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
