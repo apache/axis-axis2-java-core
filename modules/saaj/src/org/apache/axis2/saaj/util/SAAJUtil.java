@@ -161,6 +161,6 @@ public class SAAJUtil {
      */
     public static String normalizeContentType(String contentType) {
         int idx = contentType.indexOf(";");
-        return (idx == -1 ? contentType : contentType.substring(idx)).toLowerCase();
+        return (idx == -1 ? contentType : contentType.substring(0, idx)).trim().toLowerCase();
     }
 }
