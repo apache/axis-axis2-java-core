@@ -163,4 +163,10 @@ public class SAAJUtil {
         int idx = contentType.indexOf(";");
         return (idx == -1 ? contentType : contentType.substring(0, idx)).trim().toLowerCase();
     }
+    
+    public static boolean compareContentTypes(String contentType1, String contentType2) {
+        String ct1 = (contentType1 == null) ? "" : contentType1.trim().toLowerCase();
+        String ct2 = (contentType2 == null) ? "" : contentType2.trim().toLowerCase();
+        return ct1.equals(ct2);        
+    }
 }

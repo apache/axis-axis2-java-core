@@ -20,6 +20,7 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.ConfigurableDataHandler;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
@@ -148,7 +149,14 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 if (contentId == null) {
                     contentId = IDGenerator.generateID();
                 }
-                attachments.addDataHandler(contentId, attachment.getDataHandler());
+                DataHandler handler = attachment.getDataHandler();
+                // make sure that AttachmentPart content-type overrides DataHandler content-type
+                if (!SAAJUtil.compareContentTypes(attachment.getContentType(), handler.getContentType())) {
+                    ConfigurableDataHandler configuredHandler = new ConfigurableDataHandler(handler.getDataSource());
+                    configuredHandler.setContentType(attachment.getContentType());
+                    handler = configuredHandler;
+                }
+                attachments.addDataHandler(contentId, handler);
             }
             options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
         }
