@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.util.Base64;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -28,6 +28,8 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -48,13 +50,9 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Iterator;
 
-public class AttachmentTest extends TestCase {
-
-    public AttachmentTest(String name) {
-        super(name);
-    }
-
-
+@RunWith(SAAJTestRunner.class)
+public class AttachmentTest extends Assert {
+    @Validated @Test
     public void testStringAttachment() throws Exception {
 
         MessageFactory factory = MessageFactory.newInstance();
@@ -80,7 +78,7 @@ public class AttachmentTest extends TestCase {
         assertTrue(message.countAttachments() == 0);
     }
 
-
+    @Validated @Test
     public void testMultipleAttachments() throws Exception {
 
         MessageFactory factory = MessageFactory.newInstance();
@@ -113,7 +111,7 @@ public class AttachmentTest extends TestCase {
         assertTrue(nAttachments == 2);
     }
 
-
+    @Validated @Test
     public void testMultipleAttachments2() throws Exception {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
@@ -145,6 +143,9 @@ public class AttachmentTest extends TestCase {
         assertTrue(nAttachments == 2);
     }
 
+    // Note: This test case fails with Sun's SAAJ implementation
+    //       and can't be @Validated.
+    @Test
     public void testBadAttSize() throws Exception {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage();
@@ -182,7 +183,7 @@ public class AttachmentTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testClearContent() throws Exception {
         try {
             InputStream in1 = new FileInputStream(new File(System.getProperty("basedir", ".") +
@@ -260,7 +261,7 @@ public class AttachmentTest extends TestCase {
 
     }
 
-
+    @Validated @Test
     public void testGetContent() throws Exception {
         try {
             MessageFactory factory = MessageFactory.newInstance();
@@ -284,6 +285,7 @@ public class AttachmentTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testGetRawContents() {
         try {
             MessageFactory factory = MessageFactory.newInstance();
@@ -302,7 +304,7 @@ public class AttachmentTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testSetBase64Content() {
         try {
             MessageFactory factory = MessageFactory.newInstance();

@@ -19,10 +19,7 @@
 
 package org.apache.axis2.saaj.integration;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.Assert;
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -30,7 +27,15 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
+import org.apache.axis2.saaj.SAAJTestRunner;
+import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -58,7 +63,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class IntegrationTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class IntegrationTest extends Assert {
 
     static int port;
     public static final QName SERVICE_NAME = new QName("Echo");
@@ -67,33 +73,28 @@ public class IntegrationTest extends TestCase {
     public static final String SAAJ_REPO =
             System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
 
-    public IntegrationTest(String name) {
-        super(name);
-    }
-
     protected static String getAddress() {
         return "http://127.0.0.1:" +
                 port +
                 "/axis2/services/Echo";
     }
     
-    public static Test suite() {
-        return new TestSetup(new TestSuite(IntegrationTest.class)) {
-            public void setUp() throws Exception {
-                port = UtilServer.start(SAAJ_REPO);
-                AxisConfiguration axisCfg =
-                        UtilServer.getConfigurationContext().getAxisConfiguration();
-                axisCfg.addParameter(new Parameter("enableMTOM", "optional"));
-                axisCfg.addParameter(new Parameter("enableSwA", "optional"));
-            }
-
-            public void tearDown() throws Exception {
-                UtilServer.stop();
-            }
-        };
+    @BeforeClass
+    public static void initUtilServer() throws Exception {
+        port = UtilServer.start(SAAJ_REPO);
+        AxisConfiguration axisCfg =
+                UtilServer.getConfigurationContext().getAxisConfiguration();
+        axisCfg.addParameter(new Parameter("enableMTOM", "optional"));
+        axisCfg.addParameter(new Parameter("enableSwA", "optional"));
     }
 
-    protected void setUp() throws Exception {
+    @AfterClass
+    public static void shutDownUtilServer() throws Exception {
+        UtilServer.stop();
+    }
+
+    @Before
+    public void setUp() throws Exception {
         MessageReceiver mr = new AbstractInOutMessageReceiver() {
             @Override
             public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
@@ -116,12 +117,13 @@ public class IntegrationTest extends TestCase {
                 Utils.createSimpleService(SERVICE_NAME, mr, null, OPERATION_NAME));
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         UtilServer.unDeployService(SERVICE_NAME);
         UtilServer.unDeployClientService();
     }
 
-
+    @Validated @Test
     public void testSendReceiveMessageWithEmptyNSPrefix() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
@@ -152,7 +154,7 @@ public class IntegrationTest extends TestCase {
         }
     }
     
-    
+    @Validated @Test
     public void testSendReceiveSimpleSOAPMessage() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
@@ -189,6 +191,7 @@ public class IntegrationTest extends TestCase {
         return responseStr;
     }
 
+    @Validated @Test
     public void testSendReceiveMessageWithAttachment() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage request = mf.createMessage();
@@ -247,6 +250,8 @@ public class IntegrationTest extends TestCase {
 
     }
 
+    // TODO: check why this doesn't work with Sun's SAAJ implementation
+    @Test
     public void testSendReceiveNonRefAttachment() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage request = mf.createMessage();
@@ -370,7 +375,7 @@ public class IntegrationTest extends TestCase {
         ele2.addTextNode("This is another text");
     }
     
-    
+    @Validated @Test
     public void testSendReceive_ISO88591_EncodedSOAPMessage() {
         try{
         	MimeHeaders mimeHeaders = new MimeHeaders();

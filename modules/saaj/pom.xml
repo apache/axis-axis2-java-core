@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <version>1.3</version>
+            <version>1.3.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -149,24 +149,6 @@
                     <skip>false</skip>
                     <forkMode>once</forkMode>
                     <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/1.0.0/</argLine>
-                    <systemProperties>
-                        <property>
-                            <name>javax.xml.soap.MessageFactory</name>
-                            <value>org.apache.axis2.saaj.MessageFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>javax.xml.soap.SOAPFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>javax.xml.soap.SOAPConnectionFactory</name>
-                            <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
-                        </property>
-                        <property>
-                            <name>javax.xml.soap.MetaFactory</name>
-                            <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
-                        </property>
-                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

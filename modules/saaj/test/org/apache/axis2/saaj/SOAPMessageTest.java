@@ -19,8 +19,11 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 import org.apache.axis2.saaj.util.SAAJDataSource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -53,7 +56,8 @@ import java.util.Iterator;
 /**
  * 
  */
-public class SOAPMessageTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPMessageTest extends Assert {
     private SOAPMessage msg;
 
 //    static int port;
@@ -88,7 +92,8 @@ public class SOAPMessageTest extends TestCase {
 //        };
 //    }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 //        final AxisService service = Utils.createSimpleService(SERVICE_NAME,
 //                                                              EchoService.class.getName(),
 //                                                              OPERATION_NAME);
@@ -101,6 +106,7 @@ public class SOAPMessageTest extends TestCase {
 //        UtilServer.unDeployClientService();
 //    }
 
+    @Validated @Test
     public void testSaveRequired() {
         try {
             assertTrue("Save Required is False", msg.saveRequired());
@@ -109,6 +115,7 @@ public class SOAPMessageTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testSaveRequired2() {
         try {
             msg.saveChanges();
@@ -118,7 +125,7 @@ public class SOAPMessageTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testRemoveAttachements() {
         Iterator iterator = null;
         AttachmentPart ap1 = null;
@@ -183,7 +190,8 @@ public class SOAPMessageTest extends TestCase {
         }
     }
 
-
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testGetContent() {
         try {
             MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);

@@ -19,9 +19,11 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,9 +42,11 @@ import java.util.Iterator;
 /**
  * 
  */
-public class SOAPFactoryTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPFactoryTest extends Assert {
     private static final Log log = LogFactory.getLog(SOAPFactoryTest.class);
 
+    @Validated @Test
     public void testCreateDetail() {
         try {
             SOAPFactory sf = SOAPFactory.newInstance();
@@ -59,6 +63,7 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCreateElement() {
         try {
             //SOAPFactory sf = SOAPFactory.newInstance();
@@ -93,7 +98,7 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testCreateElement2() {
         try {
             SOAPFactory sf = SOAPFactory.newInstance();
@@ -121,6 +126,7 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCreateElement3() {
         try {
             SOAPFactory factory = SOAPFactory.newInstance();
@@ -138,6 +144,7 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCreateElement4() {
         try {
             SOAPFactory sf = SOAPFactory.newInstance();
@@ -164,6 +171,7 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCreateFault() {
         try {
             SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -190,6 +198,8 @@ public class SOAPFactoryTest extends TestCase {
         }
     }
 
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testCreateFault1() {
         try {
             //SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -216,6 +226,7 @@ public class SOAPFactoryTest extends TestCase {
     }
 
     /** for soap 1.1 */
+    @Validated @Test
     public void testSOAPFaultException1() {
         try {
             SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -234,6 +245,7 @@ public class SOAPFactoryTest extends TestCase {
     }
 
     /** for soap 1.2 */
+    @Validated @Test
     public void testSOAPFaultException2() {
         try {
             SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);

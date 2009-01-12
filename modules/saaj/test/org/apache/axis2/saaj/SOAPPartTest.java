@@ -19,8 +19,10 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,8 +46,9 @@ import java.util.Iterator;
 /**
  * 
  */
-public class SOAPPartTest extends TestCase {
-
+@RunWith(SAAJTestRunner.class)
+public class SOAPPartTest extends Assert {
+    @Validated @Test
     public void testAddSource() throws Exception {
         /*
         FileReader testFile = new FileReader(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
@@ -56,7 +59,9 @@ public class SOAPPartTest extends TestCase {
                                 testFile));
         */
 
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder builder = dbf.newDocumentBuilder();
         Document document = builder.parse(new File(System.getProperty("basedir", ".") +
                 "/test-resources" + File.separator + "soap-part.xml"));
         DOMSource domSource = new DOMSource(document);
@@ -107,7 +112,7 @@ public class SOAPPartTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testAddSource2() throws Exception {
         SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
         SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
@@ -131,6 +136,7 @@ public class SOAPPartTest extends TestCase {
         assertNotNull(soapMessage2);
     }
 
+    @Validated @Test
     public void testAddSource3() throws Exception {
         SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
         SOAPEnvelope soapEnv = soapMessage.getSOAPPart().getEnvelope();
@@ -178,6 +184,7 @@ public class SOAPPartTest extends TestCase {
     /**
      * Check parent processing of SOAPMessage
      */
+    @Validated @Test
     public void test_parentAccess1() throws Exception {
 
         MessageFactory mf = MessageFactory.newInstance();
@@ -193,6 +200,8 @@ public class SOAPPartTest extends TestCase {
     /**
      * Check parent processing of SOAPMessage
      */
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void test_parentAccess2() throws Exception {
 
         MessageFactory mf = MessageFactory.newInstance();
@@ -211,6 +220,7 @@ public class SOAPPartTest extends TestCase {
     /**
      * Check parent processing of SOAPMessage
      */
+    @Validated @Test
     public void test_parentAccess3() throws Exception {
 
         SOAP11Factory axiomSF = new SOAP11Factory();
@@ -231,6 +241,8 @@ public class SOAPPartTest extends TestCase {
         assertTrue(node == null);
     }
     
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testNodeTypes() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
@@ -247,6 +259,8 @@ public class SOAPPartTest extends TestCase {
         }             
     }
     
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testRemoveChild1() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
@@ -259,6 +273,8 @@ public class SOAPPartTest extends TestCase {
         assertTrue("soap env after", soapPart.getFirstChild() == null);
     }
     
+    // TODO: check why this fails with Sun's SAAJ implementation
+    @Test
     public void testRemoveChild2() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,13 +48,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
-public class SOAPEnvelopeTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPEnvelopeTest extends Assert {
 
     private static final String XML_STRING =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -73,10 +76,7 @@ public class SOAPEnvelopeTest extends TestCase {
                     "</soapenv:Body>\n" +
                     "</soapenv:Envelope>";
 
-    public SOAPEnvelopeTest(String name) {
-        super(name);
-    }
-
+    @Validated @Test
     public void testEnvelope() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage smsg =
@@ -91,6 +91,7 @@ public class SOAPEnvelopeTest extends TestCase {
         validateBody(body.getChildElements());
     }
 
+    @Validated @Test
     public void testDetachHeader() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage smsg =
@@ -106,6 +107,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertNull(smsg.getSOAPHeader());
     }
 
+    @Validated @Test
     public void testDetachBody() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
@@ -136,6 +138,7 @@ public class SOAPEnvelopeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testEnvelope2() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         final ByteArrayInputStream baIS = new ByteArrayInputStream(XML_STRING.getBytes());
@@ -171,6 +174,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(envelope.getBody() != null);
     }
 
+    @Validated @Test
     public void testEnvelopeWithCommentInEnvelope() throws Exception {
 
         String soapMessageWithLeadingComment =
@@ -197,6 +201,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(envelope.getBody() != null);
     }
 
+    @Validated @Test
     public void testEnvelopeWithCommentInBody() throws Exception {
 
         String soapMessageWithLeadingComment =
@@ -222,6 +227,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(envelope.getBody() != null);
     }
 
+    @Validated @Test
     public void testEnvelopeWithComments() throws Exception {
 
         String soapMessageWithLeadingComment =
@@ -293,6 +299,7 @@ public class SOAPEnvelopeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testHeaderElements() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPHeader header = envelope.getHeader();
@@ -317,6 +324,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(!iterator.hasNext());
     }
 
+    @Validated @Test
     public void testText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -335,6 +343,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(count == countStart + 1);
     }
 
+    @Validated @Test
     public void testNonCommentText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -353,6 +362,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(!t.isComment());
     }
 
+    @Validated @Test
     public void testCommentText() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -371,6 +381,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(t.isComment());
     }
 
+    @Validated @Test
     public void testAttributes() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -411,6 +422,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
+    @Validated @Test
     public void testAttributes2() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -451,6 +463,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
+    @Validated @Test
     public void testAttributes3() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -491,6 +504,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(foundName1 && foundName2 && foundName3);
     }
 
+    @Validated @Test
     public void testAddHeader() {
         try {
             SOAPEnvelope envelope = getSOAPEnvelope();
@@ -554,6 +568,7 @@ public class SOAPEnvelopeTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testSetEncodingStyle() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         envelope.setEncodingStyle("http://example.com/MyEncodings");
@@ -561,6 +576,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertEquals("http://example.com/MyEncodings",envelope.getEncodingStyle());
     }
 
+    @Validated @Test
     public void testElementAfterBody() throws Exception {
         MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage message = factory.createMessage();
@@ -579,6 +595,7 @@ public class SOAPEnvelopeTest extends TestCase {
         }
     }
     
+    @Validated @Test
     public void testTransform() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();

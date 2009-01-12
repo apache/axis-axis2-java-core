@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -37,16 +37,16 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class SOAPFaultTest extends TestCase {
-
-    public SOAPFaultTest(String name) {
-        super(name);
-    }
-
+@RunWith(SAAJTestRunner.class)
+public class SOAPFaultTest extends Assert {
     public void _testSOAPFaultWithDetails() throws Exception {
         /* We are trying to generate the following SOAPFault
 
@@ -155,6 +155,7 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(xml.indexOf("<faultactor>http://gizmos.com/order</faultactor>") != -1);
     }
 
+    @Validated @Test
     public void testAddDetailsTwice() throws Exception {
         MessageFactory fac = MessageFactory.newInstance();
 
@@ -194,6 +195,7 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(xml.indexOf("Hello") != -1);
     }
 
+    @Validated @Test
     public void testFaults() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPFactory soapFactory = SOAPFactory.newInstance();
@@ -250,6 +252,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testGetFaultActor() throws Exception {
         SOAPMessage msg = MessageFactory.newInstance().createMessage();
         SOAPFault sf = msg.getSOAPBody().addFault();
@@ -262,6 +265,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testGetFaultString() throws Exception {
         SOAPMessage msg = MessageFactory.newInstance().createMessage();
         SOAPFault sf = msg.getSOAPBody().addFault();
@@ -275,6 +279,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAppendSubCode() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -298,6 +303,7 @@ public class SOAPFaultTest extends TestCase {
         assertNotNull(faultSubCodes);
     }
 
+    @Validated @Test
     public void testAppendFaultSubCode() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -390,6 +396,7 @@ public class SOAPFaultTest extends TestCase {
         soapMessage.saveChanges();
     }
 
+    @Validated @Test
     public void testAddFaultReasonText2() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -405,6 +412,7 @@ public class SOAPFaultTest extends TestCase {
         soapMessage.saveChanges();
     }
 
+    @Validated @Test
     public void testAddFaultReasonText3() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -443,7 +451,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testAddFaultReasonText4() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -491,7 +499,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testSetFaultRole() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
@@ -506,6 +514,7 @@ public class SOAPFaultTest extends TestCase {
         soapMessage.saveChanges();
     }
 
+    @Validated @Test
     public void testSetFaultNode() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
 
@@ -561,6 +570,7 @@ public class SOAPFaultTest extends TestCase {
         assertNotNull(qname);
     }
 
+    @Validated @Test
     public void testHasDetail() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         //MessageFactory fac = MessageFactory.newInstance();
@@ -577,6 +587,7 @@ public class SOAPFaultTest extends TestCase {
         soapMessage.saveChanges();
     }
 
+    @Validated @Test
     public void testFaultReasonLocales() throws Exception  {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -645,6 +656,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testFaultStringLocale() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         //MessageFactory fac = MessageFactory.newInstance();
@@ -660,7 +672,7 @@ public class SOAPFaultTest extends TestCase {
         assertNotNull(result);
     }
 
-
+    @Validated @Test
     public void testFaultStringLocale2() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         //MessageFactory fac = MessageFactory.newInstance();
@@ -676,6 +688,7 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(result.equals(Locale.getDefault()));
     }
 
+    @Validated @Test
     public void testSetFaultStringLocale() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         //MessageFactory fac = MessageFactory.newInstance();
@@ -692,7 +705,8 @@ public class SOAPFaultTest extends TestCase {
         assertTrue(result.equals(expected));
     }
 
-
+    // TODO: fix this test: it uses a fault code with unbound prefix
+    @Test
     public void testFaultCodeWithPrefix1() throws Exception {
         MessageFactory fac = MessageFactory.newInstance();
         SOAPMessage soapMessage = fac.createMessage();
@@ -709,6 +723,8 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(prefix + ":Server", result);
     }
 
+    // TODO: fix this test: it uses a fault code with unbound prefix
+    @Test
     public void testFaultCodeWithPrefix2() throws Exception {
         MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage soapMessage = fac.createMessage();
@@ -725,6 +741,7 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(prefix + ":Server", result);
     }
 
+    @Validated @Test
     public void testSetGetFaultCodeAsName1() throws Exception {
         SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
         SOAPFault sf = fac.createFault();
@@ -745,7 +762,7 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(name.getURI(), name3.getNamespaceURI());
     }
 
-
+    @Validated @Test
     public void testSetGetFaultCodeAsName2() throws Exception {
         QName qname = SOAPConstants.SOAP_SENDER_FAULT;
         SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -767,7 +784,7 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(name.getURI(), name3.getNamespaceURI());
     }
 
-
+    @Validated @Test
     public void testSetGetFaultCodeAsQName1() throws Exception {
         SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
         SOAPFault sf = fac.createFault();
@@ -788,7 +805,7 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(name.getNamespaceURI(), name3.getURI());
     }
 
-
+    @Validated @Test
     public void testSetGetFaultCodeAsQName2() throws Exception {
         QName name = SOAPConstants.SOAP_SENDER_FAULT;
         SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -808,6 +825,7 @@ public class SOAPFaultTest extends TestCase {
         assertEquals(name.getNamespaceURI(), name3.getURI());
     }
 
+    @Validated @Test
     public void testFault12Defaults() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         SOAPMessage message = messageFactory.createMessage();
@@ -817,6 +835,7 @@ public class SOAPFaultTest extends TestCase {
         assertNotNull(fault.getFaultString());
     }
 
+    @Validated @Test
     public void testFault11Defaults() throws Exception {
         MessageFactory messageFactory = MessageFactory.newInstance();
         SOAPMessage message = messageFactory.createMessage();

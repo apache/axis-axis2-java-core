@@ -19,13 +19,15 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
@@ -37,7 +39,9 @@ import java.net.URL;
 /**
  * 
  */
-public class SOAPConnectionTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPConnectionTest extends Assert {
+    @Validated @Test
     public void testClose() {
         try {
             SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
@@ -47,6 +51,7 @@ public class SOAPConnectionTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCloseTwice() {
         SOAPConnectionFactory soapConnectionFactory = null;
         try {
@@ -71,6 +76,7 @@ public class SOAPConnectionTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testCallOnCloseConnection() {
         SOAPConnectionFactory soapConnectionFactory = null;
         try {
@@ -96,6 +102,7 @@ public class SOAPConnectionTest extends TestCase {
     }
 
 
+    @Validated @Test
     public void testGet() {
     	if(isNetworkedResourceAvailable("http://java.sun.com/index.html")){
             try {

@@ -19,8 +19,10 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.impl.dom.NodeImpl;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,17 +42,20 @@ import javax.xml.soap.Text;
 import java.util.Iterator;
 import java.util.List;
 
-public class SOAPElementTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SOAPElementTest extends Assert {
 
     private SOAPElement soapEle;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         soapEle =
                 SOAPFactoryImpl.newInstance().createElement("Test",
                                                             "test",
                                                             "http://test.apache.org/");
     }
 
+    @Validated @Test
     public void testAddTextNode() {
         assertNotNull(soapEle);
         String value = "foo";
@@ -60,10 +65,11 @@ public class SOAPElementTest extends TestCase {
             fail("Unexpected Exception " + e);
         }
         assertEquals(value, soapEle.getValue());
-        TextImplEx text = assertContainsText(soapEle);
+        Text text = assertContainsText(soapEle);
         assertEquals(value, text.getValue());
     }
 
+    @Validated @Test
     public void testChildren() {
         try {
             soapEle.addTextNode("foo");
@@ -112,6 +118,7 @@ public class SOAPElementTest extends TestCase {
         assertEquals("ch", lastChildSOAPEle.getPrefix());
     }
 
+    @Validated @Test
     public void testChildrenAndSiblings() {
         try {
             soapEle.addTextNode("foo");
@@ -171,6 +178,7 @@ public class SOAPElementTest extends TestCase {
         assertNull(nextSibling2.getNextSibling());
     }
 
+    @Validated @Test
     public void testCommentSibling() {
         try {
             soapEle.addTextNode("foo");
@@ -185,6 +193,7 @@ public class SOAPElementTest extends TestCase {
         assertTrue(((Text)soapEle.getLastChild().getPreviousSibling()).isComment());
     }
 
+    @Validated @Test
     public void testCommentSibling2() {
         try {
             soapEle.addTextNode("foo");
@@ -203,6 +212,7 @@ public class SOAPElementTest extends TestCase {
                 .getPreviousSibling()).isComment());
     }
 
+    @Validated @Test
     public void testAddChildElement() {
         try {
             String s = "MyName1";
@@ -238,6 +248,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAddChildElement2() {
         boolean pass = true;
         try {
@@ -290,6 +301,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testAddTextNode2() {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
@@ -328,6 +340,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testRemoveAttribute() {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
@@ -346,6 +359,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testRemoveAttribute2() {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
@@ -370,6 +384,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testRemoveAttributeName() {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
@@ -415,6 +430,7 @@ public class SOAPElementTest extends TestCase {
 
     }
 
+    @Validated @Test
     public void testRemoveNamespaceDeclaration() {
         try {
             String prefix = "myPrefix";
@@ -459,13 +475,13 @@ public class SOAPElementTest extends TestCase {
         return count;
     }
 
-    private TextImplEx assertContainsText(SOAPElement soapElem) {
+    private Text assertContainsText(SOAPElement soapElem) {
         assertTrue(soapElem.hasChildNodes());
         List childElems = toList(soapElem.getChildElements());
         assertTrue(childElems.size() == 1);
-        NodeImpl node = (NodeImpl)childElems.get(0);
-        assertTrue(node instanceof TextImplEx);
-        return (TextImplEx)node;
+        Node node = (Node)childElems.get(0);
+        assertTrue(node instanceof Text);
+        return (Text)node;
     }
 
     private List toList(java.util.Iterator iter) {
@@ -480,6 +496,7 @@ public class SOAPElementTest extends TestCase {
     /*
     * test for addChildElement(QName qname)
     */
+    @Validated @Test
     public void testAddChildElement3() {
         try {
             QName qname = new QName("http://sample.apache.org/trader", "GetStockQuote", "w");
@@ -492,6 +509,7 @@ public class SOAPElementTest extends TestCase {
     }
 
 
+    @Validated @Test
     public void testGetAttributeValue() {
         assertNotNull(soapEle);
         String value = "234.50";
@@ -569,6 +587,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testGetChildElements3() {
         try {
             MessageFactory fact = MessageFactory.newInstance();
@@ -664,6 +683,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testRemoveContent() {
         boolean pass = true;
         try {
@@ -701,7 +721,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
-
+    @Validated @Test
     public void testSetElementQName() {
         try {
             MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -732,6 +752,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
 
+    @Validated @Test
     public void testSetElementQName2() {
         try {
             MessageFactory factory = MessageFactory.newInstance();
@@ -770,6 +791,7 @@ public class SOAPElementTest extends TestCase {
         }
     }
     
+    @Validated @Test
     public void testAppendChild() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
@@ -820,6 +842,7 @@ public class SOAPElementTest extends TestCase {
         assertFalse(iter.hasNext());               
     }
     
+    @Validated @Test
     public void testRemoveChild() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();

@@ -19,7 +19,7 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -34,10 +34,15 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 /**
  * 
  */
-public class SAAJDetailTest extends TestCase {
+@RunWith(SAAJTestRunner.class)
+public class SAAJDetailTest extends Assert {
     private SOAPMessage msg = null;
     private SOAPPart sp = null;
     private SOAPBody body = null;
@@ -45,7 +50,8 @@ public class SAAJDetailTest extends TestCase {
     private SOAPHeader header = null;
     private SOAPHeaderElement headerEle = null;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         msg = MessageFactory.newInstance().createMessage();
         sp = msg.getSOAPPart();
         envelope = sp.getEnvelope();
@@ -59,6 +65,7 @@ public class SAAJDetailTest extends TestCase {
     /*
     * for soap version 1.1
     */
+    @Validated @Test
     public void testAddDetailEntry() throws Exception {
         //Add a SOAPFault object to the SOAPBody
         SOAPFault sf = body.addFault();
@@ -75,6 +82,7 @@ public class SAAJDetailTest extends TestCase {
     /*
      * for soap version 1.2
      */
+    @Validated @Test
     public void testAddDetailEntry2() throws Exception {
         msg = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
         sp = msg.getSOAPPart();
