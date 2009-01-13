@@ -588,6 +588,20 @@ public class SOAPElementTest extends Assert {
         }
     }
 
+    @Validated @Test(expected=SOAPException.class)
+    public void testCreateQNameWithUnknownPrefix() throws Exception {
+        soapEle.createQName("local", "nonexistingprefix");
+    }
+
+    @Validated @Test
+    public void testCreateQNameWithAddNamespaceDeclaration() throws Exception {
+        soapEle.addNamespaceDeclaration("p", "urn:test");
+        QName qname = soapEle.createQName("local", "p");
+        assertEquals("p", qname.getPrefix());
+        assertEquals("local", qname.getLocalPart());
+        assertEquals("urn:test", qname.getNamespaceURI());
+    }
+
     @Validated @Test
     public void testRemoveContent() throws Exception {
         boolean pass = true;

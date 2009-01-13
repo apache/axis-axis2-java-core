@@ -433,16 +433,12 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      * @since SAAJ 1.3
      */
     public QName createQName(String localName, String prefix) throws SOAPException {
-        if (this.element.getNamespaceURI(prefix) == null) {
+        String namespaceURI = element.getNamespaceURI(prefix);
+        if (namespaceURI == null) {
             throw new SOAPException("Invalid prefix");
+        } else {
+            return new QName(namespaceURI, localName, prefix);
         }
-        QName qname = null;
-        if (this.element.getOMFactory() instanceof SOAP11Factory) {
-            qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, localName, prefix);
-        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
-            qname = new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, localName, prefix);
-        }
-        return qname;
     }
 
     public Iterator getAllAttributesAsQNames() {
