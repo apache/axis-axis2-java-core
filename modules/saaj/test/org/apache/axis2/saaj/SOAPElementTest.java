@@ -394,7 +394,8 @@ public class SOAPElementTest extends Assert {
         assertNull(body.getNamespaceURI(prefix));
     }
 
-    public void _testSetEncodingStyle() throws Exception {
+    @Validated @Test
+    public void testSetEncodingStyle() throws Exception {
         SOAPMessage msg = MessageFactory.newInstance().createMessage();
         SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
         SOAPBody body = envelope.getBody();
@@ -480,8 +481,8 @@ public class SOAPElementTest extends Assert {
         assertEquals(childCount, 2);
     }
 
-    //TODO : check why this is failing
-    public void _testGetChildElements2() throws Exception {
+    @Validated @Test
+    public void testGetChildElements2() throws Exception {
         MessageFactory fact = MessageFactory.newInstance();
         SOAPMessage message = fact.createMessage();
         SOAPPart soapPart = message.getSOAPPart();
@@ -537,7 +538,8 @@ public class SOAPElementTest extends Assert {
         assertEquals(n, name);
     }
 
-    public void _testRemoveAttribute2() throws Exception {
+    @Validated @Test
+    public void testRemoveAttribute3() throws Exception {
         QName qname = new QName("http://child1.apache.org/", "Child1", "ch");
         String value = "MyValue1";
         soapEle.addAttribute(qname, value);
