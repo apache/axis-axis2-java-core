@@ -34,6 +34,7 @@ import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.catalog.JAXWSCatalogManager;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
@@ -50,6 +51,7 @@ import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.feature.ServerFramework;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ServerConfiguratorRegistry;
+import org.apache.axis2.jaxws.util.CatalogURIResolver;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.util.WSDLDefinitionWrapper;
@@ -871,21 +873,16 @@ class EndpointDescriptionImpl
             if (log.isDebugEnabled()) {
                 log.debug("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());    
             }
-            
+                        
+            ClassLoader classLoader;
             if (composite.isServiceProvider()) {
-                URIResolverImpl uriResolver =
-                        new URIResolverImpl(composite.getClassLoader());
-                serviceBuilder.setCustomResolver(uriResolver);
+                classLoader = composite.getClassLoader();
             } else {
-                ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(new
-                        PrivilegedAction() {
-                            public Object run() {
-                                return Thread.currentThread().getContextClassLoader();
-                            }
-                        });
-                URIResolverImpl uriResolver = new URIResolverImpl(classLoader);
-                serviceBuilder.setCustomResolver(uriResolver);
+                classLoader = getContextClassLoader(null);
             }
+            JAXWSCatalogManager catalogManager = getServiceDescriptionImpl().getCatalogManager();
+            CatalogURIResolver uriResolver = new CatalogURIResolver(catalogManager, classLoader);
+            serviceBuilder.setCustomResolver(uriResolver);
 
             if (getServiceDescriptionImpl().isServerSide())
                 serviceBuilder.setServerSide(true);
