@@ -295,6 +295,7 @@ class ServiceDescriptionImpl
         this.dbcMap = dbcMap;
         this.isServerSide = true;
         this.serviceQName = serviceQName;
+        this.catalogManager = this.composite.getCatalogManager();
         
         
         // if the ServiceDescriptionImpl was constructed with a specific service QName
