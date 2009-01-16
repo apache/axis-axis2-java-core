@@ -42,7 +42,7 @@ public class ListenerManager {
     private static final Log log = LogFactory.getLog(ListenerManager.class);
 
     public static ConfigurationContext defaultConfigurationContext;
-    protected ListenerManagerShutdownThread shutdownHookThread;
+    protected ListenerManagerShutdownThread shutdownHookThread = null;
 
     public static ListenerManager getDefaultListenerManager() {
         if (defaultConfigurationContext == null) return null;
@@ -131,8 +131,10 @@ public class ListenerManager {
             }
         }
 
-        shutdownHookThread = new ListenerManagerShutdownThread(this);
-        Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+        if (shutdownHookThread == null) {
+            shutdownHookThread = new ListenerManagerShutdownThread(this);
+            Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+        }
         
         stopped = false;
     }
@@ -149,8 +151,10 @@ public class ListenerManager {
         }
 
         // Remove the shutdown hook
-        Runtime.getRuntime().removeShutdownHook(shutdownHookThread);
-        shutdownHookThread = null;
+        if (shutdownHookThread != null) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHookThread);
+            shutdownHookThread = null;
+        }
 
         for (Object o : startedTransports.values()) {
             TransportListener transportListener = (TransportListener)o;
@@ -210,6 +214,11 @@ public class ListenerManager {
             if (!started) {
                 transportListener.init(configctx, trsIn);
                 transportListener.start();
+                if (shutdownHookThread == null) {
+                    shutdownHookThread = new ListenerManagerShutdownThread(this);
+                    Runtime.getRuntime().addShutdownHook(shutdownHookThread);
+                }
+                stopped = false;
             }
             startedTransports.put(trsIn.getName(), transportListener);
         }
