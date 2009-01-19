@@ -65,8 +65,6 @@ import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
-import com.sun.corba.se.impl.copyobject.FallbackObjectCopierImpl;
-
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
