@@ -34,6 +34,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -73,6 +74,8 @@ public class IntegrationTest extends Assert {
     public static final String SAAJ_REPO =
             System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
 
+    private String lastSoapAction; // Stores the last SOAP action received by the server
+
     protected static String getAddress() {
         return "http://127.0.0.1:" +
                 port +
@@ -100,6 +103,7 @@ public class IntegrationTest extends Assert {
             public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
                     throws AxisFault {
                 
+                lastSoapAction = inMessage.getSoapAction();
                 outMessage.setEnvelope(inMessage.getEnvelope());
                 Attachments inAttachments = inMessage.getAttachmentMap();
                 Attachments outAttachments = outMessage.getAttachmentMap();
@@ -383,4 +387,21 @@ public class IntegrationTest extends Assert {
         assertTrue(responseStr.indexOf("echo") != -1);
         sCon.close();
     }    
+
+    @Validated @Test @Ignore("AXIS2-1014")
+    public void testCallWithSOAPAction() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
+
+        String soapAction = "urn:test:echo";
+        
+        request.getSOAPPart().getEnvelope().getBody().addBodyElement(new QName("urn:test", "echo"));
+        request.getMimeHeaders().addHeader("SOAPAction", soapAction);
+
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        sCon.call(request, getAddress());
+        sCon.close();
+        
+        assertEquals(soapAction, lastSoapAction);
+    }
 }
