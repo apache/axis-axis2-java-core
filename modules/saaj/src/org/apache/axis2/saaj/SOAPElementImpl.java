@@ -607,14 +607,14 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see org.w3c.dom.Element#getElementsByTagName(java.lang.String)
       */
     public NodeList getElementsByTagName(String name) {
-        return element.getElementsByTagName(name);
+        return toSAAJNodeList(element.getElementsByTagName(name));
     }
 
     /* (non-Javadoc)
       * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
       */
     public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-        return element.getElementsByTagNameNS(namespaceURI, localName);
+        return toSAAJNodeList(element.getElementsByTagNameNS(namespaceURI, localName));
     }
 
     /* (non-Javadoc)
@@ -760,6 +760,15 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return null;
     }
 
+    public String getTextContent() throws DOMException {
+        return element.getTextContent();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // TODO Auto-generated method stub
+        return super.clone();
+    }
 
     public org.w3c.dom.Node getFirstChild() {
         return toSAAJNode(element.getFirstChild());
@@ -796,14 +805,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return toSAAJNode(element.getPreviousSibling());
     }
 
-    public NodeList getChildNodes() {
-        NodeList childNodes = element.getChildNodes();
-        NodeListImpl nodes = new NodeListImpl();
-
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            nodes.addNode(toSAAJNode(childNodes.item(i)));
+    private NodeList toSAAJNodeList(NodeList nodes) {
+        NodeListImpl result = new NodeListImpl();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            result.addNode(toSAAJNode(nodes.item(i)));
         }
-        return nodes;
+        return result;
+    }
+
+    public NodeList getChildNodes() {
+        return toSAAJNodeList(element.getChildNodes());
     }
 
     public boolean hasChildNodes() {
