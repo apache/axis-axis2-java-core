@@ -124,59 +124,45 @@ public class IntegrationTest extends Assert {
     }
 
     @Validated @Test
-    public void testSendReceiveMessageWithEmptyNSPrefix() {
-        try {
-            MessageFactory mf = MessageFactory.newInstance();
-            SOAPMessage request = mf.createMessage();
+    public void testSendReceiveMessageWithEmptyNSPrefix() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
 
-            SOAPPart sPart = request.getSOAPPart();
-            SOAPEnvelope env = sPart.getEnvelope();
-            SOAPBody body = env.getBody();
+        SOAPPart sPart = request.getSOAPPart();
+        SOAPEnvelope env = sPart.getEnvelope();
+        SOAPBody body = env.getBody();
 
-            //Namespace prefix is empty
-            body.addBodyElement(new QName("http://fakeNamespace2.org","echo"))
-            							.addTextNode("This is some text");
+        //Namespace prefix is empty
+        body.addBodyElement(new QName("http://fakeNamespace2.org","echo"))
+        							.addTextNode("This is some text");
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(request, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            String requestStr = printSOAPMessage(request);
-            String responseStr = printSOAPMessage(response);
-            assertTrue(responseStr.indexOf("echo") > -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        String requestStr = printSOAPMessage(request);
+        String responseStr = printSOAPMessage(response);
+        assertTrue(responseStr.indexOf("echo") > -1);
+        sCon.close();
     }
     
     @Validated @Test
-    public void testSendReceiveSimpleSOAPMessage() {
-        try {
-            MessageFactory mf = MessageFactory.newInstance();
-            SOAPMessage request = mf.createMessage();
+    public void testSendReceiveSimpleSOAPMessage() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage request = mf.createMessage();
 
-            createSimpleSOAPPart(request);
+        createSimpleSOAPPart(request);
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(request, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            String requestStr = printSOAPMessage(request);
-            String responseStr = printSOAPMessage(response);
-            assertTrue(responseStr.indexOf("echo") != -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        String requestStr = printSOAPMessage(request);
+        String responseStr = printSOAPMessage(response);
+        assertTrue(responseStr.indexOf("echo") != -1);
+        sCon.close();
     }
 
     // TODO: it is not clear how this method can give predictable results,
@@ -376,32 +362,25 @@ public class IntegrationTest extends Assert {
     }
     
     @Validated @Test
-    public void testSendReceive_ISO88591_EncodedSOAPMessage() {
-        try{
-        	MimeHeaders mimeHeaders = new MimeHeaders();
-            mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
-            
-            FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
-                    "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
-            SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
-            
+    public void testSendReceive_ISO88591_EncodedSOAPMessage() throws Exception {
+    	MimeHeaders mimeHeaders = new MimeHeaders();
+        mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
+        
+        FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
+                "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
+        SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
+        
 
-            SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(requestMessage, getAddress());
-            assertFalse(response.getAttachments().hasNext());
-            assertEquals(0, response.countAttachments());
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(requestMessage, getAddress());
+        assertFalse(response.getAttachments().hasNext());
+        assertEquals(0, response.countAttachments());
 
-            printSOAPMessage(requestMessage);
-            String responseStr = printSOAPMessage(response);
-            assertEquals("This is some text.Here are some special chars : \u00F6\u00C6\u00DA\u00AE\u00A4",
-                         response.getSOAPBody().getElementsByTagName("something").item(0).getTextContent());
-            assertTrue(responseStr.indexOf("echo") != -1);
-            sCon.close();
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            fail("Unexpected Exception while running test: " + e);
-        } catch (IOException e) {
-            fail("Unexpected Exception while running test: " + e);
-        }
+        printSOAPMessage(requestMessage);
+        String responseStr = printSOAPMessage(response);
+        assertEquals("This is some text.Here are some special chars : \u00F6\u00C6\u00DA\u00AE\u00A4",
+                     response.getSOAPBody().getElementsByTagName("something").item(0).getTextContent());
+        assertTrue(responseStr.indexOf("echo") != -1);
+        sCon.close();
     }    
 }
