@@ -476,7 +476,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
                     httpInputStream = httpCon.getInputStream();
                 }
 
-                soapMessage = new SOAPMessageImpl(httpInputStream, mimeHeaders);
+                soapMessage = new SOAPMessageImpl(httpInputStream, mimeHeaders, false);
                 httpInputStream.close();
                 httpCon.disconnect();
 

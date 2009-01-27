@@ -24,10 +24,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Node;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
@@ -142,7 +144,7 @@ public class MessageFactoryTest extends XMLAssert {
         }
     }
 
-    @Validated @Test @Ignore("AXIS2-4189")
+    @Validated @Test
     public void testParseMTOMMessage() throws Exception {
         MimeHeaders headers = new MimeHeaders();
         headers.addHeader("Content-Type",
@@ -159,15 +161,27 @@ public class MessageFactoryTest extends XMLAssert {
         SOAPPart soapPart = message.getSOAPPart();
         assertEquals("<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>",
                 soapPart.getContentId());
+        
+        // Check the xop:Include element. Note that SAAJ doesn't resolve xop:Includes!
+        SOAPElement textElement =
+                (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
+        assertNotNull(textElement);
+        Node xopIncludeNode = textElement.getChildNodes().item(0);
+        assertTrue(xopIncludeNode instanceof SOAPElement);
+        AttachmentPart ap = message.getAttachment((SOAPElement)xopIncludeNode);
+        assertEquals("<1.urn:uuid:F02ECC18873CFB73E211412748909349@apache.org>",
+                ap.getContentId());
+        
+        // Now check the attachments
         Iterator attachments = message.getAttachments();
         assertTrue(attachments.hasNext());
-        AttachmentPart ap = (AttachmentPart)attachments.next();
+        ap = (AttachmentPart)attachments.next();
         assertEquals("<1.urn:uuid:F02ECC18873CFB73E211412748909349@apache.org>",
                 ap.getContentId());
         assertFalse(attachments.hasNext());
     }
 
-    @Validated @Test @Ignore("AXIS2-4189")
+    @Validated @Test
     public void testParseSwAMessage() throws Exception {
         MimeHeaders headers = new MimeHeaders();
         headers.addHeader("Content-Type",

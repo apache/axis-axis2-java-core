@@ -77,6 +77,7 @@ import java.io.InputStream;
 public class MessageFactoryImpl extends MessageFactory {
 
     protected String soapVersion = SOAPConstants.SOAP_1_1_PROTOCOL;
+    private boolean processMTOM;
 
     /**
      * Creates a new <CODE>SOAPMessage</CODE> object with the default <CODE>SOAPPart</CODE>,
@@ -128,12 +129,31 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
                                      InputStream inputstream) throws IOException, SOAPException {
-        SOAPMessageImpl soapMessage = new SOAPMessageImpl(inputstream, mimeheaders);
+        SOAPMessageImpl soapMessage = new SOAPMessageImpl(inputstream, mimeheaders, processMTOM);
         soapMessage.setSaveRequired();
         return soapMessage;
     }
 
     public void setSOAPVersion(String soapVersion) {
         this.soapVersion = soapVersion;
+    }
+
+    /**
+     * Specify whether MTOM messages should be processed or parsed literally.
+     * <p>
+     * The way MTOM messages are handled fundamentally differs between Axiom and SAAJ.
+     * While Axiom replaces xop:Include elements by {@link javax.activation.DataHandler} backed
+     * {@link org.apache.axiom.om.OMText} nodes, there is no such requirement in SAAJ. The only
+     * requirement there is that {@link SOAPMessage#getAttachment(javax.xml.soap.SOAPElement)}
+     * returns the relevant {@link javax.xml.soap.AttachmentPart} when applied to an
+     * xop:Include element.
+     * <p>
+     * This method allows to make this SAAJ implementation behave as Axiom, i.e. to substitute
+     * xop:Include elements.
+     * 
+     * @param processMTOM whether xop:Include elements should be substituted
+     */
+    public void setProcessMTOM(boolean processMTOM) {
+        this.processMTOM = processMTOM;
     }
 }
