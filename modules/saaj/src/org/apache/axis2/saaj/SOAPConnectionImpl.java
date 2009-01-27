@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -308,11 +309,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
                         final DataHandler datahandler = (DataHandler)omText.getDataHandler();
                         AttachmentPart attachment = saajSOAPMsg.createAttachmentPart(datahandler);
                         final String id = IDGenerator.generateID();
-                        attachment.setContentId(id);
+                        attachment.setContentId("<" + id + ">");
                         attachment.setContentType(datahandler.getContentType());
                         saajSOAPMsg.addAttachmentPart(attachment);
 
-                        saajEle.addAttribute(
+                        SOAPElement xopInclude = saajEle.addChildElement(MTOMConstants.XOP_INCLUDE,
+                                "xop", MTOMConstants.XOP_NAMESPACE_URI);
+                        xopInclude.addAttribute(
                                 saajSOAPMsg.getSOAPPart().getEnvelope().createName("href"),
                                 "cid:" + id);
                     } else {

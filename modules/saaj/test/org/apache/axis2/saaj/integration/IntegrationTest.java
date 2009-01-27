@@ -427,11 +427,10 @@ public class IntegrationTest extends Assert {
         SOAPMessage response = sCon.call(request, getAddress());
         sCon.close();
         
-//        response.writeTo(System.out);
-//        SOAPPart soapPart = response.getSOAPPart();
-//        SOAPElement textElement =
-//                (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
-//        AttachmentPart ap = response.getAttachment((SOAPElement)textElement.getChildNodes().item(0));
-//        assertNotNull(ap);
+        SOAPPart soapPart = response.getSOAPPart();
+        SOAPElement textElement =
+                (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
+        AttachmentPart ap = response.getAttachment((SOAPElement)textElement.getChildNodes().item(0));
+        assertNotNull(ap);
     }
 }
