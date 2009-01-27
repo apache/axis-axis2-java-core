@@ -19,19 +19,24 @@
 
 package org.apache.axis2.saaj.util;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.activation.DataHandler;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -117,6 +122,37 @@ public class SAAJUtil {
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
                 new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
         return stAXSOAPModelBuilder.getSOAPEnvelope();
+    }
+    
+    /**
+     * Convert a SAAJ message to an Axiom SOAP envelope object and process xop:Include
+     * elements.
+     * 
+     * @param message the SAAJ message
+     * @return the OM SOAP envelope
+     * @throws SOAPException
+     */
+    public static org.apache.axiom.soap.SOAPEnvelope toOMSOAPEnvelope(
+            javax.xml.soap.SOAPMessage message) throws SOAPException {
+        
+        Attachments attachments = new Attachments();
+        for (Iterator it = message.getAttachments(); it.hasNext(); ) {
+            AttachmentPart attachment = (AttachmentPart)it.next();
+            String contentId = attachment.getContentId();
+            if (contentId != null) {
+                DataHandler dh = attachment.getDataHandler();
+                if (dh == null) {
+                    throw new SOAPException("Attachment with NULL DataHandler");
+                }
+                if (contentId.startsWith("<") && contentId.endsWith(">")) {
+                    contentId = contentId.substring(1, contentId.length()-1);
+                }
+                attachments.addDataHandler(contentId, dh);
+            }
+        }
+        OMElement docElem = (OMElement)message.getSOAPPart().getDocumentElement();
+        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(docElem.getXMLStreamReader(), attachments);
+        return builder.getSOAPEnvelope();
     }
 
     /**

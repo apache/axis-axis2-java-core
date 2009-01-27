@@ -28,6 +28,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.saaj.SAAJTestRunner;
+import org.apache.axis2.saaj.TestConstants;
 import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
 import org.junit.After;
@@ -37,6 +38,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -62,6 +64,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 @RunWith(SAAJTestRunner.class)
@@ -403,5 +406,32 @@ public class IntegrationTest extends Assert {
         sCon.close();
         
         assertEquals(soapAction, lastSoapAction);
+    }
+    
+    @Validated @Test
+    public void testCallMTOM() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        
+        MimeHeaders headers = new MimeHeaders();
+        headers.addHeader("Content-Type", TestConstants.MTOM_TEST_MESSAGE_CONTENT_TYPE);
+        InputStream in = new FileInputStream(TestConstants.MTOM_TEST_MESSAGE_FILE);
+        SOAPMessage request = mf.createMessage(headers, in);
+        SOAPEnvelope envelope = request.getSOAPPart().getEnvelope();
+        
+        // Remove the headers since they have mustunderstand=1 
+        envelope.getHeader().removeContents();
+        // Change the name of the body content so that the request is routed to the echo service
+        ((SOAPElement)envelope.getBody().getChildElements().next()).setElementQName(new QName("echo"));
+        
+        SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
+        SOAPMessage response = sCon.call(request, getAddress());
+        sCon.close();
+        
+//        response.writeTo(System.out);
+//        SOAPPart soapPart = response.getSOAPPart();
+//        SOAPElement textElement =
+//                (SOAPElement)soapPart.getEnvelope().getElementsByTagName("text").item(0);
+//        AttachmentPart ap = response.getAttachment((SOAPElement)textElement.getChildNodes().item(0));
+//        assertNotNull(ap);
     }
 }

@@ -21,7 +21,6 @@ package org.apache.axis2.saaj;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Node;
@@ -147,16 +146,8 @@ public class MessageFactoryTest extends XMLAssert {
     @Validated @Test
     public void testParseMTOMMessage() throws Exception {
         MimeHeaders headers = new MimeHeaders();
-        headers.addHeader("Content-Type",
-                "multipart/related; " +
-                "boundary=\"MIMEBoundaryurn:uuid:F02ECC18873CFB73E211412748909307\"; " +
-                "type=\"application/xop+xml\"; " +
-                "start=\"<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>\"; " +
-                "start-info=\"text/xml\"; " +
-                "charset=UTF-8;" +
-                "action=\"mtomSample\"");
-        InputStream in = new FileInputStream(System.getProperty("basedir", ".")
-                + "/test-resources/message.bin");
+        headers.addHeader("Content-Type", TestConstants.MTOM_TEST_MESSAGE_CONTENT_TYPE);
+        InputStream in = new FileInputStream(TestConstants.MTOM_TEST_MESSAGE_FILE);
         SOAPMessage message = mf.createMessage(headers, in);
         SOAPPart soapPart = message.getSOAPPart();
         assertEquals("<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>",
