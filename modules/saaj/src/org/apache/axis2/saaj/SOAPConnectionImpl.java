@@ -39,12 +39,14 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.saaj.util.UnderstandAllHeadersHandler;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
@@ -59,8 +61,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 
@@ -147,6 +151,26 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 }
                 options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
             }
+        }
+        
+        Map<String,String> httpHeaders = null;
+        for (Iterator it = request.getMimeHeaders().getAllHeaders(); it.hasNext(); ) {
+            MimeHeader header = (MimeHeader)it.next();
+            String name = header.getName().toLowerCase();
+            if (name.equals("soapaction")) {
+                requestMsgCtx.setSoapAction(header.getValue());
+            } else if (name.equals("content-type")) {
+                // Don't set the Content-Type explicitly since it will be computed by the
+                // message builder.
+            } else {
+                if (httpHeaders == null) {
+                    httpHeaders = new HashMap<String,String>();
+                }
+                httpHeaders.put(header.getName(), header.getValue());
+            }
+        }
+        if (httpHeaders != null) {
+            requestMsgCtx.setProperty(HTTPConstants.HTTP_HEADERS, httpHeaders);
         }
         
         MessageContext responseMsgCtx;

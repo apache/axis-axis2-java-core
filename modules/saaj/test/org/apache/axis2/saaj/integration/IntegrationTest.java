@@ -334,7 +334,7 @@ public class IntegrationTest extends Assert {
         sCon.close();
     }    
 
-    @Validated @Test @Ignore("AXIS2-1014")
+    @Validated @Test
     public void testCallWithSOAPAction() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage request = mf.createMessage();
