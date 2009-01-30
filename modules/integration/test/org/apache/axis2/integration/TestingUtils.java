@@ -33,7 +33,7 @@ public class TestingUtils {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace("http://org.apache.axis2/xsd", "ns1");
         OMElement method = fac.createOMElement("echoOM", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
+        OMElement value = fac.createOMElement("omEle", omNs);
         value.addChild(
                 fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
@@ -44,7 +44,7 @@ public class TestingUtils {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = fac.createOMNamespace(nameSpace, "ns1");
         OMElement method = fac.createOMElement("echoOM", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
+        OMElement value = fac.createOMElement("omEle", omNs);
         value.addChild(
                 fac.createOMText(value, "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
