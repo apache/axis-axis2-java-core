@@ -309,6 +309,9 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                                       WSDL2JavaConstants.OVERRIDE_ABSOLUTE_ADDRESS_OPTION_LONG,
                                       optionMap) != null);
 
+        config.setLowerCaseMethodName(loadOption(WSDL2JavaConstants.LOWER_CASE_METHOD_NAME,
+                                     WSDL2JavaConstants.LOWER_CASE_METHOD_NAME_LONG, optionMap) != null);
+
         // loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();
