@@ -315,6 +315,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
             if (parameters.length > 0) {
                 parameterNames = methodTable.getParameterNames(methodName);
+                // put the parameter names to use it for parsing
+                service.addParameter(methodName, parameterNames);
                 sequence = new XmlSchemaSequence();
 
                 methodSchemaType = createSchemaTypeForMethodPart(methodName);
