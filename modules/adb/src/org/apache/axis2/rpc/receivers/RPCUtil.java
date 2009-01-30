@@ -35,6 +35,7 @@ import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
@@ -145,12 +146,17 @@ public class RPCUtil {
         }
     }
 
+    public static Object[] processRequest(OMElement methodElement,
+                                          Method method, ObjectSupplier objectSupplier, String[] parameterNames)
+            throws AxisFault {
+        Class[] parameters = method.getParameterTypes();
+        return BeanUtil.deserialize(methodElement, parameters, objectSupplier, parameterNames);
+    }
 
     public static Object[] processRequest(OMElement methodElement,
                                           Method method, ObjectSupplier objectSupplier)
             throws AxisFault {
-        Class[] parameters = method.getParameterTypes();
-        return BeanUtil.deserialize(methodElement, parameters, objectSupplier);
+        return processRequest(methodElement, method, objectSupplier, null);
     }
 
     public static Object invokeServiceClass(AxisMessage inAxisMessage,
@@ -185,8 +191,13 @@ public class RPCUtil {
             }
             Object[] objectArray;
             if (inAxisMessage.isWrapped()) {
+                Parameter namesParameter = inMessage.getAxisService().getParameter(method.getName());
+                String[] parameterNames = null;
+                if (namesParameter != null){
+                    parameterNames = (String[]) namesParameter.getValue();
+                }
                 objectArray = RPCUtil.processRequest(methodElement,
-                        method, inMessage.getAxisService().getObjectSupplier());
+                        method, inMessage.getAxisService().getObjectSupplier(), parameterNames);
             } else {
                 objectArray = RPCUtil.processRequest((OMElement) methodElement.getParent(),
                         method, inMessage.getAxisService().getObjectSupplier());

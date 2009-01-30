@@ -515,6 +515,12 @@ public class BeanUtil {
     public static Object [] deserialize(OMElement response,
                                         Object [] javaTypes,
                                         ObjectSupplier objectSupplier) throws AxisFault {
+        return BeanUtil.deserialize(response, javaTypes, objectSupplier, null);
+    }
+    public static Object [] deserialize(OMElement response,
+                                        Object [] javaTypes,
+                                        ObjectSupplier objectSupplier,
+                                        String[] parameterNames) throws AxisFault {
         /*
          * Take the number of parameters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
@@ -562,6 +568,24 @@ public class BeanUtil {
             } else {
                 continue;
             }
+
+             // if the local part is not match. this means element is not present
+            // due to min occurs zero.
+            // we need to hard code arg and item since that has been used in RPCService client
+            // and some test cases
+            while ((parameterNames != null) &&
+                    (!omElement.getQName().getLocalPart().startsWith("arg")) &&
+                    (!omElement.getQName().getLocalPart().startsWith("item")) &&
+                    !omElement.getQName().getLocalPart().equals(parameterNames[count])) {
+                // POJO handles OMElement in a differnt way so need this check for OMElement
+                Class paramClassType = (Class) javaTypes[count];
+                if (!paramClassType.getName().equals(OMElement.class.getName())) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+
             currentLocalName = omElement.getLocalName();
             classType = (Class)javaTypes[count];
             omElement = ProcessElement(classType, omElement, helper, parts,
