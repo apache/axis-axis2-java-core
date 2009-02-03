@@ -85,16 +85,14 @@ public class AttachmentTest extends Assert {
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
-        URL url1 = new URL("http://www.apache.org/licenses/LICENSE-2.0.html");
-        URL url2 = new URL("http://www.apache.org/licenses/LICENSE-2.0.txt");
 
-        AttachmentPart a1 = msg.createAttachmentPart(new DataHandler(url1));
+        AttachmentPart a1 = msg.createAttachmentPart(new DataHandler("<some_xml/>", "text/xml"));
         a1.setContentType("text/xml");
         msg.addAttachmentPart(a1);
-        AttachmentPart a2 = msg.createAttachmentPart(new DataHandler(url1));
+        AttachmentPart a2 = msg.createAttachmentPart(new DataHandler("<some_xml/>", "text/xml"));
         a2.setContentType("text/xml");
         msg.addAttachmentPart(a2);
-        AttachmentPart a3 = msg.createAttachmentPart(new DataHandler(url2));
+        AttachmentPart a3 = msg.createAttachmentPart(new DataHandler("text", "text/plain"));
         a3.setContentType("text/plain");
         msg.addAttachmentPart(a3);
 
