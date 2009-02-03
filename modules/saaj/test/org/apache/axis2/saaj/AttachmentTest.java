@@ -33,9 +33,11 @@ import org.junit.runner.RunWith;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.imageio.ImageIO;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
@@ -67,7 +69,7 @@ public class AttachmentTest extends Assert {
 
         assertTrue(message.countAttachments() == 1);
 
-        java.util.Iterator it = message.getAttachments();
+        Iterator it = message.getAttachments();
         while (it.hasNext()) {
             attachment = (AttachmentPart)it.next();
             Object content = attachment.getContent();
@@ -83,26 +85,26 @@ public class AttachmentTest extends Assert {
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage msg = factory.createMessage();
-        java.net.URL url1 = new java.net.URL("http://www.apache.org/licenses/LICENSE-2.0.html");
-        java.net.URL url2 = new java.net.URL("http://www.apache.org/licenses/LICENSE-2.0.txt");
+        URL url1 = new URL("http://www.apache.org/licenses/LICENSE-2.0.html");
+        URL url2 = new URL("http://www.apache.org/licenses/LICENSE-2.0.txt");
 
-        AttachmentPart a1 = msg.createAttachmentPart(new javax.activation.DataHandler(url1));
+        AttachmentPart a1 = msg.createAttachmentPart(new DataHandler(url1));
         a1.setContentType("text/xml");
         msg.addAttachmentPart(a1);
-        AttachmentPart a2 = msg.createAttachmentPart(new javax.activation.DataHandler(url1));
+        AttachmentPart a2 = msg.createAttachmentPart(new DataHandler(url1));
         a2.setContentType("text/xml");
         msg.addAttachmentPart(a2);
-        AttachmentPart a3 = msg.createAttachmentPart(new javax.activation.DataHandler(url2));
+        AttachmentPart a3 = msg.createAttachmentPart(new DataHandler(url2));
         a3.setContentType("text/plain");
         msg.addAttachmentPart(a3);
 
         assertTrue(msg.countAttachments() == 3);
 
-        javax.xml.soap.MimeHeaders mimeHeaders = new javax.xml.soap.MimeHeaders();
+        MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Type", "text/xml");
 
         int nAttachments = 0;
-        java.util.Iterator iterator = msg.getAttachments(mimeHeaders);
+        Iterator iterator = msg.getAttachments(mimeHeaders);
         while (iterator.hasNext()) {
             nAttachments++;
             AttachmentPart ap = (AttachmentPart)iterator.next();
@@ -235,7 +237,7 @@ public class AttachmentTest extends Assert {
             MessageFactory factory = MessageFactory.newInstance();
             SOAPMessage msg = factory.createMessage();
             AttachmentPart ap = msg.createAttachmentPart();
-            Image image = javax.imageio.ImageIO.read(new File(System.getProperty("basedir", ".") +
+            Image image = ImageIO.read(new File(System.getProperty("basedir", ".") +
                     "/test-resources" + File.separator + "attach.gif"));
             ap = msg.createAttachmentPart(image, "image/gif");
 
