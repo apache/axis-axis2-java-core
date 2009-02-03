@@ -27,6 +27,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.PolicyComponent;
 
+/**
+ * Assertion to pick up the QName &ltwsoma:MTOM
+ * xmlns:wsoma="http://www.w3.org/2007/08/soap12-mtom-policy"/&gt which is compliant </br>
+ * with the WS-MTOMPolicy verion 1.1.
+ */
+
 public class MTOM11Assertion extends MTOMAssertion {
 
     // creating a logger instance

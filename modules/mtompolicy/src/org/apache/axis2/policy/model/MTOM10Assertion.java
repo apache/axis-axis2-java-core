@@ -28,8 +28,9 @@ import org.apache.neethi.Constants;
 import org.apache.neethi.PolicyComponent;
 
 /**
- * Assertion to pick up the QName <wsoma:OptimizedMimeSerialization
- * xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+ * Assertion to pick up the QName &ltwsoma:OptimizedMimeSerialization
+ * xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/&gt  which is compliant <br>
+ * with the WS-MTOMPolicy verion 1.0.
  */
 public class MTOM10Assertion extends MTOMAssertion {
 

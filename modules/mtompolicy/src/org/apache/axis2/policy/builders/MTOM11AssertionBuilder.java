@@ -32,6 +32,13 @@ import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.builders.AssertionBuilder;
 
+/**
+ * This builder is responsible for the creation of a MTOM assertion object </br>
+ * (compliant with the WS-MTOMPolicy verion 1.1).
+ * The builder will be picked by the
+ * "org.apache.neethi.AssertionBuilderFactory".
+ */
+
 public class MTOM11AssertionBuilder implements AssertionBuilder{
     
     private static Log log = LogFactory.getLog(MTOM10AssertionBuilder.class);
