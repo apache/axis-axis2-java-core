@@ -106,15 +106,31 @@ public class SAAJTestRunner extends JUnit4ClassRunner {
         if (validate) {
             multiRunListener.setFailureMessage(
                     "Invalid test case; execution failed with SAAJ reference implementation");
-            System.setProperty("javax.xml.soap.MessageFactory",
-                    "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl");
-            System.setProperty("javax.xml.soap.SOAPFactory",
-                    "com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
-            System.setProperty("javax.xml.soap.SOAPConnectionFactory",
-                    "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
-            System.setProperty("javax.xml.soap.MetaFactory",
-                    "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
+
+            if (System.getProperty("java.vendor").equals("IBM Corporation")) {
+            	System.setProperty("javax.xml.soap.MessageFactory",
+            		"com.sun.xml.internal.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl");
+            	System.setProperty("javax.xml.soap.SOAPFactory",
+            		"com.sun.xml.internal.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
+            	System.setProperty("javax.xml.soap.SOAPConnectionFactory",
+            		"com.sun.xml.internal.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
+            	System.setProperty("javax.xml.soap.MetaFactory",
+            		"com.sun.xml.internal.messaging.saaj.soap.SAAJMetaFactoryImpl");
+            
+            //Default to the SUN RI
+            } else {
+            	System.setProperty("javax.xml.soap.MessageFactory",
+            		"com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl");
+            	System.setProperty("javax.xml.soap.SOAPFactory",
+            		"com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl");
+            	System.setProperty("javax.xml.soap.SOAPConnectionFactory",
+            		"com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory");
+            	System.setProperty("javax.xml.soap.MetaFactory",
+            		"com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl");
+            }
             resetSAAJFactories();
+
+            System.out.println("About to invoke super.invokeTestMethod on: " +method.getName());
             super.invokeTestMethod(method, multiRunNotifier);
         }
         if (multiRunListener.isShouldContinue()) {
