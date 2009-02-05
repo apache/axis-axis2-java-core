@@ -1393,6 +1393,7 @@
                         <include>**/StringListTests.java</include>
                         <include>**/NonWrapTests.java</include>
                         <include>**/FaultyWebServiceTests.java</include> 
+                        <include>**/AsyncExecutorTests.java</include>
                         <include>**/ParallelAsyncTests.java</include>
                         <include>**/SWAMTOMTests.java</include>
                         <include>**/RuntimeExceptionsAsyncMepTest.java</include>
