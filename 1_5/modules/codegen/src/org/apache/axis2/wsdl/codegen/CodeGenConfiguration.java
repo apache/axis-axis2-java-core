@@ -630,4 +630,14 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public void setExceptionBaseClassName(String exceptionBaseClassName) {
         this.exceptionBaseClassName = exceptionBaseClassName;
     }
+
+    private boolean isUseOperationName;
+
+    public boolean isUseOperationName() {
+        return isUseOperationName;
+    }
+
+    public void setUseOperationName(boolean useOperationName) {
+        isUseOperationName = useOperationName;
+    }
 }
