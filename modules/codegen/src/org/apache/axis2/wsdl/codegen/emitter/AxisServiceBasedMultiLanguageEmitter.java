@@ -1585,7 +1585,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
 
-        if (this.codeGenConfiguration.isLowerCaseMethodName()) {
+        // here set the isLowerCaseMethodName variable to have the negative on useOperationName to
+        // make it easier to handle in Message receiver template.
+        if (!this.codeGenConfiguration.isUseOperationName()) {
             addAttribute(doc, "isLowerCaseMethodName", "true", rootElement);
         }
 
@@ -2258,10 +2260,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         methodElement = doc.createElement("method");
         String localPart = axisOperation.getName().getLocalPart();
 
-        if (this.codeGenConfiguration.isLowerCaseMethodName()) {
-            addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
-        } else {
+        if (this.codeGenConfiguration.isUseOperationName()) {
             addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
+        } else {
+            addAttribute(doc, "name", JavaUtils.xmlNameToJavaIdentifier(localPart), methodElement);
         }
 
         addAttribute(doc, "originalName", localPart, methodElement);

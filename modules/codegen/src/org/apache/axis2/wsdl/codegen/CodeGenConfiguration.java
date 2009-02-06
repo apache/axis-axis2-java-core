@@ -631,13 +631,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.exceptionBaseClassName = exceptionBaseClassName;
     }
 
-    private boolean isLowerCaseMethodName;
+    private boolean isUseOperationName;
 
-    public boolean isLowerCaseMethodName() {
-        return isLowerCaseMethodName;
+    public boolean isUseOperationName() {
+        return isUseOperationName;
     }
 
-    public void setLowerCaseMethodName(boolean lowerCaseMethodName) {
-        isLowerCaseMethodName = lowerCaseMethodName;
+    public void setUseOperationName(boolean useOperationName) {
+        isUseOperationName = useOperationName;
     }
 }
