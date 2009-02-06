@@ -153,8 +153,10 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                                                  optionMap) != null);
 
         config.setGenerateAll(loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION,
-                                         WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG, optionMap) !=
-                null);
+                                         WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG, optionMap) != null);
+
+        config.setUseOperationName(loadOption(WSDL2JavaConstants.USE_OPERATION_NAME,
+                                     WSDL2JavaConstants.USE_OPERATION_NAME_LONG, optionMap) != null);
 
         //populate the external mapping
         commandLineOption = loadOption(
