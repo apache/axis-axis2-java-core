@@ -157,7 +157,7 @@
                     </includes>
                     <skip>false</skip>
                     <forkMode>once</forkMode>
-                    <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/1.0.0/</argLine>
+                    <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/${geronimo.spec.saaj.version}/</argLine>
                 </configuration>
             </plugin>
         </plugins>
