@@ -58,7 +58,7 @@
             /* union to keep all the exception objects */
             union {
                 <xsl:for-each select="method">
-                    <xsl:if test="fault">
+                    <xsl:if test="count(fault/*)">
                     <xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault </xsl:text> <xsl:value-of select="@name"/>_fault;
                     </xsl:if>
                 </xsl:for-each>
@@ -561,7 +561,7 @@
                            <xsl:value-of select="$outputparam_types"/> ret_unwrapped = <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each><xsl:if test="fault">,
+                                                </xsl:for-each><xsl:if test="count(fault/*)">,
                                                 (<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault*</xsl:text>)&amp;(svc_skeleton_wrapper->fault)</xsl:if>);
                             <xsl:choose>
                                 <xsl:when test="output/param/@complextype">
@@ -594,7 +594,7 @@
                         ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each><xsl:if test="fault">,
+                                                </xsl:for-each><xsl:if test="count(fault/*)">,
                                                 (<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault*</xsl:text>)&amp;(svc_skeleton_wrapper->fault)</xsl:if>);
                     </xsl:otherwise>
                     </xsl:choose>

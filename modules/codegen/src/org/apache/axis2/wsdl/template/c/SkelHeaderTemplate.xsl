@@ -77,7 +77,7 @@
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
 
 
-         <xsl:if test="fault">
+         <xsl:if test="count(fault/*)">
             /**
              * the generated fault union for operation "<xsl:value-of select="@qname"/>",
              * in a case you want to return a fault, put the appropriate adb object for
@@ -130,7 +130,7 @@
                                           <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                          </xsl:for-each><xsl:if test="fault">,
+                                          </xsl:for-each><xsl:if test="count(fault/*)">,
                                           <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>);
 
 

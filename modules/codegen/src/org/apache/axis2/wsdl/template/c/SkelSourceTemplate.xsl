@@ -87,7 +87,7 @@
                                           <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                          </xsl:for-each><xsl:if test="fault">,
+                                          </xsl:for-each><xsl:if test="count(fault/*)">,
                                           <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if> )
         {
           /* TODO fill this with the necessary business logic */

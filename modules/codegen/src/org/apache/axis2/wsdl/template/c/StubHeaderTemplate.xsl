@@ -98,7 +98,7 @@
 
 
         <xsl:for-each select="method">
-         <xsl:if test="fault">
+         <xsl:if test="count(fault/*)">
             /**
              * the generated fault union for operation "<xsl:value-of select="@name"/>",
              * in a case you want to return a fault, put the appropriate adb object for
@@ -163,7 +163,7 @@
                                                     <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                         <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                                         <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                                    </xsl:for-each><xsl:if test="fault">,
+                                                    </xsl:for-each><xsl:if test="count(fault/*)">,
                                                         axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>);
           </xsl:if>
     </xsl:for-each>
@@ -223,7 +223,7 @@
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each><xsl:if test="fault">,
+                                                      </xsl:for-each><xsl:if test="count(fault/*)">,
                                                         axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data),
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) );
 

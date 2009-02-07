@@ -244,7 +244,7 @@
                                               <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                               <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                               <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                              </xsl:for-each><xsl:if test="fault">,
+                                              </xsl:for-each><xsl:if test="count(fault/*)">,
                                           axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>)
          {
             axis2_svc_client_t *svc_client = NULL;
@@ -383,7 +383,7 @@
               axutil_string_free(soap_act, env);
             }
 
-            <xsl:if test="fault">
+            <xsl:if test="count(fault/*)">
             if (axis2_svc_client_get_last_response_has_fault (svc_client, env) &amp;&amp; fault)
             {
                 /* so it is a fault, will try to create soap elements */
@@ -672,7 +672,7 @@
             axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each><xsl:if test="fault">,
+                                                      </xsl:for-each><xsl:if test="count(fault/*)">,
                                                         axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data);
             axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data);
         };
@@ -705,12 +705,12 @@
             axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each><xsl:if test="fault">,
+                                                      </xsl:for-each><xsl:if test="count(fault/*)">,
                                                        axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data);
             struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data* callback_data = NULL;
             void *user_data = NULL;
             axis2_status_t status = AXIS2_SUCCESS;
-            <xsl:if test="fault">axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault;
+            <xsl:if test="count(fault/*)">axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault;
             </xsl:if>
  
             <xsl:if test="output/param/@ours">
@@ -743,7 +743,7 @@
                     axiom_soap_fault_t *soap_fault = NULL;
                     axiom_node_t *body_node = axiom_soap_body_get_base_node(soap_body, env);
 
-                    <xsl:if test="fault">
+                    <xsl:if test="count(fault/*)">
                     soap_fault = axiom_soap_body_get_fault (soap_body, env);
                     if (soap_fault)
                     {
@@ -923,20 +923,20 @@
                          if(ret_val == NULL) {
                             status = on_complete(env, (<xsl:value-of select="output/param/param/@type"/>)NULL<xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
+                                                  </xsl:for-each><xsl:if test="count(fault/*)">, fault </xsl:if>, user_data);
                          }
                          else {
                             status = on_complete(env, <xsl:if test="output/param/@complextype">
                                                   <xsl:value-of select="substring-before(output/param/@complextype, '_t*')"/>_free_popping_value(
                                                   </xsl:if><xsl:value-of select="substring-before(output/param/@type, '_t*')"/>_free_popping_value(ret_val, env)<xsl:if test="output/param/@complextype">, env)</xsl:if><xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
+                                                  </xsl:for-each><xsl:if test="count(fault/*)">, fault </xsl:if>, user_data);
                          }
                          </xsl:when>
                          <xsl:otherwise>
                          status = on_complete(env, ret_val<xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
+                                                  </xsl:for-each><xsl:if test="count(fault/*)">, fault </xsl:if>, user_data);
                          </xsl:otherwise>
                      </xsl:choose>
                 </xsl:when>
@@ -975,7 +975,7 @@
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each><xsl:if test="fault">,
+                                                      </xsl:for-each><xsl:if test="count(fault/*)">,
                                                       axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data) ,
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) )
          {
