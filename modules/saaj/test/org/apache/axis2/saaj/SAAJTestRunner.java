@@ -118,7 +118,6 @@ public class SAAJTestRunner extends JUnit4ClassRunner {
 
             resetSAAJFactories();
 
-            System.out.println("About to invoke super.invokeTestMethod on: " +method.getName());
             super.invokeTestMethod(method, multiRunNotifier);
         }
         if (multiRunListener.isShouldContinue()) {
