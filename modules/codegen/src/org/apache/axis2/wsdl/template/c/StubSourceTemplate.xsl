@@ -31,6 +31,7 @@
       <xsl:variable name="method-prefix"><xsl:value-of select="@prefix"/></xsl:variable> <!-- This is no longer using -->
       <xsl:variable name="qname"><xsl:value-of select="@qname"/></xsl:variable>
       <xsl:variable name="servicename"><xsl:value-of select="@servicename"/></xsl:variable>
+      <xsl:variable name="caps_name"><xsl:value-of select="@caps-name"/></xsl:variable>
 
       /**
        * <xsl:value-of select="@name"/>.c
@@ -243,7 +244,8 @@
                                               <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                               <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                               <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                              </xsl:for-each>)
+                                              </xsl:for-each><xsl:if test="fault">,
+                                          axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>)
          {
             axis2_svc_client_t *svc_client = NULL;
             axis2_options_t *options = NULL;
@@ -381,6 +383,92 @@
               axutil_string_free(soap_act, env);
             }
 
+            <xsl:if test="fault">
+            if (axis2_svc_client_get_last_response_has_fault (svc_client, env) &amp;&amp; fault)
+            {
+                /* so it is a fault, will try to create soap elements */
+                axiom_soap_envelope_t *soap_envelope = NULL;
+                axiom_soap_body_t *soap_body = NULL;
+                axiom_soap_fault_t *soap_fault = NULL;
+ 
+                soap_envelope = axis2_svc_client_get_last_response_soap_envelope (svc_client, env);
+                if (soap_envelope)
+                {
+                    soap_body = axiom_soap_envelope_get_body (soap_envelope, env);
+                }
+                if (soap_body)
+                {
+                    soap_fault = axiom_soap_body_get_fault (soap_body, env);
+                }
+                if (soap_fault)
+                {
+                    axiom_soap_fault_detail_t *soap_detail = NULL;
+                    axiom_node_t *soap_detail_node = NULL;
+
+                    soap_detail = axiom_soap_fault_get_detail(soap_fault, env);
+
+                    if(soap_detail) 
+                    {
+                        axiom_node_t *soap_detail_base_node = NULL;
+                        soap_detail_base_node = axiom_soap_fault_detail_get_base_node(soap_detail, env);
+
+                        if(soap_detail_base_node)
+                        {
+                            soap_detail_node = axiom_node_get_first_child(soap_detail_base_node, env);
+                            /* somehow get an element node */
+                            while(soap_detail_node &amp;&amp; axiom_node_get_node_type(soap_detail_node, env) != AXIOM_ELEMENT)
+                            {
+                                soap_detail_node = axiom_node_get_next_sibling(soap_detail_node, env);
+                            }
+                        }
+                    }
+                    if(soap_detail_node) 
+                    {
+                        axis2_char_t *detail_local_name = NULL;
+                        axiom_element_t *soap_detail_ele = NULL;
+                        
+                        soap_detail_ele = axiom_node_get_data_element(soap_detail_node, env);
+                       
+                        if(soap_detail_ele)
+                        {
+                            detail_local_name = axiom_element_get_localname(soap_detail_ele, env);
+                        }
+
+                        if(!detail_local_name)
+                        {
+                            AXIS2_ERROR_SET(env->error, AXIS2_ERROR_INVALID_NULL_PARAM, AXIS2_FAILURE);
+                        }
+            <xsl:variable name="caps_method_name" select="@caps-name"/>
+            <xsl:variable name="method_name" select="@name"/>
+            <xsl:for-each select="fault/param">
+                <xsl:variable name="fault-caps-name"><xsl:value-of select="$caps_name"/>_<xsl:value-of select="$caps_method_name"/>_FAULT_<xsl:value-of select="@caps-localname"/></xsl:variable>
+                        else if(!axutil_strcmp(detail_local_name, "<xsl:value-of select="@localname"/>"))
+                        {
+                            <xsl:value-of select="@type"/> adb_obj = NULL;
+
+                            AXIS2_ERROR_SET(env->error, <xsl:value-of select="$fault-caps-name"/>, AXIS2_FAILURE);
+                            
+                            adb_obj = <xsl:value-of select="substring-before(@type, '_t*')"/>_create(env);
+                            if(adb_obj)
+                            {
+                                if(<xsl:value-of select="substring-before(@type, '_t*')"/>_deserialize(adb_obj, env, &amp;soap_detail_node, NULL, AXIS2_FALSE ) == AXIS2_FAILURE)
+                                {
+                                    <xsl:value-of select="substring-before(@type, '_t*')"/>_free(adb_obj, env);
+                                }
+                               
+                                fault-><xsl:value-of select="@shorttype"/> = adb_obj;
+                            }
+                            else {
+                                AXIS2_ERROR_SET(env->error, AXIS2_ERROR_NO_MEMORY, AXIS2_FAILURE);
+                            }
+                        }
+            </xsl:for-each>
+                    }
+                }
+                return NULL;
+             }
+            </xsl:if> 
+ 
             <!-- extract out the headers at this point -->
             <xsl:if test="output/param[@location='soap_header']">
                 op_client = axis2_svc_client_get_op_client(svc_client, env);
@@ -584,7 +672,8 @@
             axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each>, void *data);
+                                                      </xsl:for-each><xsl:if test="fault">,
+                                                        axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data);
             axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data);
         };
 
@@ -592,6 +681,7 @@
         {
             axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int, void *data);
             struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data* callback_data = NULL;
+
             void *user_data = NULL;
 
             axis2_status_t status;
@@ -615,10 +705,13 @@
             axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each>, void *data);
+                                                      </xsl:for-each><xsl:if test="fault">,
+                                                       axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data);
             struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data* callback_data = NULL;
             void *user_data = NULL;
             axis2_status_t status = AXIS2_SUCCESS;
+            <xsl:if test="fault">axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault;
+            </xsl:if>
  
             <xsl:if test="output/param/@ours">
            	    <!-- this means data binding is enable -->
@@ -639,6 +732,7 @@
 
             callback_data = (struct axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_callback_data*)axis2_callback_get_data(callback);
 
+            
             soap_envelope = axis2_callback_get_envelope(callback, env);
             if(soap_envelope)
             {
@@ -646,8 +740,69 @@
                 soap_body = axiom_soap_envelope_get_body(soap_envelope, env);
                 if(soap_body)
                 {
+                    axiom_soap_fault_t *soap_fault = NULL;
                     axiom_node_t *body_node = axiom_soap_body_get_base_node(soap_body, env);
-                    if(body_node)
+
+                    <xsl:if test="fault">
+                    soap_fault = axiom_soap_body_get_fault (soap_body, env);
+                    if (soap_fault)
+                    {
+                        axiom_soap_fault_detail_t *soap_detail = NULL;
+                        axiom_node_t *soap_detail_node = NULL;
+
+                        soap_detail = axiom_soap_fault_get_detail(soap_fault, env);
+
+                        if(soap_detail) 
+                        {
+                            soap_detail_node = axiom_soap_fault_detail_get_base_node(soap_detail, env);    
+                        }
+                        if(soap_detail_node) 
+                        {
+                            axis2_char_t *detail_local_name = NULL;
+                            axiom_element_t *soap_detail_ele = NULL;
+                            
+                            if(axiom_node_get_node_type(soap_detail_node, env) == AXIOM_ELEMENT)
+                            {
+                                soap_detail_ele = axiom_node_get_data_element(soap_detail_node, env);
+                            }
+                           
+                            if(soap_detail_ele)
+                            {
+                                detail_local_name = axiom_element_get_localname(soap_detail_ele, env);
+                            }
+
+                            if(!detail_local_name)
+                            {
+                                AXIS2_ERROR_SET(env->error, AXIS2_ERROR_INVALID_NULL_PARAM, AXIS2_FAILURE);
+                            }
+                <xsl:variable name="caps_method_name" select="@caps-name"/>
+                <xsl:variable name="method_name" select="@name"/>
+                <xsl:for-each select="fault/param">
+                    <xsl:variable name="fault-caps-name"><xsl:value-of select="$caps_name"/>_<xsl:value-of select="$caps_method_name"/>_FAULT_<xsl:value-of select="@caps-localname"/></xsl:variable>
+                            else if(!axutil_strcmp(detail_local_name, "<xsl:value-of select="@localname"/>"))
+                            {
+                                <xsl:value-of select="@type"/> adb_obj = NULL;
+
+                                AXIS2_ERROR_SET(env->error, <xsl:value-of select="$fault-caps-name"/>, AXIS2_FAILURE);
+                                
+                                adb_obj = <xsl:value-of select="substring-before(@type, '_t*')"/>_create(env);
+                                if(adb_obj)
+                                {
+                                    if(<xsl:value-of select="substring-before(@type, '_t*')"/>_deserialize(adb_obj, env, &amp;soap_detail_node, NULL, AXIS2_FALSE ) == AXIS2_FAILURE)
+                                    {
+                                        <xsl:value-of select="substring-before(@type, '_t*')"/>_free(adb_obj, env);
+                                    }
+                                   
+                                    fault.<xsl:value-of select="@shorttype"/> = adb_obj;
+                                }
+                                else {
+                                    AXIS2_ERROR_SET(env->error, AXIS2_ERROR_NO_MEMORY, AXIS2_FAILURE);
+                                }
+                            }
+                </xsl:for-each>
+                        }
+                    }
+                    else </xsl:if> <!-- else for checking the fault --> if(body_node)
                     {
                         ret_node = axiom_node_get_first_child(body_node, env);
                     }
@@ -768,20 +923,20 @@
                          if(ret_val == NULL) {
                             status = on_complete(env, (<xsl:value-of select="output/param/param/@type"/>)NULL<xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each>, user_data);
+                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
                          }
                          else {
                             status = on_complete(env, <xsl:if test="output/param/@complextype">
                                                   <xsl:value-of select="substring-before(output/param/@complextype, '_t*')"/>_free_popping_value(
                                                   </xsl:if><xsl:value-of select="substring-before(output/param/@type, '_t*')"/>_free_popping_value(ret_val, env)<xsl:if test="output/param/@complextype">, env)</xsl:if><xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each>, user_data);
+                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
                          }
                          </xsl:when>
                          <xsl:otherwise>
                          status = on_complete(env, ret_val<xsl:for-each select="output/param[@location='soap_header']">,
                                                   <xsl:text>_</xsl:text><xsl:value-of select="@name"/>
-                                                  </xsl:for-each>, user_data);
+                                                  </xsl:for-each><xsl:if test="fault">, fault </xsl:if>, user_data);
                          </xsl:otherwise>
                      </xsl:choose>
                 </xsl:when>
@@ -820,7 +975,8 @@
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each>, void *data) ,
+                                                      </xsl:for-each><xsl:if test="fault">,
+                                                      axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data) ,
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) )
          {
 

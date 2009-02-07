@@ -21,6 +21,7 @@
     <xsl:output method="text"/>
     <xsl:template match="/interface">
     <xsl:variable name="svc_name"><xsl:value-of select="@name"/></xsl:variable>
+    <xsl:variable name="caps_svc_name"><xsl:value-of select="@caps-name"/></xsl:variable>
     <xsl:variable name="method-prefix"><xsl:value-of select="@prefix"/></xsl:variable>
     <xsl:variable name="qname"><xsl:value-of select="@qname"/></xsl:variable>
 
@@ -36,6 +37,7 @@
 	#include &lt;axis2_svc_skeleton.h&gt;
 	#include &lt;axutil_log_default.h&gt;
 	#include &lt;axutil_error_default.h&gt;
+    #include &lt;axutil_error.h&gt;
 	#include &lt;axiom_text.h&gt;
 	#include &lt;axiom_node.h&gt;
 	#include &lt;axiom_element.h&gt;
@@ -50,6 +52,10 @@
     <xsl:for-each select="output/param[@type!='' and @ours]">
      <xsl:variable name="outputtype" select="substring-before(@type, '_t*')"/>
      #include "<xsl:value-of select="$outputtype"/>.h"
+    </xsl:for-each>
+    <xsl:for-each select="fault/param[@type!='' and contains(@type, 'adb_')]">
+     <xsl:variable name="faulttype" select="substring-before(@type, '_t*')"/>
+     #include "<xsl:value-of select="$faulttype"/>.h"
     </xsl:for-each>
    </xsl:for-each>
 
@@ -69,6 +75,21 @@
             </xsl:choose>
          </xsl:variable>
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
+
+
+         <xsl:if test="fault">
+            /**
+             * the generated fault union for operation "<xsl:value-of select="@qname"/>",
+             * in a case you want to return a fault, put the appropriate adb object for
+             * the union variable pointer comes as the last parameter of the method
+             */
+            typedef union
+            {
+                <xsl:for-each select="fault/param">
+                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@shorttype"/>;
+                </xsl:for-each>
+            } <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text>;
+         </xsl:if>
 
 		 <!-- regardless of the sync or async status, the generated method signature would be just a usual
 	           c function-->
@@ -109,8 +130,27 @@
                                           <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                          </xsl:for-each> );
-     </xsl:for-each>
+                                          </xsl:for-each><xsl:if test="fault">,
+                                          <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>);
+
+
+     </xsl:for-each><!-- end of for-each method -->
+
+    /** we have to reserve some error codes for adb and for custom messages */
+    #define <xsl:value-of select="$caps_svc_name"/>_ERROR_CODES_START (AXIS2_ERROR_LAST + 2000)
+
+    typedef enum 
+    {
+        <xsl:value-of select="$caps_svc_name"/>_ERROR_NONE = <xsl:value-of select="$caps_svc_name"/>_ERROR_CODES_START,
+        
+        <xsl:for-each select="method">
+            <xsl:variable name="caps_method_name" select="@caps-name"/>
+            <xsl:for-each select="fault/param">
+                <xsl:value-of select="$caps_svc_name"/>_<xsl:value-of select="$caps_method_name"/>_FAULT_<xsl:value-of select="@caps-localname"/>,
+            </xsl:for-each>
+        </xsl:for-each>
+        <xsl:value-of select="$caps_svc_name"/>_ERROR_LAST
+    } <xsl:value-of select="$method-prefix"/>_error_codes;
 
 	#ifdef __cplusplus
 	}

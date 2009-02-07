@@ -49,11 +49,9 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import com.ibm.wsdl.util.xml.DOM2Writer;
+// import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
@@ -235,6 +233,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "name", stubName, rootElement);
+        addAttribute(doc, "caps-name", stubName.toUpperCase(), rootElement);
         addAttribute(doc, "prefix", stubName, rootElement); //prefix to be used by the functions
         addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
         addAttribute(doc, "servicename", serviceCName, rootElement);
@@ -312,6 +311,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         // only the name is used
         addAttribute(doc, "name", skelName, rootElement);
+        addAttribute(doc, "caps-name", skelName.toUpperCase(), rootElement);
         addAttribute(doc, "package", "", rootElement);
         String serviceName = axisService.getName();
         String serviceTns = axisService.getTargetNamespace();
@@ -326,6 +326,12 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         doc.appendChild(rootElement);
+
+
+        /////////////////////////////////////////////////////
+        // System.out.println(DOM2Writer.nodeToString(rootElement));
+        /////////////////////////////////////////////////////
+
         return doc;
 
     }
@@ -340,6 +346,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         // only the name is used
         addAttribute(doc, "name", svcSkelName, rootElement);
+        addAttribute(doc, "caps-svc-name", skelName.toUpperCase(), rootElement);
         addAttribute(doc, "prefix", svcSkelName, rootElement); //prefix to be used by the functions
         String serviceName = axisService.getName();
         String serviceTns = axisService.getTargetNamespace();
@@ -454,6 +461,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 String opNS = axisOperation.getName().getNamespaceURI();
 
                 addAttribute(doc, "name", opCName, methodElement);
+                addAttribute(doc, "caps-name", opCName.toUpperCase(), methodElement);
                 addAttribute(doc, "localpart", localPart, methodElement);
                 addAttribute(doc, "qname", localPart + "|" + opNS, methodElement);
 
@@ -510,6 +518,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     String opNS = axisOperation.getName().getNamespaceURI();
 
                     addAttribute(doc, "name", opCName, methodElement);
+                    addAttribute(doc, "caps-name", opCName.toUpperCase(), methodElement);
                     addAttribute(doc, "localpart", localPart, methodElement);
                     addAttribute(doc, "qname", localPart + "|" + opNS, methodElement);
 
@@ -789,6 +798,178 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             }
         }
         return parameterElementList;
+    }
+
+    /**
+     * A util method that returns a unique list of faults for a given mep
+     *
+     * @param doc
+     * @return DOM element
+     */
+    protected Element getUniqueListofFaultsofMep(Document doc, String mep) {
+
+        //  list to keep fault message qnames for this mep
+        Set faultListForMep = new HashSet();
+
+        Iterator iter = this.axisService.getOperations();
+        AxisOperation axisOperation;
+
+        for (; iter.hasNext();) {
+            axisOperation = (AxisOperation) iter.next();
+            if (mep == null) {
+                // add the fault messages
+                addFaultMessages(axisOperation.getFaultMessages(), faultListForMep);
+            } else {
+                if (mep.equals(axisOperation.getMessageExchangePattern())) {
+                    // add the fault messages
+                    addFaultMessages(axisOperation.getFaultMessages(), faultListForMep);
+                }
+            }
+        }
+
+        Element rootElement = doc.createElement("fault-list");
+        Element faultElement;
+        String key;
+        Iterator iterator = faultListForMep.iterator();
+        while (iterator.hasNext()) {
+            faultElement = doc.createElement("fault");
+            key = (String) iterator.next();
+
+            //as for the name of a fault, we generate an exception
+            addAttribute(doc, "name",
+                    (String) fullyQualifiedFaultClassNameMap.get(key),
+                    faultElement);
+            addAttribute(doc, "shortName",
+                    (String) faultClassNameMap.get(key),
+                    faultElement);
+
+            //the type represents the type that will be wrapped by this
+            //name
+            String typeMapping =
+                    this.mapper.getTypeMappingName((QName) faultElementQNameMap.get(key));
+            addAttribute(doc, "type", (typeMapping == null)
+                    ? ""
+                    : typeMapping, faultElement);
+            String attribValue = (String) instantiatableMessageClassNames.
+                    get(key);
+
+            addAttribute(doc, "instantiatableType",
+                    attribValue == null ? "" : attribValue,
+                    faultElement);
+
+            String exceptionName = ((QName) faultElementQNameMap.get(key)).getLocalPart();
+            addAttribute(doc, "localname",
+                    exceptionName == null ? "" : exceptionName,
+                    faultElement);
+
+            addAttribute(doc, "caps-localname",
+                    exceptionName == null ? "" : exceptionName.toUpperCase(),
+                    faultElement);
+
+            // add an extra attribute to say whether the type mapping is
+            // the default
+            if (mapper.getDefaultMappingName().equals(typeMapping)) {
+                addAttribute(doc, "default", "yes", faultElement);
+            }
+            addAttribute(doc, "value", getParamInitializer(typeMapping),
+                    faultElement);
+
+
+            rootElement.appendChild(faultElement);
+        }
+        return rootElement;
+    }
+
+
+    /**
+     * @param doc
+     * @param operation
+     * @return Returns the parameter element.
+     */
+    protected Element[] getFaultParamElements(Document doc, AxisOperation operation) {
+        ArrayList params = new ArrayList();
+        ArrayList faultMessages = operation.getFaultMessages();
+
+        if (faultMessages != null && !faultMessages.isEmpty()) {
+            Element paramElement;
+            AxisMessage msg;
+            for (int i = 0; i < faultMessages.size(); i++) {
+                paramElement = doc.createElement("param");
+                msg = (AxisMessage) faultMessages.get(i);
+
+                if (msg.getElementQName() == null) {
+                    throw new RuntimeException("Element QName is null for " + msg.getName() + "!");
+                }
+
+                //as for the name of a fault, we generate an exception
+                String faultComment = "";
+                if (msg.getDocumentation() != null){
+                    faultComment = msg.getDocumentation().trim();
+                }
+                addAttribute(doc, "comment", faultComment, paramElement);
+                addAttribute(doc, "name",
+                        (String) fullyQualifiedFaultClassNameMap.get(msg.getName()),
+                        paramElement);
+                addAttribute(doc, "shortName",
+                        (String) faultClassNameMap.get(msg.getName()),
+                        paramElement);
+
+                // attach the namespace and the localName
+                addAttribute(doc, "namespace",
+                        msg.getElementQName().getNamespaceURI(),
+                        paramElement);
+                addAttribute(doc, "localname",
+                        msg.getElementQName().getLocalPart(),
+                        paramElement);
+                addAttribute(doc, "caps-localname",
+                        msg.getElementQName().getLocalPart().toUpperCase(),
+                        paramElement);
+
+                if (msg.getElementQName() != null) {
+                    Element qNameElement = doc.createElement("qname");
+                    addAttribute(doc, "nsuri", msg.getElementQName().getNamespaceURI(), qNameElement);
+                    addAttribute(doc, "localname", msg.getElementQName().getLocalPart(), qNameElement);
+                    paramElement.appendChild(qNameElement);
+                }
+                //the type represents the type that will be wrapped by this
+                //name
+                String typeMapping =
+                        this.mapper.getTypeMappingName(msg.getElementQName());
+                addAttribute(doc, "type", (typeMapping == null)
+                        ? ""
+                        : typeMapping, paramElement);
+
+                //add the short name
+                addShortType(paramElement, (msg.getElementQName() == null) ? null :
+                        msg.getElementQName().getLocalPart());
+
+                String attribValue = (String) instantiatableMessageClassNames.
+                        get(msg.getElementQName());
+                addAttribute(doc, "instantiatableType",
+                        attribValue == null ? "" : attribValue,
+                        paramElement);
+
+                // add an extra attribute to say whether the type mapping is
+                // the default
+                if (mapper.getDefaultMappingName().equals(typeMapping)) {
+                    addAttribute(doc, "default", "yes", paramElement);
+                }
+                addAttribute(doc, "value", getParamInitializer(typeMapping),
+                        paramElement);
+
+                Iterator iter = msg.getExtensibilityAttributes().iterator();
+                while (iter.hasNext()) {
+                    // process extensibility attributes
+                }
+                params.add(paramElement);
+            }
+
+            return (Element[]) params.toArray(new Element[params.size()]);
+        } else {
+            return new Element[]{};//return empty array
+        }
+
+
     }
 
     /**

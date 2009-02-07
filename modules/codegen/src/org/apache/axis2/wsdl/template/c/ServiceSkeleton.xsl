@@ -23,6 +23,7 @@
       <!--Template for in out message receiver -->
       <xsl:template match="/interface">
         <xsl:variable name="skeletonname"><xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="caps_svc_name"><xsl:value-of select="@caps-svc-name"/></xsl:variable>
         <xsl:variable name="qname"><xsl:value-of select="@qname"/></xsl:variable>
         <xsl:variable name="method-prefix"><xsl:value-of select="@prefix"/></xsl:variable>
         <xsl:variable name="svcop-prefix"><xsl:value-of select="@svcop_prefix"/></xsl:variable>
@@ -46,6 +47,23 @@
         #ifdef __cplusplus
         extern "C" {
         #endif
+
+
+        /**
+         * creating a custom structure to wrap the axis2_svc_skeleton class
+         */
+        typedef struct {
+            axis2_svc_skeleton_t svc_skeleton;
+
+            /* union to keep all the exception objects */
+            union {
+                <xsl:for-each select="method">
+                    <xsl:if test="fault">
+                    <xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault </xsl:text> <xsl:value-of select="@name"/>_fault;
+                    </xsl:if>
+                </xsl:for-each>
+            } fault;
+        }<xsl:value-of select="$method-prefix"/>_t;
        
         /**
          * functions prototypes
@@ -83,7 +101,6 @@
             <xsl:value-of select="$method-prefix"/>_on_fault,
             <xsl:value-of select="$method-prefix"/>_free
         };
-
 
 
         /**
@@ -148,13 +165,16 @@
 	axis2_svc_skeleton_t* AXIS2_CALL
 	<xsl:value-of select="$method-prefix"/>_create(const axutil_env_t *env)
 	{
+	    <xsl:value-of select="$method-prefix"/>_t *svc_skeleton_wrapper = NULL;
 	    axis2_svc_skeleton_t *svc_skeleton = NULL;
+        
         /* Allocate memory for the structs */
-        svc_skeleton = (axis2_svc_skeleton_t *)AXIS2_MALLOC(env->allocator,
-            sizeof(axis2_svc_skeleton_t));
+        svc_skeleton_wrapper = (<xsl:value-of select="$method-prefix"/>_t *)AXIS2_MALLOC(env->allocator,
+            sizeof(<xsl:value-of select="$method-prefix"/>_t));
+
+        svc_skeleton = (axis2_svc_skeleton_t*)svc_skeleton_wrapper;
 
         svc_skeleton->ops = &amp;<xsl:value-of select="$skeletonname"/>_svc_skeleton_ops_var;
-
 
 	    return svc_skeleton;
 	}
@@ -164,7 +184,7 @@
 	<xsl:value-of select="$method-prefix"/>_init(axis2_svc_skeleton_t *svc_skeleton,
 	                        const axutil_env_t *env)
 	{
-	    /* Any initialization stuff of <xsl:value-of select="$svcname"/> goes here */
+	    /* Nothing special in initialization  <xsl:value-of select="$svcname"/> */
 	    return AXIS2_SUCCESS;
 	}
 
@@ -365,7 +385,11 @@
           axiom_node_t *input_header = NULL;
           axiom_node_t *output_header = NULL;
           axiom_node_t *header_base_node = NULL;
+	    
+          <xsl:value-of select="$method-prefix"/>_t *svc_skeleton_wrapper = NULL;
 
+          svc_skeleton_wrapper = (<xsl:value-of select="$method-prefix"/>_t*)svc_skeleton;
+          
           <xsl:for-each select="method">
             <xsl:text>
             </xsl:text>
@@ -537,7 +561,8 @@
                            <xsl:value-of select="$outputparam_types"/> ret_unwrapped = <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each>);
+                                                </xsl:for-each><xsl:if test="fault">,
+                                                (<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault*</xsl:text>)&amp;(svc_skeleton_wrapper->fault)</xsl:if>);
                             <xsl:choose>
                                 <xsl:when test="output/param/@complextype">
                                     ret_val<xsl:value-of select="$position"/> = <xsl:value-of select="substring-before(output/param/@type, '_t*')"/>_create_with_values(env, 
@@ -569,15 +594,14 @@
                         ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
-                                                </xsl:for-each>);
+                                                </xsl:for-each><xsl:if test="fault">,
+                                                (<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault*</xsl:text>)&amp;(svc_skeleton_wrapper->fault)</xsl:if>);
                     </xsl:otherwise>
                     </xsl:choose>
                     <xsl:choose>
                     <xsl:when test="output/param/@type">
                         if ( NULL == ret_val<xsl:value-of select="$position"/> )
                         {
-                            AXIS2_ERROR_SET(env->error, AXIS2_ERROR_DATA_ELEMENT_IS_NULL, AXIS2_FAILURE);
-                            AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> ");
                             <xsl:if test="input/param/@ours">
                                 <xsl:value-of select="substring-before(input/param/@type, '_t*')"/>_free(input_val<xsl:value-of select="$position"/>, env);
                             </xsl:if>
@@ -707,10 +731,44 @@
 	{
 		axiom_node_t *error_node = NULL;
 		axiom_element_t *error_ele = NULL;
-		error_ele = axiom_element_create(env, node, "fault", NULL,
-    					&amp;error_node);
-		axiom_element_set_text(error_ele, env, "<xsl:value-of select="$qname"/> failed",
-    					error_node);
+        axutil_error_codes_t error_code;
+        <xsl:value-of select="$method-prefix"/>_t *svc_skeleton_wrapper = NULL;
+
+        svc_skeleton_wrapper = (<xsl:value-of select="$method-prefix"/>_t*)svc_skeleton;
+
+        error_code = env->error->error_number;
+
+        if(error_code &lt;= <xsl:value-of select="$caps_svc_name"/>_ERROR_NONE ||
+                error_code &gt;= <xsl:value-of select="$caps_svc_name"/>_ERROR_LAST )
+        {
+            error_ele = axiom_element_create(env, node, "fault", NULL,
+                            &amp;error_node);
+            axiom_element_set_text(error_ele, env, "<xsl:value-of select="$qname"/> failed",
+                            error_node);
+        }
+        <xsl:for-each select="method">
+            <xsl:variable name="caps_method_name" select="@caps-name"/>
+            <xsl:variable name="method_name" select="@name"/>
+            <xsl:for-each select="fault/param">
+                <xsl:variable name="fault-caps-name"><xsl:value-of select="$caps_svc_name"/>_<xsl:value-of select="$caps_method_name"/>_FAULT_<xsl:value-of select="@caps-localname"/></xsl:variable>
+
+                else if(error_code == <xsl:value-of select="$fault-caps-name"/>)
+                {
+                    /* found which error code */
+                    <xsl:value-of select="@type"/> adb_obj = NULL;
+                   
+                    adb_obj = (<xsl:value-of select="@type"/>)svc_skeleton_wrapper->fault.<xsl:value-of select="$method_name"/>_fault.<xsl:value-of select="@shorttype"/>;
+                    if(adb_obj)
+                    {
+                        error_node = <xsl:value-of select="substring-before(@type, '_t*')"/>_serialize(adb_obj, env, NULL, NULL, AXIS2_TRUE, NULL, NULL);
+                        <xsl:value-of select="substring-before(@type, '_t*')"/>_free(adb_obj, env);
+                        svc_skeleton_wrapper->fault.<xsl:value-of select="$method_name"/>_fault.<xsl:value-of select="@shorttype"/> = NULL;
+                    }
+
+                }
+            </xsl:for-each>
+        </xsl:for-each>
+
 		return error_node;
 	}
 

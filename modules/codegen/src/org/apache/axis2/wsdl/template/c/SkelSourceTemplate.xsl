@@ -87,13 +87,16 @@
                                           <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                          </xsl:for-each> )
+                                          </xsl:for-each><xsl:if test="fault">,
+                                          <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if> )
         {
           /* TODO fill this with the necessary business logic */
           <xsl:if test="$outputtype!=''">return (<xsl:value-of select="$outputtype"/>)NULL;</xsl:if>
           <xsl:if test="$outputtype=''">return AXIS2_SUCCESS;</xsl:if>
         }
      </xsl:for-each>
+
+
 
     </xsl:template>
  </xsl:stylesheet>

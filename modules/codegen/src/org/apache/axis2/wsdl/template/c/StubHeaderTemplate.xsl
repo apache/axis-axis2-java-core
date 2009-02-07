@@ -30,6 +30,7 @@
         <xsl:variable name="method-prefix"><xsl:value-of select="@prefix"/></xsl:variable>
         <xsl:variable name="qname"><xsl:value-of select="@qname"/></xsl:variable>
         <xsl:variable name="servicename"><xsl:value-of select="@servicename"/></xsl:variable>
+        <xsl:variable name="caps_name"><xsl:value-of select="@caps-name"/></xsl:variable>
 
         /**
         * <xsl:value-of select="@name"/>.h
@@ -53,6 +54,11 @@
         <xsl:for-each select="output/param[@type!='' and @ours ]">
          <xsl:variable name="outputtype" select="substring-before(@type, '_t*')"/>
          #include "<xsl:value-of select="$outputtype"/>.h"
+        </xsl:for-each>
+
+        <xsl:for-each select="fault/param[@type!='' and contains(@type, 'adb_')]">
+         <xsl:variable name="faulttype" select="substring-before(@type, '_t*')"/>
+         #include "<xsl:value-of select="$faulttype"/>.h"
         </xsl:for-each>
        </xsl:for-each>
 
@@ -89,6 +95,23 @@
          */
         axis2_char_t* AXIS2_CALL
         axis2_stub_get_endpoint_uri_of_<xsl:value-of select="$servicename"/>(const axutil_env_t *env);
+
+
+        <xsl:for-each select="method">
+         <xsl:if test="fault">
+            /**
+             * the generated fault union for operation "<xsl:value-of select="@name"/>",
+             * in a case you want to return a fault, put the appropriate adb object for
+             * the union variable pointer comes as the last parameter of the method
+             */
+            typedef union
+            {
+                <xsl:for-each select="fault/param">
+                    <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@shorttype"/>;
+                </xsl:for-each>
+            } axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text>;
+         </xsl:if>
+        </xsl:for-each>
 
         <xsl:if test="$isSync='1'">
         <xsl:for-each select="method">
@@ -140,7 +163,8 @@
                                                     <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                         <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                                         <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>
-                                                    </xsl:for-each>);
+                                                    </xsl:for-each><xsl:if test="fault">,
+                                                        axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> *fault</xsl:if>);
           </xsl:if>
     </xsl:for-each>
     </xsl:if>  <!--close for  test="$isSync='1'-->
@@ -199,7 +223,8 @@
                                                   axis2_status_t ( AXIS2_CALL *on_complete ) (const axutil_env_t *, <xsl:value-of select="$outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="output/param/@name"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                       <xsl:variable name="header_outputtype"><xsl:value-of select="@type"/></xsl:variable>
                                                       <xsl:value-of select="$header_outputtype"/><xsl:text> _</xsl:text><xsl:value-of select="@name"/>
-                                                      </xsl:for-each>, void *data) ,
+                                                      </xsl:for-each><xsl:if test="fault">,
+                                                        axis2_stub_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/><xsl:text>_fault</xsl:text> fault</xsl:if>, void *data),
                                                   axis2_status_t ( AXIS2_CALL *on_error ) (const axutil_env_t *, int exception, void *data) );
 
         </xsl:if>  <!--close for  test="$mep='http://www.w3.org/2004/08/wsdl/in-out'"-->
@@ -237,6 +262,23 @@
                                                  </xsl:for-each>);
         </xsl:if>
     </xsl:for-each>
+
+
+    /** we have to reserve some error codes for adb and for custom messages */
+    #define <xsl:value-of select="$caps_name"/>_ERROR_CODES_START (AXIS2_ERROR_LAST + 2000)
+
+    typedef enum 
+    {
+        <xsl:value-of select="$caps_name"/>_ERROR_NONE = <xsl:value-of select="$caps_name"/>_ERROR_CODES_START,
+        
+        <xsl:for-each select="method">
+            <xsl:variable name="caps_method_name" select="@caps-name"/>
+            <xsl:for-each select="fault/param">
+                <xsl:value-of select="$caps_name"/>_<xsl:value-of select="$caps_method_name"/>_FAULT_<xsl:value-of select="@caps-localname"/>,
+            </xsl:for-each>
+        </xsl:for-each>
+        <xsl:value-of select="$caps_name"/>_ERROR_LAST
+    } <xsl:value-of select="$method-prefix"/>_error_codes;
 
 	#ifdef __cplusplus
 	}
