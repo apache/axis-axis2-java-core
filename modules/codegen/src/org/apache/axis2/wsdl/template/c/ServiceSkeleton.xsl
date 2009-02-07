@@ -550,7 +550,7 @@
                             
                             <!-- if the output type is a string, we have to free it, just since user don't have a way to free it, and the wrapper
                                  keep a deep copy of the string,-->
-                            <xsl:if test="axis2_char_t*">
+                            <xsl:if test="$outputparam_types='axis2_char_t*'">
                                 if(ret_unwrapped)
                                 {
                                     /* we are freeing this for the user */
