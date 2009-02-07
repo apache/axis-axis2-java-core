@@ -1451,7 +1451,7 @@
                                       if(text_value != NULL)
                                       {
                                             prefix_found = AXIS2_FALSE;
-                                            for(cp = text_value; *cp; cp ++)
+                                            for(cp = (axis2_char_t*)text_value; *cp; cp ++)
                                             {
                                                 if(*cp == ':')
                                                 {
@@ -1470,7 +1470,7 @@
                                             else
                                             {
                                                 /* Then it is the default namespace */
-                                                cp = text_value;
+                                                cp = (axis2_char_t*)text_value;
                                                 qname_ns = axiom_element_get_default_namespace(current_element, env, current_node);
                                             }
                                           
@@ -1883,7 +1883,7 @@
                                           if(text_value != NULL)
                                           {
                                               prefix_found = AXIS2_FALSE;
-                                              for(cp = text_value; *cp; cp ++)
+                                              for(cp = (axis2_char_t*)text_value; *cp; cp ++)
                                               {
                                                   if(*cp == ':')
                                                   {
@@ -1902,7 +1902,7 @@
                                               else
                                               {
                                                   /* Then it is the default namespace */
-                                                  cp = text_value;
+                                                  cp = (axis2_char_t*)text_value;
                                                   qname_ns = axiom_element_get_default_namespace(current_element, env, current_node);
                                               }
                                               
@@ -2375,7 +2375,7 @@
                                           if(text_value != NULL)
                                           {
                                             prefix_found = AXIS2_FALSE;
-                                            for(cp = text_value; *cp; cp ++)
+                                            for(cp = (axis2_char_t*)text_value; *cp; cp ++)
                                             {
                                                 if(*cp == ':')
                                                 {
@@ -2394,7 +2394,7 @@
                                             else
                                             {
                                                 /* Then it is the default namespace */
-                                                cp = text_value;
+                                                cp = (axis2_char_t*)text_value;
                                                 qname_ns = axiom_element_get_default_namespace(current_element, env, current_node);
                                             }
                                           

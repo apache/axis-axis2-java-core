@@ -185,11 +185,12 @@
 
 
 
-     /**
-      * function to free any soap input headers
-      */
      <xsl:for-each select="method">
         <xsl:if test="input/param[@location='soap_header']">
+
+         /**
+          * function to free soap input headers
+          */
          void
          axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_input_headers(const axutil_env_t *env, <xsl:for-each select="input/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="inputtype"><xsl:value-of select="@type"/></xsl:variable>
@@ -216,11 +217,12 @@
 
 
 
-     /**
-      * function to free any soap output headers
-      */
      <xsl:for-each select="method">
         <xsl:if test="output/param[@location='soap_header']">
+
+         /**
+          * function to free any soap output headers
+          */
          void
          axis2_skel_op_<xsl:value-of select="$servicename"/>_<xsl:value-of select="@name"/>_free_output_headers(const axutil_env_t *env, <xsl:for-each select="output/param[@location='soap_header']"><xsl:if test="position()!=1">,</xsl:if>
                                                  <xsl:variable name="outputtype"><xsl:value-of select="@type"/></xsl:variable>
@@ -545,6 +547,16 @@
                                     ret_val<xsl:value-of select="$position"/> = <xsl:value-of select="substring-before(output/param/@type, '_t*')"/>_create_with_values(env, ret_unwrapped);
                                 </xsl:otherwise>
                             </xsl:choose>
+                            
+                            <!-- if the output type is a string, we have to free it, just since user don't have a way to free it, and the wrapper
+                                 keep a deep copy of the string,-->
+                            <xsl:if test="axis2_char_t*">
+                                if(ret_unwrapped)
+                                {
+                                    /* we are freeing this for the user */
+                                    AXIS2_FREE(env->allocator, ret_unwrapped);
+                                }
+                            </xsl:if>
                         }
                     </xsl:when>
                     <xsl:otherwise>
