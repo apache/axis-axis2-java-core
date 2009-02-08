@@ -26,12 +26,10 @@ import org.apache.axis2.schema.SchemaConstants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
-import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.axis2.util.XSLTUtils;
-//import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
@@ -530,9 +528,7 @@ public class CStructWriter implements BeanWriter {
         for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
             memberQName = (QName) iter.next();
             String memberClass = (String) memberTypes.get(memberQName);
-            if (PrimitiveTypeFinder.isPrimitive(memberClass)) {
-                 memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
-            }
+
 
         // add member type element
             Element memberType = XSLTUtils.addChildElement(model, "memberType", rootElement);

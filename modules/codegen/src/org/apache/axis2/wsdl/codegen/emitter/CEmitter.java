@@ -43,6 +43,8 @@ import org.apache.axis2.wsdl.codegen.writer.CStubSourceWriter;
 import org.apache.axis2.wsdl.codegen.writer.CSvcSkeletonWriter;
 import org.apache.axis2.wsdl.codegen.writer.FileWriter;
 import org.apache.axis2.wsdl.databinding.CUtils;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.databinding.CTypeMapper;
 import org.apache.neethi.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,7 +53,7 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.*;
 
-// import com.ibm.wsdl.util.xml.DOM2Writer;
+ //import com.ibm.wsdl.util.xml.DOM2Writer;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
@@ -66,6 +68,32 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     protected static final String C_OUR_TYPE_PREFIX = "axis2_";
     protected static final String C_OUR_TYPE_SUFFIX = "_t*";
+
+
+    public CEmitter() {
+        super();
+    }
+
+    /** @param configuration  */
+    public CEmitter(CodeGenConfiguration configuration) {
+        super();
+        this.codeGenConfiguration = configuration;
+        this.mapper = new CTypeMapper();
+
+
+    }
+
+    /**
+     * @param configuration
+     * @param mapper
+     */
+    public CEmitter(CodeGenConfiguration configuration, TypeMapper mapper) {
+        super();
+        this.codeGenConfiguration = configuration;
+        this.mapper = mapper;
+
+
+    }
 
     /**
      * Emit the stub
@@ -589,8 +617,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                                              String paramName,
                                              String paramType,
                                              QName opName,
+                                             QName paramQName,
                                              String partName,
-                                             boolean isPrimitive) {
+                                             boolean isPrimitive,
+                                             boolean isArray) {
 
         Element paramElement = doc.createElement("param");
         //return paramElement;/*
@@ -607,10 +637,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         }
 
         addAttribute(doc, "type", typeMappingStr, paramElement);
-        addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
-
         //adds the short type
-        addShortType(paramElement, paramType);
+        addShortType(paramElement, (paramQName == null) ? null : paramQName.getLocalPart());
+        
+        addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(paramType)) {
@@ -625,6 +655,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             addAttribute(doc, "opname", opName.getLocalPart(), paramElement);
 
         }
+
+        if (paramQName != null) {
+            Element qNameElement = doc.createElement("qname");
+            addAttribute(doc, "nsuri", paramQName.getNamespaceURI(), qNameElement);
+            addAttribute(doc, "localname", paramQName.getLocalPart(), qNameElement);
+            paramElement.appendChild(qNameElement);
+        }
+        
         if (partName != null) {
             addAttribute(doc, "partname",
                          JavaUtils.capitalizeFirstChar(partName),
@@ -633,6 +671,10 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         if (isPrimitive) {
             addAttribute(doc, "primitive", "yes", paramElement);
+        }
+
+        if (isArray) {
+            addAttribute(doc, "array", "yes", paramElement);
         }
 
         // the new trick to identify adb types

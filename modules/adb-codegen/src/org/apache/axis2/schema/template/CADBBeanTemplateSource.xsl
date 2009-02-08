@@ -65,6 +65,9 @@
           </xsl:choose>
         </xsl:variable>
 
+        <!-- checking for is union -->
+        <xsl:variable name="isUnion" select="@union"/>
+
         /**
          * <xsl:value-of select="$axis2_name"/>.c
          *
@@ -111,8 +114,6 @@
 
                 <!-- For arrays is_valid_* tracks for whether at least one element of the array is non-NULL -->
                 <xsl:text>axis2_bool_t is_valid_</xsl:text><xsl:value-of select="$CName"/>;
-
-
             </xsl:for-each>
 
             <!-- The section covers the storage for list types, -->
@@ -129,6 +130,22 @@
 
             <xsl:if test="$choice">
                 axis2_char_t *current_choice;
+            </xsl:if>
+
+            <!-- next it covers the union types -->
+            <xsl:if test="$isUnion">
+                /* for unions we are keeping members in a union */
+
+                union {
+                <xsl:for-each select="memberType">
+                    <xsl:variable name="member_type" select="@type"/>
+                    <xsl:variable name="name"><xsl:text>_</xsl:text><xsl:value-of select="@originalName"/></xsl:variable><xsl:text>
+                    </xsl:text><xsl:value-of select="$member_type"/><xsl:text> </xsl:text><xsl:value-of select="$name"/>;
+                </xsl:for-each>
+                } member_type;
+                
+                /* here too we keep the choice */
+                axis2_char_t *current_value;
             </xsl:if>
         };
 
@@ -237,6 +254,9 @@
             <xsl:if test="$choice">
                 <xsl:value-of select="$name"/>->current_choice = "";
             </xsl:if>
+            <xsl:if test="$isUnion">
+                <xsl:value-of select="$name"/>->current_value = "";
+            </xsl:if>
 
             return <xsl:value-of select="$name"/>;
         }
@@ -277,7 +297,10 @@
                   return NULL;
               }
             </xsl:for-each>
-            
+           
+            <xsl:if test="@isUnion">
+            /* this function is not implemented for union types */
+            </xsl:if>
 
             return adb_obj;
         }
@@ -300,6 +323,10 @@
                         const axutil_env_t *env)
                 {
                     <xsl:value-of select="$propertyType"/> value;
+
+                    <xsl:if test="@isUnion">
+                    /* this function is not completely implemented for union types */
+                    </xsl:if>
                     
                     value = <xsl:value-of select="$name"/>->property_<xsl:value-of select="$CName"/>;
 
@@ -321,6 +348,7 @@
                     return NULL;
                 }
             </xsl:otherwise>
+
         </xsl:choose>
 
         axis2_status_t AXIS2_CALL
@@ -348,6 +376,10 @@
                 <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env);
             </xsl:for-each>
 
+            <xsl:if test="$isUnion">
+            <xsl:value-of select="$axis2_name"/>_reset_members(<xsl:value-of select="$name"/>, env);
+            </xsl:if>
+
             <xsl:if test="not(@type)">
               if(<xsl:value-of select="$name"/>->qname)
               {
@@ -361,6 +393,7 @@
                 AXIS2_FREE(env->allocator, <xsl:value-of select="$name"/>);
                 <xsl:value-of select="$name"/> = NULL;
             }
+
             return AXIS2_SUCCESS;
         }
 
@@ -377,7 +410,7 @@
             <xsl:if test="property/@type='axutil_date_time_t*' or property/@type='axutil_base64_binary_t*'">
               void *element = NULL;
             </xsl:if>
-            <xsl:if test="itemtype/@type='axutil_date_time_t*' or itemtype/@type='axutil_base64_binary_t*'">
+            <xsl:if test="itemtype/@type='axutil_date_time_t*' or itemtype/@type='axutil_base64_binary_t*' or @ours">
               void *element = NULL;
             </xsl:if>
             <xsl:if test="property/@type='axutil_qname_t*' or itemtype/@type='axutil_qname_t*'">
@@ -549,7 +582,10 @@
                                                       env, (<xsl:value-of select="$nativePropertyType"/>)element);
                     </xsl:when>
                     <xsl:when test="@ours">
-                       <!-- It seems this is in an unreachable path -->
+                      element =  (void*)<xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_create(env);
+                      <xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_deserialize_from_string((<xsl:value-of select="$nativePropertyType"/>)element, env, attrib_text, parent);
+                      <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                (<xsl:value-of select="$nativePropertyType"/>)element);
                     </xsl:when>
                     <xsl:otherwise>
                        <!--TODO: add new attributes types -->
@@ -726,13 +762,16 @@
                   <!-- add hex_binary_t* s -->
                   <xsl:when test="$nativePropertyType='axutil_base64_binary_t*'">
                      element = (void*)axutil_base64_binary_create(env);
-                     axutil_base64_binary_add_encoded_binary((<xsl:value-of select="$nativePropertyType"/>)element, env,
+                     axutil_base64_binary_set_encoded_binary((<xsl:value-of select="$nativePropertyType"/>)element, env,
                                                                 token_value);
                      <xsl:value-of select="$axis2_name"/>_add_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>,
                                                     env, (<xsl:value-of select="$nativePropertyType"/>)element);
                   </xsl:when>
                   <xsl:when test="@ours">
-                     <!-- It seems this is in an unreachable path -->
+                      element =  (void*)<xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_create(env);
+                      <xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_deserialize_from_string((<xsl:value-of select="$nativePropertyType"/>)element, env, attrib_text, parent);
+                      <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env,
+                                                                (<xsl:value-of select="$nativePropertyType"/>)element);
                   </xsl:when>
                   <xsl:otherwise>
                      <!--TODO: add new attributes types -->
@@ -746,6 +785,225 @@
               AXIS2_FREE(env->allocator, original_node_value);
 
              </xsl:for-each>
+
+             <xsl:if test="$isUnion">
+             
+               /*
+                * axis2_qname_t *qname = NULL;
+                * axiom_attribute_t *the_attri = NULL;
+                * 
+                * qname = axutil_qname_create(env, "type", "http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                * the_attri = axiom_element_get_attribute(current_element, env, qname);
+                */
+               /* currently thereis a bug in the axiom_element_get_attribute, so we have to go to this bad method */
+
+               axiom_attribute_t *the_attri = NULL;
+               axis2_char_t *attrib_text = NULL;
+               axutil_hash_t *attribute_hash = NULL;
+               void *element = NULL;
+               axiom_element_t *current_element = NULL;
+
+               current_element = (axiom_element_t*)axiom_node_get_data_element(parent, env);
+
+               attribute_hash = axiom_element_get_all_attributes(current_element, env);
+
+               attrib_text = NULL;
+               if(attribute_hash)
+               {
+                    axutil_hash_index_t *hi;
+                    void *val;
+                    const void *key;
+           
+                    for (hi = axutil_hash_first(attribute_hash, env); hi; hi = axutil_hash_next(env, hi)) 
+                    {
+                        axutil_hash_this(hi, &amp;key, NULL, &amp;val);
+                        
+                        if(strstr((axis2_char_t*)key, "type|http://www.w3.org/2001/XMLSchema-instance"))
+                        {
+                            the_attri = (axiom_attribute_t*)val;
+                            break;
+                        }
+                    }
+               }
+
+               if(the_attri)
+               {
+                   attrib_text = axiom_attribute_get_value(the_attri, env);
+               }
+               else
+               {
+                   /* this is hoping that attribute is stored in "http://www.w3.org/2001/XMLSchema-instance", this happnes when name is in default namespace */
+                   attrib_text = axiom_element_get_attribute_value_by_name(current_element, env, "type");
+               }
+
+               if(attrib_text)
+               {
+                    /* skipping the namespace prefix */
+                    axis2_char_t *temp_attrib = NULL;
+                    temp_attrib = strchr(attrib_text, ':');
+                    if(temp_attrib)
+                    {
+                        /* take the string after the ':' character */
+                        attrib_text = temp_attrib + 1;
+                    }
+               }
+
+               if(!attrib_text) {
+                    /* nothing is here, reset things */
+                    status = <xsl:value-of select="$axis2_name"/>_reset_members(<xsl:value-of select="$name"/>, env);
+               }
+             <xsl:for-each select="memberType">
+                <xsl:variable name="member_type" select="@type"/>
+                <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>   
+               else if(!axutil_strcmp(attrib_text, "<xsl:value-of select="@originalName"/>"))
+               {
+
+                <xsl:choose>
+                  <!-- add int s -->
+                  <xsl:when test="$member_type='int' or $member_type='unsigned int'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(attrib_text));
+                  </xsl:when>
+
+                  <!-- add axis2_char_t s -->
+                  <xsl:when test="$member_type='char' or $member_type='unsigned char'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, (char)(*attrib_text)); <!-- This should be checked -->
+                  </xsl:when>
+
+                  <!-- add short s -->
+                  <xsl:when test="$member_type='short' or $member_type='unsigned short'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(attrib_text));
+                  </xsl:when>
+
+                  <!-- add int64_t s -->
+                  <xsl:when test="$member_type='int64_t'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_strtol(attrib_text, (char**)NULL, 0));
+                  </xsl:when>
+                  <xsl:when test="$member_type='uint64_t'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_strtoul(attrib_text, (char**)NULL, 0));
+                  </xsl:when>
+
+                  <!-- add float s -->
+                  <xsl:when test="$member_type='float'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, atof(attrib_text));
+                  </xsl:when>
+                  <!-- add double s -->
+                  <xsl:when test="$member_type='double'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, atof(attrib_text));
+                  </xsl:when>
+
+                  <!-- add axis2_char_t s -->
+                  <xsl:when test="$member_type='axis2_char_t*'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, attrib_text);
+                  </xsl:when>
+
+                  <!-- add axutil_qname_t s -->
+                  <xsl:when test="$member_type='axutil_qname_t*'">
+
+                    prefix_found = AXIS2_FALSE;
+                    for(cp = attrib_text; *cp; cp ++)
+                    {
+                        if(*cp == ':')
+                        {
+                            *cp = '\0';
+                            cp ++;
+                            prefix_found  = AXIS2_TRUE;
+                            break;
+                        }
+                    }
+
+                    if(prefix_found)
+                    {
+                        /* node value contain the prefix */
+                        qname_ns = axiom_element_find_namespace_uri((axiom_element_t*)axiom_node_get_data_element(parent, env), env, attrib_text, parent);
+                    }
+                    else
+                    {
+                        /* Then it is the default namespace */
+                        cp = attrib_text;
+                        qname_ns = axiom_element_get_default_namespace((axiom_element_t*)axiom_node_get_data_element(parent, env), env, parent);
+                    }
+
+                     <!-- we are done extracting info, just set the extracted value to the qname -->
+
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env,
+                                                    axutil_qname_create(
+                                                          env, 
+                                                          cp, /* cp contain the localname */
+                                                          axiom_namespace_get_uri(qname_ns, env),
+                                                          axiom_namespace_get_prefix(qname_ns, env)));
+                  </xsl:when>
+
+                 <!-- add axutil_uri_t s -->
+                  <xsl:when test="$member_type='axutil_uri_t*'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_uri_parse_string(env, attrib_text));
+                  </xsl:when>
+
+                  <!-- add axutil_duration_t s -->
+                  <xsl:when test="$member_type='axutil_duration_t*'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, axutil_duration_create_from_string(env, attrib_text));
+                  </xsl:when>
+
+                  <!-- add axis2_bool_t s -->
+                  <xsl:when test="$member_type='axis2_bool_t'">
+                     if (!axutil_strcmp(attrib_text, "TRUE") || !axutil_strcmp(token_value, "true"))
+                     {
+                         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, AXIS2_TRUE);
+                     }
+                     else
+                     {
+                         <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, AXIS2_FALSE);
+                     }
+                  </xsl:when>
+                  <!-- add axis2_byte_t s -->
+                  <xsl:when test="$member_type='axis2_byte_t' or $member_type='axis2_unsigned_byte_t'">
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, atoi(attrib_text));
+                  </xsl:when>
+                  <!-- add date_time_t* s -->
+                  <xsl:when test="$member_type='axutil_date_time_t*'">
+                     element = (void*)axutil_date_time_create(env);
+                     axutil_date_time_deserialize_date_time((axutil_date_time_t*)element, env,
+                                                                attrib_text);
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, (<xsl:value-of select="$member_type"/>)element);
+                  </xsl:when>
+                  <!-- add hex_binary_t* s -->
+                  <xsl:when test="$member_type='axutil_base64_binary_t*'">
+                     element = (void*)axutil_base64_binary_create(env);
+                     axutil_base64_binary_set_encoded_binary((<xsl:value-of select="$member_type"/>)element, env,
+                                                                attrib_text);
+                     <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>,
+                                                    env, (<xsl:value-of select="$member_type"/>)element);
+                  </xsl:when>
+                  <xsl:when test="@ours">
+                      element =  (void*)<xsl:value-of select="substring-before($member_type, '_t*')"/>_create(env);
+                      <xsl:value-of select="substring-before($member_type, '_t*')"/>_deserialize_from_string((<xsl:value-of select="$member_type"/>)element, env, attrib_text, parent);
+                      <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(<xsl:value-of select="$name"/>, env,
+                                                                (<xsl:value-of select="$member_type"/>)element);
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <!--TODO: add new attributes types -->
+                     /* can not handle the attribute type <xsl:value-of select="$member_type"/>*/
+                     status = AXIS2_FAILURE;
+                  </xsl:otherwise>
+                </xsl:choose>   
+
+               }
+             </xsl:for-each>
+             </xsl:if>
               return status;
             }
         </xsl:if>
@@ -774,7 +1032,7 @@
           </xsl:if>
 
           <!-- these two are requried -->
-          <xsl:if test="count(property)!=0  or count(itemtype)!=0"> <!-- check for at least one element exists -->
+          <xsl:if test="count(property)!=0  or count(itemtype)!=0 or $isUnion"> <!-- check for at least one element exists -->
              const axis2_char_t* text_value = NULL;
              axutil_qname_t *qname = NULL;
           </xsl:if>
@@ -786,7 +1044,7 @@
               axiom_namespace_t *qname_ns;
             </xsl:if>
           <xsl:choose>
-            <xsl:when test="@simple and (count(property)!=0 or count(itemtype)!=0)">
+            <xsl:when test="@simple and (count(property)!=0 or count(itemtype)!=0 or $isUnion)">
             
             status = AXIS2_FAILURE;
             if(parent)
@@ -797,6 +1055,7 @@
                 {
                   <xsl:choose>
                    <xsl:when test="not(@nillable)">
+                   /* but the wsdl says that, this is non nillable */
                     AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "NULL value is set to a non nillable element <xsl:value-of select="$originalName"/>");
                     status = AXIS2_FAILURE;
                    </xsl:when>
@@ -2951,7 +3210,10 @@
                          text_value =  axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$propertyInstanceName"/>, env);
                       </xsl:when>
                       <xsl:when test="@ours">
-                          <!-- This should be in an unreachable path -->
+                        if(<xsl:value-of select="$propertyInstanceName"/>)
+                        {
+                            text_value = <xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_serialize_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, namespaces);
+                        }
                       </xsl:when>
                       <xsl:otherwise>
                         <!--TODO: add new property types -->
@@ -3126,7 +3388,10 @@
                            sprintf (text_value, "%s%s%s", text_value, tmp_value, seperator);
                     </xsl:when>
                     <xsl:when test="@ours">
-                        <!-- This should be in an unreachable path -->
+                        if(element)
+                        {
+                            text_value = <xsl:value-of select="substring-before($nativePropertyType, '_t*')"/>_serialize_to_string(element, env, namespaces);
+                        }
                     </xsl:when>
                     <xsl:otherwise>
                       <!--TODO: add new property types -->
@@ -3135,7 +3400,138 @@
                   </xsl:choose>
                 }
                 </xsl:for-each>
+                
+                <xsl:if test="$isUnion">
+                
+                void *element = NULL;
+                if(!<xsl:value-of select="$name"/>->current_value || !axutil_strcmp("",<xsl:value-of select="$name"/>->current_value))
+                {
+                    text_value = NULL;
+                }
+                <xsl:for-each select="memberType">
+                   <xsl:variable name="member_type" select="@type"/>
+                   <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>   
+                   <xsl:variable name="propertyInstanceName"><xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/></xsl:variable>   
+                  else if(!axutil_strcmp("<xsl:value-of select="@originalName"/>",<xsl:value-of select="$name"/>->current_value))
+                  {
+                   <xsl:choose>
+                      <!-- add int s -->
+                      <xsl:when test="$member_type='int' or $member_type='unsigned int'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+                      <!-- add axis2_byte_t s -->
+                      <xsl:when test="$member_type='axis2_byte_t' or $member_type='axis2_unsigned_byte_t'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
 
+                      <!-- add char s -->
+                      <xsl:when test="$member_type='char' or $member_type='unsigned char'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%c", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add short s -->
+                      <xsl:when test="$member_type='short' or $member_type='unsigned short'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%d", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add int64_t s -->
+                      <xsl:when test="$member_type='int64_t'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, AXIS2_PRINTF_INT64_FORMAT_SPECIFIER, (int64_t)<xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <xsl:when test="$member_type='uint64_t'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, AXIS2_PRINTF_UINT64_FORMAT_SPECIFIER, (uint64_t)<xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add float s -->
+                      <xsl:when test="$member_type='float'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%f", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add double s -->
+                      <xsl:when test="$member_type='double'">
+                         text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, sizeof (axis2_char_t) * ADB_DEFAULT_DIGIT_LIMIT);
+                         sprintf (text_value, "%f", <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add axis2_char_t* s -->
+                      <xsl:when test="$member_type='axis2_char_t*'">
+                         text_value = (axis2_char_t*)axutil_strdup(env, <xsl:value-of select="$propertyInstanceName"/>);
+                      </xsl:when>
+
+                      <!-- add axutil_uri_t s -->
+                      <xsl:when test="$member_type='axutil_uri_t*'">
+                         text_value = axutil_uri_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, AXIS2_URI_UNP_OMITUSERINFO);
+                      </xsl:when>
+
+                      <!-- add axutil_duration_t s -->
+                      <xsl:when test="$member_type='axutil_duration_t*'">
+                         text_value = axutil_duration_serialize_duration(<xsl:value-of select="$propertyInstanceName"/>, env);
+                      </xsl:when>
+
+                      <!-- add axutil_qname_t s -->
+                      <xsl:when test="$member_type='axutil_qname_t*'">
+                        <!-- namespaces are declared in _declare_parent_namespaces -->
+                        qname_uri = axutil_qname_get_uri(<xsl:value-of select="$propertyInstanceName"/>, env);
+                        if(qname_uri == NULL)
+                        {
+                              text_value = (axis2_char_t*)axutil_strdup(env, axutil_qname_get_localpart(<xsl:value-of select="$propertyInstanceName"/>, env));
+                        }
+                        else
+                        {
+                          qname_prefix = (axis2_char_t*)axutil_hash_get(namespaces, qname_uri, AXIS2_HASH_KEY_STRING);
+                          if(qname_prefix != NULL)
+                          {
+                              text_value = (axis2_char_t*) AXIS2_MALLOC (env-> allocator, 
+                                          sizeof (axis2_char_t) * (ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT +
+                                                              axutil_strlen(axutil_qname_get_localpart(<xsl:value-of select="$propertyInstanceName"/>, env)) + 2));
+                              sprintf(text_value, "%s:%s", qname_prefix,
+                                                        axutil_qname_get_localpart(<xsl:value-of select="$propertyInstanceName"/>, env));
+                          }
+                          else
+                          {
+                              AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Failed in serialize_to_string value for <xsl:value-of select="$member_name"/>, "
+                                                          "Prefix is not declared beofre using");
+                              return NULL;
+                          }
+                        }
+                      </xsl:when>
+
+                      <!-- add axis2_bool_t s -->
+                      <xsl:when test="$member_type='axis2_bool_t'">
+                         <!--text_value = (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false";-->
+                         text_value = (axis2_char_t*)(axutil_strdup(env, (<xsl:value-of select="$propertyInstanceName"/>)?"true":"false"));
+                      </xsl:when>
+                      <!-- add axis2_date_time_t s -->
+                      <xsl:when test="$member_type='axutil_date_time_t*'">
+                         text_value =  axutil_date_time_serialize_date_time(<xsl:value-of select="$propertyInstanceName"/>, env);
+                      </xsl:when>
+                      <!-- add axis2_base64_binary_t s -->
+                      <xsl:when test="$member_type='axutil_base64_binary_t*'">
+                         text_value =  axutil_base64_binary_get_encoded_binary(<xsl:value-of select="$propertyInstanceName"/>, env);
+                      </xsl:when>
+                      <xsl:when test="@ours">
+                        if(<xsl:value-of select="$propertyInstanceName"/>)
+                        {
+                            text_value = <xsl:value-of select="substring-before($member_type, '_t*')"/>_serialize_to_string(<xsl:value-of select="$propertyInstanceName"/>, env, namespaces);
+                        }
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <!--TODO: add new property types -->
+                        /* can not handle the property type <xsl:value-of select="$member_type"/>*/
+                        text_value = NULL;
+                      </xsl:otherwise>
+                    </xsl:choose>
+                }
+                </xsl:for-each>
+                </xsl:if>
                 return text_value;
             }
         </xsl:if>
@@ -3628,6 +4024,85 @@
 
              <!-- end bracket for if(!parent_tag_closed)-->
             <xsl:if test="count(property[@attribute])!=0 or @type">
+            }
+            </xsl:if>
+
+            <xsl:if test="$isUnion">
+            /* here we need to declare the union type in the xsi:type field */
+            
+            if(axutil_strcmp(<xsl:value-of select="$name"/>->current_value, ""))
+            {
+                axis2_char_t *xsi_prefix = NULL;
+
+                if(!(xsi_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING)))
+                {
+                    /* it is better to stick with the standard prefix */
+                    xsi_prefix = (axis2_char_t*)axutil_strdup(env, "xsi");
+                    
+                    axutil_hash_set(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING, xsi_prefix);
+
+                    if(parent_element)
+                    {
+                          axiom_namespace_t *element_ns = NULL;
+                          element_ns = axiom_namespace_create(env, "http://www.w3.org/2001/XMLSchema-instance",
+                                                              xsi_prefix);
+                          axiom_element_declare_namespace_assume_param_ownership(parent_element, env, element_ns);
+                    }
+                }
+
+                <xsl:for-each select="memberType">
+                    <xsl:variable name="member_type" select="@type"/>
+                    <xsl:variable name="member_type_ns" select="@nsuri"/>
+                    <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>
+
+                    if(!axutil_strcmp(<xsl:value-of select="$name"/>->current_value, "<xsl:value-of select="@originalName"/>"))
+                    {
+                        axis2_char_t *ns_prefix = NULL;
+
+                        if(!(ns_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "<xsl:value-of select="$member_type_ns"/>", AXIS2_HASH_KEY_STRING)))
+                        {
+                            ns_prefix = (axis2_char_t*)AXIS2_MALLOC(env->allocator, sizeof (axis2_char_t) * ADB_DEFAULT_NAMESPACE_PREFIX_LIMIT);
+                            
+                            sprintf(ns_prefix, "q%d", (*next_ns_index)++); <!-- just different prefix for the special case -->
+                            axutil_hash_set(namespaces, "<xsl:value-of select="$member_type_ns"/>", AXIS2_HASH_KEY_STRING, ns_prefix);
+
+                            if(parent_element)
+                            {
+                                  axiom_namespace_t *element_ns = NULL;
+                                  element_ns = axiom_namespace_create(env, "<xsl:value-of select="$member_type_ns"/>",
+                                                                      ns_prefix);
+                                  axiom_element_declare_namespace_assume_param_ownership(parent_element, env, element_ns);
+                            }
+                        }
+
+                        /* now we will set the xsi:type="ns:type" value */
+
+                       if(!parent_tag_closed &amp;&amp; !tag_closed)
+                       {
+                            text_value = axutil_strcat(env, xsi_prefix, " type=", ns_prefix, ":", <xsl:value-of select="$name"/>->current_value, NULL);
+                            axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
+
+                            AXIS2_FREE(env->allocator, text_value);
+                        }
+                        else 
+                        {
+                            /* otherwise set it to the prarent itself */
+
+                             axiom_namespace_t *ns1 = NULL;
+                             axiom_attribute_t *attrib = NULL;
+                        
+                             ns1 = axiom_namespace_create (env,
+                                                         "http://www.w3.org/2001/XMLSchema-instance",
+                                                         xsi_prefix);
+                        
+                             text_value = axutil_strcat(env, ns_prefix, ":", <xsl:value-of select="$name"/>->current_value, NULL);
+                             attrib = axiom_attribute_create (env, "type", text_value, ns1);
+                             axiom_element_add_attribute (parent_element, env, attrib, parent);
+                            
+                             AXIS2_FREE(env->allocator, text_value);
+                        }
+                    }
+                </xsl:for-each>
             }
             </xsl:if>
 
@@ -5891,6 +6366,101 @@
 
 
         </xsl:for-each>
+
+        <xsl:for-each select="memberType">
+            <xsl:variable name="member_type" select="@type"/>
+            <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>
+ 
+            <xsl:value-of select="$member_type"/> AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$member_name"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env)
+            {
+                if(!axutil_strcmp(<xsl:value-of select="$name"/>->current_value, "<xsl:value-of select="@originalName"/>"))
+                {
+                    return <xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/>;
+                }
+                return (<xsl:value-of select="$member_type"/>)0;
+            }
+ 
+            axis2_status_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, 
+                <xsl:value-of select="$member_type"/> member_type)
+            {
+                axis2_status_t status;
+                status = <xsl:value-of select="$axis2_name"/>_reset_members(<xsl:value-of select="$name"/>, env);
+               
+                if(status == AXIS2_SUCCESS)
+                {
+                    <xsl:choose>
+                    <xsl:when test="$member_type='axis2_char_t*'">
+                        <xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/> = axutil_strdup(env, member_type);
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/> = member_type;
+                    </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:value-of select="$name"/>->current_value = "<xsl:value-of select="@originalName"/>";
+                }
+
+                return status;
+            }
+
+            axis2_bool_t AXIS2_CALL
+            <xsl:value-of select="$axis2_name"/>_is_valid_<xsl:value-of select="$member_name"/>(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env)
+            {
+                return !axutil_strcmp(<xsl:value-of select="$name"/>->current_value, "<xsl:value-of select="@originalName"/>");
+            }
+        </xsl:for-each>
+    
+        <xsl:if test="$isUnion">
+
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_reset_members(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env)
+        {
+
+            if(!axutil_strcmp(<xsl:value-of select="$name"/>->current_value, ""))
+            {
+                /* do nothing */
+            }
+            <xsl:for-each select="memberType">
+                <xsl:variable name="member_type" select="@type"/>
+                <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>
+
+                else if(!axutil_strcmp(<xsl:value-of select="$name"/>->current_value, "<xsl:value-of select="@originalName"/>"))
+                {
+                    <xsl:choose>
+                        <xsl:when test="@ours">
+                            <xsl:value-of select="substring-before(@type, '_t*')"/>_free(<xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/>, env);
+                        </xsl:when>
+                        <xsl:when test="$member_type='axis2_char_t*'">
+                            AXIS2_FREE(env->allocator, <xsl:value-of select="$name"/>->member_type._<xsl:value-of select="$member_name"/>);
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- nothing to free inside here -->
+                        </xsl:otherwise>
+                    </xsl:choose>
+                }
+            </xsl:for-each>   
+            <xsl:value-of select="$name"/>->current_value = "";
+            return AXIS2_SUCCESS;
+        }
+
+        axis2_char_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_current_member_type(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env)
+        {
+            return <xsl:value-of select="$name"/>->current_value;
+        }
+        </xsl:if>
+
     </xsl:template>
 
 </xsl:stylesheet>

@@ -77,6 +77,9 @@
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="caps_axis2_name">ADB_<xsl:value-of select="@caps-name"/></xsl:variable>
 
+        <!-- checking for is union -->
+        <xsl:variable name="isUnion" select="@union"/>
+
         #ifndef <xsl:value-of select="$caps_axis2_name"/>_H
         #define <xsl:value-of select="$caps_axis2_name"/>_H
 
@@ -111,6 +114,12 @@
         <xsl:for-each select="property[@type='axutil_duration_t*']">
           <xsl:if test="position()=1">
             #include &lt;axutil_duration.h&gt;
+          </xsl:if>
+        </xsl:for-each>
+        <xsl:for-each select="memberType">
+          <xsl:if test="@ours">
+          <xsl:variable name="propertyType" select="substring-before(@type, '_t*')"/>
+          #include "<xsl:value-of select="$propertyType"/>.h"
           </xsl:if>
         </xsl:for-each>
 
@@ -946,6 +955,70 @@
 
     </xsl:for-each>
 
+    <xsl:for-each select="memberType">
+        <xsl:variable name="member_type" select="@type"/>
+        <xsl:variable name="member_name"><xsl:text></xsl:text><xsl:value-of select="@originalName"/></xsl:variable>
+
+        /**
+         * Getter for <xsl:value-of select="$member_name"/> 
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return <xsl:value-of select="$member_name"/>, if it the last set value
+         */
+        <xsl:value-of select="$member_type"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$member_name"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+
+        /**
+         * Setter for <xsl:value-of select="$member_name"/> 
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @param member_type <xsl:value-of select="$member_name"/>
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$member_name"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env, 
+            <xsl:value-of select="$member_type"/> member_type);
+
+        /**
+         * Check if the <xsl:value-of select="$member_name"/>  is valid, you can replace this with <xsl:value-of select="$axis2_name"/>_current_member_type
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return <xsl:value-of select="$member_name"/> is valid or not
+         */
+        axis2_bool_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_is_valid_<xsl:value-of select="$member_name"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+
+    </xsl:for-each>
+
+    <xsl:if test="$isUnion">
+        /**
+         * Reset any value inside the union, this will take the union to NULL state
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return AXIS2_SUCCESS on success, else AXIS2_FAILURE
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_reset_members(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+
+        /**
+         * Retrieve the currrent member type
+         * @param <xsl:text> _</xsl:text><xsl:value-of select="$name"/> <xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t object
+         * @param env pointer to environment struct
+         * @return axis2_char_t*, the current member type as a string
+         */
+        axis2_char_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_current_member_type(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> _</xsl:text><xsl:value-of select="$name"/>,
+            const axutil_env_t *env);
+    </xsl:if>
      #ifdef __cplusplus
      }
      #endif
