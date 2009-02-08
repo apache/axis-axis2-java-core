@@ -1124,7 +1124,7 @@
                 /* This should be checked before everything */
                 AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, 
                             "Failed in building adb object for <xsl:value-of select="$originalName"/> : "
-                            "NULL elemenet can not be passed to deserialize");
+                            "NULL element can not be passed to deserialize");
                 return AXIS2_FAILURE;
               }
               </xsl:if>
@@ -3155,7 +3155,11 @@
 
                       <!-- add axis2_char_t* s -->
                       <xsl:when test="$nativePropertyType='axis2_char_t*'">
-                         text_value = (axis2_char_t*)axutil_strdup(env, <xsl:value-of select="$propertyInstanceName"/>);
+                         text_value = (axis2_char_t*)axutil_xml_quote_string(env, <xsl:value-of select="$propertyInstanceName"/>, AXIS2_FALSE);
+                         if (!text_value)
+                         {
+                             text_value = (axis2_char_t*)axutil_strdup(env, <xsl:value-of select="$propertyInstanceName"/>);
+                         }
                       </xsl:when>
 
                       <!-- add axutil_uri_t s -->
