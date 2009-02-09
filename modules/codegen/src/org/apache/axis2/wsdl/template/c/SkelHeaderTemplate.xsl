@@ -137,7 +137,7 @@
      </xsl:for-each><!-- end of for-each method -->
 
     /** we have to reserve some error codes for adb and for custom messages */
-    #define <xsl:value-of select="$caps_svc_name"/>_ERROR_CODES_START (AXIS2_ERROR_LAST + 2000)
+    #define <xsl:value-of select="$caps_svc_name"/>_ERROR_CODES_START (AXIS2_ERROR_LAST + 2500)
 
     typedef enum 
     {
