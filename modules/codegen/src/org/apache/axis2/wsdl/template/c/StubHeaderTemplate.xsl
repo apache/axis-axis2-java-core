@@ -101,7 +101,7 @@
          <xsl:if test="count(fault/*)">
             /**
              * the generated fault union for operation "<xsl:value-of select="@name"/>",
-             * in a case you want to return a fault, put the appropriate adb object for
+             * in a case the server return a fault, the corresponding adb object will be loaded for
              * the union variable pointer comes as the last parameter of the method
              */
             typedef union
