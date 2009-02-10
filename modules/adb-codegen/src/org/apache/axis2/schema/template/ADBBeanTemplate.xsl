@@ -1414,14 +1414,14 @@
                                                            // write null attribute
                                                             namespace = "<xsl:value-of select="$namespace"/>";
                                                             if (! namespace.equals("")) {
-                                                                prefix = xmlWriter.getPrefix(namespace);
+                                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace);
 
-                                                                if (prefix == null) {
-                                                                    prefix = generatePrefix(namespace);
+                                                                if (prefix2 == null) {
+                                                                    prefix2 = generatePrefix(namespace);
 
-                                                                    xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                                    xmlWriter.writeNamespace(prefix, namespace);
-                                                                    xmlWriter.setPrefix(prefix, namespace);
+                                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
+                                                                    xmlWriter.writeNamespace(prefix2, namespace);
+                                                                    xmlWriter.setPrefix(prefix2, namespace);
 
                                                                 } else {
                                                                     xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
@@ -4616,14 +4616,14 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                        // write null attribute
                                                         namespace = "<xsl:value-of select="$namespace"/>";
                                                         if (! namespace.equals("")) {
-                                                            prefix = xmlWriter.getPrefix(namespace);
+                                                            java.lang.String prefix2 = xmlWriter.getPrefix(namespace);
 
-                                                            if (prefix == null) {
-                                                                prefix = generatePrefix(namespace);
+                                                            if (prefix2 == null) {
+                                                                prefix2 = generatePrefix(namespace);
 
-                                                                xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                                xmlWriter.writeNamespace(prefix, namespace);
-                                                                xmlWriter.setPrefix(prefix, namespace);
+                                                                xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
+                                                                xmlWriter.writeNamespace(prefix2, namespace);
+                                                                xmlWriter.setPrefix(prefix2, namespace);
 
                                                             } else {
                                                                 xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
