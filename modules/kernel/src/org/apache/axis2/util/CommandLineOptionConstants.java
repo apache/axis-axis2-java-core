@@ -88,7 +88,7 @@ public interface CommandLineOptionConstants {
         String EXCLUDE_PAKAGES_OPTION_LONG = "exclude-packages";
         String SKELTON_INTERFACE_NAME_OPTION = "sin";
         String SKELTON_INTERFACE_NAME_OPTION_LONG = "skelton-interface-name";
-        String USE_OPERATION_NAME = "uom";
+        String USE_OPERATION_NAME = "uon";
         String USE_OPERATION_NAME_LONG = "use-operation-name";
         String SKELTON_CLASS_NAME_OPTION = "scn";
         String SKELTON_CLASS_NAME_OPTION_LONG = "skelton-class-name";
