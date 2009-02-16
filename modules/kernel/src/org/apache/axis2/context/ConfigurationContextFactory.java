@@ -104,7 +104,7 @@ public class ConfigurationContextFactory {
         }
 
         // Finally initialize the cluster
-        if (axisConfig.getClusterManager() != null) {
+        if (axisConfig.getClusteringAgent() != null) {
             configContext.initCluster();
         }
         
@@ -309,7 +309,7 @@ public class ConfigurationContextFactory {
     public static ConfigurationContext createEmptyConfigurationContext() throws AxisFault {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfiguration);
-        if (axisConfiguration.getClusterManager() != null) {
+        if (axisConfiguration.getClusteringAgent() != null) {
             configContext.initCluster();
         }
 
@@ -340,7 +340,7 @@ public class ConfigurationContextFactory {
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
 
-        if (axisConfig.getClusterManager() != null) {
+        if (axisConfig.getClusteringAgent() != null) {
             configContext.initCluster();
         }
 

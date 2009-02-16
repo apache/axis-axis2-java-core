@@ -23,13 +23,11 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.Utils;
-import org.apache.axis2.clustering.configuration.ConfigurationManager;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
-import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.clustering.context.DefaultContextManager;
-import org.apache.axis2.clustering.context.DefaultContextManagerListener;
-import org.apache.axis2.clustering.tribes.TribesClusterManager;
+import org.apache.axis2.clustering.management.NodeManager;
+import org.apache.axis2.clustering.management.DefaultNodeManager;
+import org.apache.axis2.clustering.state.StateManager;
+import org.apache.axis2.clustering.state.DefaultStateManager;
+import org.apache.axis2.clustering.tribes.TribesClusteringAgent;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
@@ -61,18 +59,18 @@ public class ContextReplicationTest extends TestCase {
                           "axis2.domain." + UUIDGenerator.getUUID());
 
     // --------------- Cluster-1 ------------------------------------------------------
-    private ClusterManager clusterManager1;
-    private ContextManager ctxMan1;
-    private ConfigurationManager configMan1;
+    private ClusteringAgent clusterManager1;
+    private StateManager ctxMan1;
+    private NodeManager configMan1;
     private ConfigurationContext configurationContext1;
     private AxisServiceGroup serviceGroup1;
     private AxisService service1;
     //---------------------------------------------------------------------------------
 
     // --------------- Cluster-2 ------------------------------------------------------
-    private ClusterManager clusterManager2;
-    private ContextManager ctxMan2;
-    private ConfigurationManager configMan2;
+    private ClusteringAgent clusterManager2;
+    private StateManager ctxMan2;
+    private NodeManager configMan2;
     private ConfigurationContext configurationContext2;
     private AxisServiceGroup serviceGroup2;
     private AxisService service2;
@@ -202,7 +200,7 @@ public class ContextReplicationTest extends TestCase {
         clusterManager1 = getClusterManager(configurationContext1, ctxMan1, configMan1);
         clusterManager1.addParameter(domainParam);
         clusterManager1.init();
-        System.out.println("---------- ClusterManager-1 successfully initialized -----------");
+        System.out.println("---------- ClusteringAgent-1 successfully initialized -----------");
 
         // Second cluster
         configurationContext2 =
@@ -214,26 +212,20 @@ public class ContextReplicationTest extends TestCase {
         clusterManager2 = getClusterManager(configurationContext2, ctxMan2, configMan2);
         clusterManager2.addParameter(domainParam);
         clusterManager2.init();
-        System.out.println("---------- ClusterManager-2 successfully initialized -----------");
+        System.out.println("---------- ClusteringAgent-2 successfully initialized -----------");
     }
 
-    protected ClusterManager getClusterManager(ConfigurationContext configCtx,
-                                               ContextManager contextManager,
-                                               ConfigurationManager configManager)
+    protected ClusteringAgent getClusterManager(ConfigurationContext configCtx,
+                                               StateManager stateManager,
+                                               NodeManager configManager)
             throws AxisFault {
-        ClusterManager clusterManager = new TribesClusterManager();
-        configCtx.getAxisConfiguration().setClusterManager(clusterManager);
+        ClusteringAgent clusteringAgent = new TribesClusteringAgent();
+        configCtx.getAxisConfiguration().setClusteringAgent(clusteringAgent);
+        clusteringAgent.setNodeManager(configManager);
+        clusteringAgent.setStateManager(stateManager);
+        clusteringAgent.setConfigurationContext(configCtx);
 
-        configManager.
-                setConfigurationManagerListener(new DefaultConfigurationManagerListener());
-        clusterManager.setConfigurationManager(configManager);
-
-        contextManager.setContextManagerListener(new DefaultContextManagerListener());
-        clusterManager.setContextManager(contextManager);
-
-        clusterManager.setConfigurationContext(configCtx);
-
-        return clusterManager;
+        return clusteringAgent;
     }
 
     protected AxisServiceGroup createAxisServiceGroup(ConfigurationContext configCtx)
@@ -250,15 +242,13 @@ public class ContextReplicationTest extends TestCase {
         return service;
     }
 
-    protected ContextManager getContextManager() throws AxisFault {
-        ContextManager contextManager = new DefaultContextManager();
-        contextManager.setContextManagerListener(new DefaultContextManagerListener());
-        return contextManager;
+    protected StateManager getContextManager() throws AxisFault {
+        StateManager stateManager = new DefaultStateManager();
+        return stateManager;
     }
 
-    protected ConfigurationManager getConfigurationManager() throws AxisFault {
-        ConfigurationManager contextManager = new DefaultConfigurationManager();
-        contextManager.setConfigurationManagerListener(new DefaultConfigurationManagerListener());
+    protected NodeManager getConfigurationManager() throws AxisFault {
+        NodeManager contextManager = new DefaultNodeManager();
         return contextManager;
     }
 

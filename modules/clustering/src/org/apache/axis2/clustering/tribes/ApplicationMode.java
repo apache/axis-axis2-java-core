@@ -29,20 +29,20 @@ import java.util.ArrayList;
  */
 public class ApplicationMode implements OperationMode {
 
-     private static final Log log = LogFactory.getLog(LoadBalancerMode.class);
+     private static final Log log = LogFactory.getLog(ClusterManagementMode.class);
 
-    private byte[] loadBalancerDomain;
+    private byte[] domain;
     private MembershipManager membershipManager;
 
-    public ApplicationMode(byte[] loadBalancerDomain, MembershipManager membershipManager) {
-        this.loadBalancerDomain = loadBalancerDomain;
+    public ApplicationMode(byte[] domain, MembershipManager membershipManager) {
+        this.domain = domain;
         this.membershipManager = membershipManager;
     }
 
     public void addInterceptors(Channel channel) {
         DomainFilterInterceptor dfi = new DomainFilterInterceptor();
         dfi.setOptionFlag(TribesConstants.MEMBERSHIP_MSG_OPTION);
-        dfi.setDomain(loadBalancerDomain);
+        dfi.setDomain(domain);
         channel.addInterceptor(dfi);
         if (log.isDebugEnabled()) {
             log.debug("Added Domain Filter Interceptor");

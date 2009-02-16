@@ -21,10 +21,11 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.configuration.ConfigurationClusteringCommand;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
-import org.apache.axis2.clustering.context.ContextClusteringCommand;
-import org.apache.axis2.clustering.context.DefaultContextManager;
+import org.apache.axis2.clustering.management.NodeManagementCommand;
+import org.apache.axis2.clustering.management.DefaultNodeManager;
+import org.apache.axis2.clustering.management.GroupManagementCommand;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
+import org.apache.axis2.clustering.state.DefaultStateManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -45,25 +46,25 @@ import java.util.List;
 public class ChannelListener implements org.apache.catalina.tribes.ChannelListener {
     private static final Log log = LogFactory.getLog(ChannelListener.class);
 
-    private DefaultContextManager contextManager;
-    private DefaultConfigurationManager configurationManager;
+    private DefaultStateManager stateManager;
+    private DefaultNodeManager nodeManager;
 
     private ConfigurationContext configurationContext;
 
     public ChannelListener(ConfigurationContext configurationContext,
-                           DefaultConfigurationManager configurationManager,
-                           DefaultContextManager contextManager) {
-        this.configurationManager = configurationManager;
-        this.contextManager = contextManager;
+                           DefaultNodeManager nodeManager,
+                           DefaultStateManager stateManager) {
+        this.nodeManager = nodeManager;
+        this.stateManager = stateManager;
         this.configurationContext = configurationContext;
     }
 
-    public void setContextManager(DefaultContextManager contextManager) {
-        this.contextManager = contextManager;
+    public void setStateManager(DefaultStateManager stateManager) {
+        this.stateManager = stateManager;
     }
 
-    public void setConfigurationManager(DefaultConfigurationManager configurationManager) {
-        this.configurationManager = configurationManager;
+    public void setNodeManager(DefaultNodeManager nodeManager) {
+        this.nodeManager = nodeManager;
     }
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
@@ -133,11 +134,13 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
     }
 
     private void processMessage(Serializable msg) throws ClusteringFault {
-        if (msg instanceof ContextClusteringCommand && contextManager != null) {
-            ContextClusteringCommand ctxCmd = (ContextClusteringCommand) msg;
+        if (msg instanceof StateClusteringCommand && stateManager != null) {
+            StateClusteringCommand ctxCmd = (StateClusteringCommand) msg;
             ctxCmd.execute(configurationContext);
-        } else if (msg instanceof ConfigurationClusteringCommand && configurationManager != null) {
-            configurationManager.process((ConfigurationClusteringCommand) msg);
-        } 
+        } else if (msg instanceof NodeManagementCommand && nodeManager != null) {
+            ((NodeManagementCommand) msg).execute(configurationContext);
+        } else if (msg instanceof GroupManagementCommand){
+            ((GroupManagementCommand) msg).execute(configurationContext);
+        }
     }
 }

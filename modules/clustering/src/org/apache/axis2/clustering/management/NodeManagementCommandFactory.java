@@ -17,13 +17,10 @@
  * under the License.
  */
 
-package org.apache.axis2.clustering;
+package org.apache.axis2.clustering.management;
 
-import org.apache.axis2.context.ConfigurationContext;
-
-import java.io.Serializable;
-
-public abstract class ClusteringCommand implements Serializable {
-
-    public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;
+/**
+ * 
+ */
+public final class NodeManagementCommandFactory {
 }

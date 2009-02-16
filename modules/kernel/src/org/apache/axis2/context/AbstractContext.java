@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.context.Replicator;
+import org.apache.axis2.clustering.ClusteringAgent;
+import org.apache.axis2.clustering.state.Replicator;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -218,9 +218,9 @@ public abstract class AbstractContext {
         }
         // Add the property differences only if Context replication is enabled,
         // and there are members in the cluster
-        ClusterManager clusterManager = cc.getAxisConfiguration().getClusterManager();
-        if (clusterManager == null ||
-            clusterManager.getContextManager() == null) {
+        ClusteringAgent clusteringAgent = cc.getAxisConfiguration().getClusteringAgent();
+        if (clusteringAgent == null ||
+            clusteringAgent.getStateManager() == null) {
             return false;
         }
         return true;

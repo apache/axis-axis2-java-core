@@ -17,13 +17,21 @@
  * under the License.
  */
 
-package org.apache.axis2.clustering;
+package org.apache.axis2.clustering.state.commands;
 
+import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.context.ConfigurationContext;
 
-import java.io.Serializable;
+/**
+ * 
+ */
+public class UpdateConfigurationStateCommand extends UpdateStateCommand {
 
-public abstract class ClusteringCommand implements Serializable {
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        propertyUpdater.updateProperties(configurationContext);
+    }
 
-    public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;
+    public String toString() {
+        return "UpdateConfigurationStateCommand";
+    }
 }

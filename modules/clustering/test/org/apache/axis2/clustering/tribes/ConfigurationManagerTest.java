@@ -19,26 +19,21 @@
 
 package org.apache.axis2.clustering.tribes;
 
-import org.apache.axis2.clustering.ClusterManager;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManager;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
-import org.apache.axis2.clustering.context.DefaultContextManager;
-import org.apache.axis2.clustering.context.DefaultContextManagerListener;
+import org.apache.axis2.clustering.ClusteringAgent;
+import org.apache.axis2.clustering.management.DefaultNodeManager;
+import org.apache.axis2.clustering.state.DefaultStateManager;
 import org.apache.axis2.context.ConfigurationContext;
 
 public class ConfigurationManagerTest extends
-                                      org.apache.axis2.clustering.configuration.ConfigurationManagerTestCase {
+                                      org.apache.axis2.clustering.management.ConfigurationManagerTestCase {
 
-    protected ClusterManager getClusterManager(ConfigurationContext configCtx) {
-        TribesClusterManager tribesClusterManager = new TribesClusterManager();
+    protected ClusteringAgent getClusterManager(ConfigurationContext configCtx) {
+        TribesClusteringAgent tribesClusterManager = new TribesClusteringAgent();
         tribesClusterManager.setConfigurationContext(configCtx);
-        DefaultConfigurationManager configurationManager = new DefaultConfigurationManager();
-        configurationManager.
-                setConfigurationManagerListener(new DefaultConfigurationManagerListener());
-        tribesClusterManager.setConfigurationManager(configurationManager);
-        DefaultContextManager contextManager = new DefaultContextManager();
-        contextManager.setContextManagerListener(new DefaultContextManagerListener());
-        tribesClusterManager.setContextManager(contextManager);
+        DefaultNodeManager configurationManager = new DefaultNodeManager();
+        tribesClusterManager.setNodeManager(configurationManager);
+        DefaultStateManager contextManager = new DefaultStateManager();
+        tribesClusterManager.setStateManager(contextManager);
         return tribesClusterManager;
     }
 

@@ -21,7 +21,7 @@ package org.apache.axis2.clustering.control;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.ContextClusteringCommand;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +33,7 @@ public class GetStateResponseCommand extends ControlCommand {
 
     private static final Log log = LogFactory.getLog(GetStateResponseCommand.class);
 
-    private ContextClusteringCommand[] commands;
+    private StateClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configContext) throws ClusteringFault {
         log.info("Received state initialization message");
@@ -52,7 +52,7 @@ public class GetStateResponseCommand extends ControlCommand {
         }
     }
 
-    public void setCommands(ContextClusteringCommand[] commands) {
+    public void setCommands(StateClusteringCommand[] commands) {
         this.commands = commands;
     }
 

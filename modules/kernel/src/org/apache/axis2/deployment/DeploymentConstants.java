@@ -104,8 +104,8 @@ public interface DeploymentConstants {
     String TAG_NAMESPACES = "namespaces";
 
     //ClusterBuilder
-    String TAG_CONFIGURATION_MANAGER = "configurationManager";
-    String TAG_CONTEXT_MANAGER = "contextManager";
+    String TAG_NODE_MANAGER = "nodeManager";
+    String TAG_STATE_MANAGER = "stateManager";
     String TAG_REPLICATION = "replication";
     String TAG_DEFAULTS = "defaults";
     String TAG_CONTEXT = "context";

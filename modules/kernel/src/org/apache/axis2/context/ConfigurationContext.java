@@ -23,10 +23,10 @@ package org.apache.axis2.context;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.clustering.ClusteringConstants;
-import org.apache.axis2.clustering.configuration.ConfigurationManager;
-import org.apache.axis2.clustering.context.ContextManager;
+import org.apache.axis2.clustering.management.NodeManager;
+import org.apache.axis2.clustering.state.StateManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
@@ -114,31 +114,31 @@ public class ConfigurationContext extends AbstractContext {
      * @throws AxisFault
      */
     public void initCluster() throws AxisFault {
-        ClusterManager clusterManager = axisConfiguration.getClusterManager();
-        if (clusterManager != null) {
-            ContextManager contextManager = clusterManager.getContextManager();
-            if (contextManager != null) {
-                contextManager.setConfigurationContext(this);
+        ClusteringAgent clusteringAgent = axisConfiguration.getClusteringAgent();
+        if (clusteringAgent != null) {
+            StateManager stateManaget = clusteringAgent.getStateManager();
+            if (stateManaget != null) {
+                stateManaget.setConfigurationContext(this);
             }
-            ConfigurationManager configManager = clusterManager.getConfigurationManager();
-            if (configManager != null) {
-                configManager.setConfigurationContext(this);
+            NodeManager nodeManager = clusteringAgent.getNodeManager();
+            if (nodeManager != null) {
+                nodeManager.setConfigurationContext(this);
             }
-            if (shouldClusterBeInitiated(clusterManager)) {
-                clusterManager.setConfigurationContext(this);
-                clusterManager.init();
+            if (shouldClusterBeInitiated(clusteringAgent)) {
+                clusteringAgent.setConfigurationContext(this);
+                clusteringAgent.init();
             }
         }
     }
 
     /**
-     * @param clusterManager The ClusterManager implementation
+     * @param clusteringAgent The ClusterManager implementation
      * @return true, if the cluster needs to be automatically initialized by the framework; false,
      *         otherwise
      */
-    private static boolean shouldClusterBeInitiated(ClusterManager clusterManager) {
+    private static boolean shouldClusterBeInitiated(ClusteringAgent clusteringAgent) {
         Parameter param =
-                clusterManager.getParameter(ClusteringConstants.Parameters.AVOID_INITIATION);
+                clusteringAgent.getParameter(ClusteringConstants.Parameters.AVOID_INITIATION);
         return !(param != null && JavaUtils.isTrueExplicitly(param.getValue()));
     }
 

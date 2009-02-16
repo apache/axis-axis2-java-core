@@ -22,14 +22,12 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.Member;
-import org.apache.axis2.clustering.LoadBalanceEventHandler;
-import org.apache.axis2.clustering.configuration.ConfigurationManager;
-import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
-import org.apache.axis2.clustering.context.ContextManager;
-import org.apache.axis2.clustering.context.ContextManagerListener;
+import org.apache.axis2.clustering.management.GroupManagementAgent;
+import org.apache.axis2.clustering.management.NodeManager;
+import org.apache.axis2.clustering.state.StateManager;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
@@ -74,7 +72,7 @@ public class ClusterBuilder extends DescriptionBuilder {
         }
 
         String className = classNameAttr.getAttributeValue();
-        ClusterManager clusterManager;
+        ClusteringAgent clusteringAgent;
         try {
             Class clazz;
             try {
@@ -83,28 +81,28 @@ public class ClusterBuilder extends DescriptionBuilder {
                 throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
                                                                   className));
             }
-            clusterManager = (ClusterManager) clazz.newInstance();
+            clusteringAgent = (ClusteringAgent) clazz.newInstance();
 
-            clusterManager.setConfigurationContext(configCtx);
+            clusteringAgent.setConfigurationContext(configCtx);
 
             //loading the parameters.
             processParameters(clusterElement.getChildrenWithName(new QName(TAG_PARAMETER)),
-                              clusterManager,
+                              clusteringAgent,
                               null);
 
             // loading the application domains
-            loadApplicationDomains(clusterManager, clusterElement);
+            loadGroupManagement(clusteringAgent, clusterElement);
 
             // loading the members
-            loadWellKnownMembers(clusterManager, clusterElement);
+            loadWellKnownMembers(clusteringAgent, clusterElement);
 
-            //loading the ConfigurationManager
-            loadConfigManager(clusterElement, clusterManager);
+            //loading the NodeManager
+            loadNodeManager(clusterElement, clusteringAgent);
 
-            // loading the ContextManager
-            loadContextManager(clusterElement, clusterManager);
+            // loading the StateManager
+            loadStateManager(clusterElement, clusteringAgent);
 
-            axisConfig.setClusterManager(clusterManager);
+            axisConfig.setClusteringAgent(clusteringAgent);
         } catch (InstantiationException e) {
             throw new DeploymentException(Messages.getMessage("cannotLoadClusterImpl"));
         } catch (IllegalAccessException e) {
@@ -121,12 +119,12 @@ public class ClusterBuilder extends DescriptionBuilder {
         return enabled;
     }
 
-    private void loadApplicationDomains(ClusterManager clusterManager,
-                                        OMElement clusterElement) throws DeploymentException {
-        OMElement lbEle = clusterElement.getFirstChildWithName(new QName("loadBalancer"));
+    private void loadGroupManagement(ClusteringAgent clusteringAgent,
+                                     OMElement clusterElement) throws DeploymentException {
+        OMElement lbEle = clusterElement.getFirstChildWithName(new QName("groupManagement"));
         if (lbEle != null) {
             if (isEnabled(lbEle)) {
-                log.info("Running in load balance mode");
+                log.info("Running in group management mode");
             } else {
                 log.info("Running in application mode");
                 return;
@@ -136,24 +134,30 @@ public class ClusterBuilder extends DescriptionBuilder {
                  iter.hasNext();) {
                 OMElement omElement = (OMElement) iter.next();
                 String domainName = omElement.getAttributeValue(new QName("name")).trim();
-                String handlerClass = omElement.getAttributeValue(new QName("handler")).trim();
-                LoadBalanceEventHandler eventHandler;
+                String handlerClass = omElement.getAttributeValue(new QName("agent")).trim();
+                String descAttrib = omElement.getAttributeValue(new QName("description"));
+                String description = "Description not found";
+                if (descAttrib != null) {
+                    description = descAttrib.trim();
+                }
+                GroupManagementAgent eventHandler;
                 try {
-                    eventHandler = (LoadBalanceEventHandler) Class.forName(handlerClass).newInstance();
+                    eventHandler = (GroupManagementAgent) Class.forName(handlerClass).newInstance();
+                    eventHandler.setDescription(description);
                 } catch (Exception e) {
-                    String msg = "Could not instantiate LoadBalanceEventHandler " + handlerClass +
+                    String msg = "Could not instantiate GroupManagementAgent " + handlerClass +
                                  " for domain " + domainName;
                     log.error(msg, e);
                     throw new DeploymentException(msg, e);
                 }
-                clusterManager.addLoadBalanceEventHandler(eventHandler, domainName);
+                clusteringAgent.addGroupManagementAgent(eventHandler, domainName);
             }
         }
     }
 
-    private void loadWellKnownMembers(ClusterManager clusterManager, OMElement clusterElement) {
-        clusterManager.setMembers(new ArrayList<Member>());
-        Parameter membershipSchemeParam = clusterManager.getParameter("membershipScheme");
+    private void loadWellKnownMembers(ClusteringAgent clusteringAgent, OMElement clusterElement) {
+        clusteringAgent.setMembers(new ArrayList<Member>());
+        Parameter membershipSchemeParam = clusteringAgent.getParameter("membershipScheme");
         if (membershipSchemeParam != null) {
             String membershipScheme = ((String) membershipSchemeParam.getValue()).trim();
             if (membershipScheme.equals(ClusteringConstants.MembershipScheme.WKA_BASED)) {
@@ -171,7 +175,7 @@ public class ClusterBuilder extends DescriptionBuilder {
                                                Integer.parseInt(replaceVariables(port))));
                     }
                 }
-                clusterManager.setMembers(members);
+                clusteringAgent.setMembers(members);
             }
         }
     }
@@ -200,25 +204,25 @@ public class ClusterBuilder extends DescriptionBuilder {
         return text;
     }
 
-    private void loadContextManager(OMElement clusterElement,
-                                    ClusterManager clusterManager) throws DeploymentException,
+    private void loadStateManager(OMElement clusterElement,
+                                    ClusteringAgent clusteringAgent) throws DeploymentException,
                                                                           InstantiationException,
                                                                           IllegalAccessException {
         OMElement contextManagerEle =
-                clusterElement.getFirstChildWithName(new QName(TAG_CONTEXT_MANAGER));
+                clusterElement.getFirstChildWithName(new QName(TAG_STATE_MANAGER));
         if (contextManagerEle != null) {
             if (!isEnabled(contextManagerEle)) {
-                log.info("Clustering context management has been disabled");
+                log.info("Clustering state management has been disabled");
                 return;
             }
-            log.info("Clustering context management has been enabled");
+            log.info("Clustering state management has been enabled");
 
-            // Load & set the ContextManager class
+            // Load & set the StateManager class
             OMAttribute classNameAttr =
                     contextManagerEle.getAttribute(new QName(ATTRIBUTE_CLASS));
             if (classNameAttr == null) {
                 throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
-                                                                  TAG_CONTEXT_MANAGER));
+                                                                  TAG_STATE_MANAGER));
             }
 
             String className = classNameAttr.getAttributeValue();
@@ -230,34 +234,12 @@ public class ClusterBuilder extends DescriptionBuilder {
                 throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
                                                                   className));
             }
-            ContextManager contextManager = (ContextManager) clazz.newInstance();
-            clusterManager.setContextManager(contextManager);
-
-            // Load & set the ContextManagerListener
-            OMElement listenerEle =
-                    contextManagerEle.getFirstChildWithName(new QName(TAG_LISTENER));
-            if (listenerEle != null) {
-                classNameAttr = listenerEle.getAttribute(new QName(TAG_CLASS_NAME));
-                if (classNameAttr == null) {
-                    throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
-                                                                      TAG_LISTENER));
-                }
-                className = classNameAttr.getAttributeValue();
-                try {
-                    clazz = Class.forName(className);
-                } catch (ClassNotFoundException e) {
-                    throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
-                                                                      className));
-                }
-                ContextManagerListener listener = (ContextManagerListener) clazz.newInstance();
-                contextManager.setContextManagerListener(listener);
-            } else {
-                throw new DeploymentException(Messages.getMessage("contextManagerListenerIsNull"));
-            }
+            StateManager stateManager = (StateManager) clazz.newInstance();
+            clusteringAgent.setStateManager(stateManager);
 
             //loading the parameters.
             processParameters(contextManagerEle.getChildrenWithName(new QName(TAG_PARAMETER)),
-                              contextManager,
+                              stateManager,
                               null);
 
             // Load the replication patterns to be excluded. We load the following structure.
@@ -282,14 +264,14 @@ public class ClusterBuilder extends DescriptionBuilder {
                 OMElement defaultsEle =
                         replicationEle.getFirstChildWithName(new QName(TAG_DEFAULTS));
                 if (defaultsEle != null) {
-                    List defaults = new ArrayList();
+                    List<String> defaults = new ArrayList<String>();
                     for (Iterator iter = defaultsEle.getChildrenWithName(new QName(TAG_EXCLUDE));
                          iter.hasNext();) {
                         OMElement excludeEle = (OMElement) iter.next();
                         OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
                         defaults.add(nameAtt.getAttributeValue());
                     }
-                    contextManager.setReplicationExcludePatterns(TAG_DEFAULTS, defaults);
+                    stateManager.setReplicationExcludePatterns(TAG_DEFAULTS, defaults);
                 }
 
                 // Process specifics
@@ -298,25 +280,25 @@ public class ClusterBuilder extends DescriptionBuilder {
                     OMElement contextEle = (OMElement) iter.next();
                     String ctxClassName =
                             contextEle.getAttribute(new QName(ATTRIBUTE_CLASS)).getAttributeValue();
-                    List excludes = new ArrayList();
+                    List<String> excludes = new ArrayList<String>();
                     for (Iterator iter2 = contextEle.getChildrenWithName(new QName(TAG_EXCLUDE));
                          iter2.hasNext();) {
                         OMElement excludeEle = (OMElement) iter2.next();
                         OMAttribute nameAtt = excludeEle.getAttribute(new QName(ATTRIBUTE_NAME));
                         excludes.add(nameAtt.getAttributeValue());
                     }
-                    contextManager.setReplicationExcludePatterns(ctxClassName, excludes);
+                    stateManager.setReplicationExcludePatterns(ctxClassName, excludes);
                 }
             }
         }
     }
 
-    private void loadConfigManager(OMElement clusterElement,
-                                   ClusterManager clusterManager) throws DeploymentException,
+    private void loadNodeManager(OMElement clusterElement,
+                                   ClusteringAgent clusteringAgent) throws DeploymentException,
                                                                          InstantiationException,
                                                                          IllegalAccessException {
         OMElement configManagerEle =
-                clusterElement.getFirstChildWithName(new QName(TAG_CONFIGURATION_MANAGER));
+                clusterElement.getFirstChildWithName(new QName(TAG_NODE_MANAGER));
         if (configManagerEle != null) {
             if (!isEnabled(configManagerEle)) {
                 log.info("Clustering configuration management has been disabled");
@@ -327,7 +309,7 @@ public class ClusterBuilder extends DescriptionBuilder {
             OMAttribute classNameAttr = configManagerEle.getAttribute(new QName(ATTRIBUTE_CLASS));
             if (classNameAttr == null) {
                 throw new DeploymentException(Messages.getMessage("classAttributeNotFound",
-                                                                  TAG_CONFIGURATION_MANAGER));
+                                                                  TAG_NODE_MANAGER));
             }
 
             String className = classNameAttr.getAttributeValue();
@@ -339,39 +321,15 @@ public class ClusterBuilder extends DescriptionBuilder {
                                                                   className));
             }
 
-            ConfigurationManager configurationManager =
-                    (ConfigurationManager) clazz.newInstance();
-            clusterManager.setConfigurationManager(configurationManager);
+            NodeManager nodeManager = (NodeManager) clazz.newInstance();
+            clusteringAgent.setNodeManager(nodeManager);
 
-            OMElement listenerEle =
-                    configManagerEle.getFirstChildWithName(new QName(TAG_LISTENER));
-            if (listenerEle != null) {
-                classNameAttr = listenerEle.getAttribute(new QName(TAG_CLASS_NAME));
-                if (classNameAttr == null) {
-                    throw new DeploymentException(Messages.getMessage("clusterImplNotFound",
-                                                                      TAG_LISTENER));
-                }
-
-                className = classNameAttr.getAttributeValue();
-                try {
-                    clazz = Class.forName(className);
-                } catch (ClassNotFoundException e) {
-                    throw new DeploymentException(Messages.getMessage("configurationManagerListenerIsNull"));
-                }
-                ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
-                        .newInstance();
-                listener.setConfigurationContext(configCtx);
-                configurationManager.setConfigurationManagerListener(listener);
-            } else {
-                throw new DeploymentException(Messages.getMessage("configurationManagerListenerIsNull"));
-            }
-
-            //updating the ConfigurationManager with the new ConfigurationContext
-            configurationManager.setConfigurationContext(configCtx);
+            //updating the NodeManager with the new ConfigurationContext
+            nodeManager.setConfigurationContext(configCtx);
 
             //loading the parameters.
             processParameters(configManagerEle.getChildrenWithName(new QName(TAG_PARAMETER)),
-                              configurationManager,
+                              nodeManager,
                               null);
         }
     }

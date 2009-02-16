@@ -43,14 +43,14 @@ public class TribesMembershipListener implements MembershipListener {
             } else {
             }*/
         }
-        //        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
+        //        System.err.println("++++++ IS COORD="+TribesClusteringAgent.nbc.isCoordinator());
     }
 
     public void memberDisappeared(Member member) {
         log.info("Member " + TribesUtil.getName(member) + " left cluster");
         membershipManager.memberDisappeared(member);
 
-//        System.err.println("++++++ IS COORD="+TribesClusterManager.nbc.isCoordinator());
+//        System.err.println("++++++ IS COORD="+TribesClusteringAgent.nbc.isCoordinator());
         
     }
 }

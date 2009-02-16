@@ -20,7 +20,7 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
-import org.apache.axis2.clustering.LoadBalanceEventHandler;
+import org.apache.axis2.clustering.management.GroupManagementAgent;
 import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.context.ConfigurationContext;
@@ -52,7 +52,7 @@ public class MembershipManager {
      * The domain corresponding to the membership handled by this MembershipManager
      */
     private byte[] domain;
-    private LoadBalanceEventHandler loadBalanceEventHandler;
+    private GroupManagementAgent groupManagementAgent;
     private ConfigurationContext configContext;
 
     public MembershipManager(ConfigurationContext configContext) {
@@ -75,8 +75,8 @@ public class MembershipManager {
         this.staticMembershipInterceptor = staticMembershipInterceptor;
     }
 
-    public void setLoadBalanceEventHandler(LoadBalanceEventHandler loadBalanceEventHandler) {
-        this.loadBalanceEventHandler = loadBalanceEventHandler;
+    public void setGroupManagementAgent(GroupManagementAgent groupManagementAgent) {
+        this.groupManagementAgent = groupManagementAgent;
     }
 
     public void setDomain(byte[] domain) {
@@ -149,10 +149,10 @@ public class MembershipManager {
                                   TribesUtil.areInSameDomain(localMember, member);
 
         // If this member is a load balancer, notify the respective load balance event handler?
-        if (loadBalanceEventHandler != null) {
+        if (groupManagementAgent != null) {
             log.info("Application member " + TribesUtil.getName(member) + " joined group " +
                      new String(member.getDomain()));
-            loadBalanceEventHandler.applicationMemberAdded(TribesUtil.toAxis2Member(member));
+            groupManagementAgent.applicationMemberAdded(TribesUtil.toAxis2Member(member));
         }
 
         if (shouldAddMember) {
@@ -279,8 +279,8 @@ public class MembershipManager {
         members.remove(member);
 
         // Is this an application domain member?
-        if (loadBalanceEventHandler != null) {
-            loadBalanceEventHandler.applicationMemberRemoved(TribesUtil.toAxis2Member(member));
+        if (groupManagementAgent != null) {
+            groupManagementAgent.applicationMemberRemoved(TribesUtil.toAxis2Member(member));
         }
     }
 

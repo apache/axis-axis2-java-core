@@ -17,13 +17,35 @@
  * under the License.
  */
 
-package org.apache.axis2.clustering;
+package org.apache.axis2.clustering.state.commands;
 
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
-public abstract class ClusteringCommand implements Serializable {
+/**
+ * 
+ */
+public class StateClusteringCommandCollection extends StateClusteringCommand {
 
-    public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;
+    private ArrayList commands;
+
+    public StateClusteringCommandCollection(ArrayList commands) {
+        this.commands = commands;
+    }
+
+    public void execute(ConfigurationContext configContext) throws ClusteringFault {
+        for (int i = 0; i < commands.size(); i++) {
+            StateClusteringCommand cmd = (StateClusteringCommand) commands.get(i);
+            if (cmd != null) {
+                cmd.execute(configContext);
+            }
+        }
+    }
+
+    public String toString() {
+        return "StateClusteringCommandCollection";
+    }
 }

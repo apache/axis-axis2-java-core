@@ -49,7 +49,9 @@ public class ChannelSender implements MessageSender {
         this.synchronizeAllMembers = synchronizeAllMembers;
     }
 
-    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+    public void sendToGroup(ClusteringCommand msg,
+                            MembershipManager membershipManager,
+                            int additionalOptions) throws ClusteringFault {
         if (channel == null) {
             return;
         }
@@ -64,12 +66,14 @@ public class ChannelSender implements MessageSender {
                                  Channel.SEND_OPTIONS_USE_ACK |
                                  Channel.SEND_OPTIONS_SYNCHRONIZED_ACK |
                                  TribesConstants.MSG_ORDER_OPTION |
-                                 TribesConstants.AT_MOST_ONCE_OPTION);
+                                 TribesConstants.AT_MOST_ONCE_OPTION |
+                                 additionalOptions);
                 } else {
                     channel.send(members, toByteMessage(msg),
                                  Channel.SEND_OPTIONS_ASYNCHRONOUS |
                                  TribesConstants.MSG_ORDER_OPTION |
-                                 TribesConstants.AT_MOST_ONCE_OPTION);
+                                 TribesConstants.AT_MOST_ONCE_OPTION |
+                                 additionalOptions);
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("Sent " + msg + " to group");
@@ -93,6 +97,10 @@ public class ChannelSender implements MessageSender {
                 log.warn(message, e);
             }
         }
+    }
+
+    public void sendToGroup(ClusteringCommand msg) throws ClusteringFault {
+         sendToGroup(msg, this.membershipManager, 0);
     }
 
     private ByteMessage toByteMessage(ClusteringCommand msg) throws IOException {

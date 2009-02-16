@@ -37,7 +37,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
-import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
@@ -145,7 +145,7 @@ public class AxisConfiguration extends AxisDescription {
 
     private ArrayList<TargetResolver> targetResolvers;
 
-    private ClusterManager clusterManager;
+    private ClusteringAgent clusteringAgent;
 
     private AxisConfigurator configurator;
 
@@ -1018,12 +1018,12 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public ClusterManager getClusterManager() {
-        return clusterManager;
+    public ClusteringAgent getClusteringAgent() {
+        return clusteringAgent;
     }
 
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
+    public void setClusteringAgent(ClusteringAgent clusteringAgent) {
+        this.clusteringAgent = clusteringAgent;
     }
 
      public TransactionConfiguration getTransactionConfiguration() {

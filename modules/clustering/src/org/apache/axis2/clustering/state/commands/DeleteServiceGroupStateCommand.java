@@ -17,13 +17,23 @@
  * under the License.
  */
 
-package org.apache.axis2.clustering;
+package org.apache.axis2.clustering.state.commands;
 
+import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
-import java.io.Serializable;
+/**
+ *
+ */
+public class DeleteServiceGroupStateCommand extends StateClusteringCommand {
+    private String serviceGroupContextId;
 
-public abstract class ClusteringCommand implements Serializable {
+    public void setServiceGroupContextId(String serviceGroupContextId) {
+        this.serviceGroupContextId = serviceGroupContextId;
+    }
 
-    public abstract void execute(ConfigurationContext configContext) throws ClusteringFault;
+    public void execute(ConfigurationContext configurationContext) throws ClusteringFault {
+        configurationContext.removeServiceGroupContext(serviceGroupContextId);
+    }
 }

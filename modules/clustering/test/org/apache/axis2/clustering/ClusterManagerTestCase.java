@@ -20,10 +20,6 @@
 package org.apache.axis2.clustering;
 
 import junit.framework.TestCase;
-import org.apache.axis2.clustering.configuration.ConfigurationManagerListener;
-import org.apache.axis2.clustering.configuration.DefaultConfigurationManagerListener;
-import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
-import org.apache.axis2.clustering.context.DefaultContextManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -33,25 +29,21 @@ import org.apache.axis2.util.Utils;
 
 public abstract class ClusterManagerTestCase extends TestCase {
 
-    protected ClusterManager clusterManager1 = null;
-    protected ClusterManager clusterManager2 = null;
+    protected ClusteringAgent clusterManager1 = null;
+    protected ClusteringAgent clusterManager2 = null;
     protected AxisConfiguration axisConfiguration1 = null;
     protected AxisConfiguration axisConfiguration2 = null;
     protected ConfigurationContext configurationContext1 = null;
     protected ConfigurationContext configurationContext2 = null;
-    protected ConfigurationManagerListener configManagerListener1;
-    protected ConfigurationManagerListener configManagerListener2;
     protected AxisServiceGroup serviceGroup1 = null;
     protected AxisServiceGroup serviceGroup2 = null;
     protected AxisService service1 = null;
     protected AxisService service2 = null;
     protected String serviceName = "testService";
 
-    protected abstract ClusterManager getClusterManager(ConfigurationContext configCtx);
+    protected abstract ClusteringAgent getClusterManager(ConfigurationContext configCtx);
 
     protected boolean skipChannelTests = false;
-    protected TestConfigurationManagerListener configurationManagerListener;
-    protected DefaultContextManagerListener contextManagerListener;
 
     protected void setUp() throws Exception {
 
@@ -63,16 +55,11 @@ public abstract class ClusterManagerTestCase extends TestCase {
         clusterManager1 = getClusterManager(configurationContext1);
         clusterManager2 = getClusterManager(configurationContext2);
 
-        clusterManager1.getContextManager().setConfigurationContext(configurationContext1);
-        clusterManager2.getContextManager().setConfigurationContext(configurationContext2);
+        clusterManager1.getStateManager().setConfigurationContext(configurationContext1);
+        clusterManager2.getStateManager().setConfigurationContext(configurationContext2);
 
-        clusterManager1.getConfigurationManager().setConfigurationContext(configurationContext1);
-        clusterManager2.getConfigurationManager().setConfigurationContext(configurationContext2);
-
-        configManagerListener1 = new DefaultConfigurationManagerListener();
-        clusterManager1.getConfigurationManager().setConfigurationManagerListener(configManagerListener1);
-        configManagerListener2 = new DefaultConfigurationManagerListener();
-        clusterManager2.getConfigurationManager().setConfigurationManagerListener(configManagerListener2);
+        clusterManager1.getNodeManager().setConfigurationContext(configurationContext1);
+        clusterManager2.getNodeManager().setConfigurationContext(configurationContext2);
 
         //giving both Nodes the same deployment configuration
         axisConfiguration1 = configurationContext1.getAxisConfiguration();
@@ -91,10 +78,10 @@ public abstract class ClusterManagerTestCase extends TestCase {
         System.setProperty(ClusteringConstants.LOCAL_IP_ADDRESS, Utils.getIpAddress());
         try {
             clusterManager1.init();
-            System.out.println("ClusterManager-1 successfully initialized");
+            System.out.println("ClusteringAgent-1 successfully initialized");
             System.out.println("*** PLEASE IGNORE THE java.net.ConnectException STACKTRACES. THIS IS EXPECTED ***");
             clusterManager2.init();
-            System.out.println("ClusterManager-2 successfully initialized");
+            System.out.println("ClusteringAgent-2 successfully initialized");
         } catch (ClusteringFault e) {
             String message =
                     "Could not initialize ClusterManagers. Please check the network connection";

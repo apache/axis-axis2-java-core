@@ -19,11 +19,11 @@
 
 package org.apache.axis2.clustering.control;
 
-import org.apache.axis2.clustering.ClusterManager;
+import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.context.ContextClusteringCommand;
-import org.apache.axis2.clustering.context.ContextClusteringCommandFactory;
-import org.apache.axis2.clustering.context.ContextManager;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
+import org.apache.axis2.clustering.state.StateClusteringCommandFactory;
+import org.apache.axis2.clustering.state.StateManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -38,24 +38,24 @@ import java.util.Map;
  */
 public class GetStateCommand extends ControlCommand {
 
-    private ContextClusteringCommand[] commands;
+    private StateClusteringCommand[] commands;
 
     public void execute(ConfigurationContext configCtx) throws ClusteringFault {
-        ClusterManager clusterManager = configCtx.getAxisConfiguration().getClusterManager();
-        if(clusterManager == null){
+        ClusteringAgent clusteringAgent = configCtx.getAxisConfiguration().getClusteringAgent();
+        if(clusteringAgent == null){
             return;
         }
-        ContextManager contextManager = clusterManager.getContextManager();
-        if (contextManager != null) {
-            Map excludedPropPatterns = contextManager.getReplicationExcludePatterns();
-            List<ContextClusteringCommand> cmdList = new ArrayList<ContextClusteringCommand>();
+        StateManager stateManager = clusteringAgent.getStateManager();
+        if (stateManager != null) {
+            Map excludedPropPatterns = stateManager.getReplicationExcludePatterns();
+            List<StateClusteringCommand> cmdList = new ArrayList<StateClusteringCommand>();
 
             // Add the service group contexts, service contexts & their respective properties
             String[] sgCtxIDs = configCtx.getServiceGroupContextIDs();
             for (String sgCtxID : sgCtxIDs) {
                 ServiceGroupContext sgCtx = configCtx.getServiceGroupContext(sgCtxID);
-                ContextClusteringCommand updateServiceGroupCtxCmd =
-                        ContextClusteringCommandFactory.getUpdateCommand(sgCtx,
+                StateClusteringCommand updateServiceGroupCtxCmd =
+                        StateClusteringCommandFactory.getUpdateCommand(sgCtx,
                                                                          excludedPropPatterns,
                                                                          true);
                 if (updateServiceGroupCtxCmd != null) {
@@ -64,8 +64,8 @@ public class GetStateCommand extends ControlCommand {
                 if (sgCtx.getServiceContexts() != null) {
                     for (Iterator iter2 = sgCtx.getServiceContexts(); iter2.hasNext();) {
                         ServiceContext serviceCtx = (ServiceContext) iter2.next();
-                        ContextClusteringCommand updateServiceCtxCmd =
-                                ContextClusteringCommandFactory.getUpdateCommand(serviceCtx,
+                        StateClusteringCommand updateServiceCtxCmd =
+                                StateClusteringCommandFactory.getUpdateCommand(serviceCtx,
                                                                                  excludedPropPatterns,
                                                                                  true);
                         if (updateServiceCtxCmd != null) {
@@ -75,20 +75,20 @@ public class GetStateCommand extends ControlCommand {
                 }
             }
 
-            ContextClusteringCommand updateCmd =
-                    ContextClusteringCommandFactory.getUpdateCommand(configCtx,
+            StateClusteringCommand updateCmd =
+                    StateClusteringCommandFactory.getUpdateCommand(configCtx,
                                                                      excludedPropPatterns,
                                                                      true);
             if (updateCmd != null) {
                 cmdList.add(updateCmd);
             }
             if (!cmdList.isEmpty()) {
-                commands = cmdList.toArray(new ContextClusteringCommand[cmdList.size()]);
+                commands = cmdList.toArray(new StateClusteringCommand[cmdList.size()]);
             }
         }
     }
 
-    public ContextClusteringCommand[] getCommands() {
+    public StateClusteringCommand[] getCommands() {
         return commands;
     }
 
