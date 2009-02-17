@@ -55,13 +55,12 @@ public class WSDLServiceBuilderTest extends TestCase {
         outLocation.mkdirs();
         if (testResourceFile.exists()) {
             File files [] = testResourceFile.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file1 = files[i];
+            for (File file1 : files) {
                 if (file1.isFile() && file1.getName().endsWith(".wsdl")) {
                     if (file1.getName().equals("ping-modified.wsdl") ||
-                            file1.getName().equals("ping-unbound.wsdl") ||
-                            file1.getName().equals("wsat.wsdl") ||
-                            file1.getName().equals("no-service.wsdl")) {
+                        file1.getName().equals("ping-unbound.wsdl") ||
+                        file1.getName().equals("wsat.wsdl") ||
+                        file1.getName().equals("no-service.wsdl")) {
                         continue;
                     }
                     try {

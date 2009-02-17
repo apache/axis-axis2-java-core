@@ -21,19 +21,16 @@ package org.apache.axis2.wsdl.codegen.schema;
 
 import junit.framework.TestCase;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.codegen.schema.exception.DummySchemaGenerationException;
 
 import javax.xml.namespace.QName;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 
 public class AxisServiceTopElementSchemaGeneratorTest extends TestCase {
 
-    public void testSchemaGeneration(){
+    public void testSchemaGeneration() throws Exception {
 
         AxisServiceTopElementSchemaGenerator schemaGenerator = new AxisServiceTopElementSchemaGenerator(null);
 
@@ -61,19 +58,12 @@ public class AxisServiceTopElementSchemaGeneratorTest extends TestCase {
         topElement.setTypeQName(new QName("http://test2.com","testComplexType2"));
         topElements.add(topElement);
 
-
         Map schemaMap = schemaGenerator.getSchemaMap(topElements);
-        try {
-            List xmlSchemaList = schemaGenerator.getXmlSchemaList(schemaMap);
-            org.apache.ws.commons.schema.XmlSchema xmlSchema;
-            for (Iterator iter = xmlSchemaList.iterator();iter.hasNext();){
-                xmlSchema = (org.apache.ws.commons.schema.XmlSchema) iter.next();
-//                xmlSchema.write(System.out);
-            }
-        } catch (DummySchemaGenerationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        schemaGenerator.getXmlSchemaList(schemaMap);
 
+//        List xmlSchemaList = schemaGenerator.getXmlSchemaList(schemaMap);
+//        for (Object aXmlSchemaList : xmlSchemaList) {
+//            ((org.apache.ws.commons.schema.XmlSchema)aXmlSchemaList).write(System.out);
+//        }
     }
-
 }
