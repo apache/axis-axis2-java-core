@@ -24,8 +24,6 @@
 	<target name="wsdl-codegen" unless="test.skip">
 		<!-- Set a property that can be picked up from the ant build.xml's -->
 
-		<echo>Var is ${maven.class.path}</echo>
-
 		<property name="maven.junit.jvmargs" value="" />
 		<path id="maven.dependency.classpath">
 			<path refid="maven.compile.classpath" />
