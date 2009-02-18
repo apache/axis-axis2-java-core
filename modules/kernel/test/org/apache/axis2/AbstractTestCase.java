@@ -19,30 +19,29 @@
 
 package org.apache.axis2;
 
-import junit.framework.TestCase;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
 
 /**
  * Abstract base class for test cases.
  */
-public abstract class AbstractTestCase
-        extends TestCase {
+public abstract class AbstractTestCase extends TestCase {
+
     protected String testDir = "test" + File.separator;
     protected String sampleDir = "samples" + File.separator;
     protected String outDir = "target" + File.separator + "generated" +
-            File.separator +
-            "samples" +
-            File.separator;
+        File.separator + "samples" + File.separator;
     protected String tempDir = "target" + File.separator + "generated" +
-            File.separator +
-            "temp";
+        File.separator + "temp";
     protected String testResourceDir = "test-resources";
 
-
     /**
-     * Basedir for all file I/O. Important when running tests from
-     * the reactor.  Note that anyone can use this statically.
+     * Basedir for all file I/O. Important when running tests from the reactor.
+     * Note that anyone can use this statically.
      */
     public static String basedir;
 
@@ -62,11 +61,21 @@ public abstract class AbstractTestCase
         sampleDir = new File(basedir, sampleDir).getAbsolutePath();
         outDir = new File(basedir, outDir).getAbsolutePath();
         tempDir = new File(basedir, tempDir).getAbsolutePath();
+        testResourceDir = new File(basedir, testResourceDir).getAbsolutePath();
     }
-
 
     public File getTestResourceFile(String relativePath) {
         return new File(testResourceDir, relativePath);
     }
-}
 
+    public InputStream getTestResource(String relativePath) {
+        File testResource = getTestResourceFile(relativePath);
+        try {
+            return new FileInputStream(testResource);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("The '" + testResource.getAbsolutePath() +
+                "' file does not exist. Verify that the 'basedir' System property " +
+                "is pointing to the root of the project", e);
+        }
+    }
+}

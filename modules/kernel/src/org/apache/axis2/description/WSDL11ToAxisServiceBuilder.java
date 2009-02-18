@@ -75,6 +75,9 @@ import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.http.HTTPOperation;
+import javax.wsdl.extensions.http.HTTPUrlEncoded;
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.extensions.mime.MIMEMimeXml;
 import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.mime.MIMEPart;
 import javax.wsdl.extensions.schema.Schema;
@@ -663,6 +666,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jBindingInput != null &&
                 WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
                 AxisBindingMessage axisBindingInMessage = new AxisBindingMessage();
+                axisBindingInMessage.setParent(axisBindingOperation);
                 addDocumentation(axisBindingInMessage, wsdl4jBindingInput.getDocumentationElement());
                 copyExtensibleElements(wsdl4jBindingInput.getExtensibilityElements(),
                                        wsdl4jDefinition,
@@ -694,7 +698,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingInMessage.setName(axisInMessage.getName());
                 axisBindingInMessage.setDirection(axisInMessage.getDirection());
 
-                axisBindingInMessage.setParent(axisBindingOperation);
                 axisBindingOperation
                         .addChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE, axisBindingInMessage);
             }
@@ -704,6 +707,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jBindingOutput != null &&
                 WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
                 AxisBindingMessage axisBindingOutMessage = new AxisBindingMessage();
+                axisBindingOutMessage.setParent(axisBindingOperation);
                 addDocumentation(axisBindingOutMessage, wsdl4jBindingOutput.getDocumentationElement());
                 AxisMessage axisOutMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -737,7 +741,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingOutMessage.setName(axisOutMessage.getName());
                 axisBindingOutMessage.setDirection(axisOutMessage.getDirection());
 
-                axisBindingOutMessage.setParent(axisBindingOperation);
                 axisBindingOperation
                         .addChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE, axisBindingOutMessage);
             }
@@ -2527,6 +2530,47 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // set the binding style same as the wsd2 to process smoothly
                 axisBinding.setType(WSDL2Constants.URI_WSDL2_HTTP);
                 axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBinding.getVerb());
+            } else if (wsdl4jExtensibilityElement instanceof MIMEContent) {
+                if (description instanceof AxisBindingMessage) {
+                    MIMEContent mimeContent = (MIMEContent) wsdl4jExtensibilityElement;
+                    String messageSerialization = mimeContent.getType();
+                    AxisBindingMessage bindingMessage = (AxisBindingMessage) description;
+                    setMessageSerialization(
+                        (AxisBindingOperation)bindingMessage.getParent(),
+                        originOfExtensibilityElements, messageSerialization);
+                }
+            } else if (wsdl4jExtensibilityElement instanceof MIMEMimeXml) {
+                if (description instanceof AxisBindingMessage) {
+                    AxisBindingMessage bindingMessage = (AxisBindingMessage) description;
+                    setMessageSerialization(
+                        (AxisBindingOperation)bindingMessage.getParent(),
+                        originOfExtensibilityElements,
+                        HTTPConstants.MEDIA_TYPE_TEXT_XML);
+                }
+            } else if (wsdl4jExtensibilityElement instanceof HTTPUrlEncoded) {
+                if (description instanceof AxisBindingMessage) {
+                    AxisBindingMessage bindingMessage = (AxisBindingMessage) description;
+                    setMessageSerialization(
+                        (AxisBindingOperation)bindingMessage.getParent(),
+                        originOfExtensibilityElements,
+                        HTTPConstants.MEDIA_TYPE_X_WWW_FORM);
+                }
+            }
+        }
+    }
+    
+    private static void setMessageSerialization(AxisBindingOperation bindingOperation,
+                                                String originOfExtensibilityElements, 
+                                                String messageSerialization) {
+        if (bindingOperation != null) {
+            if (BINDING_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
+                bindingOperation.setProperty(
+                    WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                    messageSerialization);
+            } else if (BINDING_OPERATION_OUTPUT.equals(originOfExtensibilityElements)) {
+                bindingOperation.setProperty(
+                    WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,
+                    messageSerialization);
             }
         }
     }
