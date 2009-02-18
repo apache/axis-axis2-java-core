@@ -710,7 +710,6 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	private void generateHttpPort(OMFactory fac, OMElement definition,
 			OMElement service) throws Exception {
 
-		// /////////////////// FIXME //////////////////////////////////////////
 		Iterator iterator = axisService.getEndpoints().values().iterator();
 		AxisEndpoint axisEndpoint;
 		AxisBinding axisBinding;
@@ -1060,8 +1059,10 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 
 			OMElement httpOperation = fac.createOMElement("operation", http);
 			operation.addChild(httpOperation);
-			httpOperation.addAttribute("location", serviceName + "/"
-					+ axisOperation.getName().getLocalPart(), null);
+            String location = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+            location = location.replace('{','(');
+            location = location.replace('}',')');
+            httpOperation.addAttribute("location", location, null);
 
 			String MEP = axisOperation.getMessageExchangePattern();
 
@@ -1085,7 +1086,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						OMElement inputelement = fac.createOMElement("content",
 								mime);
 						input.addChild(inputelement);
-						inputelement.addAttribute("type", "text/xml", null);
+                        String inputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION);
+                        inputelement.addAttribute("type", (inputType!=null? inputType:"text/xml"), null);
 						inputelement.addAttribute("part", axisOperation
 								.getName().getLocalPart(), null);
 						operation.addChild(input);
@@ -1110,7 +1112,8 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 						OMElement outElement = fac.createOMElement("content",
 								mime);
 						outElement.addChild(outElement);
-						outElement.addAttribute("type", "text/xml", null);
+                        String outputType=(String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION);
+                        outElement.addAttribute("type", (outputType!=null? outputType:"text/xml"), null);
 						outElement.addAttribute("part", axisOperation.getName()
 								.getLocalPart(), null);
 						output.addChild(outElement);

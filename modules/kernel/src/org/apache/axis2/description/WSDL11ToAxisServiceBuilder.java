@@ -2392,7 +2392,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 }
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
-                                                 HTTPConstants.MEDIA_TYPE_X_WWW_FORM);
+                                                 HTTPConstants.MEDIA_TYPE_TEXT_XML);
 
 
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Header) {
