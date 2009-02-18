@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
+import org.apache.axis2.JAXRS.JAXRSModel;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentConstants;
@@ -222,7 +223,7 @@ public class Utils {
         byte data[] = new byte[2048];
         int count;
         File f = TempFileManager.createTempFile("axis2", suffix);
-        
+
 //        if (tmpDir == null) {
 //            String directory = (String)org.apache.axis2.java.security.AccessController
 //                    .doPrivileged(new PrivilegedAction() {
@@ -370,7 +371,7 @@ public class Utils {
         }
         return useJarFileClassLoader;
     }
-    
+
     private static boolean addFiles(ArrayList urls, final File libfiles)
             throws MalformedURLException {
         Boolean exists = (Boolean)org.apache.axis2.java.security.AccessController
@@ -1404,6 +1405,13 @@ public class Utils {
             axisBinding.setType(WSDL2Constants.URI_WSDL2_HTTP);
             axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, "POST");
 
+
+            Map httpLocationMap = new TreeMap<String, AxisOperation>(new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    return (-1 * ((Comparable) o1).compareTo(o2));
+                }
+            });
+
             for (Iterator iterator = axisService.getChildren(); iterator
                     .hasNext();) {
                 AxisOperation operation = (AxisOperation)iterator.next();
@@ -1413,13 +1421,116 @@ public class Utils {
                 axisBindingOperation.setName(operationQName);
                 axisBindingOperation.setAxisOperation(operation);
                 String httpLocation = operationQName.getLocalPart();
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+                String tempParam=null;
+                String tempHTTPMethodParam=null;
+                String tempHTTPLocationParam=null;
+                // dealing with the REST data specified in Service.xml @ service class itself(using annotations)
+                Parameter parameter = operation.getParameter(Constants.JSR311_ANNOTATIONS);
+                JAXRSModel methodModel = (parameter != null && (parameter.getValue() instanceof
+                        JAXRSModel)) ? (JAXRSModel) parameter.getValue() : null;
+
+                // Setting the Produces value in the operation
+                if ( (tempParam=Utils.getHTTPOutputSerializationFromservicesXML(operation)) != null) { // first we get produce from services xml if available
+
+                        axisBindingOperation.setProperty(
+                                WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,
+                                tempParam);
+
+
+                } else if (methodModel != null && methodModel.getProduces() !=
+                        null) {  // then get it from the JAX-RS if available
+                    axisBindingOperation.setProperty(
+                            WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,
+                            methodModel.getProduces());
+
+                }
+
+                //Setting the Consumes value in the operation
+                if ((tempParam=Utils.getHTTPInputSerializationFromServicesXML(operation)) != null) { // first we get Consumes from services xml if available
+                     axisBindingOperation.setProperty(
+                                WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                                tempParam);
+
+                } else if (methodModel != null && methodModel.getConsumes() !=
+                        null) {  // then get it from the JAX-RS if available
+
+                    axisBindingOperation.setProperty(
+                            WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                            methodModel.getConsumes());
+
+                }
+
+
+                
+                //Setting the HttpMethod in the operation
+                if ((tempHTTPMethodParam=Utils.getHTTPMethodFromServicesXML(operation))!=null) { // first we get Consumes from services xml if available
+
+                        axisBindingOperation.setProperty(
+                                WSDL2Constants.ATTR_WHTTP_METHOD,
+                                tempHTTPMethodParam);
+
+                } else if (methodModel != null && (tempHTTPMethodParam=methodModel.getHTTPMethod()) !=
+                        null) {  // then get it from the JAX-RS if available
+
+                     if (tempHTTPMethodParam.equals(Constants.Configuration.HTTP_METHOD_HEAD)) {
+                                log.warn("[JAXRS] http method HEAD is not supported by AXIS2  " +
+                                        operation.getName());
+                                tempHTTPMethodParam=null;  // resetting the HTTP Method if it is head
+                            } else {
+
+                                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD,
+                                                                 tempHTTPMethodParam);
+                            }
+
+                }
+
+
+
+                //setting the Http Location in the operation
+                if((tempHTTPLocationParam=Utils.getHTTPLoacationFromServicesXML(operation) )==null){
+                    tempHTTPLocationParam=(methodModel!=null)?methodModel.getPath():null;
+                }
+
+
+                if (tempHTTPLocationParam!=null && tempHTTPMethodParam != null ){
+                     axisBindingOperation
+                                .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, tempHTTPLocationParam);
+                        httpLocationMap.put(WSDLUtil.getConstantFromHTTPLocation(tempHTTPLocationParam,
+                                                                                 tempHTTPMethodParam),operation);
+
+                }else if(tempHTTPLocationParam != null && tempHTTPMethodParam == null){
+                     axisBindingOperation
+                                .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, tempHTTPLocationParam);
+                        httpLocationMap.put(WSDLUtil.getConstantFromHTTPLocation(tempHTTPLocationParam,
+                                                                                 Constants.Configuration.HTTP_METHOD_POST),operation);
+                } else if(tempHTTPLocationParam == null && tempHTTPMethodParam != null){
+                      axisBindingOperation
+                                .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+                        httpLocationMap.put(WSDLUtil.getConstantFromHTTPLocation(httpLocation,
+                                                                                 tempHTTPMethodParam),operation);
+                } else{  // default scenario : No REST related params in services XML or source file
+                    axisBindingOperation
+                            .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+                }
+
+
                 axisBinding.addChild(axisBindingOperation.getName(),
                                      axisBindingOperation);
 
                 populateBindingOperation(axisBinding,
                                          axisBindingOperation);
+
+                // resetting my temperory parameters
+                tempParam=null;
+                tempHTTPMethodParam=null;
+                tempHTTPLocationParam=null;
+
             }
+
+            if (!httpLocationMap.isEmpty()) {
+                axisBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationMap);
+            }
+
             if (bindingCache != null) {
                 bindingCache.put(name, axisBinding);
             }
@@ -1635,4 +1746,96 @@ public class Utils {
         }
         return null;
     }
+
+
+    // here we are trying to validate the param and return it as a trimmed String.
+    public static String getHTTPLoacationFromServicesXML(AxisOperation operation) {
+
+        Parameter locationParam = operation.getParameter(Constants.Configuration.REST_LOCATION_PARAM);
+        if (locationParam != null && locationParam.getValue() != null &&
+                locationParam.getValue() instanceof String) {
+            String location = ((String) locationParam.getValue()).trim();
+            if (location.equals("")) {
+                return null;
+            } else{
+                if(location.startsWith("/")){
+                   location= location.substring(1);
+                }
+
+                return location;
+
+            }
+        } else
+            return null;
+
+    }
+
+    public static String getHTTPMethodFromServicesXML(AxisOperation operation) {
+        Parameter methodParam = operation.getParameter(Constants.Configuration.REST_METHOD_PARAM);
+        if (methodParam != null && methodParam.getValue() != null &&
+                methodParam.getValue() instanceof String) {
+            String method = ((String) methodParam.getValue()).trim();
+            if (method.equals("")) {
+                return null;
+            } else if (method.equals(Constants.Configuration.HTTP_METHOD_GET) || method.equals(Constants.Configuration.HTTP_METHOD_POST) ||
+                    method.equals(Constants.Configuration.HTTP_METHOD_PUT) || method.equals(Constants.Configuration.HTTP_METHOD_DELETE)) {
+                return method;
+            } else if (method.equals(Constants.Configuration.HTTP_METHOD_HEAD)) {
+                log.warn("Axis2 doesn't support httpMethod HEAD ");
+                return null;
+            } else {
+                log.warn("cannot identify the HTTP method");
+                return null;
+            }
+        } else
+            return null;
+    }
+
+    public static String getHTTPInputSerializationFromServicesXML(AxisOperation operation) {
+        Parameter inputSerializationParam = operation.getParameter(Constants.Configuration.REST_INPUTSERIALIZE_PARAM);
+        if (inputSerializationParam != null && inputSerializationParam.getValue() != null
+                && inputSerializationParam.getValue() instanceof String) {
+            String inputSerialization = ((String) inputSerializationParam.getValue()).trim();
+
+            if (inputSerialization.equals("")) {
+                return null;
+            } else {
+                String[] array = inputSerialization.split(",");
+                if (array.length > 1) {
+                    log.warn("WSDL2 supports only one input-serialization");
+                    return array[0];
+                } else {
+                    return array[0];
+                }
+            }
+
+        } else
+            return null;
+
+
+    }
+
+    public static String getHTTPOutputSerializationFromservicesXML(AxisOperation operation) {
+        Parameter outputSerializationParam = operation.getParameter(Constants.Configuration.REST_OUTPUTSERIALIZE_PARAM);
+        if (outputSerializationParam != null && outputSerializationParam.getValue() != null
+                && outputSerializationParam.getValue() instanceof String) {
+            String outputSerialization = ((String) outputSerializationParam.getValue()).trim();
+
+            if (outputSerialization.equals("")) {
+                return null;
+            } else {
+                String[] array = outputSerialization.split(",");
+                if (array.length > 1) {
+                    log.warn("WSDL2 supports only one input-serialization");
+                    return array[0];
+                } else {
+                    return array[0];
+                }
+            }
+        } else
+            return null;
+
+    }
+
+
 }

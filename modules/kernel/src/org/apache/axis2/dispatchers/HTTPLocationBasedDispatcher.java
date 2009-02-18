@@ -60,6 +60,9 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
             if (httpLocation != null) {
                 httpLocation = httpMethod + httpLocation;
+                if(! httpLocation.endsWith("/")){
+                     httpLocation=httpLocation.concat("/");
+                }
                 AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
                         .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
                 // Here we check whether the request was dispatched to the correct endpoint. If it

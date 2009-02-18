@@ -64,6 +64,7 @@
                         <Import-Package>
                             !javax.xml.namespace,
                             !org.apache.axis2.*,
+                            javax.ws.rs; version=1.0,
                             javax.xml.namespace; version=0.0.0,
                             javax.servlet; version=2.4.0,
                             javax.servlet.http; version=2.4.0,

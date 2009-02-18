@@ -20,6 +20,8 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.JAXRS.JAXRSUtils;
+import org.apache.axis2.JAXRS.JAXRSModel;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
@@ -56,6 +58,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     public static final String NAME_SPACE_PREFIX = "ax2";// axis2 name space
 
     private static int prefixCount = 1;
+
+    private JAXRSModel classModel;
 
     protected Map targetNamespacePrefixMap = new Hashtable();
 
@@ -249,6 +253,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             }
             service.setName(Utils.getAnnotatedServiceName(serviceClass, webervice));
         }
+        classModel= JAXRSUtils.getClassModel(serviceClass);
         methods = processMethods(serviceClass.getDeclaredMethods());
         return schemaMap.values();
     }
@@ -301,6 +306,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 //                    }
 //                }
                 addToService = true;
+            }
+// by now axis operation should be assigned but we better recheck & add the paramether
+            if(axisOperation != null){
+             axisOperation.addParameter("JAXRSAnnotaion", JAXRSUtils.getMethodModel(this.classModel,jMethod));
             }
             // Maintain a list of methods we actually work with
             list.add(jMethod);
@@ -1235,7 +1244,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         String parameterName = null;
         if (parameterAnnotation.length > 0) {
             Annotation[] tempAnnon = parameterAnnotation[j];
-            if (tempAnnon.length > 0) {
+            if ((tempAnnon.length > 0) && (tempAnnon[0] instanceof WebParam)) {
                 WebParam para = (WebParam) tempAnnon[0];
                 if (para != null) {
                     parameterName = para.name();

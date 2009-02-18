@@ -306,7 +306,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String TRANSACTION_MANAGER = "TransactionManager";
     public static final String SUSPENDED_TRANSACTION = "SuspendedTransaction";
 
-    
+   public static final String JSR311_ANNOTATIONS="JAXRSAnnotaion";
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";
@@ -335,6 +336,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD_PUT = "PUT";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
+        public static final String HTTP_METHOD_HEAD="HEAD";
 
         public static final String CONTENT_TYPE = "ContentType";
 
@@ -428,7 +430,14 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         public static final String GENERATE_ABSOLUTE_LOCATION_URIS = "generateAbsoluteLocationURIs";
 
-
-
+        /*
+        * These are the parameters introduced to Services XML in order flexible usage of REST support
+        * available in AXIS2
+        */
+        public static final String REST_LOCATION_PARAM="RESTLocation";
+        public static final String REST_METHOD_PARAM="RESTMethod";
+        public static final String REST_INPUTSERIALIZE_PARAM="RESTInputSerialization";
+        public static final String REST_OUTPUTSERIALIZE_PARAM="RESTOutputSerialization";
+        
     }
 }
