@@ -51,7 +51,7 @@ public class URIResolverImpl implements URIResolver {
     
     private static final String BUNDLE_RESOURCE_PROTOCOL = "bundleresource";
 
-    private ClassLoader classLoader;
+    protected ClassLoader classLoader;
     
     private static final Log log = LogFactory.getLog(URIResolverImpl.class);
 
@@ -203,7 +203,7 @@ public class URIResolverImpl implements URIResolver {
      * @param location
      * @return
      */
-    private boolean isAbsolute(String location) {
+    protected boolean isAbsolute(String location) {
         boolean absolute = false;
         if (location.indexOf(":/") != -1) {
             absolute = true;
@@ -222,7 +222,7 @@ public class URIResolverImpl implements URIResolver {
      * @param uri
      * @return
      */
-    private InputStream getInputStreamForURI(String uri) {
+    protected InputStream getInputStreamForURI(String uri) {
         URL streamURL = null;
         InputStream is = null;
         URI pathURI = null;
@@ -232,6 +232,9 @@ public class URIResolverImpl implements URIResolver {
             is = openStream_doPriv(streamURL);
         } catch (Throwable t) {
             //Exception handling not needed
+            if (log.isDebugEnabled()) {
+                log.debug("Exception occured in getInputStreamForURI, ignoring exception continuing processing: "+t.getMessage());
+            }
         }
 
         if (is == null) {
@@ -241,6 +244,9 @@ public class URIResolverImpl implements URIResolver {
                 is = openStream_doPriv(streamURL);
             } catch (Throwable t) {
                 //Exception handling not needed
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occured in getInputStreamForURI, ignoring exception continuing processing: "+t.getMessage());
+                }
             }
         }
 
@@ -257,6 +263,9 @@ public class URIResolverImpl implements URIResolver {
                 is = openStream_doPriv(streamURL);
             } catch (Throwable t) {
                 //Exception handling not needed
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occured in getInputStreamForURI, ignoring exception continuing processing: "+t.getMessage());
+                }
             }
         }
         return is;

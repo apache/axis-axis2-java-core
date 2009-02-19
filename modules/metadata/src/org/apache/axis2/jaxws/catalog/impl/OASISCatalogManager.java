@@ -74,8 +74,15 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
      * @param classLoader
      */
     public OASISCatalogManager(ClassLoader classLoader) {
-        this();
+    	super();
+    	this.acceptDefaults();
+    	if (DEBUG_LEVEL != null) {
+    		this.debug.setDebug(Integer.parseInt(DEBUG_LEVEL)); 
+    	}
+        // need to set classloader before calling determineFileName
         this.classloader = classLoader;
+        this.setDeterminedCatalogFiles();
+
     }
     
     /**
@@ -99,12 +106,7 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     	if (DEBUG_LEVEL != null) {
     		this.debug.setDebug(Integer.parseInt(DEBUG_LEVEL)); 
     	}
-    	
-    	String filepath = determineFileName();
-    
-        if (filepath != null) {
-            this.setCatalogFiles(filepath);
-        }
+    	setDeterminedCatalogFiles();
     }
 
     
@@ -116,6 +118,14 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
     	super(propertyFileName);
         if (DEBUG_LEVEL != null) {
             this.debug.setDebug(Integer.parseInt(DEBUG_LEVEL));            
+        }
+    }
+    
+    private void setDeterminedCatalogFiles() {    	
+    	String filepath = determineFileName();
+    
+        if (filepath != null) {
+            this.setCatalogFiles(filepath);
         }
     }
     

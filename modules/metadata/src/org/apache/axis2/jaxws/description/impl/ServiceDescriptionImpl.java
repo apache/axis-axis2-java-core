@@ -296,7 +296,12 @@ class ServiceDescriptionImpl
         this.isServerSide = true;
         this.serviceQName = serviceQName;
         this.catalogManager = this.composite.getCatalogManager();
+        // if the composit doesn't have a catalogManager, get one only if we have a catalog file
+        if (catalogManager == null) {
+            catalogManager = createCatalogManager(composite.getClassLoader());
+        }
         
+
         
         // if the ServiceDescriptionImpl was constructed with a specific service QName
         // we should use that to retrieve the potential list of PortComposite objects
@@ -2647,5 +2652,42 @@ class ServiceDescriptionImpl
                 }
             }
         }
+    }
+    /**
+     * create a catalog manager only if a catalog file is found for this classloader.
+     * Also parses the catalog to get it ready for resolution.
+     * @param cl - Classloader of the composite passes to this ServiceDescription
+     * @return a catalogManager with parsed catalog, or null if no catalog found
+     */
+    private JAXWSCatalogManager createCatalogManager(ClassLoader cl) {
+        JAXWSCatalogManager returnCatalogManager = null;
+
+        try {
+            URL catalogURL = cl.getResource(
+                    OASISCatalogManager.DEFAULT_CATALOG_WEB);
+            if (catalogURL == null) {
+                catalogURL = cl.getResource(
+                        OASISCatalogManager.DEFAULT_CATALOG_EJB);
+                if (catalogURL != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found JAX-WS catalog in EJB file");
+                    }
+                    returnCatalogManager = new OASISCatalogManager(cl);
+                    returnCatalogManager.getCatalog().parseCatalog(catalogURL);
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found JAX-WS catalog in WAR file");
+                }
+                returnCatalogManager = new OASISCatalogManager(cl);
+                returnCatalogManager.getCatalog().parseCatalog(catalogURL);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceDescriptionImpl caught exception from parseCatalog ",e);
+            }
+            returnCatalogManager = null;
+        }
+        return (returnCatalogManager);
     }
 }
