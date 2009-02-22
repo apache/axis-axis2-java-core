@@ -20,24 +20,17 @@
 package org.apache.axis2.jibx;
 
 import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IMarshallingContext;
-import org.jibx.runtime.IUnmarshallingContext;
-import org.jibx.runtime.JiBXException;
-import org.jibx.runtime.impl.MarshallingContext;
-import org.jibx.runtime.impl.UnmarshallingContext;
+import org.jibx.runtime.impl.BindingFactoryBase;
 
-public class NullBindingFactory implements IBindingFactory {
+/**
+ * Dummy binding factory for when the generated Axis2 linkage code uses only simple value
+ * conversions (and hence doesn't need a real JiBX binding).
+ */
+public class NullBindingFactory extends BindingFactoryBase implements IBindingFactory {
 
-    private static final String[] EMPTY_STRINGS = new String[0];
-
-    public IMarshallingContext createMarshallingContext() throws JiBXException {
-        return new MarshallingContext(EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS, this);
-    }
-
-    public IUnmarshallingContext createUnmarshallingContext()
-            throws JiBXException {
-        return new UnmarshallingContext(0, EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS,
-                                        EMPTY_STRINGS, this);
+    public NullBindingFactory() {
+        super("", 0, 0, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null);
     }
 
     public String getCompilerDistribution() {
@@ -48,26 +41,6 @@ public class NullBindingFactory implements IBindingFactory {
     public int getCompilerVersion() {
         // normally only used by BindingDirectory code, so okay to punt
         return 0;
-    }
-
-    public String[] getElementNames() {
-        return EMPTY_STRINGS;
-    }
-
-    public String[] getElementNamespaces() {
-        return EMPTY_STRINGS;
-    }
-
-    public String[] getMappedClasses() {
-        return EMPTY_STRINGS;
-    }
-
-    public String[] getNamespaces() {
-        return EMPTY_STRINGS;
-    }
-
-    public String[] getPrefixes() {
-        return EMPTY_STRINGS;
     }
 
     public int getTypeIndex(String type) {

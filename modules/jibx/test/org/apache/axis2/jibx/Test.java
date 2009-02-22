@@ -249,7 +249,7 @@ public class Test extends TestCase {
 //        codeGenProject.executeTarget(COMPILE_TARGET_NAME);
     }
 
-    public void testBuildAndRun() throws Exception {
+/*    public void testBuildAndRun() throws Exception {
         startServer();
 
         // start by generating and compiling the Axis2 interface code
@@ -276,7 +276,7 @@ public class Test extends TestCase {
         stopServer();
         assertEquals("Result object does not match request object",
                      customer, result);
-    }
+    }   */
 
     public void testCompileWrapped() throws Exception {
 

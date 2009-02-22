@@ -115,7 +115,6 @@
                                 <java classname="org.jibx.binding.Compile" fork="true">
                                     <classpath refid="maven.runtime.classpath"/>
                                     <classpath location="target/test-classes"/>
-                                    <arg value="-v"/>
                                     <arg value="test-resources/binding/customer-binding.xml"/>
                                     <arg value="test-resources/binding/library-binding.xml"/>
                                 </java>
