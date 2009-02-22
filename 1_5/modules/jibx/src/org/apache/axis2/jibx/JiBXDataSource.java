@@ -41,28 +41,26 @@ import java.io.Writer;
 
 /** Data source for OM element backed by JiBX data bound object. */
 public class JiBXDataSource implements OMDataSource {
-    /**
-     * Marshaller index (only needed if object does not have a top-level mapping definition in the
-     * binding, <code>-1</code> if not used).
-     */
-    private final int marshallerIndex;
+    
+    /** Mapping name, for when abstract mapping is used directly; <code>null</code> if not used). */
+    private final String marshallerName;
 
-    /** Element name (only used with {@link #marshallerIndex}). */
+    /** Element name (only used with {@link #marshallerName}). */
     private final String elementName;
     
-    /** Element namespace URI (only used with {@link #marshallerIndex}). */
+    /** Element namespace URI (only used with {@link #marshallerName}). */
     private final String elementNamespace;
 
-    /** Element namespace prefix (only used with {@link #marshallerIndex}). */
+    /** Element namespace prefix (only used with {@link #marshallerName}). */
     private final String elementNamespacePrefix;
     
-    /** Element namespace index (only used with {@link #marshallerIndex}). */
+    /** Element namespace index (only used with {@link #marshallerName}). */
     private final int elementNamespaceIndex;
 
-    /** Indexes of namespaces to be opened (only used with {@link #marshallerIndex}). */
+    /** Indexes of namespaces to be opened (only used with {@link #marshallerName}). */
     private final int[] openNamespaceIndexes;
 
-    /** Prefixes of namespaces to be opened (only used with {@link #marshallerIndex}). */
+    /** Prefixes of namespaces to be opened (only used with {@link #marshallerName}). */
     private final String[] openNamespacePrefixes;
 
     /** Data object for output. */
@@ -78,7 +76,7 @@ public class JiBXDataSource implements OMDataSource {
      * @param factory
      */
     public JiBXDataSource(IMarshallable obj, IBindingFactory factory) {
-        marshallerIndex = -1;
+        marshallerName = null;
         dataObject = obj;
         bindingFactory = factory;
         elementName = elementNamespace = elementNamespacePrefix = null;
@@ -91,7 +89,7 @@ public class JiBXDataSource implements OMDataSource {
      * Constructor from object with mapping index and binding factory.
      *
      * @param obj
-     * @param index
+     * @param mapping
      * @param name
      * @param uri
      * @param prefix
@@ -99,13 +97,13 @@ public class JiBXDataSource implements OMDataSource {
      * @param nsprefixes
      * @param factory
      */
-    public JiBXDataSource(Object obj, int index, String name, String uri, String prefix,
+    public JiBXDataSource(Object obj, String mapping, String name, String uri, String prefix,
                           int[] nsindexes, String[] nsprefixes, IBindingFactory factory) {
-        if (index < 0) {
+        if (mapping == null) {
             throw new
-                    IllegalArgumentException("index value must be non-negative");
+                    IllegalArgumentException("mapping name must be supplied");
         }
-        marshallerIndex = index;
+        marshallerName = mapping;
         dataObject = obj;
         bindingFactory = factory;
         boolean found = false;
@@ -164,7 +162,7 @@ public class JiBXDataSource implements OMDataSource {
     private void marshal(boolean full, IMarshallingContext ctx) throws JiBXException {
         try {
             
-            if (marshallerIndex < 0) {
+            if (marshallerName == null) {
                 if (dataObject instanceof IMarshallable) {
                     ((IMarshallable)dataObject).marshal(ctx);
                 } else {
@@ -192,9 +190,7 @@ public class JiBXDataSource implements OMDataSource {
                 }
                 
                 // marshal object representation (may include attributes) into element
-                IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
-                                                     bindingFactory
-                                                             .getMappedClasses()[marshallerIndex]);
+                IMarshaller mrsh = ctx.getMarshaller(marshallerName);
                 mrsh.marshal(dataObject, ctx);
                 wrtr.endTag(nsidx, name);
             }
@@ -246,7 +242,7 @@ public class JiBXDataSource implements OMDataSource {
             // check if namespaces already declared for abstract mapping
             boolean full = true;
             String[] nss = bindingFactory.getNamespaces();
-            if (marshallerIndex >= 0) {
+            if (marshallerName != null) {
                 String prefix = xmlWriter.getPrefix(elementNamespace);
                 if (elementNamespacePrefix.equals(prefix)) {
                     full = false;
