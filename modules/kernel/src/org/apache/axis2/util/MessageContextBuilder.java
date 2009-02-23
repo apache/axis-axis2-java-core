@@ -356,6 +356,15 @@ public class MessageContextBuilder {
         faultContext.setProperty(HTTPConstants.HTTP_HEADERS,
                                  processingContext.getProperty(HTTPConstants.HTTP_HEADERS));
 
+        //setting the out bound binding message
+        AxisBindingMessage inboundAxisBindingMessage
+                = (AxisBindingMessage)processingContext.getProperty(Constants.AXIS_BINDING_MESSAGE);
+        if (inboundAxisBindingMessage != null){
+                AxisBindingOperation axisBindingOperation = inboundAxisBindingMessage.getAxisBindingOperation();
+                faultContext.setProperty(Constants.AXIS_BINDING_MESSAGE,
+                        axisBindingOperation.getChild(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        }
+
         return faultContext;
     }
 
