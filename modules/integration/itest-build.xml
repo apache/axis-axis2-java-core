@@ -309,7 +309,8 @@
 		<mkdir dir="target/perf/build/repo/modules"/>
 		<copy file="../addressing/target/addressing-${addressing_version}.mar"
     	                  tofile="target/perf/build/repo/modules/addressing-${addressing_version}.mar"/>
-	</target>
+        <antcall target="build-jaxrs-services"/>
+    </target>
 	<target name="build-soap12-services">
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestModuleB"/>
@@ -320,4 +321,17 @@
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true"
 		                         dir="test-resources/SOAP12Testing/SOAP12TestServiceC"/>
 	</target>
+
+     <target name="build-jaxrs-services">
+        <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                 dir="test-resources/jaxrs/archiveTestModule"/>
+        <ant antfile="build.xml" inheritall="true" inheritrefs="true"
+                                 dir="test-resources/jaxrs/pojoTestModule"/>
+        <mkdir dir="target/test-resources/jaxrs-repository/conf/"/>
+        <copy file="test-resources/jaxrs/pojo-enabled-axis2.xml"
+    	                  tofile="target/test-resources/jaxrs-repository/conf/axis2.xml"/>
+        <mkdir dir="target/test-resources/jaxrs-repository/modules"/>
+		<copy file="../addressing/target/addressing-SNAPSHOT.mar"
+    	                  tofile="target/test-resources/jaxrs-repository/modules/addressing-SNAPSHOT.mar"/>
+    </target>
 </project>

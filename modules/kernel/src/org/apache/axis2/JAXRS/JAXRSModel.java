@@ -62,6 +62,11 @@ public class JAXRSModel {
         return ((this.Path != null) && (!this.Path.equals(""))) ? this.Path : null;
     }
 
+
+    /**
+      * only returns the one mime type  as  wsdl 2.0 can publish only one mime type for an operation
+      * @return
+      */
     public String getConsumes() {
         if((this.Consumes != null) && (!this.Consumes.equals(""))){
                    String[] array=this.Consumes.split(",");
@@ -77,6 +82,10 @@ public class JAXRSModel {
 
     }
 
+    /**
+      * only returns the one mime type  as  wsdl 2.0 can publish only one mime type for an operation
+      * @return
+      */
     public String getProduces() {
        if((this.Produces != null) && (!this.Produces.equals(""))){
            String[] array=this.Produces.split(",");

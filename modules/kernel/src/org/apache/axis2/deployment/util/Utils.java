@@ -1748,7 +1748,11 @@ public class Utils {
     }
 
 
-    // here we are trying to validate the param and return it as a trimmed String.
+    /**
+     * extract the http location from services xml related to given operation
+     * @param operation
+     * @return
+     */
     public static String getHTTPLoacationFromServicesXML(AxisOperation operation) {
 
         Parameter locationParam = operation.getParameter(Constants.Configuration.REST_LOCATION_PARAM);
@@ -1770,6 +1774,11 @@ public class Utils {
 
     }
 
+    /**
+     * extract the http method from services xml related to given operation
+     * @param operation
+     * @return
+     */
     public static String getHTTPMethodFromServicesXML(AxisOperation operation) {
         Parameter methodParam = operation.getParameter(Constants.Configuration.REST_METHOD_PARAM);
         if (methodParam != null && methodParam.getValue() != null &&
@@ -1791,6 +1800,11 @@ public class Utils {
             return null;
     }
 
+    /**
+     * get http input mime type from the services xml
+     * @param operation
+     * @return
+     */
     public static String getHTTPInputSerializationFromServicesXML(AxisOperation operation) {
         Parameter inputSerializationParam = operation.getParameter(Constants.Configuration.REST_INPUTSERIALIZE_PARAM);
         if (inputSerializationParam != null && inputSerializationParam.getValue() != null
@@ -1815,6 +1829,11 @@ public class Utils {
 
     }
 
+    /**
+     * get http output mime type from the services xml
+     * @param operation
+     * @return
+     */
     public static String getHTTPOutputSerializationFromservicesXML(AxisOperation operation) {
         Parameter outputSerializationParam = operation.getParameter(Constants.Configuration.REST_OUTPUTSERIALIZE_PARAM);
         if (outputSerializationParam != null && outputSerializationParam.getValue() != null

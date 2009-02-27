@@ -38,6 +38,13 @@ import java.lang.annotation.Annotation;
 public class JAXRSUtils {
     private static Log log = LogFactory.getLog(JAXRSModel.class);
 
+
+    
+    /**
+      * returns a jaxrs class model reading class level annotation given the service class
+      * @param serviceClass
+      * @return
+      */
     public static JAXRSModel getClassModel(Class serviceClass) {
         JAXRSModel model = new JAXRSModel();
         Annotation[] annotation = serviceClass.getAnnotations();
@@ -60,6 +67,14 @@ public class JAXRSUtils {
         return model;
     }
 
+
+    /**
+      * given a jaxrs class model & java method , construct a jaxrs model associated with
+      * method , reading the method level annotations.
+      * @param classModel
+      * @param serviceMethod
+      * @return
+      */
     public static JAXRSModel getMethodModel(JAXRSModel classModel, Method serviceMethod) {
         JAXRSModel model=new JAXRSModel();
         addProducesToMethodModel(classModel,model);
@@ -83,6 +98,13 @@ public class JAXRSUtils {
         return model;
     }
 
+
+    /**
+      * add value of the produces annotation to the given jaxrs-class model.method breaks the
+      * input String & convert it to a String[] before adding.
+      * @param produces
+      * @param classModel
+      */
     private static void addProducesToClassModel(Produces produces, JAXRSModel classModel) {
 
 
@@ -101,6 +123,13 @@ public class JAXRSUtils {
 
     }
 
+
+    /**
+      * add value of the consumes annotaiton to the given jaxrs-class model. breaks the input String
+      * & convert it to a string[] before adding.
+      * @param consumes
+      * @param classModel
+      */
     private static void addConsumesToClassModel(Consumes consumes, JAXRSModel classModel) {
 
 
@@ -119,6 +148,11 @@ public class JAXRSUtils {
     }
 
 
+    /**
+      * adding value of the path annotation to the class model
+      * @param path
+      * @param classModel
+      */
     private static void addPathToClassModel(Path path, JAXRSModel classModel) {
 
 
@@ -156,6 +190,9 @@ public class JAXRSUtils {
            methodModel.setProduces(value);
        }
    }
+
+
+
     private static void addConsumesToMethodModel(Consumes consumes,JAXRSModel methodModel){
         String value = null;
         for (String s : consumes.value()) {
@@ -164,17 +201,32 @@ public class JAXRSUtils {
             } else {
                 value = s;
             }
-            methodModel.setProduces(value);
+            methodModel.setConsumes(value);
         }
 
     }
 
+
+
+    /**
+      * copies class level Consumes value to method level model
+      * @param classModel
+      * @param methodModel
+      */
    private static void addConsumesToMethodModel(JAXRSModel classModel,JAXRSModel methodModel){
          String value=classModel.getConsumes();
        if(value!=null){
            methodModel.setConsumes(value);
        }
    }
+
+
+    /**
+     * add value of the HTTPMethod to the jaxrs-method model. axis2 only supports POST,GET,PUT,DELETE.
+      * it doesnt support HEAD. if HEAD is given it resolves to the default method (POST)
+      * @param annotation
+      * @param methodModel
+      */
 
     private static void addHTTPMethodToMethodModel(Annotation annotation,JAXRSModel methodModel){
 
@@ -193,6 +245,12 @@ public class JAXRSUtils {
 
     }
 
+    /**
+      * add http location to jaxrs method model. if service level location is already available
+      * it concatanates two.
+      * @param path
+      * @param methodModel
+      */
   private static void addPathToMethodModel(Path path,JAXRSModel methodModel){
           String value = path.value();
             if(value!=null){
@@ -212,6 +270,12 @@ public class JAXRSUtils {
             }
   }
 
+
+    /**
+      * this copies the class service level path to method level
+      * @param classModel
+      * @param methodModel
+      */
   private static  void addPathToMethodModel(JAXRSModel classModel,JAXRSModel methodModel){
        String value=classModel.getPath();
       if(value!=null){

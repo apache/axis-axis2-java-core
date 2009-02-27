@@ -517,6 +517,8 @@
                                 <property name="addressing_version" value="${version}"/>
                                 <property name="groovy.all.version" value="${groovy.all.version}"/>
                                 <property name="maven.repo.local" value="${settings.localRepository}"/>
+                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
+
                                 <path id="maven.dependency.classpath">
                                     <path refid="maven.compile.classpath"/>
                                     <path refid="maven.runtime.classpath"/>
