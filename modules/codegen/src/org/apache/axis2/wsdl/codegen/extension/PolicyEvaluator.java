@@ -73,18 +73,21 @@ public class PolicyEvaluator implements CodeGenExtension {
             return;
         }
 
-
+        AxisConfiguration axisConfiguration;
         try {
 
             ConfigurationContext configurationCtx = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(repository, null);
-            AxisConfiguration axisConfiguration = configurationCtx
-                    .getAxisConfiguration();
+            axisConfiguration = configurationCtx.getAxisConfiguration();
+        } catch (Exception e) {
+            log.error("Cannot create repository : policy will not be supported", e);
+            return;
+        }
 
-            for (Iterator iterator = axisConfiguration.getModules().values()
-                    .iterator(); iterator.hasNext();) {
-
-                AxisModule axisModule = (AxisModule)iterator.next();
+        for (Iterator iterator = axisConfiguration.getModules().values()
+                .iterator(); iterator.hasNext();) {
+            AxisModule axisModule = (AxisModule)iterator.next();
+            try {
                 String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
                 if (namespaces == null) {
@@ -101,11 +104,11 @@ public class PolicyEvaluator implements CodeGenExtension {
                 for (int i = 0; i < namespaces.length; i++) {
                     namespace2ExtsMap.put(namespaces[i], ext);
                 }
+            } catch (Exception e) {
+                log.error("Error loading policy extension from module " + axisModule.getName(), e);
             }
-
-        } catch (Exception e) {
-            log.error("cannot create repository : policy will not be supported");
         }
+
     }
 
     public void engage(CodeGenConfiguration configuration) {
@@ -184,7 +187,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             PolicyExtension policyExtension = (PolicyExtension)ns2Exts.get(targetNamespace);
 
             if (policyExtension == null) {
-                log.warn("cannot find a PolicyExtension to process " + targetNamespace + "type assertions");
+                log.warn("Cannot find a PolicyExtension to process " + targetNamespace + " type assertions");
                 continue;
             }
 
