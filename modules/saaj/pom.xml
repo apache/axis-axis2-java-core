@@ -106,7 +106,7 @@
                 </includes>
             </testResource>
             <testResource>
-                <targetPath></targetPath>
+                <targetPath>../test-resources</targetPath>
                 <directory>test-resources</directory>
                 <includes>
                     <include>**/*.properties</include>
