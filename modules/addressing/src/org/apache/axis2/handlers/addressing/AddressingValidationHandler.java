@@ -50,15 +50,15 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         if (JavaUtils.isTrueExplicitly(flag)) {
             // Check if the wsa:MessageID is required or not.
             checkMessageIDHeader(msgContext);
+            
+            // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid.
+            if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_INVOCATION_PATTERN), true)) {
+                checkWSAMInvocationPattern(msgContext);
+            }
         }
         else {
             // Check that if wsaddressing=required that addressing headers were found inbound
             checkUsingAddressing(msgContext);
-        }
-        
-        // Check that if wsamInvocationPattern flag is in effect that the replyto and faultto are valid.
-        if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_INVOCATION_PATTERN), true)) {
-            checkWSAMInvocationPattern(msgContext);
         }
 
         return InvocationResponse.CONTINUE;
