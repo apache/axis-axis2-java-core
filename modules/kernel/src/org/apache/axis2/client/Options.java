@@ -1605,11 +1605,26 @@ public class Options implements Externalizable, SafeSerializable {
         }
     }
 
-
+    /**
+     * Get the value of the <code>callTransportCleanup</code> property.
+     * This property determines whether {@link ServiceClient#cleanupTransport()} is called
+     * automatically (<code>true</code>) or not (<code>false</code>).
+     * 
+     * @return the value of the <code>callTransportCleanup</code> property
+     * @see ServiceClient#cleanupTransport()
+     */
     public boolean isCallTransportCleanup() {
         return callTransportCleanup;
     }
 
+    /**
+     * Set the value of the <code>callTransportCleanup</code> property.
+     * This property determines whether {@link ServiceClient#cleanupTransport()} is called
+     * automatically (<code>true</code>) or not (<code>false</code>).
+     * 
+     * @param callTransportCleanup the new value
+     * @see ServiceClient#cleanupTransport()
+     */
     public void setCallTransportCleanup(boolean callTransportCleanup) {
         this.callTransportCleanup = callTransportCleanup;
     }

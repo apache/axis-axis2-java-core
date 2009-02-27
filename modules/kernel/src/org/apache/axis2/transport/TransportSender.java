@@ -33,10 +33,21 @@ import org.apache.axis2.engine.Handler;
 public interface TransportSender extends Handler {
 
     /**
-     * Clean up
+     * Release resources associated with a given message context.
+     * This method is called after processing the response of an invocation of
+     * a synchronous out-in operation to allow the transport to release any resources allocated
+     * during that invocation.
+     * <p>
+     * This method is mainly useful for connection oriented transports that return from
+     * {@link #invoke(MessageContext)} before the entire response is available. A transport of
+     * this type will construct an {@link java.io.InputStream} object and set it as the
+     * {@link MessageContext#TRANSPORT_IN} property on the
+     * {@link org.apache.axis2.context.OperationContext}). In order for this to work, the
+     * connection must remain open until the response has been processed. This method is then
+     * used to release the connection explicitly.
      *
      * @param msgContext
-     * @throws org.apache.axis2.AxisFault
+     * @throws AxisFault
      */
     public void cleanup(MessageContext msgContext) throws AxisFault;
 

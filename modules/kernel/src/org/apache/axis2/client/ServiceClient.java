@@ -510,11 +510,16 @@ public class ServiceClient {
      * Directly invoke an anonymous operation with an In-Out MEP. This method sends your supplied
      * XML and receives a response. For more control, you can instead create a client for the
      * operation and use that client to execute the exchange.
+     * <p>
+     * Unless the <code>callTransportCleanup</code> property on the {@link Options} object has been
+     * set to <code>true</code>, the caller must invoke {@link #cleanupTransport()} after
+     * processing the response.
      *
      * @param elem the data to send (becomes the content of SOAP body)
      * @return response
      * @throws AxisFault in case of error
      * @see #createClient(QName)
+     * @see #cleanupTransport()
      */
     public OMElement sendReceive(OMElement elem) throws AxisFault {
         return sendReceive(ANON_OUT_IN_OP, elem);
@@ -524,11 +529,16 @@ public class ServiceClient {
      * Directly invoke a named operationQName with an In-Out MEP. This method sends your supplied
      * XML and receives a response. For more control, you can instead create a client for the
      * operationQName and use that client to execute the exchange.
+     * <p>
+     * Unless the <code>callTransportCleanup</code> property on the {@link Options} object has been
+     * set to <code>true</code>, the caller must invoke {@link #cleanupTransport()} after
+     * processing the response.
      *
      * @param operationQName name of operationQName to be invoked (non-<code>null</code>)
      * @param xmlPayload     the data to send (becomes the content of SOAP body)
      * @return response OMElement
      * @throws AxisFault in case of error
+     * @see #cleanupTransport()
      */
     public OMElement sendReceive(QName operationQName, OMElement xmlPayload)
             throws AxisFault {
@@ -803,6 +813,27 @@ public class ServiceClient {
         }
     }
 
+    /**
+     * Release resources allocated by the transport during the last service invocation.
+     * This method will call
+     * {@link org.apache.axis2.transport.TransportSender#cleanup(MessageContext)} on the
+     * transport sender used during that invocation.
+     * <p>
+     * If the <code>callTransportCleanup</code> property on the {@link Options} object is
+     * set to <code>false</code> (which is the default), then this method must be called
+     * after each invocation of an operation with an in-out MEP, but not before the response
+     * from that operation has been completely processed (or {@link OMElement#build()}
+     * has been called on the response element).
+     * <p>
+     * If the <code>callTransportCleanup</code> property is set to <code>true</code>,
+     * then this method is called automatically. Note that in this case, {@link OMElement#build()}
+     * will be called on the response element before is returned. This effectively disables
+     * deferred parsing of the response and prevents the code from starting to process the
+     * response before it has been completely received. Therefore this approach is not recommended
+     * whenever performance is important.
+     * 
+     * @throws AxisFault
+     */
     public void cleanupTransport() throws AxisFault {
         if (getLastOperationContext() != null) {
             MessageContext outMessageContext =
