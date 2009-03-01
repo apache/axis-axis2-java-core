@@ -73,7 +73,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
 
-        ConfigurationContext configCtx = 
+        ConfigurationContext configCtx =
                 ConfigurationContextFactory.createDefaultConfigurationContext();
         MessageContext msgCtxt = configCtx.createMessageContext();
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
@@ -238,7 +238,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                                       testUtil.getOMBuilder("soap11roleTest.xml")
                                               .getDocumentElement()));
     }
-    
+
     public void testSOAP12RoleSupport() throws Exception {
         ConfigurationContext cfgCtx =
                 ConfigurationContextFactory.createDefaultConfigurationContext();
@@ -283,7 +283,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                                       testUtil.getOMBuilder("soap12roleTest.xml")
                                               .getDocumentElement()));
     }
-    
+
     public void testDuplicateHeaders() throws Exception {
 
         // this will check whether we can add to epr, if there is one already.
