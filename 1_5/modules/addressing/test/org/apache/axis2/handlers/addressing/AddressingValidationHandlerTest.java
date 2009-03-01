@@ -49,7 +49,7 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
         String testfile = directory + "/" + versionDirectory + "/" + testName;
 
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testfile);
         mc.setEnvelope(omBuilder.getSOAPEnvelope());
 
