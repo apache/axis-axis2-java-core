@@ -48,25 +48,26 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         secondRelationshipType = "axis2:some.custom.relationship";
     }
 
-    public void testExtractAddressingInformationFromHeaders() throws Exception{
-    	Options options = extractAddressingInformationFromHeaders(null);
+    public void testExtractAddressingInformationFromHeaders() throws Exception {
+        Options options = extractAddressingInformationFromHeaders(null);
 
         assertNotNull(options);
         assertNotNull(options.getTo());
     }
-    
-    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception{
-    	testFileName = "soapmessage.customrole.xml";
-    	extractAddressingInformationFromHeaders(new RolePlayer(){
-			public List getRoles() {
-				ArrayList al = new ArrayList();
-				al.add("http://my/custom/role");
-				return al;
-			}
-			public boolean isUltimateDestination() {
-				return false;
-			}
-    	});
+
+    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception {
+        testFileName = "soapmessage.customrole.xml";
+        extractAddressingInformationFromHeaders(new RolePlayer() {
+            public List getRoles() {
+                ArrayList al = new ArrayList();
+                al.add("http://my/custom/role");
+                return al;
+            }
+
+            public boolean isUltimateDestination() {
+                return false;
+            }
+        });
     }
 
     public void testMessageWithOmittedAction() {

@@ -75,19 +75,20 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
-    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception{
-    	testFileName = "soapmessage.customrole.xml";
-    	Options options = extractAddressingInformationFromHeaders(new RolePlayer(){
-			public List getRoles() {
-				ArrayList al = new ArrayList();
-				al.add("http://my/custom/role");
-				return al;
-			}
-			public boolean isUltimateDestination() {
-				return false;
-			}
-    	});
+
+    public void testExtractAddressingInformationFromHeadersCustomRole() throws Exception {
+        testFileName = "soapmessage.customrole.xml";
+        Options options = extractAddressingInformationFromHeaders(new RolePlayer() {
+            public List getRoles() {
+                ArrayList al = new ArrayList();
+                al.add("http://my/custom/role");
+                return al;
+            }
+
+            public boolean isUltimateDestination() {
+                return false;
+            }
+        });
 
         assertNotNull(options);
         assertNotNull(options.getTo());
@@ -96,19 +97,20 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         assertEPRHasCorrectMetadata(options.getReplyTo());
 
     }
-    
-    public void testExtractAddressingInformationFromHeadersCustomRoleSOAP12() throws Exception{
-    	testFileName = "soapmessage.customrole.soap12.xml";
-    	Options options = extractAddressingInformationFromHeaders(new RolePlayer(){
-			public List getRoles() {
-				ArrayList al = new ArrayList();
-				al.add("http://my/custom/role");
-				return al;
-			}
-			public boolean isUltimateDestination() {
-				return false;
-			}
-    	});
+
+    public void testExtractAddressingInformationFromHeadersCustomRoleSOAP12() throws Exception {
+        testFileName = "soapmessage.customrole.soap12.xml";
+        Options options = extractAddressingInformationFromHeaders(new RolePlayer() {
+            public List getRoles() {
+                ArrayList al = new ArrayList();
+                al.add("http://my/custom/role");
+                return al;
+            }
+
+            public boolean isUltimateDestination() {
+                return false;
+            }
+        });
 
         assertNotNull(options);
         assertNotNull(options.getTo());
@@ -232,7 +234,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
 
-    public void testDifferentSoapActionProcessing() throws Exception{
+    public void testDifferentSoapActionProcessing() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
@@ -247,7 +249,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
 
-    public void testSameSoapAction() throws Exception{
+    public void testSameSoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
@@ -263,7 +265,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
 
-    public void testEmptySoapAction() throws Exception{
+    public void testEmptySoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
@@ -278,7 +280,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
 
-    public void testNullSoapAction() throws Exception{
+    public void testNullSoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
         mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
