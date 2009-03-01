@@ -69,52 +69,57 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                                                                 MessageContext mc)
             throws Exception {
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testMessagePath);
-        SOAPEnvelope envelope = (SOAPEnvelope) omBuilder.getDocumentElement();
+        SOAPEnvelope envelope = (SOAPEnvelope)omBuilder.getDocumentElement();
         mc.setEnvelope(envelope);
         inHandler.invoke(mc);
     }
 
-    protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer) throws Exception{
-            String testfile = "valid-messages/" + versionDirectory + "/" + testFileName;
+    protected Options extractAddressingInformationFromHeaders(RolePlayer rolePlayer)
+            throws Exception {
+        String testfile = "valid-messages/" + versionDirectory + "/" + testFileName;
 
-            MessageContext mc = new MessageContext();
-            mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
-            if(rolePlayer != null){
-            	mc.getConfigurationContext().getAxisConfiguration().addParameter(Constants.SOAP_ROLE_PLAYER_PARAMETER, rolePlayer);
-            }
-            basicExtractAddressingInformationFromHeaders(testfile, mc);
+        MessageContext mc = new MessageContext();
+        final ConfigurationContext context =
+                ConfigurationContextFactory.createEmptyConfigurationContext();
+        mc.setConfigurationContext(context);
+        if (rolePlayer != null) {
+            mc.getConfigurationContext().getAxisConfiguration()
+                    .addParameter(Constants.SOAP_ROLE_PLAYER_PARAMETER, rolePlayer);
+        }
+        basicExtractAddressingInformationFromHeaders(testfile, mc);
 
-            Options options = mc.getOptions();
+        Options options = mc.getOptions();
 
-            if (options == null) {
-                fail("Addressing Information Headers have not been retrieved properly");
-            }
-            assertEquals("action header is not correct", action, options.getAction());
-            assertActionHasExtensibilityAttribute(mc);
-            assertEquals("message id header is not correct",
-                         options.getMessageId().trim(),
-                         messageID.trim());
-            assertMessageIDHasExtensibilityAttribute(mc);
+        if (options == null) {
+            fail("Addressing Information Headers have not been retrieved properly");
+        }
+        assertEquals("action header is not correct", action, options.getAction());
+        assertActionHasExtensibilityAttribute(mc);
+        assertEquals("message id header is not correct",
+                     options.getMessageId().trim(),
+                     messageID.trim());
+        assertMessageIDHasExtensibilityAttribute(mc);
 
-            assertFullFromEPR(options.getFrom());
-            assertFullFaultEPR(options.getFaultTo());
-            assertFullReplyToEPR(options.getReplyTo());
+        assertFullFromEPR(options.getFrom());
+        assertFullFaultEPR(options.getFaultTo());
+        assertFullReplyToEPR(options.getReplyTo());
 
-            assertRelationships(options);
+        assertRelationships(options);
 
-            return options;
+        return options;
     }
 
     private void testExtractAddressingInformationFromHeadersInvalidCardinality(String headerName) {
         String testfile = "invalid-cardinality-messages/" + versionDirectory +
-                "/invalidCardinality" + headerName + "Message.xml";
+                          "/invalidCardinality" + headerName + "Message.xml";
         try {
             MessageContext mc = new MessageContext();
-            mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+            mc.setConfigurationContext(
+                    ConfigurationContextFactory.createEmptyConfigurationContext());
             try {
                 basicExtractAddressingInformationFromHeaders(testfile, mc);
                 fail("An AxisFault should have been thrown due to 2 wsa:" + headerName +
-                        " headers.");
+                     " headers.");
             } catch (AxisFault af) {
                 if (headerName.equals(AddressingConstants.WSA_REPLY_TO)) {
                     assertNull("No ReplyTo should be set on the MessageContext", mc.getReplyTo());
@@ -166,7 +171,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 "omitted-header-messages/" + versionDirectory + "/" + testName + "Message.xml";
 
         MessageContext mc = new MessageContext();
-        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
         mc.setConfigurationContext(cc);
         basicExtractAddressingInformationFromHeaders(testfile, mc);
 

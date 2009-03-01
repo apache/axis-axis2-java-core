@@ -85,7 +85,8 @@ public class AddressingInFaultHandlerTest extends TestCase {
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testfile);
         SOAPEnvelope envelope = ((SOAPEnvelope)omBuilder.getDocumentElement());
         MessageContext msgContext = new MessageContext();
-        msgContext.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgContext.setConfigurationContext(
+                ConfigurationContextFactory.createEmptyConfigurationContext());
         msgContext.setEnvelope(envelope);
         AddressingInHandler afih = new AddressingInHandler();
         afih.invoke(msgContext);
