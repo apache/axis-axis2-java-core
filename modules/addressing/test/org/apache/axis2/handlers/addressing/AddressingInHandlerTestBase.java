@@ -79,7 +79,9 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         String testfile = "valid-messages/" + versionDirectory + "/" + testFileName;
 
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        final ConfigurationContext context =
+                ConfigurationContextFactory.createEmptyConfigurationContext();
+        mc.setConfigurationContext(context);
         if (rolePlayer != null) {
             mc.getConfigurationContext().getAxisConfiguration()
                     .addParameter(Constants.SOAP_ROLE_PLAYER_PARAMETER, rolePlayer);
@@ -113,7 +115,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         try {
             MessageContext mc = new MessageContext();
             mc.setConfigurationContext(
-                    ConfigurationContextFactory.createDefaultConfigurationContext());
+                    ConfigurationContextFactory.createEmptyConfigurationContext());
             try {
                 basicExtractAddressingInformationFromHeaders(testfile, mc);
                 fail("An AxisFault should have been thrown due to 2 wsa:" + headerName +
@@ -169,7 +171,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                 "omitted-header-messages/" + versionDirectory + "/" + testName + "Message.xml";
 
         MessageContext mc = new MessageContext();
-        ConfigurationContext cc = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
         mc.setConfigurationContext(cc);
         basicExtractAddressingInformationFromHeaders(testfile, mc);
 

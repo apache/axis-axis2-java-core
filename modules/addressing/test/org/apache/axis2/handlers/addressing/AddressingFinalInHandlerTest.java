@@ -237,7 +237,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testDifferentSoapActionProcessing() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/differentAction");
@@ -252,7 +252,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testSameSoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/action");
@@ -268,7 +268,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testEmptySoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         try {
             mc.setSoapAction("");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -283,7 +283,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testNullSoapAction() throws Exception {
         String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        mc.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        mc.setConfigurationContext(ConfigurationContextFactory.createEmptyConfigurationContext());
         try {
             mc.setSoapAction(null);
             basicExtractAddressingInformationFromHeaders(testfile, mc);
