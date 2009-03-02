@@ -104,7 +104,7 @@
         <fi.version>1.1.8</fi.version>
         <geronimo.spec.activation.version>1.0.1</geronimo.spec.activation.version>
         <geronimo.spec.annotation.version>1.1</geronimo.spec.annotation.version>
-        <geronimo.spec.javamail.version>1.2</geronimo.spec.javamail.version>
+        <geronimo.spec.javamail.version>1.6</geronimo.spec.javamail.version>
         <geronimo.spec.stax.version>1.0.1</geronimo.spec.stax.version>
         <geronimo.spec.metadata.version>1.1.2</geronimo.spec.metadata.version>
         <geronimo.spec.saaj.version>1.0.1</geronimo.spec.saaj.version>
