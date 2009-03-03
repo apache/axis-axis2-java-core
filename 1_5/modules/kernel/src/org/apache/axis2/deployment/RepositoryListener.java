@@ -119,17 +119,31 @@ public class RepositoryListener implements DeploymentConstants {
             while (moduleURLs.hasMoreElements()) {
                 try {
                     URL url = (URL)moduleURLs.nextElement();
-                    String fileName = url.toString();
-                    if (fileName.startsWith("jar")) {
-                        url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
-                        fileName = url.toString();
-                    } else if (fileName.startsWith("file")) {
-                        fileName =
-                                fileName.substring(0, fileName.lastIndexOf("/META-INF/module.xml"));
-                    } else continue;
-
-                    log.debug("Deploying module from classpath at '" + fileName + "'");
-                    File f = new File(new URI(fileName));
+                    URI moduleURI;
+                    if (url.getProtocol().equals("file")) {
+                        String urlString = url.toString();
+                        moduleURI = new URI(urlString.substring(0,
+                                urlString.lastIndexOf("/META-INF/module.xml")));
+                    } else {
+                        // Check if the URL refers to an archive (such as
+                        // jar:file:/dir/some.jar!/META-INF/module.xml) and extract the
+                        // URL of the archive. In general the protocol will be "jar", but
+                        // some containers may use other protocols, e.g. WebSphere uses
+                        // "wsjar" (AXIS2-4258).
+                        String path = url.getPath();
+                        int idx = path.lastIndexOf("!/");
+                        if (idx != -1 && path.substring(idx+2).equals("META-INF/module.xml")) {
+                            moduleURI = new URI(path.substring(0, idx));
+                            if (!moduleURI.getScheme().equals("file")) {
+                                continue;
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
+    
+                    log.debug("Deploying module from classpath at '" + moduleURI + "'");
+                    File f = new File(moduleURI);
                     addFileToDeploy(f, deployer, WSInfo.TYPE_MODULE);
 
                 } catch (URISyntaxException e) {
