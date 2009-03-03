@@ -101,7 +101,10 @@ public class ParameterIncludeImpl
      */
     public void addParameter(Parameter param) {
         if (param != null) {
-            parameters.put(param.getName(), param);
+            synchronized (parameters) {
+                parameters.put(param.getName(), param);
+            }
+            
             if (DEBUG_ENABLED) {
                 this.debugParameterAdd(param);
             }
@@ -109,7 +112,9 @@ public class ParameterIncludeImpl
     }
 
     public void removeParameter(Parameter param) throws AxisFault {
-        parameters.remove(param.getName());
+        synchronized (parameters) {
+            parameters.remove(param.getName());
+        }
     }
 
     /**
