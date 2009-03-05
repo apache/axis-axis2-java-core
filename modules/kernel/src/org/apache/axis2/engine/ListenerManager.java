@@ -151,8 +151,8 @@ public class ListenerManager {
         }
 
         // Remove the shutdown hook
-        if (shutdownHookThread != null) {
-            Runtime.getRuntime().removeShutdownHook(shutdownHookThread);
+        if (shutdownHookThread != null && shutdownHookThread.getState() != Thread.State.RUNNABLE) {
+        	Runtime.getRuntime().removeShutdownHook(shutdownHookThread);
             shutdownHookThread = null;
         }
 
