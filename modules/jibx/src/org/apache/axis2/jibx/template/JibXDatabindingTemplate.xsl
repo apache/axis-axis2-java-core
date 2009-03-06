@@ -834,7 +834,7 @@
     private org.apache.axiom.om.OMElement mappedChild(Object value, org.apache.axiom.om.OMFactory factory) {
         org.jibx.runtime.IMarshallable mrshable = (org.jibx.runtime.IMarshallable)value;
         org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(mrshable, bindingFactory);
-        int index = bindingFactory.getClassIndexMap().get(mrshable.JiBX_className());
+        int index = bindingFactory.getClassIndexMap().get(mrshable.JiBX_getName());
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], "");
         return factory.createOMElement(src, bindingFactory.getElementNames()[index], appns);
     }
