@@ -201,7 +201,7 @@
                           wrapper.addChild(mappedChild(result, factory));
               </xsl:when>
               <xsl:otherwise>
-                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_name<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
                           org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                           org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                           wrapper.addChild(child);
@@ -273,7 +273,7 @@
                   wrapper.addChild(mappedChild(result, factory));
               </xsl:when>
               <xsl:otherwise>
-                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_name<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
                   org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                   org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                   wrapper.addChild(child);
@@ -634,7 +634,7 @@
         if (bindingFactory == null) {
             throw new RuntimeException(bindingErrorMessage);
         }
-        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_name<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
         child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
       </xsl:when>
@@ -834,7 +834,7 @@
     private org.apache.axiom.om.OMElement mappedChild(Object value, org.apache.axiom.om.OMFactory factory) {
         org.jibx.runtime.IMarshallable mrshable = (org.jibx.runtime.IMarshallable)value;
         org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(mrshable, bindingFactory);
-        int index = mrshable.JiBX_getIndex();
+        int index = bindingFactory.getClassIndexMap().get(mrshable.JiBX_getName());
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], "");
         return factory.createOMElement(src, bindingFactory.getElementNames()[index], appns);
     }
@@ -853,13 +853,13 @@
   
   <!-- Called by "initialize-binding" template to generate mapped class index fields. -->
   <xsl:template match="abstract-type" mode="generate-index-fields">
-          private static final int _type_index<xsl:value-of select="@type-index"/>;
+          private static final String _type_name<xsl:value-of select="@type-index"/>;
   </xsl:template>
     
   <!-- Called by "initialize-binding" template to initialize mapped class index fields. -->
   <xsl:template match="abstract-type" mode="set-index-fields">
-         _type_index<xsl:value-of select="@type-index"/> = (bindingFactory == null) ?
-            -1 : bindingFactory.getTypeIndex("{<xsl:value-of select="@ns"/>}:<xsl:value-of select="@name"/>");
+         _type_name<xsl:value-of select="@type-index"/> =
+             "{<xsl:value-of select="@ns"/>}:<xsl:value-of select="@name"/>";
   </xsl:template>
   
   
@@ -957,7 +957,7 @@
         uctx.unmarshalElement()
       </xsl:when>
       <xsl:when test="@form='complex'">
-        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(<xsl:choose><xsl:when test="string-length(normalize-space(@create-type)) = 0">null</xsl:when><xsl:otherwise>new <xsl:value-of select="@create-type"/>()</xsl:otherwise></xsl:choose>, uctx)
+        uctx.getUnmarshaller(_type_name<xsl:value-of select="@type-index"/>).unmarshal(<xsl:choose><xsl:when test="string-length(normalize-space(@create-type)) = 0">null</xsl:when><xsl:otherwise>new <xsl:value-of select="@create-type"/>()</xsl:otherwise></xsl:choose>, uctx)
       </xsl:when>
     </xsl:choose>
   </xsl:template>
