@@ -90,7 +90,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
