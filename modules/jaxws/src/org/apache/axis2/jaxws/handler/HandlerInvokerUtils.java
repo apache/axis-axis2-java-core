@@ -51,35 +51,6 @@ public class HandlerInvokerUtils {
         else {
             // inbound response; must be on the client
             bindingProto = mepMessageCtx.getEndpointDesc().getClientBindingID();
-            // The getHeader processing is done on the server by the EndpointController.
-            // For messages inbound to the client (i.e. responses), we do it here since all three
-            // client JAX-WS APIs (i.e. sync, async, and async callback) use this method to 
-            // invoke the handlers.
-            List<QName> understood = new ArrayList<QName>();
-            for(Handler handler:handlers){
-                if(handler instanceof SOAPHandler){
-                    SOAPHandler soapHandler = (SOAPHandler)handler;
-                    //Invoking getHeaders.
-                    if(log.isDebugEnabled()){
-                        log.debug("Client side: Invoking getHeader() on SOAPHandler: " + soapHandler);
-                    }
-                    Set<QName> headers = soapHandler.getHeaders();
-                    if(headers!=null){
-                        for(QName header:headers){
-                            if(!understood.contains(header)){
-                                if(log.isDebugEnabled()){
-                                    log.debug("Adding Header QName" + header + " to uderstoodHeaderQName List");
-                                }
-                                //Adding this to understood header list.
-                                // FIXME: This list of headers undestood by the client inbound
-                                // JAX-WS handlers should be used in client-side inbound 
-                                // mustUnderstand header processing.
-                                understood.add(header);
-                            }
-                        }
-                    }
-                }
-            }
         }
         Protocol proto = Protocol.getProtocolForBinding(bindingProto);
         

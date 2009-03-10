@@ -68,6 +68,14 @@ public class SoapMessageMUProvider implements Provider<SOAPMessage> {
                     response = AttachmentUtil.toSOAPMessage(responseStr);
                     System.out.println("invoke: ---Response message= "
                             + AttachmentUtil.toString(response));
+                } else if (string.contains(new StringBuffer(AttachmentUtil.MU_TEXT2))){
+                    // There are two headers and both need to be fixed-up
+                    String responseStr = AttachmentUtil.msgEnvMU2.replaceAll(
+                            AttachmentUtil.MUHEADER_CLIENT2,AttachmentUtil.MUHEADER_SERVER2);
+                    responseStr = responseStr.replaceAll(
+                            AttachmentUtil.MUHEADER_CLIENT,AttachmentUtil.MUHEADER_SERVER);
+                    response = AttachmentUtil.toSOAPMessage(responseStr);
+                    System.out.println("invoke: ---Response message= " + AttachmentUtil.toString(response));
                 } else if (string.contains(new StringBuffer(AttachmentUtil.MU_TEXT))) {
                     String responseStr =
                             AttachmentUtil.msgEnvMU.replaceAll(AttachmentUtil.MUHEADER_CLIENT,

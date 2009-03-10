@@ -23,6 +23,7 @@ package org.apache.axis2.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -80,6 +81,10 @@ public class AxisEngine {
                 continue;
             }
 
+            if (clientHandlerUnderstandsHeader(headerBlock, msgContext)) {
+                continue;
+            }
+            
             if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug("MustUnderstand header not processed or registered as understood"+headerName);
             }
@@ -649,4 +654,56 @@ public class AxisEngine {
             }
         }
     }
+    
+    /**
+     * Answer if an application handler (such as a JAXWS application handler) has registered that 
+     * it understands this header. Note that the handlers do this registration only on the 
+     * service-requester side.  That is because on the service-provider side the handlers have
+     * not been instantiated at this point so can not be queried yet. 
+     * @param headerBlock Contains the SOAP header to check
+     * @param messageContext Contains the inbound message context
+     * @return true if this header QName is registered as being understood or false otherwise.
+     */
+    private static boolean clientHandlerUnderstandsHeader(SOAPHeaderBlock headerBlock, 
+            MessageContext messageContext) {
+        boolean headerUnderstood = false;
+        // Get the property off the outbound context, if it exists and contains this header
+        // then it is understood
+        QName headerQName = headerBlock.getQName();
+        Set understoodHeaders = getUnderstoodClientHeaders(messageContext);
+        if (understoodHeaders != null && understoodHeaders.size() > 0) {
+            headerUnderstood = understoodHeaders.contains(headerQName);
+        }
+        return headerUnderstood;
+    }
+    
+    /**
+     * Get the collection of Header QNames that are registered as being understood.
+     * This assumes that a Set of QNames which indicates what headers are "understood" by
+     * this particular client through the client's programming model (i.e. application
+     * handlers) has been defined and stored on the outbound MessageContext under the
+     * client.UnderstoodHeaders property. 
+     * @param msgContext The inbound message context
+     * @return a Set of Header QNames that have been registered as understood, or null if
+     * none have been registered.
+     */
+    private static Set getUnderstoodClientHeaders(MessageContext msgContext) {
+        Set returnQN = null;
+        // The client sets the property on the JAX-WS Request Message Context, which will be copied
+        // to the Axis2 outbound message context.
+        OperationContext opCtx = msgContext.getOperationContext();
+        MessageContext outboundMC = null;
+        try {
+            outboundMC = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        }
+        catch (AxisFault af) {
+            // Ignore this; it means that there wasn't an outbound message for this operation.
+        }
+        if (outboundMC != null) {
+            returnQN = 
+                (Set) outboundMC.getProperty("client.UnderstoodHeaders");
+        }
+        return returnQN;
+    }
+
 }

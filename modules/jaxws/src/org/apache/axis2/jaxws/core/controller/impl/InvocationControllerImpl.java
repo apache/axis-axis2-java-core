@@ -35,8 +35,15 @@ import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.soap.SOAPHandler;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set; 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -78,6 +85,10 @@ public abstract class InvocationControllerImpl implements InvocationController {
                                                            false);
 
         if (success) {
+            // If there are any headers understood by handlers, then set a property
+            // on the message context so the response mustUnderstand processing takes those
+            // understood headers into consideration.
+            registerUnderstoodHeaders(request, ic.getHandlers()); 
             prepareRequest(request);
             response = doInvoke(request);
             prepareResponse(response);
@@ -199,6 +210,10 @@ public abstract class InvocationControllerImpl implements InvocationController {
                                                            HandlerChainProcessor.MEP.REQUEST,
                                                            false);
         if (success) {
+            // If there are any headers understood by handlers, then set a property
+            // on the message context so the response mustUnderstand processing takes those
+            // understood headers into consideration.
+            registerUnderstoodHeaders(request, ic.getHandlers()); 
             prepareRequest(request);
             resp = doInvokeAsync(request);
         } else
@@ -256,6 +271,10 @@ public abstract class InvocationControllerImpl implements InvocationController {
                                                            HandlerChainProcessor.MEP.REQUEST,
                                                            false);
         if (success) {
+            // If there are any headers understood by handlers, then set a property
+            // on the message context so the response mustUnderstand processing takes those
+            // understood headers into consideration.
+            registerUnderstoodHeaders(request, ic.getHandlers()); 
             prepareRequest(request);
             future = doInvokeAsync(request, asyncHandler);
         } else { // the outbound handler chain must have had a problem, and
@@ -299,4 +318,30 @@ public abstract class InvocationControllerImpl implements InvocationController {
      */
     protected abstract void prepareResponse(MessageContext mc);
 
+    private void registerUnderstoodHeaders(MessageContext request,
+                                           List<Handler> handlerList) {
+      if (handlerList != null && handlerList.size() > 0) {
+        Set<QName> understoodHeaders = new HashSet<QName>();
+        
+        // Add the headers from each of the SOAP handlers to the collection
+        for (Handler handler : handlerList) {
+          if(handler instanceof SOAPHandler){
+            SOAPHandler soapHandler = (SOAPHandler)handler;
+            Set<QName> headers = soapHandler.getHeaders();
+            if (headers != null && headers.size() > 0) {
+              understoodHeaders.addAll(headers);
+            }
+          }
+        }
+        
+        // Put the understood header qnames on the request context where it can
+        // be found during response processing.
+        if (understoodHeaders != null & understoodHeaders.size() > 0) {
+          if (log.isDebugEnabled()) {
+            log.debug("Adding understood header QName collection to message context " + understoodHeaders);
+          }
+          request.setProperty("client.UnderstoodHeaders", understoodHeaders);
+        }
+      }
+    }
 }

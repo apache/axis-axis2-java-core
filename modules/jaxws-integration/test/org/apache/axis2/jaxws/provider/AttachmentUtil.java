@@ -49,6 +49,7 @@ public class AttachmentUtil {
     public static final String SOAP12_NAMESPACE = "http://www.w3.org/2003/05/soap-envelope";
 
     public static final String MU_TEXT = "soap message mustUnderstand header request";
+    public static final String MU_TEXT2 = "soap message mustUnderstand header request 2"; 
     public static final String UNDERSTOOD_MU_TEXT = "understood headers soap message mustUnderstand header request";
     public static final String TEXT = "soap message request";
     public static final String VALUE = "value";
@@ -57,6 +58,8 @@ public class AttachmentUtil {
     public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     public static final String MUHEADER_CLIENT = "ns1:muclient";
     public static final String MUHEADER_SERVER = "ns1:muserver";
+    public static final String MUHEADER_CLIENT2 = "ns1:muclient2";
+    public static final String MUHEADER_SERVER2 = "ns1:muserver2";
     public static final String MUHEADER_CLIENT_UNDERSTOOD = "ns1:muclientunderstood";
     public static final String MUHEADER_SERVER_UNDERSTOOD = "ns1:muserverunderstood";
     public static final String msgEnvMU = 
@@ -72,6 +75,21 @@ public class AttachmentUtil {
                 "</ns1:invoke>" +
             "</soapenv:Body>" +
         "</soapenv:Envelope>";
+
+    // Similar to msgEnvMU but has two Header elements marked as mustUnderstand
+    public static final String msgEnvMU2 = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                                              "<soapenv:Header>" +
+                                                 "<"+MUHEADER_CLIENT+" xmlns:ns1=\"http://ws.apache.org/axis2\" soapenv:mustUnderstand=\"1\">MUinfo</"+MUHEADER_CLIENT+">" +
+                                                 "<"+MUHEADER_CLIENT2+" xmlns:ns1=\"http://ws.apache.org/axis2\" soapenv:mustUnderstand=\"1\">MUinfo2</"+MUHEADER_CLIENT2+">" +
+                                              "</soapenv:Header>" +    
+                                              "<soapenv:Body>" +
+                                                 "<ns1:invoke xmlns:ns1=\"http://ws.apache.org/axis2\">" +
+                                                    VALUE_NODE +
+                                                       MU_TEXT2 +
+                                                    VALUE_NODE_SLASH +
+                                                 "</ns1:invoke>" +
+                                              "</soapenv:Body>" +
+                                           "</soapenv:Envelope>";
     
     public static final String msgEnv = 
         "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
@@ -83,6 +101,16 @@ public class AttachmentUtil {
                 "</ns1:invoke>" +
             "</soapenv:Body>" +
         "</soapenv:Envelope>";
+
+    public static final String msgEnv2 = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                                            "<soapenv:Body>" +
+                                               "<ns1:invoke xmlns:ns1=\"http://ws.apache.org/axis2\">" +
+                                                  VALUE_NODE +
+                                                     MU_TEXT2 +
+                                                  VALUE_NODE_SLASH +
+                                               "</ns1:invoke>" +
+                                            "</soapenv:Body>" +
+                                         "</soapenv:Envelope>";    
     
     public static final String msgEnvPlain = 
         "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
