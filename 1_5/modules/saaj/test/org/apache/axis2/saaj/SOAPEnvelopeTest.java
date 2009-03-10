@@ -47,11 +47,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 
+import org.w3c.dom.Comment;  
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource; 
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.Iterator;
 
 public class SOAPEnvelopeTest extends TestCase {
@@ -72,6 +76,8 @@ public class SOAPEnvelopeTest extends TestCase {
                     "</shw:Address>\n" +
                     "</soapenv:Body>\n" +
                     "</soapenv:Envelope>";
+    
+    private static final String XML_INPUT_1 = "<root><a><!-- this is a test with a comment node --></a></root>";
 
     public SOAPEnvelopeTest(String name) {
         super(name);
@@ -628,5 +634,56 @@ public class SOAPEnvelopeTest extends TestCase {
         symbol.appendChild(def);
         document.appendChild(getLastTradePrice);
         return getLastTradePrice;
+    }
+    
+    public void testTransformWithComments() throws Exception {
+        MessageFactory fact = MessageFactory.newInstance();
+        SOAPMessage message = fact.createMessage();
+        SOAPBody body = message.getSOAPBody();
+        Source source = new SAXSource(new InputSource(new StringReader(XML_INPUT_1)));
+        DOMResult result = new DOMResult(body);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.transform(source, result);
+        
+        // test DOM
+        org.w3c.dom.Node rootNode = result.getNode();
+        org.w3c.dom.Node node = rootNode.getFirstChild();
+        assertTrue(node instanceof Element);
+        assertEquals("root", node.getNodeName());
+        
+        node = node.getFirstChild();
+        assertTrue(node instanceof Element);
+        assertEquals("a", node.getNodeName());
+        
+        node = node.getFirstChild();
+        assertTrue(node instanceof Comment);
+        assertEquals("this is a test with a comment node", node.getNodeValue().trim());
+        
+        // test SAAJ
+        assertEquals(1, body.getChildNodes().getLength());
+        Iterator iter = body.getChildElements();
+        assertTrue(iter.hasNext()); 
+        Object obj = iter.next();
+        assertTrue(obj instanceof SOAPBodyElement);  
+        SOAPElement soapElement = (SOAPElement)obj;
+        assertEquals("root", soapElement.getLocalName());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof SOAPElement);  
+        soapElement = (SOAPElement)obj;
+        assertEquals("a", soapElement.getLocalName());
+        assertFalse(iter.hasNext());
+        
+        iter = soapElement.getChildElements();
+        assertTrue(iter.hasNext()); 
+        obj = iter.next();
+        assertTrue(obj instanceof Text);  
+        Text text = (Text)obj;
+        assertTrue(text.isComment());
+        assertEquals("this is a test with a comment node", text.getData().trim());
+        assertFalse(iter.hasNext());        
     }
 }
