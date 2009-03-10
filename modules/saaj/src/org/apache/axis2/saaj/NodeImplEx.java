@@ -209,9 +209,7 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
             org.w3c.dom.Node prevSiblingDOMNode = comment.getPreviousSibling();
             org.w3c.dom.Node nextSiblingDOMNode = comment.getNextSibling();
             SOAPElementImpl parent = new SOAPElementImpl((ElementImpl)domNode.getParentNode());
-            TextImplEx saajTextNode = new TextImplEx("<!--" +
-                    comment.getData() +
-                    "-->",
+            CommentImpl saajTextNode = new CommentImpl(comment.getData(),
                                                      parent, prevSiblingDOMNode,
                                                      nextSiblingDOMNode);
             ((NodeImpl)domNode).setUserData(SAAJ_NODE, saajTextNode, null);

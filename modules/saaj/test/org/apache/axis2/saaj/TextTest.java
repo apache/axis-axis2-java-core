@@ -20,6 +20,7 @@
 package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -179,8 +180,10 @@ public class TextTest extends TestCase {
             isComment = ((Text)node).isComment();
             if (i == 1 || i == 3) {
                 assertEquals(true, isComment);
+                assertTrue(node instanceof Comment);
             } else {
                 assertEquals(false, isComment);
+                assertFalse(node instanceof Comment);
             }
         }
     }

@@ -102,12 +102,12 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         String namespaceURI = child.getNamespaceURI();
         String prefix = child.getPrefix();
 
-        element.declareNamespace(namespaceURI, prefix);
-        
         SOAPBodyElementImpl childEle = new SOAPBodyElementImpl(child);
 
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
-        childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        if (namespaceURI != null && namespaceURI.trim().length() > 0) {
+            childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
+        }
         element.appendChild(childEle.element);
         ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
@@ -432,7 +432,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         }
         if (node instanceof org.w3c.dom.Comment) {
             org.w3c.dom.Comment domText = (org.w3c.dom.Comment)node;
-            return new TextImplEx("<!--" + domText.getData() + "-->", parent);
+            return new CommentImpl(domText.getData(), parent);
         }
         Element domEle = ((Element)node);
         int indexOfColon = domEle.getTagName().indexOf(":");
