@@ -57,7 +57,6 @@ import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.SelfManagedDataHolder;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -148,6 +147,7 @@ public class MessageContext extends AbstractContext
     // current revision level of this object
     private static final int revisionID = REVISION_2;
 
+    private static final boolean DEBUG_ENABLED = log.isDebugEnabled() || log.isTraceEnabled();
 
     /**
      * A place to store the current MessageContext
@@ -574,14 +574,14 @@ public class MessageContext extends AbstractContext
     }
 
     public AxisOperation getAxisOperation() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getAxisOperation");
         }
         return axisOperation;
     }
 
     public AxisService getAxisService() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getAxisService");
         }
         return axisService;
@@ -593,14 +593,14 @@ public class MessageContext extends AbstractContext
      * so the service might not match up with this serviceGroup
     */
     public AxisServiceGroup getAxisServiceGroup() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getAxisServiceGroup");
         }
         return axisServiceGroup;
     }
 
     public ConfigurationContext getConfigurationContext() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getConfigurationContext");
         }
         return configurationContext;
@@ -622,7 +622,7 @@ public class MessageContext extends AbstractContext
     }
 
     public ArrayList<Handler> getExecutionChain() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getExecutionChain");
         }
         return executionChain;
@@ -656,7 +656,7 @@ public class MessageContext extends AbstractContext
      * @return An Iterator over the LIFO data structure.
      */
     public Iterator<Handler> getExecutedPhases() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getExecutedPhases");
         }
         if (executedPhases == null) {
@@ -826,7 +826,7 @@ public class MessageContext extends AbstractContext
     }
 
     public OperationContext getOperationContext() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getOperationContext");
         }
         return operationContext;
@@ -885,7 +885,7 @@ public class MessageContext extends AbstractContext
         return getLocalProperty(name, true);
     }
     public Object getLocalProperty(String name, boolean searchOptions) {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getProperty");
         }
 
@@ -917,7 +917,7 @@ public class MessageContext extends AbstractContext
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getProperty");
         }
 
@@ -1054,7 +1054,7 @@ public class MessageContext extends AbstractContext
      * @return Returns ServiceContext.
      */
     public ServiceContext getServiceContext() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getServiceContext");
         }
         return serviceContext;
@@ -1068,7 +1068,7 @@ public class MessageContext extends AbstractContext
     }
 
     public ServiceGroupContext getServiceGroupContext() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getServiceGroupContext");
         }
         return serviceGroupContext;
@@ -1108,7 +1108,7 @@ public class MessageContext extends AbstractContext
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getTransportIn");
         }
         return transportIn;
@@ -1118,7 +1118,7 @@ public class MessageContext extends AbstractContext
      * @return Returns TransportOutDescription.
      */
     public TransportOutDescription getTransportOut() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getTransportOut");
         }
         return transportOut;
@@ -1219,7 +1219,7 @@ public class MessageContext extends AbstractContext
 
     public AxisMessage getAxisMessage() {
         if (reconcileAxisMessage) {
-            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
+            if (DEBUG_ENABLED && log.isWarnEnabled()) {
                 log.warn(this.getLogIDString() +
                     ":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
             }
@@ -1537,7 +1537,7 @@ public class MessageContext extends AbstractContext
     }
 
     public Options getOptions() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getOptions");
         }
         return options;
@@ -1569,7 +1569,7 @@ public class MessageContext extends AbstractContext
 
 
     public Policy getEffectivePolicy() {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("getEffectivePolicy");
         }
         
@@ -1635,7 +1635,7 @@ public class MessageContext extends AbstractContext
 
 
     public boolean isEngaged(String moduleName) {
-        if (LoggingControl.debugLoggingAllowed) {
+        if (DEBUG_ENABLED) {
             checkActivateWarning("isEngaged");
         }
         boolean enegage;
@@ -1895,7 +1895,7 @@ public class MessageContext extends AbstractContext
             }
         }
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             Iterator<String> it2 = map.keySet().iterator();
             while (it2.hasNext()) {
                 Object key = it2.next();
@@ -1969,7 +1969,7 @@ public class MessageContext extends AbstractContext
                     || (executionChain.size() == 0)) {
                 out.writeBoolean(ExternalizeConstants.EMPTY_OBJECT);
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(getLogIDString() + ":serializeSelfManagedData(): No data : END");
                 }
 
@@ -1985,7 +1985,7 @@ public class MessageContext extends AbstractContext
             if (selfManagedDataHolderList.size() == 0) {
                 out.writeBoolean(ExternalizeConstants.EMPTY_OBJECT);
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(getLogIDString() + ":serializeSelfManagedData(): No data : END");
                 }
 
@@ -2007,7 +2007,7 @@ public class MessageContext extends AbstractContext
 
         }
         catch (IOException e) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace("MessageContext:serializeSelfManagedData(): Exception [" +
                     e.getClass().getName() + "]  description [" + e.getMessage() + "]", e);
             }
@@ -2038,7 +2038,7 @@ public class MessageContext extends AbstractContext
                 if (SelfManagedDataManager.class.isAssignableFrom(handler.getClass())) {
                     // only call the handler's serializeSelfManagedData if it implements SelfManagedDataManager
 
-                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    if (DEBUG_ENABLED && log.isTraceEnabled()) {
                         log.trace(
                                 "MessageContext:serializeSelfManagedDataHelper(): calling handler  [" +
                                         handler.getClass().getName() + "]  name [" +
@@ -2059,7 +2059,7 @@ public class MessageContext extends AbstractContext
                             selfManagedDataHandlerCount++;
                         }
                         catch (Exception exc) {
-                            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                                 log.trace("MessageContext:serializeSelfManagedData(): exception [" +
                                     exc.getClass().getName() + "][" + exc.getMessage() +
                                     "]  in setting up SelfManagedDataHolder object for [" +
@@ -2074,7 +2074,7 @@ public class MessageContext extends AbstractContext
             return selfManagedDataHolderList;
         }
         catch (Exception ex) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace("MessageContext:serializeSelfManagedData(): exception [" +
                     ex.getClass().getName() + "][" + ex.getMessage() + "]", ex);
             }
@@ -2122,7 +2122,7 @@ public class MessageContext extends AbstractContext
             // implementation than the one we saved during serializeSelfManagedData.
             // NOTE: the exception gets absorbed!
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(
                     "MessageContext:deserialize_getHandlerFromExecutionChain(): ClassCastException thrown: " +
                             e.getMessage(), e);
@@ -2153,7 +2153,7 @@ public class MessageContext extends AbstractContext
                         executionChain.iterator(), classname, qNameAsString);
 
                 if (handler == null) {
-                    if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                    if (DEBUG_ENABLED && log.isTraceEnabled()) {
                         log.trace(getLogIDString() + ":deserializeSelfManagedData():  [" +
                                 classname +
                                 "]  was not found in the executionChain associated with the message context.");
@@ -2169,7 +2169,7 @@ public class MessageContext extends AbstractContext
                 // the handler implementing SelfManagedDataManager is responsible for repopulating
                 // the SelfManagedData in the MessageContext (this)
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(getLogIDString() +
                             ":deserializeSelfManagedData(): calling handler [" + classname + "] [" +
                             qNameAsString + "]  deserializeSelfManagedData method");
@@ -2180,7 +2180,7 @@ public class MessageContext extends AbstractContext
             }
         }
         catch (IOException ioe) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + ":deserializeSelfManagedData(): IOException thrown: " +
                         ioe.getMessage(), ioe);
             }
@@ -2211,7 +2211,7 @@ public class MessageContext extends AbstractContext
         SafeObjectOutputStream out = SafeObjectOutputStream.install(o);
         String logCorrelationIDString = getLogIDString();
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":writeExternal(): writing to output stream");
         }
 
@@ -2345,7 +2345,7 @@ public class MessageContext extends AbstractContext
 
                 // update the index for the entry in the chain
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                             ":writeExternal(): ***BEFORE OBJ WRITE*** executionChain entry class [" +
                             objClass + "] qname [" + qnameAsString + "]");
@@ -2358,7 +2358,7 @@ public class MessageContext extends AbstractContext
                 // will be attempted
                 nextIndex++;
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                             ":writeExternal(): ***AFTER OBJ WRITE*** executionChain entry class [" +
                             objClass + "] qname [" + qnameAsString + "]");
@@ -2383,7 +2383,7 @@ public class MessageContext extends AbstractContext
             // general case: handle "null" or "empty"
             out.writeBoolean(ExternalizeConstants.EMPTY_OBJECT);
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString + ":writeExternal(): executionChain is NULL");
             }
         }
@@ -2450,7 +2450,7 @@ public class MessageContext extends AbstractContext
 
                 mdEntry.setQName(qnameAsString);
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                             ":writeExternal(): ***BEFORE Executed List OBJ WRITE*** executedPhases entry class [" +
                             objClass + "] qname [" + qnameAsString + "]");
@@ -2463,7 +2463,7 @@ public class MessageContext extends AbstractContext
                 // will be attempted
                 execNextIndex++;
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString + ":writeExternal(): " +
                             "***AFTER Executed List OBJ WRITE*** " +
                             "executedPhases entry class [" + objClass + "] " +
@@ -2488,7 +2488,7 @@ public class MessageContext extends AbstractContext
             // general case: handle "null" or "empty"
             out.writeBoolean(ExternalizeConstants.EMPTY_OBJECT);
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(
                         logCorrelationIDString + ":writeExternal(): executedPhases is NULL");
             }
@@ -2505,7 +2505,7 @@ public class MessageContext extends AbstractContext
             setMessageID(tmpID);
         }
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":writeExternal():   message ID [" + tmpID + "]");
         }
 
@@ -2738,7 +2738,7 @@ public class MessageContext extends AbstractContext
         // done
         //---------------------------------------------------------
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString +
                     ":writeExternal(): completed writing to output stream for " +
                     logCorrelationIDString);
@@ -2753,7 +2753,7 @@ public class MessageContext extends AbstractContext
         boolean persistOptimized = false;
         if (attachments != null && attachments.getContentIDList().size() > 1) {
             persistOptimized = true;
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+            if (DEBUG_ENABLED && log.isTraceEnabled())
                 log.trace(getLogIDString()
                         + ":getPersistOptimized(): attachments present; persist optimized");
         }
@@ -2761,7 +2761,7 @@ public class MessageContext extends AbstractContext
             Object property = getProperty(Configuration.ENABLE_MTOM);
             if (property != null && JavaUtils.isTrueExplicitly(property)) {
                 persistOptimized = true;
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+                if (DEBUG_ENABLED && log.isTraceEnabled())
                     log.trace(getLogIDString()
                             + ":getPersistOptimized(): ENBABLE_MTOM is set; persist optimized");
             }
@@ -2770,12 +2770,12 @@ public class MessageContext extends AbstractContext
             Object property = getProperty(Configuration.ENABLE_SWA);
             if (property != null && JavaUtils.isTrueExplicitly(property)) {
                 persistOptimized = true;
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+                if (DEBUG_ENABLED && log.isTraceEnabled())
                     log.trace(getLogIDString()
                             + ":getPersistOptimized(): ENBABLE_SWA is set; persist optimized");
             }
         }
-        if (!persistOptimized && LoggingControl.debugLoggingAllowed && log.isTraceEnabled())
+        if (!persistOptimized && DEBUG_ENABLED && log.isTraceEnabled())
             log.trace(getLogIDString()
                     + ":getPersistOptimized(): No attachments or attachment settings; persist non-optimized");
         return persistOptimized;
@@ -2802,7 +2802,7 @@ public class MessageContext extends AbstractContext
         needsToBeReconciled = true;
 
         // trace point
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
                     in.available() + "]  ");
         }
@@ -2851,7 +2851,7 @@ public class MessageContext extends AbstractContext
         logCorrelationID = (String) in.readObject();
 
         // trace point
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             logCorrelationIDString = "[MessageContext: logID=" + getLogCorrelationID() + "]";
             log.trace(myClassName + ":readExternal():  reading the input stream for  " +
                       getLogIDString());
@@ -2898,7 +2898,7 @@ public class MessageContext extends AbstractContext
         metaExecutionChain = null;
 
         String marker = in.readUTF();
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read executionChain, marker is: " + marker);
         }
@@ -2910,7 +2910,7 @@ public class MessageContext extends AbstractContext
 
             int expectedNumberEntries = in.readInt();
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): execution chain:  expected number of entries [" +
                         expectedNumberEntries + "]");
@@ -2949,7 +2949,7 @@ public class MessageContext extends AbstractContext
 
                         tmpQNameAsStr = mdObj.getQNameAsString();
 
-                        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                        if (DEBUG_ENABLED && log.isTraceEnabled()) {
                             String tmpHasList = mdObj.isListEmpty() ? "no children" : "has children";
 
                             if (log.isTraceEnabled()) {
@@ -2969,7 +2969,7 @@ public class MessageContext extends AbstractContext
 
             int adjustedNumberEntries = in.readInt();
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): adjusted number of entries ExecutionChain [" +
                         adjustedNumberEntries + "]    ");
@@ -2977,7 +2977,7 @@ public class MessageContext extends AbstractContext
         }
 
         if ((metaExecutionChain == null) || (metaExecutionChain.isEmpty())) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): meta data for Execution Chain is NULL");
             }
@@ -3021,7 +3021,7 @@ public class MessageContext extends AbstractContext
         metaExecuted = null;
 
         marker = in.readUTF();
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read executedPhases, marker is: " + marker);
         }
@@ -3039,7 +3039,7 @@ public class MessageContext extends AbstractContext
             // There are an inboundExecutedPhases and an outboundExecutedPhases and this one
             // is empty, so skip over it and read the next one
             marker = in.readUTF();
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + 
                           ": readExternal(): Skipping over oldStyle empty inboundExecutedPhases");
                 log.trace(getLogIDString() + 
@@ -3057,7 +3057,7 @@ public class MessageContext extends AbstractContext
         if (gotInExecList == ExternalizeConstants.ACTIVE_OBJECT) {
             int expectedNumberInExecList = in.readInt();
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): executed phases:  expected number of entries [" +
                         expectedNumberInExecList + "]");
@@ -3101,7 +3101,7 @@ public class MessageContext extends AbstractContext
                             tmpHasList = "has list";
                         }
 
-                        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                        if (DEBUG_ENABLED && log.isTraceEnabled()) {
                             log.trace(getLogIDString() +
                                     ":readExternal(): meta data class [" + tmpClassNameStr +
                                     "] qname [" + tmpQNameAsStr + "]  index [" + count + "]   [" +
@@ -3117,7 +3117,7 @@ public class MessageContext extends AbstractContext
 
             int adjustedNumberInExecList = in.readInt();
 
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): adjusted number of entries executedPhases [" +
                         adjustedNumberInExecList + "]    ");
@@ -3125,14 +3125,14 @@ public class MessageContext extends AbstractContext
         }
         
         if ((metaExecuted == null) || (metaExecuted.isEmpty())) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): meta data for executedPhases list is NULL");
             }
         }
         
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): After reading executedPhases, marker is: " + marker);
         }
@@ -3141,7 +3141,7 @@ public class MessageContext extends AbstractContext
         // and the outbound phases wasn't read above, then we need to skip over it
         if (marker.equals("outboundExecutedPhases")) {
             Boolean gotOutExecList = in.readBoolean();
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + 
                           ": readExternal(): Skipping over outboundExecutedPhases, marker is: " + marker + 
                           ", is list an active object: " + gotOutExecList);
@@ -3151,7 +3151,7 @@ public class MessageContext extends AbstractContext
             }
             
             marker = in.readUTF();
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + 
                           ": readExternal(): After skipping ooutboundExecutePhases, marker is: " + marker);
             }
@@ -3164,7 +3164,7 @@ public class MessageContext extends AbstractContext
         options = (Options) in.readObject();
 
         if (options != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + ":readExternal(): restored Options [" +
                         options.getLogCorrelationIDString() + "]");
             }
@@ -3177,7 +3177,7 @@ public class MessageContext extends AbstractContext
         // axisOperation is not usable until the meta data has been reconciled
         axisOperation = null;
         marker = in.readUTF();  // Read Marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read axisOperation, marker is: " + marker);
         }
@@ -3186,14 +3186,14 @@ public class MessageContext extends AbstractContext
         // operation context is not usable until it has been activated
         // NOTE: expect this to be the parent
         marker = in.readUTF();  // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read operationContext, marker is: " + marker);
         }
         operationContext = (OperationContext) in.readObject();
 
         if (operationContext != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() + ":readExternal(): restored OperationContext [" +
                         operationContext.getLogCorrelationIDString() + "]");
             }
@@ -3206,7 +3206,7 @@ public class MessageContext extends AbstractContext
         // axisService is not usable until the meta data has been reconciled
         axisService = null;
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read axisService, marker is: " + marker);
         }
@@ -3221,7 +3221,7 @@ public class MessageContext extends AbstractContext
         // serviceContext
         //-------------------------
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read serviceContext, marker is: " + marker);
         }
@@ -3254,7 +3254,7 @@ public class MessageContext extends AbstractContext
         // axisServiceGroup is not usable until the meta data has been reconciled
         axisServiceGroup = null;
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read AxisServiceGroup, marker is: " + marker);
         }
@@ -3269,7 +3269,7 @@ public class MessageContext extends AbstractContext
         // serviceGroupContext
         //-----------------------------
         marker = in.readUTF();
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read ServiceGroupContext, marker is: " + marker);
         }
@@ -3302,7 +3302,7 @@ public class MessageContext extends AbstractContext
         // axisMessage is not usable until the meta data has been reconciled
         axisMessage = null;
         marker = in.readUTF();  // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read AxisMessage, marker is: " + marker);
         }
@@ -3349,18 +3349,18 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         // read local properties
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read properties, marker is: " + marker);
         }
-        properties = in.readMap(new HashMapUpdateLockable());
+        properties = in.readMap(new HashMap());
 
 
         //---------------------------------------------------------
         // special data
         //---------------------------------------------------------
         marker = in.readUTF(); // Read marker
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() + 
                       ": readExternal(): About to read SpecialData, marker is: " + marker);
         }
@@ -3386,7 +3386,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
 
         // trace point
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(getLogIDString() +
                     ":readExternal():  message context object created for  " +
                     getLogIDString());
@@ -3526,7 +3526,7 @@ public class MessageContext extends AbstractContext
         String tmpID = getMessageID();
         String logCorrelationIDString = getLogIDString();
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":activate():   message ID [" + tmpID + "] for " +
                     logCorrelationIDString);
         }
@@ -3569,7 +3569,7 @@ public class MessageContext extends AbstractContext
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                         "activate():  exception caught when getting the TransportOutDescription [" +
                         qout.toString() + "]  from the AxisConfiguration [" +
@@ -3590,7 +3590,7 @@ public class MessageContext extends AbstractContext
         // reconcile the execution chain
         //-------------------------------------------------------
         if (metaExecutionChain != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(
                         logCorrelationIDString + ":activate(): reconciling the execution chain...");
             }
@@ -3605,7 +3605,7 @@ public class MessageContext extends AbstractContext
             }
             catch (Exception ex) {
                 // log the exception
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                         ":activate(): *** WARNING *** deserializing the self managed data encountered Exception [" +
                         ex.getClass().getName() + " : " + ex.getMessage() + "]", ex);
@@ -3617,7 +3617,7 @@ public class MessageContext extends AbstractContext
         // reconcile the lists for the executed phases
         //-------------------------------------------------------
         if (metaExecuted != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                         ":activate(): reconciling the executed chain...");
             }
@@ -3670,13 +3670,13 @@ public class MessageContext extends AbstractContext
 
         String logCorrelationIDString = getLogIDString();
         // trace point
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":activateWithOperationContext():  BEGIN");
         }
 
         if (operationCtx == null) {
             // won't be able to finish
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                     ":activateWithOperationContext():  *** WARNING ***  No active OperationContext object is available.");
             }
@@ -3690,7 +3690,7 @@ public class MessageContext extends AbstractContext
 
         if (configCtx == null) {
             // won't be able to finish
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                     ":activateWithOperationContext():  *** WARNING ***  No active ConfigurationContext object is available.");
             }
@@ -3752,7 +3752,7 @@ public class MessageContext extends AbstractContext
 
         String tmpID = getMessageID();
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":activateWithOperationContext():   message ID [" +
                     tmpID + "]");
         }
@@ -3770,7 +3770,7 @@ public class MessageContext extends AbstractContext
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                         "activateWithOperationContext():  exception caught when getting the TransportInDescription [" +
                         qin.toString() + "]  from the AxisConfiguration [" +
@@ -3797,7 +3797,7 @@ public class MessageContext extends AbstractContext
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                         "activateWithOperationContext():  exception caught when getting the TransportOutDescription [" +
                         qout.toString() + "]  from the AxisConfiguration [" +
@@ -3818,7 +3818,7 @@ public class MessageContext extends AbstractContext
         // reconcile the execution chain
         //-------------------------------------------------------
         if (metaExecutionChain != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                         ":activateWithOperationContext(): reconciling the execution chain...");
             }
@@ -3833,7 +3833,7 @@ public class MessageContext extends AbstractContext
             }
             catch (Exception ex) {
                 // log the exception
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(logCorrelationIDString +
                         ":activateWithOperationContext(): *** WARNING *** deserializing the self managed data encountered Exception [" +
                         ex.getClass().getName() + " : " + ex.getMessage() + "]", ex);
@@ -3845,7 +3845,7 @@ public class MessageContext extends AbstractContext
         // reconcile the lists for the executed phases
         //-------------------------------------------------------
         if (metaExecuted != null) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                         ":activateWithOperationContext(): reconciling the executed chain...");
             }
@@ -3865,7 +3865,7 @@ public class MessageContext extends AbstractContext
         //-------------------------------------------------------
         needsToBeReconciled = false;
 
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":activateWithOperationContext():  END");
         }
     }
@@ -4014,7 +4014,7 @@ public class MessageContext extends AbstractContext
                 // so add it to the parent
                 mdPhase.addToList(mdEntry);
 
-                if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+                if (DEBUG_ENABLED && log.isTraceEnabled()) {
                     log.trace(getLogIDString() + ":setupPhaseList(): list entry class [" +
                             objClass + "] qname [" + qnameAsString + "]");
                 }
@@ -4044,7 +4044,7 @@ public class MessageContext extends AbstractContext
     public MessageContext extractCopyMessageContext() {
         MessageContext copy = new MessageContext();
         String logCorrelationIDString = getLogIDString();
-        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+        if (DEBUG_ENABLED && log.isTraceEnabled()) {
             log.trace(logCorrelationIDString + ":extractCopyMessageContext():  based on " +
                     logCorrelationIDString + "   into copy " + copy.getLogIDString());
         }
@@ -4074,7 +4074,7 @@ public class MessageContext extends AbstractContext
             copy.setEnvelope(envelope);
         }
         catch (Exception ex) {
-            if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
+            if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(logCorrelationIDString +
                     ":extractCopyMessageContext():  Exception caught when setting the copy with the envelope",
                       ex);
@@ -4216,7 +4216,7 @@ public class MessageContext extends AbstractContext
      */
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
-            if (LoggingControl.debugLoggingAllowed && log.isWarnEnabled()) {
+            if (DEBUG_ENABLED && log.isWarnEnabled()) {
                 log.warn(getLogIDString() + ":" + methodname + "(): ****WARNING**** " + myClassName +
                     ".activate(configurationContext) needs to be invoked.");
             }

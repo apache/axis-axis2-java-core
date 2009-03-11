@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Well this is never clearly defined, what it does or the life-cycle.
@@ -434,7 +435,7 @@ public class ServiceContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        properties = in.readMap(new HashMapUpdateLockable());
+        properties = in.readMap(new HashMap());
 
         //---------------------------------------------------------
         // AxisService

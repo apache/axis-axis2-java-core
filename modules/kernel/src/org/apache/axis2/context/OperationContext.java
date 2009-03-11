@@ -69,7 +69,7 @@ public class OperationContext extends AbstractContext
 
     private static final String myClassName = "OperationContext";
 
-    private boolean debugEnabled = log.isDebugEnabled();
+    private static boolean debugEnabled = log.isDebugEnabled();
 
     /**
      * An ID which can be used to correlate operations on an instance of
@@ -572,7 +572,7 @@ public class OperationContext extends AbstractContext
         // properties
         //---------------------------------------------------------
         in.readUTF(); // read marker
-        properties = in.readMap(new HashMapUpdateLockable());
+        properties = in.readMap(new HashMap());
 
         //---------------------------------------------------------
         // axis operation meta data

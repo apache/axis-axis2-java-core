@@ -181,7 +181,7 @@ public class SessionContext extends AbstractContext
      * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *
-     * @param o The stream to write the object contents to
+     * @param out The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput o) throws IOException {
@@ -275,7 +275,7 @@ public class SessionContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        properties = in.readMap(new HashMapUpdateLockable());
+        properties = in.readMap(new HashMap());
 
         //---------------------------------------------------------
         // "nested"

@@ -378,7 +378,7 @@ public class ServiceGroupContext extends AbstractContext
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
-        properties = in.readMap(new HashMapUpdateLockable());
+        properties = in.readMap(new HashMap());
 
         //---------------------------------------------------------
         // AxisServiceGroup

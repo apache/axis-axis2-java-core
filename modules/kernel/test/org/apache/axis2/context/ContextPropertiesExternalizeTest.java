@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
@@ -41,7 +42,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         mc.setProperty("key4_nullValue", null);
         mc.setProperty("key5", "value5");
         
-        assertTrue(mc.properties instanceof HashMapUpdateLockable);
+        assertTrue(mc.properties instanceof HashMap);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -63,16 +64,14 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", mcRead.getProperty(null));
             assertNull(mcRead.getProperty("key4_nullValue"));
             assertEquals("value5", mcRead.getProperty("key5"));
-            assertTrue(mcRead.properties instanceof HashMapUpdateLockable);
+            assertTrue(mcRead.properties instanceof HashMap);
             
         } catch (Exception ex) {
             ex.printStackTrace();
             fail("Caught exception: " + ex);
         }
-        
-        
     }
-    
+
     public void testExternalizeOperationContext() {
         OperationContext ctx = new OperationContext(new OutOnlyAxisOperation(), new ServiceContext());
         
@@ -82,7 +81,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
+        assertTrue(ctx.properties instanceof HashMap);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -104,7 +103,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
+            assertTrue(ctxRead.properties instanceof HashMap);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -121,7 +120,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
+        assertTrue(ctx.properties instanceof HashMap);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -143,7 +142,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
+            assertTrue(ctxRead.properties instanceof HashMap);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -160,7 +159,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
+        assertTrue(ctx.properties instanceof HashMap);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -182,7 +181,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
+            assertTrue(ctxRead.properties instanceof HashMap);
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -199,7 +198,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
         ctx.setProperty("key4_nullValue", null);
         ctx.setProperty("key5", "value5");
         
-        assertTrue(ctx.properties instanceof HashMapUpdateLockable);
+        assertTrue(ctx.properties instanceof HashMap);
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -221,7 +220,7 @@ public class ContextPropertiesExternalizeTest extends TestCase {
             assertEquals("value3_nullKey", ctxRead.getProperty(null));
             assertNull(ctxRead.getProperty("key4_nullValue"));
             assertEquals("value5", ctxRead.getProperty("key5"));
-            assertTrue(ctxRead.properties instanceof HashMapUpdateLockable);
+            assertTrue(ctxRead.properties instanceof HashMap);
             
         } catch (Exception ex) {
             ex.printStackTrace();

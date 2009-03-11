@@ -114,6 +114,7 @@ public class MessageContextChangeTest extends TestCase {
 //            new FieldDescription("java.lang.Class",
 //                                 new String[] {"class$org$apache$axis2$context$SelfManagedDataManager","class$1"}),
             new FieldDescription("java.lang.Exception", "failureReason"),
+            new FieldDescription("boolean", "DEBUG_ENABLED"),
     };
 
 
