@@ -59,11 +59,13 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.SelfManagedDataHolder;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -84,24 +86,24 @@ import java.util.Map;
 
 /**
  * <p>Axis2 states are held in two information models, called description hierarchy
- *  and context hierarchy. Description hierarchy hold deployment configuration 
- *  and it's values does not change unless deployment configuration change 
- *  occurs where Context hierarchy hold run time information. Both hierarchies 
- *  consists four levels, Global, Service Group, Operation and Message. Please 
- *  look at "Information Model" section  of "Axis2 Architecture Guide" for more 
+ *  and context hierarchy. Description hierarchy hold deployment configuration
+ *  and it's values does not change unless deployment configuration change
+ *  occurs where Context hierarchy hold run time information. Both hierarchies
+ *  consists four levels, Global, Service Group, Operation and Message. Please
+ *  look at "Information Model" section  of "Axis2 Architecture Guide" for more
  *  information.</p>
- *  <p>MessageContext hold run time information about one Message invocation. It 
- *  hold reference to OperationContext, ServiceGroupContext, and Configuration 
- *  Context tied with current message. For an example if you need accesses to other 
- *  messages of the current invocation, you can get to them via OperationContext. 
- *  Addition to class attributes define in Message context, message context stores 
- *  the information as name value pairs. Those name value pairs,and class attributes 
- *  tweak the execution behavior of message context and some of them can be find in 
- *  org.apache.axis2.Constants class. (TODO we should provide list of supported 
- *  options). You may set them at any level of context hierarchy and they will 
+ *  <p>MessageContext hold run time information about one Message invocation. It
+ *  hold reference to OperationContext, ServiceGroupContext, and Configuration
+ *  Context tied with current message. For an example if you need accesses to other
+ *  messages of the current invocation, you can get to them via OperationContext.
+ *  Addition to class attributes define in Message context, message context stores
+ *  the information as name value pairs. Those name value pairs,and class attributes
+ *  tweak the execution behavior of message context and some of them can be find in
+ *  org.apache.axis2.Constants class. (TODO we should provide list of supported
+ *  options). You may set them at any level of context hierarchy and they will
  *  affect invocations related to their child elements. </p>
  */
-public class MessageContext extends AbstractContext 
+public class MessageContext extends AbstractContext
     implements Externalizable, SafeSerializable {
 
     /*
@@ -849,11 +851,11 @@ public class MessageContext extends AbstractContext
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
-        
+
         if( axisMessage != null ) {
             return axisMessage.getParameter(key);
         }
-        
+
         if (axisOperation != null) {
             return axisOperation.getParameter(key);
         }
@@ -905,10 +907,10 @@ public class MessageContext extends AbstractContext
         // tough
         return null;
     }
-    
+
     /**
      * Retrieves a property value. The order of search is as follows: search in
-     * my own map and then look in my context hierarchy, and then in options. 
+     * my own map and then look in my context hierarchy, and then in options.
      * Since its possible
      * that the entire hierarchy is not present, I will start at whatever level
      * has been set.
@@ -936,7 +938,7 @@ public class MessageContext extends AbstractContext
         // nearest level is present and ask that to find the property.
         //
         // If the context is already an ancestor, it was checked during
-        // the super.getProperty call.  In such cases, the second check 
+        // the super.getProperty call.  In such cases, the second check
         // is not performed.
         if (operationContext != null) {
             if (!isAncestor(operationContext)) {
@@ -981,7 +983,7 @@ public class MessageContext extends AbstractContext
     public boolean isPropertyTrue(String name, boolean defaultVal) {
         return JavaUtils.isTrueExplicitly(getProperty(name), defaultVal);
     }
-    
+
     /**
      * Retrieves all property values. The order of search is as follows: search in
      * my own options and then look in my context hierarchy. Since its possible
@@ -1200,10 +1202,10 @@ public class MessageContext extends AbstractContext
         // of the inbound content length.
         if (attachments != null) {
 //            return attachments.getContentLength();
-        } 
-        
+        }
+
         // Otherwise the length is accumulated by the DetachableInputStream.
-        DetachableInputStream dis = 
+        DetachableInputStream dis =
             (DetachableInputStream) getProperty(Constants.DETACHABLE_INPUT_STREAM);
         if (dis != null) {
             return dis.length();
@@ -1455,7 +1457,7 @@ public class MessageContext extends AbstractContext
             }
             AxisService axisService = context.getAxisService();
             this.setAxisService(axisService);
-            
+
             // Inform the listeners of an attach event
             if (axisService != null) {
                 axisService.attachServiceContextEvent(serviceContext, this);
@@ -1572,25 +1574,33 @@ public class MessageContext extends AbstractContext
         if (DEBUG_ENABLED) {
             checkActivateWarning("getEffectivePolicy");
         }
-        
-        AxisBindingMessage bindingMessage = 
+
+        AxisBindingMessage bindingMessage =
         	(AxisBindingMessage) getProperty(Constants.AXIS_BINDING_MESSAGE);
-        
+
         // If AxisBindingMessage is not set, try to find the binding message from the AxisService
         if (bindingMessage == null) {
         	bindingMessage = findBindingMessage();
         }
-        
+
         if (bindingMessage != null) {
             return bindingMessage.getEffectivePolicy();
-        // If we can't find the AxisBindingMessage, then try the AxisMessage   
+        // If we can't find the AxisBindingMessage, then try the AxisMessage
         } else if (axisMessage != null) {
-        		return axisMessage.getEffectivePolicy();        		
+        		return axisMessage.getEffectivePolicy();
         } else {
-        		return null;
+            if (axisService != null){
+                List<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
+                policyList.addAll(axisService.getPolicySubject().getAttachedPolicyComponents());
+                AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
+                policyList.addAll(axisConfiguration.getPolicySubject().getAttachedPolicyComponents());
+		        return PolicyUtil.getMergedPolicy(policyList, axisService);
+            } else {
+               return null;
+            }
         }
     }
- 
+
     private AxisBindingMessage findBindingMessage() {
     	if (axisService != null && axisOperation != null ) {
 			if (axisService.getEndpointName() != null) {
@@ -1616,7 +1626,7 @@ public class MessageContext extends AbstractContext
 						axisBindingMessage = (AxisBindingMessage) axisBindingOperation
 								.getChild(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 						return axisBindingMessage;
-						
+
 					} else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT
 							.equals(direction)
 							&& WSDLUtil
@@ -2251,7 +2261,7 @@ public class MessageContext extends AbstractContext
         //-----------------------------------------------------------------------
         // Create and initialize the OMOutputFormat for Message Externalization
         //-----------------------------------------------------------------------
-        
+
         OMOutputFormat outputFormat= new OMOutputFormat();
         outputFormat.setSOAP11(isSOAP11);
         boolean persistOptimized = getPersistOptimized();
@@ -2413,7 +2423,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         out.writeUTF("executedPhases");
         if (executedPhases != null && executedPhases.size() > 0) {
-        
+
             // start writing data to the output stream
             out.writeBoolean(ExternalizeConstants.ACTIVE_OBJECT);
             out.writeInt(executedPhases.size());
@@ -2511,7 +2521,7 @@ public class MessageContext extends AbstractContext
 
         out.writeUTF("options");
         out.writeObject(options);
-        
+
         //---------------------------------------------------------
         // operation
         //---------------------------------------------------------
@@ -2548,7 +2558,7 @@ public class MessageContext extends AbstractContext
         }
 
         out.writeObject(operationContext);
-   
+
 
         //---------------------------------------------------------
         // service
@@ -2559,7 +2569,7 @@ public class MessageContext extends AbstractContext
         out.writeUTF("axisService");
         metaAxisService = null;
         if (axisService != null) {
-            metaAxisService = new MetaDataEntry(axisService.getClass().getName(), 
+            metaAxisService = new MetaDataEntry(axisService.getClass().getName(),
                                                 axisService.getName());
         }
         out.writeObject(metaAxisService);
@@ -2708,7 +2718,7 @@ public class MessageContext extends AbstractContext
         metaTransportIn = null;
         if (transportIn != null) {
             metaTransportIn = new MetaDataEntry(null, transportIn.getName());
-        } 
+        }
         out.writeObject(metaTransportIn);
 
         // TransportOutDescription transportOut
@@ -2717,7 +2727,7 @@ public class MessageContext extends AbstractContext
             metaTransportOut = new MetaDataEntry(null, transportOut.getName());
         }
         out.writeObject(metaTransportOut);
-        
+
 
         //---------------------------------------------------------
         // properties
@@ -2745,7 +2755,7 @@ public class MessageContext extends AbstractContext
         }
 
     }
-    
+
     /**
      * @return true if the data should be persisted as optimized attachments
      */
@@ -2794,7 +2804,7 @@ public class MessageContext extends AbstractContext
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {        
+    public void readExternal(ObjectInput inObject) throws IOException, ClassNotFoundException {
         SafeObjectInputStream in = SafeObjectInputStream.install(inObject);
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references
@@ -2899,7 +2909,7 @@ public class MessageContext extends AbstractContext
 
         String marker = in.readUTF();
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read executionChain, marker is: " + marker);
         }
         boolean gotChain = in.readBoolean();
@@ -3022,11 +3032,11 @@ public class MessageContext extends AbstractContext
 
         marker = in.readUTF();
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read executedPhases, marker is: " + marker);
         }
-        
-        // Previous versions of Axis2 saved two phases in the stream, although one should 
+
+        // Previous versions of Axis2 saved two phases in the stream, although one should
         // always have been null.  The two phases and their associated markers are, in this order:
         // "inboundExecutedPhases", "outboundExecutedPhases".
         boolean gotInExecList = in.readBoolean();
@@ -3034,23 +3044,23 @@ public class MessageContext extends AbstractContext
         if (marker.equals("inboundExecutedPhases")) {
             oldStyleExecutedPhases = true;
         }
-        
+
         if (oldStyleExecutedPhases && (gotInExecList == ExternalizeConstants.EMPTY_OBJECT)) {
             // There are an inboundExecutedPhases and an outboundExecutedPhases and this one
             // is empty, so skip over it and read the next one
             marker = in.readUTF();
             if (DEBUG_ENABLED && log.isTraceEnabled()) {
-                log.trace(getLogIDString() + 
+                log.trace(getLogIDString() +
                           ": readExternal(): Skipping over oldStyle empty inboundExecutedPhases");
-                log.trace(getLogIDString() + 
+                log.trace(getLogIDString() +
                           ": readExternal(): About to read executedPhases, marker is: " + marker);
             }
             gotInExecList = in.readBoolean();
         }
-        
+
         /*
-         * At this point, the stream should point to either "executedPhases" if this is the 
-         * new style of serialization.  If it is the oldStyle, it should point to whichever 
+         * At this point, the stream should point to either "executedPhases" if this is the
+         * new style of serialization.  If it is the oldStyle, it should point to whichever
          * of "inbound" or "outbound" executed phases contains an active object, since only one
          * should
          */
@@ -3123,36 +3133,36 @@ public class MessageContext extends AbstractContext
                         adjustedNumberInExecList + "]    ");
             }
         }
-        
+
         if ((metaExecuted == null) || (metaExecuted.isEmpty())) {
             if (DEBUG_ENABLED && log.isTraceEnabled()) {
                 log.trace(getLogIDString() +
                         ":readExternal(): meta data for executedPhases list is NULL");
             }
         }
-        
+
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): After reading executedPhases, marker is: " + marker);
         }
 
-        // If this is an oldStyle that contained both an inbound and outbound executed phases, 
+        // If this is an oldStyle that contained both an inbound and outbound executed phases,
         // and the outbound phases wasn't read above, then we need to skip over it
         if (marker.equals("outboundExecutedPhases")) {
             Boolean gotOutExecList = in.readBoolean();
             if (DEBUG_ENABLED && log.isTraceEnabled()) {
-                log.trace(getLogIDString() + 
-                          ": readExternal(): Skipping over outboundExecutedPhases, marker is: " + marker + 
+                log.trace(getLogIDString() +
+                          ": readExternal(): Skipping over outboundExecutedPhases, marker is: " + marker +
                           ", is list an active object: " + gotOutExecList);
             }
             if (gotOutExecList != ExternalizeConstants.EMPTY_OBJECT) {
                 throw new IOException("Both inboundExecutedPhases and outboundExecutedPhases had active objects");
             }
-            
+
             marker = in.readUTF();
             if (DEBUG_ENABLED && log.isTraceEnabled()) {
-                log.trace(getLogIDString() + 
+                log.trace(getLogIDString() +
                           ": readExternal(): After skipping ooutboundExecutePhases, marker is: " + marker);
             }
         }
@@ -3160,7 +3170,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         // options
         //---------------------------------------------------------
-        
+
         options = (Options) in.readObject();
 
         if (options != null) {
@@ -3178,7 +3188,7 @@ public class MessageContext extends AbstractContext
         axisOperation = null;
         marker = in.readUTF();  // Read Marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read axisOperation, marker is: " + marker);
         }
         metaAxisOperation = (MetaDataEntry) in.readObject();
@@ -3187,7 +3197,7 @@ public class MessageContext extends AbstractContext
         // NOTE: expect this to be the parent
         marker = in.readUTF();  // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read operationContext, marker is: " + marker);
         }
         operationContext = (OperationContext) in.readObject();
@@ -3207,7 +3217,7 @@ public class MessageContext extends AbstractContext
         axisService = null;
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read axisService, marker is: " + marker);
         }
         metaAxisService = (MetaDataEntry) in.readObject();
@@ -3216,13 +3226,13 @@ public class MessageContext extends AbstractContext
         // serviceContextID string
         //-------------------------
         serviceContextID = (String) in.readObject();
-        
+
         //-------------------------
         // serviceContext
         //-------------------------
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read serviceContext, marker is: " + marker);
         }
 
@@ -3255,7 +3265,7 @@ public class MessageContext extends AbstractContext
         axisServiceGroup = null;
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read AxisServiceGroup, marker is: " + marker);
         }
         metaAxisServiceGroup = (MetaDataEntry) in.readObject();
@@ -3270,7 +3280,7 @@ public class MessageContext extends AbstractContext
         //-----------------------------
         marker = in.readUTF();
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read ServiceGroupContext, marker is: " + marker);
         }
 
@@ -3303,7 +3313,7 @@ public class MessageContext extends AbstractContext
         axisMessage = null;
         marker = in.readUTF();  // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read AxisMessage, marker is: " + marker);
         }
         metaAxisMessage = (MetaDataEntry) in.readObject();
@@ -3350,7 +3360,7 @@ public class MessageContext extends AbstractContext
         // read local properties
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read properties, marker is: " + marker);
         }
         properties = in.readMap(new HashMap());
@@ -3361,7 +3371,7 @@ public class MessageContext extends AbstractContext
         //---------------------------------------------------------
         marker = in.readUTF(); // Read marker
         if (DEBUG_ENABLED && log.isTraceEnabled()) {
-            log.trace(getLogIDString() + 
+            log.trace(getLogIDString() +
                       ": readExternal(): About to read SpecialData, marker is: " + marker);
         }
 
