@@ -243,14 +243,13 @@ public class AxisBinding extends AxisDescription {
     
     public Policy getEffectivePolicy() {
         ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
-        policyList.addAll(getPolicyInclude().getAttachedPolicies());
+        policyList.addAll(getPolicySubject().getAttachedPolicyComponents());
      
         // AxisEndpoint
         AxisEndpoint axisEndpoint = getAxisEndpoint();
         
         if (axisEndpoint != null) {
-            policyList.addAll(axisEndpoint.getPolicyInclude()
-                    .getAttachedPolicies());
+            policyList.addAll(axisEndpoint.getPolicySubject().getAttachedPolicyComponents());
         }
         
         AxisService service = null;
@@ -260,9 +259,9 @@ public class AxisBinding extends AxisDescription {
         }
         
         if (service != null) {
-            Policy effectivePolicy = service.getPolicyInclude().getEffectivePolicy();
-            if (effectivePolicy != null) {
-                policyList.add(effectivePolicy);
+            PolicySubject servicePolicySubject = service.getPolicySubject();
+            if (servicePolicySubject != null) {
+                policyList.addAll(servicePolicySubject.getAttachedPolicyComponents());
             }
         }
         
