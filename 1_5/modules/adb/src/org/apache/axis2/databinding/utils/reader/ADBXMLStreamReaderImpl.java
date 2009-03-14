@@ -1006,7 +1006,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         //we are done with the delegation
         //increment the property index
         currentPropertyIndex = currentPropertyIndex + 2;
-        return childReader.getEventType();
+        // If necessary, discard the START_DOCUMENT element (AXIS2-4271)
+        int eventType = childReader.getEventType();
+        return eventType == START_DOCUMENT ? childReader.next() : eventType;
     }
 
     /** are we done ? */
