@@ -37,7 +37,7 @@ public class DirectoryResourceLocation extends AbstractUrlResourceLocation {
 
     public ResourceHandle getResourceHandle(String resourceName) {
         File file = new File(baseDir, resourceName);
-        if (!file.exists()) {
+        if (!file.exists() || !isLocal(file)) {
             return null;
         }
 
@@ -49,6 +49,16 @@ public class DirectoryResourceLocation extends AbstractUrlResourceLocation {
         }
     }
 
+    private boolean isLocal(File file) {
+        try {
+            String base = baseDir.getCanonicalPath();
+            String relative = file.getCanonicalPath();
+            return (relative.startsWith(base));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+    
     public Manifest getManifest() throws IOException {
         if (!manifestLoaded) {
             File manifestFile = new File(baseDir, "META-INF/MANIFEST.MF");
