@@ -19,7 +19,6 @@
 
 package org.apache.axis2.description;
 
-import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -1245,16 +1244,21 @@ public class AxisService extends AxisDescription {
 				out.flush();
 				out.close();
 			} else {
+                            // make sure we are only serving .xsd files and ignore requests with
+                            // ".." in the name.
+                            if (xsd.endsWith(".xsd") && xsd.indexOf("..") == -1) {
 				InputStream in = getClassLoader().getResourceAsStream(
 						DeploymentConstants.META_INF + "/" + xsd);
 				if (in != null) {
-					out.write(IOUtils.getStreamAsByteArray(in));
-					out.flush();
-					out.close();
+                                    IOUtils.copy(in, out, true);
 				} else {
-					// Can't find the schema
-					return -1;
+                                    // Can't find the schema
+                                    return -1;
 				}
+                            } else {
+                                // bad schema request
+                                return -1;
+                            }
 			}
 		} else if (schemas.size() > 1) {
 			// multiple schemas are present and the user specified
@@ -1569,6 +1573,44 @@ public class AxisService extends AxisDescription {
 		}
 	}
 
+    /**
+     * Produces a WSDL2 for this AxisService and prints it to the specified
+     * OutputStream.
+     * 
+     * @param out
+     *            destination stream.
+     * @param wsdl
+     *            wsdl name
+     * @return -1 implies not found, 0 implies redirect to root, 1 implies
+     *         found/printed wsdl
+     * @throws IOException
+     */
+    public int printWSDL2(OutputStream out, String requestIP, String wsdl) 
+        throws IOException, AxisFault {    
+        // a name is present - try to pump the requested wsdl file
+        if (!"".equals(wsdl)) {
+            // make sure we are only serving .wsdl files and ignore requests with
+            // ".." in the name.
+            if (wsdl.endsWith(".wsdl") && wsdl.indexOf("..") == -1) {
+                InputStream in = getClassLoader().getResourceAsStream(
+                                    DeploymentConstants.META_INF + "/" + wsdl);
+                if (in != null) {
+                    IOUtils.copy(in, out, true);
+                } else {
+                    // can't find the wsdl
+                    return -1;
+                }
+            } else {
+                // bad wsdl2 request
+                return -1;
+            }
+        } else {
+            printWSDL2(out, requestIP);
+        }
+        
+        return 1;
+    }
+    
 	/**
 	 * Gets the description about the service which is specified in
 	 * services.xml.
