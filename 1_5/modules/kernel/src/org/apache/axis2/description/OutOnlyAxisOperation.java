@@ -265,10 +265,10 @@ class OutOnlyAxisOperationClient extends OperationClient {
         OperationContext oc = sc.createOperationContext(axisOp);
         oc.addMessageContext(mc);
         
-        // ship it out
-        if (!block) {
-            mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
-        }
+        // here we should not set it as NON bloking. if needed then user can do
+        // it. if all the senders invoke in a different threads then it causes
+        // a performance problem when using a MultiThreadedHttpConnectionManager
+        
         AxisEngine.send(mc);
         // all done
         completed = true;
