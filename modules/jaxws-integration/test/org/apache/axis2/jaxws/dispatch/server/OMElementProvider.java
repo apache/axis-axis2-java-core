@@ -19,11 +19,8 @@
 
 package org.apache.axis2.jaxws.dispatch.server;
 
-import java.io.StringReader;
+import java.util.Iterator;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
@@ -36,12 +33,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
-import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
  * A Provider&lt;OMElement&gt; implementation used to test sending and 
@@ -54,20 +49,23 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class OMElementProvider implements Provider<OMElement> {
-    
-    private static final String sampleResponse = 
-        "<test:echoOMElement xmlns:test=\"http://org/apache/axis2/jaxws/test/OMELEMENT\">" +
-        "<test:input>SAMPLE RESPONSE MESSAGE</test:input>" +
-        "</test:echoOMElement>";
-    
-    private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-    
+
     public OMElement invoke(OMElement obj) {
-        try {
-            System.out.println("MIKE: " + obj.toStringWithConsume());
-        } catch (XMLStreamException e) {
-            System.out.println("MIKE: PROBLEM");
+        // since this is test code, let's check the inbound obj:
+        SOAPEnvelope inboundEnv = (SOAPEnvelope)obj;
+        SOAPBody inboundBody = inboundEnv.getBody();
+        Iterator it = inboundBody.getChildren();
+        OMElement el3 = null;
+        for (;it.hasNext();) {
+            OMElement el2 = (OMElement)it.next();
+            Iterator it2 = el2.getChildElements();
+            for (;it2.hasNext();) {
+                el3 = (OMElement)it2.next();
+                assert(el3.getText().equals("SAMPLE REQUEST MESSAGE"));
+            }
         }
+        assert(el3 != null);
+
         OMElement payload = createPayload();
         
         SOAPFactory factory = new SOAP12Factory();

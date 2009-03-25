@@ -182,9 +182,6 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 block = message.getBodyBlock(null, factory);
                 if (block != null) {
                     value = block.getBusinessObject(true);
-                    if (value instanceof OMBlockFactoryImpl) {
-                        value = ((OMBlock)value).getOMElement();
-                    }
                 } else {
                     // REVIEW This seems like the correct behavior.  If the body is empty, return a null
                     // Any changes here should also be made to XMLDispatch.getValue
@@ -197,7 +194,18 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
 
             } else if (mode.equals(Mode.MESSAGE)) {
                 BlockFactory factory = (BlockFactory)FactoryRegistry.getFactory(blockFactoryType);
-                if (factory instanceof OMBlockFactoryImpl) {
+
+                if (factory instanceof OMBlockFactory) {
+                    /*
+                     * see MessageImpl.getValue(Object, BlockFactory)
+                     * The getValue method is not performant; it uses an intermediate StringBlock.  To support OMElement in a
+                     * performant way, we simply retrieve the OMElement from the Message object, rather than unnecessarily
+                     * using the non-performant code in MessageImpl.getValue.
+                     * 
+                     * TODO:  when MessageImpl.getValue is fixed, this code can be removed, and the check for (value instanceof OMBlock)
+                     * placed below.  However, the solution here actually traverses less code, so perhaps it should remain as-is.
+                     */
+
                     value = (OMElement)message.getAsOMElement();
                 } else {
                     value = message.getValue(null, factory);

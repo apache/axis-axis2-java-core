@@ -282,14 +282,21 @@ public class ProviderDispatcher extends JavaDispatcher {
             Service.Mode providerServiceMode = endpointDesc.getServiceMode();
 
             if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Provider type is " + providerType.getClass().getName());
+                }
                 if (providerType.equals(SOAPMessage.class)) {
                     // We can get the SOAPMessage directly from the message itself
                     if (log.isDebugEnabled()) {
-                        log.debug("Provider Type is SOAPMessage.");
                         log.debug("Number Message attachments=" + message.getAttachmentIDs().size());
                     }
                 }
                 if (providerType.equals(OMElement.class)) {
+                    // TODO avoid call to message.getValue due to
+                    // current unnecessary message transformation in
+                    // message.getValue.  Once message.getValue is fixed,
+                    // this code block is unnecessary, though no harm
+                    // will come if it remains.  rott
                     requestParamValue = message.getAsOMElement();
                 } else {
                     requestParamValue = message.getValue(null, factory);
@@ -307,6 +314,10 @@ public class ProviderDispatcher extends JavaDispatcher {
                     try {
                         requestParamValue = block.getBusinessObject(true);
                         if (requestParamValue instanceof OMBlock) {
+                            // Provider<OMBlock> is not supported, so we need to get the OMElement out
+                            if (log.isDebugEnabled()) {
+                                log.debug("request parameter business object is OMBlock.  Now retrieving OMElement from OMBlock.");
+                            }
                             requestParamValue = ((OMBlock)requestParamValue).getOMElement();
                         }
                     } catch (WebServiceException e) {
