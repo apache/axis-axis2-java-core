@@ -55,7 +55,8 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
             SOAPFault fault = envelope.getBody().getFault();
 
             if (fault == null) {
-                throw new AxisFault("Problem");
+                throw new AxisFault("A Soap envelope with fault action -" + action + " has been received without " +
+                        "a fault element in the soap body");
             }
 
             SOAPFactory sf = ((SOAPFactory)envelope.getOMFactory());
