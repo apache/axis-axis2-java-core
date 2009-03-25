@@ -46,7 +46,7 @@
             <order phase="Addressing" before="AddressingBasedDispatcher"/>
         </handler>
         <handler name="AddressingInFaultHandler" class="org.apache.axis2.handlers.addressing.AddressingInFaultHandler">
-            <order phase="Addressing" after="AddressingBasedDispatcher"/>
+            <order phase="PreDispatch" after="AddressingBasedDispatcher"/>
         </handler>
         <!-- AddressingValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
     </InFaultFlow>
