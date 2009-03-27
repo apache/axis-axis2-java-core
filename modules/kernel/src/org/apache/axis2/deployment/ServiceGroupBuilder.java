@@ -117,25 +117,26 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
      */
     protected void processModuleRefs(Iterator moduleRefs, AxisServiceGroup axisServiceGroup)
             throws DeploymentException {
-        try {
+//        try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
                 OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
 
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
+                    axisServiceGroup.addModuleref(refName);
 
-                    if (axisConfig.getModule(refName) == null) {
-                        throw new DeploymentException(
-                                Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
-                    } else {
-                        axisServiceGroup.addModuleref(refName);
-                    }
+//                    if (axisConfig.getModule(refName) == null) {
+//                        throw new DeploymentException(
+//                                Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
+//                    } else {
+//                        axisServiceGroup.addModuleref(refName);
+//                    }
                 }
             }
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
-        }
+//        } catch (AxisFault axisFault) {
+//            throw new DeploymentException(axisFault);
+//        }
     }
 
     protected void processServiceModuleConfig(Iterator moduleConfigs, ParameterInclude parent,

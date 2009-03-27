@@ -476,7 +476,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     protected void processOperationModuleRefs(Iterator moduleRefs,
                                               AxisOperation operation) throws DeploymentException {
-        try {
+//        try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
                 OMAttribute moduleRefAttribute = moduleref
@@ -484,20 +484,21 @@ public class DescriptionBuilder implements DeploymentConstants {
 
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
+                    operation.addModule(refName);
 
-                    if (axisConfig.getModule(refName) == null) {
-                        throw new DeploymentException(Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
-                    } else {
-                        operation.addModule(refName);
-                    }
+//                    if (axisConfig.getModule(refName) == null) {
+//                        throw new DeploymentException(Messages.getMessage(
+//                                DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
+//                    } else {
+//                        operation.addModule(refName);
+//                    }
                 }
             }
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(Messages.getMessage(
-                    DeploymentErrorMsgs.MODULE_NOT_FOUND, axisFault
-                    .getMessage()), axisFault);
-        }
+//        } catch (AxisFault axisFault) {
+//            throw new DeploymentException(Messages.getMessage(
+//                    DeploymentErrorMsgs.MODULE_NOT_FOUND, axisFault
+//                    .getMessage()), axisFault);
+//        }
     }
 
     /**

@@ -88,9 +88,7 @@ public class ServiceDeployer implements Deployer {
                                              location,
                                              deploymentFileData,
                                              axisConfig);
-            log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                         deploymentFileData.getName(),
-                                         location.toString()));
+
         } catch (DeploymentException de) {
             de.printStackTrace();
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,

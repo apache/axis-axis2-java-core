@@ -47,6 +47,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.FaultyServiceData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -555,6 +556,30 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
         axisConfiguration.addModule(modulemetadata);
         log.debug(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
+
+        synchronized (axisConfiguration.getFaultyServicsDuetoModules()) {
+
+            //Check whether there are faulty services due to this module
+            HashMap<String, FaultyServiceData> faultyServices = axisConfiguration.getFaultyServicesDuetoModule(
+                    modulemetadata.getName());
+            faultyServices = (HashMap<String, FaultyServiceData>)faultyServices.clone();
+
+            // Here iterating a cloned hashmap and modifying the original hashmap.
+            // To avoid the ConcurrentModificationException.
+            for (Iterator<FaultyServiceData> itr = faultyServices.values().iterator(); itr.hasNext();) {
+
+                FaultyServiceData faultyServiceData = itr.next();
+                axisConfiguration.removeFaultyServiceDuetoModule(modulemetadata.getName(),
+                        faultyServiceData.getServiceGroup().getServiceGroupName());
+
+                //Recover the faulty serviceGroup.
+                addServiceGroup(faultyServiceData.getServiceGroup(),
+                        faultyServiceData.getServiceList(),
+                        faultyServiceData.getServiceLocation(),
+                        faultyServiceData.getCurrentDeploymentFile(),
+                        axisConfiguration);
+            }
+        }
     }
 
     public static void addServiceGroup(AxisServiceGroup serviceGroup,
@@ -562,12 +587,104 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                        URL serviceLocation,
                                        DeploymentFileData currentDeploymentFile,
                                        AxisConfiguration axisConfiguration) throws AxisFault {
-        fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfiguration);
-        axisConfiguration.addServiceGroup(serviceGroup);
-        if (currentDeploymentFile != null) {
-            addAsWebResources(currentDeploymentFile.getFile(),
-                              serviceGroup.getServiceGroupName(), serviceGroup);
+
+        if (isServiceGroupReadyToDeploy(serviceGroup, serviceList, serviceLocation,
+                currentDeploymentFile, axisConfiguration)) {
+
+            fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfiguration);
+            axisConfiguration.addServiceGroup(serviceGroup);
+
+            if (currentDeploymentFile != null) {
+                addAsWebResources(currentDeploymentFile.getFile(),
+                        serviceGroup.getServiceGroupName(), serviceGroup);
+                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                                         currentDeploymentFile.getName(),
+                                         serviceLocation.toString()));
+            } else {
+                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                                         serviceGroup.getServiceGroupName()));
+            }
+
         }
+    }
+
+    /**
+     * Performs a check routine, in order to identify whether all the serviceGroup, service and operation level
+     * modules are available. If a referenced module is not deployed yet, the serviceGroup is added as a faulty service.
+     * @param serviceGroup
+     * @param serviceList
+     * @param serviceLocation
+     * @param currentDeploymentFile
+     * @param axisConfig
+     * @return boolean
+     * @throws AxisFault
+     */
+    protected static boolean isServiceGroupReadyToDeploy(AxisServiceGroup serviceGroup,
+                                                         ArrayList serviceList,
+                                                         URL serviceLocation,
+                                                         DeploymentFileData currentDeploymentFile,
+                                                         AxisConfiguration axisConfig) throws AxisFault {
+        synchronized (axisConfig.getFaultyServicsDuetoModules()) {
+            String moduleName;
+            ArrayList groupModules = serviceGroup.getModuleRefs();
+            for (int i = 0; i < groupModules.size(); i++) {
+                moduleName = (String) groupModules.get(i);
+                AxisModule module = axisConfig.getModule(moduleName);
+
+                if (module == null) {
+                    axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup, serviceList,
+                            serviceLocation, currentDeploymentFile));
+                    if (log.isDebugEnabled()) {
+                                log.debug("Service: " + serviceGroup.getServiceGroupName() +
+                                        " becomes faulty due to Module: " + moduleName);
+                            }
+                    return false;
+                }
+            }
+
+            for (Object aServiceList : serviceList) {
+                AxisService axisService = (AxisService) aServiceList;
+
+                // modules from <service>
+                ArrayList list = axisService.getModules();
+
+                for (int i = 0; i < list.size(); i++) {
+                    moduleName = (String) list.get(i);
+                    AxisModule module = axisConfig.getModule(moduleName);
+
+                    if (module == null) {
+                        axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup, serviceList,
+                                serviceLocation, currentDeploymentFile));
+                        if (log.isDebugEnabled()) {
+                                log.debug("Service: " + serviceGroup.getServiceGroupName() +
+                                        " becomes faulty due to Module: " + moduleName);
+                            }
+                        return false;
+                    }
+                }
+
+                for (Iterator iterator = axisService.getOperations(); iterator.hasNext();) {
+                    AxisOperation opDesc = (AxisOperation) iterator.next();
+                    ArrayList modules = opDesc.getModuleRefs();
+
+                    for (int i = 0; i < modules.size(); i++) {
+                        moduleName = (String) modules.get(i);
+                        AxisModule module = axisConfig.getModule(moduleName);
+
+                        if (module == null) {
+                            axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup,
+                                    serviceList, serviceLocation, currentDeploymentFile));
+                            if (log.isDebugEnabled()) {
+                                log.debug("Service: " + serviceGroup.getServiceGroupName() +
+                                        " becomes faulty due to Module: " + moduleName);
+                            }
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     protected static void fillServiceGroup(AxisServiceGroup serviceGroup,

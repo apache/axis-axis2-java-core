@@ -657,7 +657,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 	 */
 	protected void processModuleRefs(Iterator moduleRefs)
 			throws DeploymentException {
-		try {
+//		try {
 			while (moduleRefs.hasNext()) {
 				OMElement moduleref = (OMElement) moduleRefs.next();
 				OMAttribute moduleRefAttribute = moduleref
@@ -665,18 +665,18 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 				if (moduleRefAttribute != null) {
 					String refName = moduleRefAttribute.getAttributeValue();
-
-					if (axisConfig.getModule(refName) == null) {
-						throw new DeploymentException(Messages.getMessage(
-								DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
-					} else {
-						service.addModuleref(refName);
-					}
+                    service.addModuleref(refName);
+//					if (axisConfig.getModule(refName) == null) {
+//						throw new DeploymentException(Messages.getMessage(
+//								DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
+//					} else {
+//						service.addModuleref(refName);
+//					}
 				}
 			}
-		} catch (AxisFault axisFault) {
-			throw new DeploymentException(axisFault);
-		}
+//		} catch (AxisFault axisFault) {
+//			throw new DeploymentException(axisFault);
+//		}
 	}
 
 	protected void processOperationModuleConfig(Iterator moduleConfigs,

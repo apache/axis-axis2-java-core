@@ -61,6 +61,7 @@ import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.FaultyServiceData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -115,6 +116,10 @@ public class AxisConfiguration extends AxisDescription {
      * To store faulty services
      */
     private Hashtable<String, String> faultyServices;
+
+    private final HashMap<String, HashMap<String, FaultyServiceData>> faultyServicesDueToModules = new HashMap<String,
+            HashMap<String, FaultyServiceData>>();
+
 
     private List<Phase> inFaultPhases;
 
@@ -640,6 +645,54 @@ public class AxisConfiguration extends AxisDescription {
 
     public Hashtable<String, String> getFaultyServices() {
         return faultyServices;
+    }
+
+    /**
+     * Updates the map that keeps track of faulty services due to modules
+     * @param moduleName This service has become faulty due this module.
+     * @param faultyServiceData  Data that are required when recovering the faulty service.
+     */
+    public void addFaultyServiceDuetoModule(String moduleName, FaultyServiceData faultyServiceData) {
+        HashMap<String, FaultyServiceData> faultyServicesMap;
+
+        synchronized (faultyServicesDueToModules) {
+
+            if (faultyServicesDueToModules.containsKey(moduleName)) {
+                faultyServicesMap = faultyServicesDueToModules.get(moduleName);
+                faultyServicesMap.put(faultyServiceData.getServiceGroupName(), faultyServiceData);
+
+            } else {
+                faultyServicesMap = new HashMap<String, FaultyServiceData>();
+                faultyServicesMap.put(faultyServiceData.getServiceGroupName(), faultyServiceData);
+                faultyServicesDueToModules.put(moduleName, faultyServicesMap);
+            }
+        }
+    }
+
+    public HashMap<String, FaultyServiceData> getFaultyServicesDuetoModule(String moduleName) {
+        if (faultyServicesDueToModules.containsKey(moduleName)) {
+            return faultyServicesDueToModules.get(moduleName);
+
+        }
+        return new HashMap<String, FaultyServiceData>(1);
+    }
+
+    public HashMap<String, HashMap<String, FaultyServiceData>> getFaultyServicsDuetoModules(){
+        return faultyServicesDueToModules;
+    }
+
+    public void removeFaultyServiceDuetoModule(String moduleName, String serviceGroupName) {
+        synchronized (faultyServicesDueToModules) {
+            HashMap<String, FaultyServiceData> faultyServices = faultyServicesDueToModules.get(moduleName);
+
+            if(faultyServices != null){
+                faultyServices.remove(serviceGroupName);
+
+                if(faultyServices.isEmpty()){
+                    faultyServicesDueToModules.remove(moduleName);
+                }
+            }
+        }
     }
 
     public void removeFaultyService(String key) {
