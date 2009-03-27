@@ -1098,7 +1098,7 @@ class MetadataTestCachingClientContextFactory extends ClientConfigurationFactory
         if (context == null) {
             context = super.getClientConfigurationContext();
         }
-        System.out.println("Test version of MetadataTestCachingClientContextFactory: " + context);
+//        System.out.println("Test version of MetadataTestCachingClientContextFactory: " + context);
         return context;
     }
     

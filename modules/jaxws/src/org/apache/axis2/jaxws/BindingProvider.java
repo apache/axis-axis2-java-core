@@ -54,6 +54,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     protected EndpointDescription endpointDesc;
 
+    // NOTE this reference to the ServiceDelegate MUST be a strong reference to keep the delegate
+    // from being GC'd when the Service instance in the client goes out of scope but ports under
+    // that service are still in use.
     protected ServiceDelegate serviceDelegate;
 
     private org.apache.axis2.jaxws.spi.Binding binding;

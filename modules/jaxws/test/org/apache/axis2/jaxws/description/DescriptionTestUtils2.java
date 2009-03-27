@@ -91,12 +91,13 @@ public class DescriptionTestUtils2 {
         ServiceDelegate returnServiceDelegate = null;
         try {
             try {
-                Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
+//                Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
+                Field serviceDelgateField = service.getClass().getDeclaredField("delegate");
                 serviceDelgateField.setAccessible(true);
                 returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (NoSuchFieldException e) {
                 // This may be a generated service subclass, so get the delegate from the superclass
-                Field serviceDelegateField = service.getClass().getSuperclass().getDeclaredFields()[0];
+                Field serviceDelegateField = service.getClass().getSuperclass().getDeclaredField("delegate");
                 serviceDelegateField.setAccessible(true);
                 returnServiceDelegate = (ServiceDelegate) serviceDelegateField.get(service);
             } 
@@ -104,6 +105,9 @@ public class DescriptionTestUtils2 {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) { 
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

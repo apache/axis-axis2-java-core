@@ -43,6 +43,8 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -68,7 +70,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
       */
 
     private ServiceDescription serviceDesc;
-    private Object serviceDelegateKey;
+    private WeakReference<Object> serviceDelegateKeyReference;
     
     public HandlerResolverImpl(ServiceDescription sd) {
         this(sd, null);
@@ -76,7 +78,9 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
 
     public HandlerResolverImpl(ServiceDescription sd, Object serviceDelegateKey) { 
         this.serviceDesc = sd;
-        this.serviceDelegateKey = serviceDelegateKey;
+        if (serviceDelegateKey != null) {
+            this.serviceDelegateKeyReference = new WeakReference<Object>(serviceDelegateKey);
+        }
     }
     
     private ResolvedHandlersDescription getResolvedHandlersDescription(PortInfo portInfo) {
@@ -84,17 +88,26 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         // On the client the handler information can be changed via service-delegate-specific
         // deployment information.  So, only look into the service-side cache only if the 
         // service delegate key is null.
-        if (serviceDelegateKey == null) {
+        if (getServiceDelegateKey() == null) {
             resolvedHandlersDesc = serviceDesc.getResolvedHandlersDescription(portInfo);
         }
         return resolvedHandlersDesc;
     }
+
+    private Object getServiceDelegateKey() {
+        Object returnKey = null;
+        if (serviceDelegateKeyReference != null) {
+            returnKey = serviceDelegateKeyReference.get();
+        }
+        return returnKey;
+    }
+
     private ResolvedHandlersDescription getOrCreateResolvedHandlersDescription(PortInfo portInfo) {
         ResolvedHandlersDescription resolvedHandlersDesc = null;
         // On the client the handler information can be changed via service-delegate-specific
         // deployment information.  So, only look into the service-side cache only if the 
         // service delegate key is null.
-        if (serviceDelegateKey == null) {
+        if (getServiceDelegateKey() == null) {
             resolvedHandlersDesc = serviceDesc.getResolvedHandlersDescription(portInfo);
             if (resolvedHandlersDesc == null) {
                 resolvedHandlersDesc = DescriptionFactory.createResolvedHandlersDescription();
@@ -281,7 +294,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
         
         // Get the HandlerChains specified on the Endpoint (service-provider) or on the Service
         // (service-requester).
-        handlerChainsType = serviceDesc.getHandlerChain(serviceDelegateKey);  
+        handlerChainsType = serviceDesc.getHandlerChain(getServiceDelegateKey());  
 
         // HandlerChains apply to specific Port Compoments (service-provider) or Ports (
         // (service-requesters) so find the appropriate one.
@@ -303,7 +316,7 @@ public class HandlerResolverImpl extends BaseHandlerResolver {
             // overrides the annotations as described in the long-winded comment above.
             // -- THEN --
             // Use this handler chains information
-            HandlerChainsType hct_includingComposite = ed.getHandlerChain(serviceDelegateKey);
+            HandlerChainsType hct_includingComposite = ed.getHandlerChain(getServiceDelegateKey());
             HandlerChainsType hct_noComposite = ed.getHandlerChain();
             if (handlerChainsType == null || (hct_includingComposite != hct_noComposite)) {
                 handlerChainsType = hct_includingComposite;

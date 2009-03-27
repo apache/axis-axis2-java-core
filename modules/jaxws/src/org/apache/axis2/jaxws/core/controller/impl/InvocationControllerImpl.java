@@ -336,7 +336,7 @@ public abstract class InvocationControllerImpl implements InvocationController {
         
         // Put the understood header qnames on the request context where it can
         // be found during response processing.
-        if (understoodHeaders != null & understoodHeaders.size() > 0) {
+        if (understoodHeaders != null && understoodHeaders.size() > 0) {
           if (log.isDebugEnabled()) {
             log.debug("Adding understood header QName collection to message context " + understoodHeaders);
           }

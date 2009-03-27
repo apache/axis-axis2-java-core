@@ -901,12 +901,12 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         ServiceDelegate returnServiceDelegate = null;
         try {
             try {
-                Field serviceDelgateField = service.getClass().getDeclaredFields()[0];
+                Field serviceDelgateField = service.getClass().getDeclaredField("delegate");
                 serviceDelgateField.setAccessible(true);
                 returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (NoSuchFieldException e) {
                 // This may be a generated service subclass, so get the delegate from the superclass
-                Field serviceDelegateField = service.getClass().getSuperclass().getDeclaredFields()[0];
+                Field serviceDelegateField = service.getClass().getSuperclass().getDeclaredField("delegate");
                 serviceDelegateField.setAccessible(true);
                 returnServiceDelegate = (ServiceDelegate) serviceDelegateField.get(service);
             } 
@@ -916,6 +916,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             }
             throw ExceptionFactory.makeWebServiceException(e);
         } catch (IllegalAccessException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Attempt to get service delegate for service caught exception.", e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (NoSuchFieldException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Attempt to get service delegate for service caught exception.", e);
             }
@@ -957,6 +962,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
     
     protected void finalize() throws Throwable {
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDelegate.finalize entered for " + this);
+        }
         try {
             releaseServiceResources();
         } catch (Exception e) {
@@ -965,6 +973,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             }
         } finally {
             super.finalize();
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDelegate.finalize exited");
         }
     }   
 }

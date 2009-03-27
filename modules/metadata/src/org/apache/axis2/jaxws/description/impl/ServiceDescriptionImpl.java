@@ -48,6 +48,7 @@ import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.jaxws.util.WeakKey;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
@@ -70,6 +71,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.net.ConnectException;
@@ -114,11 +116,13 @@ class ServiceDescriptionImpl
                 new HashMap<QName, EndpointDescription>();
 
     // Endpoints for dynamic ports
-    // This needs to be a strong reference (not Weak or Soft) so that the resource release logic
-    // in the finalizer still has a reference to the EndpointDescriptions so they can be
-    // released.  Otherwise, this collection will be null when the finalizer is called.
-    private Map<Object, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
-                new HashMap<Object, Map<QName, EndpointDescriptionImpl>>();
+    // The WeakKey is an instance of a ServiceDelegate.  It is a Weak Reference so it does not
+    // prevent the service delegate from being GC'd
+    private Map<WeakKey, Map<QName, EndpointDescriptionImpl>> dynamicEndpointDescriptions =
+                new HashMap<WeakKey, Map<QName, EndpointDescriptionImpl>>();
+    // Used to cleanup entries in the dynamic port collection when the ServiceDelegate is
+    // GC'd
+    private ReferenceQueue dynamicPortRefQueue = new ReferenceQueue<WeakKey>();
 
     // Cache classes for the info for resolved handlers
     private SoftReference<Map<PortInfo, ResolvedHandlersDescription>> resolvedHandlersDescription =
@@ -712,8 +716,8 @@ class ServiceDescriptionImpl
     public Collection<EndpointDescriptionImpl> getDynamicEndpointDescriptions_AsCollection(Object serviceDelegateKey) {
         Collection <EndpointDescriptionImpl> dynamicEndpoints = null;
     	if (serviceDelegateKey != null ) {
-    		if (dynamicEndpointDescriptions.get(serviceDelegateKey) != null)
-    			dynamicEndpoints = dynamicEndpointDescriptions.get(serviceDelegateKey).values();
+    		if (dynamicEndpointDescriptions.get(WeakKey.comparisonKey(serviceDelegateKey)) != null)
+    			dynamicEndpoints = dynamicEndpointDescriptions.get(WeakKey.comparisonKey(serviceDelegateKey)).values();
         }
     	return dynamicEndpoints;
     }
@@ -2323,7 +2327,7 @@ class ServiceDescriptionImpl
     private EndpointDescriptionImpl getDynamicEndpointDescriptionImpl(QName portQName, Object key) {
         Map<QName, EndpointDescriptionImpl> innerMap = null;
         synchronized(dynamicEndpointDescriptions) {
-        	innerMap = dynamicEndpointDescriptions.get(key);
+        	innerMap = dynamicEndpointDescriptions.get(WeakKey.comparisonKey(key));
             if (innerMap != null) {
             	return innerMap.get(portQName);
             }
@@ -2335,10 +2339,10 @@ class ServiceDescriptionImpl
     												Object key) {
         Map<QName, EndpointDescriptionImpl> innerMap = null;
         synchronized(dynamicEndpointDescriptions) {
-            innerMap = dynamicEndpointDescriptions.get(key);
+            innerMap = dynamicEndpointDescriptions.get(WeakKey.comparisonKey(key));
             if (innerMap == null) {
                innerMap = new HashMap<QName, EndpointDescriptionImpl>();
-               dynamicEndpointDescriptions.put(key, innerMap);
+               dynamicEndpointDescriptions.put(new WeakKey(key, dynamicPortRefQueue), innerMap);
             }
             innerMap.put(endpointDescriptionImpl.getPortQName(), endpointDescriptionImpl);
         }
@@ -2565,23 +2569,40 @@ class ServiceDescriptionImpl
 
     public void releaseResources(Object delegate) {
         try {
-        if (log.isDebugEnabled()) {
-            log.debug("ServiceDescription release resources called with delegate " + delegate);
-        }
-        // If the service desc can be removed from the cache, which means no other service delegates
-        // are using it, then we will release the resources associated with it.  If it can't be 
-        // removed because it is still in use, then just return.
-        if (!DescriptionFactoryImpl.removeFromCache(this)) {
             if (log.isDebugEnabled()) {
-                log.debug("ServiceDesc was not removed from cache, so it will not be released");
+                log.debug("ServiceDescription release resources called with delegate " + delegate);
             }
-            return;
+
+            // If the entire service desc can be removed from the cache, which means no other service delegates
+            // are using it, then we will release the resources associated with it.  If it can't be 
+            // removed because it is still in use, then release resources it contains associated with
+            // this particular delegate
+            if (DescriptionFactoryImpl.removeFromCache(this)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDesc not in use so it was removed from cache.  Releasing all resources for this ServiceDesc");
+                }
+                releaseAllResourcesForServiceDescription();
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDesc still in use so not removed from cache.  Releasing resources for delegate");
+                }
+                releaseResourcesForDelegate(delegate);
+            }
+        } catch (Throwable t) {
+            if (log.isDebugEnabled()) {
+                log.debug("Release resorces in ServiceDesc caught throwable ", t);
+            }
+            throw ExceptionFactory.makeWebServiceException(t);
         }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("ServiceDesc was removed from cache, so releasing associated resources");
-        }
-                
+        return;
+    }    
+    
+    /**
+     * Release all resources for the ServiceDescription. This is done when there are no 
+     * active service delegates which are using the ServiceDescription.  Note that multiple
+     * service delegates can share a single ServiceDescription.
+     */
+    private void releaseAllResourcesForServiceDescription() {
         
         // Close all the endpoint descs, both declared and dynamic
         Collection<EndpointDescription> definedEndpoints = definedEndpointDescriptions.values(); 
@@ -2606,22 +2627,144 @@ class ServiceDescriptionImpl
             Collection<EndpointDescriptionImpl> dynamicEndpoints = mapEntry.values();
             if (dynamicEndpoints != null && dynamicEndpoints.size() > 0) {
                 for (EndpointDescription endpointDesc : dynamicEndpoints) {
-                    ((EndpointDescriptionImpl) endpointDesc).releaseResources(getAxisConfigContext());
-                    // Remove this endpoint from the list on axis config 
-                    removeFromDynamicEndpointCache(endpointDesc);
+                    releaseEndpoint(endpointDesc);
                 }
             }
         }
         dynamicEndpointDescriptions.clear();
-        
-        } catch (Throwable t) {
-            if (log.isDebugEnabled()) {
-                log.debug("Release resorces in ServiceDesc caught throwable ", t);
-            }
-            throw ExceptionFactory.makeWebServiceException(t);
-        }
+    }
+
+    /**
+     * Release all the resources associated with a particular endpoint description. 
+     * @param endpointDesc The endpoint for which the resources are to be released.
+     */
+    private void releaseEndpoint(EndpointDescription endpointDesc) {
+        ((EndpointDescriptionImpl) endpointDesc).releaseResources(getAxisConfigContext());
+        // Remove this endpoint from the list on axis config 
+        removeFromDynamicEndpointCache(endpointDesc);
     }
     
+    /**
+     * Release resources associated with a specific service delegate.  When a service delegate is
+     * closed, if the entire ServiceDescription can not be released because other services are
+     * still using it, then attempt to release any resources associated with this closed service
+     * delegate.  Currently, the resources which are released are:
+     * - Any unreferenced dynamic ports
+     * 
+     * @param delegate
+     */
+    private void releaseResourcesForDelegate(Object delegate) {
+        // Get the dynamic endpoint entries tied to this delegate and remove the entry.
+        // If no other delegates refer to this port, then it can be released also.
+        synchronized(dynamicEndpointDescriptions) {
+            // Note that if the delegate has already been GC'd, then there will be no entry
+            // matching the delegate in the table, since the WeakKey delegate referent will have
+            // been set to null.
+            Map<QName, EndpointDescriptionImpl> delegateEntry = 
+                dynamicEndpointDescriptions.remove(WeakKey.comparisonKey(delegate));
+            if (delegateEntry != null && delegateEntry.size() > 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed delegate from dynamic ports: " + delegate);
+                }
+                // There were dynamic ports for this delegate.  Release all ports this delegate was
+                // using that no other delegates still references 
+                releaseUnreferencedDynamicPorts(delegateEntry);
+            }
+            // Remove any entries that were GC'd.    The instance of the WeakKey containing the 
+            // ServiceDelegate that was GC'd is placed on the reference queue, so we use that exact 
+            // key value to remove the entry from the collection.
+            Object gcKey = null;
+            while ((gcKey = dynamicPortRefQueue.poll()) != null) {
+                WeakKey removeKey = (WeakKey) gcKey;
+                if (log.isDebugEnabled()) {
+                    log.debug("Removing GC'd key from dynamic ports: " + removeKey);
+                }
+                Map<QName, EndpointDescriptionImpl> removeEntry = 
+                    dynamicEndpointDescriptions.remove(removeKey);
+                if (removeEntry != null && removeEntry.size() > 0) {
+                    // There were dynamic ports for this delegate.  Release all ports this delegate was
+                    // using that no other delegates still references 
+                    if (log.isDebugEnabled()) {
+                        log.debug("Releasing dynamic ports referenced by GC'd key : " + removeEntry);
+                    }
+                    releaseUnreferencedDynamicPorts(removeEntry);
+                }
+            }
+        }
+    }
+
+    /**
+     * Release any dynamic ports in the collection argument that are not referenced by any
+     * currently-active service delegates.  When a service delegate is closed, it is deleted
+     * from the list of currently-active delegates.  The dynamic ports associated with that service
+     * delegate are passed to this method, which will check all the remaining service delegates
+     * to see if any of the dynamic ports are no longer in use.  Any which are no longer in use
+     * will have the resources held by the EndpointDescriptoinImpl released.
+     * 
+     * IMPORTANT:  This method MUST be called with the within a  
+     * synchronized(dynamicEndpointDescriptions) block to prevent ConcurrentModificationExceptions
+     * 
+     * @param delegateEntry Map containing the dynamic endpoints referenced by a now-deleted
+     * service delegate.
+     */
+    private void releaseUnreferencedDynamicPorts(Map<QName, EndpointDescriptionImpl> delegateEntry) {
+        
+        // The argument is a colleciton of dynamic port QNames (the key) and the associated 
+        // EndpointDescription for the dynamic port (the value).  For each one of these, we need 
+        // to check the remaining active service delegates to see of the dynamic port is no longer
+        // in use.  If it is not, it can be relesed.
+
+        // Get a list of the (QName, EndpointDescriptionImpl) entries for the delegate that has
+        // been deleted.
+        Set<Map.Entry<QName, EndpointDescriptionImpl>> delegatePortEntries = delegateEntry.entrySet();
+        Iterator<Map.Entry<QName, EndpointDescriptionImpl>> delegatePortEntriesIteator = 
+            delegatePortEntries.iterator();
+
+        // Loop through the (QName, EndpointDescriptionImpl) entries for the deleted delegate
+        // to see if the dynamic port is still being used by any of the remining service 
+        // delegates.
+        while (delegatePortEntriesIteator.hasNext()) {
+            
+            Map.Entry<QName, EndpointDescriptionImpl> delegatePortEntry = 
+                delegatePortEntriesIteator.next();
+            boolean deletePort = true;
+
+            // For this entry, loop through all the still-active service delegates and see 
+            // if this (QName, EndpointDescriptionImpl) still exists.  If not, it can released.
+            Collection<Map<QName, EndpointDescriptionImpl>> activeDelegatePortEntries = 
+                dynamicEndpointDescriptions.values();
+            Iterator<Map<QName, EndpointDescriptionImpl>> activeDelegatePortEntriesIterator =
+                activeDelegatePortEntries.iterator();
+            while (deletePort && activeDelegatePortEntriesIterator.hasNext()) {
+                
+                // Check the dynamic ports for this currently-active service delegate to see
+                // if the it shared the deleted delegate's (QName, EndpointDescriptionImpl)
+                Map<QName, EndpointDescriptionImpl> activeDelegatePorts = 
+                    activeDelegatePortEntriesIterator.next();
+                Set<Map.Entry<QName, EndpointDescriptionImpl>> checkActivePorts = 
+                    activeDelegatePorts.entrySet();
+                Iterator<Map.Entry<QName, EndpointDescriptionImpl>> checkActivePortsIterator =
+                    checkActivePorts.iterator();
+                while (deletePort && checkActivePortsIterator.hasNext()) {
+                    Map.Entry<QName, EndpointDescriptionImpl> checkActivePort = 
+                        checkActivePortsIterator.next();
+                    if (checkActivePort.getKey().equals(delegatePortEntry.getKey())
+                        && checkActivePort.getValue().equals(delegatePortEntry.getValue())) {
+                        deletePort = false;
+                    }
+                }
+            }
+            
+            // The port can be deleted because no other delegates refer to it
+            if (deletePort) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Releasing resources for dynamic port " + delegatePortEntry.getKey());
+                }
+                releaseEndpoint(delegatePortEntry.getValue());
+            }
+        }
+    }
+
     /**
      * Remove the endpointDescription from the list of dynamic ports held on the
      * AxisConfiguration object.
