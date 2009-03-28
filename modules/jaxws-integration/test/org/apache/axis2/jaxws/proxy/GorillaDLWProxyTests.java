@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtilsMonitor;
 import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
-import org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
@@ -482,7 +481,6 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
 	    	GorillaInterface proxy = getProxy();
 	    	GregorianCalendar cal = new GregorianCalendar(Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
 	    	DatatypeFactory javaxtypeFactory = DatatypeFactory.newInstance();
-	    	DatatypeFactory xercesfactoryImpl = DatatypeFactoryImpl.newInstance();
 	    	XMLGregorianCalendar request=  javaxtypeFactory.newXMLGregorianCalendar(cal);
 	    	System.out.println("Javax Factory Clazz Name = "+request.getClass().getName());
 	    	Duration d = javaxtypeFactory.newDuration(System.currentTimeMillis());
