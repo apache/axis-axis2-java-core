@@ -162,9 +162,12 @@
                     </includes>
                     <skip>false</skip>
                     <forkMode>once</forkMode>
-                    <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/${geronimo.spec.saaj.version}/</argLine>
-                    <!-- This fixes an issue on Sun JDKs caused by the presence of jaxp-ri on the classpath -->
-                    <argLine>-Dcom.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration=com.sun.org.apache.xerces.internal.parsers.XIncludeParserConfiguration</argLine>
+                    <!-- Notes:
+                      * The Xerces related property fixes an issue on Sun JDKs caused by the
+                        presence of jaxp-ri on the classpath.
+                      * Please leave this on a single line. Adding a newline between the two
+                        options causes a build failure. -->
+                    <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/${geronimo.spec.saaj.version}/ -Dcom.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration=com.sun.org.apache.xerces.internal.parsers.XIncludeParserConfiguration</argLine>
                 </configuration>
             </plugin>
         </plugins>
