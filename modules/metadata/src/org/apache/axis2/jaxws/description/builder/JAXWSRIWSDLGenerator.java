@@ -87,12 +87,18 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     private String classPath;
 
     private AxisService axisService;
+    private AxisConfiguration axisConfiguration;
     private boolean init = false;
     private HashMap<String, XmlSchema> docMap;
     private HashMap<String, Definition> wsdlDefMap;
 
     public JAXWSRIWSDLGenerator(AxisService axisService) {
         this.axisService = axisService;
+    }
+
+    public JAXWSRIWSDLGenerator(AxisService axisService, AxisConfiguration axisConfig) {
+        this.axisService = axisService;
+        this.axisConfiguration = axisConfig;
     }
 
     /**
@@ -115,7 +121,9 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
     public void generateWsdl(String className, String bindingType, JAXWSCatalogManager catalogManager) throws
             WebServiceException {
 
-        AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
+        if (this.axisConfiguration == null) {
+            this.axisConfiguration = axisService.getAxisConfiguration();
+        }
         File tempFile = (File) axisConfiguration.getParameterValue(
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
         if (tempFile == null) {

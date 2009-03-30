@@ -46,6 +46,7 @@ import org.apache.axis2.jaxws.description.builder.CustomAnnotationProcessor;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
+import org.apache.axis2.jaxws.description.builder.JAXWSRIWSDLGenerator;
 import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.feature.ServerConfigurator;
 import org.apache.axis2.jaxws.feature.ServerFramework;
@@ -102,6 +103,7 @@ class EndpointDescriptionImpl
 
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
+    private AxisConfiguration axisConfig;
     // In some environments some of the resources on an AxisService can lead to OOMs.
     // However, releasing these resources can have other implications.  
     private boolean releaseAxisServiceResources = false;
@@ -226,6 +228,8 @@ class EndpointDescriptionImpl
                             DescriptionBuilderComposite sparseComposite,
                             Object sparseCompositeKey) {
 
+        this.axisConfig = parent.getAxisConfigContext().getAxisConfiguration();
+
         this.parentServiceDescription = parent;
         composite = new DescriptionBuilderComposite();
         composite.setSparseComposite(sparseCompositeKey, sparseComposite);
@@ -320,6 +324,8 @@ class EndpointDescriptionImpl
      */
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName, Map<String, Object>
         properties, Integer portCompositeIndex) {
+
+        this.axisConfig = parent.getAxisConfigContext().getAxisConfiguration();
         
         // initialize CustomAnnotationIntance list and CustomAnnotationProcessor map
         customAnnotations = new ArrayList<CustomAnnotationInstance>();
@@ -745,7 +751,12 @@ class EndpointDescriptionImpl
         if (!isDynamicPort && getServiceDescriptionImpl().getWSDLWrapper() != null) {
             isAxisServiceBuiltFromWSDL = buildAxisServiceFromWSDL();
         } else {
-            buildAxisServiceFromAnnotations();
+            if (useGeneratedWSDL()) {
+                buildAxisServiceFromGeneratedWSDL();
+            } else {
+                buildAxisServiceFromAnnotations();
+                addAnnotationParamToService();
+            }
         }
 
         if (axisService == null) {
@@ -814,7 +825,12 @@ class EndpointDescriptionImpl
 
         if (!isAxisServiceBuiltFromWSDL) {
             //generateWSDL(composite);
-            buildAxisServiceFromAnnotations();
+            if (useGeneratedWSDL()) {
+                buildAxisServiceFromGeneratedWSDL();
+            } else {
+                buildAxisServiceFromAnnotations();
+                addAnnotationParamToService();
+            }
         }
 
         if (axisService == null) {
@@ -938,6 +954,79 @@ class EndpointDescriptionImpl
             return isBuiltFromWSDL;
         }
         return isBuiltFromWSDL;
+    }
+
+    /**
+     * If a WSDL is not already found, this method can be used to generate a WSDL and create
+     * the AxisService using that WSDL
+     */
+
+    private void buildAxisServiceFromGeneratedWSDL() {
+        /**
+         * First we create a dummy axis service to get the information for WSDL generation.
+         * When the new axis service is created from the WSDL, this one is overidden by the
+         * new service.
+         */
+        buildAxisServiceFromAnnotations();
+
+        //Save the fully qualified class name for the serviceImpl
+        Parameter serviceClassNameParameter = new Parameter();
+        serviceClassNameParameter.setName(MDQConstants.SERVICE_CLASS);
+        serviceClassNameParameter
+                .setValue(DescriptionUtils.javifyClassName(composite.getClassName()));
+        try {
+            this.axisService.addParameter(serviceClassNameParameter);
+        } catch (AxisFault axisFault) {
+            throw ExceptionFactory.makeWebServiceException(Messages
+                    .getMessage("setupAxisServiceErr2"), axisFault);
+        }
+
+        addToAxisService();
+
+        JAXWSRIWSDLGenerator wsdlGenerator =
+                new JAXWSRIWSDLGenerator(this.axisService, this.axisConfig);
+
+        try {
+            //generate the wsdl
+            Definition def = wsdlGenerator.getWSDL(axisService);
+
+            //create the new axis service from the generated wsdl
+            WSDL11ToAxisServiceBuilder axisServiceBuilder = new WSDL11ToAxisServiceBuilder(def,
+                    getServiceDescription().getServiceQName(), getPortQName().getLocalPart());
+
+            if (getServiceDescriptionImpl().isServerSide()) {
+                axisServiceBuilder.setServerSide(true);
+            } else {
+                axisServiceBuilder.setServerSide(false);
+            }
+
+            this.axisService = axisServiceBuilder.populateService();
+            axisService.setName(createAxisServiceName());
+
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(Messages
+                    .getMessage("setupAxisServiceErr3"),e);
+        }
+    }
+
+    /**
+     * Reads the property in axis config (comes from axis2.xml) and decides whether we have to
+     * build the AxisService using a generated WSDL.
+     * @return true if param true
+     */
+    private boolean useGeneratedWSDL(){
+        Parameter param = this.axisConfig.getParameter(MDQConstants.USE_GENERATED_WSDL);
+        return param != null && "true".equals(param.getValue());
+    }
+
+    private void addAnnotationParamToService() {
+        //Add a parameter to identify that this AxisService is created only using annotations
+        try {
+            axisService.addParameter(MDQConstants.USED_ANNOTATIONS_ONLY, "true");
+        } catch (AxisFault axisFault) {
+            throw ExceptionFactory.makeWebServiceException(Messages
+                    .getMessage("setupAxisServiceErr2"), axisFault);
+        }
     }
 
     private void buildAxisServiceFromAnnotations() {

@@ -308,7 +308,7 @@ public class AxisService2WSDL11 implements Java2WSDLConstants {
 	}
 
 	private void writeMessage(AxisMessage axismessage, OMFactory fac, OMElement defintions) {
-		if (messagesMap.get(axismessage.getName()) == null) {
+		if (axismessage.getName() != null && messagesMap.get(axismessage.getName()) == null) {
 			messagesMap.put(axismessage.getName(), axismessage);
 			QName schemaElementName = axismessage.getElementQName();
 			OMElement messageElement = fac.createOMElement(MESSAGE_LOCAL_NAME, wsdl);

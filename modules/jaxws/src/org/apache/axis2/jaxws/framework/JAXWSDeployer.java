@@ -218,6 +218,7 @@ public class JAXWSDeployer implements Deployer {
         for (int i = 0; i < size; i++) {
             AxisService axisService = (AxisService) axisServiceList.get(i);
             serviceGroup.addService(axisService);
+            Utils.addEndpointsToService(axisService, axisConfig);
         }
         axisConfig.addServiceGroup(serviceGroup);
         configureAddressing(serviceGroup);

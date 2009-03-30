@@ -105,6 +105,12 @@
     <!-- use this parameter to override autodetected url -->
     <!--<parameter name="httpFrontendHostUrl">https://someotherhost/context</parameter>-->
 
+    <!--By default, JAXWS services are created by reading annotations. WSDL and schema are generated-->
+    <!--using a separate WSDL generator only when ?wsdl is called. Therefore, even if you engage-->
+    <!--policies etc.. to AxisService, it doesn't appear in the WSDL. By setting the following property-->
+    <!--to true, you can create the AxisService using the generated WSDL and remove the need for a-->
+    <!--WSDL generator. When ?wsdl is called, WSDL is generated in the normal way.-->
+    <parameter name="useGeneratedWSDLinJAXWS">false</parameter>
 
     <!--    The way of adding listener to the system-->
     <!--    <listener class="org.apache.axis2.ObserverIMPL">-->

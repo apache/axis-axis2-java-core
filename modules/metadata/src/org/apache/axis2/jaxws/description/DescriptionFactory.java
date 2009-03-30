@@ -22,9 +22,11 @@ package org.apache.axis2.jaxws.description;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.JAXWSRIWSDLGenerator;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 import org.apache.ws.commons.schema.SchemaBuilder;
 import org.apache.commons.logging.Log;
@@ -532,12 +534,20 @@ public class DescriptionFactory {
         ServiceDescription serviceDescription = DescriptionFactoryImpl.createServiceDescription(serviceImplClass, configContext);
         EndpointDescription[] edArray = serviceDescription.getEndpointDescriptions();
         AxisService axisService = edArray[0].getAxisService();
-        try {
-            JAXWSRIWSDLGenerator value = new JAXWSRIWSDLGenerator(axisService);
-            axisService.addParameter("WSDLSupplier", value);
-            axisService.addParameter("SchemaSupplier", value);
-        } catch (Exception ex) {
-            log.info("Unable to set the WSDLSupplier", ex);
+
+        /**
+         * WSDL supplier and Schema supplier is needed only when the service is built only using
+         * annotations. In other cases, WSDL can be generated in the normal way.
+         */
+        Parameter param = axisService.getParameter(MDQConstants.USED_ANNOTATIONS_ONLY);
+        if (param != null && "true".equals(param.getValue())) {
+            try {
+                JAXWSRIWSDLGenerator value = new JAXWSRIWSDLGenerator(axisService);
+                axisService.addParameter("WSDLSupplier", value);
+                axisService.addParameter("SchemaSupplier", value);
+            } catch (Exception ex) {
+                log.info("Unable to set the WSDLSupplier", ex);
+            }
         }
         return axisService;
     }
