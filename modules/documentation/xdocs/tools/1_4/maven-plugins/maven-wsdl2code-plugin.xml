@@ -46,25 +46,25 @@ WSDL.</p>
 POM</a> (Project Object Model):</p>
 <pre>
     &lt;build&gt;
-    	&lt;plugins&gt;
-    		&lt;plugin&gt;
-    			&lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
-    			&lt;artifactId&gt;axis2-wsdl2code-maven-plugin&lt;/artifactId&gt;
-				&lt;version&gt;1.4&lt;/version&gt;
-    			&lt;executions&gt;
-    				&lt;execution&gt;
-    					&lt;goals&gt;
-    						&lt;goal&gt;wsdl2code&lt;/goal&gt;
-    					&lt;/goals&gt;
-    				&lt;configuration&gt;
-					&lt;packageName&gt;com.foo.myservice&lt;/packageName&gt;
-					&lt;wsdlFile&gt;src/main/wsdl/myservice.wsdl&lt;/wsdlFile&gt;
-					&lt;databindingName&gt;xmlbeans&lt;/databindingName&gt;
-				&lt;/configuration&gt;
-				&lt;/execution&gt;
-			&lt;/executions&gt;
-    		&lt;/plugin&gt;
-    	&lt;/plugins&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.axis2&lt;/groupId&gt;
+                &lt;artifactId&gt;axis2-wsdl2code-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;1.4&lt;/version&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;wsdl2code&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;configuration&gt;
+                    &lt;packageName&gt;com.foo.myservice&lt;/packageName&gt;
+                    &lt;wsdlFile&gt;src/main/wsdl/myservice.wsdl&lt;/wsdlFile&gt;
+                    &lt;databindingName&gt;xmlbeans&lt;/databindingName&gt;
+                &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
     &lt;/build&gt;
 </pre>
 Also please add axis2 jars as a dependency 
