@@ -56,13 +56,13 @@ POM</a> (Project Object Model):</p>
                         &lt;goals&gt;
                             &lt;goal&gt;wsdl2code&lt;/goal&gt;
                         &lt;/goals&gt;
-                    &lt;configuration&gt;
-                    &lt;packageName&gt;com.foo.myservice&lt;/packageName&gt;
-                    &lt;wsdlFile&gt;src/main/wsdl/myservice.wsdl&lt;/wsdlFile&gt;
-                    &lt;databindingName&gt;xmlbeans&lt;/databindingName&gt;
-                &lt;/configuration&gt;
-                &lt;/execution&gt;
-            &lt;/executions&gt;
+                        &lt;configuration&gt;
+                            &lt;packageName&gt;com.foo.myservice&lt;/packageName&gt;
+                            &lt;wsdlFile&gt;src/main/wsdl/myservice.wsdl&lt;/wsdlFile&gt;
+                            &lt;databindingName&gt;xmlbeans&lt;/databindingName&gt;
+                        &lt;/configuration&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
             &lt;/plugin&gt;
         &lt;/plugins&gt;
     &lt;/build&gt;
@@ -219,6 +219,12 @@ default, sources are generated for all services.</td>
 <td>Location of the WSDL file, which is read as input</td>
 <td>src/main/axis2/service.wsdl</td>
 </tr>
+<tr>
+<td>unwrap</td>
+<td>${axis2.wsdl2code.unwrap}</td>
+<td>This will select between wrapped and unwrapped during code generation.
+Maps to the -uw option of the command line tool.</td>
+<td>false</td>
 </tbody>
 </table>
 </body>
