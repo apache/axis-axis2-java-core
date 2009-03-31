@@ -507,8 +507,8 @@ public class BuilderUtil {
             } else {
                 Parameter attachmentSizeThresholdParameter = msgContext
                         .getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
-                attachmentSizeThreshold = attachmentSizeThresholdParameter
-                        .getValue().toString();
+                attachmentSizeThreshold = attachmentSizeThresholdParameter != null ?
+                        attachmentSizeThresholdParameter.getValue().toString() : null;
             }
         }
 
