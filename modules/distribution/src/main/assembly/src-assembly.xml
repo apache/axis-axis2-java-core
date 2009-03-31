@@ -80,7 +80,11 @@
 		<exclude>**/.svn/**</exclude>
 		<exclude>**/bin/**</exclude>
 		<exclude>**/*.log</exclude>
+		<!--
 		<exclude>**/.*</exclude>
+		Above prevents ".classpath" and ".project" from being copied (see
+		modules/tool/conf/codegen
+		-->
 		<exclude>**/.settings/**</exclude>
 		<exclude>**/*.license</exclude>
 		<exclude>**/*.iml</exclude>
