@@ -477,11 +477,25 @@ public class JAXBDSContext {
                             else if ((ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY)) {
 
                                 // The type could be any Object or primitive
+                            	
+                            	//process primitives first
+                            	//first verify if we have a primitive type associated in the array.
+                            	//array could be single dimension or multi dimension.
+                            	Class cType = type.getComponentType();
+                            	while(cType.isArray()){
+                            		cType = cType.getComponentType();
+                            	}
+                            	if(cType.isPrimitive()){
+                            		jaxb = u.unmarshal(reader, type);
+                            	}
+                            	// process non primitive                       	
                                 // I will first unmarshall the xmldata to a String[]
                                 // Then use the unmarshalled jaxbElement to create
                                 // proper type Object Array.
-                                
-                                jaxb = unmarshalArray(reader, u, type);
+                            	
+                            	else{
+                            		jaxb = unmarshalArray(reader, u, type);
+                            	}
                                 
                             } else {
                                 
@@ -702,9 +716,12 @@ public class JAXBDSContext {
                     // String instead. Then we get the correct wire format:
                     // <foo>1 2 3</foo>
                     Object jbo = b;
-                    if (isList) {
+                    if(DEBUG_ENABLED){
+                    	log.debug("check if marshalling type list or array object type = "+ (( b!=null )? b.getClass().getName():"null"));
+                    }
+                    if (isList) {                   	
                         if (DEBUG_ENABLED) {
-                            log.debug("marshalling type which is a List or Array");
+                            log.debug("marshalling type which is a List");
                         }
                         
                         // This code assumes that the JAXBContext does not understand
@@ -732,7 +749,6 @@ public class JAXBDSContext {
                             jbo = new JAXBElement(qName, String.class, text); 
                         }
                     }
-
                     // When JAXBContext is created using a context path, it will not include Enum
                     // classes.
                     // These classes have @XmlEnum annotation but not @XmlType/@XmlElement, so the
@@ -814,5 +830,4 @@ public class JAXBDSContext {
             throw new OMException(t);
         }
     }
-
 }
