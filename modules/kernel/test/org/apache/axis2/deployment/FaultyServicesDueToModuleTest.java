@@ -29,6 +29,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.context.ConfigurationContextFactory;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.io.File;
 
 public class FaultyServicesDueToModuleTest extends TestCase {
@@ -45,7 +46,7 @@ public class FaultyServicesDueToModuleTest extends TestCase {
         AxisService axisService = axisConfig.getService("echo2");
         assertNull(axisService);
 
-        HashMap<String, FaultyServiceData> faultyServicesMap = axisConfig.getFaultyServicesDuetoModule(
+        Map<String, FaultyServiceData> faultyServicesMap = axisConfig.getFaultyServicesDuetoModule(
                 "sample-logging");
         FaultyServiceData faultyServiceData = faultyServicesMap.get("echo2");
         assertNotNull(faultyServiceData);
@@ -60,7 +61,7 @@ public class FaultyServicesDueToModuleTest extends TestCase {
         AxisService axisService = axisConfig.getService("echo2");
         assertNotNull(axisService);
 
-        HashMap<String, FaultyServiceData> faultyServicesMap = axisConfig.getFaultyServicesDuetoModule(
+        Map<String, FaultyServiceData> faultyServicesMap = axisConfig.getFaultyServicesDuetoModule(
                 "sample-logging");
         FaultyServiceData faultyServiceData = faultyServicesMap.get("echo2");
         assertNull(faultyServiceData);

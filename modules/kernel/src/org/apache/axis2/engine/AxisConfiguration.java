@@ -117,8 +117,12 @@ public class AxisConfiguration extends AxisDescription {
      */
     private Hashtable<String, String> faultyServices;
 
-    private final HashMap<String, HashMap<String, FaultyServiceData>> faultyServicesDueToModules = new HashMap<String,
-            HashMap<String, FaultyServiceData>>();
+    /**
+     * To store services which have become faulty due to modules. Here key is the module name and the corresponding
+     * value is an another map which holds the list faulty services due a single module.
+     */
+    private final Map<String, Map<String, FaultyServiceData>> faultyServicesDueToModules = new HashMap<String,
+            Map<String, FaultyServiceData>>();
 
 
     private List<Phase> inFaultPhases;
@@ -653,7 +657,7 @@ public class AxisConfiguration extends AxisDescription {
      * @param faultyServiceData  Data that are required when recovering the faulty service.
      */
     public void addFaultyServiceDuetoModule(String moduleName, FaultyServiceData faultyServiceData) {
-        HashMap<String, FaultyServiceData> faultyServicesMap;
+        Map<String, FaultyServiceData> faultyServicesMap;
 
         synchronized (faultyServicesDueToModules) {
 
@@ -669,7 +673,12 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public HashMap<String, FaultyServiceData> getFaultyServicesDuetoModule(String moduleName) {
+    /**
+     * Returns a map which contains the faulty services due a module.
+     * @param moduleName
+     * @return
+     */
+    public Map<String, FaultyServiceData> getFaultyServicesDuetoModule(String moduleName) {
         if (faultyServicesDueToModules.containsKey(moduleName)) {
             return faultyServicesDueToModules.get(moduleName);
 
@@ -677,13 +686,22 @@ public class AxisConfiguration extends AxisDescription {
         return new HashMap<String, FaultyServiceData>(1);
     }
 
-    public HashMap<String, HashMap<String, FaultyServiceData>> getFaultyServicsDuetoModules(){
+    /**
+     * Returns the map which keeps track of faulty services due to modules.
+     * @return
+     */
+    public Map<String, Map<String, FaultyServiceData>> getFaultyServicesDuetoModules(){
         return faultyServicesDueToModules;
     }
 
+    /**
+     * Removes a faulty service from the map faultyServicesDueToModules.
+     * @param moduleName
+     * @param serviceGroupName
+     */
     public void removeFaultyServiceDuetoModule(String moduleName, String serviceGroupName) {
         synchronized (faultyServicesDueToModules) {
-            HashMap<String, FaultyServiceData> faultyServices = faultyServicesDueToModules.get(moduleName);
+            Map<String, FaultyServiceData> faultyServices = faultyServicesDueToModules.get(moduleName);
 
             if(faultyServices != null){
                 faultyServices.remove(serviceGroupName);

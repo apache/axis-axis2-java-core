@@ -557,10 +557,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         axisConfiguration.addModule(modulemetadata);
         log.debug(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
 
-        synchronized (axisConfiguration.getFaultyServicsDuetoModules()) {
+        synchronized (axisConfiguration.getFaultyServicesDuetoModules()) {
 
             //Check whether there are faulty services due to this module
-            HashMap<String, FaultyServiceData> faultyServices = axisConfiguration.getFaultyServicesDuetoModule(
+            HashMap<String, FaultyServiceData> faultyServices =
+                    (HashMap<String, FaultyServiceData>)axisConfiguration.getFaultyServicesDuetoModule(
                     modulemetadata.getName());
             faultyServices = (HashMap<String, FaultyServiceData>)faultyServices.clone();
 
@@ -624,7 +625,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                          URL serviceLocation,
                                                          DeploymentFileData currentDeploymentFile,
                                                          AxisConfiguration axisConfig) throws AxisFault {
-        synchronized (axisConfig.getFaultyServicsDuetoModules()) {
+        synchronized (axisConfig.getFaultyServicesDuetoModules()) {
             String moduleName;
             ArrayList groupModules = serviceGroup.getModuleRefs();
             for (int i = 0; i < groupModules.size(); i++) {
