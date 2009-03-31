@@ -310,7 +310,6 @@ class OutInAxisOperationClient extends OperationClient {
         mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
         mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
         AxisEngine.send(mc);
-		System.out.println("--- Going to wait for call back message comes. --- "+ Thread.currentThread().getId());
 		if (internalCallback != null) {
             internalCallback.waitForCompletion(options.getTimeOutInMilliSeconds());
 
@@ -539,7 +538,6 @@ class OutInAxisOperationClient extends OperationClient {
          * finally block.
          */
         public synchronized void onComplete() {
-			System.out.println("-- Got the response notify the call back -- " + Thread.currentThread().getId());
 			complete = true;
             notify();
         }
