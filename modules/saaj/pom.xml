@@ -122,18 +122,7 @@
                 <targetPath>../test-resources/saaj-repo</targetPath>
             </testResource>
             <testResource>
-                <targetPath>../test-resources</targetPath>
                 <directory>test-resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <targetPath></targetPath>
-                <directory>test-resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                </includes>
             </testResource>
         </testResources>
         <plugins>

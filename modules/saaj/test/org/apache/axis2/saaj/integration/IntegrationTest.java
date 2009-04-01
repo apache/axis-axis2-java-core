@@ -28,7 +28,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 import org.apache.axis2.saaj.SAAJTestRunner;
-import org.apache.axis2.saaj.TestConstants;
+import org.apache.axis2.saaj.TestUtils;
 import org.apache.axis2.saaj.Validated;
 import org.apache.axis2.util.Utils;
 import org.junit.After;
@@ -41,7 +41,6 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Node;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
@@ -61,7 +60,6 @@ import javax.xml.soap.SOAPPart;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -200,10 +198,7 @@ public class IntegrationTest extends Assert {
         request.addAttachmentPart(textAttach);
 
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = System.getProperty("basedir", ".") + "/" + "test-resources/axis2.jpg";
-        File myfile = new File(jpgfilename);
-        FileDataSource fds = new FileDataSource(myfile);
-        DataHandler imageDH = new DataHandler(fds);
+        DataHandler imageDH = new DataHandler(TestUtils.getTestFileAsDataSource("axis2.jpg"));
         AttachmentPart jpegAttach = request.createAttachmentPart(imageDH);
         jpegAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
         jpegAttach.setContentId("submitSampleImage@apache.org");
@@ -316,9 +311,8 @@ public class IntegrationTest extends Assert {
     	MimeHeaders mimeHeaders = new MimeHeaders();
         mimeHeaders.addHeader("Content-Type", "text/xml; charset=iso-8859-1");
         
-        FileInputStream fileInputStream = new FileInputStream(System.getProperty("basedir", ".") +
-                "/test-resources" + File.separator + "soap-part-iso-8859-1.xml");
-        SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders,fileInputStream);
+        InputStream inputStream = TestUtils.getTestFile("soap-part-iso-8859-1.xml");
+        SOAPMessage requestMessage = MessageFactory.newInstance().createMessage(mimeHeaders, inputStream);
         
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
@@ -356,8 +350,8 @@ public class IntegrationTest extends Assert {
         MessageFactory mf = MessageFactory.newInstance();
         
         MimeHeaders headers = new MimeHeaders();
-        headers.addHeader("Content-Type", TestConstants.MTOM_TEST_MESSAGE_CONTENT_TYPE);
-        InputStream in = new FileInputStream(TestConstants.MTOM_TEST_MESSAGE_FILE);
+        headers.addHeader("Content-Type", TestUtils.MTOM_TEST_MESSAGE_CONTENT_TYPE);
+        InputStream in = TestUtils.getTestFile(TestUtils.MTOM_TEST_MESSAGE_FILE);
         SOAPMessage request = mf.createMessage(headers, in);
         SOAPEnvelope envelope = request.getSOAPPart().getEnvelope();
         

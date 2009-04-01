@@ -22,7 +22,6 @@ package org.apache.axis2.saaj;
 import junit.framework.Assert;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -92,10 +91,7 @@ public class AttachmentSerializationTest extends Assert {
         msg.addAttachmentPart(ap);
 
         // Second attachment
-        String jpgfilename = System.getProperty("basedir", ".") + "/" + "test-resources/axis2.jpg";
-        File myfile = new File(jpgfilename);
-        FileDataSource fds = new FileDataSource(myfile);
-        DataHandler dh = new DataHandler(fds);
+        DataHandler dh = new DataHandler(TestUtils.getTestFileAsDataSource("axis2.jpg"));
         AttachmentPart ap2 = msg.createAttachmentPart(dh);
         ap2.setContentType("image/jpg");
         msg.addAttachmentPart(ap2);

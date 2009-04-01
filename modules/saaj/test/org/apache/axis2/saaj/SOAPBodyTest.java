@@ -42,7 +42,6 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import java.io.File;
 import java.util.Iterator;
 
 @RunWith(SAAJTestRunner.class)
@@ -119,8 +118,7 @@ public class SOAPBodyTest extends Assert {
             factory.setNamespaceAware(true);
 
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(new File(System.getProperty("basedir", ".") + "/" +
-                    "test-resources" + File.separator + "soap-body.xml"));
+            document = builder.parse(TestUtils.getTestFileURI("soap-body.xml"));
             MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
 

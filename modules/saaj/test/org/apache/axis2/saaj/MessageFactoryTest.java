@@ -34,7 +34,6 @@ import javax.xml.soap.SOAPPart;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 
@@ -146,8 +145,8 @@ public class MessageFactoryTest extends XMLAssert {
     @Validated @Test
     public void testParseMTOMMessage() throws Exception {
         MimeHeaders headers = new MimeHeaders();
-        headers.addHeader("Content-Type", TestConstants.MTOM_TEST_MESSAGE_CONTENT_TYPE);
-        InputStream in = new FileInputStream(TestConstants.MTOM_TEST_MESSAGE_FILE);
+        headers.addHeader("Content-Type", TestUtils.MTOM_TEST_MESSAGE_CONTENT_TYPE);
+        InputStream in = TestUtils.getTestFile(TestUtils.MTOM_TEST_MESSAGE_FILE);
         SOAPMessage message = mf.createMessage(headers, in);
         SOAPPart soapPart = message.getSOAPPart();
         assertEquals("<0.urn:uuid:F02ECC18873CFB73E211412748909308@apache.org>",
@@ -180,8 +179,7 @@ public class MessageFactoryTest extends XMLAssert {
                 "boundary=MIMEBoundaryurn_uuid_E3F7CE4554928DA89B1231365678616; " +
                 "type=\"text/xml\"; " +
                 "start=\"<0.urn:uuid:E3F7CE4554928DA89B1231365678617@apache.org>\"");
-        InputStream in = new FileInputStream(System.getProperty("basedir", ".")
-                + "/test-resources/SwAmessage.bin");
+        InputStream in = TestUtils.getTestFile("SwAmessage.bin");
         SOAPMessage message = mf.createMessage(headers, in);
         SOAPPart soapPart = message.getSOAPPart();
         assertEquals("<0.urn:uuid:E3F7CE4554928DA89B1231365678617@apache.org>",
