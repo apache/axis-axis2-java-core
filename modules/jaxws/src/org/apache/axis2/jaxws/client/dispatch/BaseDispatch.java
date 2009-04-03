@@ -122,6 +122,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
@@ -248,6 +249,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
@@ -312,6 +314,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
@@ -387,6 +390,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
             requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             

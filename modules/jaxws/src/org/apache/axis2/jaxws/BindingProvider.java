@@ -61,6 +61,8 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
     private org.apache.axis2.jaxws.spi.Binding binding;
 
+    public static final String BINDING_PROVIDER = "org.apache.axis2.jaxws.BindingProvider";
+    
     public BindingProvider(ServiceDelegate svcDelegate,
                            EndpointDescription epDesc,
                            org.apache.axis2.addressing.EndpointReference epr,

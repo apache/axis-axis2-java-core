@@ -175,6 +175,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // Create and configure the request MessageContext
         InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
         MessageContext request = createRequest(method, args);
+        request.getAxisMessageContext().setProperty(BINDING_PROVIDER, this);
         request.setEndpointDescription(getEndpointDescription());
         request.setOperationDescription(operationDesc);
 
