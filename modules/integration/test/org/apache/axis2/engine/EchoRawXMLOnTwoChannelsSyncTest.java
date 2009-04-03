@@ -113,8 +113,8 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase
         method.addChild(value);
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(true);
+        options.setTransportInProtocol(Constants.TRANSPORT_LOCAL);
+        options.setUseSeparateListener(false);
         options.setAction(operationName.getLocalPart());
 
         ServiceClient sender = new ServiceClient(configConetxt, service);

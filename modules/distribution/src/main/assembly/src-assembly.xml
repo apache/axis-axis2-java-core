@@ -63,7 +63,8 @@
                 <include>modules/tool/**</include>
                 <include>modules/transports/**</include>
                 <include>modules/webapp/**</include>
-                <include>modules/xmlbeans/**</include>                
+                <include>modules/xmlbeans/**</include> 
+                <include>modules/transport/**</include>               
             </includes>
 
 	    <excludes>

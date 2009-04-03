@@ -149,9 +149,6 @@
         <smack.version>3.0.4</smack.version>
         <commons.lang.version>2.3</commons.lang.version>
         <javax.mail.version>1.4</javax.mail.version>
-        <transport.http.version>1.0-SNAPSHOT</transport.http.version>
-        <transport.tcp.version>1.0-SNAPSHOT</transport.tcp.version>
-        <transport.local.version>1.0-SNAPSHOT</transport.local.version>
         <!-- The build failing if tests are skipped is very annoying -->
         <failIfNoTests>false</failIfNoTests>
         <m2Repository>'${settings.localRepository}'</m2Repository>
@@ -656,39 +653,6 @@
                     <exclusion>
                         <groupId>org.codehaus.woodstox</groupId>
                         <artifactId>wstx-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>axis2-transport-http</artifactId>
-                <version>${transport.http.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.axis2</groupId>
-                        <artifactId>axis2-kernel</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>axis2-transport-tcp</artifactId>
-                <version>${transport.tcp.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.axis2</groupId>
-                        <artifactId>axis2-kernel</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>axis2-transport-local</artifactId>
-                <version>${transport.local.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.axis2</groupId>
-                        <artifactId>axis2-kernel</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

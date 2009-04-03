@@ -45,13 +45,13 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>axis2-transport-local</artifactId>
-        <version>${transport.local.version}</version>
+        <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>axis2-transport-http</artifactId>
-        <version>${transport.http.version}</version>
+        <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
