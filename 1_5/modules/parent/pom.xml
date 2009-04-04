@@ -109,7 +109,7 @@
         <geronimo.spec.metadata.version>1.1.2</geronimo.spec.metadata.version>
         <geronimo.spec.saaj.version>1.0.1</geronimo.spec.saaj.version>
         <geronimo.spec.jaxws.version>1.0</geronimo.spec.jaxws.version>
-        <httpcore.version>4.0-beta1</httpcore.version>
+        <httpcore.version>4.0</httpcore.version>
         <intellij.version>5.0</intellij.version>
         <jalopy.version>1.5rc3</jalopy.version>
         <jaxb.api.version>2.1</jaxb.api.version>
