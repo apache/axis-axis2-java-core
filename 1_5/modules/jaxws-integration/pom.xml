@@ -63,16 +63,14 @@
             <version>${version}</version>
         </dependency>
          <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
+            <version>${version}</version>
         </dependency>
          <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>axis2-transport-tcp</artifactId>
-        </dependency>
-         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
+            <version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
