@@ -109,6 +109,16 @@
             <artifactId>geronimo-activation_1.1_spec</artifactId>
             <version>1.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
        </dependencies>
 
     <build>

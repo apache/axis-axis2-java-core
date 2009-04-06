@@ -180,7 +180,7 @@
         <!-- <parameter name="threadKeepAliveTimeUnit">MILLISECONDS</parameter>            -->
     <!--</transportReceiver>-->
 
-	<!--Uncomment if you want to have TCP transport support-->
+    <!--Uncomment if you want to have TCP transport support-->
     <!--transportReceiver name="tcp"
                        class="org.apache.axis2.transport.tcp.TCPServer">
         <parameter name="port">6060</parameter-->>
@@ -193,8 +193,11 @@
     <!-- Transport Outs -->
     <!-- ================================================= -->
 
+    <!--Uncomment if you want to have TCP transport support-->
+    <!--
     <transportSender name="tcp"
                      class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
+    -->
     <transportSender name="local"
                      class="org.apache.axis2.transport.local.LocalTransportSender"/>
     <transportSender name="http"

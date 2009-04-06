@@ -42,10 +42,6 @@
         <parameter name="port">6060</parameter>
     </transportReceiver>
 
-    <transportReceiver name="tcp" class="org.apache.axis2.transport.tcp.TCPServer">
-        <parameter name="port">6060</parameter>
-    </transportReceiver>
-
     <!-- ================================================= -->
     <!-- Transport Outs -->
     <!-- ================================================= -->
@@ -55,7 +51,6 @@
         <parameter name="Transfer-Encoding">chunked</parameter>
     </transportSender>
 
-    <transportSender name="tcp" class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
     <transportSender name="local" class="org.apache.axis2.transport.local.LocalTransportSender"/>
 
     <!-- ================================================= -->
