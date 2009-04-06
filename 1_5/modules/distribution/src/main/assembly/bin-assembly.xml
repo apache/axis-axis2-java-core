@@ -99,17 +99,6 @@
 
 
         <!-- copy contents of the webapp module -->
-        <fileSet>
-            <directory>../../modules/webapp/src/main/webapp</directory>
-            <outputDirectory>webapp</outputDirectory>
-            <excludes>
-                <exclude>project.xml</exclude>
-                <exclude>**/*.iml</exclude>
-                <exclude>**/.*</exclude>
-                <exclude>**/conf/**</exclude>
-                <exclude>**/scripts/**</exclude>
-            </excludes>
-        </fileSet>
 
         <fileSet>
             <directory>../../modules/webapp/src/main/webapp</directory>
@@ -245,13 +234,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/xmlbeans/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-xmlbeans-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>../../modules/tool/axis2-ant-plugin/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
@@ -270,13 +252,6 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>axis2-corba-${version}.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>../../modules/mtompolicy/target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>axis2-mtompolicy-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
