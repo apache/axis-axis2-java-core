@@ -75,7 +75,7 @@
         <copy file="build/WsaMappingService.aar" tofile="../../repository/services/sample-WsaMappingService.aar" overwrite="true"/>
     </target>
     
-    <target name="generate.module">
+    <target name="generate.module" depends="compile">
        <jar destfile="build/logging.mar">
             <fileset dir="src/userguide/loggingmodule/">
                 <include name="META-INF/**"/>
