@@ -35,7 +35,7 @@ import java.io.StringWriter;
  * Message Exchage Pattern IN-OUT
  */
 public class EchoBlockingDualClient {
-    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8090/axis2/services/MyService");
+    private static EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:8080/axis2/services/MyService");
 
     public static void main(String[] args) {
         ServiceClient sender = null;
