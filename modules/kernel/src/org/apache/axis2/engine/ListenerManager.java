@@ -56,9 +56,27 @@ public class ListenerManager {
     // We're stopped at first.
     private boolean stopped = true;
 
+    // need to preserve the default behavior of requiring a shutdown hook
+    private boolean shutdownHookRequired = true;
+
     public void init(ConfigurationContext configCtx) {
+        if (this.configctx != null) return;
+
         configCtx.setTransportManager(this);
         this.configctx = configCtx;
+
+        // initialize all the transport listeners
+        for (Object o : configctx.getAxisConfiguration().getTransportsIn().values()) {
+            try {
+                TransportInDescription transportIn = (TransportInDescription)o;
+                TransportListener listener = transportIn.getReceiver();
+                if (listener != null && startedTransports.get(transportIn.getName()) == null) {
+                    listener.init(configctx, transportIn);
+                }
+            } catch (Exception e) {
+                log.info(e.getMessage(), e);
+            }
+        }
     }
 
     public ConfigurationContext getConfigctx() {
@@ -117,12 +135,16 @@ public class ListenerManager {
     public synchronized void start() {
         if (!stopped) return;
 
+        if (configctx == null) {
+            log.error("Can't start uninitialized ListenerManager!");
+            return;
+        }
+
         for (Object o : configctx.getAxisConfiguration().getTransportsIn().values()) {
             try {
                 TransportInDescription transportIn = (TransportInDescription)o;
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null && startedTransports.get(transportIn.getName()) == null) {
-                    listener.init(configctx, transportIn);
                     listener.start();
                     startedTransports.put(transportIn.getName(), listener);
                 }
@@ -131,7 +153,7 @@ public class ListenerManager {
             }
         }
 
-        if (shutdownHookThread == null) {
+        if (shutdownHookThread == null && isShutdownHookRequired()) {
             shutdownHookThread = new ListenerManagerShutdownThread(this);
             Runtime.getRuntime().addShutdownHook(shutdownHookThread);
         }
@@ -214,7 +236,7 @@ public class ListenerManager {
             if (!started) {
                 transportListener.init(configctx, trsIn);
                 transportListener.start();
-                if (shutdownHookThread == null) {
+                if (shutdownHookThread == null && isShutdownHookRequired()) {
                     shutdownHookThread = new ListenerManagerShutdownThread(this);
                     Runtime.getRuntime().addShutdownHook(shutdownHookThread);
                 }
@@ -242,6 +264,14 @@ public class ListenerManager {
         this.startedTransports.clear();
         this.configctx = null;
         defaultConfigurationContext = null;
+    }
+
+    public boolean isShutdownHookRequired() {
+        return shutdownHookRequired;
+    }
+
+    public void setShutdownHookRequired(boolean shutdownHookRequired) {
+        this.shutdownHookRequired = shutdownHookRequired;
     }
 
     static class ListenerManagerShutdownThread extends Thread {
