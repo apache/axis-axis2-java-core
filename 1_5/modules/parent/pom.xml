@@ -1060,22 +1060,79 @@
                     <name>release</name>
                 </property>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+          <build>
+                          <plugins>
+
+                              <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-release-plugin</artifactId>
+                                  <configuration>
+                                      <useReleaseProfile>false</useReleaseProfile>
+                                      <goals>deploy</goals>
+                                      <arguments>-Prelease</arguments>
+                                  </configuration>
+                              </plugin>
+
+                              <!-- We want a source jar -->
+                              <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-source-plugin</artifactId>
+                                  <executions>
+                                      <execution>
+                                          <goals>
+                                              <goal>jar</goal>
+                                          </goals>
+                                      </execution>
+                                  </executions>
+                              </plugin>
+
+                              <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+                              <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-gpg-plugin</artifactId>
+                                  <inherited>true</inherited>
+                                  <configuration>
+                                      <passphrase>${gpg.passphrase}</passphrase>
+                                  </configuration>
+                                  <executions>
+                                      <execution>
+                                          <goals>
+                                              <goal>sign</goal>
+                                          </goals>
+                                      </execution>
+                                  </executions>
+                              </plugin>
+
+                              <!-- We want to deploy the artifact to a staging location for perusal -->
+                              <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-deploy-plugin</artifactId>
+                                  <inherited>true</inherited>
+                                  <configuration>
+                                      <altDeploymentRepository>${deploy.altRepository}</altDeploymentRepository>
+                                      <updateReleaseInfo>true</updateReleaseInfo>
+                                  </configuration>
+                              </plugin>
+
+                              <!-- We want the JavaDoc JAR published with the release -->
+                              <plugin>
+                                  <groupId>org.apache.maven.plugins</groupId>
+                                  <artifactId>maven-javadoc-plugin</artifactId>
+                                  <inherited>true</inherited>
+                                  <configuration>
+                                      <source>1.5</source>
+                                  </configuration>
+                                  <executions>
+                                      <execution>
+                                          <id>attach-javadocs</id>
+                                          <goals>
+                                              <goal>jar</goal>
+                                          </goals>
+                                      </execution>
+                                  </executions>
+                              </plugin>
+                          </plugins>
+                      </build>
         </profile>
         <profile>
             <id>java15</id>
@@ -1132,6 +1189,14 @@
             </build>
         </profile>
     </profiles>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_5</connection>
+    <developerConnection>
+      scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_5
+    </developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/webservices/axis2/branches/java/1_5</url>
+  </scm>
+
     <distributionManagement>
         <repository>
             <id>apache-repo</id>
