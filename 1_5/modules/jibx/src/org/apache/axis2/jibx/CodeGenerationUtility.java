@@ -44,7 +44,7 @@ import org.jibx.binding.model.BindingElement;
 import org.jibx.binding.model.ElementBase;
 import org.jibx.binding.model.FormatElement;
 import org.jibx.binding.model.IncludeElement;
-import org.jibx.binding.model.MappingElement;
+import org.jibx.binding.model.MappingElementBase;
 import org.jibx.binding.model.ModelVisitor;
 import org.jibx.binding.model.NamespaceElement;
 import org.jibx.binding.model.ValidationContext;
@@ -575,7 +575,7 @@ public class CodeGenerationUtility {
                     detail.setAttribute("type-index", clsindex);
                     bindinit.appendChild(detail);
                     if (mappedclass == null) {
-                        MappingElement mapping = (MappingElement)complexTypeMap.get(tname);
+                        MappingElementBase mapping = (MappingElementBase)complexTypeMap.get(tname);
                         mappedclass = mapping.getClassName();
                     }
                 }
@@ -830,11 +830,11 @@ public class CodeGenerationUtility {
                     } else {
                         
                         // conversion must be defined by mapping
-                        MappingElement mapping;
+                        MappingElementBase mapping;
                         if (refname == null) {
 
                             // complex type reference translates to abstract mapping in binding
-                            mapping = (MappingElement)complexTypeMap.get(typename);
+                            mapping = (MappingElementBase)complexTypeMap.get(typename);
                             if (mapping == null) {
                                 throw new RuntimeException("Cannot unwrap element " +
                                         qname + ": no abstract mapping definition found for type " +
@@ -850,7 +850,7 @@ public class CodeGenerationUtility {
                         } else {
                             
                             // element reference translates to concrete mapping
-                            mapping = (MappingElement)elementMap.get(refname);
+                            mapping = (MappingElementBase)elementMap.get(refname);
                             if (mapping == null) {
                                 throw new RuntimeException("Cannot unwrap element " +
                                         qname + ": no concrete mapping definition found for element " +
@@ -1043,7 +1043,7 @@ public class CodeGenerationUtility {
         if (obj == null) {
             throw new RuntimeException("No mapping defined for element " + qname);
         }
-        MappingElement mapping = (MappingElement)obj;
+        MappingElementBase mapping = (MappingElementBase)obj;
         String cname = mapping.getClassName();
         codeGenConfig.getTypeMapper().addTypeMappingName(qname, cname);
         return cname;
@@ -1087,7 +1087,7 @@ public class CodeGenerationUtility {
             } else if (child.type() == ElementBase.MAPPING_ELEMENT) {
                 
                 // record only abstract mappings with type names, and mappings with names
-                MappingElement mapping = (MappingElement)child;
+                MappingElementBase mapping = (MappingElementBase)child;
                 bindingMap.put(mapping, binding);
                 if (mapping.isAbstract() && mapping.getTypeQName() != null) {
 
