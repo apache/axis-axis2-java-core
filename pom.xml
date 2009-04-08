@@ -87,9 +87,7 @@
             <modules>
                 <module>../transport/modules/parent</module>
                 <module>../transport/modules/base</module>
-                <module>../transport/modules/http</module>
                 <module>../transport/modules/tcp</module>
-                <module>../transport/modules/local</module>
                 <module>../transport/modules/xmpp</module>
                 <module>../transport/modules/mail</module>
                 <module>../transport/modules/jms</module>
