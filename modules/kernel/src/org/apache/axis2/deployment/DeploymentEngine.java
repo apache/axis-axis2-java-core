@@ -63,6 +63,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.lang.reflect.Method;
@@ -127,6 +129,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     private HashMap extensionToDeployerMappingMap = new HashMap();
     
     private Map<String, Map<String, Deployer>> deployerMap = new HashMap<String, Map<String, Deployer>>();
+
+    private Lock lock = new ReentrantLock();
 
     public void loadServices() {
         repoListener.checkServices();
@@ -1332,6 +1336,101 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         }
         if (scheduler != null) {
             scheduler.cleanup();
+        }
+    }
+
+    /**
+     * Adds and initializes the deploer.
+     *
+     * @param deployer  Deployer object to be added
+     * @param directory
+     * @param extension
+     */
+    public void addDeployer(Deployer deployer, String directory, String extension){
+
+        if (deployer == null) {
+            log.error("Failed to add Deployer : deployer is null");
+            return;
+        }
+
+        if (directory == null) {
+            log.error("Failed to add Deployer " + deployer.getClass().getName() + ": missing 'directory' attribute");
+            return;
+        }
+
+        if (extension == null) {
+            log.error("Failed to add Deployer " + deployer.getClass().getName() + ": Deployer missing 'extension' attribute");
+            return;
+        }
+        // A leading dot is redundant, so strip it.  So we allow either ".foo" or "foo", either
+        // of which will result in extension="foo"
+        if (extension.charAt(0) == '.') extension = extension.substring(1);
+
+
+        lock.lock();
+        try {
+            Map<String, Deployer> extensionMap = deployerMap.get(directory);
+            if (extensionMap == null) {
+                extensionMap = new HashMap<String, Deployer>();
+                deployerMap.put(directory, extensionMap);
+            }
+            extensionMap.put(extension, deployer);
+            extensionToDeployerMappingMap.put(extension, deployer);
+        } finally {
+            lock.unlock();
+        }
+
+        // If axis2 is not initialized, Axis2 will handle the deployer init() and relavent service deployment
+        // If axis2 is initialized and hotDeployment is on, Axis2 will handle the relavent service deployments.
+        // If axis2 is initialized and hotDeployment is off, we need to manually deploy the relavent service artifacts.
+        if(configContext != null){
+            // Initialize the Deployer            
+            deployer.init(configContext);
+            if(!hotDeployment){
+                //TBD
+            }
+        }
+    }
+
+    /**
+     * Remove the Deployer mapped for the diven directory and the extension
+     * @param directory
+     * @param extension
+     */
+    public void removeDeployer(String directory, String extension) {
+        if (directory == null) {
+            log.error("Failed to remove Deployer : missing 'directory' attribute");
+            return;
+        }
+
+        if (extension == null) {
+            log.error("Failed to remove Deployer : Deployer missing 'extension' attribute");
+            return;
+        }
+
+        Map<String, Deployer> extensionMap = deployerMap.get(directory);
+        if (extensionMap == null) {
+            return;
+        }
+
+        lock.lock();
+        try {
+            if (extensionMap.containsKey(extension)) {
+                Deployer deployer = extensionMap.remove(extension);
+                if(extensionMap.isEmpty()){
+                    deployerMap.remove(directory);
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Deployer " + deployer.getClass().getName() + " is removed");
+                }
+            }
+
+            if(extensionToDeployerMappingMap.containsKey(extension)){
+                extensionToDeployerMappingMap.remove(extension);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 }
