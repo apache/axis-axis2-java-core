@@ -30,7 +30,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-parent</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Parent</name>
     <inceptionYear>2004</inceptionYear>
@@ -80,14 +80,14 @@
               element, and it will need to be changed manually before a release,
               as the maven-release-plugin will not update this value.
         -->
-        <version>1.5-SNAPSHOT</version>
+        <version>1.5</version>
 
         <!-- Version #'s for the mars that we generate -->
-        <addressing.mar.version>1.5-SNAPSHOT</addressing.mar.version>
-        <soapmonitor.mar.version>1.5-SNAPSHOT</soapmonitor.mar.version>
-        <mex.mar.version>1.5-SNAPSHOT</mex.mar.version>
-        <ping.mar.version>1.5-SNAPSHOT</ping.mar.version>
-        <scripting.mar.version>1.5-SNAPSHOT</scripting.mar.version>
+        <addressing.mar.version>1.5</addressing.mar.version>
+        <soapmonitor.mar.version>1.5</soapmonitor.mar.version>
+        <mex.mar.version>1.5</mex.mar.version>
+        <ping.mar.version>1.5</ping.mar.version>
+        <scripting.mar.version>1.5</scripting.mar.version>
 
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
@@ -1055,24 +1055,20 @@
 
     <profiles>
         <profile>
-            <activation>
-                <property>
-                    <name>release</name>
-                </property>
-            </activation>
+          <id>release</id>
           <build>
                           <plugins>
 
-                              <plugin>
-                                  <groupId>org.apache.maven.plugins</groupId>
-                                  <artifactId>maven-release-plugin</artifactId>
-                                  <configuration>
-				      <tagBase>https://svn.apache.org/repos/asf/webservices/axis2/tags/java/</tagBase>
-                                      <useReleaseProfile>false</useReleaseProfile>
-                                      <goals>deploy</goals>
-                                      <arguments>-Prelease</arguments>
-                                  </configuration>
-                              </plugin>
+                              <!--<plugin>-->
+                                  <!--<groupId>org.apache.maven.plugins</groupId>-->
+                                  <!--<artifactId>maven-release-plugin</artifactId>-->
+                                  <!--<configuration>-->
+				      <!--<tagBase>https://svn.apache.org/repos/asf/webservices/axis2/tags/java/</tagBase>-->
+                                      <!--<useReleaseProfile>false</useReleaseProfile>-->
+                                      <!--<goals>deploy</goals>-->
+                                      <!--<arguments>-Prelease</arguments>-->
+                                  <!--</configuration>-->
+                              <!--</plugin>-->
 
                               <!-- We want a source jar -->
                               <plugin>
