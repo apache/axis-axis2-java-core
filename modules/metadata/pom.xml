@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>1.5</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>axis2-metadata</artifactId>

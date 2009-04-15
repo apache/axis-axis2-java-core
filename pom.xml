@@ -30,7 +30,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>pom</packaging>
     <name>Apache Axis2 - Root</name>
     <modules>
@@ -76,6 +76,13 @@
         <module>modules/transport/http</module>
     </modules>
     <profiles>
+        <profile>
+          <id>plugins</id>
+          <modules>
+            <module>modules/tool/axis2-aar-maven-plugin</module>
+            <module>modules/tool/axis2-mar-maven-plugin</module>            
+          </modules>
+        </profile>
         <profile>
             <id>transport</id>
             <activation>
