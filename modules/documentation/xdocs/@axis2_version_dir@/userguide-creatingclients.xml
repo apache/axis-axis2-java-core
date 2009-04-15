@@ -156,8 +156,7 @@ for calling each of these operations.</p>
 <p><b>The short story:</b></p>
 <ol>
 <li>
-href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin"
-<a href="">Download</a> and unpack the Apache Axis2 Standard
+<a href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">Download</a> and unpack the Apache Axis2 Standard
 Distribution, if you have not done it already.</li>
 <li>Create the client stub with the following command:
 <pre>
