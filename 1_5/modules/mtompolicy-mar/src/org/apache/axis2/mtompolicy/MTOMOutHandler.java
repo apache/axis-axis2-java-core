@@ -29,8 +29,20 @@ import org.apache.axis2.policy.model.MTOMAssertion;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
+/**
+ * This out handler does a check of the effective policy set. Based on that the corresponding MTOM property </br>
+ * value is set.
+ */
 public class MTOMOutHandler extends AbstractHandler {
 
+	/**
+	 * Checks the effective policy set and based on it the <code>enableMTOM</code> is set to the appropriate value.</br>
+	 * E.g. if the policy states that MTOM is <code>optional</code> then the <code>enableMTOM</code> is set to this value.  
+	 * 
+	 * @param msgCtx the {@link MessageContext}
+     * 
+     * @throws AxisFault
+	 */
     public InvocationResponse invoke(MessageContext msgCtx) throws AxisFault {
 
         Policy policy = msgCtx.getEffectivePolicy();

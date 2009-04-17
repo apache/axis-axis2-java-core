@@ -33,11 +33,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
+/**
+ * The module implementation class for the MTOM module.
+ *
+ */
 public class MTOMPolicy implements Module {
 
-    /*
-     * setup for logging
-     */
     private static final Log log = LogFactory.getLog(MTOMPolicy.class);
 
     public void applyPolicy(Policy policy, AxisDescription axisDescription)
@@ -45,7 +46,7 @@ public class MTOMPolicy implements Module {
         if (log.isDebugEnabled()) {
             log.debug("applyPolicy() called on MTOMPolicy module");
         }
-
+        
     }
 
     public boolean canSupportAssertion(Assertion assertion) {

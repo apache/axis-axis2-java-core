@@ -38,6 +38,8 @@ import org.apache.neethi.builders.AssertionBuilder;
 import javax.xml.namespace.QName;
 
 /**
+ * This builder is responsible for the creation of a MTOM assertion object </br>
+ * (compliant with the WS-MTOMPolicy verion 1.0).
  * The builder will be picked by the
  * "org.apache.neethi.AssertionBuilderFactory".
  */

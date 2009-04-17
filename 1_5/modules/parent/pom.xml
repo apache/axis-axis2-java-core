@@ -88,6 +88,7 @@
         <mex.mar.version>1.5</mex.mar.version>
         <ping.mar.version>1.5</ping.mar.version>
         <scripting.mar.version>1.5</scripting.mar.version>
+        <mtompolicy.mar.version>1.5</mtompolicy.mar.version>
 
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>

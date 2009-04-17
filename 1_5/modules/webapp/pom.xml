@@ -1419,6 +1419,13 @@
                             </includes>
                         </resource>
                         <resource>
+                            <directory>${basedir}/../mtompolicy-mar/target</directory>
+                            <targetPath>WEB-INF/modules</targetPath>
+                            <includes>
+                                <include>*mtompolicy*.mar</include>
+                            </includes>
+                        </resource>
+                        <resource>
                             <directory>${basedir}/../samples/version/target</directory>
                             <targetPath>WEB-INF/services</targetPath>
                             <includes>
