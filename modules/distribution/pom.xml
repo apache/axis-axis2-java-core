@@ -361,6 +361,8 @@
                                       tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
                                 <copy file="../../modules/scripting/target/axis2-scripting-${version}.mar"
                                       tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
+                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${mtompolicy.mar.version}.mar"
+                                      tofile="target/tmp-repository/modules/mtompolicy-${mtompolicy.mar.version}.mar"/>
 
                                 <!-- generate modules.list -->
                                 <echo file="target/tmp-repository/modules/modules.list" append="false">

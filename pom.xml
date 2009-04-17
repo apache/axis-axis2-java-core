@@ -46,6 +46,7 @@
         <module>modules/kernel</module>
         <module>modules/mex</module>
         <module>modules/mtompolicy</module>
+        <module>modules/mtompolicy-mar</module>
         <module>modules/parent</module>
         <module>modules/ping</module>
         <module>modules/samples/version</module>
