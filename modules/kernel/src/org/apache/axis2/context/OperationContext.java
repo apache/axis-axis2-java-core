@@ -266,9 +266,14 @@ public class OperationContext extends AbstractContext
 
 
     /**
-     * @param messageLabel
-     * @return Returns MessageContext.
-     * @throws AxisFault
+     * Get the message context identified by a given label.
+     * 
+     * @param messageLabel The label of the message context to retrieve.
+     *                     This should be one of the <code>MESSAGE_LABEL_xxx</code> constants
+     *                     defined in {@link WSDLConstants}.
+     * @return the message context for the given label, or <code>null</code> if no
+     *         message context was found
+     * @throws AxisFault never
      */
     public MessageContext getMessageContext(String messageLabel)
             throws AxisFault {
@@ -276,7 +281,7 @@ public class OperationContext extends AbstractContext
             return null;
         }
 
-        return (MessageContext) messageContexts.get(messageLabel);
+        return messageContexts.get(messageLabel);
 
     }
 
