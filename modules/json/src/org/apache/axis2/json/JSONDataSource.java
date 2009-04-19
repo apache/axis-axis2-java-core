@@ -24,7 +24,7 @@ import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 
 /**
@@ -33,8 +33,8 @@ import java.util.HashMap;
 
 public class JSONDataSource extends AbstractJSONDataSource {
 
-    public JSONDataSource(InputStream jsonInputStream, String localName) {
-        super(jsonInputStream, localName);
+    public JSONDataSource(Reader jsonReader, String localName) {
+        super(jsonReader, localName);
     }
 
     /**

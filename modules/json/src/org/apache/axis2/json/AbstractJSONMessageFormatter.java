@@ -38,7 +38,10 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -89,7 +92,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         } else {
             try {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-                XMLStreamWriter jsonWriter = getJSONWriter(bytesOut);
+                XMLStreamWriter jsonWriter = getJSONWriter(bytesOut, format);
                 element.serializeAndConsume(jsonWriter);
                 jsonWriter.writeEndDocument();
 
@@ -113,8 +116,17 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
         return null;
     }
 
+    private XMLStreamWriter getJSONWriter(OutputStream outStream, OMOutputFormat format)
+            throws AxisFault {
+        try {
+            return getJSONWriter(new OutputStreamWriter(outStream, format.getCharSetEncoding()));
+        } catch (UnsupportedEncodingException ex) {
+            throw AxisFault.makeFault(ex);
+        }
+    }
+    
     //returns the "Mapped" JSON writer
-    protected abstract XMLStreamWriter getJSONWriter(OutputStream outStream);
+    protected abstract XMLStreamWriter getJSONWriter(Writer writer);
 
     /**
      * If the data source is a "Mapped" formatted data source, gives the JSON string by directly
@@ -158,7 +170,7 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
 
                 out.write(jsonToWrite.getBytes());
             } else {
-                XMLStreamWriter jsonWriter = getJSONWriter(out);
+                XMLStreamWriter jsonWriter = getJSONWriter(out, format);
                 element.serializeAndConsume(jsonWriter);
                 jsonWriter.writeEndDocument();
             }
@@ -191,11 +203,11 @@ public abstract class AbstractJSONMessageFormatter implements MessageFormatter {
                     jsonString = getStringToWrite(((OMSourcedElementImpl)
                             dataOut).getDataSource());
                 } else {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    StringWriter out = new StringWriter();
                     XMLStreamWriter jsonWriter = getJSONWriter(out);
                     dataOut.serializeAndConsume(jsonWriter);
                     jsonWriter.writeEndDocument();
-                    jsonString = new String(out.toByteArray());
+                    jsonString = out.toString();
                 }
                 jsonString = URIEncoderDecoder.quoteIllegal(jsonString,
                         WSDL2Constants.LEGAL_CHARACTERS_IN_URL);

@@ -19,14 +19,14 @@
 
 package org.apache.axis2.json;
 
-import java.io.InputStream;
+import java.io.Reader;
 
 /** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
 
 public class JSONOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(InputStream
-            jsonInputStream, String prefix, String localName) {
-        return new JSONDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
+    protected AbstractJSONDataSource getDataSource(Reader
+            jsonReader, String prefix, String localName) {
+        return new JSONDataSource(jsonReader, "\"" + prefix + localName + "\"");
     }
 }

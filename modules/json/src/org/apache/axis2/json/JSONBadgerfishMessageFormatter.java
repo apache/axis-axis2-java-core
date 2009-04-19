@@ -23,8 +23,7 @@ import org.apache.axiom.om.OMDataSource;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
 
 import javax.xml.stream.XMLStreamWriter;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 /**
  * This JSONBadgerfishMessageFormatter is the formatter for "Badgerfish" formatted JSON in Axis2.
@@ -37,8 +36,8 @@ public class JSONBadgerfishMessageFormatter extends AbstractJSONMessageFormatter
 
     //returns the writer for the badgerfish format
     @Override
-    protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
-        return new BadgerFishXMLStreamWriter(new OutputStreamWriter(outStream));
+    protected XMLStreamWriter getJSONWriter(Writer writer) {
+        return new BadgerFishXMLStreamWriter(writer);
     }
 
     /**

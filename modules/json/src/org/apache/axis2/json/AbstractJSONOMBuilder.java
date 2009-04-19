@@ -25,14 +25,17 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.util.URIEncoderDecoder;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 /** Makes the OMSourcedElementImpl object with the JSONDataSource inside. */
@@ -60,6 +63,8 @@ public abstract class AbstractJSONOMBuilder implements Builder {
         String prefix = "";
         OMNamespace ns = factory.createOMNamespace("", "");
 
+        Reader reader;
+        
         //if the input stream is null, then check whether the HTTP method is GET, if so get the
         // JSON String which is received as a parameter, and make it an input stream
 
@@ -82,9 +87,22 @@ public abstract class AbstractJSONOMBuilder implements Builder {
             //half as the incoming JSON message
             if ((index = requestURL.indexOf("=")) > 0) {
                 jsonString = requestURL.substring(index + 1);
-                inputStream = new ByteArrayInputStream(jsonString.getBytes());
+                reader = new StringReader(jsonString);
             } else {
                 throw new AxisFault("No JSON message received through HTTP GET or POST");
+            }
+        } else {
+            // Not sure where this is specified, but SOAPBuilder also determines the charset
+            // encoding like that
+            String charSetEncoding = (String)messageContext.getProperty(
+                    Constants.Configuration.CHARACTER_SET_ENCODING);
+            if (charSetEncoding == null) {
+                charSetEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+            }
+            try {
+                reader = new InputStreamReader(inputStream, charSetEncoding);
+            } catch (UnsupportedEncodingException ex) {
+                throw AxisFault.makeFault(ex);
             }
         }
 
@@ -95,12 +113,12 @@ public abstract class AbstractJSONOMBuilder implements Builder {
          */
         try {
             //read the stream until we find a : symbol
-            char temp = (char)inputStream.read();
+            char temp = (char)reader.read();
             while (temp != ':') {
                 if (temp != ' ' && temp != '{') {
                     localName += temp;
                 }
-                temp = (char)inputStream.read();
+                temp = (char)reader.read();
             }
 
             //if the part we read ends with ", there is no prefix, otherwise it has a prefix
@@ -111,12 +129,12 @@ public abstract class AbstractJSONOMBuilder implements Builder {
                     prefix = localName.substring(1, localName.length()) + ":";
                     localName = "";
                     //so far we have read only the prefix, now lets read the localname
-                    temp = (char)inputStream.read();
+                    temp = (char)reader.read();
                     while (temp != ':') {
                         if (temp != ' ') {
                             localName += temp;
                         }
-                        temp = (char)inputStream.read();
+                        temp = (char)reader.read();
                     }
                     localName = localName.substring(0, localName.length() - 1);
                 }
@@ -124,10 +142,10 @@ public abstract class AbstractJSONOMBuilder implements Builder {
         } catch (IOException e) {
             throw AxisFault.makeFault(e);
         }
-        AbstractJSONDataSource jsonDataSource = getDataSource(inputStream, prefix, localName);
+        AbstractJSONDataSource jsonDataSource = getDataSource(reader, prefix, localName);
         return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
     }
 
-    protected abstract AbstractJSONDataSource getDataSource(InputStream
-            jsonInputStream, String prefix, String localName);
+    protected abstract AbstractJSONDataSource getDataSource(Reader
+            jsonReader, String prefix, String localName);
 }

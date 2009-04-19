@@ -28,8 +28,8 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 
 /**
@@ -40,13 +40,13 @@ import java.io.Writer;
 
 public abstract class AbstractJSONDataSource implements OMDataSource {
 
-    private InputStream jsonInputStream;
+    private Reader jsonReader;
     private String jsonString;
     private boolean isRead = false;
     protected String localName;
 
-    public AbstractJSONDataSource(InputStream jsonInputStream, String localName) {
-        this.jsonInputStream = jsonInputStream;
+    public AbstractJSONDataSource(Reader jsonReader, String localName) {
+        this.jsonReader = jsonReader;
         this.localName = localName;
     }
 
@@ -169,11 +169,11 @@ public abstract class AbstractJSONDataSource implements OMDataSource {
             return jsonString;
         } else {
             try {
-                char temp = (char)jsonInputStream.read();
+                char temp = (char)jsonReader.read();
                 jsonString = "";
                 while ((int)temp != 65535) {
                     jsonString += temp;
-                    temp = (char)jsonInputStream.read();
+                    temp = (char)jsonReader.read();
                 }
             } catch (IOException e) {
                 throw new OMException();

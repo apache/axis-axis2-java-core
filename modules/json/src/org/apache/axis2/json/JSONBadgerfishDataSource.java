@@ -23,7 +23,7 @@ package org.apache.axis2.json;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
 import org.codehaus.jettison.json.JSONTokener;
 
-import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * JSON data source implementation for the "Badgerfish" convention.
@@ -31,8 +31,8 @@ import java.io.InputStream;
 
 public class JSONBadgerfishDataSource extends AbstractJSONDataSource {
 
-    public JSONBadgerfishDataSource(InputStream jsonInputStream, String localName) {
-        super(jsonInputStream, localName);
+    public JSONBadgerfishDataSource(Reader jsonReader, String localName) {
+        super(jsonReader, localName);
     }
 
     /**

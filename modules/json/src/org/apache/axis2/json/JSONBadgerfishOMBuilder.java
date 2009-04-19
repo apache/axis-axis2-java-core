@@ -19,7 +19,7 @@
 
 package org.apache.axis2.json;
 
-import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * Message builder for "Badgerfish" convention. DataSource used here is
@@ -28,8 +28,8 @@ import java.io.InputStream;
 
 public class JSONBadgerfishOMBuilder extends AbstractJSONOMBuilder {
     @Override
-    protected AbstractJSONDataSource getDataSource(InputStream jsonInputStream, String prefix,
+    protected AbstractJSONDataSource getDataSource(Reader jsonReader, String prefix,
                                            String localName) {
-        return new JSONBadgerfishDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
+        return new JSONBadgerfishDataSource(jsonReader, "\"" + prefix + localName + "\"");
     }
 }

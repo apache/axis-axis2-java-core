@@ -27,11 +27,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
 
 public class JSONDataSourceTest extends XMLTestCase {
 
@@ -98,8 +98,8 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {
-        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
-        return new JSONBadgerfishDataSource(readLocalName(jsonInputStream), "\"p\"");
+        Reader jsonReader = new StringReader(jsonString);
+        return new JSONBadgerfishDataSource(readLocalName(jsonReader), "\"p\"");
     }
 
     private String getBadgerfishJSONString() {
@@ -107,15 +107,15 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private JSONDataSource getMappedDataSource(String jsonString) {
-        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
-        return new JSONDataSource(readLocalName(jsonInputStream), "\"mapping\"");
+        Reader jsonReader = new StringReader(jsonString);
+        return new JSONDataSource(readLocalName(jsonReader), "\"mapping\"");
     }
 
     private String getMappedJSONString() {
         return "{\"mapping\":{\"inner\":[{\"first\":\"test string one\"},\"test string two\"],\"name\":\"foo\"}}";
     }
 
-    private InputStream readLocalName(InputStream in) {
+    private Reader readLocalName(Reader in) {
         try {
             while ((char)in.read() != ':') {
             }

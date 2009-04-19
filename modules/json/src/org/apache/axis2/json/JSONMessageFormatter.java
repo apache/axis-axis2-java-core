@@ -24,8 +24,7 @@ import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 import javax.xml.stream.XMLStreamWriter;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 /**
  * This JSONMessageFormatter is the formatter for "Mapped" formatted JSON in Axis2. This type of
@@ -43,9 +42,9 @@ public class JSONMessageFormatter extends AbstractJSONMessageFormatter {
 
     //returns the "Mapped" JSON writer
     @Override
-    protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
+    protected XMLStreamWriter getJSONWriter(Writer writer) {
         MappedNamespaceConvention mnc = new MappedNamespaceConvention();
-        return new MappedXMLStreamWriter(mnc, new OutputStreamWriter(outStream));
+        return new MappedXMLStreamWriter(mnc, writer);
     }
 
     /**
