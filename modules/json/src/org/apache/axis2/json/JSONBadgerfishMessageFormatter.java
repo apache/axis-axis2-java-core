@@ -33,9 +33,10 @@ import java.io.OutputStreamWriter;
  * namespaces with JSON
  */
 
-public class JSONBadgerfishMessageFormatter extends JSONMessageFormatter {
+public class JSONBadgerfishMessageFormatter extends AbstractJSONMessageFormatter {
 
     //returns the writer for the badgerfish format
+    @Override
     protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
         return new BadgerFishXMLStreamWriter(new OutputStreamWriter(outStream));
     }
@@ -47,9 +48,10 @@ public class JSONBadgerfishMessageFormatter extends JSONMessageFormatter {
      * @param dataSource data source to be checked
      * @return the JSON string to write
      */
+    @Override
     protected String getStringToWrite(OMDataSource dataSource) {
         if (dataSource instanceof JSONBadgerfishDataSource) {
-            return ((JSONDataSource)dataSource).getCompleteJOSNString();
+            return ((JSONBadgerfishDataSource)dataSource).getCompleteJOSNString();
         } else {
             return null;
         }

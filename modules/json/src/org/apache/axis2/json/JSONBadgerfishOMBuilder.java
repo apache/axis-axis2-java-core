@@ -26,9 +26,9 @@ import java.io.InputStream;
  * JSONBadgerfishDataSource which is specific for "Badgerfish"
  */
 
-public class JSONBadgerfishOMBuilder extends JSONOMBuilder {
-
-    protected JSONDataSource getDataSource(InputStream jsonInputStream, String prefix,
+public class JSONBadgerfishOMBuilder extends AbstractJSONOMBuilder {
+    @Override
+    protected AbstractJSONDataSource getDataSource(InputStream jsonInputStream, String prefix,
                                            String localName) {
         return new JSONBadgerfishDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
     }

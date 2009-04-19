@@ -26,12 +26,10 @@ import org.codehaus.jettison.json.JSONTokener;
 import java.io.InputStream;
 
 /**
- * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in
- * the OMSourcedElementImpl and can be used either to expand the tree or get the JSON String
- * directly without expanding. This uses the "Badgerfish" JSON convention.
+ * JSON data source implementation for the "Badgerfish" convention.
  */
 
-public class JSONBadgerfishDataSource extends JSONDataSource {
+public class JSONBadgerfishDataSource extends AbstractJSONDataSource {
 
     public JSONBadgerfishDataSource(InputStream jsonInputStream, String localName) {
         super(jsonInputStream, localName);
@@ -44,6 +42,7 @@ public class JSONBadgerfishDataSource extends JSONDataSource {
      * @throws javax.xml.stream.XMLStreamException
      *          if there is an error while making the StAX reader.
      */
+    @Override
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
         //input factory for "Badgerfish"
