@@ -990,7 +990,7 @@ public class ConverterUtil {
 
 
         } else {
-            throw new NumberFormatException("date string can not be less than 19 charactors");
+            throw new NumberFormatException("date string can not be less than 19 characters");
         }
 
         return calendar;
