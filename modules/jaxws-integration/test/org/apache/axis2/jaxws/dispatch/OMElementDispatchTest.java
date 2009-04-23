@@ -41,6 +41,8 @@ import junit.framework.TestSuite;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
@@ -274,10 +276,11 @@ public class OMElementDispatchTest extends AbstractTestCase {
         // we're in PAYLOAD mode, we don't have to worry about the envelope.
         StringReader sr = new StringReader(sampleEnvelope);
         XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
-        StAXOMBuilder builder = new StAXOMBuilder(inputReader);  
-        OMElement om = builder.getDocumentElement();
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+        SOAPEnvelope soap12Envelope = (SOAPEnvelope) builder.getDocumentElement();
         
-        OMElement response = dispatch.invoke(om);
+        
+        OMElement response = dispatch.invoke(soap12Envelope);
         
         // Check to make sure the contents of the message are correct
         //String responseText = baos.toString();
@@ -296,8 +299,8 @@ public class OMElementDispatchTest extends AbstractTestCase {
         
         StringReader sr2 = new StringReader(sampleEnvelope);
         inputReader = inputFactory.createXMLStreamReader(sr2);
-        builder = new StAXOMBuilder(inputReader);  
-        om = builder.getDocumentElement();
+        builder = new StAXSOAPModelBuilder(inputReader, null);  
+        SOAPEnvelope om = (SOAPEnvelope)builder.getDocumentElement();
         response = dispatch.invoke(om);
         
         // Check to make sure the contents of the message are correct

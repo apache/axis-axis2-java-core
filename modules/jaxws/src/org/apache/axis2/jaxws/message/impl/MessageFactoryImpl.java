@@ -32,6 +32,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.databinding.DataSourceBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -137,6 +138,9 @@ public class MessageFactoryImpl implements MessageFactory {
             return new MessageImpl((SOAPEnvelope)block.getBusinessObject(true), protocol);
         } else if (block instanceof DataSourceBlock) {
             return createFrom(block.getOMElement(), protocol);
+        } else if (block instanceof OMBlock){
+           	OMBlock omblock = (OMBlock)block;
+        	return new MessageImpl((OMElement)omblock.getBusinessObject(true), protocol);
         }
         return createFrom(block.getXMLStreamReader(true), protocol);
     }

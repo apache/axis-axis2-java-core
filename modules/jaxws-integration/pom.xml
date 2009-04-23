@@ -1283,7 +1283,15 @@
 									basedir="${pom.basedir}/target/test-classes/servicejars/HandlerHeaderService"
 								/>
 								<delete dir="target/test-classes/servicejars/HandlerHeaderService"/>
-								
+                                <copy toDir="target/test-classes/servicejars/OMProviderService/">
+									<fileset dir="target/test-classes">
+									   <include name="org/apache/axis2/jaxws/provider/om/**"/>
+									</fileset>
+								</copy>
+								<zip destfile="target/test-classes/servicejars/OMProviderService.jar"
+						             basedir="${pom.basedir}/target/test-classes/servicejars/OMProviderService"
+						        />
+						        <delete dir="target/test-classes/servicejars/OMProviderService"/>      
                                 <copy toDir="target/test-classes/">
                                     <fileset dir="test-resources/">
                                         <include name="**/*.properties"/>
@@ -1400,6 +1408,7 @@
                         <include>**/SOAPBindingProviderTests.java</include>
                         <include>**/SoapMessageProviderTests.java</include>
                         <include>**/StringProviderTests.java</include>
+                        <include>**/OMProviderTests.java</include>
                         
                     </includes>
                     <systemProperties>
