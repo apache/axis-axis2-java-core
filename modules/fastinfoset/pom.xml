@@ -117,6 +117,14 @@
                     <include>**/*</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>../..</directory>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
         </resources>
         <testResources>
             <testResource>
