@@ -68,18 +68,13 @@ public class BeanUtil {
                 beanClass, beanName, typeTable, qualified, processingDocLitBare);
 
         ArrayList objectAttributes = new ArrayList();
-        objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
-        if (typeTable != null && qualified) {
+
+        if ((typeTable != null)){
             QName qNamefortheType = typeTable.getQNamefortheType(getClassName(beanClass));
-            if (qNamefortheType == null) {
-                // Added objectAttributes as a fix for issues AXIS2-2055 and AXIS2-1899 to
-                // support polymorphism in POJO approach.
-                objectAttributes.add(beanClass.getName());
-            } else {
+            if (qNamefortheType != null){
+                objectAttributes.add(new QName(Constants.XSI_NAMESPACE, "type", "xsi"));
                 objectAttributes.add(qNamefortheType);
             }
-        } else {
-            objectAttributes.add(beanClass.getName());
         }
 
         return new ADBXMLStreamReaderImpl(beanName, propertyQnameValueList.toArray(), objectAttributes.toArray(),
