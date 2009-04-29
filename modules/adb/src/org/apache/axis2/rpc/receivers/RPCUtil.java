@@ -442,7 +442,7 @@ public class RPCUtil {
                             RPCUtil.processResponse(fac, resObject, bodyContent, ns,
                                     envelope, method,
                                     service.isElementFormDefault(),
-                                    null);
+                                    service.getTypeTable());
                         }
                     }
                 }
