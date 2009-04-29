@@ -87,6 +87,15 @@
             </includes>
         </fileSet>
 
+        <!-- copy class files to webapp/WEB-INF/classes directory -->
+        <fileSet>
+            <directory>../../modules/webapp/target/classes</directory>
+            <outputDirectory>webapp/WEB-INF/classes</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
 
         <!-- copy *.properties to webapp/WEB-INF/classes directory -->
         <fileSet>
