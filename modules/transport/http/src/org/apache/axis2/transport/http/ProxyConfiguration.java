@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -197,7 +198,12 @@ public class ProxyConfiguration {
         }
         
         httpClient.getParams().setAuthenticationPreemptive(true);
-        httpClient.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
+        HttpState tmpHttpState = httpClient.getState();
+        HttpState httpState = (HttpState)messageContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);
+        if (httpState != null) {
+            tmpHttpState = httpState;
+        }        
+        tmpHttpState.setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(this.getProxyHost(), this.getProxyPort());
     }
 

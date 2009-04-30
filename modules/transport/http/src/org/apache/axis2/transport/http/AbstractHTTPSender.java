@@ -40,6 +40,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
@@ -322,6 +323,14 @@ public abstract class AbstractHTTPSender {
 
                 Credentials creds;
 
+                HttpState tmpHttpState = null;
+                HttpState httpState = (HttpState)msgCtx.getProperty(HTTPConstants.CACHED_HTTP_STATE);
+                if (httpState != null) {
+                    tmpHttpState = httpState;
+                } else {
+                    tmpHttpState = agent.getState();
+                }
+                
                 agent.getParams()
                         .setAuthenticationPreemptive(authenticator.getPreemptiveAuthentication());
 
@@ -333,17 +342,17 @@ public abstract class AbstractHTTPSender {
                         /*Credentials for Digest and Basic Authentication*/
                         creds = new UsernamePasswordCredentials(username, password);
                     }
-                    agent.getState().setCredentials(new AuthScope(host, port, realm), creds);
+                    tmpHttpState.setCredentials(new AuthScope(host, port, realm), creds);
                 } else {
                     if (domain != null) {
                         /*Credentials for NTLM Authentication when host is ANY_HOST*/
                         creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
-                        agent.getState().setCredentials(
+                        tmpHttpState.setCredentials(
                                 new AuthScope(AuthScope.ANY_HOST, port, realm), creds);
                     } else {
                         /*Credentials only for Digest and Basic Authentication*/
                         creds = new UsernamePasswordCredentials(username, password);
-                        agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
+                        tmpHttpState.setCredentials(new AuthScope(AuthScope.ANY), creds);
                     }
                 }
                 /* Customizing the priority Order */
@@ -547,7 +556,8 @@ public abstract class AbstractHTTPSender {
         if (cookiePolicy != null) {
             method.getParams().setCookiePolicy(cookiePolicy);   
         }
-        httpClient.executeMethod(config, method);
+        HttpState httpState = (HttpState)msgContext.getProperty(HTTPConstants.CACHED_HTTP_STATE);        
+        httpClient.executeMethod(config, method, httpState);
     }
 
     public void addCustomHeaders(HttpMethod method, MessageContext msgContext) {

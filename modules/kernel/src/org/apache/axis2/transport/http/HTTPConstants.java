@@ -22,6 +22,8 @@ package org.apache.axis2.transport.http;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.httpclient.HttpState;
+
 /**
  * HTTP protocol and message context constants.
  */
@@ -436,6 +438,12 @@ public class HTTPConstants {
      * Field CACHED_HTTP_CLIENT
      */
     public static final String CACHED_HTTP_CLIENT = "CACHED_HTTP_CLIENT";
+
+    /**
+     * The name of the property that sets a HTTP state to be cached. 
+     * The property value should be of type {@link HttpState}.  
+     */
+    public static final String CACHED_HTTP_STATE = "CACHED_HTTP_STATE";    
 
     /**
      * @deprecated please use MULTITHREAD_HTTP_CONNECTION_MANAGER
