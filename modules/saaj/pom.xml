@@ -155,6 +155,13 @@
                       * Please leave this on a single line. Adding a newline between the two
                         options causes a build failure. -->
                     <argLine>-Djava.endorsed.dirs=${m2Repository}/org/apache/geronimo/specs/geronimo-saaj_1.3_spec/${geronimo.spec.saaj.version}/ -Dcom.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration=com.sun.org.apache.xerces.internal.parsers.XIncludeParserConfiguration</argLine>
+                    <systemProperties>
+                        <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

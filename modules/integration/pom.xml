@@ -349,6 +349,11 @@
                                     <name>build.repository</name>
                                     <value>./target/test-classes</value>
                                 </property>
+                                <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
+                                <property>
+                                    <name>java.awt.headless</name>
+                                    <value>true</value>
+                                </property>
                             </systemProperties>
                         </configuration>
                     </plugin>
@@ -394,6 +399,11 @@
                                 <property>
                                     <name>build.repository</name>
                                     <value>./target/test-classes</value>
+                                </property>
+                                <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
+                                <property>
+                                    <name>java.awt.headless</name>
+                                    <value>true</value>
                                 </property>
                             </systemProperties>
                         </configuration>

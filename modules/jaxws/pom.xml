@@ -317,6 +317,11 @@
                             <name>org.apache.axis2.jaxws.repo.path</name>
                             <value>./target/repository</value>
                         </property>
+                        <!-- Prevent Mac OS X from showing an icon in the dock during the test run -->
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
                     </systemProperties>
                 </configuration>
             </plugin>
