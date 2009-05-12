@@ -34,7 +34,6 @@ import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.jaxws.TestLogger;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReference;
 import org.apache.axis2.jaxws.addressing.SubmissionEndpointReferenceBuilder;
 import org.apache.axis2.jaxws.client.InterceptableClientTestCase;
