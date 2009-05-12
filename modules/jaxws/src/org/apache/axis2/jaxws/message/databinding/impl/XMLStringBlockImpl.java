@@ -75,7 +75,12 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
     protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
             throws XMLStreamException {
         // Create a Reader2Writer converter and get the output as a String
-        Reader2Writer r2w = new Reader2Writer(reader);
+        Reader2Writer r2w;
+        if ((busContext == null) && (omElement != null) && (omElement.isComplete())) {
+            r2w = new Reader2Writer(reader, false);
+        } else {
+            r2w = new Reader2Writer(reader);
+        }
         return r2w.getAsString();
     }
     

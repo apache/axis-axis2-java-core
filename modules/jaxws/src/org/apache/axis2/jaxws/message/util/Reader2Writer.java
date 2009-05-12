@@ -23,6 +23,9 @@ import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.jaxws.utility.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -37,6 +40,9 @@ import java.util.Iterator;
 public class Reader2Writer {
 
     private XMLStreamReader reader;
+    private boolean closeReader = true;
+    
+    private static final Log log = LogFactory.getLog(Reader2Writer.class);
 
     /**
      * Construct from a Reader
@@ -45,6 +51,16 @@ public class Reader2Writer {
      */
     public Reader2Writer(XMLStreamReader reader) {
         this.reader = reader;
+    }
+
+    /**
+     * Construct from a Reader
+     * @param reader -- the input to the converter
+     * @param closeReader -- close the reader upon completion
+     */
+    public Reader2Writer(XMLStreamReader reader, boolean closeReader) {
+        this(reader);
+        this.closeReader = closeReader;
     }
 
     /**
@@ -66,8 +82,13 @@ public class Reader2Writer {
             //omNode.serializeAndConsume(writer);
             omNode.serialize(writer);
         }
-        // Close the reader
-        reader.close();
+        // Close the reader if marked to do so
+        if (closeReader) {
+            if (log.isDebugEnabled()) {
+                log.debug("closing reader, builder: " + JavaUtils.stackToString());
+            }
+            reader.close();
+        }
     }
 
     /**

@@ -71,6 +71,10 @@ public class HandlerChainProcessor {
     private MEPContext mepCtx;
 
     private List<Handler> handlers = null;
+    
+    // for tracking purposes -- see trackInternalCall
+    private static Handler currentHandler = null;
+    private static String currentMethod = null;
 
     // track start/end of logical and protocol handlers in the list
     // The two scenarios are:  1) run logical handlers only, 2) run all handlers
@@ -87,6 +91,16 @@ public class HandlerChainProcessor {
     // HandlerChainProcessor.handleMessage
     private RuntimeException savedException;
     private Protocol proto; // need to save it incase we have to make a fault message
+
+    // we track whether the SOAPHeadersAdapter and SAAJ are both used in a given handler
+    // method.  If the tracker property is set, and both are called in a handler method,
+    // we throw an exception.  This behavior can easily be turned off by a handler method
+    // by removing or setting to true the Constants.JAXWS_HANDLER_TRACKER property
+    public enum TRACKER {
+        SOAP_HEADERS_ADAPTER_CALLED, SAAJ_CALLED
+    };
+    private static boolean soap_headers_adapter_called = false;
+    private static boolean saaj_called = false;
 
     /*
       * HandlerChainProcess expects null, empty list, or an already-sorted
@@ -236,10 +250,20 @@ public class HandlerChainProcessor {
         if (expectResponse) {
             if (result == FAILED) {
                 // we should only use callGenericHandlers_avoidRecursion in this case
+                // the message context is now an outbound message context,
+                // and should be marked as such so the SOAPHeadersAdapter will
+                // "install" with the correct property key.
+                mepCtx.getMessageContext().setOutbound(newDirection == Direction.OUT);
+                SOAPHeadersAdapter.install(mepCtx.getMessageContext());                
                 callGenericHandlers_avoidRecursion(newStart, newEnd, newDirection);
                 callCloseHandlers(newStart_inclusive, newEnd, newDirection);
             } else if (result == PROTOCOL_EXCEPTION) {
                 try {
+                    // the message context is now an outbound message context,
+                    // and should be marked as such so the SOAPHeadersAdapter will
+                    // "install" with the correct property key.
+                    mepCtx.getMessageContext().setOutbound(newDirection == Direction.OUT);
+                    SOAPHeadersAdapter.install(mepCtx.getMessageContext());
                     callGenericHandleFault(newStart, newEnd, newDirection);
                     callCloseHandlers(newStart_inclusive, newEnd, newDirection);
                 } catch (RuntimeException re) {
@@ -319,7 +343,7 @@ public class HandlerChainProcessor {
                 if (log.isDebugEnabled()) {
                     log.debug("Invoking handleMessage on: " + handler.getClass().getName());
                 }
-                handler.handleMessage(currentMC);
+                callHandleMessageWithTracker(handler);
             }
         } else { // IN case
             for (; i >= end; i--) {
@@ -329,7 +353,7 @@ public class HandlerChainProcessor {
                 if (log.isDebugEnabled()) {
                     log.debug("Invoking handleMessage on: " + handler.getClass().getName());
                 }
-                handler.handleMessage(currentMC);
+                callHandleMessageWithTracker(handler);
             }
         }
     }
@@ -353,7 +377,7 @@ public class HandlerChainProcessor {
             currentMC.put(Constants.MEP_CONTEXT, mepCtx);
 
             getPreInvoker().preInvoke(currentMC);
-            boolean success = handler.handleMessage(currentMC);
+            boolean success = callHandleMessageWithTracker(handler);
             getPostInvoker().postInvoke(currentMC);
             if (success) {
                 if (log.isDebugEnabled()) {
@@ -411,7 +435,7 @@ public class HandlerChainProcessor {
                     if (log.isDebugEnabled()) {
                         log.debug("Invoking close on: " + handler.getClass().getName());
                     }
-                    handler.close(currentMC);
+                    callCloseWithTracker(handler);
                     
                     // TODO when we close, are we done with the handler instance, and thus
                     // may call the PreDestroy annotated method?  I don't think so, especially
@@ -431,7 +455,7 @@ public class HandlerChainProcessor {
                     if (log.isDebugEnabled()) {
                         log.debug("Invoking close on: " + handler.getClass().getName());
                     }
-                    handler.close(currentMC);
+                    callCloseWithTracker(handler);
                     
                     // TODO when we close, are we done with the handler instance, and thus
                     // may call the PreDestroy annotated method?  I don't think so, especially
@@ -509,7 +533,7 @@ public class HandlerChainProcessor {
                 if (log.isDebugEnabled()) {
                     log.debug("Invoking handleFault on: " + handler.getClass().getName());
                 }
-                boolean success = handler.handleFault(currentMC);
+                boolean success = callHandleFaultWithTracker(handler);
 
                 if (!success)
                     break;
@@ -521,7 +545,7 @@ public class HandlerChainProcessor {
                 if (log.isDebugEnabled()) {
                     log.debug("Invoking handleFault on: " + handler.getClass().getName());
                 }
-                boolean success = handler.handleFault(currentMC);
+                boolean success = callHandleFaultWithTracker(handler);
 
                 if (!success)
                     break;
@@ -623,5 +647,96 @@ public class HandlerChainProcessor {
     	return handlerPostInvoker;
     }
     
+    public static void trackInternalCall(org.apache.axis2.jaxws.core.MessageContext mc, TRACKER tracker) {
+        switch (tracker) {
+        case SAAJ_CALLED:
+            saaj_called = true;
+            break;
+        case SOAP_HEADERS_ADAPTER_CALLED:
+            soap_headers_adapter_called = true;
+            break;
+        }
+        Object trackerProp = (mc == null ? null : mc.getProperty(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER));
+        if ((trackerProp != null) && ((Boolean)trackerProp).booleanValue()) {
+            if (saaj_called && soap_headers_adapter_called) {
+                // this means both the SAAJ model and SOAPHeadersAdapter code has been called in such a
+                // way as to cause data transformation.  We want customers to avoid doing this (calling both)
+                // in a given handler method, so we throw an exception:
+                if (log.isDebugEnabled()) {
+                    String logString = "JAX-WS Handler implementations should not use the " + org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER 
+                    + " property to retrieve SOAP headers and manipulate the SOAP message using the SAAJ API in the same method "
+                    + "implementation.  The Handler implementation and method doing this is: "
+                    + currentHandler.getClass().getName() + currentMethod;
+                    log.debug(logString);
+                }
+            }
+        }
+    }
+    
+    private boolean callHandleMessageWithTracker(Handler handler) throws RuntimeException {
+        currentHandler = handler;
+        currentMethod = "handleMessage";
+        // turn on the tracker property
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, true);
+        boolean success = false;
+        RuntimeException savedEx = null;
+        try {
+            success = handler.handleMessage(currentMC);
+        } catch (RuntimeException t) {
+            savedEx = t;
+        }
+        // turn off the tracker property and reset the static tracker booleans
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, false);
+        saaj_called = false;
+        soap_headers_adapter_called = false;
+        
+        if (savedEx != null) {
+            throw savedEx;
+        }
+        return success;
+    }
+    
+    private boolean callHandleFaultWithTracker(Handler handler) {
+        currentHandler = handler;
+        currentMethod = "handleFault";
+        // turn on the tracker property
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, true);
+        boolean success = false;
+        RuntimeException savedEx = null;
+        try {
+            success = handler.handleFault(currentMC);
+        } catch (RuntimeException t) {
+            savedEx = t;
+        }
+        // turn off the tracker property and reset the static tracker booleans
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, false);
+        saaj_called = false;
+        soap_headers_adapter_called = false;
+        
+        if (savedEx != null) {
+            throw savedEx;
+        }
+        return success;
+    }
+    
+    private void callCloseWithTracker(Handler handler) {
+        currentHandler = handler;
+        currentMethod = "close";
+        // turn on the tracker property
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, true);
+        RuntimeException savedEx = null;
+        try {
+            handler.close(currentMC);
+        } catch (RuntimeException t) {
+            savedEx = t;
+        }
+        // turn off the tracker property and reset the static tracker booleans
+        currentMC.put(org.apache.axis2.jaxws.handler.Constants.JAXWS_HANDLER_TRACKER, false);
+        saaj_called = false;
+        soap_headers_adapter_called = false;
+        if (savedEx != null) {
+            throw savedEx;
+        }
+    }
 
 }
