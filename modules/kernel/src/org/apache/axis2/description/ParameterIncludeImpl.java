@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -181,20 +180,11 @@ public class ParameterIncludeImpl
      * @return Returns parameter.
      */
     public Parameter getParameter(String name) {
-        return (Parameter) parameters.get(name);
+        return parameters.get(name);
     }
 
     public ArrayList<Parameter> getParameters() {
-        Collection<Parameter> col = parameters.values();
-        ArrayList<Parameter> para_list = new ArrayList<Parameter>();
-
-        for (Iterator<Parameter> iterator = col.iterator(); iterator.hasNext();) {
-            Parameter parameter = (Parameter) iterator.next();
-
-            para_list.add(parameter);
-        }
-
-        return para_list;
+        return new ArrayList<Parameter>(parameters.values());
     }
 
     // to check whether the parameter is locked at any level
