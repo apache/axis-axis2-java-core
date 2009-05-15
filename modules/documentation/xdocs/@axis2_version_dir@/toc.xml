@@ -105,9 +105,9 @@ Guide</a></li>
 <ul>
 <li>18.1 <a href="http-transport.html" target="mainFrame">HTTP
 Transport</a></li>
-<li>18.3 <a href="tcp-transport.html" target="mainFrame">TCP
+<li>18.2 <a href="tcp-transport.html" target="mainFrame">TCP
 Transport</a></li>
-<li>18.5 <a href="transport_howto.html" target="mainFrame">Custom
+<li>18.3 <a href="transport_howto.html" target="mainFrame">Custom
 Transport</a></li>
 </ul>
 </li>

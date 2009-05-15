@@ -177,7 +177,7 @@ client for an existing Web service</li>
 <ul>
 <li><a href="tcp-transport.html">TCP Transport</a> - A guide to
 sending and receiving SOAP messages via TCP in Axis2</li>
-<li><a>HTTP Transports</a> - A description on HTTP sender and HTTP
+<li><a href="http-transport.html">HTTP Transports</a> - A description on HTTP sender and HTTP
 receiver in Axis2</li>
 <li><a href="transport_howto.html">Write Your Own Axis2
 Transport</a> - A quick and easy guide to create your own Axis2

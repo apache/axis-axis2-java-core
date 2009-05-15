@@ -245,7 +245,7 @@
                 <inherited>false</inherited>
                 <executions>
                     <execution>
-                        <id>service-module-list-generation</id>
+                        <id>javadoc</id>
                         <phase>package</phase>
                         <configuration>
                             <tasks>

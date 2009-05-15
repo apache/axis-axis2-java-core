@@ -167,8 +167,7 @@ HTTPS.</p>
 <pre>
 &lt;transportSender name="<b>http</b>" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
    &lt;parameter name="PROTOCOL"&gt;HTTP/1.1&lt;/parameter&gt;
-   &lt;parameter name="PROXY" proxy_host="proxy_host_name" proxy_port="proxy_host_port"
-      &gt;userName:domain:passWord&lt;/parameter&gt;
+   &lt;parameter name="PROXY" proxy_host="proxy_host_name" proxy_port="proxy_host_port"&gt;userName:domain:passWord&lt;/parameter&gt;
 &lt;/transportSender&gt;</pre>
 
 <p>For a particular proxy, if authentication is not available, enter the
@@ -180,13 +179,13 @@ proxy configuration as below. </p>
     New proxy configuration would require the user to add a TOP level parameter in the axis2.xml named "Proxy".
 </p>
     <pre>
-        &lt;parameter name="Proxy"&gt;
-             &lt;Configuration&gt;
-                      &lt;ProxyHost&gt;example.org&lt;/ProxyHost&gt;
-                      &lt;ProxyPort&gt;5678&lt;/ProxyPort&gt;
-                      &lt;ProxyUser&gt;EXAMPLE\saminda&lt;/ProxyUser&gt;
-                      &lt;ProxyPassword>ppp&lt;/ProxyPassword&gt;
-              &lt;/Configuration&gt;
+&lt;parameter name="Proxy"&gt;
+    &lt;Configuration&gt;
+        &lt;ProxyHost&gt;example.org&lt;/ProxyHost&gt;
+        &lt;ProxyPort&gt;5678&lt;/ProxyPort&gt;
+        &lt;ProxyUser&gt;EXAMPLE\saminda&lt;/ProxyUser&gt;
+        &lt;ProxyPassword>ppp&lt;/ProxyPassword&gt;
+    &lt;/Configuration&gt;
 &lt;/parameter&gt;
     </pre>
 
@@ -293,9 +292,7 @@ object, you can set the relevant property in the Stub:
 </p>
 
     <source>
-        <pre>
-            options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, "true");
-        </pre>
+        <pre>options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT, "true");</pre>
     </source>
 
     <a name="setting_cached_httpclient_object"></a>
@@ -310,8 +307,7 @@ the Stub:
 
     <source>
     <pre>
-MultiThreadedHttpConnectionManager conmgr = new
-MultiThreadedHttpConnectionManager();
+MultiThreadedHttpConnectionManager conmgr = new MultiThreadedHttpConnectionManager();
 conmgr.getParams().setDefaultMaxConnectionsPerHost(10);
 HttpClient client = new HttpClient(conmgr);
 configurationContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, client);
