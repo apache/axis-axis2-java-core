@@ -51,6 +51,19 @@ public interface TransportListener {
      */
     EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;
 
+    /**
+     * Get the endpoint references for a given service. These are the addresses that a client
+     * can use to send requests to the given service through this transport.
+     * 
+     * @param serviceName TODO: this is actually not simply the service name!
+     * @param ip The host name or IP address of the local host. The implementation should use
+     *           this information instead of {@link java.net.InetAddress#getLocalHost()}.
+     *           The value of this parameter may be <code>null</code>, in which case the
+     *           implementation should use {@link org.apache.axis2.util.Utils#getIpAddress(
+     *           org.apache.axis2.engine.AxisConfiguration)}.
+     * @return an array of endpoint references for the given service
+     * @throws AxisFault
+     */
     EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault;
 
     /**
