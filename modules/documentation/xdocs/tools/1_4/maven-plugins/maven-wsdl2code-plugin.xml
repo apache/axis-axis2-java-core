@@ -225,6 +225,7 @@ default, sources are generated for all services.</td>
 <td>This will select between wrapped and unwrapped during code generation.
 Maps to the -uw option of the command line tool.</td>
 <td>false</td>
+</tr>
 </tbody>
 </table>
 </body>
