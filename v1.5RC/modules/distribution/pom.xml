@@ -1,0 +1,432 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>1.5</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.apache.axis2</groupId>
+    <artifactId>distribution</artifactId>
+    <name>Apache Axis2 - Distribution</name>
+    <description>Apache Axis2 Distribution</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <docs.folder.version>1_4</docs.folder.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sun.xml.fastinfoset</groupId>
+            <artifactId>FastInfoset</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tribes</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>juli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jibx</groupId>
+            <artifactId>jibx-bind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jibx</groupId>
+            <artifactId>jibx-run</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-launcher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${stax.impl.groupid}</groupId>
+            <artifactId>${stax.impl.artifact}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-activation_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-annotation_1.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-saaj_1.3_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jaxws_2.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-impl-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>bsf</groupId>
+            <artifactId>bsf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jalopy</groupId>
+            <artifactId>jalopy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+        </dependency>
+        <!-- Smack Jabber client libraries to be included -->
+        <dependency>
+            <groupId>org.igniterealtime</groupId>
+            <artifactId>smack</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.igniterealtime</groupId>
+            <artifactId>smackx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>apache-repo</id>
+            <name>Maven Central Repository</name>
+            <url>
+                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>apache-snapshots</id>
+            <name>Apache Development Repository</name>
+            <url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.version}</version>
+                <executions>
+                    <execution>
+                        <id>distribution-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>axis2-${version}</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/war-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/src-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/bin-assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/doc-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven.antrun.version}</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}">
+                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@">
+                                        <exclude name="**/*.xml"/>
+                                    </fileset>
+                                </copy>
+
+                                <filter filtersfile="../documentation/xdocs/dynamic-labels.properties"/>
+                                <copy toDir="target/tmp-doc-distro/xdocs/${docs.folder.version}" filtering="on"
+                                      overwrite="true">
+                                    <globmapper from="*.xml" to="*.html"/>
+                                    <fileset dir="../documentation/xdocs/@axis2_version_dir@"/>
+                                </copy>
+
+                                <filter token="axisVersion" value="${version}"/>
+                                <tstamp>
+                                    <format property="TODAY" pattern="dd-MM-yyyy"/>
+                                </tstamp>
+                                <filter token="TODAY" value="${TODAY}"/>
+                                <copy toDir="target/tmp-doc-distro/docs" filtering="on" overwrite="true">
+                                    <fileset dir="../..">
+                                        <include name="LICENSE.txt"/>
+                                        <include name="README.txt"/>
+                                        <include name="release-notes.html"/>
+                                    </fileset>
+                                    <fileset dir="../../release-docs/readme-files">
+                                        <include name="*.txt"/>
+                                    </fileset>
+                                </copy>
+
+                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="on" overwrite="true">
+                                    <globmapper from="*.xml" to="*.html"/>
+                                    <fileset dir="../documentation/xdocs">
+                                        <exclude name="@axis2_version_dir@/**"/>
+                                        <exclude name="**/*.gif"/>
+                                        <exclude name="**/*.jpg"/>
+                                        <exclude name="**/*.png"/>
+                                    </fileset>
+                                </copy>
+
+                                <copy toDir="target/tmp-doc-distro/xdocs" filtering="off" overwrite="true">
+                                    <fileset dir="../documentation/xdocs">
+                                        <exclude name="@axis2_version_dir@/**"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.css"/>
+                                        <include name="**/*.xsd"/>
+                                        <include name="**/*.cgi"/>
+                                        <include name="**/*.properties"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>service-module-list-generation</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/tmp-repository"/>
+                                <mkdir dir="target/tmp-repository/modules"/>
+                                <mkdir dir="target/tmp-repository/services"/>
+
+                                <copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar"
+                                      tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
+                                <copy file="../../modules/addressing/target/addressing-${version}.mar"
+                                      tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>
+                                <copy file="../../modules/ping/target/ping-${version}.mar"
+                                      tofile="target/tmp-repository/modules/ping-${ping.mar.version}.mar"/>
+                                <copy file="../../modules/mex/target/mex-${version}.mar"
+                                      tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
+                                <copy file="../../modules/scripting/target/axis2-scripting-${version}.mar"
+                                      tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
+                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${mtompolicy.mar.version}.mar"
+                                      tofile="target/tmp-repository/modules/mtompolicy-${mtompolicy.mar.version}.mar"/>
+
+                                <!-- generate modules.list -->
+                                <echo file="target/tmp-repository/modules/modules.list" append="false">
+                                    #
+                                    # Licensed to the Apache Software Foundation (ASF) under one
+                                    # or more contributor license agreements. See the NOTICE file
+                                    # distributed with this work for additional information
+                                    # regarding copyright ownership. The ASF licenses this file
+                                    # to you under the Apache License, Version 2.0 (the
+                                    # "License"); you may not use this file except in compliance
+                                    # with the License. You may obtain a copy of the License at
+                                    #
+                                    # http://www.apache.org/licenses/LICENSE-2.0
+                                    #
+                                    # Unless required by applicable law or agreed to in writing,
+                                    # software distributed under the License is distributed on an
+                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                    # KIND, either express or implied. See the License for the
+                                    # specific language governing permissions and limitations
+                                    # under the License.
+                                    #
+                                    soapmonitor-${soapmonitor.mar.version}.mar
+                                    addressing-${addressing.mar.version}.mar
+                                    ping-${ping.mar.version}.mar
+                                    mex-${mex.mar.version}.mar
+                                    scripting-${scripting.mar.version}.mar
+                                </echo>
+
+                                <copy file="../../modules/samples/target/toWar/services/version.aar"
+                                      todir="target/tmp-repository/services"/>
+                                <!-- generate services.list -->
+                                <echo file="target/tmp-repository/services/services.list" append="false">
+                                    #
+                                    # Licensed to the Apache Software Foundation (ASF) under one
+                                    # or more contributor license agreements. See the NOTICE file
+                                    # distributed with this work for additional information
+                                    # regarding copyright ownership. The ASF licenses this file
+                                    # to you under the Apache License, Version 2.0 (the
+                                    # "License"); you may not use this file except in compliance
+                                    # with the License. You may obtain a copy of the License at
+                                    #
+                                    # http://www.apache.org/licenses/LICENSE-2.0
+                                    #
+                                    # Unless required by applicable law or agreed to in writing,
+                                    # software distributed under the License is distributed on an
+                                    # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                    # KIND, either express or implied. See the License for the
+                                    # specific language governing permissions and limitations
+                                    # under the License.
+                                    #
+                                    version.aar
+                                </echo>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>delete-temporary-files</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <delete dir="target/tmp-doc-distro"/>
+                                <delete dir="target/tmp-repository"/>
+                                <delete dir="target/archive-tmp"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
