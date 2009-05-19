@@ -22,10 +22,9 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.Constants;
+import org.apache.axis2.classloader.JarFileClassLoader;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -46,8 +45,8 @@ import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.FaultyServiceData;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,15 +59,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 public abstract class DeploymentEngine implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
@@ -200,8 +202,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 URL servicesDir = new URL(repoURL, directory);
                 URL filelisturl = new URL(servicesDir, listName);
                 ArrayList files = getFileList(filelisturl);
-                for (int i = 0; i < files.size(); i++) {
-                    String fileName = (String) files.get(i);
+                for (Object file : files) {
+                    String fileName = (String)file;
                     String extension = getExtension(fileName);
                     Deployer deployer = extensionMap.get(extension);
                     if (deployer == null) {
@@ -216,7 +218,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     // just for init and other reflection methods
                     Method method = null;
                     try {
-                        method = classToLoad.getMethod("deployFromURL", new Class[]{URL.class});
+                        method = classToLoad.getMethod("deployFromURL", URL.class);
                     } catch (Exception e) {
                         //We do not need to inform this to user , since this something
                         // Axis2 is checking to support Session. So if the method is
@@ -224,9 +226,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     }
                     if (method != null) {
                         try {
-                            method.invoke(deployer, new Object[]{servicesURL});
+                            method.invoke(deployer, servicesURL);
                         } catch (Exception e) {
-                            log.info("Exception trying to call " + "deployFromURL for the deployer" + deployer.getClass() , e);
+                            log.info(
+                                    "Exception trying to call " + "deployFromURL for the deployer" +
+                                    deployer.getClass(), e);
                         }
                     }
                 }
@@ -258,9 +262,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             URL filelisturl = new URL(servicesDir, "services.list");
             ArrayList files = getFileList(filelisturl);
 
-            for (Iterator fileIterator = files.iterator();
-                 fileIterator.hasNext();) {
-                String fileUrl = (String) fileIterator.next();
+            for (Object file : files) {
+                String fileUrl = (String)file;
                 if (fileUrl.endsWith(".aar")) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     URL servicesURL = new URL(servicesDir, fileUrl);
@@ -270,7 +273,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
                     log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                                 org.apache.axis2.util.Utils.getModuleName(serviceGroup.getServiceGroupName()),
+                                                 org.apache.axis2.util.Utils.getModuleName(
+                                                         serviceGroup.getServiceGroupName()),
                                                  servicesURL.toString()));
                 }
             }
@@ -389,8 +393,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     serviceClassLoader.getResourceAsStream(line),
                                     serviceClassLoader, line);
                             if (services != null) {
-                                for (int i = 0; i < services.size(); i++) {
-                                    AxisService axisService = (AxisService) services.get(i);
+                                for (Object service : services) {
+                                    AxisService axisService = (AxisService)service;
                                     servicesMap.put(axisService.getName(), axisService);
                                 }
                             }
@@ -434,7 +438,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                             new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
                     File file = Utils.toFile(servicesURL);
                     if(file != null && file.exists()){
-                        wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
+                        wsdl2AxisServiceBuilder.setCustomWSDLResolver(
                                     new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
                         wsdl2AxisServiceBuilder.setCustomResolver(
                                 new AARFileBasedURIResolver(file));
@@ -483,7 +487,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                 new WSDL11ToAxisServiceBuilder(wsdlStream, axisService);
                         File file = Utils.toFile(servicesURL);
                         if(file != null && file.exists()){
-                            wsdl2AxisServiceBuilder.setCustomWSLD4JResolver(
+                            wsdl2AxisServiceBuilder.setCustomWSDLResolver(
                                         new AARBasedWSDLLocator(wsdlLocation, file, wsdlStream));
                             wsdl2AxisServiceBuilder.setCustomResolver(
                                     new AARFileBasedURIResolver(file));
@@ -571,18 +575,18 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
             // Here iterating a cloned hashmap and modifying the original hashmap.
             // To avoid the ConcurrentModificationException.
-            for (Iterator<FaultyServiceData> itr = faultyServices.values().iterator(); itr.hasNext();) {
+            for (FaultyServiceData faultyServiceData : faultyServices.values()) {
 
-                FaultyServiceData faultyServiceData = itr.next();
                 axisConfiguration.removeFaultyServiceDuetoModule(modulemetadata.getName(),
-                        faultyServiceData.getServiceGroup().getServiceGroupName());
+                                                                 faultyServiceData
+                                                                         .getServiceGroup().getServiceGroupName());
 
                 //Recover the faulty serviceGroup.
                 addServiceGroup(faultyServiceData.getServiceGroup(),
-                        faultyServiceData.getServiceList(),
-                        faultyServiceData.getServiceLocation(),
-                        faultyServiceData.getCurrentDeploymentFile(),
-                        axisConfiguration);
+                                faultyServiceData.getServiceList(),
+                                faultyServiceData.getServiceLocation(),
+                                faultyServiceData.getCurrentDeploymentFile(),
+                                axisConfiguration);
             }
         }
     }
@@ -614,13 +618,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Performs a check routine, in order to identify whether all the serviceGroup, service and operation level
-     * modules are available. If a referenced module is not deployed yet, the serviceGroup is added as a faulty service.
-     * @param serviceGroup
-     * @param serviceList
-     * @param serviceLocation
-     * @param currentDeploymentFile
-     * @param axisConfig
+     * Performs a check routine, in order to identify whether all the serviceGroup, service and
+     * operation level modules are available. If a referenced module is not deployed yet, the
+     * serviceGroup is added as a faulty service.
+     * @param serviceGroup the AxisServiceGroup we're checking
+     * @param serviceList a List of AxisServices to check
+     * @param serviceLocation the URL of the service (only used if there's a problem)
+     * @param currentDeploymentFile the current DeploymentFileData object (only used if there's a
+     *                              problem)
+     * @param axisConfig the active AxisConfiguration
      * @return boolean
      * @throws AxisFault
      */
@@ -628,21 +634,25 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                          ArrayList serviceList,
                                                          URL serviceLocation,
                                                          DeploymentFileData currentDeploymentFile,
-                                                         AxisConfiguration axisConfig) throws AxisFault {
+                                                         AxisConfiguration axisConfig)
+            throws AxisFault {
         synchronized (axisConfig.getFaultyServicesDuetoModules()) {
             String moduleName;
             ArrayList groupModules = serviceGroup.getModuleRefs();
-            for (int i = 0; i < groupModules.size(); i++) {
-                moduleName = (String) groupModules.get(i);
+            for (Object groupModule : groupModules) {
+                moduleName = (String)groupModule;
                 AxisModule module = axisConfig.getModule(moduleName);
 
                 if (module == null) {
-                    axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup, serviceList,
-                            serviceLocation, currentDeploymentFile));
+                    axisConfig.addFaultyServiceDuetoModule(moduleName,
+                                   new FaultyServiceData(serviceGroup,
+                                                         serviceList,
+                                                         serviceLocation,
+                                                         currentDeploymentFile));
                     if (log.isDebugEnabled()) {
-                                log.debug("Service: " + serviceGroup.getServiceGroupName() +
-                                        " becomes faulty due to Module: " + moduleName);
-                            }
+                        log.debug("Service: " + serviceGroup.getServiceGroupName() +
+                                  " becomes faulty due to Module: " + moduleName);
+                    }
                     return false;
                 }
             }
@@ -653,17 +663,20 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 // modules from <service>
                 ArrayList list = axisService.getModules();
 
-                for (int i = 0; i < list.size(); i++) {
-                    moduleName = (String) list.get(i);
+                for (Object aList : list) {
+                    moduleName = (String)aList;
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module == null) {
-                        axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup, serviceList,
-                                serviceLocation, currentDeploymentFile));
+                        axisConfig.addFaultyServiceDuetoModule(moduleName,
+                                                               new FaultyServiceData(serviceGroup,
+                                                                                     serviceList,
+                                                                                     serviceLocation,
+                                                                                     currentDeploymentFile));
                         if (log.isDebugEnabled()) {
-                                log.debug("Service: " + serviceGroup.getServiceGroupName() +
-                                        " becomes faulty due to Module: " + moduleName);
-                            }
+                            log.debug("Service: " + serviceGroup.getServiceGroupName() +
+                                      " becomes faulty due to Module: " + moduleName);
+                        }
                         return false;
                     }
                 }
@@ -672,16 +685,20 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     AxisOperation opDesc = (AxisOperation) iterator.next();
                     ArrayList modules = opDesc.getModuleRefs();
 
-                    for (int i = 0; i < modules.size(); i++) {
-                        moduleName = (String) modules.get(i);
+                    for (Object module1 : modules) {
+                        moduleName = (String)module1;
                         AxisModule module = axisConfig.getModule(moduleName);
 
                         if (module == null) {
-                            axisConfig.addFaultyServiceDuetoModule(moduleName, new FaultyServiceData(serviceGroup,
-                                    serviceList, serviceLocation, currentDeploymentFile));
+                            axisConfig.addFaultyServiceDuetoModule(moduleName,
+                                                                   new FaultyServiceData(
+                                                                           serviceGroup,
+                                                                           serviceList,
+                                                                           serviceLocation,
+                                                                           currentDeploymentFile));
                             if (log.isDebugEnabled()) {
                                 log.debug("Service: " + serviceGroup.getServiceGroupName() +
-                                        " becomes faulty due to Module: " + moduleName);
+                                          " becomes faulty due to Module: " + moduleName);
                             }
                             return false;
                         }
@@ -700,8 +717,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
         serviceGroup.setParent(axisConfig);
-        for (int i = 0; i < groupModules.size(); i++) {
-            String moduleName = (String) groupModules.get(i);
+        for (Object groupModule : groupModules) {
+            String moduleName = (String)groupModule;
             AxisModule module = axisConfig.getModule(moduleName);
 
             if (module != null) {
@@ -726,15 +743,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             // modules from <service>
             ArrayList list = axisService.getModules();
 
-            for (int i = 0; i < list.size(); i++) {
-                AxisModule module = axisConfig.getModule((String) list.get(i));
+            for (Object aList : list) {
+                AxisModule module = axisConfig.getModule((String)aList);
 
                 if (module == null) {
                     throw new DeploymentException(
                             Messages.getMessage(
                                     DeploymentErrorMsgs.BAD_MODULE_FROM_SERVICE,
                                     axisService.getName(),
-                                    ((QName) list.get(i)).getLocalPart()));
+                                    ((QName)aList).getLocalPart()));
                 }
 
                 axisService.engageModule(module);
@@ -744,8 +761,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 AxisOperation opDesc = (AxisOperation) iterator.next();
                 ArrayList modules = opDesc.getModuleRefs();
 
-                for (int i = 0; i < modules.size(); i++) {
-                    String moduleName = (String) modules.get(i);
+                for (Object module1 : modules) {
+                    String moduleName = (String)module1;
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
@@ -779,8 +796,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public void doDeploy() {
         try {
             if (wsToDeploy.size() > 0) {
-                for (int i = 0; i < wsToDeploy.size(); i++) {
-                    DeploymentFileData fileToDeploy = (DeploymentFileData) wsToDeploy.get(i);
+                for (Object aWsToDeploy : wsToDeploy) {
+                    DeploymentFileData fileToDeploy = (DeploymentFileData)aWsToDeploy;
                     try {
                         fileToDeploy.deploy();
                     } catch (DeploymentException e) {
@@ -852,8 +869,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     public void unDeploy() {
         try {
             if (wsToUnDeploy.size() > 0) {
-                for (int i = 0; i < wsToUnDeploy.size(); i++) {
-                    WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
+                for (Object aWsToUnDeploy : wsToUnDeploy) {
+                    WSInfo wsInfo = (WSInfo)aWsToUnDeploy;
                     if (wsInfo.getType() == WSInfo.TYPE_SERVICE) {
                         //No matter what we need to undeploy the service
                         // if user has deleted the file from the repository
@@ -1340,11 +1357,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Adds and initializes the deploer.
+     * Add and initialize a new Deployer.
      *
-     * @param deployer  Deployer object to be added
-     * @param directory
-     * @param extension
+     * @param deployer Deployer object to be registered
+     * @param directory the directory which will be scanned for deployable artifacts
+     * @param extension the extension of the deployable artifacts for this Deployer
      */
     public void addDeployer(Deployer deployer, String directory, String extension){
 
@@ -1393,9 +1410,10 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Remove the Deployer mapped for the diven directory and the extension
-     * @param directory
-     * @param extension
+     * Remove any Deployer mapped for the given directory and extension
+     *
+     * @param directory the directory of deployables
+     * @param extension the extension of deployables
      */
     public void removeDeployer(String directory, String extension) {
         if (directory == null) {

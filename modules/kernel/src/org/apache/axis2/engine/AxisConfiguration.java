@@ -118,11 +118,12 @@ public class AxisConfiguration extends AxisDescription {
     private Hashtable<String, String> faultyServices;
 
     /**
-     * To store services which have become faulty due to modules. Here key is the module name and the corresponding
-     * value is an another map which holds the list faulty services due a single module.
+     * To store services which have become faulty due to modules. Here key is the module name and
+     * the corresponding value is an another map which holds the a Map of faulty services due a
+     * single module (keyed by service name).
      */
-    private final Map<String, Map<String, FaultyServiceData>> faultyServicesDueToModules = new HashMap<String,
-            Map<String, FaultyServiceData>>();
+    private final Map<String, Map<String, FaultyServiceData>> faultyServicesDueToModules =
+            new HashMap<String, Map<String, FaultyServiceData>>();
 
 
     private List<Phase> inFaultPhases;
@@ -176,7 +177,7 @@ public class AxisConfiguration extends AxisDescription {
         faultyModules = new Hashtable<String, String>();
         observersList = new ArrayList<AxisObserver>();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList<Phase>();
-        systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
+        systemClassLoader = org.apache.axis2.java.security.AccessController
                 .doPrivileged(new PrivilegedAction<ClassLoader>() {
                     public ClassLoader run() {
                         return Thread.currentThread().getContextClassLoader();
@@ -282,8 +283,8 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Remove a module with moduleName & moduleVersion
      *
-     * @param moduleName
-     * @param moduleVersion
+     * @param moduleName the name of the module to remove
+     * @param moduleVersion the version of the module to remove
      */
     public void removeModule(String moduleName, String moduleVersion) {
         allModules.remove(Utils.getModuleName(moduleName, moduleVersion));
@@ -305,10 +306,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method addService.
+     * Add an AxisService to our global configuration.  Since services must
+     * be in ServiceGroups, we construct an anonymous AxisServiceGroup around
+     * the passed AxisService and then call addServiceGroup().
      *
-     * @param service
-     * @throws AxisFault
+     * @param service an AxisService to deploy.
+     * @throws AxisFault if something goes wrong (invalid service, service is
+     *                   already deployed, etc...)
      */
     public synchronized void addService(AxisService service) throws AxisFault {
         AxisServiceGroup axisServiceGroup = new AxisServiceGroup();
@@ -327,30 +331,30 @@ public class AxisConfiguration extends AxisDescription {
 
         Iterator<AxisService> services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            axisService = (AxisService) services.next();
+            axisService = services.next();
             if (axisService.getSchemaTargetNamespace() == null) {
                 axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            axisService = (AxisService) services.next();
+            axisService = services.next();
             if (axisService.isUseDefaultChains()) {
                 Iterator<AxisOperation> operations = axisService.getOperations();
                 while (operations.hasNext()) {
-                    AxisOperation operation = (AxisOperation) operations.next();
+                    AxisOperation operation = operations.next();
                     phasesinfo.setOperationPhases(operation);
                 }
             }
         }
         Iterator<AxisModule> enModule = getEngagedModules().iterator();
         while (enModule.hasNext()) {
-            axisServiceGroup.engageModule((AxisModule) enModule.next());
+            axisServiceGroup.engageModule(enModule.next());
         }
         services = axisServiceGroup.getServices();
         ArrayList<AxisService> servicesIAdded = new ArrayList<AxisService>();
         while (services.hasNext()) {
-            axisService = (AxisService) services.next();
+            axisService = services.next();
             processEndpoints(axisService, axisService.getAxisConfiguration());
 
             Map<String, AxisEndpoint> endpoints = axisService.getEndpoints();
@@ -360,8 +364,7 @@ public class AxisConfiguration extends AxisDescription {
             } catch (AxisFault axisFault) {
                 // Whoops, must have been a duplicate!  If we had a problem here, we have to
                 // remove all the ones we added...
-                for (Iterator<AxisService> i = servicesIAdded.iterator(); i.hasNext();) {
-                    AxisService service = (AxisService) i.next();
+                for (AxisService service : servicesIAdded) {
                     allServices.remove(service.getName());
                 }
                 // And toss this in case anyone wants it?
@@ -371,7 +374,7 @@ public class AxisConfiguration extends AxisDescription {
             if (endpoints != null) {
                 Iterator<String> endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
-                    String endpointName = (String) endpointNameIter.next();
+                    String endpointName = endpointNameIter.next();
                     if (log.isDebugEnabled()) {
                         log.debug("Adding service to allEndpoints map: ("
                                   + serviceName + "," + endpointName + ") ");
@@ -396,13 +399,14 @@ public class AxisConfiguration extends AxisDescription {
 
     public void addToAllServicesMap(AxisService axisService) throws AxisFault {
         String serviceName = axisService.getName();
-        AxisService oldService = (AxisService) allServices.get(serviceName);
+        AxisService oldService = allServices.get(serviceName);
         if (oldService == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Adding service to allServices map: [" + serviceName + "] ");
             }
             allServices.put(serviceName, axisService);
             if (log.isTraceEnabled()) {
+                //noinspection ThrowableInstanceNeverThrown
                 log.trace("After adding to allServices map, size is "
                           + allServices.size(), 
                           new Exception("AxisConfiguration.addToAllServicesMap called from"));
@@ -427,7 +431,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator<AxisService> services = axisServiceGroup.getServices();
         boolean isClientSide = false;
         while (services.hasNext()) {
-            AxisService axisService = (AxisService) services.next();
+            AxisService axisService = services.next();
             allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
@@ -437,10 +441,10 @@ public class AxisConfiguration extends AxisDescription {
 
             //removes the endpoints to this service
             String serviceName = axisService.getName();
-            String key = null;
+            String key;
 
-            for (Iterator<String> iter = axisService.getEndpoints().keySet().iterator(); iter.hasNext();){
-                key = serviceName + "." + (String)iter.next();
+            for (String s : axisService.getEndpoints().keySet()) {
+                key = serviceName + "." + s;
                 this.allEndpoints.remove(key);
             }
 
@@ -454,9 +458,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method addTransportIn.
+     * Add an incoming transport description (i.e. receiver) to our configuration.
      *
-     * @param transport
+     * @param transport TransportInDescription to add.
      * @throws AxisFault
      */
     public void addTransportIn(TransportInDescription transport) throws AxisFault {
@@ -469,9 +473,9 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method addTransportOut.
+     * Add an outgoing transport description (i.e. sender) to our configuration.
      *
-     * @param transport
+     * @param transport TransportOutDescription to add.
      * @throws AxisFault
      */
     public void addTransportOut(TransportOutDescription transport)
@@ -519,8 +523,8 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Engages a module using given name and its version ID.
      *
-     * @param moduleName
-     * @param versionID
+     * @param moduleName name of module to engage
+     * @param versionID version of module to engage
      * @throws AxisFault
      */
     public void engageModule(String moduleName, String versionID)
@@ -530,6 +534,7 @@ public class AxisConfiguration extends AxisDescription {
         if (module != null) {
             engageModule(module);
         } else {
+            // TODO : Should this be an NPE or InvalidArgumentException?
             throw new AxisFault(Messages.getMessage("refertoinvalidmodule"));
         }
     }
@@ -537,7 +542,7 @@ public class AxisConfiguration extends AxisDescription {
     public void onEngage(AxisModule module, AxisDescription engager) throws AxisFault {
         Iterator<AxisServiceGroup> servicegroups = getServiceGroups();
         while (servicegroups.hasNext()) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) servicegroups.next();
+            AxisServiceGroup serviceGroup = servicegroups.next();
             serviceGroup.engageModule(module, engager);
         }
     }
@@ -554,21 +559,20 @@ public class AxisConfiguration extends AxisDescription {
 
         Iterator<AxisServiceGroup> serviceGroups = getServiceGroups();
         while (serviceGroups.hasNext()) {
-            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
+            AxisServiceGroup axisServiceGroup = serviceGroups.next();
             axisServiceGroup.disengageModule(module);
         }
     }
 
     public void notifyObservers(int event_type, AxisService service) {
+        if (service.isClientSide())
+            return;
+
         AxisEvent event = new AxisEvent(event_type);
 
-        for (int i = 0; i < observersList.size(); i++) {
-            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
-
+        for (AxisObserver observer : observersList) {
             try {
-                if (!service.isClientSide()) {
-                    axisObserver.serviceUpdate(event, service);
-                }
+                observer.serviceUpdate(event, service);
             } catch (Throwable e) {
                 // No need to stop the system due to this, so log and ignore
                 log.debug(e);
@@ -579,11 +583,10 @@ public class AxisConfiguration extends AxisDescription {
     public void notifyObservers(int event_type, AxisModule moule) {
         AxisEvent event = new AxisEvent(event_type);
 
-        for (int i = 0; i < observersList.size(); i++) {
-            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
+        for (AxisObserver anObserversList : observersList) {
 
             try {
-                axisObserver.moduleUpdate(event, moule);
+                anObserversList.moduleUpdate(event, moule);
             } catch (Throwable e) {
                 // No need to stop the system due to this, so log and ignore
                 log.debug(e);
@@ -594,11 +597,10 @@ public class AxisConfiguration extends AxisDescription {
     public void notifyObservers(int event_type, AxisServiceGroup serviceGroup) {
         AxisEvent event = new AxisEvent(event_type);
 
-        for (int i = 0; i < observersList.size(); i++) {
-            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
+        for (AxisObserver anObserversList : observersList) {
 
             try {
-                axisObserver.serviceGroupUpdate(event, serviceGroup);
+                anObserversList.serviceGroupUpdate(event, serviceGroup);
             } catch (Throwable e) {
                 // No need to stop the system due to this, so log and ignore
                 log.debug(e);
@@ -607,13 +609,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Method removeService.
+     * Remove a service.
      *
-     * @param name
+     * @param name name of service to remove
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        AxisService service = (AxisService) allServices.remove(name);
+        AxisService service = allServices.remove(name);
         if (service != null) {
             AxisServiceGroup serviceGroup = service.getAxisServiceGroup();
             serviceGroup.removeService(name);
@@ -638,8 +640,8 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault if an individual engageModule() fails
      */
     public void engageGlobalModules() throws AxisFault {
-        for (Iterator<String> i = globalModuleList.iterator(); i.hasNext();) {
-            engageModule((String) i.next());
+        for (String aGlobalModuleList : globalModuleList) {
+            engageModule(aGlobalModuleList);
         }
     }
 
@@ -674,9 +676,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Returns a map which contains the faulty services due a module.
-     * @param moduleName
-     * @return
+     * Returns a map which contains the faulty services due a particular module.
+     *
+     * @param moduleName name of the module about which to inquire
+     * @return a Map&lt;String, FaultyServiceData&gt; mapping service name to data
      */
     public Map<String, FaultyServiceData> getFaultyServicesDuetoModule(String moduleName) {
         if (faultyServicesDueToModules.containsKey(moduleName)) {
@@ -688,22 +691,27 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Returns the map which keeps track of faulty services due to modules.
-     * @return
+     * @return a Map keyed by module name, containing Maps keyed by service name containing
+     *         FaultyServiceData for each faulty service.
      */
     public Map<String, Map<String, FaultyServiceData>> getFaultyServicesDuetoModules(){
         return faultyServicesDueToModules;
     }
 
     /**
-     * Removes a faulty service from the map faultyServicesDueToModules.
-     * @param moduleName
-     * @param serviceGroupName
+     * Removes a faulty service for a given module from the internal map.
+     *
+     * TODO: Doesn't this actually remove a faulty service *group*? And should this even be public?
+     * 
+     * @param moduleName name of the module to look up
+     * @param serviceGroupName name of the service group to remove
      */
     public void removeFaultyServiceDuetoModule(String moduleName, String serviceGroupName) {
         synchronized (faultyServicesDueToModules) {
-            Map<String, FaultyServiceData> faultyServices = faultyServicesDueToModules.get(moduleName);
+            Map<String, FaultyServiceData> faultyServices =
+                    faultyServicesDueToModules.get(moduleName);
 
-            if(faultyServices != null){
+            if (faultyServices != null) {
                 faultyServices.remove(serviceGroupName);
 
                 if(faultyServices.isEmpty()){
@@ -716,7 +724,7 @@ public class AxisConfiguration extends AxisDescription {
     public void removeFaultyService(String key) {
         Iterator<String> itr = faultyServices.keySet().iterator();
         while (itr.hasNext()) {
-            String fullFileName = (String) itr.next();
+            String fullFileName = itr.next();
             if (fullFileName.indexOf(key) > 0) {
                 faultyServices.remove(fullFileName);
                 return;
@@ -741,11 +749,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public MessageReceiver getMessageReceiver(String mepURL) {
-        return (MessageReceiver) messageReceivers.get(mepURL);
+        return messageReceivers.get(mepURL);
     }
 
     /**
-     * @param contentType
+     * Get a Builder for a particular content type.
+     *
+     * @param contentType the desired content type
      * @return the configured message builder implementation class name against
      *         the given content type.
      */
@@ -755,9 +765,9 @@ public class AxisConfiguration extends AxisDescription {
             return null;
         }
         if (contentType != null) {
-            builder = (Builder) messageBuilders.get(contentType);
+            builder = messageBuilders.get(contentType);
             if (builder == null) {
-                builder = (Builder) messageBuilders.get(contentType.toLowerCase());
+                builder = messageBuilders.get(contentType.toLowerCase());
             }
             if (builder == null) {
                 Iterator<Entry<String, Builder>> iterator = messageBuilders.entrySet().iterator();
@@ -782,12 +792,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * @param contentType
-     * @return the configured message formatter implementation class name
-     *         against the given content type.
+     * Get a MessageFormatter for the specified content type.
+     *
+     * @param contentType content type to look up
+     * @return a MessageFormatter corresponding to the given content type, or null.
      */
     public MessageFormatter getMessageFormatter(String contentType) {
-        return (MessageFormatter) messageFormatters.get(contentType);
+        return messageFormatters.get(contentType);
     }
 
 //    /**
@@ -801,29 +812,25 @@ public class AxisConfiguration extends AxisDescription {
 //    }
 
     /**
-     * Method getModule. First it will check whether the given module is there
-     * in the hashMap, if so returns that and the name, which can be either with
-     * version string or without version string. <p/> If its not found and the
-     * name does not contain the version string in it then checks whether the default
-     * version of the module is available in the sytem for the given name, then returns
-     * that.
+     * Get an AxisModule by name.
      *
-     * @param name
-     * @return Returns ModuleDescription.
+     * If the exact name passed (which might contain a version) is present, we'll return that,
+     * otherwise we'll look for the default version *if* there is no version in the passed
+     * name.
+     *
+     * @param name module name to look up
+     * @return an AxisModule if found, or null
      */
     public AxisModule getModule(String name) {
-        AxisModule module = (AxisModule) allModules.get(name);
+        AxisModule module = allModules.get(name);
         if (module != null) {
             return module;
         }
         // checks whether the version string seperator is not there in the
         // module name
-        String moduleName = name;
-        String defaultModuleVersion = getDefaultModuleVersion(moduleName);
+        String defaultModuleVersion = getDefaultModuleVersion(name);
         if (defaultModuleVersion != null) {
-            module =
-                    (AxisModule) allModules.get(Utils.getModuleName(moduleName,
-                                                                    defaultModuleVersion));
+            module = allModules.get(Utils.getModuleName(name, defaultModuleVersion));
             if (module != null) {
                 return module;
             }
@@ -842,20 +849,20 @@ public class AxisConfiguration extends AxisDescription {
         if (moduleVersion == null || moduleVersion.trim().length() == 0) {
             moduleVersion = getDefaultModuleVersion(moduleName);
         }
-        return (AxisModule) allModules.get(Utils.getModuleName(moduleName, moduleVersion));
+        return allModules.get(Utils.getModuleName(moduleName, moduleVersion));
     }
 
     /**
-     * The class loader that becomes the parent of all the modules
+     * Get the class loader that becomes the parent of all the modules
      *
-     * @return
+     * @return a ClassLoader
      */
     public ClassLoader getModuleClassLoader() {
         return this.moduleClassLoader;
     }
 
     public ModuleConfiguration getModuleConfig(String moduleName) {
-        return (ModuleConfiguration) moduleConfigmap.get(moduleName);
+        return moduleConfigmap.get(moduleName);
     }
 
     /**
@@ -893,11 +900,11 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Method getService.
      *
-     * @param name
-     * @return Returns AxisService.
+     * @param name the name of the service to look up
+     * @return an AxisService if found, or null
      */
     public AxisService getService(String name) throws AxisFault {
-        AxisService axisService = (AxisService) allServices.get(name);
+        AxisService axisService = allServices.get(name);
         if (axisService != null) {
             if (axisService.isActive()) {
                 return axisService;
@@ -906,7 +913,7 @@ public class AxisConfiguration extends AxisDescription {
                         .getMessage("serviceinactive", name));
             }
         } else {
-            axisService = (AxisService) allEndpoints.get(name);
+            axisService = allEndpoints.get(name);
             if (axisService != null) {
                 if (axisService.isActive()) {
                     return axisService;
@@ -923,15 +930,16 @@ public class AxisConfiguration extends AxisDescription {
      * Service can start and stop, once stopped it cannot be accessed, so we
      * need a way to get the service even if service is not active.
      *
+     * @param serviceName name to look up
      * @return AxisService
      */
     public AxisService getServiceForActivation(String serviceName) {
-        AxisService axisService = null;
-        axisService = (AxisService) allServices.get(serviceName);
+        AxisService axisService;
+        axisService = allServices.get(serviceName);
         if (axisService != null) {
             return axisService;
         } else {
-            axisService = (AxisService) allEndpoints.get(serviceName);
+            axisService = allEndpoints.get(serviceName);
             return axisService;
         }
     }
@@ -956,8 +964,8 @@ public class AxisConfiguration extends AxisDescription {
     public HashMap<String, AxisService> getServices() {
         HashMap<String, AxisService> hashMap = new HashMap<String, AxisService>(this.allServices.size());
         String key;
-        for (Iterator<String> iter = this.allServices.keySet().iterator(); iter.hasNext();){
-            key = iter.next();
+        for (String s : this.allServices.keySet()) {
+            key = s;
             hashMap.put(key, this.allServices.get(key));
         }
         return hashMap;
@@ -970,11 +978,11 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public TransportInDescription getTransportIn(String name) {
-        return (TransportInDescription) transportsIn.get(name);
+        return transportsIn.get(name);
     }
 
     public TransportOutDescription getTransportOut(String name) {
-        return (TransportOutDescription) transportsOut.get(name);
+        return transportsOut.get(name);
     }
 
     public HashMap<String, TransportInDescription> getTransportsIn() {
@@ -986,11 +994,14 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * This method needs to remain for a few Axis2 releases to support
-     * legacy apps still using it.
+     * Find out whether a given module is engaged.
      *
-     * @param qname
+     * This method needs to remain for a few Axis2 releases to support
+     * legacy apps still using it.  It will be disappearing in 1.6.
+     *
+     * @param qname QName of the module
      * @deprecated Use {@link #isEngaged(String)}
+     * @return true if a module matching the passed QName is engaged globally
      */
     public boolean isEngaged(QName qname) {
         return isEngaged(qname.getLocalPart());
@@ -1023,7 +1034,11 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * @param list
+     * Set the inbound fault phases
+     *
+     * TODO: Passing mutable lists like this and using them directly is bad practice.
+     *
+     * @param list a List of Phases which will become our inbound fault flow
      */
     public void setInFaultPhases(List<Phase> list) {
         inFaultPhases = list;
@@ -1039,7 +1054,11 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * @param list
+     * Set the outbound fault phases
+     *
+     * TODO: Passing mutable lists like this and using them directly is bad practice.
+     *
+     * @param list a List of Phases which will become our outbound fault flow
      */
     public void setOutFaultPhases(List<Phase> list) {
         outFaultPhases = list;
@@ -1067,8 +1086,10 @@ public class AxisConfiguration extends AxisDescription {
      * asks to engage a module without given version ID, in which case,
      * the default version is engaged.
      *
-     * @param moduleName
-     * @param moduleVersion
+     * TODO: This currently does NOTHING if a default has already been set. Should either overwrite or throw.
+     *
+     * @param moduleName the name of the module for which we're setting the default version
+     * @param moduleVersion the default version
      */
     public void addDefaultModuleVersion(String moduleName, String moduleVersion) {
         if (nameToversionMap.get(moduleName) == null) {
@@ -1077,15 +1098,15 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public String getDefaultModuleVersion(String moduleName) {
-        return (String) nameToversionMap.get(moduleName);
+        return nameToversionMap.get(moduleName);
     }
 
     public AxisModule getDefaultModule(String moduleName) {
         String defaultModuleVersion = getDefaultModuleVersion(moduleName);
         if (defaultModuleVersion == null) {
-            return (AxisModule) allModules.get(moduleName);
+            return allModules.get(moduleName);
         } else {
-            return (AxisModule) allModules.get(moduleName + "-" + defaultModuleVersion);
+            return allModules.get(moduleName + "-" + defaultModuleVersion);
         }
     }
 
@@ -1110,7 +1131,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void stopService(String serviceName) throws AxisFault {
-        AxisService service = (AxisService) allServices.get(serviceName);
+        AxisService service = allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
                                                     serviceName));
@@ -1120,7 +1141,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void startService(String serviceName) throws AxisFault {
-        AxisService service = (AxisService) allServices.get(serviceName);
+        AxisService service = allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
                                                     serviceName));
@@ -1142,15 +1163,15 @@ public class AxisConfiguration extends AxisDescription {
 
         List<AxisModule> modulesList;
 
-        for (int i = 0; i < namespaces.length; i++) {
-            modulesList = policySupportedModules.get(namespaces[i]);
+        for (String namespace : namespaces) {
+            modulesList = policySupportedModules.get(namespace);
 
             if (modulesList != null) {
                 modulesList.add(axisModule);
             } else {
                 modulesList = new ArrayList<AxisModule>();
                 modulesList.add(axisModule);
-                policySupportedModules.put(namespaces[i], modulesList);
+                policySupportedModules.put(namespace, modulesList);
             }
         }
     }
@@ -1162,8 +1183,8 @@ public class AxisConfiguration extends AxisDescription {
             return;
         }
 
-        for (int i = 0; i < localPolicyAssertions.length; i++) {
-            addLocalPolicyAssertion(localPolicyAssertions[i]);
+        for (QName localPolicyAssertion : localPolicyAssertions) {
+            addLocalPolicyAssertion(localPolicyAssertion);
         }
     }
 
@@ -1184,6 +1205,8 @@ public class AxisConfiguration extends AxisDescription {
      * TargetResolver which iterates over the registered
      * TargetResolvers, calling each one in turn when
      * resolveTarget is called.
+     *
+     * @return a TargetResolver which iterates over all registered TargetResolvers.
      */
     public TargetResolver getTargetResolverChain() {
         if (targetResolvers.isEmpty()) {
@@ -1193,7 +1216,7 @@ public class AxisConfiguration extends AxisDescription {
             public void resolveTarget(MessageContext messageContext) {
                 Iterator<TargetResolver> iter = targetResolvers.iterator();
                 while (iter.hasNext()) {
-                    TargetResolver tr = (TargetResolver) iter.next();
+                    TargetResolver tr = iter.next();
                     tr.resolveTarget(messageContext);
                 }
             }
@@ -1245,17 +1268,21 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Return DataLocator instance for specified dialect.
+     * @param dialect the dialect to look up
+     * @return an AxisDataLocator, or null
      */
     public AxisDataLocator getDataLocator(String dialect) {
-        return (AxisDataLocator) dataLocators.get(dialect);
+        return dataLocators.get(dialect);
     }
 
 
     /**
      * Return classname of DataLocator configured for specified dialect.
+     * @param dialect the dialect to look up
+     * @return a String containing a class name, or null
      */
     public String getDataLocatorClassName(String dialect) {
-        return (String) dataLocatorClassNames.get(dialect);
+        return dataLocatorClassNames.get(dialect);
     }
 
 
@@ -1345,17 +1372,17 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Insert a Phase
-     * @param d
-     * @param phaseList
-     * @return
+     * Insert a Phase into a list of Phases
+     *
+     * @param d a Deployable containing the Phase to insert
+     * @param phaseList a list of Phases
+     * @return a new List of Phases with the new one correctly deployed.
      * @throws AxisFault
      */
     private List<Phase> findAndInsertPhase(Deployable d, List<Phase> phaseList) throws AxisFault {
         DeployableChain<Phase> ec = new DeployableChain<Phase>();
         String last = null;
-        for (Iterator<Phase> i = phaseList.iterator(); i.hasNext();) {
-            Phase phase = (Phase)i.next();
+        for (Phase phase : phaseList) {
             String name = phase.getName();
             Deployable existing = new Deployable(name);
             existing.setTarget(phase);
