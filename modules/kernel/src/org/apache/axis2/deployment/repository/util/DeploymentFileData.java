@@ -119,7 +119,7 @@ public class DeploymentFileData {
             }
         } else {
             if (this.file != null) {
-                classLoader = Utils.getClassLoader(parent, this.file);
+                classLoader = Utils.getClassLoader(parent, this.file, isChildFirstClassLoading);
             }
         }
     }

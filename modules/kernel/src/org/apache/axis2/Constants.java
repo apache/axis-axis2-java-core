@@ -444,7 +444,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          *  so the modules and services first use the classes in their class loader first
          */
 
-        public static final String ENABLE_CHILD_FIRST_CLASS_LOADING="EnableChldFirstClassLoading";
+        public static final String ENABLE_CHILD_FIRST_CLASS_LOADING="EnableChildFirstClassLoading";
 
     }
 }

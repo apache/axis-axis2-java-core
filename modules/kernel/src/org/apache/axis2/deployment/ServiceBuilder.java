@@ -22,20 +22,13 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.description.java2wsdl.TypeTable;
 import org.apache.axis2.engine.MessageReceiver;
@@ -43,6 +36,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,6 +124,17 @@ public class ServiceBuilder extends DescriptionBuilder {
 			Iterator itr = service_element.getChildrenWithName(new QName(
 					TAG_PARAMETER));
 			processParameters(itr, service, service.getParent());
+
+            Parameter childFirstClassLoading =
+                    service.getParameter(Constants.Configuration.ENABLE_CHILD_FIRST_CLASS_LOADING);
+            if (childFirstClassLoading != null){
+                DeploymentClassLoader deploymentClassLoader = (DeploymentClassLoader) service.getClassLoader();
+                if (JavaUtils.isTrueExplicitly(childFirstClassLoading.getValue())){
+                    deploymentClassLoader.setChildFirstClassLoading(true);
+                } else if (JavaUtils.isFalseExplicitly(childFirstClassLoading.getValue())){
+                    deploymentClassLoader.setChildFirstClassLoading(false);
+                }
+            }
 
 			// If multiple services in one service group have different values
 			// for the PARENT_FIRST

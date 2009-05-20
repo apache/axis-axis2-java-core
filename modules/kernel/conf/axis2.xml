@@ -26,6 +26,9 @@
     <parameter name="enableMTOM">false</parameter>
     <parameter name="enableSwA">false</parameter>
 
+
+    <parameter name="EnableChildFirstClassLoading">false</parameter>
+
     <!--Uncomment if you want to enable file caching for attachments -->
     <!--parameter name="cacheAttachments">true</parameter>
     <parameter name="attachmentDIR"></parameter>

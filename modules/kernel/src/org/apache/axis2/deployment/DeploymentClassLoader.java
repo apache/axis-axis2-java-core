@@ -283,4 +283,12 @@ public class DeploymentClassLoader extends URLClassLoader {
         }
         return c;
     }
+
+    public boolean isChildFirstClassLoading() {
+        return isChildFirstClassLoading;
+    }
+
+    public void setChildFirstClassLoading(boolean childFirstClassLoading) {
+        isChildFirstClassLoading = childFirstClassLoading;
+    }
 }

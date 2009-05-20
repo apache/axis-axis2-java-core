@@ -23,11 +23,9 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Deployable;
 import org.apache.axis2.engine.MessageReceiver;
@@ -36,6 +34,7 @@ import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.JavaUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -99,6 +98,18 @@ public class ModuleBuilder extends DescriptionBuilder {
             Iterator itr = moduleElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             processParameters(itr, module, module.getParent());
+
+            Parameter childFirstClassLoading =
+                    module.getParameter(Constants.Configuration.ENABLE_CHILD_FIRST_CLASS_LOADING);
+            if (childFirstClassLoading != null){
+                DeploymentClassLoader deploymentClassLoader = (DeploymentClassLoader) module.getModuleClassLoader();
+                if (JavaUtils.isTrueExplicitly(childFirstClassLoading.getValue())){
+                    deploymentClassLoader.setChildFirstClassLoading(true);
+                } else if (JavaUtils.isFalseExplicitly(childFirstClassLoading.getValue())){
+                    deploymentClassLoader.setChildFirstClassLoading(false);
+                }
+            }
+
             if (moduleClassAtt != null) {
                 String moduleClass = moduleClassAtt.getAttributeValue();
 

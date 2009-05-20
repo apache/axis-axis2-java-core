@@ -67,7 +67,8 @@ public class POJODeployer implements Deployer {
                 File parentFile = file.getParentFile();
                 ClassLoader classLoader =
                         Utils.getClassLoader(configCtx.getAxisConfiguration().
-                                getSystemClassLoader(), parentFile);
+                                getSystemClassLoader(), parentFile,
+                                configCtx.getAxisConfiguration().isChildFirstClassLoading());
 
                 Thread.currentThread().setContextClassLoader(classLoader);
                 String className = file.getName();

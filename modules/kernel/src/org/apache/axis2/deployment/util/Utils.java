@@ -305,9 +305,9 @@ public class Utils {
         return f;
     }
 
-    public static ClassLoader getClassLoader(ClassLoader parent, String path)
+    public static ClassLoader getClassLoader(ClassLoader parent, String path, boolean isChildFirstClassLoading)
             throws DeploymentException {
-        return getClassLoader(parent, new File(path));
+        return getClassLoader(parent, new File(path), isChildFirstClassLoading);
     }
 
     /**
@@ -319,7 +319,7 @@ public class Utils {
      * @return a new ClassLoader pointing to both the passed dir and jar files under lib/
      * @throws DeploymentException if problems occur
      */
-    public static ClassLoader getClassLoader(final ClassLoader parent, File file)
+    public static ClassLoader getClassLoader(final ClassLoader parent, File file, final boolean isChildFirstClassLoading)
             throws DeploymentException {
         URLClassLoader classLoader;
 
@@ -348,7 +348,7 @@ public class Utils {
                             if (useJarFileClassLoader()) {
                                 return new JarFileClassLoader(urllist, parent);
                             } else {
-                                return new URLClassLoader(urllist, parent);
+                                return new DeploymentClassLoader(urllist, null, parent, isChildFirstClassLoading);
                             }
                         }
                     });
