@@ -438,6 +438,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String REST_METHOD_PARAM="RESTMethod";
         public static final String REST_INPUTSERIALIZE_PARAM="RESTInputSerialization";
         public static final String REST_OUTPUTSERIALIZE_PARAM="RESTOutputSerialization";
-        
+
+        /**
+         *  this parameter enables child first class loading.
+         *  so the modules and services first use the classes in their class loader first
+         */
+
+        public static final String ENABLE_CHILD_FIRST_CLASS_LOADING="EnableChldFirstClassLoading";
+
     }
 }

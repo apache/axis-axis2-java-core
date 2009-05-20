@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.transaction.TransactionConfiguration;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.unknowncontent.UnknownContentBuilder;
@@ -62,6 +63,7 @@ import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.FaultyServiceData;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1426,4 +1428,13 @@ public class AxisConfiguration extends AxisDescription {
 					axisService, axisConfiguration);
 		}
 	}
+
+    public boolean isChildFirstClassLoading(){
+        boolean childFirstClassLoading = false;
+        Parameter isChildFirstClassLoading = this.getParameter(Constants.Configuration.ENABLE_CHILD_FIRST_CLASS_LOADING);
+        if (isChildFirstClassLoading != null){
+             childFirstClassLoading = JavaUtils.isTrueExplicitly(isChildFirstClassLoading.getValue());
+        }
+        return childFirstClassLoading;
+    }
 }

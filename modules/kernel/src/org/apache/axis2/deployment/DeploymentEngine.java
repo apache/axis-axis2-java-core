@@ -311,7 +311,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     new URL[]{moduleurl},
                                     axisConfig.getModuleClassLoader(),
                                     true,
-                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                                    axisConfig.isChildFirstClassLoading());
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -367,7 +368,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     new URL[]{servicesURL},
                     axisConfig.getServiceClassLoader(),
                     true,
-                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                    (File) axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                    axisConfig.isChildFirstClassLoading());
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -1163,7 +1165,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
-            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader(), null);
+            currentDeploymentFile.setClassLoader(false, config.getModuleClassLoader(), null,
+                    config.isChildFirstClassLoading());
             axismodule.setModuleClassLoader(currentDeploymentFile.getClassLoader());
             archiveReader.readModuleArchive(currentDeploymentFile, axismodule,
                                             false, config);
@@ -1266,7 +1269,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             throws AxisFault {
         try {
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(serviceFile, null);
-            DeploymentClassLoader classLoader = Utils.createClassLoader(serviceFile);
+            DeploymentClassLoader classLoader = Utils.createClassLoader(serviceFile,
+                    configCtx.getAxisConfiguration().isChildFirstClassLoading());
             currentDeploymentFile.setClassLoader(classLoader);
             AxisServiceGroup serviceGroup = new AxisServiceGroup();
             serviceGroup.setServiceGroupClassLoader(classLoader);

@@ -43,6 +43,8 @@ public class DeploymentClassLoader extends URLClassLoader {
     // List of jar files inside the jars in the original url
     private List embedded_jars;
 
+    private boolean isChildFirstClassLoading;
+
     /**
      * DeploymentClassLoader is extended from URLClassLoader. The constructor
      * does not override the super constructor, but takes in an addition list of
@@ -51,10 +53,14 @@ public class DeploymentClassLoader extends URLClassLoader {
      * @param urls   <code>URL</code>s
      * @param parent parent classloader <code>ClassLoader</code>
      */
-    public DeploymentClassLoader(URL[] urls, List embedded_jars, ClassLoader parent) {
+    public DeploymentClassLoader(URL[] urls,
+                                 List embedded_jars,
+                                 ClassLoader parent,
+                                 boolean isChildFirstClassLoading) {
         super(urls, parent);
         this.urls = urls;
         this.embedded_jars = embedded_jars;
+        this.isChildFirstClassLoading = isChildFirstClassLoading;
     }
 
     /**
@@ -259,5 +265,22 @@ public class DeploymentClassLoader extends URLClassLoader {
             }
         }
         return null;
+    }
+
+    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        Class c = null;
+        if (!isChildFirstClassLoading) {
+            c = super.loadClass(name, resolve);
+        } else {
+            c = findLoadedClass(name);
+            if (c == null) {
+                try {
+                    c = findClass(name);
+                } catch (Exception e) {
+                    c = super.loadClass(name, resolve);
+                }
+            }
+        }
+        return c;
     }
 }

@@ -102,7 +102,7 @@ public class DeploymentFileData {
         this.classLoader = classLoader;
     }
 
-    public void setClassLoader(boolean isDirectory, ClassLoader parent, File file) throws AxisFault {
+    public void setClassLoader(boolean isDirectory, ClassLoader parent, File file, boolean isChildFirstClassLoading) throws AxisFault {
         if (!isDirectory) {
             if (this.file != null) {
                 URL[] urlsToLoadFrom;
@@ -112,7 +112,7 @@ public class DeploymentFileData {
                                                                 this.file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{this.file.toURL()};
-                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file);
+                    classLoader = Utils.createClassLoader(urlsToLoadFrom, parent, true, file, isChildFirstClassLoading);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }

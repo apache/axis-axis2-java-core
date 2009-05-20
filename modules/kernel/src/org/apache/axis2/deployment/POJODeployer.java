@@ -147,7 +147,8 @@ public class POJODeployer implements Deployer {
                             configCtx.getAxisConfiguration().getSystemClassLoader(),
                             true,
                             (File)configCtx.getAxisConfiguration().
-                                    getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                    getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                            configCtx.getAxisConfiguration().isChildFirstClassLoading());
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");

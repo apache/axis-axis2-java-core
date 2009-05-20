@@ -667,13 +667,10 @@ public class Utils {
                     DeploymentFileData filedata = new DeploymentFileData(
                             inputFile);
 
-                    filedata
-                            .setClassLoader(
-                                    false,
+                    filedata.setClassLoader(false,
                                     moduleClassLoader,
-                                    (File)axisConfig
-                                            .getParameterValue(
-                                                    Constants.Configuration.ARTIFACTS_TEMP_DIR));
+                                    (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
+                                    axisConfig.isChildFirstClassLoading());
                     HashMap wsdlservice = archiveReader.processWSDLs(filedata);
                     if (wsdlservice != null && wsdlservice.size() > 0) {
                         Iterator servicesitr = wsdlservice.values().iterator();
@@ -846,7 +843,7 @@ public class Utils {
         excludeList.add("shutDown");
     }
 
-    public static DeploymentClassLoader createClassLoader(File serviceFile)
+    public static DeploymentClassLoader createClassLoader(File serviceFile, boolean isChildFirstClassLoading)
             throws MalformedURLException {
         ClassLoader contextClassLoader =
                 (ClassLoader)org.apache.axis2.java.security.AccessController
@@ -856,13 +853,14 @@ public class Utils {
                             }
                         });
         return createDeploymentClassLoader(new URL[]{serviceFile.toURL()},
-                                           contextClassLoader, new ArrayList());
+                                           contextClassLoader, new ArrayList(), isChildFirstClassLoading);
     }
 
     public static ClassLoader createClassLoader(ArrayList urls,
                                                 ClassLoader serviceClassLoader,
                                                 boolean extractJars,
-                                                File tmpDir) {
+                                                File tmpDir,
+                                                boolean isChildFirstClassLoading) {
         URL url = (URL)urls.get(0);
         if (extractJars) {
             try {
@@ -871,7 +869,7 @@ public class Utils {
                 urls.addAll(0, Arrays.asList(urls1));
                 URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
                 return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                                   null);
+                                                   null, isChildFirstClassLoading);
             } catch (Exception e) {
                 log
                         .warn("Exception extracting jars into temporary directory : "
@@ -883,7 +881,7 @@ public class Utils {
         List embedded_jars = Utils.findLibJars(url);
         URL[] urls2 = (URL[])urls.toArray(new URL[urls.size()]);
         return createDeploymentClassLoader(urls2, serviceClassLoader,
-                                           embedded_jars);
+                                           embedded_jars, isChildFirstClassLoading);
     }
 
     public static File toFile(URL url) throws UnsupportedEncodingException {
@@ -894,12 +892,13 @@ public class Utils {
     public static ClassLoader createClassLoader(URL[] urls,
                                                 ClassLoader serviceClassLoader,
                                                 boolean extractJars,
-                                                File tmpDir) {
+                                                File tmpDir,
+                                                boolean isChildFirstClassLoading) {
         if (extractJars) {
             try {
                 URL[] urls1 = Utils.getURLsForAllJars(urls[0], tmpDir);
                 return createDeploymentClassLoader(urls1, serviceClassLoader,
-                                                   null);
+                                                   null, isChildFirstClassLoading);
             } catch (Exception e) {
                 log
                         .warn("Exception extracting jars into temporary directory : "
@@ -910,17 +909,17 @@ public class Utils {
         }
         List embedded_jars = Utils.findLibJars(urls[0]);
         return createDeploymentClassLoader(urls, serviceClassLoader,
-                                           embedded_jars);
+                                           embedded_jars, isChildFirstClassLoading);
     }
 
     private static DeploymentClassLoader createDeploymentClassLoader(
             final URL[] urls, final ClassLoader serviceClassLoader,
-            final List embeddedJars) {
+            final List embeddedJars, final boolean isChildFirstClassLoading) {
         return (DeploymentClassLoader)AccessController
                 .doPrivileged(new PrivilegedAction() {
                     public Object run() {
                         return new DeploymentClassLoader(urls, embeddedJars,
-                                                         serviceClassLoader);
+                                                         serviceClassLoader, isChildFirstClassLoading);
                     }
                 });
     }
