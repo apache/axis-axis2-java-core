@@ -1381,14 +1381,14 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../soapmonitor/target</directory>
+                            <directory>${basedir}/../soapmonitor/module/target</directory>
                             <targetPath>WEB-INF/modules</targetPath>
                             <includes>
                                 <include>soapmonitor*.mar</include>
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../soapmonitor/target</directory>
+                            <directory>${basedir}/../soapmonitor/servlet/target</directory>
                             <targetPath>WEB-INF/lib</targetPath>
                             <includes>
                                 <include>soapmonitor*.jar</include>

@@ -341,7 +341,7 @@
                                 <mkdir dir="target/tmp-repository/modules"/>
                                 <mkdir dir="target/tmp-repository/services"/>
 
-                                <copy file="../../modules/soapmonitor/target/soapmonitor-${version}.mar"
+                                <copy file="../../modules/soapmonitor/module/target/soapmonitor-${version}.mar"
                                       tofile="target/tmp-repository/modules/soapmonitor-${soapmonitor.mar.version}.mar"/>
                                 <copy file="../../modules/addressing/target/addressing-${version}.mar"
                                       tofile="target/tmp-repository/modules/addressing-${addressing.mar.version}.mar"/>

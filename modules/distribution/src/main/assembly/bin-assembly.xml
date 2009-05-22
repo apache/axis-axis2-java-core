@@ -194,10 +194,10 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>../../modules/soapmonitor/target</directory>
+            <directory>../../modules/soapmonitor/servlet/target</directory>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>soapmonitor-${version}.jar</include>
+                <include>soapmonitor-servlet-${version}.jar</include>
             </includes>
         </fileSet>
         <fileSet>
