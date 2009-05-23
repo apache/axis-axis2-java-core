@@ -553,4 +553,15 @@ public class Utils {
     private static boolean isIP(String hostAddress) {
         return hostAddress.split("[.]").length == 4;
     }
+
+    /**
+     * Get the scheme part from a URI (or URL).
+     * 
+     * @param uri the URI
+     * @return the scheme of the URI
+     */
+    public static String getURIScheme(String uri) {
+        int index = uri.indexOf(':');
+        return index > 0 ? uri.substring(0, index) : null;
+    }
 }

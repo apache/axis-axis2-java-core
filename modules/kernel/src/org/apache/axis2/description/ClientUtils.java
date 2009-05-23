@@ -27,6 +27,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,8 +47,7 @@ public class ClientUtils {
             throws AxisFault {
         String transportURI = (String) msgctx.getProperty(Constants.Configuration.TRANSPORT_URL);
         if (transportURI != null && !"".equals(transportURI)) {
-            int index = transportURI.indexOf(':');
-            String transport = (index > 0) ? transportURI.substring(0, index) : null;
+            String transport = Utils.getURIScheme(transportURI);
             if (transport != null) {
                 TransportOutDescription transportOut = ac.getTransportOut(transport);
                 if (transportOut == null) {
@@ -73,8 +73,7 @@ public class ClientUtils {
                 throw new AxisFault(Messages.getMessage("cannotInferTransportNoAddr"));
             }
             String uri = epr.getAddress();
-            int index = uri.indexOf(':');
-            String transport = (index > 0) ? uri.substring(0, index) : null;
+            String transport = Utils.getURIScheme(uri);
             if (transport != null && ac.getTransportOut(transport) != null) {
                 return ac.getTransportOut(transport);
             } else {

@@ -411,13 +411,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
 	private void setServiceEPR(AxisService axisService, String urlString)
 			throws Exception {
-		URL url = new URL(urlString);
-		Utils.addSoap11Endpoint(axisService, url);
-		Utils.addSoap12Endpoint(axisService, url);
+		Utils.addSoap11Endpoint(axisService, urlString);
+		Utils.addSoap12Endpoint(axisService, urlString);
 		
-		String protocol = url.getProtocol();
-		if ("http".equals(protocol)) {
-			Utils.addHttpEndpoint(axisService, url);
+		if ("http".equals(org.apache.axis2.util.Utils.getURIScheme(urlString))) {
+			Utils.addHttpEndpoint(axisService, urlString);
 		}
 	}
 

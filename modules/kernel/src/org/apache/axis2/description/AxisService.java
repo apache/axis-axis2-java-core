@@ -1470,14 +1470,10 @@ public class AxisService extends AxisDescription {
 	private String getLocationURI(String[] eprs, String epr) throws AxisFault {
 		String returnIP = null;
 		if (epr != null) {
-			if (epr.indexOf(":") > -1) {
-				String existingProtocol = epr.substring(0, epr.indexOf(":"))
-						.trim();
-				String eprProtocol;
+		    String existingProtocol = org.apache.axis2.util.Utils.getURIScheme(epr);
+			if (existingProtocol != null) {
 				for (int i = 0; i < eprs.length; i++) {
-					eprProtocol = eprs[i].substring(0, eprs[i].indexOf(":"))
-							.trim();
-					if (eprProtocol.equals(existingProtocol)) {
+					if (existingProtocol.equals(org.apache.axis2.util.Utils.getURIScheme(eprs[i]))) {
 						returnIP = eprs[i];
 						break;
 					}
