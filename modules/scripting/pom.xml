@@ -56,14 +56,6 @@
         <testSourceDirectory>test</testSourceDirectory>
         <resources>
             <resource>
-                <directory>../../..</directory>
-                <includes>
-                    <include>NOTICE.txt</include>
-                    <include>LICENSE.txt</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
                 <directory>conf</directory>
                 <excludes>
                     <exclude>**/*.properties</exclude>
@@ -87,6 +79,22 @@
             </testResource>
         </testResources>
         <plugins>
+            <plugin>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>legal-files</id>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>

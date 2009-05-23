@@ -28,59 +28,20 @@
         <version>SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
-    <artifactId>axis2-mtompolicy</artifactId>
-    <name>Apache Axis2 - MTOM Policy</name>
-    <description>Axis2 : MTOM Policy</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
-            <version>${version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
-        </dependency>
-    </dependencies>
+    <artifactId>axis2-resource-bundle</artifactId>
+    <name>Apache Axis2 - Resource bundle</name>
+    <description>Contains the legal files that must be included in all artifacts</description>
     <build>
-        <sourceDirectory>src</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        <testSourceDirectory>test</testSourceDirectory>
-        <testResources>
-            <testResource>
-                <directory>test-resources</directory>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-remote-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>legal-files</id>
                         <goals>
-                            <goal>process</goal>
+                            <goal>bundle</goal>
                         </goals>
-                        <configuration>
-                            <resourceBundles>
-                                <resourceBundle>org.apache.axis2:axis2-resource-bundle:${pom.version}</resourceBundle>
-                            </resourceBundles>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
             </plugin>
         </plugins>
     </build>
