@@ -39,23 +39,29 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
+import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
-
+    private static final Log log = LogFactory.getLog(HTTPTransportUtils.class);
 
     /**
      * @deprecated This was used only by the now deprecated processHTTPGetRequest() method.
@@ -272,5 +278,66 @@ public class HTTPTransportUtils {
                (contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
+    }
+    
+    public static EndpointReference[] getEPRsForService(ConfigurationContext configurationContext,
+            TransportInDescription trpInDesc, String serviceName, String ip, int port) throws AxisFault {
+        
+        AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
+        Parameter param = axisConfiguration.getParameter(Constants.HTTP_FRONTEND_HOST_URL);
+        StringBuilder epr = new StringBuilder();
+        if (param != null) {
+            epr.append(param.getValue());
+            String servicePath = configurationContext.getServicePath();
+            if (epr.charAt(epr.length()-1) != '/' && !servicePath.startsWith("/")) {
+                epr.append('/');
+            }
+            epr.append(servicePath);
+        } else {
+            param = trpInDesc.getParameter(TransportListener.HOST_ADDRESS);
+            if (param != null) {
+                // TODO: Need to decide if we really want to deprecate this parameter.
+                //       Reason to deprecate it is that it has a misleading name ("hostname"
+                //       while it is actually a URL), that its role overlaps with that
+                //       of the "httpFrontendHostUrl" parameter in the Axis configuration and
+                //       that there might be a confusion with the "hostname" parameter in the
+                //       Axis configuration (which has a different meaning).
+                //       If we deprecate it, we need to remove it from all the axis2.xml sample
+                //       files. Note that the same parameter seems to be used by the TCP transport,
+                //       but it's role is not very clear (since TCP has no concept of request URI).
+                log.warn("Transport '" + trpInDesc.getName()
+                        + "' is configured with deprecated parameter '"
+                        + TransportListener.HOST_ADDRESS + "'. Please set '"
+                        + Constants.HTTP_FRONTEND_HOST_URL
+                        + "' in the Axis configuration instead.");
+                epr.append(param.getValue());
+            } else {
+                if (ip == null){
+                    try {
+                        ip = Utils.getIpAddress(configurationContext.getAxisConfiguration());
+                    } catch (SocketException ex) {
+                        AxisFault.makeFault(ex);
+                    }
+                }
+                String scheme = trpInDesc.getName();
+                epr.append(scheme);
+                epr.append("://");
+                epr.append(ip);
+                if (!(scheme.equals("http") && port == 80
+                        || scheme.equals("https") && port == 443)) {
+                    epr.append(':');
+                    epr.append(port);
+                }
+            }
+            String serviceContextPath = configurationContext.getServiceContextPath();
+            if (epr.charAt(epr.length()-1) != '/' && !serviceContextPath.startsWith("/")) {
+                epr.append('/');
+            }
+            epr.append(serviceContextPath);
+        }
+        epr.append('/');
+        epr.append(serviceName);
+        epr.append('/');
+        return new EndpointReference[]{new EndpointReference(epr.toString())};
     }
 }

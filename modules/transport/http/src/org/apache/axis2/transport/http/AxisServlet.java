@@ -47,12 +47,10 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.QueryStringParser;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -576,32 +574,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         //RUNNING_PORT
-        String port = (String) configContext.getProperty(ListingAgent.RUNNING_PORT);
-        if (port == null) {
-            port = "8080";
-        }
-        if (ip == null) {
-            try {
-                ip = Utils.getIpAddress(axisConfiguration);
-                if (ip == null) {
-                    ip = "localhost";
-                }
-            } catch (SocketException e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-
-        String endpointRefernce = "http://" + ip + ":" + port;
-        if (configContext.getServiceContextPath().startsWith("/")) {
-            endpointRefernce = endpointRefernce +
-                    configContext.getServiceContextPath() + "/" + serviceName;
-        } else {
-            endpointRefernce = endpointRefernce + '/' +
-                    configContext.getServiceContextPath() + "/" + serviceName;
-        }
-        EndpointReference endpoint = new EndpointReference(endpointRefernce + "/");
-
-        return new EndpointReference[]{endpoint};
+        String portString = (String) configContext.getProperty(ListingAgent.RUNNING_PORT);
+        // TODO: there is something strange here because we never generate EPRs for https
+        return HTTPTransportUtils.getEPRsForService(configContext,
+                configContext.getAxisConfiguration().getTransportIn("http"),
+                serviceName, ip, portString == null ? 8080 : Integer.parseInt(portString));
     }
 
     /**
