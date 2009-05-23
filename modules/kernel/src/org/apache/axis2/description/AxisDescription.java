@@ -59,6 +59,10 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
 
     private Map<Object, AxisDescription> children;
 
+    /**
+     * Map of modules engaged on this object. The key is the archive name as defined by
+     * {@link AxisModule#getArchiveName()}.
+     */
     protected Map<String, AxisModule> engagedModules;
 
     /** List of ParameterObservers who want to be notified of changes */
@@ -450,12 +454,12 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
             String tempModuleName = tempAxisModule.getName();
 
             if (moduleName.equals(tempModuleName)) {
-                String existing = tempAxisModule.getVersion();
+                Version existing = tempAxisModule.getVersion();
                 if (!Utils.checkVersion(axisModule.getVersion(), existing)) {
                     throw new AxisFault(Messages.getMessage("mismatchedModuleVersions",
                                                             getClass().getName(),
                                                             moduleName,
-                                                            existing));
+                                                            String.valueOf(existing)));
                 }
             }
 
@@ -470,8 +474,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         // If we have anything specific to do, let that happen
         onEngage(axisModule, source);
 
-        engagedModules.put(Utils.getModuleName(axisModule.getName(), axisModule.getVersion()),
-                           axisModule);
+        engagedModules.put(axisModule.getArchiveName(), axisModule);
     }
 
     protected void onEngage(AxisModule module, AxisDescription engager)
@@ -498,8 +501,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
     }
 
     public boolean isEngaged(AxisModule axisModule) {
-        String id = Utils.getModuleName(axisModule.getName(), axisModule
-                .getVersion());
+        String id = axisModule.getArchiveName();
         return engagedModules != null && engagedModules.keySet().contains(id);
     }
 
@@ -510,8 +512,7 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         // module.getVersion());
         if (isEngaged(module)) {
             onDisengage(module);
-            engagedModules.remove(Utils.getModuleName(module.getName(), module
-                    .getVersion()));
+            engagedModules.remove(module.getArchiveName());
         }
     }
 

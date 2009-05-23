@@ -46,7 +46,6 @@ import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -512,9 +511,8 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
                         moduleXMLFound = true;
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
-                        // setting module name
-                        module.setName(Utils.getModuleName(shortFileName));
-                        module.setVersion(Utils.getModuleVersion(shortFileName));
+                        // setting module name and version
+                        module.setArchiveName(shortFileName);
                         builder.populateModule();
                         break;
                     }
@@ -540,9 +538,8 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     in = new FileInputStream(file);
                     ModuleBuilder builder = new ModuleBuilder(in, module, axisConfig);
-                    // setting module name
-                    module.setName(Utils.getModuleName(shortFileName));
-                    module.setVersion(Utils.getModuleVersion(shortFileName));
+                    // setting module name and version
+                    module.setArchiveName(shortFileName);
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(

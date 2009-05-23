@@ -22,6 +22,7 @@ package org.apache.axis2.engine;
 import java.io.File;
 import java.net.URL;
 import java.security.PrivilegedAction;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -55,6 +56,7 @@ import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.Version;
 import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
@@ -80,7 +82,8 @@ public class AxisConfiguration extends AxisDescription {
     private HashMap<String, String> dataLocatorClassNames = new HashMap<String, String>();
 
     /**
-     * This is a Map of String name -> AxisModule for all available Modules.
+     * Map of all available modules. The key is the archive name as defined by
+     * {@link AxisModule#getArchiveName()}.
      */
     private final HashMap<String, AxisModule> allModules = new HashMap<String, AxisModule>();
 
@@ -232,27 +235,18 @@ public class AxisConfiguration extends AxisDescription {
         module.setParent(this);
 
         // check whether the module version paramter is there , if so set the module version as that
-        Parameter verisonParamter = module.getParameter(org.apache.axis2.Constants.MODULE_VERSION);
-        if (verisonParamter !=null ) {
-            String version = (String) verisonParamter.getValue();
-            module.setVersion(version);
-        }
-
-        if (module.getVersion() == null) {
-            if (module.getName().endsWith(AxisModule.VERSION_SNAPSHOT)) {
-                allModules.put(module.getName(), module);
-                String moduleName =
-                        module.getName().substring(0,
-                                                   module.getName().indexOf(AxisModule.VERSION_SNAPSHOT) - 1);
-                module.setName(moduleName);
-                module.setVersion(AxisModule.VERSION_SNAPSHOT);
-            } else {
-                allModules.put(module.getName(), module);
+        Parameter versionParameter = module.getParameter(org.apache.axis2.Constants.MODULE_VERSION);
+        if (versionParameter !=null ) {
+            String version = (String) versionParameter.getValue();
+            try {
+                module.setVersion(new Version(version));
+            } catch (ParseException ex) {
+                throw new AxisFault("The version number '" + version + "' specified by the "
+                        + org.apache.axis2.Constants.MODULE_VERSION + " parameter is invalid");
             }
-
-        } else { // Calculate the module version from the name
-            allModules.put(Utils.getModuleName(module.getName(), module.getVersion()), module);
         }
+
+        allModules.put(module.getArchiveName(), module);
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
 
         // Registering the policy namespaces that the module understand
@@ -291,6 +285,16 @@ public class AxisConfiguration extends AxisDescription {
     public void removeModule(String moduleName, String moduleVersion) {
         allModules.remove(Utils.getModuleName(moduleName, moduleVersion));
         // TODO disengage has to be done here
+    }
+
+    /**
+     * Remove a module with moduleName & moduleVersion
+     *
+     * @param moduleName the name of the module to remove
+     * @param moduleVersion the version of the module to remove
+     */
+    public void removeModule(String moduleName, Version moduleVersion) {
+        removeModule(moduleName, moduleVersion.toString());
     }
 
     /**
