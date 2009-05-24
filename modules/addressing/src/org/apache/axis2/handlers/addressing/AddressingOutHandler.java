@@ -41,8 +41,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
@@ -60,36 +58,17 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
     private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
 
-    private boolean includeOptionalHeaders;
-    private boolean disableAddressing;
-
-    public void init(HandlerDescription arg0) {
-        super.init(arg0);
-
-        //Determine whether to include optional addressing headers in the output message.
-        //The default is not to include any headers that can be safely omitted.
-        Parameter param = arg0.getParameter(INCLUDE_OPTIONAL_HEADERS);
-        String value = Utils.getParameterValue(param);
-        includeOptionalHeaders = JavaUtils.isTrueExplicitly(value);
-
-        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
-        }
-
-        //Determine whether to disable the handler by default.
-        param = arg0.getParameter(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
-        value = Utils.getParameterValue(param);
-        disableAddressing = JavaUtils.isTrueExplicitly(value);
-
-        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug("disableAddressing=" + disableAddressing);
-        }
-    }
-
+    // TODO: This is required for MessageContext#getModuleParameter.
+    //       Not clear why there is no way to automatically determine this!
+    private static final String MODULE_NAME = "addressing";
+    
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         //determine whether outbound addressing has been disabled or not.
         boolean disableAddressing =
-            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, this.disableAddressing);
+            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES)
+             || JavaUtils.isTrueExplicitly(Utils.getParameterValue(
+                     msgContext.getModuleParameter(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+                     MODULE_NAME, handlerDesc)));
 
         if (disableAddressing) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
@@ -110,7 +89,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
         // Determine whether to include optional addressing headers in the output.
         boolean includeOptionalHeaders =
-            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS, this.includeOptionalHeaders);
+            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS)
+             || JavaUtils.isTrueExplicitly(Utils.getParameterValue(
+                     msgContext.getModuleParameter(INCLUDE_OPTIONAL_HEADERS, MODULE_NAME,
+                     handlerDesc)));
 
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
