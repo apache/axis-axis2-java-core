@@ -146,7 +146,8 @@ public class AxisServiceGroup extends AxisDescription {
         AxisService service = getService(name);
 
         if (service != null) {
-            getAxisConfiguration().notifyObservers(AxisEvent.SERVICE_REMOVE, service);
+            getAxisConfiguration().notifyObservers(new AxisEvent(AxisEvent.SERVICE_REMOVE,service),
+                    service);
         }
 
         removeChild(name);

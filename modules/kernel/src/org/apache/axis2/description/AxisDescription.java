@@ -27,6 +27,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.JavaUtils;
@@ -436,6 +437,8 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
      */
     public void engageModule(AxisModule axisModule) throws AxisFault {
         engageModule(axisModule, this);
+        AxisConfiguration config = getAxisConfiguration();
+        config.notifyObservers(new AxisEvent(AxisEvent.MODULE_ENGAGED , this) , axisModule);
     }
 
     /**
@@ -513,6 +516,11 @@ public abstract class AxisDescription implements ParameterInclude, DescriptionCo
         if (isEngaged(module)) {
             onDisengage(module);
             engagedModules.remove(module.getArchiveName());
+            /**
+             * if a Disengaged module belogs to an AxisService or an Operation
+             * notify with a serviceUpdate
+             */
+            getAxisConfiguration().notifyObservers(new AxisEvent(AxisEvent.MODULE_DISENGAGED, this), module);
         }
     }
 

@@ -20,6 +20,8 @@
 
 package org.apache.axis2.engine;
 
+import org.apache.axis2.description.AxisDescription;
+
 public class AxisEvent {
 
     /**
@@ -32,14 +34,30 @@ public class AxisEvent {
     public static final int SERVICE_START = 3;
     public static final int MODULE_DEPLOY = 4;
     public static final int MODULE_REMOVE = 5;
+    public static final int MODULE_ENGAGED = 6;
+    public static final int MODULE_DISENGAGED = 7;
+
+    /**
+     * hold a reference to the AxisDiscription
+     * that the AxisEvent must carry ot the Observer
+     * this referrece can be null of not needed
+     */
+    private AxisDescription axisDiscription;
+    
     private int EVENT_TYPE;
 
-    public AxisEvent(int EVENT_TYPE) {
+    public AxisEvent(int EVENT_TYPE , AxisDescription axisDescription) {
         this.EVENT_TYPE = EVENT_TYPE;
+        this.axisDiscription = axisDiscription;
+
     }
 
     public int getEventType() {
         return EVENT_TYPE;
+    }
+    
+    public AxisDescription getAxisDiscription() {
+       return axisDiscription;
     }
 
 }

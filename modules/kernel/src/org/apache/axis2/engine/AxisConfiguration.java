@@ -247,7 +247,7 @@ public class AxisConfiguration extends AxisDescription {
         }
 
         allModules.put(module.getArchiveName(), module);
-        notifyObservers(AxisEvent.MODULE_DEPLOY, module);
+        notifyObservers(new AxisEvent(AxisEvent.MODULE_DEPLOY,null), module);
 
         // Registering the policy namespaces that the module understand
         registerModulePolicySupport(module);
@@ -332,7 +332,7 @@ public class AxisConfiguration extends AxisDescription {
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
         axisServiceGroup.setParent(this);
-        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
+        notifyObservers(new AxisEvent(AxisEvent.SERVICE_DEPLOY, axisServiceGroup), axisServiceGroup);
         AxisService axisService;
 
         Iterator<AxisService> services = axisServiceGroup.getServices();
@@ -395,7 +395,7 @@ public class AxisConfiguration extends AxisDescription {
             }
 
             if (!axisService.isClientSide()) {
-                notifyObservers(AxisEvent.SERVICE_DEPLOY, axisService);
+                notifyObservers(new AxisEvent(AxisEvent.SERVICE_DEPLOY ,axisService ), axisService);
             }
         }
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
@@ -440,7 +440,7 @@ public class AxisConfiguration extends AxisDescription {
             AxisService axisService = services.next();
             allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
-                notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
+                notifyObservers(new AxisEvent(AxisEvent.SERVICE_REMOVE , axisService), axisService);
             } else {
                 isClientSide = true;
             }
@@ -457,7 +457,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         removeChild(serviceGroupName);
         if (!isClientSide) {
-            notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
+            notifyObservers(new AxisEvent(AxisEvent.SERVICE_REMOVE, axisServiceGroup), axisServiceGroup);
         }
 
         return axisServiceGroup;
@@ -570,11 +570,9 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void notifyObservers(int event_type, AxisService service) {
+    public void notifyObservers(AxisEvent event, AxisService service) {
         if (service.isClientSide())
             return;
-
-        AxisEvent event = new AxisEvent(event_type);
 
         for (AxisObserver observer : observersList) {
             try {
@@ -586,8 +584,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void notifyObservers(int event_type, AxisModule moule) {
-        AxisEvent event = new AxisEvent(event_type);
+    public void notifyObservers(AxisEvent event, AxisModule moule) {
 
         for (AxisObserver anObserversList : observersList) {
 
@@ -600,8 +597,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    public void notifyObservers(int event_type, AxisServiceGroup serviceGroup) {
-        AxisEvent event = new AxisEvent(event_type);
+    public void notifyObservers(AxisEvent event, AxisServiceGroup serviceGroup) {
 
         for (AxisObserver anObserversList : observersList) {
 
@@ -1143,7 +1139,7 @@ public class AxisConfiguration extends AxisDescription {
                                                     serviceName));
         }
         service.setActive(false);
-        notifyObservers(AxisEvent.SERVICE_STOP, service);
+        notifyObservers(new AxisEvent(AxisEvent.SERVICE_STOP , service), service);
     }
 
     public void startService(String serviceName) throws AxisFault {
@@ -1153,7 +1149,7 @@ public class AxisConfiguration extends AxisDescription {
                                                     serviceName));
         }
         service.setActive(true);
-        notifyObservers(AxisEvent.SERVICE_START, service);
+        notifyObservers(new AxisEvent(AxisEvent.SERVICE_START , service), service);
     }
 
     public List<AxisModule> getModulesForPolicyNamesapce(String namesapce) {
