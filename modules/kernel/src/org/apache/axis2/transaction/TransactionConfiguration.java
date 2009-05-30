@@ -30,6 +30,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -45,22 +46,23 @@ public class TransactionConfiguration {
     private Hashtable<String, String> jndiProperties = new Hashtable<String, String>();
     private String transactionManagerJNDIName = null;
 
-
+    public TransactionConfiguration() {
+    }
 
     public TransactionConfiguration(ParameterInclude transactionParameters) throws DeploymentException {
        Iterator it = transactionParameters.getParameters().iterator();
         while (it.hasNext()) {
             Parameter parameter = (Parameter) it.next();
             jndiProperties.put(parameter.getName(), (String) parameter.getValue());
-        }         
-     
+        }
+
         transactionManagerJNDIName = (String) transactionParameters.getParameter(TX_MANAGER_JNDI_NAME).getValue();
 
         if(transactionManagerJNDIName == null){
              throw new DeploymentException("Required transaction parameter " + TX_MANAGER_JNDI_NAME + " missing");
         }
 
-        threadTransactionManager = new ThreadLocal();     
+        threadTransactionManager = new ThreadLocal();
     }
 
     public int getTransactionTimeout(){
@@ -85,6 +87,10 @@ public class TransactionConfiguration {
         } catch(Exception ignore) {}
 
         return transactionManager;
+    }
+
+    public UserTransaction getUserTransaction() throws AxisFault {
+        return new Axis2UserTransaction(getTransactionManager());
     }
 
     private synchronized TransactionManager lookupTransactionManager() throws AxisFault {

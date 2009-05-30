@@ -65,6 +65,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.lang.reflect.Constructor;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
@@ -184,13 +185,28 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
 
             //Add jta transaction  configuration
-            OMElement transactionElement = config_element
-                    .getFirstChildWithName(new QName(TAG_TRANSACTION));
+            OMElement transactionElement = config_element.getFirstChildWithName(new QName(TAG_TRANSACTION));
             if (transactionElement != null) {
                 ParameterInclude transactionParameters = new ParameterIncludeImpl();
                 Iterator parameters = transactionElement.getChildrenWithName(new QName(TAG_PARAMETER));
                 processParameters(parameters, transactionParameters, null);
-                TransactionConfiguration txcfg = new TransactionConfiguration(transactionParameters);
+
+                TransactionConfiguration txcfg = null;
+                OMAttribute txConfigurationClassAttribute =
+                        transactionElement.getAttribute(new QName(TAG_TRANSACTION_CONFIGURATION_CLASS));
+
+                if (txConfigurationClassAttribute != null){
+                    String txConfigurationClassName = txConfigurationClassAttribute.getAttributeValue();
+                    try {
+                        Class txConfigurationClass = Class.forName(txConfigurationClassName);
+                        Constructor constructor = txConfigurationClass.getConstructor(new Class[]{ParameterInclude.class});
+                        txcfg = (TransactionConfiguration) constructor.newInstance(new Object[]{transactionParameters});
+                    } catch (Exception e) {
+                        throw new DeploymentException("Can not found or instantiate the class " + txConfigurationClassName, e);
+                    }
+                } else {
+                    txcfg = new TransactionConfiguration(transactionParameters);
+                }
 
                 OMAttribute timeoutAttribute = transactionElement.getAttribute(new QName(TAG_TIMEOUT));
                 if(timeoutAttribute != null) {
