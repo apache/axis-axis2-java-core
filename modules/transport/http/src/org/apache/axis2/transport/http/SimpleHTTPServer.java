@@ -86,6 +86,7 @@ public class SimpleHTTPServer implements TransportListener {
         TransportInDescription httpDescription =
                 new TransportInDescription(Constants.TRANSPORT_HTTP);
         httpDescription.setReceiver(this);
+        trpInDesc = httpDescription;
         httpFactory.getListenerManager().addListener(httpDescription, true);
         sessionManager = new SessionManager();
     }
