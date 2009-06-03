@@ -313,6 +313,41 @@ HttpClient client = new HttpClient(conmgr);
 configurationContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, client);
 </pre>
     </source>
+
+    <a name="setting_cached_httpstate_object"></a>
+<h2>Setting the cached httpstate object</h2>
+
+HttpState object can be set as property to the options of a given Axis2 client. 
+HttpState keeps HTTP attributes that may persist from request to request, such
+ as cookies and authentication credentials. So, it is possible to re-use one and
+  the same HttpState object if appropriate.
+
+The idea is to provide the capability to specify/associate a separate HttpState 
+with every client and still reuse one and the same HttpClient. So, this make 
+sense only when CACHED_HTTP_CLIENT is re-used between different clients
+from different threads which may invoke different hosts with different credentials
+and cookies. This is really complicated scenario, but is absolutely possible one.
+ If you re-use a common HttpClient between different clients then the clients will 
+ re-use, the internal for the HttpClient, HttpState object. Doing so authentication 
+ credentials are exposed to all clients sharing one and the same HttpClient. 
+ This is definitely not a good idea. The problem with Cookies is different. The
+  problem here is that if two distinct clients invoke one and the same service 
+  at a specific host then the session established with a given cookie by one of
+  the clients can wrongly be shared among them, too, if it has not expired. This 
+  will cause problems since the two client may need different sessions, which is
+  the more probable scenario.
+
+Sample configuration:
+
+    <source>
+    <pre>
+HttpState myHttpState = new HttpState();
+options.setProperty(WSClientConstants.CACHED_HTTP_STATE, myHttpState);
+</pre>
+    </source>
+    
+Doing so the HttpState is attached to the client. Respectively this is automatically propagated to all MessageContext objects used by the client. 
+Underneath this just instructs Axis2 that the CACHED_HTTP_STATE set should be passed as a parameter when HttpClient#executeMethod is invoked. 
     
 </body>
 </html>
