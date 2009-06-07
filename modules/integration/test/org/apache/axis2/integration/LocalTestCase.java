@@ -153,14 +153,11 @@ public class LocalTestCase extends TestCase {
      */
     protected AxisService deployClassAsService(String name, Class myClass, String scope)
             throws Exception {
-        AxisService service = new AxisService(name);
-        if (scope != null) service.setScope(scope);
-
+         AxisService service = AxisService.createService(myClass.getName(),serverConfig);
+         if (scope != null) service.setScope(scope);
         service.addParameter(Constants.SERVICE_CLASS,
                               myClass.getName());
-
-        Utils.fillAxisService(service, serverConfig, null, null);
-
+        service.setName(name);
         serverCtx.deployService(service);
         return service;
     }

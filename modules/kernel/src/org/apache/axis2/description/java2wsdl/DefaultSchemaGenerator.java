@@ -44,8 +44,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.beans.PropertyDescriptor;
 import java.beans.BeanInfo;
@@ -99,7 +98,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected NamespaceGenerator nsGen = null;
 
     protected String targetNamespace = null;
-    //to keep the list of operation which uses MR other than RPC MR
+    //to keep the list of operations which use other MR not RPC MR
     protected ArrayList nonRpcMethods = new ArrayList();
 
     protected Class serviceClass = null;
@@ -335,6 +334,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         axisOperation);
             }
             Annotation[][] parameterAnnotation = jMethod.getParameterAnnotations();
+
+            Type[] genericParameterTypes = jMethod.getGenericParameterTypes();
             for (int j = 0; j < parameters.length; j++) {
                 Class methodParameter = parameters[j];
                 String parameterName = getParameterName(parameterAnnotation, j, parameterNames);
@@ -342,7 +343,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     generateSchemaForType(sequence, null, jMethod.getName());
                     break;
                 } else {
-                    generateSchemaForType(sequence, methodParameter, parameterName);
+                    Type genericParameterType = genericParameterTypes[j];
+                    Type genericType = null;
+                    if(genericParameterType instanceof ParameterizedType){
+                        ParameterizedType aType = (ParameterizedType) genericParameterType;
+                        Type[] parameterArgTypes = aType.getActualTypeArguments();
+                        genericType = parameterArgTypes[0];
+                        generateSchemaForType(sequence, genericType, parameterName, true);
+                    }else{
+                        generateSchemaForType(sequence, methodParameter, parameterName);
+                    }
                 }
             }
             // for its return type
@@ -361,11 +371,19 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         returnName = "return";
                     }
                 }
+                Type genericParameterType = jMethod.getGenericReturnType();
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, returnName);
-                } else {
+                } else if(genericParameterType instanceof ParameterizedType){
+                        ParameterizedType aType = (ParameterizedType) genericParameterType;
+                        Type[] parameterArgTypes = aType.getActualTypeArguments();
+                        generateSchemaForType(sequence, parameterArgTypes[0], returnName, true);
+                    } else {
                     generateSchemaForType(sequence, returnType, returnName);
                 }
+
+
+
                 AxisMessage outMessage = axisOperation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 outMessage.setElementQName(typeTable.getQNamefortheType(partQname));
@@ -557,17 +575,42 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
             PropertyDescriptor property = null;
             String propertyName = null;
+
             for (int i = 0; i < properties.length; i++) {
                 property = properties[i];
                 propertyName = property.getName();
                 if (!property.getName().equals("class") && (property.getPropertyType() != null)) {
                     if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
-                        property.getPropertyType();
-                        generateSchemaforFieldsandProperties(xmlSchema,
-                                sequence,
-                                property.getPropertyType(),
-                                propertyName,
-                                property.getPropertyType().isArray());
+                        Type genericFieldType = null;
+                        try {
+                            Field field = javaType.getDeclaredField(propertyName);
+                            genericFieldType = field.getGenericType();
+                        } catch (Exception e) {
+                            //log.info(e.getMessage());
+                        }
+
+                        if(genericFieldType instanceof ParameterizedType){
+                            ParameterizedType aType = (ParameterizedType) genericFieldType;
+                            Type[] fieldArgTypes = aType.getActualTypeArguments();
+                            try {
+                                generateSchemaforGenericFields(xmlSchema,
+                                    sequence,
+                                    fieldArgTypes[0],
+                                    propertyName);
+                            } catch (Exception e) {
+                                generateSchemaforFieldsandProperties(xmlSchema,
+                                    sequence,
+                                    property.getPropertyType(),
+                                    propertyName,
+                                    property.getPropertyType().isArray());
+                            }
+                        } else {
+                            generateSchemaforFieldsandProperties(xmlSchema,
+                                    sequence,
+                                    property.getPropertyType(),
+                                    propertyName,
+                                    property.getPropertyType().isArray());
+                        }
                     }
                 }
             }
@@ -585,7 +628,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArrayType) {
             propertyName = type.getComponentType().getName();
             if (type.getComponentType().isArray()) {
-                // this is a doble array element
+                // this is a double array element
                 Class simpleType = type.getComponentType();
                 String simpleTypeName = "";
                 while (simpleType.isArray()) {
@@ -655,37 +698,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             if (isGenerateWrappedArrayTypes && isArrayType) {
 
-                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
-                xmlSchemaElement.setName( name + "Wrapper");
-                xmlSchemaElement.setNillable(true);
-                sequence.getItems().add(xmlSchemaElement);
-
-                String complexTypeName =
-                        typeTable.getSimpleSchemaTypeName(propertyName).getLocalPart() + "Wrapper";
-
-                XmlSchemaComplexType xmlSchemaComplexType = null;
-                if (xmlSchema.getTypeByName(complexTypeName) == null) {
-                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
-                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
-                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    xmlSchemaComplexType.setName(complexTypeName);
-
-                    xmlSchema.getItems().add(xmlSchemaComplexType);
-                    xmlSchema.getSchemaTypes().add(
-                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
-                            xmlSchemaComplexType);
-                    addElementToSequence("array",
-                        typeTable.getSimpleSchemaTypeName(propertyName),
-                        xmlSchemaSequence,
-                        propertyName.equals("base64Binary"),
-                        isArrayType,
-                        type.isPrimitive());
-                } else {
-                   xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
-                }
-
-                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
-                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+                processGenerateWrappedArrayTypes(xmlSchema, sequence, type, name, isArrayType, propertyName);
 
 
             } else {
@@ -706,37 +719,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             if (isGenerateWrappedArrayTypes && isArrayType) {
 
-                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
-                xmlSchemaElement.setName(name + "Wrapper");
-                xmlSchemaElement.setNillable(true);
-                sequence.getItems().add(xmlSchemaElement);
-
-                String complexTypeName =
-                        typeTable.getSimpleSchemaTypeName(propertyName).getLocalPart() + "Wrapper";
-
-                XmlSchemaComplexType xmlSchemaComplexType = null;
-                if (xmlSchema.getTypeByName(complexTypeName) == null) {
-                    xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
-                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
-                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    xmlSchemaComplexType.setName(complexTypeName);
-
-                    xmlSchema.getItems().add(xmlSchemaComplexType);
-                    xmlSchema.getSchemaTypes().add(
-                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
-                            xmlSchemaComplexType);
-                    addElementToSequence("array",
-                            typeTable.getSimpleSchemaTypeName(propertyName),
-                            xmlSchemaSequence,
-                            propertyName.equals("base64Binary"),
-                            isArrayType,
-                            type.isPrimitive());
-                } else {
-                    xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
-                }
-
-                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
-                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+                processGenerateWrappedArrayTypes(xmlSchema, sequence, type, name, isArrayType, propertyName);
 
 
             } else {
@@ -761,6 +744,175 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
 
 
+    }
+
+    protected void generateSchemaforGenericFields(XmlSchema xmlSchema,
+                                                  XmlSchemaSequence sequence, Type genericType,
+                                                  String name)
+            throws Exception {
+        String propertyName;
+        Class type;
+        boolean isArrayType = true;
+        if (genericType instanceof GenericArrayType) {
+            Class simpleType = (Class) ((GenericArrayType) genericType).getGenericComponentType();
+            propertyName = simpleType.getName();
+            // this is a doble array element
+            String simpleTypeName = "";
+            while (simpleType.isArray()) {
+                simpleTypeName += "ArrayOf";
+                simpleType = simpleType.getComponentType();
+            }
+            simpleTypeName += simpleType.getSimpleName();
+
+            if (xmlSchema.getTypeByName(simpleTypeName) == null) {
+                XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                generateSchemaforGenericFields(xmlSchema,
+                        xmlSchemaSequence, simpleType, "array");
+
+                xmlSchemaComplexType.setName(simpleTypeName);
+                xmlSchema.getItems().add(xmlSchemaComplexType);
+                xmlSchema.getSchemaTypes().add(
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
+            }
+
+            if (isGenerateWrappedArrayTypes) {
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName( name + "Wrapper");
+                xmlSchemaElement.setNillable(true);
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName = simpleTypeName + "Wrapper";
+
+                XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                xmlSchemaComplexType.setName(complexTypeName);
+
+                xmlSchema.getItems().add(xmlSchemaComplexType);
+                xmlSchema.getSchemaTypes().add(
+                        new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                        xmlSchemaComplexType);
+                addContentToMethodSchemaType(xmlSchemaSequence,
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                        "array",
+                        true);
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace,
+                        xmlSchemaComplexType.getName()));
+
+            } else {
+                addContentToMethodSchemaType(sequence,
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                        name,
+                        true);
+
+            }
+            return;
+        } else {
+//            isArrayType = false;
+            type = (Class) genericType;
+            propertyName = type.getName();
+        }
+
+        if (isArrayType && "byte".equals(propertyName)) {
+            propertyName = "base64Binary";
+        }
+        if (isDataHandler(type)) {
+            propertyName = "base64Binary";
+        }
+        if (typeTable.isSimpleType(propertyName)) {
+
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+                processGenerateWrappedArrayTypes(xmlSchema, sequence, type, name, isArrayType, propertyName);
+
+
+            } else {
+                addElementToSequence(name,
+                        typeTable.getSimpleSchemaTypeName(propertyName),
+                        sequence,
+                        propertyName.equals("base64Binary"),
+                        isArrayType,
+                        type.isPrimitive());
+            }
+
+        } else {
+            if (isArrayType) {
+                generateSchema(type.getComponentType());
+            } else {
+                generateSchema(type);
+            }
+
+            if (isGenerateWrappedArrayTypes && isArrayType) {
+
+                processGenerateWrappedArrayTypes(xmlSchema, sequence, type, name, isArrayType, propertyName);
+
+
+            } else {
+                addElementToSequence(name,
+                        typeTable.getComplexSchemaType(propertyName),
+                        sequence,
+                        false,
+                        isArrayType,
+                        type.isPrimitive());
+            }
+
+            if (typeTable.getComplexSchemaType(propertyName) != null && !((NamespaceMap) xmlSchema.getNamespaceContext()).values().
+                    contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
+                XmlSchemaImport importElement = new XmlSchemaImport();
+                importElement.setNamespace(
+                        typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+                xmlSchema.getItems().add(importElement);
+                ((NamespaceMap) xmlSchema.getNamespaceContext()).
+                        put(generatePrefix(),
+                                typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+            }
+        }
+
+
+    }
+
+
+    private void processGenerateWrappedArrayTypes(XmlSchema xmlSchema,
+                                                  XmlSchemaSequence sequence,
+                                                  Class type,
+                                                  String name,
+                                                  boolean isArrayType,
+                                                  String propertyName) {
+        XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+        xmlSchemaElement.setName( name + "Wrapper");
+        xmlSchemaElement.setNillable(true);
+        sequence.getItems().add(xmlSchemaElement);
+
+        String complexTypeName =
+                typeTable.getSimpleSchemaTypeName(propertyName).getLocalPart() + "Wrapper";
+
+        XmlSchemaComplexType xmlSchemaComplexType ;
+        if (xmlSchema.getTypeByName(complexTypeName) == null) {
+            xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+            xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+            xmlSchemaComplexType.setName(complexTypeName);
+
+            xmlSchema.getItems().add(xmlSchemaComplexType);
+            xmlSchema.getSchemaTypes().add(
+                    new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                    xmlSchemaComplexType);
+            addElementToSequence("array",
+                typeTable.getSimpleSchemaTypeName(propertyName),
+                xmlSchemaSequence,
+                propertyName.equals("base64Binary"),
+                isArrayType,
+                type.isPrimitive());
+        } else {
+           xmlSchemaComplexType = (XmlSchemaComplexType) xmlSchema.getTypeByName(complexTypeName);
+        }
+
+        xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+        xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
     }
 
     private void addElementToSequence(String name,
@@ -792,7 +944,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         if (isArrayType) {
             if (type.getComponentType().isArray()) {
-                // this is a doble array element
+                // this is a double array element
                 Class simpleType = type.getComponentType();
                 String simpleTypeName = "";
                 while (simpleType.isArray()) {
@@ -801,50 +953,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 }
                 simpleTypeName += simpleType.getSimpleName();
 
-                XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
-                if (xmlSchema.getTypeByName(simpleTypeName) == null) {
-                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
-                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
-                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    generateSchemaForType(xmlSchemaSequence, type.getComponentType(), "array");
-                    xmlSchemaComplexType.setName(simpleTypeName);
-                    xmlSchema.getItems().add(xmlSchemaComplexType);
-                    xmlSchema.getSchemaTypes().add(
-                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
-                }
-
-                if (isGenerateWrappedArrayTypes) {
-                    XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
-                    xmlSchemaElement.setName(partName + "Wrapper");
-                    xmlSchemaElement.setNillable(true);
-                    sequence.getItems().add(xmlSchemaElement);
-
-                    String complexTypeName = simpleTypeName + "Wrapper";
-
-                    XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
-                    XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
-                    xmlSchemaComplexType.setParticle(xmlSchemaSequence);
-                    xmlSchemaComplexType.setName(complexTypeName);
-
-                    xmlSchema.getItems().add(xmlSchemaComplexType);
-                    xmlSchema.getSchemaTypes().add(
-                            new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
-                            xmlSchemaComplexType);
-                    addContentToMethodSchemaType(xmlSchemaSequence,
-                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
-                            "array",
-                            true);
-
-                    xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
-                    xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
-                    return new QName(xmlSchema.getTargetNamespace(), complexTypeName);
-                } else {
-                    addContentToMethodSchemaType(sequence,
-                            new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
-                            partName,
-                            true);
-                    return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
-                }
+                return processParameterArrayTypes(sequence, type, partName, simpleTypeName);
 
 
             } else {
@@ -868,6 +977,101 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isDataHandler(type)) {
             classTypeName = "base64Binary";
         }
+
+        return generateSchemaTypeforNameCommon(sequence, partName, isArrayType, type, classTypeName);
+    }
+
+
+    private QName generateSchemaForType(XmlSchemaSequence sequence, Type genericType, String partName, boolean isArrayType)
+            throws Exception {
+
+
+        Class type;
+        if (genericType instanceof GenericArrayType) {
+            // this is a double array element
+            Class simpleType = (Class) ((GenericArrayType) genericType).getGenericComponentType();
+            String simpleTypeName = "";
+            while (simpleType.isArray()) {
+                simpleTypeName += "ArrayOf";
+                simpleType = simpleType.getComponentType();
+            }
+            simpleTypeName += simpleType.getSimpleName();
+
+            XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+            if (xmlSchema.getTypeByName(simpleTypeName) == null) {
+                XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                generateSchemaForType(xmlSchemaSequence, simpleType, "array",true);
+                xmlSchemaComplexType.setName(simpleTypeName);
+                xmlSchema.getItems().add(xmlSchemaComplexType);
+                xmlSchema.getSchemaTypes().add(
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
+            }
+
+            if (isGenerateWrappedArrayTypes) {
+                XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+                xmlSchemaElement.setName(partName + "Wrapper");
+                xmlSchemaElement.setNillable(true);
+                sequence.getItems().add(xmlSchemaElement);
+
+                String complexTypeName = simpleTypeName + "Wrapper";
+
+                XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+                XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+                xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+                xmlSchemaComplexType.setName(complexTypeName);
+
+                xmlSchema.getItems().add(xmlSchemaComplexType);
+                xmlSchema.getSchemaTypes().add(
+                        new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                        xmlSchemaComplexType);
+                addContentToMethodSchemaType(xmlSchemaSequence,
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                        "array",
+                        true);
+
+                xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+                xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+                return new QName(xmlSchema.getTargetNamespace(), complexTypeName);
+            } else {
+                addContentToMethodSchemaType(sequence,
+                        new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                        partName,
+                        true);
+                return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
+            }
+
+
+        } else{
+            type = (Class) genericType;
+        }
+        if (AxisFault.class.getName().equals(type)) {
+            return null;
+        }
+        String classTypeName;
+        if (type == null) {
+            classTypeName = "java.lang.Object";
+        } else {
+            classTypeName = type.getName();
+        }
+        if (isArrayType && "byte".equals(classTypeName)) {
+            classTypeName = "base64Binary";
+            isArrayType = false;
+        }
+
+        if (isDataHandler(type)) {
+            classTypeName = "base64Binary";
+        }
+
+        return generateSchemaTypeforNameCommon(sequence, partName, isArrayType, type, classTypeName);
+    }
+
+    private QName generateSchemaTypeforNameCommon(XmlSchemaSequence sequence,
+                                                  String partName,
+                                                  boolean isArrayType,
+                                                  Class type,
+                                                  String classTypeName) throws Exception {
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
         if (schemaTypeName == null) {
             schemaTypeName = generateSchema(type);
@@ -959,6 +1163,53 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
         return schemaTypeName;
+    }
+
+    private QName processParameterArrayTypes(XmlSchemaSequence sequence, Class type, String partName, String simpleTypeName) throws Exception {
+        XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
+        if (xmlSchema.getTypeByName(simpleTypeName) == null) {
+            XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+            xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+            generateSchemaForType(xmlSchemaSequence, type.getComponentType(), "array");
+            xmlSchemaComplexType.setName(simpleTypeName);
+            xmlSchema.getItems().add(xmlSchemaComplexType);
+            xmlSchema.getSchemaTypes().add(
+                    new QName(xmlSchema.getTargetNamespace(), simpleTypeName), xmlSchemaComplexType);
+        }
+
+        if (isGenerateWrappedArrayTypes) {
+            XmlSchemaElement xmlSchemaElement = new XmlSchemaElement();
+            xmlSchemaElement.setName(partName + "Wrapper");
+            xmlSchemaElement.setNillable(true);
+            sequence.getItems().add(xmlSchemaElement);
+
+            String complexTypeName = simpleTypeName + "Wrapper";
+
+            XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence xmlSchemaSequence = new XmlSchemaSequence();
+            xmlSchemaComplexType.setParticle(xmlSchemaSequence);
+            xmlSchemaComplexType.setName(complexTypeName);
+
+            xmlSchema.getItems().add(xmlSchemaComplexType);
+            xmlSchema.getSchemaTypes().add(
+                    new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()),
+                    xmlSchemaComplexType);
+            addContentToMethodSchemaType(xmlSchemaSequence,
+                    new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                    "array",
+                    true);
+
+            xmlSchemaElement.setSchemaType(xmlSchemaComplexType);
+            xmlSchemaElement.setSchemaTypeName(new QName(schemaTargetNameSpace, xmlSchemaComplexType.getName()));
+            return new QName(xmlSchema.getTargetNamespace(), complexTypeName);
+        } else {
+            addContentToMethodSchemaType(sequence,
+                    new QName(xmlSchema.getTargetNamespace(), simpleTypeName),
+                    partName,
+                    true);
+            return new QName(xmlSchema.getTargetNamespace(), simpleTypeName);
+        }
     }
 
     protected boolean isDataHandler(Class clazz) {

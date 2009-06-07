@@ -23,7 +23,9 @@ import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 import com.sun.xml.bind.v2.runtime.JaxBeanInfo;
 import org.apache.axis2.description.java2wsdl.DefaultSchemaGenerator;
 import org.apache.axis2.util.Loader;
-import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.axis2.deployment.util.BeanExcludeInfo;
+import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,6 +39,9 @@ import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,6 +50,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 
 public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
     public JaxbSchemaGenerator(ClassLoader loader, String className,
@@ -234,6 +242,123 @@ public class JaxbSchemaGenerator extends DefaultSchemaGenerator {
             System.out.println(">>>> :" + cls);
         }
         return JAXBContext.newInstance(classes.toArray(new Class[classes.size()]), map);
+    }
+
+    protected QName generateSchema(Class javaType) throws Exception {
+        String name = getClassName(javaType);
+        QName schemaTypeName = typeTable.getComplexSchemaType(name);
+        if (schemaTypeName == null) {
+            String simpleName = javaType.getSimpleName();
+
+            String packageName = getQualifiedName(javaType.getPackage());
+            String targetNameSpace = resolveSchemaNamespace(packageName);
+
+            XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
+            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
+            if (targetNamespacePrefix == null) {
+                targetNamespacePrefix = generatePrefix();
+                targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix);
+            }
+
+            XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
+            XmlSchemaSequence sequence = new XmlSchemaSequence();
+            XmlSchemaComplexContentExtension complexExtension =
+                    new XmlSchemaComplexContentExtension();
+
+            XmlSchemaElement eltOuter = new XmlSchemaElement();
+            schemaTypeName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
+            eltOuter.setName(simpleName);
+            eltOuter.setQName(schemaTypeName);
+
+            Class sup = javaType.getSuperclass();
+            if ((sup != null) && !("java.lang.Object".compareTo(sup.getName()) == 0) &&
+                    !(getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") > 0)
+                    && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0))
+            {
+                String superClassName = sup.getName();
+                String superclassname = sup.getSimpleName();
+                String tgtNamespace;
+                String tgtNamespacepfx;
+                QName qName = typeTable.getSimpleSchemaTypeName(superClassName);
+                if (qName != null) {
+                    tgtNamespace = qName.getNamespaceURI();
+                    tgtNamespacepfx = qName.getPrefix();
+                } else {
+                    tgtNamespace = resolveSchemaNamespace(getQualifiedName(sup.getPackage()));
+                    tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
+                    QName superClassQname = generateSchema(sup);
+                    if (superClassQname != null) {
+                        tgtNamespacepfx = superClassQname.getPrefix();
+                        tgtNamespace = superClassQname.getNamespaceURI();
+                    }
+                }
+                if (tgtNamespacepfx == null) {
+                    tgtNamespacepfx = generatePrefix();
+                    targetNamespacePrefixMap.put(tgtNamespace, tgtNamespacepfx);
+                }
+                //if the parent class package name is differ from the child
+                if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
+                        contains(tgtNamespace)) {
+                    XmlSchemaImport importElement = new XmlSchemaImport();
+                    importElement.setNamespace(tgtNamespace);
+                    xmlSchema.getItems().add(importElement);
+                    ((NamespaceMap) xmlSchema.getNamespaceContext()).
+                            put(generatePrefix(), tgtNamespace);
+                }
+
+                QName basetype = new QName(tgtNamespace, superclassname, tgtNamespacepfx);
+                complexExtension.setBaseTypeName(basetype);
+                complexExtension.setParticle(sequence);
+                XmlSchemaComplexContent contentModel = new XmlSchemaComplexContent();
+                contentModel.setContent(complexExtension);
+                complexType.setContentModel(contentModel);
+
+            } else {
+                complexType.setParticle(sequence);
+            }
+
+            complexType.setName(simpleName);
+
+//            xmlSchema.getItems().add(eltOuter);
+            xmlSchema.getElements().add(schemaTypeName, eltOuter);
+            eltOuter.setSchemaTypeName(complexType.getQName());
+
+            xmlSchema.getItems().add(complexType);
+            xmlSchema.getSchemaTypes().add(schemaTypeName, complexType);
+
+            // adding this type to the table
+            typeTable.addComplexSchema(name, eltOuter.getQName());
+            // adding this type's package to the table, to support inheritance.
+            typeTable.addComplexSchema(getQualifiedName(javaType.getPackage()), eltOuter.getQName());
+
+            BeanExcludeInfo beanExcludeInfo = null;
+            if (service.getExcludeInfo() != null) {
+                beanExcludeInfo = service.getExcludeInfo().getBeanExcludeInfoForClass(getClassName(javaType));
+            }
+
+            // we need to get properties only for this bean. hence ignore the super
+            // class properties
+            BeanInfo beanInfo = Introspector.getBeanInfo(javaType, javaType.getSuperclass());
+            PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
+            PropertyDescriptor property ;
+            String propertyName ;
+
+            for (int i = 0; i < properties.length; i++) {
+                property = properties[i];
+                propertyName = property.getName();
+                if (!property.getName().equals("class") && (property.getPropertyType() != null)) {
+                    if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
+
+                        generateSchemaforFieldsandProperties(xmlSchema,
+                                sequence,
+                                property.getPropertyType(),
+                                propertyName,
+                                property.getPropertyType().isArray());
+                    }
+                }
+            }
+        }
+        return schemaTypeName;
     }
 
 }
