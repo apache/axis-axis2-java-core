@@ -70,7 +70,7 @@ public interface DeploymentConstants {
     String TAG_TRANSPORT = "transport";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
-    String TAG_CLUSTER = "cluster";
+    String TAG_CLUSTER = "clustering";
     String TAG_TRANSACTION = "transaction";
     String TAG_TRANSACTION_CONFIGURATION_CLASS = "transactionConfigurationClass";
     String TAG_TIMEOUT = "timeout";
