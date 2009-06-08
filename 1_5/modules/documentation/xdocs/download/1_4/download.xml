@@ -24,7 +24,7 @@
 <meta name="generator" content=
 "HTML Tidy for Windows (vers 14 June 2007), see www.w3.org" />
 <meta http-equiv="content-type" content="" />
-<title>Axis2 1.4 Release</title>
+<title>Axis2 1.5 Release</title>
 </head>
 <body>
 <!--Google Anayitcs tracking code-->
@@ -36,7 +36,7 @@ _uacct = "UA-1954378-3";
 urchinTracker();
 //]]>
 </script><!--End of Google Anayitcs tracking code-->
-<h2>Axis2 1.4 Release</h2>
+<h2>Axis2 1.5 Release</h2>
 <div>
 <table border="1" cellpadding="1">
 <tbody>
@@ -56,13 +56,13 @@ distribution will contain addressing.mar and soapmonitor.mar. But
 the other modules that are being developed within Axis2 will not be
 included here, and need to be <a href=
 "../../modules/index.html">downloaded</a> separately.</td>
-<td><a href="[preferred]/ws/axis2/1_4/axis2-1.4-bin.zip" title=
-"[preferred]/ws/axis2/1_4/axis2-1.4-bin.zip" onClick=
-"javascript:urchinTracker ('/downloads/axis2-1.4-bin.zip');">zip</a>
-<a href="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.md5"
-title="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.md5">MD5</a>
-<a href="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.asc"
-title="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-bin.zip.asc">PGP</a></td>
+<td><a href="[preferred]/ws/axis2/1_5/axis2-1.5-bin.zip" title=
+"[preferred]/ws/axis2/1_5/axis2-1.5-bin.zip" onClick=
+"javascript:urchinTracker ('/downloads/axis2-1.5-bin.zip');">zip</a>
+<a href="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-bin.zip.md5"
+title="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-bin.zip.md5">MD5</a>
+<a href="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-bin.zip.asc"
+title="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-bin.zip.asc">PGP</a></td>
 </tr>
 <tr>
 <td><a name="src" id="src"></a> <strong>Source
@@ -70,48 +70,48 @@ Distribution</strong></td>
 <td>This will contain the sources of Axis2 standard distribution.
 One can generate a binary distribution from this by typing
 <span class="style1">$maven dist-bin</span> (<a href=
-"http://ws.apache.org/axis2/1_4/installationguide.html#env-src">Set
+"http://ws.apache.org/axis2/1_5/installationguide.html#env-src">Set
 up Axis2 environment</a> before running this command). Useful for
 advanced users.</td>
-<td><a href="[preferred]/ws/axis2/1_4/axis2-1.4-src.zip" title=
-"[preferred]/ws/axis2/1_4/axis2-1.4-src.zip" onClick=
-"javascript:urchinTracker ('/downloads/axis2-1.4-src.zip');">zip</a>
+<td><a href="[preferred]/ws/axis2/1_5/axis2-1.5-src.zip" title=
+"[preferred]/ws/axis2/1_5/axis2-1.5-src.zip" onClick=
+"javascript:urchinTracker ('/downloads/axis2-1.5-src.zip');">zip</a>
 <a href=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip.md5"
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-src.zip.md5"
 title=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip.md5">MD5</a>
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-src.zip.md5">MD5</a>
 <a href=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip.asc"
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-src.zip.asc"
 title=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-src.zip.asc">PGP</a></td>
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-src.zip.asc">PGP</a></td>
 </tr>
 <tr>
 <td><a name="war" id="war"></a><strong>WAR (Web Archive)
 Distribution</strong></td>
 <td>This will be the web application of Axis2 which can be deployed
 in most of the servlet containers.</td>
-<td><a href="[preferred]/ws/axis2/1_4/axis2-1.4-war.zip" title=
-"[preferred]/ws/axis2/1_4/axis2-1.4-war.zip" onClick=
-"javascript:urchinTracker ('/downloads/axis2-1.4-war.zip');">zip</a>
-<a href="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.md5"
-title="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.md5">MD5</a>
-<a href="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.asc"
-title="http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-war.zip.asc">PGP</a></td>
+<td><a href="[preferred]/ws/axis2/1_5/axis2-1.5-war.zip" title=
+"[preferred]/ws/axis2/1_5/axis2-1.5-war.zip" onClick=
+"javascript:urchinTracker ('/downloads/axis2-1.5-war.zip');">zip</a>
+<a href="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-war.zip.md5"
+title="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-war.zip.md5">MD5</a>
+<a href="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-war.zip.asc"
+title="http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-war.zip.asc">PGP</a></td>
 </tr>
 <tr>
 <td><strong>Documents Distribution</strong></td>
 <td>This will contain all the documentation in one package.</td>
-<td><a href="[preferred]/ws/axis2/1_4/axis2-1.4-docs.zip" title=
-"[preferred]/ws/axis2/1_4/axis2-1.4-docs.zip" onClick=
-"javascript:urchinTracker ('/downloads/axis2-1.4-docs.zip');">zip</a>
+<td><a href="[preferred]/ws/axis2/1_5/axis2-1.5-docs.zip" title=
+"[preferred]/ws/axis2/1_5/axis2-1.5-docs.zip" onClick=
+"javascript:urchinTracker ('/downloads/axis2-1.5-docs.zip');">zip</a>
 <a href=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-docs.zip.md5"
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-docs.zip.md5"
 title=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-docs.zip.md5">MD5</a>
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-docs.zip.md5">MD5</a>
 <a href=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-docs.zip.asc"
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-docs.zip.asc"
 title=
-"http://www.apache.org/dist/ws/axis2/1_4/axis2-1.4-docs.zip.asc">PGP</a></td>
+"http://www.apache.org/dist/ws/axis2/1_5/axis2-1.5-docs.zip.asc">PGP</a></td>
 </tr>
 </tbody>
 </table>
