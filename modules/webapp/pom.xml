@@ -1356,6 +1356,30 @@
         <finalName>axis2-${version}</finalName>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo.jspc</groupId>
+                <artifactId>jspc-maven-plugin</artifactId>
+                <version>2.0-alpha-3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- We only want to validate the JSPs, but not to include the compiled
+                         versions in the project: -->
+                    <includeInProject>false</includeInProject>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo.jspc</groupId>
+                        <artifactId>jspc-compiler-tomcat6</artifactId>
+                        <version>2.0-alpha-3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven.war.version}</version>
