@@ -204,7 +204,7 @@ public class SimpleTypeMapper {
     }
 
     public static boolean isDataHandler(Class obj) {
-       return obj.isAssignableFrom(DataHandler.class);
+       return obj.isAssignableFrom(DataHandler.class) && !obj.equals(Object.class);
     }
 
     public static boolean isHashSet(Class obj) {

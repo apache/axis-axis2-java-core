@@ -105,7 +105,6 @@
                     <skip>false</skip>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
-                        <exclude>**/*Util*.java</exclude>
                         <exclude>**/*PhaseResolvingTest.java</exclude>
                     </excludes>
                     <includes>
