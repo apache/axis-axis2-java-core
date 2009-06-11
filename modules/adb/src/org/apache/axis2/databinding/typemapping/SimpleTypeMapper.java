@@ -287,9 +287,8 @@ public class SimpleTypeMapper {
                 return obj.toString();
             }
         } else if (obj instanceof Calendar) {
-            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return zulu.format(((Calendar)obj).getTime());
+            Calendar calendar = (Calendar) obj;
+            return ConverterUtil.convertToString(calendar);
         } else if (obj instanceof Date) {
             SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
 
