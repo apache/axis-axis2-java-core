@@ -25,6 +25,7 @@
     <artifactId>java_first_jaxws</artifactId>
     <name>JAXWS - Starting from Java Example</name>
     <version>1.1</version>
+    <packaging>war</packaging>
     <inceptionYear>2004</inceptionYear>
 
     <dependencies>
@@ -214,6 +215,26 @@
                 <configuration>
                     <warSourceDirectory>${basedir}/src/webapp</warSourceDirectory>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- Also build the JAR during the package phase. The JAR is required
+                     when deploying on axis2server. -->
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- This allows to run the sample on an embedded servlet container
+                     using the following command: mvn cargo:start -->
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.0</version>
             </plugin>
         </plugins>
         <sourceDirectory>src/main</sourceDirectory>
