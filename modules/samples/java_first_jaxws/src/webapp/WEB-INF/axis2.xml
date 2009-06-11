@@ -212,8 +212,8 @@
     <transportSender name="tcp"
                      class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
     -->
-    <transportSender name="local"
-                     class="org.apache.axis2.transport.local.LocalTransportSender"/>
+    <!-- transportSender name="local"
+                     class="org.apache.axis2.transport.local.LocalTransportSender"/ -->
     <transportSender name="http"
                      class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
         <parameter name="PROTOCOL">HTTP/1.1</parameter>
