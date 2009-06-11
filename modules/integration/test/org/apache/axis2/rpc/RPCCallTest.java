@@ -26,6 +26,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.integration.RPCLocalTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
@@ -316,14 +317,13 @@ public class RPCCallTest extends RPCLocalTestCase {
     }
 
     public void testCalender() throws AxisFault {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         RPCServiceClient sender = getRPCClient("EchoXMLService", "echoCalander");
 
         ArrayList args = new ArrayList();
-        Date date = Calendar.getInstance().getTime();
-        args.add(zulu.format(date));
+        Calendar calendar = Calendar.getInstance();
+        args.add(ConverterUtil.convertToString(calendar));
         OMElement response = sender.invokeBlocking(new QName("http://rpc.axis2.apache.org", "echoCalander", "req"), args.toArray());
-        assertEquals(response.getFirstElement().getText(), zulu.format(date));
+        assertEquals(response.getFirstElement().getText(), ConverterUtil.convertToString(calendar));
     }
 
 
