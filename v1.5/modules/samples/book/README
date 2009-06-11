@@ -1,0 +1,9 @@
+This example shows how to use Axis2 in a servlet container. You must 
+have Maven 2.x installed to build this example.  To build type:
+
+$ mvn install war:war
+
+Rename the resultant war as your_web_app.war and drop it into any servlet engine. 
+The WSDL file for the service should be viewable at:
+
+http://yourhost:port/your_web_app/services/BookService?wsdl
