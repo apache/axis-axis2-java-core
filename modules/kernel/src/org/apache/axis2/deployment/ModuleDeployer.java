@@ -104,15 +104,13 @@ public class ModuleDeployer implements Deployer {
             e.printStackTrace(error_ptintWriter);
             moduleStatus = "Error:\n" + errorWriter.toString();
         } catch (Throwable t) {
-            if (log.isInfoEnabled()) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                t.printStackTrace(pw);
-                log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                                              deploymentFileData.getName(),
-                                              t.getMessage()),
-                          t);
-            }
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
+                    deploymentFileData.getName(),
+                    t.getMessage()),
+                    t);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             t.printStackTrace(error_ptintWriter);
             moduleStatus = "Error:\n" + errorWriter.toString();
