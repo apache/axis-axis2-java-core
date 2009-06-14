@@ -173,27 +173,21 @@ public class ModuleBuilder extends DescriptionBuilder {
                 processPolicyRefElements(policyRefElements, module.getPolicySubject());
             }
 
-            // process INFLOW
-            OMElement inFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN));
-            if (inFlow != null) {
-                module.setInFlow(processFlow(inFlow, module));
-            }
-
-            OMElement outFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT));
-            if (outFlow != null) {
-                module.setOutFlow(processFlow(outFlow, module));
-            }
-
-            OMElement inFaultFlow =
-                    moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
-            if (inFaultFlow != null) {
-                module.setFaultInFlow(processFlow(inFaultFlow, module));
-            }
-
-            OMElement outFaultFlow =
-                    moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
-            if (outFaultFlow != null) {
-                module.setFaultOutFlow(processFlow(outFaultFlow, module));
+            // process flows (case-insensitive)
+            
+            Iterator flows = moduleElement.getChildElements();
+            while (flows.hasNext()) {
+                OMElement flowElement = (OMElement)flows.next();
+                final String flowName = flowElement.getLocalName();
+                if (flowName.compareToIgnoreCase(TAG_FLOW_IN) == 0) {
+                    module.setInFlow(processFlow(flowElement, module));
+                } else if (flowName.compareToIgnoreCase(TAG_FLOW_OUT) == 0) {
+                    module.setOutFlow(processFlow(flowElement, module));
+                } else if (flowName.compareToIgnoreCase(TAG_FLOW_IN_FAULT) == 0) {
+                    module.setFaultInFlow(processFlow(flowElement, module));
+                } else if (flowName.compareToIgnoreCase(TAG_FLOW_OUT_FAULT) == 0) {
+                    module.setFaultOutFlow(processFlow(flowElement, module));
+                }
             }
 
             OMElement supportedPolicyNamespaces =
