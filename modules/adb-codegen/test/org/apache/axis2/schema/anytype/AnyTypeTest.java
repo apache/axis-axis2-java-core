@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 
 
@@ -672,6 +673,18 @@ public class AnyTypeTest extends TestCase {
         } catch (Exception e) {
             fail();
         }
+    }
+    
+    // Regression test for AXIS2-4273
+    public void testTestMixedWithNilledAnyType() throws Exception {
+        TestMixed test = TestMixed.Factory.parse(StAXUtils.createXMLStreamReader(new StringReader(
+                "<TestMixed xmlns='http://adb.test/anyType' " +
+                "           xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" +
+                "  <param1 xsi:nil='true'/>" +
+                "  <param2>test</param2>" +
+                "</TestMixed>")));
+        assertNull(test.getParam1());
+        assertEquals("test", test.getParam2());
     }
 }
 

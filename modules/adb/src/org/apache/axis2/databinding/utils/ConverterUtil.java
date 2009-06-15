@@ -1512,6 +1512,7 @@ public class ConverterUtil {
         String nillableValue = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "nil");
         if ("true".equals(nillableValue) || "1".equals(nillableValue)){
             returnObject = null;
+            xmlStreamReader.next();
         } else {
             String attributeType = xmlStreamReader.getAttributeValue(Constants.XSI_NAMESPACE, "type");
             if (attributeType != null) {
