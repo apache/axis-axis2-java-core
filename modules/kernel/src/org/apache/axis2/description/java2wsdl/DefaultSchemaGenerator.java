@@ -254,6 +254,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
         classModel= JAXRSUtils.getClassModel(serviceClass);
         methods = processMethods(serviceClass.getDeclaredMethods());
+        
+        for (String extraClassName : getExtraClasses()) {
+            Class<?> extraClass = Class.forName(extraClassName, true, classLoader);
+            if (typeTable.getSimpleSchemaTypeName(extraClassName) == null) {
+                generateSchema(extraClass);
+            }
+        }
+        
         return schemaMap.values();
     }
 
