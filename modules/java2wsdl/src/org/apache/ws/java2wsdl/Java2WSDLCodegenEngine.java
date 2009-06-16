@@ -38,7 +38,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
     public static final String WSDL_FILENAME_SUFFIX = ".wsdl";
     public static final String COMMA = ",";
 
-    public Java2WSDLCodegenEngine(Map optionsMap) throws Exception {
+    public Java2WSDLCodegenEngine(Map<String,Java2WSDLCommandLineOption> optionsMap) throws Exception {
         //create a new  Java2WSDLBuilder and populate it
         Java2WSDLCommandLineOption option = loadOption(Java2WSDLConstants.CLASSNAME_OPTION, Java2WSDLConstants.CLASSNAME_OPTION_LONG, optionsMap);
         String className = option == null ? null : option.getOptionValue();
@@ -59,7 +59,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         java2WsdlBuilder.generateWSDL();
     }
 
-    private FileOutputStream resolveOutputStream(String className, Map optionsMap) throws Exception
+    private FileOutputStream resolveOutputStream(String className, Map<String,Java2WSDLCommandLineOption> optionsMap) throws Exception
     {
         Java2WSDLCommandLineOption option = loadOption(Java2WSDLConstants.OUTPUT_LOCATION_OPTION,
                                                        Java2WSDLConstants.OUTPUT_LOCATION_OPTION_LONG, optionsMap);
@@ -96,7 +96,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         return out;
     }
     
-    private ClassLoader resolveClassLoader(Map optionsMap) throws Exception
+    private ClassLoader resolveClassLoader(Map<String,Java2WSDLCommandLineOption> optionsMap) throws Exception
     {
         // if the class path is present, create a URL class loader with those
         //class path entries present. if not just take the  TCCL
@@ -106,9 +106,9 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         ClassLoader classLoader;
 
         if (option != null) {
-            ArrayList optionValues = option.getOptionValues();
+            ArrayList<String> optionValues = option.getOptionValues();
             URL[] urls = new URL[optionValues.size()];
-            String[] classPathEntries = (String[]) optionValues.toArray(new String[optionValues.size()]);
+            String[] classPathEntries = optionValues.toArray(new String[optionValues.size()]);
 
             try {
                 for (int i = 0; i < classPathEntries.length; i++) {
@@ -136,7 +136,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         return classLoader;
     }
 
-    private void configureJava2WSDLBuilder(Map optionsMap, String className) throws Exception
+    private void configureJava2WSDLBuilder(Map<String,Java2WSDLCommandLineOption> optionsMap, String className) throws Exception
     {
         //set the other parameters to the builder
         Java2WSDLCommandLineOption option = loadOption(Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION,
@@ -187,7 +187,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         
         option = loadOption(Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
                             Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION_LONG, optionsMap);
-        java2WsdlBuilder.setExtraClasses(option == null ? new ArrayList() : option.getOptionValues());
+        java2WsdlBuilder.setExtraClasses(option == null ? new ArrayList<String>() : option.getOptionValues());
         
         option = loadOption(Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
                             Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION_LONG, optionsMap);
@@ -238,17 +238,19 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
     }
     
-    private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption, Map options) {
+    private Java2WSDLCommandLineOption loadOption(String shortOption, String longOption,
+                Map<String,Java2WSDLCommandLineOption> options) {
+        
         //short option gets precedence
         Java2WSDLCommandLineOption option = null;
         if (longOption != null) {
-            option = (Java2WSDLCommandLineOption) options.get(longOption);
+            option = options.get(longOption);
             if (option != null) {
                 return option;
             }
         }
         if (shortOption != null) {
-            option = (Java2WSDLCommandLineOption) options.get(shortOption);
+            option = options.get(shortOption);
         }
 
         return option;
@@ -261,16 +263,16 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         
     }
     
-    protected Map loadJavaPkg2NamespaceMap(Java2WSDLCommandLineOption option) 
+    protected Map<String,String> loadJavaPkg2NamespaceMap(Java2WSDLCommandLineOption option) 
     { 
-        Map pkg2nsMap = new Hashtable();
+        Map<String,String> pkg2nsMap = new Hashtable<String,String>();
         if (option != null) 
         {
-            ArrayList optionValues = option.getOptionValues();
+            ArrayList<String> optionValues = option.getOptionValues();
             String anOptionValue ;
             for ( int count = 0 ; count < optionValues.size() ; ++count )
             {
-                anOptionValue = ((String)optionValues.get(count)).trim();
+                anOptionValue = optionValues.get(count).trim();
                 
                 //an option value will be of the form [java package, namespace]
                 //hence we take the two substrings starting after '[' and upto ',' and

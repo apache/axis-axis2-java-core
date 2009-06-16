@@ -41,7 +41,6 @@ import org.apache.axis2.util.XMLPrettyPrinter;
 
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,10 +66,10 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 	private String style = Java2WSDLConstants.DOCUMENT;
 	private String use = Java2WSDLConstants.LITERAL;
 	private String locationUri;
-	private ArrayList extraClasses;
+	private ArrayList<String> extraClasses;
 
 	private String nsGenClassName = null;
-	private Map pkg2nsMap = null;
+	private Map<String,String> pkg2nsMap = null;
 	private boolean pretty = true;
 	private String wsdlVersion = WSDL_VERSION_1;
 	private String schemaGenClassName = null;
@@ -80,7 +79,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
     // location of the class name to package mapping file
     // File is simple file with qualifiedClassName:SchemaQName
     private String mappingFileLocation;
-    private HashMap messageReceivers = null;
+    private HashMap<String,MessageReceiver> messageReceivers = null;
 
     public Java2WSDLBuilder() {
 		try {
@@ -111,7 +110,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 	}
 
     public Java2WSDLBuilder(OutputStream out, String className,
-                            ClassLoader classLoader, HashMap messageReceivers) {
+                            ClassLoader classLoader, HashMap<String,MessageReceiver> messageReceivers) {
         this(out, className, classLoader);
         this.messageReceivers = messageReceivers;
     }
@@ -213,7 +212,7 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 				className, getSchemaTargetNamespace(),
 				getSchemaTargetNamespacePrefix());
 
-		ArrayList excludedOperation = new ArrayList();
+		ArrayList<String> excludedOperation = new ArrayList<String>();
 		Utils.addExcludeMethods(excludedOperation);
 		schemaGenerator.setExcludeMethods(excludedOperation);
 		schemaGenerator.setAttrFormDefault(getAttrFormDefault());
@@ -231,13 +230,13 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		}
 
         if(messageReceivers == null) {
-            messageReceivers = new HashMap();
-            Class inOnlyMessageReceiver = Loader
+            messageReceivers = new HashMap<String,MessageReceiver>();
+            Class<?> inOnlyMessageReceiver = Loader
                     .loadClass("org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
             MessageReceiver messageReceiver = (MessageReceiver) inOnlyMessageReceiver
                     .newInstance();
             messageReceivers.put(WSDL2Constants.MEP_URI_IN_ONLY, messageReceiver);
-            Class inoutMessageReceiver = Loader
+            Class<?> inoutMessageReceiver = Loader
                     .loadClass("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
             MessageReceiver inOutmessageReceiver = (MessageReceiver) inoutMessageReceiver
                     .newInstance();
@@ -309,11 +308,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		this.elementFormDefault = elementFormDefault;
 	}
 
-	public ArrayList getExtraClasses() {
+	public ArrayList<String> getExtraClasses() {
 		return extraClasses;
 	}
 
-	public void setExtraClasses(ArrayList extraClasses) {
+	public void setExtraClasses(ArrayList<String> extraClasses) {
 		this.extraClasses = extraClasses;
 	}
 
@@ -333,11 +332,11 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 		this.schemaGenClassName = schemaGenClassName;
 	}
 
-	public Map getPkg2nsMap() {
+	public Map<String,String> getPkg2nsMap() {
 		return pkg2nsMap;
 	}
 
-	public void setPkg2nsMap(Map pkg2nsMap) {
+	public void setPkg2nsMap(Map<String,String> pkg2nsMap) {
 		this.pkg2nsMap = pkg2nsMap;
 	}
 
@@ -373,8 +372,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
 
 		} else {
 			try {
-				Class clazz = Class.forName(this.schemaGenClassName);
-				Constructor constructor = clazz.getConstructor(new Class[] {
+				Class<?> clazz = Class.forName(this.schemaGenClassName);
+				Constructor<?> constructor = clazz.getConstructor(new Class[] {
 						ClassLoader.class, String.class, String.class,
 						String.class });
 				schemaGen = (SchemaGenerator) constructor

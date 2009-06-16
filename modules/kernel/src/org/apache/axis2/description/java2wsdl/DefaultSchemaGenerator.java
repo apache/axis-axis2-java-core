@@ -87,9 +87,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected String elementFormDefault = null;
 
-    protected ArrayList<Method> excludeMethods = new ArrayList<Method>();
+    protected ArrayList<String> excludeMethods = new ArrayList<String>();
 
-    protected ArrayList<Class<?>> extraClasses = null;
+    protected ArrayList<String> extraClasses = null;
 
     protected boolean useWSDLTypesNamespace = false;
 
@@ -1329,8 +1329,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return NAME_SPACE_PREFIX + prefixCount++;
     }
 
-    public void setExcludeMethods(ArrayList<Method> excludeMethods) {
-        if (excludeMethods == null) excludeMethods = new ArrayList<Method>();
+    public void setExcludeMethods(ArrayList<String> excludeMethods) {
+        if (excludeMethods == null) excludeMethods = new ArrayList<String>();
         this.excludeMethods = excludeMethods;
     }
 
@@ -1387,14 +1387,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public ArrayList<Class<?>> getExtraClasses() {
+    public ArrayList<String> getExtraClasses() {
         if (extraClasses == null) {
-            extraClasses = new ArrayList<Class<?>>();
+            extraClasses = new ArrayList<String>();
         }
         return extraClasses;
     }
 
-    public void setExtraClasses(ArrayList<Class<?>> extraClasses) {
+    public void setExtraClasses(ArrayList<String> extraClasses) {
         this.extraClasses = extraClasses;
     }
 

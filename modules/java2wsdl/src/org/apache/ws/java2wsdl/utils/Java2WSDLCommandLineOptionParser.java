@@ -23,7 +23,6 @@ import org.apache.axis2.description.java2wsdl.Java2WSDLConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +31,9 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
     private static int NEW_OPTION = 1;
     private static int SUB_PARAM_OF_OPTION = 2;
 
-    private Map commandLineOptions;
+    private Map<String,Java2WSDLCommandLineOption> commandLineOptions;
 
-    public Java2WSDLCommandLineOptionParser(Map commandLineOptions) {
+    public Java2WSDLCommandLineOptionParser(Map<String,Java2WSDLCommandLineOption> commandLineOptions) {
         this.commandLineOptions = commandLineOptions;
     }
 
@@ -49,8 +48,9 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
      * @param args
      * @return CommandLineOption List
      */
-    private Map parse(String[] args) {
-        Map commandLineOptions = new HashMap();
+    private Map<String,Java2WSDLCommandLineOption> parse(String[] args) {
+        Map<String,Java2WSDLCommandLineOption> commandLineOptions
+                = new HashMap<String,Java2WSDLCommandLineOption>();
 
         if (0 == args.length)
             return commandLineOptions;
@@ -60,17 +60,17 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
         //State 2 means earlier one was a sub param of a -option
 
         int state = STARTED;
-        ArrayList optionBundle = null;
+        ArrayList<String> optionBundle = null;
         String optionType = null;
         Java2WSDLCommandLineOption commandLineOption;
 
-        for (int i = 0; i < args.length; i++) {
+        for (String arg : args) {
 
-            if (args[i].startsWith("-")) {
+            if (arg.startsWith("-")) {
                 if (STARTED == state) {
                     // fresh one
                     state = NEW_OPTION;
-                    optionType = args[i];
+                    optionType = arg;
                 } else if (SUB_PARAM_OF_OPTION == state || NEW_OPTION == state) {
                     // new one but old one should be saved
                     commandLineOption =
@@ -78,7 +78,7 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
                     commandLineOptions.put(commandLineOption.getOptionType(),
                             commandLineOption);
                     state = NEW_OPTION;
-                    optionType = args[i];
+                    optionType = arg;
                     optionBundle = null;
                 }
             } else {
@@ -92,18 +92,18 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
                     return commandLineOptions;
 
                 } else if (NEW_OPTION == state) {
-                    Java2WSDLCommandLineOption old = (Java2WSDLCommandLineOption)commandLineOptions.get(getOptionType(optionType));
+                    Java2WSDLCommandLineOption old = commandLineOptions.get(getOptionType(optionType));
                     if(old !=null){
-                        old.getOptionValues().add(args[i]);
+                        old.getOptionValues().add(arg);
                         optionBundle = null;
                         state = STARTED;
                     } else {
-                        optionBundle = new ArrayList();
-                        optionBundle.add(args[i]);
+                        optionBundle = new ArrayList<String>();
+                        optionBundle.add(arg);
                         state = SUB_PARAM_OF_OPTION;
                     }
                 } else if (SUB_PARAM_OF_OPTION == state) {
-                    optionBundle.add(args[i]);
+                    optionBundle.add(arg);
                 }
 
             }
@@ -125,16 +125,13 @@ public class Java2WSDLCommandLineOptionParser implements Java2WSDLConstants {
         return type;
     }
 
-    public Map getAllOptions() {
+    public Map<String,Java2WSDLCommandLineOption> getAllOptions() {
         return this.commandLineOptions;
     }
 
-    public List getInvalidOptions(Java2WSDLOptionsValidator validator) {
-        List faultList = new ArrayList();
-        Iterator iterator = this.commandLineOptions.values().iterator();
-        while (iterator.hasNext()) {
-            Java2WSDLCommandLineOption commandLineOption = ((Java2WSDLCommandLineOption) (iterator
-                    .next()));
+    public List<Java2WSDLCommandLineOption> getInvalidOptions(Java2WSDLOptionsValidator validator) {
+        List<Java2WSDLCommandLineOption> faultList = new ArrayList<Java2WSDLCommandLineOption>();
+        for (Java2WSDLCommandLineOption commandLineOption : commandLineOptions.values()) {
             if (validator.isInvalid(commandLineOption)) {
                 faultList.add(commandLineOption);
             }

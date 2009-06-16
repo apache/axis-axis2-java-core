@@ -36,7 +36,7 @@ public interface SchemaGenerator {
 
     Method[] getMethods();
 
-    void setExcludeMethods(ArrayList<Method> excludeMethods);
+    void setExcludeMethods(ArrayList<String> excludeMethods);
 
     String getSchemaTargetNameSpace();
 
@@ -44,7 +44,7 @@ public interface SchemaGenerator {
 
     void setElementFormDefault(String elementFormDefault);
 
-    void setExtraClasses(ArrayList<Class<?>> extraClasses);
+    void setExtraClasses(ArrayList<String> extraClasses);
 
     void setUseWSDLTypesNamespace(boolean useWSDLTypesNamespace);
 

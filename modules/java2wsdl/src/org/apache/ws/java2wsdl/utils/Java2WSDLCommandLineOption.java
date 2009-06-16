@@ -26,11 +26,11 @@ import java.util.ArrayList;
 public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
 
     private String type;
-       private ArrayList optionValues;
+       private ArrayList<String> optionValues;
 
        public Java2WSDLCommandLineOption(String type, String[] values) {
            setOptionType(type);
-           ArrayList arrayList = new ArrayList(values.length);
+           ArrayList<String> arrayList = new ArrayList<String>(values.length);
            for (int i = 0; i < values.length; i++) {
                arrayList.add(values[i]);
            }
@@ -47,7 +47,7 @@ public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
        /**
         * @param type
         */
-       public Java2WSDLCommandLineOption(String type, ArrayList values) {
+       public Java2WSDLCommandLineOption(String type, ArrayList<String> values) {
            setOptionType(type);
 
            if (null != values) {
@@ -69,7 +69,7 @@ public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
         */
        public String getOptionValue() {
            if (optionValues != null)
-               return (String) optionValues.get(0);
+               return optionValues.get(0);
            else
                return null;
        }
@@ -79,7 +79,7 @@ public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
        /**
         * @return Returns the optionValues.
         */
-       public ArrayList getOptionValues() {
+       public ArrayList<String> getOptionValues() {
            return optionValues;
        }
 
