@@ -20,6 +20,7 @@
 package org.apache.axis2.description.java2wsdl;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.ws.commons.schema.XmlSchema;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,13 +30,13 @@ import java.util.Map;
 public interface SchemaGenerator {
     void setNsGen(NamespaceGenerator nsGen);
 
-    Collection generateSchema() throws Exception;
+    Collection<XmlSchema> generateSchema() throws Exception;
 
     TypeTable getTypeTable();
 
     Method[] getMethods();
 
-    void setExcludeMethods(ArrayList excludeMethods);
+    void setExcludeMethods(ArrayList<Method> excludeMethods);
 
     String getSchemaTargetNameSpace();
 
@@ -43,15 +44,15 @@ public interface SchemaGenerator {
 
     void setElementFormDefault(String elementFormDefault);
 
-    void setExtraClasses(ArrayList extraClasses);
+    void setExtraClasses(ArrayList<Class<?>> extraClasses);
 
     void setUseWSDLTypesNamespace(boolean useWSDLTypesNamespace);
 
-    void setPkg2nsmap(Map pkg2nsmap);
+    void setPkg2nsmap(Map<String,String> pkg2nsmap);
 
     String getTargetNamespace();
 
-    void setNonRpcMethods(ArrayList nonRpcMethods);
+    void setNonRpcMethods(ArrayList<String> nonRpcMethods);
 
     void setAxisService(AxisService service);
 

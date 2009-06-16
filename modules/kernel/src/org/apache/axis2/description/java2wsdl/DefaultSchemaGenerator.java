@@ -60,9 +60,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     private JAXRSModel classModel;
 
-    protected Map targetNamespacePrefixMap = new Hashtable();
+    protected Map<String,String> targetNamespacePrefixMap = new Hashtable<String,String>();
 
-    protected Map schemaMap = new Hashtable();
+    protected Map<String,XmlSchema> schemaMap = new Hashtable<String,XmlSchema>();
 
     protected XmlSchemaCollection xmlSchemaCollection = new XmlSchemaCollection();
 
@@ -87,21 +87,21 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     protected String elementFormDefault = null;
 
-    protected ArrayList excludeMethods = new ArrayList();
+    protected ArrayList<Method> excludeMethods = new ArrayList<Method>();
 
-    protected ArrayList extraClasses = null;
+    protected ArrayList<Class<?>> extraClasses = null;
 
     protected boolean useWSDLTypesNamespace = false;
 
-    protected Map pkg2nsmap = null;
+    protected Map<String,String> pkg2nsmap = null;
 
     protected NamespaceGenerator nsGen = null;
 
     protected String targetNamespace = null;
     //to keep the list of operations which use other MR not RPC MR
-    protected ArrayList nonRpcMethods = new ArrayList();
+    protected ArrayList<String> nonRpcMethods = new ArrayList<String>();
 
-    protected Class serviceClass = null;
+    protected Class<?> serviceClass = null;
     protected AxisService service;
     // location of the custom schema , if any
     protected String customSchemaLocation;
@@ -231,7 +231,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
      * @return Returns XmlSchema.
      * @throws Exception
      */
-    public Collection generateSchema() throws Exception {
+    public Collection<XmlSchema> generateSchema() throws Exception {
         loadCustomSchemaFile();
         loadMappingFile();
         //all most all the time the ittr will have only one class in it
@@ -243,7 +243,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
          * nothing will happen) 2. In the next stage for all the methods
          * messages and port types will be creteated
          */
-        WebService webervice = (WebService) serviceClass.getAnnotation(WebService.class);
+        WebService webervice = serviceClass.getAnnotation(WebService.class);
         if (webervice != null) {
             String tns = webervice.targetNamespace();
             if (tns != null && !"".equals(tns)) {
@@ -258,18 +258,17 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected Method[] processMethods(Method[] declaredMethods) throws Exception {
-        ArrayList list = new ArrayList();
+        ArrayList<Method> list = new ArrayList<Method>();
         //short the elements in the array
         Arrays.sort(declaredMethods, new MathodComparator());
 
 
         // since we do not support overload
-        HashMap uniqueMethods = new LinkedHashMap();
+        HashMap<String,Method> uniqueMethods = new LinkedHashMap<String,Method>();
         XmlSchemaComplexType methodSchemaType;
         XmlSchemaSequence sequence = null;
 
-        for (int i = 0; i < declaredMethods.length; i++) {
-            Method jMethod = declaredMethods[i];
+        for (Method jMethod : declaredMethods) {
             WebMethod methodAnnon = jMethod.getAnnotation(WebMethod.class);
             if (methodAnnon != null) {
                 if (methodAnnon.exclude()) {
@@ -315,7 +314,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             processException(jMethod, axisOperation);
             uniqueMethods.put(methodName, jMethod);
-            Class[] parameters = jMethod.getParameterTypes();
+            Class<?>[] parameters = jMethod.getParameterTypes();
             String parameterNames[] = null;
             AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             if (inMessage != null) {
@@ -337,7 +336,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
             Type[] genericParameterTypes = jMethod.getGenericParameterTypes();
             for (int j = 0; j < parameters.length; j++) {
-                Class methodParameter = parameters[j];
+                Class<?> methodParameter = parameters[j];
                 String parameterName = getParameterName(parameterAnnotation, j, parameterNames);
                 if (nonRpcMethods.contains(jMethod.getName())) {
                     generateSchemaForType(sequence, null, jMethod.getName());
@@ -356,7 +355,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 }
             }
             // for its return type
-            Class returnType = jMethod.getReturnType();
+            Class<?> returnType = jMethod.getReturnType();
             if (!"void".equals(jMethod.getReturnType().getName())) {
                 String partQname = methodName + RESPONSE;
                 methodSchemaType =
@@ -395,7 +394,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 service.addOperation(axisOperation);
             }
         }
-        return (Method[]) list.toArray(new Method[list.size()]);
+        return list.toArray(new Method[list.size()]);
     }
 
     /**
@@ -431,9 +430,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 }
                 generateBaseException = true;
             }
-            Class[] extypes = jMethod.getExceptionTypes();
-            for (int j = 0; j < extypes.length; j++) {
-                Class extype = extypes[j];
+            for (Class<?> extype : jMethod.getExceptionTypes()) {
                 if (AxisFault.class.getName().equals(extype.getName())) {
                     continue;
                 }
@@ -477,7 +474,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
      * @param javaType : Class to whcih need to generate Schema
      * @return : Generated QName
      */
-    protected QName generateSchema(Class javaType) throws Exception {
+    protected QName generateSchema(Class<?> javaType) throws Exception {
         String name = getClassName(javaType);
         QName schemaTypeName = typeTable.getComplexSchemaType(name);
         if (schemaTypeName == null) {
@@ -487,7 +484,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             String targetNameSpace = resolveSchemaNamespace(packageName);
 
             XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
-            String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
+            String targetNamespacePrefix = targetNamespacePrefixMap.get(targetNameSpace);
             if (targetNamespacePrefix == null) {
                 targetNamespacePrefix = generatePrefix();
                 targetNamespacePrefixMap.put(targetNameSpace, targetNamespacePrefix);
@@ -503,7 +500,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             eltOuter.setName(simpleName);
             eltOuter.setQName(schemaTypeName);
 
-            Class sup = javaType.getSuperclass();
+            Class<?> sup = javaType.getSuperclass();
             if ((sup != null) && !("java.lang.Object".compareTo(sup.getName()) == 0) &&
                     !(getQualifiedName(sup.getPackage()).indexOf("org.apache.axis2") > 0)
                     && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0))
@@ -518,7 +515,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     tgtNamespacepfx = qName.getPrefix();
                 } else {
                     tgtNamespace = resolveSchemaNamespace(getQualifiedName(sup.getPackage()));
-                    tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
+                    tgtNamespacepfx = targetNamespacePrefixMap.get(tgtNamespace);
                     QName superClassQname = generateSchema(sup);
                     if (superClassQname != null) {
                         tgtNamespacepfx = superClassQname.getPrefix();
@@ -572,13 +569,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             // we need to get properties only for this bean. hence ignore the super
             // class properties
             BeanInfo beanInfo = Introspector.getBeanInfo(javaType, javaType.getSuperclass());
-            PropertyDescriptor[] properties = beanInfo.getPropertyDescriptors();
-            PropertyDescriptor property = null;
-            String propertyName = null;
 
-            for (int i = 0; i < properties.length; i++) {
-                property = properties[i];
-                propertyName = property.getName();
+            for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
+                String propertyName = property.getName();
                 if (!property.getName().equals("class") && (property.getPropertyType() != null)) {
                     if ((beanExcludeInfo == null) || !beanExcludeInfo.isExcludedProperty(propertyName)) {
                         Type genericFieldType = null;
@@ -621,7 +614,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     // moved code common to Fields & properties out of above method
     protected void generateSchemaforFieldsandProperties(XmlSchema xmlSchema,
-                                                        XmlSchemaSequence sequence, Class type,
+                                                        XmlSchemaSequence sequence, Class<?> type,
                                                         String name, boolean isArrayType)
             throws Exception {
         String propertyName;
@@ -629,7 +622,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             propertyName = type.getComponentType().getName();
             if (type.getComponentType().isArray()) {
                 // this is a double array element
-                Class simpleType = type.getComponentType();
+                Class<?> simpleType = type.getComponentType();
                 String simpleTypeName = "";
                 while (simpleType.isArray()) {
                     simpleTypeName += "ArrayOf";
@@ -751,10 +744,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                                                   String name)
             throws Exception {
         String propertyName;
-        Class type;
+        Class<?> type;
         boolean isArrayType = true;
         if (genericType instanceof GenericArrayType) {
-            Class simpleType = (Class) ((GenericArrayType) genericType).getGenericComponentType();
+            Class<?> simpleType = (Class<?>) ((GenericArrayType) genericType).getGenericComponentType();
             propertyName = simpleType.getName();
             // this is a doble array element
             String simpleTypeName = "";
@@ -813,7 +806,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             return;
         } else {
 //            isArrayType = false;
-            type = (Class) genericType;
+            type = (Class<?>) genericType;
             propertyName = type.getName();
         }
 
@@ -878,7 +871,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
     private void processGenerateWrappedArrayTypes(XmlSchema xmlSchema,
                                                   XmlSchemaSequence sequence,
-                                                  Class type,
+                                                  Class<?> type,
                                                   String name,
                                                   boolean isArrayType,
                                                   String propertyName) {
@@ -935,7 +928,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
 
-    private QName generateSchemaForType(XmlSchemaSequence sequence, Class type, String partName)
+    private QName generateSchemaForType(XmlSchemaSequence sequence, Class<?> type, String partName)
             throws Exception {
 
         boolean isArrayType = false;
@@ -945,7 +938,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         if (isArrayType) {
             if (type.getComponentType().isArray()) {
                 // this is a double array element
-                Class simpleType = type.getComponentType();
+                Class<?> simpleType = type.getComponentType();
                 String simpleTypeName = "";
                 while (simpleType.isArray()) {
                     simpleTypeName += "ArrayOf";
@@ -986,10 +979,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             throws Exception {
 
 
-        Class type;
+        Class<?> type;
         if (genericType instanceof GenericArrayType) {
             // this is a double array element
-            Class simpleType = (Class) ((GenericArrayType) genericType).getGenericComponentType();
+            Class<?> simpleType = (Class<?>) ((GenericArrayType) genericType).getGenericComponentType();
             String simpleTypeName = "";
             while (simpleType.isArray()) {
                 simpleTypeName += "ArrayOf";
@@ -1044,7 +1037,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
 
 
         } else{
-            type = (Class) genericType;
+            type = (Class<?>) genericType;
         }
         if (AxisFault.class.getName().equals(type)) {
             return null;
@@ -1070,7 +1063,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     private QName generateSchemaTypeforNameCommon(XmlSchemaSequence sequence,
                                                   String partName,
                                                   boolean isArrayType,
-                                                  Class type,
+                                                  Class<?> type,
                                                   String classTypeName) throws Exception {
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
         if (schemaTypeName == null) {
@@ -1165,7 +1158,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return schemaTypeName;
     }
 
-    private QName processParameterArrayTypes(XmlSchemaSequence sequence, Class type, String partName, String simpleTypeName) throws Exception {
+    private QName processParameterArrayTypes(XmlSchemaSequence sequence, Class<?> type, String partName, String simpleTypeName) throws Exception {
         XmlSchema xmlSchema = getXmlSchema(schemaTargetNameSpace);
         if (xmlSchema.getTypeByName(simpleTypeName) == null) {
             XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
@@ -1212,7 +1205,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    protected boolean isDataHandler(Class clazz) {
+    protected boolean isDataHandler(Class<?> clazz) {
         return clazz != null && DataHandler.class.isAssignableFrom(clazz);
     }
 
@@ -1283,7 +1276,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     }
 
     protected XmlSchemaComplexType getComplexTypeForElement(XmlSchema xmlSchema, QName name) {
-        Iterator iterator = xmlSchema.getItems().getIterator();
+        Iterator<?> iterator = xmlSchema.getItems().getIterator();
         while (iterator.hasNext()) {
             XmlSchemaObject object = (XmlSchemaObject) iterator.next();
             if (object instanceof XmlSchemaElement && ((XmlSchemaElement) object).getQName().equals(name)) {
@@ -1296,7 +1289,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
     protected XmlSchema getXmlSchema(String targetNamespace) {
         XmlSchema xmlSchema;
 
-        if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
+        if ((xmlSchema = schemaMap.get(targetNamespace)) == null) {
             String targetNamespacePrefix;
 
             if (targetNamespace.equals(schemaTargetNameSpace) &&
@@ -1336,8 +1329,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return NAME_SPACE_PREFIX + prefixCount++;
     }
 
-    public void setExcludeMethods(ArrayList excludeMethods) {
-        if (excludeMethods == null) excludeMethods = new ArrayList();
+    public void setExcludeMethods(ArrayList<Method> excludeMethods) {
+        if (excludeMethods == null) excludeMethods = new ArrayList<Method>();
         this.excludeMethods = excludeMethods;
     }
 
@@ -1394,14 +1387,14 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public ArrayList getExtraClasses() {
+    public ArrayList<Class<?>> getExtraClasses() {
         if (extraClasses == null) {
-            extraClasses = new ArrayList();
+            extraClasses = new ArrayList<Class<?>>();
         }
         return extraClasses;
     }
 
-    public void setExtraClasses(ArrayList extraClasses) {
+    public void setExtraClasses(ArrayList<Class<?>> extraClasses) {
         this.extraClasses = extraClasses;
     }
 
@@ -1409,13 +1402,13 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         //if all types must go into the wsdl types schema namespace
         if (useWSDLTypesNamespace) {
             //return schemaTargetNameSpace;
-            return (String) pkg2nsmap.get("all");
+            return pkg2nsmap.get("all");
         } else {
             if (pkg2nsmap != null && !pkg2nsmap.isEmpty()) {
                 //if types should go into namespaces that are mapped against the package name for the type
                 if (pkg2nsmap.get(packageName) != null) {
                     //return that mapping
-                    return (String) pkg2nsmap.get(packageName);
+                    return pkg2nsmap.get(packageName);
                 } else {
                     return getNsGen().schemaNamespaceFromPackageName(packageName).toString();
                 }
@@ -1434,11 +1427,11 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         this.useWSDLTypesNamespace = useWSDLTypesNamespace;
     }
 
-    public Map getPkg2nsmap() {
+    public Map<String,String> getPkg2nsmap() {
         return pkg2nsmap;
     }
 
-    public void setPkg2nsmap(Map pkg2nsmap) {
+    public void setPkg2nsmap(Map<String,String> pkg2nsmap) {
         this.pkg2nsmap = pkg2nsmap;
     }
 
@@ -1446,7 +1439,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return targetNamespace;
     }
 
-    protected String getClassName(Class type) {
+    protected String getClassName(Class<?> type) {
         String name = type.getName();
         if (name.indexOf("$") > 0) {
             name = name.replace('$', '_');
@@ -1462,7 +1455,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public void setNonRpcMethods(ArrayList nonRpcMethods) {
+    public void setNonRpcMethods(ArrayList<String> nonRpcMethods) {
         if (nonRpcMethods != null) {
             this.nonRpcMethods = nonRpcMethods;
         }
@@ -1513,10 +1506,8 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         return parameterName;
     }
 
-    public class MathodComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            Method method1 = (Method) o1;
-            Method method2 = (Method) o2;
+    public class MathodComparator implements Comparator<Method> {
+        public int compare(Method method1, Method method2) {
             String[] values = new String[2];
             values[0] = method1.getName();
             values[1] = method2.getName();
@@ -1529,10 +1520,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         }
     }
 
-    public class PropertyComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            PropertyDescriptor propertyDescriptor1 = (PropertyDescriptor) o1;
-            PropertyDescriptor propertyDescriptor2 = (PropertyDescriptor) o2;
+    public class PropertyComparator implements Comparator<PropertyDescriptor> {
+        public int compare(PropertyDescriptor propertyDescriptor1,
+                PropertyDescriptor propertyDescriptor2) {
+            
             String[] values = new String[2];
             values[0] = propertyDescriptor1.getName();
             values[1] = propertyDescriptor2.getName();
