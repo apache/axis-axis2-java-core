@@ -290,7 +290,34 @@ class DescriptionBuilderUtils {
      * @return
      */
     static String reparseIfArray(String classToLoad) {
-
+        if (log.isDebugEnabled())
+        {
+            log.debug("entry with String parameter classToLoad: " + classToLoad);
+        }
+        if (classToLoad.startsWith("[")) {
+            // It appears that the string is already in binary form.
+            // Detect if the form is valid and fix it if it is not.
+            // For example, sometimes a [my.Foo is input instead of the required [Lmy.Foo;
+            String binaryForm = classToLoad;
+            
+            int indexAfterBracket = classToLoad.lastIndexOf("[") + 1;
+            
+            String base = classToLoad.substring(indexAfterBracket);
+            String dims = classToLoad.substring(0, indexAfterBracket);
+            
+            if (getPrimitiveClass(base) == null) {
+                // Make sure the base starts with an L and ends with a ;
+                if (!base.startsWith("L") && !base.endsWith(";")) {
+                    binaryForm = dims + "L" + base + ";";
+                }
+            }
+            if (log.isDebugEnabled())
+            {
+                log.debug("exit method with String return value binaryForm: " + binaryForm);
+            }            
+            return binaryForm;
+        }
+                    
         String reparsedClassName = classToLoad;
         if (isClassAnArray(classToLoad)) {
             String baseType = getBaseArrayClassName(classToLoad);
@@ -301,6 +328,10 @@ class DescriptionBuilderUtils {
                 reparsedClassName = dimensionPrefix + "L" + baseType + ";";
             }
         }
+        if (log.isDebugEnabled())
+        {
+            log.debug("exit method with String return value reparsedClassName: " + reparsedClassName);
+        }        
         return reparsedClassName;
     }
 

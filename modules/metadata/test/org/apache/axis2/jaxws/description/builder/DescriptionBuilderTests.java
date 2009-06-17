@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description.builder;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderUtils;
 
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
@@ -250,6 +251,12 @@ public class DescriptionBuilderTests extends TestCase {
         }
         assertNotNull(ex);
     }
+    
+    public void testDescriptionBuilderUtilsReparseIfArray() {
+        String expected = "[Lmy.Class;";
+        String out = DescriptionBuilderUtils.reparseIfArray("[my.Class");
+        assertEquals("DescriptionBuilderUtils reparseIfArray method did not reformat binary class name properly", expected, out);
+    }       
     
     class TestProcessor implements CustomAnnotationProcessor {
         
