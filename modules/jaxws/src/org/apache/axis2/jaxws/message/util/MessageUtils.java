@@ -207,6 +207,16 @@ public class MessageUtils {
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
         }
         
+        // Detect if a SOAPAction header is set as a Mime header in request message
+        String soapAction = (String) headerMap.get("SOAPAction");
+        if (soapAction != null) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("Found SOAPAction as Mime header: " + soapAction);
+        	}
+        	// Set on MessageContext and it will be written out in request
+        	msgContext.setSoapAction(soapAction);
+        }
+        
         // Make sure the the JAX-WS AttachmentAdapter is correctly installed
         // So that any user attachments provide are moved to the Axiom Attachments
         // Map
