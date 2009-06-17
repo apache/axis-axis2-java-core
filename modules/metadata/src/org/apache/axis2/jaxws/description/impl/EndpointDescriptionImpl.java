@@ -1157,7 +1157,7 @@ class EndpointDescriptionImpl
         }
     }
 
-    public ServiceClient getServiceClient() {
+    public synchronized ServiceClient getServiceClient() {
         try {
             if (serviceClient == null) {
                 ConfigurationContext configCtx = getServiceDescription().getAxisConfigContext();
@@ -1165,6 +1165,9 @@ class EndpointDescriptionImpl
                 AxisConfiguration axisCfg = configCtx.getAxisConfiguration();
                 if (axisCfg.getService(axisSvc.getName()) != null) {
                     axisSvc.setName(axisSvc.getName() + uniqueID());
+                    if (log.isDebugEnabled()) {
+                    	log.debug("AxisService name is now " + axisSvc.getName() + ". This name should be unique; if not, errors might occur.");
+                    }
                 }
                 serviceClient = new ServiceClient(configCtx, axisSvc);
             }
