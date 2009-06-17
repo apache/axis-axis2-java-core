@@ -65,4 +65,7 @@ public class GreeterImpl implements Greeter {
         return null;
     }
 
+    public String simpleTest(String name, byte[] bytes) {
+        return "name=" + name + " numbytes=" +bytes.length;
+    }
 }

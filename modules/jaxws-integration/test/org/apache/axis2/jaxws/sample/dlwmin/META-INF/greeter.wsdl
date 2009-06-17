@@ -75,6 +75,21 @@
                     </sequence>
                 </complexType>
             </element>
+            <element name="simpleTest">
+                <complexType>
+                    <sequence>
+                        <element name="name" minOccurs="0" type="xsd:string"/>
+                        <element name="bytes" type="xsd:base64binary"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="simpleTestResponse">
+                <complexType>
+                    <sequence>
+                        <element name="response" type="xsd:string"/>
+                    </sequence>
+                </complexType>
+            </element>
         </schema>
     </wsdl:types>
     <wsdl:message name="greetMeRequest">
@@ -104,6 +119,12 @@
     <wsdl:message name="processFault3">
         <wsdl:part name="fault3" element="types:processFault3"/>
     </wsdl:message>
+     <wsdl:message name="simpleTestRequest">
+        <wsdl:part name="in" element="tns:simpleTest"/>
+    </wsdl:message>
+    <wsdl:message name="simpleTestResponse">
+        <wsdl:part name="out" element="tns:simpleTestResponse"/>
+    </wsdl:message>
     <wsdl:portType name="Greeter">
         <wsdl:operation name="greetMe">
             <wsdl:input name="greetMeRequest" message="tns:greetMeRequest"/>
@@ -119,6 +140,10 @@
             <wsdl:fault name="processFault" message="tns:processFault"/>
             <wsdl:fault name="processFault2" message="tns:processFault2"/>
             <wsdl:fault name="processFault3" message="tns:processFault3"/>
+        </wsdl:operation>
+        <wsdl:operation name="simpleTest">
+            <wsdl:input name="simpleTestRequest" message="tns:simpleTestRequest"/>
+            <wsdl:output name="simpleTestResponse" message="tns:simpleTestResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="GreeterSOAPBinding" type="tns:Greeter">
@@ -158,6 +183,15 @@
             <fault name="processFault3">
                 <soap:fault name="processFault3" use="literal"/>
             </fault>
+        </wsdl:operation>
+        <wsdl:operation name="simpleTest">
+            <soap:operation soapAction="simpleTest" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="GreeterService">

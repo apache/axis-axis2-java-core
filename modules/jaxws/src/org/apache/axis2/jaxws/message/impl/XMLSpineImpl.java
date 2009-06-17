@@ -269,6 +269,26 @@ class XMLSpineImpl implements XMLSpine {
     public int getNumBodyBlocks() throws WebServiceException {
         return _getNumChildElements(_getBodyBlockParent());
     }
+    
+    /**
+     * getBodyBlockQNames 
+     * Calling this method will cache the OM.  Avoid it in performant situations.
+     *
+     * @return List of QNames
+     * @throws WebServiceException
+     */
+    public List<QName> getBodyBlockQNames() throws WebServiceException {
+        int numBlocks = getNumBodyBlocks();
+        List<QName> qNames = new ArrayList<QName>();
+        
+        for (int i =0; i< numBlocks; i++ ) {
+            OMElement omElement = _getChildOMElement(_getBodyBlockParent(), i);
+            if (omElement != null) {
+                qNames.add(omElement.getQName());
+            } 
+        }
+        return qNames;
+    }
 
 
     /* (non-Javadoc)

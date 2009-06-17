@@ -51,4 +51,12 @@ public interface Greeter {
         @WebParam(targetNamespace = "", partName = "in")
         TestBean in
     ) throws TestException, TestException2, TestException3;
+    
+    @WebMethod
+    public String simpleTest(
+            @WebParam(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "name")
+            String name, 
+            @WebParam(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "bytes")
+            byte[] bytes);
+    
 }

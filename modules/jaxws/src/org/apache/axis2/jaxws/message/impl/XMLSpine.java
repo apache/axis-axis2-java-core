@@ -48,7 +48,7 @@ interface XMLSpine {
     /**
      * Get the protocol for this Message (soap11, soap12, etc.)
      *
-     * @return Protocl
+     * @return Protocol
      */
     public Protocol getProtocol();
 
@@ -132,6 +132,15 @@ interface XMLSpine {
      * @throws WebServiceException
      */
     public int getNumBodyBlocks() throws WebServiceException;
+    
+    /**
+     * getBodyBlockQNames 
+     * Calling this method will cache the OM.  Avoid it in performant situations.
+     *
+     * @return List of QNames
+     * @throws WebServiceException
+     */
+    public List<QName> getBodyBlockQNames() throws WebServiceException;
 
     /**
      * getBodyBlock Get the body block at the specificed index. The BlockFactory and object 

@@ -508,6 +508,10 @@ public class MessageImpl implements Message {
         return xmlPart.getNumBodyBlocks();
     }
     
+    public List<QName> getBodyBlockQNames() throws WebServiceException {
+        return xmlPart.getBodyBlockQNames();
+    }
+    
     public int getNumHeaderBlocks() throws WebServiceException {
         return xmlPart.getNumHeaderBlocks();
     }

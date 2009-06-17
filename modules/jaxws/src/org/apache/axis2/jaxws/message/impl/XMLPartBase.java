@@ -608,6 +608,17 @@ public abstract class XMLPartBase implements XMLPart {
     public int getNumBodyBlocks() throws WebServiceException {
         return getContentAsXMLSpine().getNumBodyBlocks();
     }
+    
+    /**
+     * getBodyBlockQNames 
+     * Calling this method will cache the OM.  Avoid it in performant situations.
+     *
+     * @return List of QNames
+     * @throws WebServiceException
+     */
+    public List<QName> getBodyBlockQNames() throws WebServiceException {
+        return getContentAsXMLSpine().getBodyBlockQNames();
+    }
 
     /* (non-Javadoc)
       * @see org.apache.axis2.jaxws.message.XMLPart#getNumHeaderBlocks()

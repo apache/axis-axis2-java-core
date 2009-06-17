@@ -452,6 +452,9 @@ public class JAXBDSContext {
 
         if (DEBUG_ENABLED) {
             log.debug("Invoking unmarshalByType.");
+            log.debug("  type = " + type);
+            log.debug("  isList = " + isList);
+            log.debug("  ctype = "+ ctype);
         }
 
         return AccessController.doPrivileged(new PrivilegedAction() {
@@ -470,12 +473,14 @@ public class JAXBDSContext {
                             // but there is not much we can do about it so seralize it as
                             // usual
                             if (ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                                if (DEBUG_ENABLED) {
+                                    log.debug("Unmarshal Array via BY_CONTEXT_PATH approach");
+                                }
                                 jaxb = u.unmarshal(reader, type);
                             }
                             // list on client array on server, Can happen only in start from java
                             // case.
                             else if ((ctype == JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY)) {
-
                                 // The type could be any Object or primitive
                             	
                             	//process primitives first
@@ -486,6 +491,9 @@ public class JAXBDSContext {
                             		cType = cType.getComponentType();
                             	}
                             	if(cType.isPrimitive()){
+                            	    if (DEBUG_ENABLED) {
+                                        log.debug("Unmarshal Array of primitive via BY_CLASS_ARRAY approach");
+                                    }
                             		jaxb = u.unmarshal(reader, type);
                             	}
                             	// process non primitive                       	
@@ -494,11 +502,16 @@ public class JAXBDSContext {
                                 // proper type Object Array.
                             	
                             	else{
+                            	    if (DEBUG_ENABLED) {
+                                        log.debug("Unmarshal Array of non-primitive via BY_CLASS_ARRAY approach");
+                                    }
                             		jaxb = unmarshalArray(reader, u, type);
                             	}
                                 
                             } else {
-                                
+                                if (DEBUG_ENABLED) {
+                                    log.debug("Unmarshal Array");
+                                }
                                 jaxb = u.unmarshal(reader, type);
                                 
                             }
@@ -523,7 +536,7 @@ public class JAXBDSContext {
                             // object
                             // ... }
                             if (DEBUG_ENABLED) {
-                                log.debug("unmarshalByType. Unmarshalling " + type.getName()
+                                log.debug("Unmarshalling " + type.getName()
                                         + " as Enum");
                             }
 
@@ -539,6 +552,9 @@ public class JAXBDSContext {
                         }
                         //Normal case: We are not unmarshalling a xsd:list or Array
                         else {
+                            if (DEBUG_ENABLED) {
+                                log.debug("Unmarshalling normal case (not array, not xsd:list, not enum)");
+                            }
                             jaxb = u.unmarshal(reader, type);
                         }
 
@@ -547,9 +563,31 @@ public class JAXBDSContext {
                         // list or array (see NOTE above)
                         // First unmarshal as a String
                         //Second convert the String into a list or array
-                        
+                        if (DEBUG_ENABLED) {
+                            log.debug("Unmarshalling xsd:list");
+                        }
                         jaxb = unmarshalAsListOrArray(reader, u, type);
                         
+                    }
+                    if (log.isDebugEnabled()) {
+                        Class cls;
+                        if (jaxb == null) {
+                            if (DEBUG_ENABLED) {
+                                log.debug("End unmarshalByType returning null object");
+                            }
+
+                        } else if (jaxb instanceof JAXBElement) {
+                            JAXBElement jbe = (JAXBElement) jaxb;
+                            if (DEBUG_ENABLED) {
+                                log.debug("End unmarshalByType returning JAXBElement");
+                                log.debug("  Class = " + jbe.getDeclaredType());
+                                log.debug("  QName = " + jbe.getName());
+                            }
+                        } else {
+                            if (DEBUG_ENABLED) {
+                                log.debug("End unmarshalByType returning " + jaxb.getClass());
+                            }
+                        }
                     }
                     return jaxb;
                 } catch (OMException e) {

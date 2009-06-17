@@ -84,26 +84,6 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                     MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (pds.length > 0) {
-                if (signatureArguments == null) {
-                	throw ExceptionFactory.makeWebServiceException(
-                			Messages.getMessage("NullParamErr1",operationDesc.getJavaMethodName()));
-                }
-                if (signatureArguments != null) {
-                    for (Object argument : signatureArguments) {
-                        if (argument == null) {
-                        	throw ExceptionFactory.makeWebServiceException(
-                        			Messages.getMessage("NullParamErr1",operationDesc.getJavaMethodName()));
-                        }
-                    }
-                }
-            }
-
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
@@ -193,7 +173,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             }
 
             // Unmarshal the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds,
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElementsWithMissingElements(pds,
                                                                          message,
                                                                          packages,
                                                                          true, // input
@@ -203,19 +183,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
 
-            // TODO This needs more work.  We need to check inside holders of input params.  We also
-            // may want to exclude header params from this check
-            //Validate input parameters for operation and make sure no input parameters are null.
-            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
-            //to a method then an implementation MUST throw WebServiceException.
-            if (sigArguments != null) {
-                for (Object argument : sigArguments) {
-                    if (argument == null) {
-                        throw ExceptionFactory.makeWebServiceException(
-                    			Messages.getMessage("NullParamErr2",operationDesc.getJavaMethodName()));
-                    }
-                }
-            }
+            // Note:  The code used to check to ensure that parameters were not null.
+            // The code sited 3.6.2.3 of the JAX-WS specification, but that portion of the specification
+            // is for rpc/literal marshaling.  This code is for document/literal marshaling.
+            // Nulls are allowed.
+            
             return sigArguments;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -442,7 +414,6 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                                                                          hasReturnInBody,
                                                                          javaTypes); // unmarshal by type
 
-            // TODO Should we check for null output body values?  Should we check for null output header values ?
 
             // Populate the response Holders
             MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);

@@ -129,6 +129,117 @@ public class DLWMinTests extends AbstractTestCase {
      * Test simple greetMe method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
+    public void testSimpleTest() {
+        
+        Greeter proxy = getProxy("simpleTest");
+        
+        String name = "user1";
+        byte[] bytes = new byte[100];
+        String response = proxy.simpleTest(name, bytes);
+        System.out.println(response);
+        assertTrue(response.contains("name=user1"));
+        assertTrue(response.contains("numbytes=100"));
+        
+        // Try the call again
+        response = proxy.simpleTest(name, bytes);
+        System.out.println(response);
+        assertTrue(response.contains("name=user1"));
+        assertTrue(response.contains("numbytes=100"));
+    }
+    
+    
+    /**
+     * Test simple greetMe method 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testSimpleTestNoName() {
+        
+        Greeter proxy = getProxy("simpleTest");
+        
+        
+        // Try with a no name
+        String name = null;
+        byte[] bytes = new byte[100];
+        String response = proxy.simpleTest(name, bytes);
+        System.out.println(response);
+        assertTrue(response.contains("name=null"));
+        assertTrue(response.contains("numbytes=100"));
+        
+        // Try the call again
+        response = proxy.simpleTest(name, bytes);
+        System.out.println(response);
+        assertTrue(response.contains("name=null"));
+        assertTrue(response.contains("numbytes=100"));
+    }
+    
+    /**
+     * Test simple greetMe method with dispatch 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testSimple_Dispatch() {
+       
+        Dispatch<String> dispatch = getDispatch("simpleTest");
+        
+        String request =
+            "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
+            "<pre:name>user1</pre:name>" +
+            "<pre:bytes>AAAAAA</pre:bytes>" +
+            "</pre:simpleTest>";
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
+        String response = dispatch.invoke(request);
+        System.out.println(response);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("name=user1"));
+        assertTrue(response.contains("numbytes=3"));
+        assertTrue(response.contains("dlwmin:simpleTestResponse"));
+        
+        // Try the call again
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        System.out.println(response);
+        
+        assertTrue(response.contains("name=user1"));
+        assertTrue(response.contains("numbytes=3"));
+        assertTrue(response.contains("dlwmin:simpleTestResponse"));
+    }
+    
+    /**
+     * Test simple greetMe method with dispatch 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testSimpleNoName_Dispatch() {
+       
+        Dispatch<String> dispatch = getDispatch("simpleTest");
+        
+        String request =
+            "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
+            "<pre:bytes>AAAAAA</pre:bytes>" +
+            "</pre:simpleTest>";
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
+        String response = dispatch.invoke(request);
+        System.out.println(response);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("name=null"));
+        assertTrue(response.contains("numbytes=3"));
+        assertTrue(response.contains("dlwmin:simpleTestResponse"));
+        
+        // Try the call again
+        response = dispatch.invoke(request);
+        TestLogger.logger.debug("Doc/Lit Wrapped Minimal Response =" + response);
+        System.out.println(response);
+        
+        assertTrue(response.contains("name=null"));
+        assertTrue(response.contains("numbytes=3"));
+        assertTrue(response.contains("dlwmin:simpleTestResponse"));
+    }
+    
+    
+    /**
+     * Test simple greetMe method 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
     public void testUnqualified() {
         
         Greeter proxy = getProxy("testUnqualified");

@@ -350,6 +350,11 @@ class ParameterDescriptionImpl
             string.append("Name: " + getParameterName());
             //
             string.append(newline);
+            string.append("Namespace: " + getTargetNamespace());
+            string.append(newline);
+            string.append("PartName: " + getPartName());
+            //
+            string.append(newline);
             string.append("Is header: " + (isHeader() == true));
             string.append(sameline);
             string.append("Is holder: " + (isHolderType() == true));

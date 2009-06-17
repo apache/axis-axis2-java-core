@@ -197,6 +197,15 @@ public interface XMLPart {
      * @throws WebServiceException
      */
     public int getNumBodyBlocks() throws WebServiceException;
+    
+    /**
+     * getBodyBlockQNames 
+     * Calling this method will cache the OM.  Avoid it in performant situations.
+     *
+     * @return List of QNames
+     * @throws WebServiceException
+     */
+    public List<QName> getBodyBlockQNames() throws WebServiceException;
 
     /**
      * getBodyBlock Get the body block at the specificed index. The BlockFactory and object context are
