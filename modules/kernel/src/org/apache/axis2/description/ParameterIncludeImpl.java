@@ -38,9 +38,13 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
 
 /**
  * Class ParameterIncludeImpl
@@ -84,13 +88,15 @@ public class ParameterIncludeImpl
     /**
      * Field parmeters
      */
-    protected final HashMap<String, Parameter> parameters;
+    protected Map<String, Parameter> parameters;
 
     /**
      * Constructor ParameterIncludeImpl.
      */
     public ParameterIncludeImpl() {
-        parameters = new HashMap<String, Parameter>();
+        // Use a capacity large enough to prevent
+        // resizing
+        parameters = new HashMap<String, Parameter>(64);
     }
 
     /**
@@ -102,6 +108,26 @@ public class ParameterIncludeImpl
         if (param != null) {
             synchronized (parameters) {
                 parameters.put(param.getName(), param);
+                try {
+                    parameters.put(param.getName(), param);
+                } catch (ConcurrentModificationException cme) {
+                    // The ParameteterIncludeImpl is supposed to be immutable after it is populated.
+                    // But alas, sometimes the callers forget and try to add new items.  If
+                    // this occurs, swap over to the slower ConcurrentHashMap and continue.
+                    if (log.isDebugEnabled()) {
+                        log.debug("ConcurrentModificationException Occured...changing to ConcurrentHashMap");
+                        log.debug("The exception is: " + cme);
+                    }
+
+                    Map newMap = new ConcurrentHashMap(parameters);
+                    newMap.put(param.getName(), param);
+                    parameters = newMap;
+                }
+
+                if (DEBUG_ENABLED) {
+                    this.debugParameterAdd(param);
+                }
+
             }
             
             if (DEBUG_ENABLED) {
@@ -112,8 +138,22 @@ public class ParameterIncludeImpl
 
     public void removeParameter(Parameter param) throws AxisFault {
         synchronized (parameters) {
-            parameters.remove(param.getName());
-        }
+            try {
+                parameters.remove(param.getName());
+            } catch (ConcurrentModificationException cme) {
+                // The ParameteterIncludeImpl is supposed to be immutable after it is populated.
+                // But alas, sometimes the callers forget and try to add new items.  If
+                // this occurs, swap over to the slower ConcurrentHashMap and continue.
+                if (log.isDebugEnabled()) {
+                    log.debug("ConcurrentModificationException Occured...changing to ConcurrentHashMap");
+                    log.debug("The exception is: " + cme);
+                }
+
+                Map newMap = new ConcurrentHashMap(parameters);
+                newMap.remove(param.getName());
+                parameters = newMap;
+            }
+        } 
     }
 
     /**
@@ -184,7 +224,9 @@ public class ParameterIncludeImpl
     }
 
     public ArrayList<Parameter> getParameters() {
-        return new ArrayList<Parameter>(parameters.values());
+        synchronized(parameters) {
+            return new ArrayList<Parameter>(parameters.values());
+        }
     }
 
     // to check whether the parameter is locked at any level
