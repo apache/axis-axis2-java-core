@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.description.impl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.AttachmentDescription;
 import org.apache.axis2.jaxws.description.AttachmentType;
@@ -63,6 +64,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -250,7 +252,12 @@ public class DescriptionUtils {
             log.debug("Attempting to load @HandlerChain configuration file: " + configFile +
                     " relative to class: " + className);
         }
+        // Attempt 1:
+	// Try absolute loading
         try {
+	    if (log.isDebugEnabled()) {
+	        log.debug("Attempt 1: Try absolute load of (" + configFile + ")");
+	    }
             configURL = new URL(configFile);
             if (configURL != null) {
                 if (log.isDebugEnabled()) {
@@ -261,17 +268,30 @@ public class DescriptionUtils {
         }
         catch (MalformedURLException e) {
             // try another method to obtain a stream to the configuration file
+	    if (log.isDebugEnabled()) {
+	        log.debug("Attempt 1 Failed with exception.  Try Attempt 2.  " +
+	                  "The caught exception is : " + e);
+	    }
         }
         catch (IOException e) {
             // report this since it was a valid URL but the openStream caused a problem
+	    if (log.isDebugEnabled()) {
+	        log.debug("The URL was valid, but opening the stream " +
+	                      "caused a problem : " + e);
+	    }
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
                                                                          configFile, className,
                                                                          e.toString()));
         }
+
+	    // Attempt 2:
+	    // Try relative uri loading from Classloaders
         if (configStream == null) {
             if (log.isDebugEnabled()) {
                 log.debug("@HandlerChain.file attribute refers to a relative location: "
                         + configFile);
+	        log.debug("Attempt 2: Try relative uri load of (" + configFile + ") " +
+	            "from the classloaders");
             }
             className = className.replace(".", "/");
             try {
@@ -285,10 +305,14 @@ public class DescriptionUtils {
                 if (log.isDebugEnabled()) {
                     log.debug("@HandlerChain.file resolved file path location: " + resolvedPath);
                 }
-                configStream = getInputStream(resolvedPath, classLoader);
+                configStream = getInputStream_priv(resolvedPath, classLoader);
             }
-            catch (URISyntaxException e) {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
+	    catch (Throwable e) {
+	      if (log.isDebugEnabled()) {
+	          log.debug("Attempt 2 Failed with exception. " +
+	                    "The caught exception is : " + e);
+	      }
+              throw ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail",
                                                                              configFile, className,
                                                                              e.toString()));
             }
@@ -310,12 +334,39 @@ public class DescriptionUtils {
         }
         return configStream;
     }
-    
+
+    /**
+     * A doPriv version of getInputStream
+     * @return
+     */
+    private static InputStream getInputStream_priv(final String path, 
+                                                   final ClassLoader classLoader) {
+        return (InputStream) 
+            AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    return getInputStream(path, classLoader);
+                }
+            });
+    }
+
+    /**
+     * Get the InputStream from the relative path and classloader
+     * @param path
+     * @param classLoader
+     * @return
+     */
     private static InputStream getInputStream(String path, ClassLoader classLoader) {
+        if (log.isDebugEnabled()) {
+            log.debug("Start getInputStream with ("
+                      + path + ") and classloader (" + classLoader  + ")");
+        }
         InputStream configStream = classLoader.getResourceAsStream(path);
         if (configStream == null) {
             // try another classloader
             ClassLoader cl = System.class.getClassLoader();
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting with System classloader (" + cl + ")");
+            }
             if (cl != null) {
                 configStream = cl.getResourceAsStream(path);
             }
@@ -323,6 +374,10 @@ public class DescriptionUtils {
         if (configStream == null) {
             // and another classloader
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting with current thread " +
+                            "classloader (" + cl + ")");
+            }
             if (cl != null) {
                 configStream = cl.getResourceAsStream(path);
             }

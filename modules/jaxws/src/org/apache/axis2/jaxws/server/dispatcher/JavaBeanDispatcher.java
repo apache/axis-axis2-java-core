@@ -48,6 +48,8 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 /**
  * The JavaBeanDispatcher is used to manage creating an instance of a JAX-WS service implementation
@@ -136,7 +138,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getContextClassLoader();
         
         AsyncInvocationWorker worker = new AsyncInvocationWorker(target, 
                                                                  methodInputParams, 
@@ -184,7 +186,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         EndpointInvocationContext eic = (EndpointInvocationContext) request.getInvocationContext();
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getContextClassLoader();
         
         AsyncInvocationWorker worker = new AsyncInvocationWorker(target, methodInputParams, cl, eic);
         FutureTask task = new FutureTask<AsyncInvocationWorker>(worker);
@@ -354,6 +356,35 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         setFaultResponseAction(t, request, response);
         
         return response;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws ClassNotFoundException {
+                    return Thread.currentThread().getContextClassLoader();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            // The privileged method will throw a PriviledgedActionException which
+            // contains the actual exception.
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            Exception wrappedE = e.getException();
+            if (wrappedE instanceof RuntimeException) {
+                throw (RuntimeException) wrappedE;
+            } else {
+                throw new RuntimeException(wrappedE);
+            }
+        }
+        
+        return cl;
     }
     
 }
