@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
@@ -418,12 +419,27 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             if ((soapActionString == null) || (soapActionString.length() == 0)) {
                 // now let's try to get WSA action
                 soapActionString = messageContext.getWSAAction();
+                if (log.isDebugEnabled()) {
+                    log.debug("SOAP Action from getWSAAction was : " + soapActionString);
+                }
                 if (messageContext.getAxisOperation() != null
                         && ((soapActionString == null) || (soapActionString
                         .length() == 0))) {
                     // last option is to get it from the axis operation
-                    soapActionString = messageContext.getAxisOperation()
-                            .getSoapAction();
+                    String axisOpSOAPAction = messageContext.getAxisOperation().
+                        getSoapAction();
+                    if (log.isDebugEnabled()) {
+                        log.debug("SOAP Action from AxisOperation was : " + axisOpSOAPAction);
+                    }
+                    if (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction)
+                        || (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction))
+                        || (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction))) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Will not override SOAP Action because " + axisOpSOAPAction + " in AxisOperation was auto-generated");
+                        }   
+                    } else {
+                        soapActionString = axisOpSOAPAction;
+                    }   
                 }
             }
         }
