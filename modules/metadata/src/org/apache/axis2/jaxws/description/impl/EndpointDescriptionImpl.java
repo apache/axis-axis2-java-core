@@ -1163,13 +1163,20 @@ class EndpointDescriptionImpl
                 ConfigurationContext configCtx = getServiceDescription().getAxisConfigContext();
                 AxisService axisSvc = getAxisService();
                 AxisConfiguration axisCfg = configCtx.getAxisConfiguration();
-                if (axisCfg.getService(axisSvc.getName()) != null) {
-                    axisSvc.setName(axisSvc.getName() + uniqueID());
-                    if (log.isDebugEnabled()) {
-                    	log.debug("AxisService name is now " + axisSvc.getName() + ". This name should be unique; if not, errors might occur.");
+                // The method synchronization prevents more than 1 service client being created
+                // for the same EndpointDescription instance by multiple threads.  We also need
+                // to prevent different EndpointDescription instances from creating service client
+                // instances using the same AxisService name under multiple threads.  We do that by
+                // synchronizing on the AxisConfiguration instance.
+                synchronized(axisCfg) {
+                    if (axisCfg.getService(axisSvc.getName()) != null) {
+                        axisSvc.setName(axisSvc.getName() + uniqueID());
+                        if (log.isDebugEnabled()) {
+                        	log.debug("AxisService name is now " + axisSvc.getName() + ". This name should be unique; if not, errors might occur.");
+                        }
                     }
+                    serviceClient = new ServiceClient(configCtx, axisSvc);
                 }
-                serviceClient = new ServiceClient(configCtx, axisSvc);
             }
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(
