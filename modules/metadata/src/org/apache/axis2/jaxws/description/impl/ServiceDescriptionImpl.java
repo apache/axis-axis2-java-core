@@ -176,6 +176,12 @@ class ServiceDescriptionImpl
                            Object sparseCompositeKey) {
         if (log.isDebugEnabled()) {
             log.debug("ServiceDescriptionImpl(URL,QName,Class,DescriptionBuilderComposite,Object)");
+
+            log.debug("entry");
+            log.debug("  wsdlURL = " + wsdlURL);
+            log.debug("  serviceQName = " + serviceQName);
+            log.debug("  serviceClass = " + serviceClass);
+            log.debug("  sparseComposite = " + DescriptionUtils.dumpString(sparseComposite));
         }
     	
     	if (sparseComposite != null) {
@@ -228,6 +234,9 @@ class ServiceDescriptionImpl
         this.serviceQName = serviceQName;
 
         setupWsdlDefinition();
+        if (log.isDebugEnabled()) {
+            log.debug("exit " + this.toString());
+        }
     }
     
     URL getSparseCompositeWsdlURL(DescriptionBuilderComposite sparseComposite) {
@@ -287,12 +296,18 @@ class ServiceDescriptionImpl
             DescriptionBuilderComposite composite, 
             ConfigurationContext configContext, 
             QName serviceQName) {
-        this.composite = composite;
-        
-        this.configContext = configContext;
         if (log.isDebugEnabled()) {
             log.debug("ServiceDescriptionImpl(HashMap<String,DescriptionBuilderComposite>,ConfigurationContext)");
         }
+        if (log.isDebugEnabled()) {
+            log.debug("entry");
+            log.debug("  composite = " + DescriptionUtils.dumpString(composite));
+            log.debug("  configContext = " + configContext);
+            log.debug("  serviceQName = " + serviceQName);
+        }
+        this.composite = composite;
+        
+        this.configContext = configContext;
 
         String serviceImplName = this.composite.getClassName();
 
@@ -373,6 +388,9 @@ class ServiceDescriptionImpl
         	EndpointDescriptionImpl endpointDescription =
                 	new EndpointDescriptionImpl(this, serviceImplName, props, null);
         	addEndpointDescription(endpointDescription);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("exit " + this.toString());
         }
     }
 
@@ -1278,6 +1296,9 @@ class ServiceDescriptionImpl
     }
 
     void setServiceQName(QName theName) {
+        if (log.isDebugEnabled()) {
+            log.debug("Set serviceQName to " + serviceQName);
+        }
         serviceQName = theName;
     }
     
@@ -1388,7 +1409,8 @@ class ServiceDescriptionImpl
         }
         catch (Exception ex) {
             throw ExceptionFactory.makeWebServiceException(
-            		Messages.getMessage("dbclIntegrityErr",ex.toString(),composite.toString()), ex);
+            		Messages.getMessage("dbclIntegrityErr",ex.toString(),
+            		        DescriptionUtils.dumpString(composite)), ex);
         }
     }
 
@@ -2377,6 +2399,15 @@ class ServiceDescriptionImpl
                 string.append("Generated WSDL Definition available: " +
                         (getWSDLGeneratedDefinition() != null));
             }
+            
+            
+            string.append(newline);
+            string.append("isServerSide: " + isServerSide);
+            string.append(newline);
+            string.append("handlerChainAnnotation: " + handlerChainAnnotation);
+            string.append(newline);
+            string.append("handlerChainsType: " + handlerChainsType);
+            
             // Ports
             string.append(newline);
             List<QName> ports = getPorts(null);
@@ -2393,6 +2424,17 @@ class ServiceDescriptionImpl
             // string.append(newline);
             // string.append("ConfigurationContext: " + getAxisConfigContext());
             // EndpointDescriptions
+            
+            // Print out the composite
+            string.append("start composite");
+            try { 
+                string.append(DescriptionUtils.dumpString(composite));
+            } catch (Throwable t) {
+            }
+            string.append(newline);
+            string.append("end composite");
+            string.append(newline);
+            
             string.append(newline);
             Collection<EndpointDescription> endpointDescs = getEndpointDescriptions_AsCollection();
             if (endpointDescs == null) {

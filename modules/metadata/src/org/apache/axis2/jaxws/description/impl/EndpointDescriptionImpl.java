@@ -227,6 +227,15 @@ class EndpointDescriptionImpl
                             ServiceDescriptionImpl parent, 
                             DescriptionBuilderComposite sparseComposite,
                             Object sparseCompositeKey) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("entry ");
+            log.debug("  theClass=" + theClass);
+            log.debug("  portName= " + portName);
+            log.debug("  dynamicPort= " + dynamicPort);
+            log.debug("  parent=" + parent);
+            log.debug("  sparseComposite=" + DescriptionUtils.dumpString(sparseComposite));
+        }
 
         this.axisConfig = parent.getAxisConfigContext().getAxisConfiguration();
 
@@ -279,7 +288,9 @@ class EndpointDescriptionImpl
         } finally {
             releaseAxisServiceResources();
         }
-        
+        if (log.isDebugEnabled()) {
+            log.debug("exit");
+        }
     }
     
     private void setupReleaseResources(ConfigurationContext configurationContext) {
@@ -324,6 +335,13 @@ class EndpointDescriptionImpl
      */
     EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName, Map<String, Object>
         properties, Integer portCompositeIndex) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("entry ");
+            log.debug("  parent=" + parent);
+            log.debug("  serviceImplName=" + parent);
+            log.debug("  portCompositeIndex=" + portCompositeIndex);
+        }
 
         this.axisConfig = parent.getAxisConfigContext().getAxisConfiguration();
         
@@ -583,6 +601,9 @@ class EndpointDescriptionImpl
         // REVIEW: there are some throws above that won't cause the release
         setupReleaseResources(composite.getConfigurationContext());
         releaseAxisServiceResources();
+        if (log.isDebugEnabled()) {
+            log.debug("exit");
+        }
     }
 
     private void addToAxisService() {
@@ -871,6 +892,9 @@ class EndpointDescriptionImpl
     }
 
     private boolean buildAxisServiceFromWSDL() {
+        if (log.isDebugEnabled()) {
+            log.debug("entry");
+        }
         boolean isBuiltFromWSDL = false;
         try {
 
@@ -887,7 +911,11 @@ class EndpointDescriptionImpl
                             getPortQName().getLocalPart());
 
             if (log.isDebugEnabled()) {
-                log.debug("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());    
+                log.debug("Building AxisService from wsdl: " + getServiceDescriptionImpl().getWSDLWrapper().getWSDLLocation());  
+                log.debug("Build Axis Service from WSDL ");
+                log.debug("  Service QName =" + getServiceDescription().getServiceQName());
+                log.debug("  Port QName = "  + getPortQName());
+                log.debug("  WSDL = " + def.toString()); 
             }
                         
             ClassLoader classLoader;
@@ -951,7 +979,10 @@ class EndpointDescriptionImpl
             log.warn(Messages.getMessage("bldAxisSrvcFromWSDLErr",implClassName,wsdlLocation),e);
 
             isBuiltFromWSDL = false;
-            return isBuiltFromWSDL;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("exit isBuiltFromWSDL = " + isBuiltFromWSDL);
+
         }
         return isBuiltFromWSDL;
     }

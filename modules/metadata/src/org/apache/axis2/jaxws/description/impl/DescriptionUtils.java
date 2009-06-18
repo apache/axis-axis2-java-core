@@ -664,4 +664,18 @@ public class DescriptionUtils {
         }
         return soapBindingType;
     }
+    
+    /**
+     * Dump the contents of the composite in a String for 
+     * debug trace
+     * @param composite
+     * @return String
+     */
+    static String dumpString(DescriptionBuilderComposite composite) {
+        try {
+            return composite.toString();
+        } catch (Throwable t) {
+            return "Cannot dump DescriptionBuilderComposite due to : " + t;
+        }
+    }
 }
