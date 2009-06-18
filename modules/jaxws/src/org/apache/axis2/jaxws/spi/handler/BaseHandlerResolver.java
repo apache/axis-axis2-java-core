@@ -116,42 +116,154 @@ public abstract class BaseHandlerResolver implements HandlerResolver {
         }
     }
     
-    private static boolean doesPatternMatch(QName portInfoQName, QName pattern) {
-        if (pattern == null)
-            return true;
+    /**
+     * Returns true of the specified qName matches the pattern.
+     * Some customers may have become dependent on the older
+     * algorithm.  So first the "official" algorithm is used
+     * and if that fails, the older algorithm is used.
+     * @param qName QName
+     * @param pattern QName
+     * @return true or false
+     */
+    public static boolean doesPatternMatch(QName qName, QName pattern) {
+        
+        // Validate pattern only generates warnings if the pattern qname
+        // does not align with the specification. 
         validatePattern(pattern);
-        // build up the strings according to the regular expression defined at http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
-        // use the prefix, not the literal namespace
-        String portInfoPrefix = portInfoQName.getNamespaceURI(); //Prefix();
-        String portInfoLocalPart = portInfoQName.getLocalPart();
-        String portInfoString = ((portInfoPrefix == null) || (portInfoPrefix.equals(""))) ? "" : portInfoPrefix + ":";
-        portInfoString += portInfoLocalPart;
         
-        String patternStringPrefix = pattern.getNamespaceURI(); //Prefix();
-        String patternInfoLocalPart = pattern.getLocalPart();
-        String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";
-        patternString += patternInfoLocalPart;
+        // Try the official pattern match algorithm
+        boolean match = doesPatternMatch_Official(qName, pattern);
         
-        // now match the portInfoQName to the user pattern
-        // But first, convert the user pattern to a regular expression.  Remember, the only non-QName character allowed is "*", which
-        // is a wildcard, with obvious restrictions on what characters can match (for example, a .java filename cannot contain perentheses).
-        // We'll just use part of the above reg ex to form the appropriate restrictions on the user-specified "*" character:
-        Pattern userp = Pattern.compile(patternString.replace("*", "(\\w|\\.|-|_)*"));
-        Matcher userm = userp.matcher(portInfoString);
-        boolean match = userm.matches();
-        if (log.isDebugEnabled()) {
-            if (!match) {
-                log.debug("Pattern match failed: \"" + portInfoString + "\" does not match \"" + patternString + "\"");
-            } else {
-                log.debug("Pattern match succeeded: \"" + portInfoString + "\" matches \"" + patternString + "\"");
+        // Customers may be dependent on the old algorithm, so this is retained.
+        if (!match) {
+            if (log.isDebugEnabled()) {
+                log.debug("The offical matching algorithm failed.  Re-attempting with the prior algorithm");
+            }
+            match = doesPatternMatch_Old(qName, pattern);
+            if (log.isDebugEnabled()) {
+                log.debug("The old matching algorithm returns " + match);
             }
         }
         return match;
+    }
+
+    /**
+     * The old match algorithm combines the namespace and localpart into
+     * a single string to do the matching.  Unfortunately this will cause
+     * the pure wildcard (*) pattern to fail.  And in addition, it may cause
+     * other patterns to succeed.  Prefer the doesPatternMatch_Official algorithm
+     * @param portInfoQName
+     * @param pattern
+     * @return
+     */
+    private static boolean doesPatternMatch_Old(QName portInfoQName, QName pattern) {
+      if (pattern == null)
+          return true;
+     
+      // build up the strings according to the regular expression defined at http://java.sun.com/xml/ns/javaee/javaee_web_services_1_2.xsd
+      // use the prefix, not the literal namespace
+      String portInfoPrefix = portInfoQName.getNamespaceURI(); //Prefix();
+      String portInfoLocalPart = portInfoQName.getLocalPart();
+      String portInfoString = ((portInfoPrefix == null) || (portInfoPrefix.equals(""))) ? "" : portInfoPrefix + ":";
+      portInfoString += portInfoLocalPart;
+      
+      String patternStringPrefix = pattern.getNamespaceURI(); //Prefix();
+      String patternInfoLocalPart = pattern.getLocalPart();
+      String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";
+      patternString += patternInfoLocalPart;
+      
+      // now match the portInfoQName to the user pattern
+      // But first, convert the user pattern to a regular expression.  Remember, the only non-QName character allowed is "*", which
+      // is a wildcard, with obvious restrictions on what characters can match (for example, a .java filename cannot contain perentheses).
+      // We'll just use part of the above reg ex to form the appropriate restrictions on the user-specified "*" character:
+      Pattern userp = Pattern.compile(patternString.replace("*", "(\\w|\\.|-|_)*"));
+      Matcher userm = userp.matcher(portInfoString);
+      boolean match = userm.matches();
+      if (log.isDebugEnabled()) {
+          if (!match) {
+              log.debug("Pattern match failed: \"" + portInfoString + "\" does not match \"" + patternString + "\"");
+          } else {
+              log.debug("Pattern match succeeded: \"" + portInfoString + "\" matches \"" + patternString + "\"");
+          }
+      }
+      return match;
+      
+  }
+    
+    /**
+     * Determine if the indicated qname matches the pattern
+     * @param qName
+     * @param pattern
+     * @return
+     */
+    private static boolean doesPatternMatch_Official(QName qName, QName pattern) {
+        if (log.isDebugEnabled()) {
+            log.debug("entry pattern=" + pattern + " qname=" + qName);
+        }
+        if (pattern == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Successful Match: Pattern is null");
+            }
+            return true;
+        }
         
+        // Do a pattern match on the local part of the qname.
+        String patternLocalPart = pattern.getLocalPart();
+        String localPart = qName.getLocalPart();
+        
+        // Replace the wildcard (*) references in the QName with an appropriate regular expression.
+        String regEx = patternLocalPart.replace("*", "(\\w|\\.|-|_)*");
+        Pattern userp = Pattern.compile(regEx);
+        Matcher userm = userp.matcher(localPart);
+        boolean match = userm.matches();
+        if (!match) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Match: The local name does not match the regex pattern: " + regEx);
+            }
+            return false;
+        } 
+        
+        
+        // Now do the matching with the namespace.
+        // If the entire pattern is a wildcard (*), then all namespaces are acceptable.
+        // For example:
+        //     <port-name-pattern>*</port-name-pattern>
+        // 
+        // In such cases, the assumption is that the pattern namespace will be empty.
+        String patternNamespace = pattern.getNamespaceURI();
+        String namespace = qName.getNamespaceURI();
+        if (patternNamespace.length() == 0) {  // By definition, a namespace will never be null.
+            if (log.isDebugEnabled()) {
+                log.debug("Successful Match: The local name matches and the pattern namespace is empty.");
+            }
+            return true;
+        }
+        
+        // If a namespace is specified, it will be done via a prefix.  For example:
+        //    <port-name-pattern>p:MyPortName</port-name-pattern>
+        // Thus according to the current pattern structure there is no way to 
+        // specify wildcards for the namespace portion of the match
+        if (patternNamespace.equals(namespace)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Successful Match: The local names and namespaces match.");
+            }
+            return true;
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("No Match");
+        }
+        return false;   
     }
     
     
     private static void validatePattern(QName pattern) {
+        if (pattern == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("The pattern qname is null.  This is accepted and interpretted as a wildcard");
+            }
+            return;
+        }
         String patternStringPrefix = pattern.getPrefix();
         String patternInfoLocalPart = pattern.getLocalPart();
         String patternString = ((patternStringPrefix == null) || (patternStringPrefix.equals(""))) ? "" : patternStringPrefix + ":";

@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.handler.factory.HandlerInvokerFactory;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.LogicalHandler;
@@ -862,6 +863,66 @@ public class HandlerChainProcessorTests extends TestCase {
             FactoryRegistry.getFactory(HandlerInvokerFactory.class);
         assertNotNull(factory);
         assertNotNull(factory.createHandlerInvoker(new MessageContext()));
+    }
+    
+    /**
+     * Test the pattern match algorithm in BaseHanderResolverImpl
+     */
+    public void testPattenMatch() {
+        
+        QName qName = new QName("http://mysample", "MyName", "prefix");
+        QName pattern = new QName("http://mysample", "MyName");
+        
+        // Test direct match
+        boolean match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test partial localName match (post)
+        pattern = new QName("http://mysample", "My*");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test partial localName match (pre)
+        pattern = new QName("http://mysample", "*Name");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test partial localName match (inner)
+        pattern = new QName("http://mysample", "M*e");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test full wildcard on localName
+        pattern = new QName("http://mysample", "*");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test full wildcard
+        pattern = new QName("", "*");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Negative Test (not supposed to match prefix)
+        pattern = new QName("prefix", "*");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is not expected to match the pattern " + pattern, !match);
+        
+        
+        // Test partial localName match (pre) and no namespace
+        pattern = new QName("", "*Name");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test partial localName match (inner) and no namespace
+        pattern = new QName("", "M*e");
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
+        // Test null pattern...for legacy reasons this is accepted and interpretted as a wildcard
+        pattern = null;
+        match = HandlerResolverImpl.doesPatternMatch(qName, pattern);
+        assertTrue("The qName " + qName + " is expected to match the pattern " + pattern, match);
+        
     }
 
 
