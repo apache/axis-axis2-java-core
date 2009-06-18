@@ -106,6 +106,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
      */
     protected abstract AsyncResponse createAsyncResponseListener();
 
+    
+    /**
+     * Note to developer: When making a change or fix to this method, please consider
+     * all 5 Proxy/Dispatch "invoke" methods now available in JAX-WS. For Dispatch, 
+     * these are:
+     * 1) Synchronous invoke()
+     * 2) invokeOneWay()
+     * 3) invokeAsynch (Future)
+     * 4) invokeAsynch (Callback)
+     * 
+     * For Proxy:
+     * 5) invokeSEIMethod() 
+     *
+     */
     public Object invoke(Object obj) throws WebServiceException {
 
         // Catch all exceptions and rethrow an appropriate WebService Exception
@@ -197,9 +211,17 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             return returnObj;
         } catch (WebServiceException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invoke(): Synchronous invocation failed, " 
+                        + "caught a WebServiceException: ", e);
+            }
             throw e;
         } catch (Exception e) {
             // All exceptions are caught and rethrown as a WebServiceException
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invoke(): Synchronous invocation failed, caught an Exception, " + 
+                        "wrapping into a WebServiceException. Exception caught: ", e);
+            }  
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
@@ -215,6 +237,19 @@ public abstract class BaseDispatch<T> extends BindingProvider
         }
     }
 
+    /**
+     * Note to developer: When making a change or fix to this method, please consider
+     * all 5 Proxy/Dispatch "invoke" methods now available in JAX-WS. For Dispatch, 
+     * these are:
+     * 1) Synchronous invoke()
+     * 2) invokeOneWay()
+     * 3) invokeAsynch (Future)
+     * 4) invokeAsynch (Callback)
+     * 
+     * For Proxy:
+     * 5) invokeSEIMethod() 
+     *
+     */
     public void invokeOneWay(Object obj) throws WebServiceException {
 
         // All exceptions are caught and rethrown as a WebServiceException
@@ -251,6 +286,27 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setHandlers(binding.getHandlerChain());
 
             initMessageContext(obj, requestMsgCtx);
+            
+            /*
+             * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
+             * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
+             * server would reply with a "Set-Cookie" header, which is copied as a "Cookie"-keyed property to the service context during response.
+             * In this case, if we succeed in using an existing server session, no "Set-Cookie" header will be returned, and therefore no
+             * "Cookie"-keyed property would be set on the service context.  So, let's copy our request context HEADER_COOKIE key to the service
+             * context now to prevent the "no cookie" exception in BindingProvider.setupSessionContext.  It is possible the server does not support
+             * sessions, in which case no error occurs, but the client app would assume it is participating in a session.
+             */
+            if ((requestContext.containsKey(BindingProvider.SESSION_MAINTAIN_PROPERTY)) && ((Boolean)requestContext.get(BindingProvider.SESSION_MAINTAIN_PROPERTY))) {
+                if ((requestContext.containsKey(HTTPConstants.HEADER_COOKIE)) && (requestContext.get(HTTPConstants.HEADER_COOKIE) != null)) {
+                    if (invocationContext.getServiceClient().getServiceContext().getProperty(HTTPConstants.HEADER_COOKIE) == null) {
+                        invocationContext.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
+                                "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                        }
+                    }
+                }
+            }
 
             // call common init method for all invoke* paths
             preInvokeInit(invocationContext);
@@ -276,13 +332,35 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             return;
         } catch (WebServiceException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeOneWay(): One-way invocation failed, " + 
+                        "caught a WebServiceException: ", e);
+            }
             throw e;
         } catch (Exception e) {
             // All exceptions are caught and rethrown as a WebServiceException
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeOneWay(): One-way invocation failed, " + 
+                        "caught an Exception, wrapping into a WebServicesException. " + 
+                        " Exception caught: ", e);
+            }
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
+    /**
+     * Note to developer: When making a change or fix to this method, please consider
+     * all 5 Proxy/Dispatch "invoke" methods now available in JAX-WS. For Dispatch, 
+     * these are:
+     * 1) Synchronous invoke()
+     * 2) invokeOneWay()
+     * 3) invokeAsynch (Future)
+     * 4) invokeAsynch (Callback)
+     * 
+     * For Proxy:
+     * 5) invokeSEIMethod() 
+     *
+     */
     public Future<?> invokeAsync(Object obj, AsyncHandler asynchandler) throws WebServiceException {
 
         // All exceptions are caught and rethrown as a WebServiceException
@@ -319,6 +397,26 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setHandlers(binding.getHandlerChain());
 
             initMessageContext(obj, requestMsgCtx);
+            /*
+             * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
+             * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
+             * server would reply with a "Set-Cookie" header, which is copied as a "Cookie"-keyed property to the service context during response.
+             * In this case, if we succeed in using an existing server session, no "Set-Cookie" header will be returned, and therefore no
+             * "Cookie"-keyed property would be set on the service context.  So, let's copy our request context HEADER_COOKIE key to the service
+             * context now to prevent the "no cookie" exception in BindingProvider.setupSessionContext.  It is possible the server does not support
+             * sessions, in which case no error occurs, but the client app would assume it is participating in a session.
+             */
+            if ((requestContext.containsKey(BindingProvider.SESSION_MAINTAIN_PROPERTY)) && ((Boolean)requestContext.get(BindingProvider.SESSION_MAINTAIN_PROPERTY))) {
+                if ((requestContext.containsKey(HTTPConstants.HEADER_COOKIE)) && (requestContext.get(HTTPConstants.HEADER_COOKIE) != null)) {
+                    if (invocationContext.getServiceClient().getServiceContext().getProperty(HTTPConstants.HEADER_COOKIE) == null) {
+                        invocationContext.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
+                                "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                        }
+                    }
+                }
+            }
 
             // call common init method for all invoke* paths
             preInvokeInit(invocationContext);
@@ -355,13 +453,34 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             return asyncResponse;
         } catch (WebServiceException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeAsync() [Callback]: Asynchronous invocation failed, " +
+                    "caught a WebServiceException: ", e);
+            }
             throw e;
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeAsync() [Callback]: Asynchronous invocation failed, " +
+                    "caught an Exception, wrapping into a WebServiceException. Exception caught: ", e);
+            }
             // All exceptions are caught and rethrown as a WebServiceException
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
+    /**
+     * Note to developer: When making a change or fix to this method, please consider
+     * all 5 Proxy/Dispatch "invoke" methods now available in JAX-WS. For Dispatch, 
+     * these are:
+     * 1) Synchronous invoke()
+     * 2) invokeOneWay()
+     * 3) invokeAsynch (Future)
+     * 4) invokeAsynch (Callback)
+     * 
+     * For Proxy:
+     * 5) invokeSEIMethod() 
+     *
+     */
     public Response invokeAsync(Object obj) throws WebServiceException {
 
         // All exceptions are caught and rethrown as a WebServiceException
@@ -398,6 +517,27 @@ public abstract class BaseDispatch<T> extends BindingProvider
             invocationContext.setHandlers(binding.getHandlerChain());
 
             initMessageContext(obj, requestMsgCtx);
+            
+            /*
+             * if SESSION_MAINTAIN_PROPERTY is true, and the client app has explicitly set a HEADER_COOKIE on the request context, assume the client
+             * app is expecting the HEADER_COOKIE to be the session id.  If we were establishing a new session, no cookie would be sent, and the 
+             * server would reply with a "Set-Cookie" header, which is copied as a "Cookie"-keyed property to the service context during response.
+             * In this case, if we succeed in using an existing server session, no "Set-Cookie" header will be returned, and therefore no
+             * "Cookie"-keyed property would be set on the service context.  So, let's copy our request context HEADER_COOKIE key to the service
+             * context now to prevent the "no cookie" exception in BindingProvider.setupSessionContext.  It is possible the server does not support
+             * sessions, in which case no error occurs, but the client app would assume it is participating in a session.
+             */
+            if ((requestContext.containsKey(BindingProvider.SESSION_MAINTAIN_PROPERTY)) && ((Boolean)requestContext.get(BindingProvider.SESSION_MAINTAIN_PROPERTY))) {
+                if ((requestContext.containsKey(HTTPConstants.HEADER_COOKIE)) && (requestContext.get(HTTPConstants.HEADER_COOKIE) != null)) {
+                    if (invocationContext.getServiceClient().getServiceContext().getProperty(HTTPConstants.HEADER_COOKIE) == null) {
+                        invocationContext.getServiceClient().getServiceContext().setProperty(HTTPConstants.HEADER_COOKIE, requestContext.get(HTTPConstants.HEADER_COOKIE));
+                        if (log.isDebugEnabled()) {
+                            log.debug("Client-app defined Cookie property (assume to be session cookie) on request context copied to service context." +
+                                "  Caution:  server may or may not support sessions, but client app will not be informed when not supported.");
+                        }
+                    }
+                }
+            }
 
             // call common init method for all invoke* paths
             preInvokeInit(invocationContext);
@@ -434,8 +574,16 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
             return asyncResponse;
         } catch (WebServiceException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeAsync() [Polling]: Asynchronous invocation failed, " +
+                    "caught a WebServiceException: ", e);
+            }
             throw e;
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("BaseDispatch.invokeAsync() [Polling]: Asynchronous invocation failed, " +
+                    "caught an Exception, wrapping into a WebServiceException. Exception caught: ",e);
+            }
             // All exceptions are caught and rethrown as a WebServiceException
             throw ExceptionFactory.makeWebServiceException(e);
         }

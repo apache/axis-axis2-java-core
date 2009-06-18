@@ -161,9 +161,20 @@ public class JAXWSProxyHandler extends BindingProvider implements
     }
 
     /*
-    * Performs the invocation of the method defined on the Service Endpoint
-    * Interface.
-    */
+     * Note to developer: When making a change or fix to this method, please consider
+     * all 5 Proxy/Dispatch "invoke" methods now available in JAX-WS. For Dispatch, 
+     * these are:
+     * 1) Synchronous invoke()
+     * 2) invokeOneWay()
+     * 3) invokeAsynch (Future)
+     * 4) invokeAsynch (Callback)
+     * 
+     * For Proxy:
+     * 5) invokeSEIMethod() 
+     *
+     * Performs the invocation of the method defined on the Service Endpoint
+     * Interface.
+     */
     private Object invokeSEIMethod(Method method, Object[] args) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to invoke SEI Method " + method.getName());
@@ -295,6 +306,10 @@ public class JAXWSProxyHandler extends BindingProvider implements
             //Check to see if we need to maintain session state
             checkMaintainSessionState(request, requestIC);
 
+            if (log.isDebugEnabled()) {
+                log.debug("Exiting the method invokeSEIMethod() - Async Callback ");
+            }
+
             return future;
         }
 
@@ -310,6 +325,10 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
             //Check to see if we need to maintain session state
             checkMaintainSessionState(request, requestIC);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Exiting the method invokeSEIMethod() - Async Polling ");
+            }
 
             return response;
         }
@@ -329,7 +348,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
                     getResponseContext(), responseContext);
             
             Object responseObj = createResponse(method, args, responseContext, operationDesc);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Exiting the method invokeSEIMethod() - Sync");
+            }
+                        
             return responseObj;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exiting the method invokeSEIMethod() - One Way ");
         }
 
         return null;
