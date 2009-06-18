@@ -98,6 +98,16 @@ public class WebServiceExceptionLogger {
                 log.debug("The exception is an instance of checked exception: " + 
                           checkedException.getName());
             }
+            
+            // Extra trace if ElementNSImpl incompatibility problem.
+            // The incompatibility exception occurs if the JAXB Unmarshaller 
+            // unmarshals to a dom element instead of a generated object.  This can 
+            // result in class cast exceptions.  The solution is usually a missing
+            // @XmlSeeAlso annotation in the jaxws or jaxb classes. 
+            if (rootT.toString().contains("org.apache.xerces.dom.ElementNSImpl incompatible")) {
+            	log.debug("This exception may be due to a missing @XmlSeeAlso in the client's jaxws or" +
+            			" jaxb classes.");
+            }
             log.debug("Method = " + method.toGenericString());
             for (int i = 0; i < args.length; i++) {
                 String value =

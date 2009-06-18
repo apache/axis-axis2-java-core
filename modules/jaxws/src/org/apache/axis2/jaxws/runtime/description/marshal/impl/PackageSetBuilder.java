@@ -44,14 +44,18 @@ import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.bind.JAXBElement;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
@@ -94,6 +98,11 @@ public class PackageSetBuilder {
      * @return Set of Packages
      */
     public static TreeSet<String> getPackagesFromSchema(ServiceDescription serviceDesc) {
+    	
+    	if (log.isDebugEnabled()) {
+    		log.debug("start getPackagesFromSchema");
+    		log.debug("ServiceDescription = " + serviceDesc.toString());
+    	}
 
         TreeSet<String> set = new TreeSet<String>();
         //If we are on client side we will get wsdl definition from ServiceDescription. If we are on server side we will have to
@@ -127,6 +136,9 @@ public class PackageSetBuilder {
                 }
             }
         }
+        if (log.isDebugEnabled()) {
+        	log.debug("end getPackagesFromSchema");
+        }
         return set;
     }
 
@@ -136,6 +148,11 @@ public class PackageSetBuilder {
      */
     public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc,
                                                              MarshalServiceRuntimeDescription msrd) {
+    	if (log.isDebugEnabled()) {
+    		log.debug("start getPackagesFromAnnotations");
+    		log.debug("ServiceDescription = " + serviceDesc.toString());
+    		log.debug("MarshalServiceRuntimeDescription = " + msrd.toString());
+    	}
         TreeSet<String> set = new TreeSet<String>();
         Collection<EndpointDescription> endpointDescs = serviceDesc.getEndpointDescriptions_AsCollection();
         
@@ -144,6 +161,9 @@ public class PackageSetBuilder {
             for (EndpointDescription endpointDesc: endpointDescs) {
                 set.addAll(getPackagesFromAnnotations(endpointDesc, msrd));
             }
+        }
+        if (log.isDebugEnabled()) {
+        	log.debug("end getPackagesFromAnnotations");
         }
         return set;
     }
@@ -154,10 +174,15 @@ public class PackageSetBuilder {
      */
     private static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc,
                                                               MarshalServiceRuntimeDescription msrd) {
-        
+    	if (log.isDebugEnabled()) {
+    		log.debug("start getPackagesFromAnnotations for EndpointDescription " + endpointDesc.getName());
+    	}
         TreeSet<String> set = new TreeSet<String>();
         String implClassName = getServiceImplClassName(endpointDesc);
         if (implClassName != null) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("EndpointDescription implClassName = " + implClassName);
+        	}
             Class clz = loadClass(implClassName);
             if(clz == null){
                 clz = loadClass(implClassName, endpointDesc.getAxisService().getClassLoader());
@@ -171,6 +196,9 @@ public class PackageSetBuilder {
         if (endpointInterfaceDesc != null) {
             getPackagesFromAnnotations(endpointDesc, endpointInterfaceDesc, set, msrd);
         }
+        if (log.isDebugEnabled()) {
+    		log.debug("end getPackagesFromAnnotations for EndpointDescription " + endpointDesc.getName());
+    	}
         return set;
     }
 
@@ -185,10 +213,47 @@ public class PackageSetBuilder {
             TreeSet<String> set,
             MarshalServiceRuntimeDescription msrd) {
         
+    	if (log.isDebugEnabled()) {
+    		log.debug("start getPackagesFromAnnotations for EndpointInterfaceDescription " + 
+    					endpointInterfaceDesc.getPortType());
+    	}
         OperationDescription[] opDescs = endpointInterfaceDesc.getDispatchableOperations();
 
-        // Inspect the @XmlSeeAlso classes on the interface
-        addXmlSeeAlsoPackages(endpointInterfaceDesc.getSEIClass(), msrd, set);
+        // Inspect the @XmlSeeAlso classes on the interface.
+        // A) The SEI class is accessible via the getSEIClass method -OR-
+        // B) The endpoint directly implements the sei class
+        //    (The @XmlSeeAlso annotations were picked up when the endpoint is examined) -OR-
+        // C) Find the SEI class using the @WebService annotation
+        Class seicls = endpointInterfaceDesc.getSEIClass();
+        if (log.isDebugEnabled()) {
+        	log.debug("SEI Class is " + seicls);
+        }
+        if (seicls == null) {
+        	String implClassName = getServiceImplClassName(ed);
+            if (implClassName != null) {
+            	if (log.isDebugEnabled()) {
+            		log.debug("EndpointDescription implClassName = " + implClassName);
+            	}
+                Class clz = loadClass(implClassName);
+                if(clz == null){
+                    clz = loadClass(implClassName, ed.getAxisService().getClassLoader());
+                }
+                if (clz != null) {
+                	WebService ws = (WebService) getAnnotation(clz, WebService.class);
+                	if (ws != null) {
+                		String intClassName = ws.endpointInterface();
+                		if (log.isDebugEnabled()) {
+                    		log.debug("WebService endpointinterface = " + intClassName);
+                    	}
+                        seicls = loadClass(intClassName);
+                        if (seicls== null){
+                            seicls = loadClass(intClassName, ed.getAxisService().getClassLoader());
+                        }
+                	}
+                }
+            }
+        }
+        addXmlSeeAlsoPackages(seicls, msrd, set);
         
         
         // Build a set of packages from all of the operations
@@ -197,6 +262,10 @@ public class PackageSetBuilder {
                 getPackagesFromAnnotations(ed, opDescs[i], set, msrd);
             }
         }
+        if (log.isDebugEnabled()) {
+    		log.debug("end getPackagesFromAnnotations for EndpointInterfaceDescription " + 
+    					endpointInterfaceDesc.getPortType());
+    	}
         return;
     }
 
@@ -434,6 +503,9 @@ public class PackageSetBuilder {
     private static void addXmlSeeAlsoPackages(Class clz, 
                                               MarshalServiceRuntimeDescription msrd, 
                                               TreeSet<String> set) {
+    	if (log.isDebugEnabled()) {
+    		log.debug("start addXmlSeeAlsoPackages for " + clz);
+    	}
         if (clz != null) {
             AnnotationDesc aDesc = msrd.getAnnotationDesc(clz);
             if (aDesc != null) {
@@ -445,6 +517,9 @@ public class PackageSetBuilder {
                                 (seeAlso[i].getPackage() == null) ? "" : 
                                     seeAlso[i].getPackage().getName();
                         if (pkg != null) {
+                        	if (log.isDebugEnabled()) {
+                        		log.debug(" adding package = " + pkg);
+                        	}
                             set.add(pkg);
                         }
                     }
@@ -458,6 +533,9 @@ public class PackageSetBuilder {
                 }
             }
         }
+        if (log.isDebugEnabled()) {
+    		log.debug("end addXmlSeeAlsoPackages for " + clz);
+    	}
     }
     /**
      * Loads the class
@@ -504,7 +582,7 @@ public class PackageSetBuilder {
             // Class.forName does not support primitives
             Class cls = ClassUtils.getPrimitiveClass(className);
             if (cls == null) {
-                cls = Class.forName(className, true, loader);
+                cls = forName(className, true, loader);
             }
             return cls;
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
@@ -568,7 +646,7 @@ public class PackageSetBuilder {
                             // Class.forName does not support primitives
                             Class cls = ClassUtils.getPrimitiveClass(className);
                             if (cls == null) {
-                                cls = Class.forName(className, initialize, classloader);
+                                cls = forName(className, initialize, classloader);
                             }
                             return cls;
                         }
@@ -624,5 +702,19 @@ public class PackageSetBuilder {
             }
         }
         return result;
+    }
+    
+    /**
+     * Get an annotation.  This is wrappered to avoid a Java2Security violation.
+     * @param cls Class that contains annotation 
+     * @param annotation Class of requrested Annotation
+     * @return annotation or null
+     */
+    private static Annotation getAnnotation(final AnnotatedElement element, final Class annotation) {
+        return (Annotation) AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return element.getAnnotation(annotation);
+            }
+        });
     }
 }

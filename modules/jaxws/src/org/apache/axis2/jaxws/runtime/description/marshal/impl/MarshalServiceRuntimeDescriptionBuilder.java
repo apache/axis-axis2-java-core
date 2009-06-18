@@ -63,7 +63,14 @@ public class MarshalServiceRuntimeDescriptionBuilder {
      */
     static private void init(MarshalServiceRuntimeDescriptionImpl marshalDesc,
                              ServiceDescription serviceDesc) {
+    	
+    	if (log.isDebugEnabled()) {
+    		log.debug("start init");
+    	}
 
+    	if (log.isDebugEnabled()) {
+    		log.debug("Discover the artifacts");
+    	}
         // Artifact class discovery/builder
         ArtifactProcessor artifactProcessor = new ArtifactProcessor(serviceDesc);
         try {
@@ -75,6 +82,9 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());
         marshalDesc.setFaultBeanDescMap(artifactProcessor.getFaultBeanDescMap());
 
+        if (log.isDebugEnabled()) {
+    		log.debug("Build the annotations map");
+    	}
         // Build the annotation map
         Map<String, AnnotationDesc> map;
         try {
@@ -90,6 +100,10 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         }
         marshalDesc.setAnnotationMap(map);
 
+       
+        if (log.isDebugEnabled()) {
+    		log.debug("Build the property descriptor cache");
+    	}
         // Build the property descriptor map
         Map<Class, Map<String, PropertyDescriptorPlus>> cache;
         try {
@@ -118,12 +132,23 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         boolean doAnnotationWalk = true;
         packages = new TreeSet<String>();
         if (doSchemaWalk) {
+        	if (log.isDebugEnabled()) {
+        		log.debug("Get the packages using the schema");
+        	}
             packages.addAll(PackageSetBuilder.getPackagesFromSchema(serviceDesc));
         }
         if (doAnnotationWalk) {
             // Get the package names from the annotations.  Use the annotation map to reduce Annotation introspection
+        	if (log.isDebugEnabled()) {
+        		log.debug("Get the packages using the class annotations");
+        	}
             packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(serviceDesc, marshalDesc));
         }
         marshalDesc.setPackages(packages);
+        
+        if (log.isDebugEnabled()) {
+        	log.debug("MarshalDesc = " + marshalDesc);
+    		log.debug("end init");
+    	}
     }
 }

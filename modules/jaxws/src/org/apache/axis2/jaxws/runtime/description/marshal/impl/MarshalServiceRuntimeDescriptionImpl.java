@@ -146,60 +146,67 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     }
 
     public String toString() {
-        final String newline = "\n";
-        final String sameline = " ";
-        StringBuffer string = new StringBuffer();
+        try {
+            final String newline = "\n";
+            final String sameline = " ";
+            StringBuffer string = new StringBuffer();
 
-        string.append(newline);
-        string.append("  MarshalServiceRuntime:" + getKey());
-        string.append(newline);
-        string.append("    Packages = " + getPackages().toString());
-
-        for (Entry<String, AnnotationDesc> entry : this.annotationMap.entrySet()) {
             string.append(newline);
-            string.append("    AnnotationDesc cached for:" + entry.getKey());
-            string.append(entry.getValue().toString());
-        }
-
-        for (Entry<Class, Map<String, PropertyDescriptorPlus>> entry : this.pdMapCache.entrySet()) {
+            string.append("  MarshalServiceRuntime:" + getKey());
             string.append(newline);
-            string.append("    PropertyDescriptorPlus Map cached for:" +
-                    entry.getKey().getCanonicalName());
-            for (PropertyDescriptorPlus pdp : entry.getValue().values()) {
+            String pkgs = (getPackages() == null) ? "none" : getPackages().toString();
+            string.append("    Packages = " + pkgs);
+
+            for (Entry<String, AnnotationDesc> entry : this.annotationMap.entrySet()) {
                 string.append(newline);
-                string.append("      propertyName   =" + pdp.getPropertyName());
-                string.append(newline);
-                string.append("        xmlName      =" + pdp.getXmlName());
-                string.append(newline);
-                string.append("        propertyType =" + pdp.getPropertyType().getCanonicalName());
-                string.append(newline);
+                string.append("    AnnotationDesc cached for:" + entry.getKey());
+                string.append(entry.getValue().toString());
             }
+
+            for (Entry<Class, Map<String, PropertyDescriptorPlus>> entry : this.pdMapCache.entrySet()) {
+                string.append(newline);
+                string.append("    PropertyDescriptorPlus Map cached for:" +
+                        entry.getKey().getCanonicalName());
+                for (PropertyDescriptorPlus pdp : entry.getValue().values()) {
+                    string.append(newline);
+                    string.append("      propertyName   =" + pdp.getPropertyName());
+                    string.append(newline);
+                    string.append("        xmlName      =" + pdp.getXmlName());
+                    string.append(newline);
+                    string.append("        propertyType =" + pdp.getPropertyType().getCanonicalName());
+                    string.append(newline);
+                }
+            }
+
+            string.append("    RequestWrappers");
+            for (Entry<OperationDescription, String> entry : this.requestWrapperMap.entrySet()) {
+                string.append(newline);
+                string.append("    Operation:" + entry.getKey().getJavaMethodName() +
+                        " RequestWrapper:" + entry.getValue());
+            }
+
+            string.append("    ResponseWrappers");
+            for (Entry<OperationDescription, String> entry : this.responseWrapperMap.entrySet()) {
+                string.append(newline);
+                string.append("    Operation:" + entry.getKey().getJavaMethodName() +
+                        " ResponseWrapper:" + entry.getValue());
+            }
+
+            string.append("    FaultBeanDesc");
+            for (Entry<FaultDescription, FaultBeanDesc> entry : this.faultBeanDescMap.entrySet()) {
+                string.append(newline);
+                string.append("    FaultException:" + entry.getKey().getExceptionClassName());
+                string.append(newline);
+                string.append(entry.getValue().toString());
+            }
+
+
+            return string.toString();
+        } catch (Throwable t) {
+            // A problem occurred while dumping the contents.
+            // This should not be re-thrown.
+            return "An error occured while dumping the debug contents of MarshalServiceRuntimeDescriptionImpl:" + t.toString();
         }
-
-        string.append("    RequestWrappers");
-        for (Entry<OperationDescription, String> entry : this.requestWrapperMap.entrySet()) {
-            string.append(newline);
-            string.append("    Operation:" + entry.getKey().getJavaMethodName() +
-                    " RequestWrapper:" + entry.getValue());
-        }
-
-        string.append("    ResponseWrappers");
-        for (Entry<OperationDescription, String> entry : this.responseWrapperMap.entrySet()) {
-            string.append(newline);
-            string.append("    Operation:" + entry.getKey().getJavaMethodName() +
-                    " ResponseWrapper:" + entry.getValue());
-        }
-
-        string.append("    FaultBeanDesc");
-        for (Entry<FaultDescription, FaultBeanDesc> entry : this.faultBeanDescMap.entrySet()) {
-            string.append(newline);
-            string.append("    FaultException:" + entry.getKey().getExceptionClassName());
-            string.append(newline);
-            string.append(entry.getValue().toString());
-        }
-
-
-        return string.toString();
     }
 
 
