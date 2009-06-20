@@ -19,113 +19,60 @@
 
 package org.apache.axis2.schema.union;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.union.*;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 
-public class UnionTest extends TestCase {
+public class UnionTest extends AbstractTestCase {
 
-    public void testRecord2(){
-        Object result;
-        result = testRecord2(new Integer(10));
-        assertEquals(result,new Integer(10));
-        result = testRecord2(new Boolean(true));
-        assertEquals(result,new Boolean(true));
+    public void testRecord2() throws Exception {
+        testRecord2(new Integer(10));
+        testRecord2(new Boolean(true));
     }
 
-    private Object testRecord2(Object testObject) {
+    private void testRecord2(Object testObject) throws Exception {
         Record2 record2 = new Record2();
         DateOrDateTimeType dateOrDateTimeType = new DateOrDateTimeType();
         record2.setElem1(dateOrDateTimeType);
         dateOrDateTimeType.setObject(testObject);
 
-        try {
-            OMElement omElement = record2.getOMElement(Record2.MY_QNAME,
-                     OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            Record2 newRecord2 = Record2.Factory.parse(xmlReader);
-            return newRecord2.getElem1().getObject();
-        } catch (Exception e) {
-            assertFalse(true);
-        }
-        return null;
+        testSerializeDeserialize(record2);
     }
 
-    public void testRecord1() {
-        Object result;
-        try {
-            result = testRecord1(new URI("http://www.google.com"));
-            assertEquals(result,new URI("http://www.google.com"));
-            result = testRecord1(FooEnum._value1);
-            assertEquals(result,FooEnum._value1);
-        } catch (URI.MalformedURIException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public void testRecord1() throws Exception {
+        testRecord1(new URI("http://www.google.com"));
+        testRecord1(FooEnum._value1);
     }
 
-    private Object testRecord1(Object testObject) {
+    private void testRecord1(Object testObject) throws Exception {
         Record1 record1 = new Record1();
         FooOpenEnum fooOpenEnum = new FooOpenEnum();
         record1.setElem1(fooOpenEnum);
-        try {
-            fooOpenEnum.setObject(testObject);
-            OMElement omElement = record1.getOMElement(Record1.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            Record1 newRecord1 = Record1.Factory.parse(xmlReader);
-            return newRecord1.getElem1().getObject();
-        } catch (Exception e) {
-            assertFalse(true);
-        }
-        return null;
+        fooOpenEnum.setObject(testObject);
+
+        testSerializeDeserialize(record1);
     }
 
-    public void testUnionQName(){
+    public void testUnionQName() throws Exception {
         UnionQNameTestElement unionQNameTestElement = new UnionQNameTestElement();
         UnionQNameTest unionQNameTest = new UnionQNameTest();
         unionQNameTestElement.setUnionQNameTestElement(unionQNameTest);
         unionQNameTest.setObject(new QName("http://www.google.com","test"));
 
-        try {
-            OMElement omElement = unionQNameTestElement.getOMElement(UnionQNameTestElement.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            UnionQNameTestElement result = UnionQNameTestElement.Factory.parse(xmlReader);
-            assertEquals(unionQNameTest.getObject(),result.getUnionQNameTestElement().getObject());
-        } catch (Exception e) {
-            assertTrue(false);
-        }
+        testSerializeDeserialize(unionQNameTestElement);
     }
 
-    public void testInnerSimpleTypes(){
+    public void testInnerSimpleTypes() throws Exception {
         TestInnerUnionType testInnerUnionType = new TestInnerUnionType();
         PackingType_T packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
         PackingType_T_type0 packingType_t_type0 = new PackingType_T_type0();
         packingType_t_type0.setPackingType_T_type0("MINOR_a");
         packingType_t.setObject(packingType_t_type0);
-        OMElement omElement;
-        try {
-            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(packingType_t_type0.toString(),result.getTestInnerUnionType().getObject().toString());
-        } catch (Exception e) {
-            assertTrue(false);
-        }
+        
+        testSerializeDeserialize(testInnerUnionType);
 
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
@@ -134,33 +81,13 @@ public class UnionTest extends TestCase {
         packingType_t_type1.setPackingType_T_type1("PROP_a");
         packingType_t.setObject(packingType_t_type1);
 
-         try {
-            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(packingType_t_type1.toString(),result.getTestInnerUnionType().getObject().toString());
-        } catch (Exception e) {
-            assertTrue(false);
-        }
+        testSerializeDeserialize(testInnerUnionType);
 
         testInnerUnionType = new TestInnerUnionType();
         packingType_t = new PackingType_T();
         testInnerUnionType.setTestInnerUnionType(packingType_t);
         packingType_t.setObject(PackingType_T_type2.TAR);
 
-        try {
-            omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
-            assertEquals(PackingType_T_type2.TAR,result.getTestInnerUnionType().getObject());
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-
-
+        testSerializeDeserialize(testInnerUnionType);
     }
 }

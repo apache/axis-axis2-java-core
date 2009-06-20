@@ -19,22 +19,14 @@
 
 package org.apache.axis2.schema.union2;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.union2.*;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.util.Date;
 
+public class Union2Test extends AbstractTestCase {
 
-public class Union2Test extends TestCase {
-
-    public void testUnionElement2() {
+    public void testUnionElement2() throws Exception {
         TestUnionElement2 testUnionElement2 = new TestUnionElement2();
 
         TestUnion1 param1 = new TestUnion1();
@@ -46,28 +38,10 @@ public class Union2Test extends TestCase {
 
         testUnionElement2.setAttribute1(attribute1);
 
-        try {
-            OMElement omElement = testUnionElement2.getOMElement(
-                    TestUnionElement2.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element String ==> " + omElementString);
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(
-                            new ByteArrayInputStream(omElementString.getBytes()));
-            TestUnionElement2 result = TestUnionElement2.Factory.parse(xmlReader);
-            assertEquals(result.getParam1().getObject(), Boolean.TRUE);
-            assertEquals(result.getAttribute1().getObject(), "test attribute");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testUnionElement2);
     }
 
-    public void testListElement2() {
+    public void testListElement2() throws Exception {
         TestListElement1 testListElement1 = new TestListElement1();
 
         TestList1 param1 = new TestList1();
@@ -78,32 +52,10 @@ public class Union2Test extends TestCase {
         attribute1.setString(new String[]{"attribute1","attribute2"});
         testListElement1.setAttribute1(attribute1);
 
-        try {
-            OMElement omElement = testListElement1.getOMElement(
-                    TestListElement1.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element String ==> " + omElementString);
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(
-                            new ByteArrayInputStream(omElementString.getBytes()));
-            TestListElement1 result = TestListElement1.Factory.parse(xmlReader);
-            assertEquals(result.getParam1().getString()[0], "param1");
-            assertEquals(result.getParam1().getString()[1], "param2");
-            assertEquals(result.getAttribute1().getString()[0], "attribute1");
-            assertEquals(result.getAttribute1().getString()[1], "attribute2");
-        } catch (ADBException e) {
-            e.printStackTrace();
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        testSerializeDeserialize(testListElement1);
     }
 
-    public void testFuzzDateType(){
+    public void testFuzzDateType() throws Exception {
         TestFuzzyDateType testFuzzyDateType = new TestFuzzyDateType();
 
         FuzzyDateType fuzzyDateType = new FuzzyDateType();
@@ -111,20 +63,6 @@ public class Union2Test extends TestCase {
 
         testFuzzyDateType.setTestFuzzyDateType(fuzzyDateType);
 
-        try {
-            OMElement omElement = testFuzzyDateType.getOMElement(
-                    TestFuzzyDateType.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestFuzzyDateType result = TestFuzzyDateType.Factory.parse(xmlReader);
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        TestFuzzyDateType result = (TestFuzzyDateType)serializeDeserialize(testFuzzyDateType);
     }
 }

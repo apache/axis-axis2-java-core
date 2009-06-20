@@ -19,51 +19,23 @@
 
 package org.apache.axis2.schema.booleantest;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.boolean1.TestBoolean1;
 import org.tempuri.boolean1.TestBoolean2;
 
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class BooleanTest extends AbstractTestCase {
 
-
-public class BooleanTest extends TestCase {
-
-    public void testBooleanTest1(){
+    public void testBooleanTest1() throws Exception {
         TestBoolean1 testBoolean = new TestBoolean1();
         testBoolean.setTestBoolean1(true);
-
-        try {
-            OMElement omElement = testBoolean.getOMElement(TestBoolean1.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestBoolean1 result = TestBoolean1.Factory.parse(xmlReader);
-            assertEquals(result.getTestBoolean1(),true);
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testBoolean);
     }
 
-    public void testBooleanTest2(){
+    public void testBooleanTest2() throws Exception {
         TestBoolean2 testBoolean = new TestBoolean2();
         testBoolean.setParam1(false);
         testBoolean.setAttribute1(true);
-
-         try {
-            OMElement omElement = testBoolean.getOMElement(TestBoolean2.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestBoolean2 result = TestBoolean2.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(),false);
-            assertEquals(result.getAttribute1(),true);
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testBoolean);
     }
 
 }

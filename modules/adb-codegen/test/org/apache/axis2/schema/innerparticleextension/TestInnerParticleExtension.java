@@ -19,22 +19,14 @@
 
 package org.apache.axis2.schema.innerparticleextension;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.innerparticalextension.ChildElement_type0;
 import org.tempuri.innerparticalextension.ParentTypeChoice;
 import org.tempuri.innerparticalextension.TestElement;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class TestInnerParticleExtension extends AbstractTestCase {
 
-public class TestInnerParticleExtension extends TestCase {
-
-    public void testTestElement(){
+    public void testTestElement() throws Exception {
         TestElement testElement = new TestElement();
 
         ChildElement_type0 childElement_type0[] = new ChildElement_type0[2];
@@ -62,29 +54,6 @@ public class TestInnerParticleExtension extends TestCase {
 
         testElement.setChildElement(childElement_type0);
 
-        try {
-            OMElement omElement = testElement.getOMElement(TestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element string ==> " + omElementString);
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestElement result = TestElement.Factory.parse(xmlReader);
-            assertEquals(result.getChildElement()[0].getTestAttribute(),"Test Attribute");
-            assertEquals(result.getChildElement()[1].getTestAttribute(),"Test Attribute");
-
-            assertEquals(result.getChildElement()[0].getParentTypeChoice()[0].getParam1(),"param1");
-            assertEquals(result.getChildElement()[0].getParentTypeChoice()[1].getParam2(),"param2");
-            assertEquals(result.getChildElement()[1].getParentTypeChoice()[0].getParam1(),"param1");
-            assertEquals(result.getChildElement()[1].getParentTypeChoice()[1].getParam2(),"param2");
-
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
-
+        testSerializeDeserialize(testElement);
     }
 }

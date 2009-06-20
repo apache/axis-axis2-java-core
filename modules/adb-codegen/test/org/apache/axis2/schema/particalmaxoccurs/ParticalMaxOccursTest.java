@@ -20,21 +20,13 @@
 package org.apache.axis2.schema.particalmaxoccurs;
 
 import com.mynamespace.testparticlemaxoccurs.*;
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.AbstractTestCase;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-
-
-public class ParticalMaxOccursTest extends TestCase {
+public class ParticalMaxOccursTest extends AbstractTestCase {
 
     private int i = 0;
 
-    public void testParticalSequenceMaxOccursTest1() {
+    public void testParticalSequenceMaxOccursTest1() throws Exception {
         TestParticalSequenceMaxOccurs1 testParticalMaxOccures1 = new TestParticalSequenceMaxOccurs1();
         TestParticalSequenceMaxOccursType1 testParticalMaxOccursType1 = new TestParticalSequenceMaxOccursType1();
         testParticalMaxOccures1.setTestParticalSequenceMaxOccurs1(testParticalMaxOccursType1);
@@ -51,27 +43,10 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType1.setTestParticalSequenceMaxOccursType1Sequence(testSequences);
 
-         try {
-             OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalSequenceMaxOccurs1.MY_QNAME,
-                       OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs1 result = TestParticalSequenceMaxOccurs1.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType1Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs1().getTestParticalSequenceMaxOccursType1Sequence();
-            assertEquals(resultSequences[0].getParm1(), "Param11");
-            assertEquals(resultSequences[0].getParm2(), "Param12");
-            assertEquals(resultSequences[1].getParm1(), "Param21");
-            assertEquals(resultSequences[1].getParm2(), "Param22");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures1);
     }
 
-    public void testParticleSequenceMaxOccurs2() {
+    public void testParticleSequenceMaxOccurs2() throws Exception {
         TestParticalSequenceMaxOccurs2 testParticalMaxOccures2 = new TestParticalSequenceMaxOccurs2();
         TestParticalSequenceMaxOccursType2 testParticalMaxOccursType2 = new TestParticalSequenceMaxOccursType2();
         testParticalMaxOccures2.setTestParticalSequenceMaxOccurs2(testParticalMaxOccursType2);
@@ -88,31 +63,10 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType2.setTestParticalSequenceMaxOccursType2Sequence(testSequences);
 
-        try {
-            OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalSequenceMaxOccurs2.MY_QNAME,
-                     OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs2 result = TestParticalSequenceMaxOccurs2.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType2Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs2().getTestParticalSequenceMaxOccursType2Sequence();
-            assertEquals(resultSequences[0].getParm1()[0], "Param111");
-            assertEquals(resultSequences[0].getParm1()[1], "Param112");
-            assertEquals(resultSequences[0].getParm1()[2], "Param113");
-            assertEquals(resultSequences[1].getParm2()[0], "Param121");
-            assertEquals(resultSequences[1].getParm2()[1], "Param122");
-            assertEquals(resultSequences[1].getParm2()[2], "Param123");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures2);
     }
 
-    public void testParticleSequenceMaxOccurs3() {
+    public void testParticleSequenceMaxOccurs3() throws Exception {
         TestParticalSequenceMaxOccurs3 testParticalMaxOccures3 = new TestParticalSequenceMaxOccurs3();
         TestParticalSequenceMaxOccursType3 testParticalMaxOccursType3 = new TestParticalSequenceMaxOccursType3();
         testParticalMaxOccures3.setTestParticalSequenceMaxOccurs3(testParticalMaxOccursType3);
@@ -127,29 +81,18 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType3.setTestParticalSequenceMaxOccursType3Sequence(testSequences);
 
-        try {
-            OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalSequenceMaxOccurs3.MY_QNAME,
-                      OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs3 result = TestParticalSequenceMaxOccurs3.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType3Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs3().getTestParticalSequenceMaxOccursType3Sequence();
-            assertEquals(resultSequences[0].getParm2()[0], "Param111");
-            assertEquals(resultSequences[0].getParm2()[1], null);
-            assertEquals(resultSequences[0].getParm2()[2], "Param113");
-            assertEquals(resultSequences[1].getParm1()[0], "Param121");
-            assertEquals(resultSequences[1].getParm1()[1], "Param122");
-            assertEquals(resultSequences[1].getParm1()[2], null);
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        TestParticalSequenceMaxOccurs3 result = (TestParticalSequenceMaxOccurs3)serializeDeserialize(testParticalMaxOccures3);
+        TestParticalSequenceMaxOccursType3Sequence[] resultSequences =
+                result.getTestParticalSequenceMaxOccurs3().getTestParticalSequenceMaxOccursType3Sequence();
+        assertEquals(resultSequences[0].getParm2()[0], "Param111");
+        assertEquals(resultSequences[0].getParm2()[1], null);
+        assertEquals(resultSequences[0].getParm2()[2], "Param113");
+        assertEquals(resultSequences[1].getParm1()[0], "Param121");
+        assertEquals(resultSequences[1].getParm1()[1], "Param122");
+        assertEquals(resultSequences[1].getParm1()[2], null);
     }
 
-    public void testParticleSequenceMaxOccurs4() {
+    public void testParticleSequenceMaxOccurs4() throws Exception {
 
         TestParticalSequenceMaxOccurs4 testParticalSequenceMaxOccurs4 = new TestParticalSequenceMaxOccurs4();
         TestParticalSequenceMaxOccursType4 testParticalSequenceMaxOccursType4 = new TestParticalSequenceMaxOccursType4();
@@ -168,37 +111,10 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalSequenceMaxOccursType4Sequence[2] = new TestParticalSequenceMaxOccursType4Sequence();
         testParticalSequenceMaxOccursType4Sequence[2].setParm3(getNewCustomType());
 
-        try {
-            OMElement omElement = testParticalSequenceMaxOccurs4.getOMElement(TestParticalSequenceMaxOccurs4.MY_QNAME,
-                     OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs4 result = TestParticalSequenceMaxOccurs4.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType4Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs4().getTestParticalSequenceMaxOccursType4Sequence();
-            assertTrue(isEqual(resultSequences[0].getParm1(), testParticalSequenceMaxOccursType4Sequence[0].getParm1()));
-            assertTrue(isEqual(resultSequences[0].getParm2(), testParticalSequenceMaxOccursType4Sequence[0].getParm2()));
-            assertTrue(isEqual(resultSequences[0].getParm3(), testParticalSequenceMaxOccursType4Sequence[0].getParm3()));
-
-            assertTrue(isEqual(resultSequences[1].getParm1(), testParticalSequenceMaxOccursType4Sequence[1].getParm1()));
-            assertTrue(isEqual(resultSequences[1].getParm2(), testParticalSequenceMaxOccursType4Sequence[1].getParm2()));
-            assertTrue(isEqual(resultSequences[1].getParm3(), testParticalSequenceMaxOccursType4Sequence[1].getParm3()));
-
-            assertTrue(isEqual(resultSequences[2].getParm1(), testParticalSequenceMaxOccursType4Sequence[2].getParm1()));
-            assertTrue(isEqual(resultSequences[2].getParm2(), testParticalSequenceMaxOccursType4Sequence[2].getParm2()));
-            assertTrue(isEqual(resultSequences[2].getParm3(), testParticalSequenceMaxOccursType4Sequence[2].getParm3()));
-
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
-
+        testSerializeDeserialize(testParticalSequenceMaxOccurs4);
     }
 
-    public void testParticleSequenceMaxOccurs5() {
+    public void testParticleSequenceMaxOccurs5() throws Exception {
 
         TestParticalSequenceMaxOccurs5 testParticalSequenceMaxOccurs5 = new TestParticalSequenceMaxOccurs5();
         TestParticalSequenceMaxOccursType5 testParticalSequenceMaxOccursType5 = new TestParticalSequenceMaxOccursType5();
@@ -222,39 +138,10 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalSequenceMaxOccursType5Sequence[2].setParm1(new TestCustomType[]{getNewCustomType()});
         testParticalSequenceMaxOccursType5Sequence[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-        try {
-            OMElement omElement = testParticalSequenceMaxOccurs5.getOMElement(TestParticalSequenceMaxOccurs5.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs5 result = TestParticalSequenceMaxOccurs5.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType5Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs5().getTestParticalSequenceMaxOccursType5Sequence();
-            assertTrue(isEqual(resultSequences[0].getParm1(), testParticalSequenceMaxOccursType5Sequence[0].getParm1()));
-            assertTrue(isEqual(resultSequences[0].getParm2(), testParticalSequenceMaxOccursType5Sequence[0].getParm2()));
-            assertTrue(isEqual(resultSequences[0].getParm3(), testParticalSequenceMaxOccursType5Sequence[0].getParm3()));
-
-            assertTrue(isEqual(resultSequences[1].getParm1(), testParticalSequenceMaxOccursType5Sequence[1].getParm1()));
-            assertTrue(isEqual(resultSequences[1].getParm2(), testParticalSequenceMaxOccursType5Sequence[1].getParm2()));
-            assertTrue(isEqual(resultSequences[1].getParm3(), testParticalSequenceMaxOccursType5Sequence[1].getParm3()));
-
-            assertTrue(isEqual(resultSequences[2].getParm1(), testParticalSequenceMaxOccursType5Sequence[2].getParm1()));
-            assertTrue(isEqual(resultSequences[2].getParm2(), testParticalSequenceMaxOccursType5Sequence[2].getParm2()));
-            assertTrue(isEqual(resultSequences[2].getParm3(), testParticalSequenceMaxOccursType5Sequence[2].getParm3()));
-
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
-
+        testSerializeDeserialize(testParticalSequenceMaxOccurs5);
     }
 
-    public void testParticalSequenceMaxOccursTest6() {
+    public void testParticalSequenceMaxOccursTest6() throws Exception {
         TestParticalSequenceMaxOccurs6 testParticalMaxOccures6 = new TestParticalSequenceMaxOccurs6();
         TestParticalSequenceMaxOccursType6 testParticalMaxOccursType6 = new TestParticalSequenceMaxOccursType6();
         testParticalMaxOccures6.setTestParticalSequenceMaxOccurs6(testParticalMaxOccursType6);
@@ -273,51 +160,20 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        try {
-            OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalSequenceMaxOccurs6.MY_QNAME,
-                     OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalSequenceMaxOccurs6 result = TestParticalSequenceMaxOccurs6.Factory.parse(xmlReader);
-            TestParticalSequenceMaxOccursType6Sequence[] resultSequences =
-                    result.getTestParticalSequenceMaxOccurs6().getTestParticalSequenceMaxOccursType6Sequence();
-            assertEquals(resultSequences[0].getParm1(), "Param11");
-            assertEquals(resultSequences[0].getParm2(), "Param12");
-            assertEquals(resultSequences[1].getParm1(), "Param21");
-            assertEquals(resultSequences[1].getParm2(), "Param22");
-            assertEquals(result.getTestParticalSequenceMaxOccurs6().getAttribute1(), "Attribute1");
-            assertEquals(result.getTestParticalSequenceMaxOccurs6().getAttribute2(), "Attribute2");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures6);
     }
 
-    public void testParticalMaxOccursTest() {
+    public void testParticalMaxOccursTest() throws Exception {
         TestParticalChoiceMaxOccurs testParticalChoiceMaxOccurs = new TestParticalChoiceMaxOccurs();
         TestParticalChoiceMaxOccursType testParticalChoiceMaxOccursType = new TestParticalChoiceMaxOccursType();
         testParticalChoiceMaxOccurs.setTestParticalChoiceMaxOccurs(testParticalChoiceMaxOccursType);
 
         testParticalChoiceMaxOccursType.setParm1("Param1");
 
-        try {
-            OMElement omElement =
-                     testParticalChoiceMaxOccurs.getOMElement(TestParticalChoiceMaxOccurs.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM string ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs result = TestParticalChoiceMaxOccurs.Factory.parse(xmlReader);
-            assertEquals(result.getTestParticalChoiceMaxOccurs().getParm1(), "Param1");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalChoiceMaxOccurs);
     }
 
-    public void testParticalChoiceMaxOccursTest1() {
+    public void testParticalChoiceMaxOccursTest1() throws Exception {
         TestParticalChoiceMaxOccurs1 testParticalMaxOccures1 = new TestParticalChoiceMaxOccurs1();
         TestParticalChoiceMaxOccursType1 testParticalMaxOccursType1 = new TestParticalChoiceMaxOccursType1();
         testParticalMaxOccures1.setTestParticalChoiceMaxOccurs1(testParticalMaxOccursType1);
@@ -332,27 +188,10 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType1.setTestParticalChoiceMaxOccursType1Choice(testChoices);
 
-       try {
-            OMElement omElement = testParticalMaxOccures1.getOMElement(TestParticalChoiceMaxOccurs1.MY_QNAME,
-                   OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs1 result = TestParticalChoiceMaxOccurs1.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType1Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs1().getTestParticalChoiceMaxOccursType1Choice();
-            assertEquals(resultChoices[0].getParm1(), "Param11");
-            assertEquals(resultChoices[1].getParm2(), "Param12");
-        } catch (XMLStreamException e) {
-           e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-           e.printStackTrace();
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures1);
     }
 
-    public void testParticleChoiceMaxOccurs2() {
+    public void testParticleChoiceMaxOccurs2() throws Exception {
         TestParticalChoiceMaxOccurs2 testParticalMaxOccures2 = new TestParticalChoiceMaxOccurs2();
         TestParticalChoiceMaxOccursType2 testParticalMaxOccursType2 = new TestParticalChoiceMaxOccursType2();
         testParticalMaxOccures2.setTestParticalChoiceMaxOccurs2(testParticalMaxOccursType2);
@@ -367,29 +206,10 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType2.setTestParticalChoiceMaxOccursType2Choice(testChoices);
 
-         try {
-             OMElement omElement = testParticalMaxOccures2.getOMElement(TestParticalChoiceMaxOccurs2.MY_QNAME,
-                      OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs2 result = TestParticalChoiceMaxOccurs2.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType2Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs2().getTestParticalChoiceMaxOccursType2Choice();
-            assertEquals(resultChoices[0].getParm1()[0], "Param111");
-            assertEquals(resultChoices[0].getParm1()[1], "Param112");
-            assertEquals(resultChoices[0].getParm1()[2], "Param113");
-            assertEquals(resultChoices[1].getParm2()[0], "Param121");
-            assertEquals(resultChoices[1].getParm2()[1], "Param122");
-            assertEquals(resultChoices[1].getParm2()[2], "Param123");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures2);
     }
 
-    public void testParticleChoiceMaxOccurs3() {
+    public void testParticleChoiceMaxOccurs3() throws Exception {
         TestParticalChoiceMaxOccurs3 testParticalMaxOccures3 = new TestParticalChoiceMaxOccurs3();
         TestParticalChoiceMaxOccursType3 testParticalMaxOccursType3 = new TestParticalChoiceMaxOccursType3();
         testParticalMaxOccures3.setTestParticalChoiceMaxOccurs3(testParticalMaxOccursType3);
@@ -404,29 +224,10 @@ public class ParticalMaxOccursTest extends TestCase {
 
         testParticalMaxOccursType3.setTestParticalChoiceMaxOccursType3Choice(testChoices);
 
-        try {
-            OMElement omElement = testParticalMaxOccures3.getOMElement(TestParticalChoiceMaxOccurs3.MY_QNAME,
-                     OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs3 result = TestParticalChoiceMaxOccurs3.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType3Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs3().getTestParticalChoiceMaxOccursType3Choice();
-            assertEquals(resultChoices[0].getParm1()[0], "Param111");
-            assertEquals(resultChoices[0].getParm1()[1], null);
-            assertEquals(resultChoices[0].getParm1()[2], "Param113");
-            assertEquals(resultChoices[1].getParm2()[0], "Param121");
-            assertEquals(resultChoices[1].getParm2()[1], "Param122");
-            assertEquals(resultChoices[1].getParm2()[2], null);
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures3);
     }
 
-    public void testParticleChoiceMaxOccurs4() {
+    public void testParticleChoiceMaxOccurs4() throws Exception {
 
         TestParticalChoiceMaxOccurs4 testParticalChoiceMaxOccurs4 = new TestParticalChoiceMaxOccurs4();
         TestParticalChoiceMaxOccursType4 testParticalChoiceMaxOccursType4 = new TestParticalChoiceMaxOccursType4();
@@ -445,37 +246,10 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalChoiceMaxOccursType4Choice[2] = new TestParticalChoiceMaxOccursType4Choice();
         testParticalChoiceMaxOccursType4Choice[2].setParm3(getNewCustomType());
 
-         try {
-             OMElement omElement = testParticalChoiceMaxOccurs4.getOMElement(TestParticalChoiceMaxOccurs4.MY_QNAME,
-                      OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs4 result = TestParticalChoiceMaxOccurs4.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType4Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs4().getTestParticalChoiceMaxOccursType4Choice();
-            assertTrue(isEqual(resultChoices[0].getParm1(), testParticalChoiceMaxOccursType4Choice[0].getParm1()));
-            assertTrue(isEqual(resultChoices[0].getParm2(), testParticalChoiceMaxOccursType4Choice[0].getParm2()));
-            assertTrue(isEqual(resultChoices[0].getParm3(), testParticalChoiceMaxOccursType4Choice[0].getParm3()));
-
-            assertTrue(isEqual(resultChoices[1].getParm1(), testParticalChoiceMaxOccursType4Choice[1].getParm1()));
-            assertTrue(isEqual(resultChoices[1].getParm2(), testParticalChoiceMaxOccursType4Choice[1].getParm2()));
-            assertTrue(isEqual(resultChoices[1].getParm3(), testParticalChoiceMaxOccursType4Choice[1].getParm3()));
-
-            assertTrue(isEqual(resultChoices[2].getParm1(), testParticalChoiceMaxOccursType4Choice[2].getParm1()));
-            assertTrue(isEqual(resultChoices[2].getParm2(), testParticalChoiceMaxOccursType4Choice[2].getParm2()));
-            assertTrue(isEqual(resultChoices[2].getParm3(), testParticalChoiceMaxOccursType4Choice[2].getParm3()));
-
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
-
+        testSerializeDeserialize(testParticalChoiceMaxOccurs4);
     }
 
-    public void testParticleChoiceMaxOccurs5() {
+    public void testParticleChoiceMaxOccurs5() throws Exception {
 
         TestParticalChoiceMaxOccurs5 testParticalChoiceMaxOccurs5 = new TestParticalChoiceMaxOccurs5();
         TestParticalChoiceMaxOccursType5 testParticalChoiceMaxOccursType5 = new TestParticalChoiceMaxOccursType5();
@@ -495,39 +269,10 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalChoiceMaxOccursType5Choice[2] = new TestParticalChoiceMaxOccursType5Choice();
         testParticalChoiceMaxOccursType5Choice[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-       try {
-            OMElement omElement = testParticalChoiceMaxOccurs5.getOMElement(TestParticalChoiceMaxOccurs5.MY_QNAME,
-                   OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs5 result = TestParticalChoiceMaxOccurs5.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType5Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs5().getTestParticalChoiceMaxOccursType5Choice();
-            assertTrue(isEqual(resultChoices[0].getParm1(), testParticalChoiceMaxOccursType5Choice[0].getParm1()));
-            assertTrue(isEqual(resultChoices[0].getParm2(), testParticalChoiceMaxOccursType5Choice[0].getParm2()));
-            assertTrue(isEqual(resultChoices[0].getParm3(), testParticalChoiceMaxOccursType5Choice[0].getParm3()));
-
-            assertTrue(isEqual(resultChoices[1].getParm1(), testParticalChoiceMaxOccursType5Choice[1].getParm1()));
-            assertTrue(isEqual(resultChoices[1].getParm2(), testParticalChoiceMaxOccursType5Choice[1].getParm2()));
-            assertTrue(isEqual(resultChoices[1].getParm3(), testParticalChoiceMaxOccursType5Choice[1].getParm3()));
-
-            assertTrue(isEqual(resultChoices[2].getParm1(), testParticalChoiceMaxOccursType5Choice[2].getParm1()));
-            assertTrue(isEqual(resultChoices[2].getParm2(), testParticalChoiceMaxOccursType5Choice[2].getParm2()));
-            assertTrue(isEqual(resultChoices[2].getParm3(), testParticalChoiceMaxOccursType5Choice[2].getParm3()));
-
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
-
+        testSerializeDeserialize(testParticalChoiceMaxOccurs5);
     }
 
-    public void testParticalChoiceMaxOccursTest6() {
+    public void testParticalChoiceMaxOccursTest6() throws Exception {
         TestParticalChoiceMaxOccurs6 testParticalMaxOccures6 = new TestParticalChoiceMaxOccurs6();
         TestParticalChoiceMaxOccursType6 testParticalMaxOccursType6 = new TestParticalChoiceMaxOccursType6();
         testParticalMaxOccures6.setTestParticalChoiceMaxOccurs6(testParticalMaxOccursType6);
@@ -544,24 +289,7 @@ public class ParticalMaxOccursTest extends TestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        try {
-            OMElement omElement = testParticalMaxOccures6.getOMElement(TestParticalChoiceMaxOccurs6.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestParticalChoiceMaxOccurs6 result = TestParticalChoiceMaxOccurs6.Factory.parse(xmlReader);
-            TestParticalChoiceMaxOccursType6Choice[] resultChoices =
-                    result.getTestParticalChoiceMaxOccurs6().getTestParticalChoiceMaxOccursType6Choice();
-            assertEquals(resultChoices[0].getParm1(), "Param11");
-            assertEquals(resultChoices[1].getParm2(), "Param12");
-            assertEquals(result.getTestParticalChoiceMaxOccurs6().getAttribute1(), "Attribute1");
-            assertEquals(result.getTestParticalChoiceMaxOccurs6().getAttribute2(), "Attribute2");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(testParticalMaxOccures6);
     }
 
     private TestCustomType getNewCustomType() {
@@ -572,63 +300,4 @@ public class ParticalMaxOccursTest extends TestCase {
         testCustomType.setParam3("Param" + i + "3");
         return testCustomType;
     }
-
-    private boolean isEqual(TestCustomType object1, TestCustomType object2) {
-        boolean isEqual = false;
-        if ((object1 != null) && (object2 != null)) {
-            isEqual = isEqual(object1.getParam1(), object2.getParam1()) &&
-                    isEqual(object1.getParam2(), object2.getParam2()) &&
-                    isEqual(object1.getParam3(), object2.getParam3());
-        } else if ((object1 == null) && (object2 == null)) {
-            isEqual = true;
-        }
-        return isEqual;
-    }
-
-    private boolean isEqual(TestCustomType[] object1, TestCustomType[] object2) {
-        boolean isEqual = false;
-        if ((object1 != null) && (object2 != null)) {
-            if (object1.length == object2.length) {
-                isEqual = true;
-                for (int i = 0; i < object1.length; i++) {
-                    if (!isEqual(object1[i], object2[i])) {
-                        isEqual = false;
-                        break;
-                    }
-                }
-            }
-        } else if ((object1 == null) && (object2 == null)) {
-            isEqual = true;
-        }
-        return isEqual;
-    }
-
-    private boolean isEqual(String[] object1, String[] object2) {
-        boolean isEqual = false;
-        if ((object1 != null) && (object2 != null)) {
-            if (object1.length == object2.length) {
-                isEqual = true;
-                for (int i = 0; i < object1.length; i++) {
-                    if (!isEqual(object1[i], object2[i])) {
-                        isEqual = false;
-                        break;
-                    }
-                }
-            }
-        } else if ((object1 == null) && (object2 == null)) {
-            isEqual = true;
-        }
-        return isEqual;
-    }
-
-    private boolean isEqual(String object1, String object2) {
-        boolean isEqual = false;
-        if ((object1 != null) && (object2 != null)) {
-            isEqual = object1.equals(object2);
-        } else if ((object1 == null) && (object2 == null)) {
-            isEqual = true;
-        }
-        return isEqual;
-    }
-
 }

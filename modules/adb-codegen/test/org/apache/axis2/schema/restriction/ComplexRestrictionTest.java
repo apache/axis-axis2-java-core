@@ -19,22 +19,15 @@
 
 package org.apache.axis2.schema.restriction;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.GetExemplarResponseType;
 import org.tempuri.GetExemplarResponseTypeElement;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 
-public class ComplexRestrictionTest extends TestCase {
+public class ComplexRestrictionTest extends AbstractTestCase {
 
-    public void testGetExemplarResponseTypeElement(){
+    public void testGetExemplarResponseTypeElement() throws Exception {
         GetExemplarResponseTypeElement getExemplarResponseTypeElement = new GetExemplarResponseTypeElement();
         GetExemplarResponseType getExemplarResponseType = new GetExemplarResponseType();
         getExemplarResponseType.setExemplar("test string1");
@@ -44,25 +37,7 @@ public class ComplexRestrictionTest extends TestCase {
 
         getExemplarResponseTypeElement.setGetExemplarResponseTypeElement(getExemplarResponseType);
 
-        try {
-            OMElement omElement =
-                    getExemplarResponseTypeElement.getOMElement(GetExemplarResponseTypeElement.MY_QNAME,
-                            OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OMElement string ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            GetExemplarResponseTypeElement result = GetExemplarResponseTypeElement.Factory.parse(xmlReader);
-            GetExemplarResponseType resultType = result.getGetExemplarResponseTypeElement();
-            assertEquals(resultType.getExemplar(),"test string1");
-            assertEquals(resultType.getResponseMessage(),"test string2");
-            assertEquals(resultType.getSupportedMethods(),"test string3");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(getExemplarResponseTypeElement);
     }
 
 }

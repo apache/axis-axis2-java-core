@@ -19,21 +19,16 @@
 
 package org.apache.axis2.schema.extension;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.types.Language;
+import org.apache.axis2.schema.AbstractTestCase;
+
 import test.axis2.apache.org.BaseType;
 import test.axis2.apache.org.FullName;
 import test.axis2.apache.org.SimpleType;
 
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class SimpleExtensionTest extends AbstractTestCase {
 
-public class SimpleExtensionTest extends TestCase {
-
-    public void testSimpleTypeComplexExtension() {
+    public void testSimpleTypeComplexExtension() throws Exception {
         FullName fullName = new FullName();
         fullName.setFirst("amila");
         fullName.setMiddle("chinthaka");
@@ -43,36 +38,7 @@ public class SimpleExtensionTest extends TestCase {
 
         fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE", ""));
 
-        try {
-            OMElement omElement = fullName.getOMElement(FullName.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
-            String omElementString;
-            XMLStreamReader xmlReader;
-            FullName newFullName;
-
-            omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            newFullName = FullName.Factory.parse(xmlReader);
-            assertEquals(newFullName.getFirst(), "amila");
-            assertEquals(newFullName.getMiddle(), "chinthaka");
-            assertEquals(newFullName.getLast(), "suriarachchi");
-            assertEquals(newFullName.getLanguage().toString(), "singhala");
-            assertEquals(newFullName.getAttribute1().toString(), BaseType._s1);
-            assertEquals(newFullName.getAttribute2().toString(), "ATTRIBUTE");
-
-            omElementString = omElement.toString();
-            System.out.println("OM String ==> " + omElementString);
-            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            newFullName = FullName.Factory.parse(xmlReader);
-            assertEquals(newFullName.getFirst(), "amila");
-            assertEquals(newFullName.getMiddle(), "chinthaka");
-            assertEquals(newFullName.getLast(), "suriarachchi");
-            assertEquals(newFullName.getLanguage().toString(), "singhala");
-            assertEquals(newFullName.getAttribute1().toString(), BaseType._s1);
-            assertEquals(newFullName.getAttribute2().toString(), "ATTRIBUTE");
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        testSerializeDeserialize(fullName);
     }
 
 

@@ -19,42 +19,26 @@
 
 package org.apache.axis2.schema.list;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.AbstractTestCase;
+
 import test.axis2.apache.org.*;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+
+public class ListTest extends AbstractTestCase {
 
 
-public class ListTest extends TestCase {
-
-
-    public void testListString(){
+    public void testListString() throws Exception {
 
         TestListStringElement testListStringElement = new TestListStringElement();
         TestListString testListString = new TestListString();
         testListStringElement.setTestListStringElement(testListString);
         testListString.setString(new String[]{"string1","string2"});
 
-       try {
-           OMElement omElement = testListStringElement.getOMElement(TestListStringElement.MY_QNAME,
-                       OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestListStringElement result = TestListStringElement.Factory.parse(xmlReader);
-            assertEquals(testListString.toString(),result.getTestListStringElement().toString());
-        } catch (Exception e) {
-            assertFalse(true);
-        }
-
+        testSerializeDeserialize(testListStringElement);
     }
 
-    public void testListQName(){
+    public void testListQName() throws Exception {
 
         TestListQNameElement testListQNameElement = new TestListQNameElement();
         TestListQName testListQName = new TestListQName();
@@ -63,21 +47,10 @@ public class ListTest extends TestCase {
                         new QName("http://www.google","test3")});
         testListQNameElement.setTestListQNameElement(testListQName);
 
-        try {
-            OMElement omElement = testListQNameElement.getOMElement(TestListQNameElement.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestListQNameElement result = TestListQNameElement.Factory.parse(xmlReader);
-            assertEquals(result.getTestListQNameElement().getQName()[0],testListQName.getQName()[0]);
-            assertEquals(result.getTestListQNameElement().getQName()[1],testListQName.getQName()[1]);
-            assertEquals(result.getTestListQNameElement().getQName()[2],testListQName.getQName()[2]);
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        testSerializeDeserialize(testListQNameElement);
     }
 
-    public void testListOurs(){
+    public void testListOurs() throws Exception {
 
         TestListOursElement testListOursElement = new TestListOursElement();
         TestListOurs testListOurs = new TestListOurs();
@@ -90,41 +63,20 @@ public class ListTest extends TestCase {
         testString3.setTestString("test");
         testListOurs.setTestString(new TestString[]{testString1,testString2,testString3});
 
-        try {
-            OMElement omElement = testListOursElement.getOMElement(TestListOursElement.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestListOursElement result = TestListOursElement.Factory.parse(xmlReader);
-            assertEquals(result.getTestListOursElement().getTestString()[0].getTestString(),testString1.getTestString());
-            assertEquals(result.getTestListOursElement().getTestString()[1].getTestString(),testString2.getTestString());
-            assertEquals(result.getTestListOursElement().getTestString()[2].getTestString(),testString3.getTestString());
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        testSerializeDeserialize(testListOursElement);
     }
 
-    public void testListSuper(){
+    public void testListSuper() throws Exception {
 
         SuperTestListStringElement superTestListStringElement = new SuperTestListStringElement();
         SuperTestListString superTestListString = new SuperTestListString();
         superTestListStringElement.setSuperTestListStringElement(superTestListString);
         superTestListString.setString(new String[]{"test1","test2","test3"});
 
-       try {
-           OMElement omElement = superTestListStringElement.getOMElement(SuperTestListStringElement.MY_QNAME,
-                   OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            SuperTestListStringElement result = SuperTestListStringElement.Factory.parse(xmlReader);
-            assertEquals(superTestListString.getString()[0],result.getSuperTestListStringElement().getString()[0]);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
+        testSerializeDeserialize(superTestListStringElement);
     }
 
-    public void testInnerSimpleTypes(){
+    public void testInnerSimpleTypes() throws Exception {
         TestInnerListSimpleType testInnerListSimpleType = new TestInnerListSimpleType();
         InnerListSimpleType innerListSimpleType = new InnerListSimpleType();
         testInnerListSimpleType.setTestInnerListSimpleType(innerListSimpleType);
@@ -134,20 +86,6 @@ public class ListTest extends TestCase {
 
         innerListSimpleType.setInnerListSimpleType_type0(list);
 
-         try {
-             OMElement omElement = testInnerListSimpleType.getOMElement(TestInnerListSimpleType.MY_QNAME,
-                      OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerListSimpleType result = TestInnerListSimpleType.Factory.parse(xmlReader);
-            assertEquals(result.getTestInnerListSimpleType().getInnerListSimpleType_type0()[0],InnerListSimpleType_type0.Access);
-            assertEquals(result.getTestInnerListSimpleType().getInnerListSimpleType_type0()[1],InnerListSimpleType_type0.Exist);
-        } catch (Exception e) {
-            assertTrue(false);
-        }
-
+        testSerializeDeserialize(testInnerListSimpleType);
     }
-
-
 }

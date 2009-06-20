@@ -20,21 +20,11 @@
 package org.apache.axis2.schema.innerparticles;
 
 import com.mynamespace.testinnerparticle.*;
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class InnerParticlesTest extends AbstractTestCase {
 
-
-
-public class InnerParticlesTest extends TestCase {
-
-    public void testInnerParticle1() {
+    public void testInnerParticle1() throws Exception {
 
         TestInnerParticle1 testInnerParticle1 = new TestInnerParticle1();
         testInnerParticle1.setParam1("Param1");
@@ -44,25 +34,10 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle1.setTestInnerParticle1Sequence_type0(testInnerParticle1Sequence_type0);
         testInnerParticle1.setParam4("Param4");
 
-         try {
-            OMElement omElement = testInnerParticle1.getOMElement(TestInnerParticle1.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle1 result = TestInnerParticle1.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(), "Param1");
-            assertEquals(result.getTestInnerParticle1Sequence_type0().getParam2(), "Param2");
-            assertEquals(result.getTestInnerParticle1Sequence_type0().getParam3(), "Param3");
-            assertEquals(result.getParam4(), "Param4");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle1);
     }
 
-    public void testInnerParticle2() {
+    public void testInnerParticle2() throws Exception {
 
         TestInnerParticle2 testInnerParticle2 = new TestInnerParticle2();
         testInnerParticle2.setParam1("Param1");
@@ -72,46 +47,21 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle2.setTestInnerParticle2Choice_type0(testInnerParticle2Choice_type1);
         testInnerParticle2.setParam4("Param4");
 
-       try {
-            OMElement omElement =
-                   testInnerParticle2.getOMElement(TestInnerParticle2.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle2 result = TestInnerParticle2.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(), "Param1");
-            assertEquals(result.getTestInnerParticle2Choice_type0().getParam3(), "Param3");
-            assertEquals(result.getParam4(), "Param4");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        TestInnerParticle2 result = (TestInnerParticle2)serializeDeserialize(testInnerParticle2);
+        assertEquals(result.getParam1(), "Param1");
+        assertEquals(result.getTestInnerParticle2Choice_type0().getParam3(), "Param3");
+        assertEquals(result.getParam4(), "Param4");
     }
 
-    public void testInnerParticle31() {
+    public void testInnerParticle31() throws Exception {
 
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         testInnerParticle3.setParam1("Param1");
 
-        try {
-            OMElement omElement =
-                     testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle3 result = TestInnerParticle3.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(), "Param1");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle3);
     }
 
-    public void testInnerParticle32() {
+    public void testInnerParticle32() throws Exception {
 
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         TestInnerParticle3Choice_type0 testInnerParticle3Choice_type1 = new TestInnerParticle3Choice_type0();
@@ -119,25 +69,11 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle3Choice_type1.setParam3("Param3");
         testInnerParticle3.setTestInnerParticle3Choice_type0(testInnerParticle3Choice_type1);
 
-        try {
-            OMElement omElement =
-                    testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle3 result = TestInnerParticle3.Factory.parse(xmlReader);
-            assertEquals(result.getTestInnerParticle3Choice_type0().getParam3(), "Param3");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
+        TestInnerParticle3 result = (TestInnerParticle3)serializeDeserialize(testInnerParticle3);
+        assertEquals(result.getTestInnerParticle3Choice_type0().getParam3(), "Param3");
     }
 
-    public void testInnerParticle33() {
+    public void testInnerParticle33() throws Exception {
 
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         testInnerParticle3.setParam1("Param1");
@@ -147,46 +83,19 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle3.setTestInnerParticle3Choice_type0(testInnerParticle3Choice_type1);
         testInnerParticle3.setParam4("Param4");
 
-         try {
-             OMElement omElement =
-                      testInnerParticle3.getOMElement(TestInnerParticle3.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle3 result = TestInnerParticle3.Factory.parse(xmlReader);
-            assertEquals(result.getParam4(), "Param4");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        TestInnerParticle3 result = (TestInnerParticle3)serializeDeserialize(testInnerParticle3);
+        assertEquals(result.getParam4(), "Param4");
     }
 
-    public void testInnerParticle41() {
+    public void testInnerParticle41() throws Exception {
 
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam1("Param1");
 
-         try {
-             OMElement omElement =
-                      testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle4 result = TestInnerParticle4.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(), "Param1");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle4);
     }
 
-    public void testInnerParticle42() {
+    public void testInnerParticle42() throws Exception {
 
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         TestInnerParticle4Sequence_type0 TestInnerParticle4Sequence_type0 = new TestInnerParticle4Sequence_type0();
@@ -194,49 +103,18 @@ public class InnerParticlesTest extends TestCase {
         TestInnerParticle4Sequence_type0.setParam3("Param3");
         testInnerParticle4.setTestInnerParticle4Sequence_type0(TestInnerParticle4Sequence_type0);
 
-        try {
-            OMElement omElement =
-                     testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle4 result = TestInnerParticle4.Factory.parse(xmlReader);
-            assertEquals(result.getTestInnerParticle4Sequence_type0().getParam2(), "Param2");
-            assertEquals(result.getTestInnerParticle4Sequence_type0().getParam3(), "Param3");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle4);
     }
 
-    public void testInnerParticle43() {
+    public void testInnerParticle43() throws Exception {
 
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam4("Param4");
 
-         try {
-            OMElement omElement =
-                      testInnerParticle4.getOMElement(TestInnerParticle4.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle4 result = TestInnerParticle4.Factory.parse(xmlReader);
-            assertEquals(result.getParam4(), "Param4");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle4);
     }
 
-    public void testInnerParticle5() {
+    public void testInnerParticle5() throws Exception {
 
         TestInnerParticle5 testInnerParticle5 = new TestInnerParticle5();
         testInnerParticle5.setParam1("Param1");
@@ -252,28 +130,10 @@ public class InnerParticlesTest extends TestCase {
         testInnerParticle5.setTestInnerParticle5Sequence_type1(testInnerParticle2Choice_type1);
         testInnerParticle5.setParam6("Param6");
 
-        try {
-            OMElement omElement =
-                    testInnerParticle5.getOMElement(TestInnerParticle5.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnerParticle5 result = TestInnerParticle5.Factory.parse(xmlReader);
-            assertEquals(result.getParam1(), "Param1");
-            assertEquals(result.getTestInnerParticle5Sequence_type1().getParam2(), "Param2");
-            assertEquals(result.getTestInnerParticle5Sequence_type1().getParam3(), "Param3");
-            assertEquals(result.getTestInnerParticle5Sequence_type1().getTestInnerParticle5Sequence_type0().getParam4(), "Param4");
-            assertEquals(result.getTestInnerParticle5Sequence_type1().getTestInnerParticle5Sequence_type0().getParam5(), "Param5");
-            assertEquals(result.getParam6(), "Param6");
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
+        testSerializeDeserialize(testInnerParticle5);
     }
 
-    public void testIntterParticalExtension(){
+    public void testIntterParticalExtension() throws Exception {
          TestInnterParticleExtension testInnterParticleExtension = new TestInnterParticleExtension();
 
         TestInnterParticleExtensionChildComplexType testInnterParticleExtensionChildComplexType =
@@ -287,27 +147,14 @@ public class InnerParticlesTest extends TestCase {
         testInnterParticleExtensionParentComplexTypeChoice_type0.setParam1("param1");
         testInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
 
-        try {
-            OMElement omElement = testInnterParticleExtension.getOMElement(TestInnterParticleExtension.MY_QNAME,
-                                                            OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestInnterParticleExtension result = TestInnterParticleExtension.Factory.parse(xmlReader);
-            assertTrue(result.getTestInnterParticleExtension() instanceof TestInnterParticleExtensionChildComplexType);
-            TestInnterParticleExtensionChildComplexType resultComplexType =
-                    (TestInnterParticleExtensionChildComplexType) result.getTestInnterParticleExtension();
-            assertEquals(resultComplexType.getTestInnterParticleExtensionParentComplexTypeChoice_type0().getParam2(),"param2");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        TestInnterParticleExtension result = (TestInnterParticleExtension)serializeDeserialize(testInnterParticleExtension);
+        assertTrue(result.getTestInnterParticleExtension() instanceof TestInnterParticleExtensionChildComplexType);
+        TestInnterParticleExtensionChildComplexType resultComplexType =
+                (TestInnterParticleExtensionChildComplexType) result.getTestInnterParticleExtension();
+        assertEquals(resultComplexType.getTestInnterParticleExtensionParentComplexTypeChoice_type0().getParam2(),"param2");
     }
 
-    public void testTestComplexTypeElement(){
+    public void testTestComplexTypeElement() throws Exception {
         TestComplexTypeElement testComplexTypeElement = new TestComplexTypeElement();
 
         TestComplexType testComplexType = new TestComplexType();
@@ -320,24 +167,7 @@ public class InnerParticlesTest extends TestCase {
         TestComplexTypeSequence_type0 testComplexTypeSequence_type0 = new TestComplexTypeSequence_type0();
         testComplexType.setTestComplexTypeSequence_type0(testComplexTypeSequence_type0);
 
-        try {
-            OMElement omElement = testComplexTypeElement.getOMElement(
-                    TestComplexTypeElement.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(
-                    new ByteArrayInputStream(omElementString.getBytes()));
-            TestComplexTypeElement result = TestComplexTypeElement.Factory.parse(xmlReader);
-            assertEquals(result.getTestComplexTypeElement().getTestElement().getParam(),"param");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        TestComplexTypeElement result = (TestComplexTypeElement)serializeDeserialize(testComplexTypeElement);
+        assertEquals(result.getTestComplexTypeElement().getTestElement().getParam(),"param");
     }
-
-
 }

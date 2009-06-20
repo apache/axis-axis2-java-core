@@ -19,37 +19,16 @@
 
 package org.apache.axis2.schema.all;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.Update;
 
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class AllTest extends AbstractTestCase {
 
-
-public class AllTest extends TestCase {
-
-    public void testAll(){
+    public void testAll() throws Exception {
         Update update = new Update();
         update.setArg0("test");
         update.setArg1(true);
         update.setId(2);
-
-
-        try {
-            OMElement omElement = update.getOMElement(Update.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("om string ==> " + omElementString);
-            omElementString = "<ns1:Update xmlns:ns1=\"http://tempuri.org/\"><ns1:arg1>true</ns1:arg1><ns1:id>2</ns1:id><ns1:arg0>test</ns1:arg0></ns1:Update>";
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            Update newUpdate = Update.Factory.parse(xmlReader);
-            assertEquals(update.getArg0(),newUpdate.getArg0());
-            assertEquals(update.getArg1(),newUpdate.getArg1());
-            assertEquals(update.getId(),newUpdate.getId());
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        testSerializeDeserialize(update);
     }
 }

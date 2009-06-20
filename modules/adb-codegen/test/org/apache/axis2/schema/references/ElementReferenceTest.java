@@ -20,20 +20,11 @@
 package org.apache.axis2.schema.references;
 
 import com.americanexpress.www.wsdl.ctn.utilities.atb.*;
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class ElementReferenceTest extends AbstractTestCase {
 
-
-public class ElementReferenceTest extends TestCase {
-
-    public void testSingleElementReference() {
+    public void testSingleElementReference() throws Exception {
         CheckEligibility1 echCheckEligibility1 = new CheckEligibility1();
         AtbRequestCheckEligibility_type0 atbRequestCheckEligibility = new AtbRequestCheckEligibility_type0();
         echCheckEligibility1.setAtbRequestCheckEligibility(atbRequestCheckEligibility);
@@ -42,24 +33,10 @@ public class ElementReferenceTest extends TestCase {
         atbRequestCheckEligibility.setExpirationDate("date");
         atbRequestCheckEligibility.setNameAsOnCard("cardname");
         atbRequestCheckEligibility.setYearOfRedemption(2);
-
-
-        try {
-            OMElement omElement = echCheckEligibility1.getOMElement(CheckEligibility1.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-            String omElementString = omElement.toStringWithConsume();
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            CheckEligibility1 result = CheckEligibility1.Factory.parse(xmlReader);
-            assertEquals(result.getAtbRequestCheckEligibility().getCardNumber(), "carnumber");
-            assertEquals(result.getAtbRequestCheckEligibility().getClientId(), "clientid");
-            assertEquals(result.getAtbRequestCheckEligibility().getExpirationDate(), "date");
-            assertEquals(result.getAtbRequestCheckEligibility().getNameAsOnCard(), "cardname");
-            assertEquals(result.getAtbRequestCheckEligibility().getYearOfRedemption(), 2);
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(echCheckEligibility1);
     }
 
-    public void testMultipleElementReference() {
+    public void testMultipleElementReference() throws Exception {
         CheckEligibility2 echCheckEligibility2 = new CheckEligibility2();
         AtbRequestCheckEligibility_type0[] atbRequestCheckEligibility = new AtbRequestCheckEligibility_type0[2];
         echCheckEligibility2.setAtbRequestCheckEligibility(atbRequestCheckEligibility);
@@ -78,51 +55,18 @@ public class ElementReferenceTest extends TestCase {
         atbRequestCheckEligibility[1].setNameAsOnCard("cardname");
         atbRequestCheckEligibility[1].setYearOfRedemption(2);
 
-
-        try {
-            OMElement omElement = echCheckEligibility2.getOMElement(CheckEligibility2.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-            String omElementString = omElement.toStringWithConsume();
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            CheckEligibility2 result = CheckEligibility2.Factory.parse(xmlReader);
-            assertEquals(result.getAtbRequestCheckEligibility()[0].getCardNumber(), "carnumber");
-            assertEquals(result.getAtbRequestCheckEligibility()[0].getClientId(), "clientid");
-            assertEquals(result.getAtbRequestCheckEligibility()[0].getExpirationDate(), "date");
-            assertEquals(result.getAtbRequestCheckEligibility()[0].getNameAsOnCard(), "cardname");
-            assertEquals(result.getAtbRequestCheckEligibility()[0].getYearOfRedemption(), 2);
-
-            assertEquals(result.getAtbRequestCheckEligibility()[1].getCardNumber(), "carnumber");
-            assertEquals(result.getAtbRequestCheckEligibility()[1].getClientId(), "clientid");
-            assertEquals(result.getAtbRequestCheckEligibility()[1].getExpirationDate(), "date");
-            assertEquals(result.getAtbRequestCheckEligibility()[1].getNameAsOnCard(), "cardname");
-            assertEquals(result.getAtbRequestCheckEligibility()[1].getYearOfRedemption(), 2);
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(echCheckEligibility2);
     }
 
-    public void testElement11(){
+    public void testElement11() throws Exception {
 
         Element1 element1 = new Element1();
         ComplexType1 complexType1 = new ComplexType1();
         element1.setElement1(complexType1);
-
-        try {
-            OMElement omElement = element1.getOMElement(Element1.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            Element1 result = Element1.Factory.parse(xmlReader);
-            assertNotNull(result);
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(element1);
     }
 
-    public void testElement12(){
+    public void testElement12() throws Exception {
 
         Element1 element1 = new Element1();
         ComplexType1 complexType1 = new ComplexType1();
@@ -131,27 +75,10 @@ public class ElementReferenceTest extends TestCase {
         complexType1.setElement1(complexType2);
         ComplexType1 complexType3 = new ComplexType1();
         complexType2.setElement1(complexType3);
-
-
-        try {
-            OMElement omElement = element1.getOMElement(Element1.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            Element1 result = Element1.Factory.parse(xmlReader);
-            assertNotNull(result);
-            assertNotNull(result.getElement1());
-            assertNotNull(result.getElement1().getElement1());
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(element1);
     }
 
-    public void testElement21(){
+    public void testElement21() throws Exception {
         Element2 element2 = new Element2();
         Element2_type0 element2_type0 = new Element2_type0();
         element2.setElement2(element2_type0);
@@ -161,24 +88,10 @@ public class ElementReferenceTest extends TestCase {
         element2_type1.setParam1("test string2");
         element2_type0.setElement2(element2_type1);
 
-        try {
-            OMElement omElement = element2.getOMElement(Element2.MY_QNAME,OMAbstractFactory.getOMFactory());
-            String omElmentString = omElement.toStringWithConsume();
-            System.out.println("OM element ==>" + omElmentString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElmentString.getBytes()));
-            Element2 result = Element2.Factory.parse(xmlReader);
-            assertEquals(result.getElement2().getParam1(),"test string1");
-            assertEquals(result.getElement2().getElement2().getParam1(), "test string2");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(element2);
     }
 
-    public void testSimpleReference() {
+    public void testSimpleReference() throws Exception {
         TestSimpleReference testSimpleReference = new TestSimpleReference();
         Discard_transferToken discard_transferToken = new Discard_transferToken();
 // FIXME: Breaks in IBM JDK 1.5 - the generated code there is looking for AuthInfo_type0 instead of AuthInfo_type1
@@ -188,26 +101,6 @@ public class ElementReferenceTest extends TestCase {
         discard_transferToken.setParam1("New parm");
         testSimpleReference.setTestSimpleReference(discard_transferToken);
 
-        try {
-            OMElement omElement = testSimpleReference.getOMElement(TestSimpleReference.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElmentString = omElement.toStringWithConsume();
-            System.out.println("OM element ==>" + omElmentString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElmentString.getBytes()));
-            TestSimpleReference result = TestSimpleReference.Factory.parse(xmlReader);
-            assertEquals(result.getTestSimpleReference().getParam1(),"New parm");
-// See FIXME above:
-//            assertEquals(result.getTestSimpleReference().getAuthInfo().getAuthInfo_type1(),"Simple param");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
-
+        testSerializeDeserialize(testSimpleReference);
     }
-
-
 }

@@ -19,25 +19,17 @@
 
 package org.apache.axis2.schema.rampart;
 
-import junit.framework.TestCase;
 import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.w3.www._2005._05.xmlmime.Base64Binary;
 import org.w3.www._2005._05.xmlmime.ContentType_type0;
 import org.w3.www._2005._05.xmlmime.TestExtension;
 
 import javax.activation.DataHandler;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 
+public class RampartTest extends AbstractTestCase {
 
-public class RampartTest extends TestCase {
-
-    public void testExtension(){
+    public void testExtension() throws Exception {
         TestExtension testExtension = new TestExtension();
 
         Base64Binary base64Binary = new Base64Binary();
@@ -51,19 +43,6 @@ public class RampartTest extends TestCase {
         contentType_type0.setContentType_type0("test string");
         base64Binary.setContentType(contentType_type0);
 
-        try {
-            OMElement omElement = testExtension.getOMElement(TestExtension.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestExtension result = TestExtension.Factory.parse(xmlReader);
-            
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        TestExtension result = (TestExtension)serializeDeserialize(testExtension);
     }
 }

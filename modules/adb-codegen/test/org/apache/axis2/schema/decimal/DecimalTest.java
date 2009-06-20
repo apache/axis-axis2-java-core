@@ -19,25 +19,17 @@
 
 package org.apache.axis2.schema.decimal;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.schema.AbstractTestCase;
 import org.tempuri.boolean1.ArrayOfDecimal;
 import org.tempuri.boolean1.GetHistoricNavResponse;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+public class DecimalTest extends AbstractTestCase {
 
-public class DecimalTest  extends TestCase {
-
-    public void testDecimal(){
+    public void testDecimal() throws Exception{
         GetHistoricNavResponse getHistoricNavResponse = new GetHistoricNavResponse();
         ArrayOfDecimal arrayOfDecimal = new ArrayOfDecimal();
         getHistoricNavResponse.setOut(arrayOfDecimal);
@@ -48,29 +40,10 @@ public class DecimalTest  extends TestCase {
         arrayOfDecimal.addDecimal(new BigDecimal("111.38"));
         arrayOfDecimal.addDecimal(new BigDecimal("111.54"));
 
-        try {
-            OMElement omElement = getHistoricNavResponse.getOMElement(GetHistoricNavResponse.MY_QNAME,
-                    OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            XMLStreamReader xmlReader =
-                    StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            GetHistoricNavResponse result = GetHistoricNavResponse.Factory.parse(xmlReader);
-            assertEquals(result.getOut().getDecimal()[0], null);
-            assertEquals(result.getOut().getDecimal()[1], null);
-            assertEquals(result.getOut().getDecimal()[2].toString(), "111.38");
-            assertEquals(result.getOut().getDecimal()[3].toString(), "111.38");
-            assertEquals(result.getOut().getDecimal()[4].toString(), "111.38");
-            assertEquals(result.getOut().getDecimal()[5].toString(), "111.54");
-        } catch (ADBException e) {
-            fail();
-        } catch (XMLStreamException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
+        testSerializeDeserialize(getHistoricNavResponse);
     }
 
+    // TODO: explain what this test has to do with "DecimalTest"???
     public void testDuration(){
         Calendar calendar = Calendar.getInstance();
         Duration duration = new Duration(false,0,0,23,12,24,23.45);

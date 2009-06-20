@@ -19,32 +19,18 @@
 
 package org.apache.axis2.schema.choice;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.schema.AbstractTestCase;
+
 import test.axis2.apache.org.TestChoise;
 
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class ChoiceTest extends AbstractTestCase {
 
-
-public class ChoiceTest extends TestCase {
-
-    public void testChoice(){
+    public void testChoice() throws Exception {
         TestChoise testChoise = new TestChoise();
         testChoise.setChoice1("test 2");
         testChoise.setChoice2(5);
-
-        try {
-            OMElement omElement = testChoise.getOMElement(TestChoise.MY_QNAME, OMAbstractFactory.getOMFactory());
-            String omElementString = omElement.toStringWithConsume();
-            System.out.println("OM Element ==> " + omElementString);
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            TestChoise newTestChoice = TestChoise.Factory.parse(xmlReader);
-            assertEquals(5,newTestChoice.getChoice2());
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        
+        TestChoise newTestChoice = (TestChoise)serializeDeserialize(testChoise);
+        assertEquals(5, newTestChoice.getChoice2());
     }
 }

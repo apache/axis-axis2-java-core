@@ -19,21 +19,14 @@
 
 package org.apache.axis2.schema.extension;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import test.axis2.apache.org.BaseType;
+import org.apache.axis2.schema.AbstractTestCase;
+
 import test.axis2.apache.org.ExtendedComplexType;
-import test.axis2.apache.org.FullName;
 import test.axis2.apache.org.TestComplexElement;
 
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
+public class ComplexExtenstionTest extends AbstractTestCase {
 
-public class ComplexExtenstionTest extends TestCase {
-
-    public void testComplexExtension() {
+    public void testComplexExtension() throws Exception {
 
         TestComplexElement testComplexElement = new TestComplexElement();
         ExtendedComplexType extendedComplexType = new ExtendedComplexType();
@@ -44,35 +37,7 @@ public class ComplexExtenstionTest extends TestCase {
         extendedComplexType.setParentElement1("test1");
         extendedComplexType.setParentElement2("test2");
 
-        try {
-            OMElement omElement = testComplexElement.getOMElement(TestComplexElement.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
-            String omElementString;
-            XMLStreamReader xmlReader;
-            TestComplexElement result;
-
-            omElementString = omElement.toStringWithConsume();
-            System.out.println("OM String ==> " + omElementString);
-            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            result = TestComplexElement.Factory.parse(xmlReader);
-            assertEquals(result.getTestComplexElement().getFirst(),"Amila");
-            assertEquals(result.getTestComplexElement().getMiddle(),"Chinthaka");
-            assertEquals(result.getTestComplexElement().getLast(),"Suriarachchi");
-            assertEquals(result.getTestComplexElement().getParentElement1(),"test1");
-            assertEquals(result.getTestComplexElement().getParentElement2(),"test2");
-
-            omElementString = omElement.toString();
-            System.out.println("OM String ==> " + omElementString);
-            xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-            result = TestComplexElement.Factory.parse(xmlReader);
-            assertEquals(result.getTestComplexElement().getFirst(),"Amila");
-            assertEquals(result.getTestComplexElement().getMiddle(),"Chinthaka");
-            assertEquals(result.getTestComplexElement().getLast(),"Suriarachchi");
-            assertEquals(result.getTestComplexElement().getParentElement1(),"test1");
-            assertEquals(result.getTestComplexElement().getParentElement2(),"test2");
-
-        } catch (Exception e) {
-            assertFalse(true);
-        }
+        testSerializeDeserialize(testComplexElement);
 
     }
 }
