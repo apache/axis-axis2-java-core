@@ -19,6 +19,7 @@
 
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -69,6 +70,10 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                             ADBXMLStreamReaderImpl(qName, elementList.toArray(), null));
         }
 
+        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+            throw new UnsupportedOperationException("Unimplemented method");
+        }
+
         public void serialize(final QName parentQName,
                               final OMFactory factory,
                               MTOMAwareXMLStreamWriter xmlWriter)
@@ -81,7 +86,7 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
     }
 
@@ -106,6 +111,10 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                                                                                         null);
         }
 
+        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+            throw new UnsupportedOperationException("Unimplemented method");
+        }
+
         public void serialize(final QName parentQName,
                               final OMFactory factory,
                               MTOMAwareXMLStreamWriter xmlWriter)
@@ -118,7 +127,7 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
     }
 
@@ -130,6 +139,11 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                                                                                         elementList.toArray(),
                                                                                         null);
         }
+
+        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+            throw new UnsupportedOperationException("Unimplemented method");
+        }
+
         public void serialize(final QName parentQName,
                               final OMFactory factory,
                               MTOMAwareXMLStreamWriter xmlWriter)
@@ -142,7 +156,7 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
     }
 
@@ -157,6 +171,11 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
             return parser;
         }
+
+        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+            throw new UnsupportedOperationException("Unimplemented method");
+        }
+
         public void serialize(final QName parentQName,
                               final OMFactory factory,
                               MTOMAwareXMLStreamWriter xmlWriter)
@@ -169,7 +188,7 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
     }
 }

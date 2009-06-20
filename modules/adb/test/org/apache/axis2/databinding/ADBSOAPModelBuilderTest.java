@@ -193,6 +193,10 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
             return new ADBXMLStreamReaderImpl(adbBeanQName, propertyList.toArray(), null);
         }
 
+        public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+            throw new UnsupportedOperationException("Unimplemented method");
+        }
+
         public void serialize(final QName parentQName,
                               final OMFactory factory,
                               MTOMAwareXMLStreamWriter xmlWriter)
@@ -205,7 +209,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
     }
 

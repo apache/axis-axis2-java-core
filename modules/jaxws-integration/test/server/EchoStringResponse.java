@@ -86,6 +86,30 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
 
     }
 
+    /**
+    *
+    * @param parentQName
+    * @param factory
+    * @return org.apache.axiom.om.OMElement
+    */
+   public org.apache.axiom.om.OMElement getOMElement (
+           final javax.xml.namespace.QName parentQName,
+           final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
+
+
+    
+            org.apache.axiom.om.OMDataSource dataSource =
+                   new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
+
+             public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                   EchoStringResponse.this.serialize(MY_QNAME,factory,xmlWriter);
+             }
+           };
+           return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+           MY_QNAME,factory,dataSource);
+        
+   }
+
     public void serialize(final QName parentQName,
                           final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter)

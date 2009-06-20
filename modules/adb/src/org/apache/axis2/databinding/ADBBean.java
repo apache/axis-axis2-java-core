@@ -19,6 +19,7 @@
 
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
@@ -42,6 +43,7 @@ public interface ADBBean extends Serializable {
      */
     public XMLStreamReader getPullParser(QName adbBeanQName) throws XMLStreamException;
 
+    public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException;
 
     public void serialize(final QName parentQName,
                           final OMFactory factory,

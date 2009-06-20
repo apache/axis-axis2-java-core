@@ -26,6 +26,7 @@
 
 package org.apache.axis2.databinding;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
@@ -105,6 +106,10 @@ public class CreateAccountRequest implements
 
     }
 
+    public OMElement getOMElement(QName parentQName, OMFactory factory) throws ADBException {
+        throw new UnsupportedOperationException("Unimplemented method");
+    }
+
     public void serialize(final QName parentQName,
                           final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter)
@@ -117,7 +122,7 @@ public class CreateAccountRequest implements
                               MTOMAwareXMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
-            throw new UnsupportedOperationException("Un implemented method");
+            throw new UnsupportedOperationException("Unimplemented method");
         }
 
     /** Factory class that keeps the parse method */
