@@ -851,6 +851,9 @@ public class ConfigurationContext extends AbstractContext {
      * @return The ContextRoot
      */
     public String getContextRoot() {
+        if (contextRoot == null) {
+            contextRoot = (String) axisConfiguration.getParameter("contextRoot").getValue();
+        }
         return contextRoot;
     }
 
