@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 
-public class ChiceTest extends TestCase {
+public class ChoiceTest extends TestCase {
 
     public void testChoice(){
         TestChoise testChoise = new TestChoise();
