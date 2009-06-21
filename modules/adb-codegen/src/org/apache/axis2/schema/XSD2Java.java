@@ -19,7 +19,6 @@
 
 package org.apache.axis2.schema;
 
-import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Document;
@@ -28,6 +27,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
+
+import static org.apache.axis2.schema.i18n.SchemaCompilerMessages.getMessage;
 
 public class XSD2Java {
 
@@ -38,37 +39,42 @@ public class XSD2Java {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            // printout the options
-            System.out.println(SchemaCompilerMessages.getMessage("schema.xsdarg1"));
-            System.out.println(SchemaCompilerMessages.getMessage("schema.xsdarg2"));
+        if (args.length < 2) {
+            System.out.println(getMessage("schema.usage"));
+            System.exit(1);
         } else {
-            compile(args[0], args[1]);
+            File outputFolder = new File(args[args.length-1]);
+            for (int i=0; i<args.length-1; i++) {
+                File xsdFile = new File(args[i]);
+                // Only output a message if the user has specified more than one schema file
+                if (args.length > 2) {
+                    System.out.println(getMessage("schema.compiling", xsdFile.getName()));
+                }
+                compile(xsdFile, outputFolder);
+            }
         }
-
     }
 
     /**
      * @param xsdName
      * @param outputLocation
      */
-    private static void compile(String xsdName, String outputLocation) throws Exception {
+    private static void compile(File xsdFile, File outputFolder) throws Exception {
             //load the current Schema through a file
             //first read the file into a DOM
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setNamespaceAware(true);
 
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-            Document doc = builder.parse(new File(xsdName));
+            Document doc = builder.parse(xsdFile);
 
             //now read it to a schema
             XmlSchemaCollection schemaCol = new XmlSchemaCollection();
             XmlSchema currentSchema = schemaCol.read(doc, null);
 
-            File outputFolder = new File(outputLocation);
             if (outputFolder.exists()) {
                 if (outputFolder.isFile()) {
-                    throw new IOException(SchemaCompilerMessages.getMessage("schema.locationNotFolder"));
+                    throw new IOException(getMessage("schema.locationNotFolder"));
                 }
             } else {
                 outputFolder.mkdirs();
