@@ -26,6 +26,7 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
@@ -180,13 +182,33 @@ public abstract class AbstractTestCase extends TestCase {
     
     /**
      * Serialize a bean to XML, then deserialize the XML and compare the resulting bean to
-     * the original.
+     * the original. This will actually do the serialization and deserialization several times
+     * using different approaches in order to increase the test coverage.
      * 
      * @param bean the bean to serialize
      * @throws Exception
      */
     public static void testSerializeDeserialize(ADBBean bean) throws Exception {
-        assertBeanEquals(bean, serializeDeserialize(bean));
+        Class<? extends ADBBean> beanClass = bean.getClass();
+        QName qname = getADBBeanQName(beanClass);
+        
+        OMElement omElement = bean.getOMElement(qname, OMAbstractFactory.getOMFactory());
+        String omElementString = omElement.toStringWithConsume();
+        
+        // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
+        assertBeanEquals(bean, parse(beanClass,
+                StAXUtils.createXMLStreamReader(new StringReader(omElementString))));
+        
+        // Deserialization approach 2: use an Axiom tree with caching. In this case the
+        // XMLStreamReader implementation is OMStAXWrapper and we test interoperability
+        // between ADB and Axiom's OMStAXWrapper.
+        OMElement omElement2 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(
+                new StringReader(omElementString))).getDocumentElement();
+        assertBeanEquals(bean, parse(beanClass, omElement2.getXMLStreamReader()));
+        
+        // Deserialization approach 3: use the pull parser produced by ADB.
+        // TODO: this badly fails for many of the test cases => there are still issues to solve!!! 
+//        assertBeanEquals(bean, parse(beanClass, bean.getPullParser(qname)));
     }
     
     /**
