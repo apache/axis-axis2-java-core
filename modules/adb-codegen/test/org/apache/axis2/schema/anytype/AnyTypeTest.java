@@ -253,5 +253,11 @@ public class AnyTypeTest extends AbstractTestCase {
         assertNull(test.getParam1());
         assertEquals("test", test.getParam2());
     }
+    
+    public void testEmptyString() throws Exception {
+        TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
+        testAnyTypeElement.setTestAnyTypeElement1("");
+        testSerializeDeserialize(testAnyTypeElement);
+    }
 }
 

@@ -1529,10 +1529,7 @@ public class ConverterUtil {
                         xmlStreamReader.next();
                         returnObject = getDataHandlerObject(xmlStreamReader);
                     } else {
-                        // we have to do this other wise xmlstream event type is not set.
-                        xmlStreamReader.next();
-                        String attribValue = xmlStreamReader.getText();
-                        xmlStreamReader.next();
+                        String attribValue = xmlStreamReader.getElementText();
                         if (attribValue != null) {
                             if (attributeType.equals("string")) {
                                 returnObject = attribValue;
