@@ -82,9 +82,15 @@
         -->
         <version>SNAPSHOT</version>
 
+	<!-- Tracking SNAPSHOT(s) of a few projects -->
+        <axiom.version>1.2.9-SNAPSHOT</axiom.version>
+        <neethi.version>SNAPSHOT</neethi.version>
+        <xmlschema.version>SNAPSHOT</xmlschema.version>
+        <woden.version>1.0-SNAPSHOT</woden.version>
+
+	<!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
-        <axiom.version>1.2.9-SNAPSHOT</axiom.version>
         <bcel.version>5.2</bcel.version>
         <bsf.version>2.4.0</bsf.version>
         <commons.codec.version>1.3</commons.codec.version>
@@ -120,7 +126,6 @@
         <maven.plugin.testing.version>1.1</maven.plugin.testing.version>
         <maven.version>2.0.7</maven.version>
         <maven.war.version>2.0.2</maven.war.version>
-        <neethi.version>2.0.4</neethi.version>
         <plexus.utils.version>1.4.9</plexus.utils.version>
         <rhino.version>1.6R7</rhino.version>
         <servlet.api.version>2.3</servlet.api.version>
@@ -130,13 +135,10 @@
         <stax.impl.groupid>org.codehaus.woodstox</stax.impl.groupid>
         <stax.impl.version>3.2.4</stax.impl.version>
         <tomcat.version>6.0.16</tomcat.version>
-        <!--<woden.version>1.0M8</woden.version>-->
-        <woden.version>1.0-SNAPSHOT</woden.version>
         <wsdl4j.version>1.6.2</wsdl4j.version>
         <xalan.version>2.7.0</xalan.version>
         <xmlbeans.version>2.3.0</xmlbeans.version>
         <xml_resolver.version>1.2</xml_resolver.version>
-        <xmlschema.version>1.4.3</xmlschema.version>
         <xmlunit.version>1.1</xmlunit.version>
         <smack.version>3.0.4</smack.version>
         <commons.lang.version>2.3</commons.lang.version>
