@@ -22,8 +22,6 @@ package org.apache.axis2.schema.anytype;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.schema.AbstractTestCase;
 
-import test.adb.anytype.*;
-
 import javax.xml.namespace.QName;
 import java.io.StringReader;
 
@@ -245,7 +243,7 @@ public class AnyTypeTest extends AbstractTestCase {
     // Regression test for AXIS2-4273
     public void testTestMixedWithNilledAnyType() throws Exception {
         TestMixed test = TestMixed.Factory.parse(StAXUtils.createXMLStreamReader(new StringReader(
-                "<TestMixed xmlns='http://adb.test/anyType' " +
+                "<TestMixed xmlns='http://apache.org/axis2/schema/anytype' " +
                 "           xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" +
                 "  <param1 xsi:nil='true'/>" +
                 "  <param2>test</param2>" +

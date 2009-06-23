@@ -21,16 +21,14 @@ package org.apache.axis2.schema.choice;
 
 import org.apache.axis2.schema.AbstractTestCase;
 
-import test.axis2.apache.org.TestChoise;
-
 public class ChoiceTest extends AbstractTestCase {
 
     public void testChoice() throws Exception {
-        TestChoise testChoise = new TestChoise();
-        testChoise.setChoice1("test 2");
-        testChoise.setChoice2(5);
+        TestChoice testChoice = new TestChoice();
+        testChoice.setChoice1("test 2");
+        testChoice.setChoice2(5);
         
-        TestChoise newTestChoice = (TestChoise)serializeDeserialize(testChoise);
+        TestChoice newTestChoice = (TestChoice)serializeDeserialize(testChoice);
         assertEquals(5, newTestChoice.getChoice2());
     }
 }

@@ -19,8 +19,8 @@
 
 <s:schema elementFormDefault="qualified"
           xmlns:s="http://www.w3.org/2001/XMLSchema"
-          xmlns:tns="http://tempuri.org/"
-          targetNamespace="http://tempuri.org/">
+          xmlns:tns="http://apache.org/axis2/schema/enumeration"
+          targetNamespace="http://apache.org/axis2/schema/enumeration">
     <s:element name="CountPlacesInRect">
         <s:complexType>
             <s:sequence>

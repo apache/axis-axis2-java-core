@@ -20,8 +20,6 @@
 package org.apache.axis2.schema.defaultvalue;
 
 import junit.framework.TestCase;
-import org.tempuri.boolean1.TestElement1;
-import org.tempuri.boolean1.TestElement2;
 
 public class DefaultValueTest extends TestCase {
 

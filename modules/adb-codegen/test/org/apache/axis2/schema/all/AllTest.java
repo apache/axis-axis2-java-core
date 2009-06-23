@@ -20,7 +20,6 @@
 package org.apache.axis2.schema.all;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.Update;
 
 public class AllTest extends AbstractTestCase {
 

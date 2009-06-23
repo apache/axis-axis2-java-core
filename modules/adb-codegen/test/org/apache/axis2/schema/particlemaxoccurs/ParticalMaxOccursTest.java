@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package org.apache.axis2.schema.particalmaxoccurs;
+package org.apache.axis2.schema.particlemaxoccurs;
 
-import com.mynamespace.testparticlemaxoccurs.*;
 import org.apache.axis2.schema.AbstractTestCase;
 
 public class ParticalMaxOccursTest extends AbstractTestCase {

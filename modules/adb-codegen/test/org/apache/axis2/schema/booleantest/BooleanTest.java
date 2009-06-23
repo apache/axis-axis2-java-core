@@ -20,8 +20,6 @@
 package org.apache.axis2.schema.booleantest;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.boolean1.TestBoolean1;
-import org.tempuri.boolean1.TestBoolean2;
 
 public class BooleanTest extends AbstractTestCase {
 

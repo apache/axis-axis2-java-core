@@ -19,7 +19,6 @@
 
 package org.apache.axis2.schema.innerparticles;
 
-import com.mynamespace.testinnerparticle.*;
 import org.apache.axis2.schema.AbstractTestCase;
 
 public class InnerParticlesTest extends AbstractTestCase {

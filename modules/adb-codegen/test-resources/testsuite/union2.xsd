@@ -20,8 +20,8 @@
 <s:schema elementFormDefault="qualified"
           xmlns:s="http://www.w3.org/2001/XMLSchema"
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-          xmlns:tns="http://tempuri.org/union2"
-          targetNamespace="http://tempuri.org/union2">
+          xmlns:tns="http://apache.org/axis2/schema/union2"
+          targetNamespace="http://apache.org/axis2/schema/union2">
 
     <s:simpleType name="TestUnion1">
         <s:union memberTypes="s:string s:boolean tns:TestRestriction"/>

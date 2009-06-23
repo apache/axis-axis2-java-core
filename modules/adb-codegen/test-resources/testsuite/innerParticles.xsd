@@ -19,9 +19,9 @@
   ~ under the License.
   -->
 
-<xsd:schema targetNamespace="http://mynamespace.com/testinnerparticle"
+<xsd:schema targetNamespace="http://apache.org/axis2/schema/innerparticles"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:test1="http://mynamespace.com/testinnerparticle"
+            xmlns:test1="http://apache.org/axis2/schema/innerparticles"
             elementFormDefault="qualified" attributeFormDefault="unqualified"
             version="1.0">
     <xsd:element name="TestInnerParticle1">

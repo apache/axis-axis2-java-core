@@ -20,8 +20,8 @@
 <s:schema elementFormDefault="qualified"
           xmlns:s="http://www.w3.org/2001/XMLSchema"
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-          xmlns:tns="http://tempuri.org/innerparticalextension"
-          targetNamespace="http://tempuri.org/innerparticalextension">
+          xmlns:tns="http://apache.org/axis2/schema/innerparticleextension"
+          targetNamespace="http://apache.org/axis2/schema/innerparticleextension">
 
     <s:complexType name="ParentType">
         <s:choice minOccurs="0" maxOccurs="unbounded">

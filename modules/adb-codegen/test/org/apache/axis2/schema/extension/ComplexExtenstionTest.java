@@ -21,9 +21,6 @@ package org.apache.axis2.schema.extension;
 
 import org.apache.axis2.schema.AbstractTestCase;
 
-import test.axis2.apache.org.ExtendedComplexType;
-import test.axis2.apache.org.TestComplexElement;
-
 public class ComplexExtenstionTest extends AbstractTestCase {
 
     public void testComplexExtension() throws Exception {

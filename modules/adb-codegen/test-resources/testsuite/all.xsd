@@ -19,8 +19,8 @@
 
 <xs:schema elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://tempuri.org/"
-           targetNamespace="http://tempuri.org/">
+           xmlns:tns="http://apache.org/axis2/schema/all"
+           targetNamespace="http://apache.org/axis2/schema/all">
     <xs:element name="Update">
         <xs:complexType>
             <xs:all>

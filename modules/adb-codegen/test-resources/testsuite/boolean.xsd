@@ -19,8 +19,8 @@
 
 <xs:schema elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://tempuri.org/boolean1"
-           targetNamespace="http://tempuri.org/boolean1">
+           xmlns:tns="http://apache.org/axis2/schema/booleantest"
+           targetNamespace="http://apache.org/axis2/schema/booleantest">
 
     <xs:element name="TestBoolean1" type="xs:boolean"/>
     <xs:element name="TestBoolean2" >

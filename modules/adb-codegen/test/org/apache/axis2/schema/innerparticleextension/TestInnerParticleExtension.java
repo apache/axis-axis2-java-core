@@ -20,9 +20,6 @@
 package org.apache.axis2.schema.innerparticleextension;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.innerparticalextension.ChildElement_type0;
-import org.tempuri.innerparticalextension.ParentTypeChoice;
-import org.tempuri.innerparticalextension.TestElement;
 
 public class TestInnerParticleExtension extends AbstractTestCase {
 

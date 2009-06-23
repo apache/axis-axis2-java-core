@@ -20,7 +20,6 @@
 package org.apache.axis2.schema.union2;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.union2.*;
 
 import java.util.Date;
 

@@ -19,7 +19,6 @@
 
 package org.apache.axis2.schema.group;
 
-import group.test.axis2.apache.org.*;
 import org.apache.axis2.schema.AbstractTestCase;
 
 public class GroupTest extends AbstractTestCase {

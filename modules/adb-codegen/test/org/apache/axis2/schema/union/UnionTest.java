@@ -21,7 +21,6 @@ package org.apache.axis2.schema.union;
 
 import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.union.*;
 
 import javax.xml.namespace.QName;
 

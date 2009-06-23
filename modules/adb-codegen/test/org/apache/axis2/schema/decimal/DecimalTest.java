@@ -21,8 +21,6 @@ package org.apache.axis2.schema.decimal;
 
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.boolean1.ArrayOfDecimal;
-import org.tempuri.boolean1.GetHistoricNavResponse;
 
 import java.math.BigDecimal;
 import java.util.Calendar;

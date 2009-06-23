@@ -20,8 +20,8 @@
 <schema elementFormDefault="qualified"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:tns="org.apache.axis2.test"
-        targetNamespace="org.apache.axis2.test">
+        xmlns:tns="http://apache.org/axis2/schema/extension"
+        targetNamespace="http://apache.org/axis2/schema/extension">
 
     <xs:complexType name="type">
         <xs:sequence>

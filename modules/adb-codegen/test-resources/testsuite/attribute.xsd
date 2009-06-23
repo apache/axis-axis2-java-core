@@ -20,8 +20,8 @@
 <xs:schema elementFormDefault="qualified"
            attributeFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://tempuri.org/attribute"
-           targetNamespace="http://tempuri.org/attribute">
+           xmlns:tns="http://apache.org/axis2/schema/attribute"
+           targetNamespace="http://apache.org/axis2/schema/attribute">
 
     <xs:element name="TestElement1">
         <xs:complexType>

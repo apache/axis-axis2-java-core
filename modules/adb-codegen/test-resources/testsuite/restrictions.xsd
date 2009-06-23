@@ -20,9 +20,9 @@
 <xsd:schema elementFormDefault="qualified"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:xs="http://www.w3.org/2001/XMLSchema"
-            xmlns:tns="http://tempuri.org/"
+            xmlns:tns="http://apache.org/axis2/schema/restriction"
             xmlns:ns1="http://google.com"
-            targetNamespace="http://tempuri.org/">
+            targetNamespace="http://apache.org/axis2/schema/restriction">
 
     <xsd:simpleType name="ChildSimpleType">
         <xsd:restriction base="xsd:string"/>

@@ -24,9 +24,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
-import org.tempuri.defaultnamepaces.TestChildType;
-import org.tempuri.defaultnamepaces.TestElement1;
-import org.tempuri.defaultnamepaces.TestSimpleUnion;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -36,27 +33,28 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 
 public class DefaultNamespacesTest extends TestCase {
+    private static final String NS_URI = TestElement1.MY_QNAME.getNamespaceURI();
 
     public void testTestElement1() {
 
         TestElement1 testElement1 = new TestElement1();
 
         TestChildType testChildType = new TestChildType();
-        testChildType.setParam1(new QName("http://tempuri.org/defaultnamepaces", "param1"));
+        testChildType.setParam1(new QName(NS_URI, "param1"));
         testChildType.setParam2("Param2");
-        testChildType.setParam3(new QName("http://tempuri.org/defaultnamepaces", "param3"));
+        testChildType.setParam3(new QName(NS_URI, "param3"));
         testChildType.setParam4("Param4");
 
         TestSimpleUnion testSimpleUnion1 = new TestSimpleUnion();
-        testSimpleUnion1.setObject(new QName("http://tempuri.org/defaultnamepaces", "param5"));
+        testSimpleUnion1.setObject(new QName(NS_URI, "param5"));
 
         testChildType.setParam5(testSimpleUnion1);
 
         testChildType.setAttribute1("attribute1");
-        testChildType.setAttribute2(new QName("http://tempuri.org/defaultnamepaces", "attribute2"));
+        testChildType.setAttribute2(new QName(NS_URI, "attribute2"));
 
         TestSimpleUnion testSimpleUnion2 = new TestSimpleUnion();
-        testSimpleUnion2.setObject(new QName("http://tempuri.org/defaultnamepaces", "attribute3"));
+        testSimpleUnion2.setObject(new QName(NS_URI, "attribute3"));
 
 
         testElement1.setTestElement1(testChildType);
@@ -66,7 +64,7 @@ public class DefaultNamespacesTest extends TestCase {
 
             XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(stringWriter);
             MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
-            testElement1.getTestElement1().serialize(new QName("http://tempuri.org/defaultnamepaces", "TestElement1", "ns1"),
+            testElement1.getTestElement1().serialize(new QName(NS_URI, "TestElement1", "ns1"),
                     OMAbstractFactory.getSOAP11Factory(), mtomAwareXMLStreamWriter);
             xmlStreamWriter.flush();
             xmlStreamWriter.close();
@@ -76,12 +74,12 @@ public class DefaultNamespacesTest extends TestCase {
             TestElement1 result = TestElement1.Factory.parse(xmlReader);
             assertTrue(result.getTestElement1() instanceof TestChildType);
             TestChildType resultType = (TestChildType) result.getTestElement1();
-            assertEquals(resultType.getParam1(), new QName("http://tempuri.org/defaultnamepaces", "param1"));
+            assertEquals(resultType.getParam1(), new QName(NS_URI, "param1"));
             assertEquals(resultType.getParam2(), "Param2");
-            assertEquals(resultType.getParam3(), new QName("http://tempuri.org/defaultnamepaces", "param3"));
+            assertEquals(resultType.getParam3(), new QName(NS_URI, "param3"));
             assertEquals(resultType.getParam4(), "Param4");
             assertEquals(resultType.getAttribute1(), "attribute1");
-            assertEquals(resultType.getAttribute2(), new QName("http://tempuri.org/defaultnamepaces", "attribute2"));
+            assertEquals(resultType.getAttribute2(), new QName(NS_URI, "attribute2"));
         } catch (XMLStreamException e) {
             fail();
         } catch (Exception e) {

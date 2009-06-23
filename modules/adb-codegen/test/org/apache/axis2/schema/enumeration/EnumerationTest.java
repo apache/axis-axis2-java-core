@@ -20,8 +20,6 @@
 package org.apache.axis2.schema.enumeration;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.CountPlacesInRect;
-import org.tempuri.PlaceType;
 
 public class EnumerationTest extends AbstractTestCase {
 

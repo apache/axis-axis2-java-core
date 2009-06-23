@@ -20,8 +20,6 @@
 package org.apache.axis2.schema.restriction;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.GetExemplarResponseType;
-import org.tempuri.GetExemplarResponseTypeElement;
 
 import java.math.BigInteger;
 

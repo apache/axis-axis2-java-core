@@ -20,7 +20,6 @@
 package org.apache.axis2.schema.attribute;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.attribute.*;
 
 public class AttributeTest extends AbstractTestCase {
 

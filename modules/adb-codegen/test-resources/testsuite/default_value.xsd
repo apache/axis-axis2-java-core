@@ -19,8 +19,8 @@
 
 <xs:schema elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://tempuri.org/boolean1"
-           targetNamespace="http://tempuri.org/boolean1">
+           xmlns:tns="http://apache.org/axis2/schema/defaultvalue"
+           targetNamespace="http://apache.org/axis2/schema/defaultvalue">
 
     <xs:element name="TestElement1" type="xs:int" default="56"/>
     <xs:element name="TestElement2" >

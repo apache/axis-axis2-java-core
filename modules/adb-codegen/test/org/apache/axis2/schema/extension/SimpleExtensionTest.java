@@ -22,10 +22,6 @@ package org.apache.axis2.schema.extension;
 import org.apache.axis2.databinding.types.Language;
 import org.apache.axis2.schema.AbstractTestCase;
 
-import test.axis2.apache.org.BaseType;
-import test.axis2.apache.org.FullName;
-import test.axis2.apache.org.SimpleType;
-
 public class SimpleExtensionTest extends AbstractTestCase {
 
     public void testSimpleTypeComplexExtension() throws Exception {

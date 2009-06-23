@@ -21,8 +21,6 @@ package org.apache.axis2.schema.list;
 
 import org.apache.axis2.schema.AbstractTestCase;
 
-import test.axis2.apache.org.*;
-
 import javax.xml.namespace.QName;
 
 public class ListTest extends AbstractTestCase {

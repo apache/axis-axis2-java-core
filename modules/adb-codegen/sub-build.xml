@@ -64,7 +64,7 @@
 			<arg file="${testsuite.source.dir}/list.xsd"/>
 			<arg file="${testsuite.source.dir}/element_references.xsd"/>
 			<arg file="${testsuite.source.dir}/innersequence_choice.xsd"/>
-			<arg file="${testsuite.source.dir}/testattribute.xsd"/>
+			<arg file="${testsuite.source.dir}/attribute.xsd"/>
 			<arg file="${testsuite.source.dir}/boolean.xsd"/>
 			<arg file="${testsuite.source.dir}/particalMaxOccures.xsd"/>
 			<arg file="${testsuite.source.dir}/innerParticles.xsd"/>

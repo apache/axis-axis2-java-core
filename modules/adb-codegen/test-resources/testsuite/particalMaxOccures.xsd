@@ -19,9 +19,9 @@
   ~ under the License.
   -->
 
-<xsd:schema targetNamespace="http://mynamespace.com/testparticlemaxoccurs"
+<xsd:schema targetNamespace="http://apache.org/axis2/schema/particlemaxoccurs"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:tns="http://mynamespace.com/testparticlemaxoccurs"
+            xmlns:tns="http://apache.org/axis2/schema/particlemaxoccurs"
             elementFormDefault="qualified" attributeFormDefault="unqualified"
             version="1.0">
 

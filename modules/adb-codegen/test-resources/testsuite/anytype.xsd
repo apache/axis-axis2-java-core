@@ -18,8 +18,8 @@
   -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://adb.test/anyType"
-           xmlns:tns="http://adb.test/anyType"
+           targetNamespace="http://apache.org/axis2/schema/anytype"
+           xmlns:tns="http://apache.org/axis2/schema/anytype"
            elementFormDefault="qualified">
     <xs:element name="TestAnyTypeElement1" type="xs:anyType"/>
     <xs:element name="TestAnyTypeElement2" type="xs:anyType" nillable="true"/>

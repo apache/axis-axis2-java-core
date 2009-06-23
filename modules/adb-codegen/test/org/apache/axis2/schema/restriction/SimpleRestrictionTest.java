@@ -20,20 +20,6 @@
 package org.apache.axis2.schema.restriction;
 
 import org.apache.axis2.schema.AbstractTestCase;
-import org.tempuri.Address;
-import org.tempuri.ComplexRestrictionTypeTestElement;
-import org.tempuri.EnumerationSimpleTypeElement;
-import org.tempuri.HairColor_type1;
-import org.tempuri.NormalSimpleTypeElement;
-import org.tempuri.ParentEnumerationSimpleType;
-import org.tempuri.ParentNormalSimpleType;
-import org.tempuri.ParentRestrictionType;
-import org.tempuri.ParentSimpleType;
-import org.tempuri.Person;
-import org.tempuri.PersonElement;
-import org.tempuri.TestSimpleAttribute;
-import org.tempuri.TestSimpleAttributeElement;
-import org.tempuri.Zip_type1;
 
 import javax.xml.namespace.QName;
 import java.util.Calendar;
