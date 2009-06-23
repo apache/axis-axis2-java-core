@@ -70,7 +70,7 @@ public class XSD2Java {
 
             //now read it to a schema
             XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-            XmlSchema currentSchema = schemaCol.read(doc, null);
+            XmlSchema currentSchema = schemaCol.read(doc, xsdFile.toURI().toString(), null);
 
             if (outputFolder.exists()) {
                 if (outputFolder.isFile()) {
