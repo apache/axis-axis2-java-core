@@ -2720,16 +2720,13 @@ public class SchemaCompiler {
                                      QName componentQName,
                                      int componetType) {
         boolean isExists = false;
-        if (!schema.getTargetNamespace().equals(componentQName.getNamespaceURI())){
-             return false;
-        }
         switch (componetType) {
             case COMPONENT_TYPE : {
-                isExists = (schema.getTypeByName(componentQName.getLocalPart()) != null);
+                isExists = (schema.getTypeByName(componentQName) != null);
                 break;
             }
             case COMPONENT_ELEMENT : {
-                isExists = (schema.getElementByName(componentQName.getLocalPart()) != null);
+                isExists = (schema.getElementByName(componentQName) != null);
                 break;
             }
             case COMPONENT_ATTRIBUTE : {
