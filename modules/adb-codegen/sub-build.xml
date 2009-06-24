@@ -81,6 +81,7 @@
 			<arg file="${testsuite.source.dir}/complexExtension.xsd"/>
 			<arg file="${testsuite.source.dir}/soapencoding.xsd"/>
 			<arg file="${testsuite.source.dir}/chameleon.xsd"/>
+			<arg file="${testsuite.source.dir}/nonamespace.xsd"/> <!-- compile only; no tests -->
 			<arg file="${schema.generated.src.dir}"/>
 		</java>
     </target>

@@ -270,7 +270,7 @@ public class SchemaCompiler {
                         && (options.getNs2PackageMap().containsKey(nsp))) {
                     writer.registerExtensionMapperPackageName((String) options.getNs2PackageMap().get(nsp));
                 } else {
-                    writer.registerExtensionMapperPackageName(URLProcessor.makePackageName(nsp));
+                    writer.registerExtensionMapperPackageName(nsp == null ? null : URLProcessor.makePackageName(nsp));
                 }
             }
             // second round - call the schema compiler one by one
@@ -317,8 +317,8 @@ public class SchemaCompiler {
         if (!isPartofGroup) {
             //set a mapper package if not avaialable
             if (writer.getExtensionMapperPackageName() == null) {
-                writer.registerExtensionMapperPackageName(
-                        URLProcessor.makePackageName(schema.getTargetNamespace()));
+                String ns = schema.getTargetNamespace();
+                writer.registerExtensionMapperPackageName(ns == null ? null : URLProcessor.makePackageName(ns));
             }
         }
 

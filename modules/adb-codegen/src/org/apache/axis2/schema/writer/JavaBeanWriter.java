@@ -1354,7 +1354,7 @@ public class JavaBeanWriter implements BeanWriter {
      * mapper class for the whole
      */
     private String getFullyQualifiedMapperClassName() {
-        if (wrapClasses || !writeClasses) {
+        if (wrapClasses || !writeClasses || mappingClassPackage == null) {
             return EXTENSION_MAPPER_CLASSNAME;
         } else {
             return mappingClassPackage + "." + EXTENSION_MAPPER_CLASSNAME;
