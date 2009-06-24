@@ -27,6 +27,7 @@ import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -210,7 +211,7 @@ public class EJBUtil {
          * @throws AxisFault If fals
          */
         private Object getEJBHome(AxisService service, String beanJndiName) throws AxisFault {
-            Object ejbHome;
+            Object ejbHome = null;
 
             // Set up an InitialContext and use it get the beanJndiName from JNDI
             try {
@@ -262,12 +263,17 @@ public class EJBUtil {
                 if (context == null)
                     throw new AxisFault("cannot create initial context");
 
-                ejbHome = getEJBHome(context, beanJndiName);
+                try {
+                    ejbHome = getEJBHome(context, beanJndiName);
+                } catch (Exception e) {
+                    ejbHome = getEJBHome(context, beanJndiName); // Retry for the 2nd time to overcome issues related to cahing
+                } 
 
                 if (ejbHome == null)
                     throw new AxisFault("cannot find jndi home");
             }
             catch (Exception exception) {
+
                 throw AxisFault.makeFault(exception);
             }
 
