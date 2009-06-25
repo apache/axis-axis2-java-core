@@ -199,8 +199,7 @@ public abstract class AbstractTestCase extends TestCase {
         // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
 //        testSerializeDeserialize3(bean);
         
-        // TODO: this fails for one of the test cases
-//        testSerializeDeserialize4(bean);
+        testSerializeDeserialize4(bean);
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.

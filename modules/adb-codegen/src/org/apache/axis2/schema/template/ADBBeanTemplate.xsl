@@ -1521,21 +1521,19 @@
          */
         private void writeStartElement(java.lang.String prefix, java.lang.String namespace, java.lang.String localPart,
                                        javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-            if (namespace != null &amp;&amp; namespace.trim().length() > 0) {
-                java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
-                if (writerPrefix != null) {
-                    xmlWriter.writeStartElement(namespace, localPart);
-                } else {
-                    if (prefix == null) {
-                        prefix = generatePrefix(namespace);
-                    }
-
-                    xmlWriter.writeStartElement(prefix, localPart, namespace);
-                    xmlWriter.writeNamespace(prefix, namespace);
-                    xmlWriter.setPrefix(prefix, namespace);
-                }
+            java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
+            if (writerPrefix != null) {
+                xmlWriter.writeStartElement(namespace, localPart);
             } else {
-                xmlWriter.writeStartElement(localPart);
+                if (namespace.length() == 0) {
+                    prefix = "";
+                } else if (prefix == null) {
+                    prefix = generatePrefix(namespace);
+                }
+
+                xmlWriter.writeStartElement(prefix, localPart, namespace);
+                xmlWriter.writeNamespace(prefix, namespace);
+                xmlWriter.setPrefix(prefix, namespace);
             }
         }
         
