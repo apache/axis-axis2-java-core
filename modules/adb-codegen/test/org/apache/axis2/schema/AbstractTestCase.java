@@ -24,9 +24,11 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -49,6 +51,8 @@ import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.types.Language;
 import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import junit.framework.TestCase;
 
@@ -189,26 +193,61 @@ public abstract class AbstractTestCase extends TestCase {
      * @throws Exception
      */
     public static void testSerializeDeserialize(ADBBean bean) throws Exception {
+        testSerializeDeserialize1(bean);
+        testSerializeDeserialize2(bean);
+        
+        // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
+//        testSerializeDeserialize3(bean);
+        
+        // TODO: this fails for one of the test cases
+//        testSerializeDeserialize4(bean);
+    }
+    
+    // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
+    private static void testSerializeDeserialize1(ADBBean bean) throws Exception {
         Class<? extends ADBBean> beanClass = bean.getClass();
         QName qname = getADBBeanQName(beanClass);
-        
         OMElement omElement = bean.getOMElement(qname, OMAbstractFactory.getOMFactory());
         String omElementString = omElement.toStringWithConsume();
-        
-        // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
         assertBeanEquals(bean, parse(beanClass,
                 StAXUtils.createXMLStreamReader(new StringReader(omElementString))));
-        
-        // Deserialization approach 2: use an Axiom tree with caching. In this case the
-        // XMLStreamReader implementation is OMStAXWrapper and we test interoperability
-        // between ADB and Axiom's OMStAXWrapper.
+    }
+    
+    // Deserialization approach 2: use an Axiom tree with caching. In this case the
+    // XMLStreamReader implementation is OMStAXWrapper and we test interoperability
+    // between ADB and Axiom's OMStAXWrapper.
+    private static void testSerializeDeserialize2(ADBBean bean) throws Exception {
+        Class<? extends ADBBean> beanClass = bean.getClass();
+        QName qname = getADBBeanQName(beanClass);
+        OMElement omElement = bean.getOMElement(qname, OMAbstractFactory.getOMFactory());
+        String omElementString = omElement.toStringWithConsume();
         OMElement omElement2 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(
                 new StringReader(omElementString))).getDocumentElement();
         assertBeanEquals(bean, parse(beanClass, omElement2.getXMLStreamReader()));
-        
-        // Deserialization approach 3: use the pull parser produced by ADB.
-        // TODO: this badly fails for many of the test cases => there are still issues to solve!!! 
-//        assertBeanEquals(bean, parse(beanClass, bean.getPullParser(qname)));
+    }
+    
+    // Deserialization approach 3: use the pull parser produced by ADB.
+    private static void testSerializeDeserialize3(ADBBean bean) throws Exception {
+        Class<? extends ADBBean> beanClass = bean.getClass();
+        QName qname = getADBBeanQName(beanClass);
+        assertBeanEquals(bean, parse(beanClass, bean.getPullParser(qname)));
+    }
+    
+    // Approach 4: Serialize the bean as the child of an element that declares a default namespace.
+    // If ADB behaves correctly, this should not have any impact. A failure here may be an indication
+    // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
+    private static void testSerializeDeserialize4(ADBBean bean) throws Exception {
+        Class<? extends ADBBean> beanClass = bean.getClass();
+        QName qname = getADBBeanQName(beanClass);
+        StringWriter sw = new StringWriter();
+        MTOMAwareXMLStreamWriter writer = new MTOMAwareXMLSerializer(StAXUtils.createXMLStreamWriter(sw));
+        writer.writeStartElement("", "root", "urn:test");
+        writer.writeDefaultNamespace("urn:test");
+        bean.serialize(qname, null, writer);
+        writer.writeEndElement();
+        writer.flush();
+        OMElement omElement3 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(new StringReader(sw.toString()))).getDocumentElement();
+        assertBeanEquals(bean, parse(beanClass, omElement3.getFirstElement().getXMLStreamReader()));
     }
     
     /**
