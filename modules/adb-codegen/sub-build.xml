@@ -74,7 +74,6 @@
 			<arg file="${testsuite.source.dir}/abstract.xsd"/>
 			<arg file="${testsuite.source.dir}/decimal.xsd"/>
 			<arg file="${testsuite.source.dir}/anytype.xsd"/>
-			<arg file="${testsuite.source.dir}/rampart.xsd"/>
 			<arg file="${testsuite.source.dir}/innerParticleExtension.xsd"/>
 			<arg file="${testsuite.source.dir}/union2.xsd"/>
 			<arg file="${testsuite.source.dir}/default_value.xsd"/>
