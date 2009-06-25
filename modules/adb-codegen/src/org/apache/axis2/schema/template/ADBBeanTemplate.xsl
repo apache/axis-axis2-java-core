@@ -760,27 +760,7 @@
             <xsl:choose>
 
             <xsl:when test="$simple and $union">
-                // fist write the start element
-                java.lang.String namespace = parentQName.getNamespaceURI();
-                java.lang.String localName = parentQName.getLocalPart();
-
-                if (! namespace.equals("")) {
-                    java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                    if (prefix == null) {
-                        prefix = generatePrefix(namespace);
-
-                        xmlWriter.writeStartElement(prefix, localName, namespace);
-                        xmlWriter.writeNamespace(prefix, namespace);
-                        xmlWriter.setPrefix(prefix, namespace);
-
-                    } else {
-                        xmlWriter.writeStartElement(namespace, localName);
-                    }
-
-                } else {
-                    xmlWriter.writeStartElement(localName);
-                }
+                writeStartElement(null, parentQName.getNamespaceURI(), parentQName.getLocalPart(), xmlWriter);
 
                 <xsl:for-each select="memberType">
                       <xsl:if test="position() > 1">} else </xsl:if>
@@ -816,27 +796,7 @@
                  <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
                  <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
 
-                // first write the start element
-                java.lang.String namespace = parentQName.getNamespaceURI();
-                java.lang.String localName = parentQName.getLocalPart();
-
-                if (! namespace.equals("")) {
-                    java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                    if (prefix == null) {
-                        prefix = generatePrefix(namespace);
-
-                        xmlWriter.writeStartElement(prefix, localName, namespace);
-                        xmlWriter.writeNamespace(prefix, namespace);
-                        xmlWriter.setPrefix(prefix, namespace);
-
-                    } else {
-                        xmlWriter.writeStartElement(namespace, localName);
-                    }
-
-                } else {
-                    xmlWriter.writeStartElement(localName);
-                }
+                writeStartElement(null, parentQName.getNamespaceURI(), parentQName.getLocalPart(), xmlWriter);
 
                 <xsl:choose>
                    <xsl:when test="$varType='javax.xml.namespace.QName'">
@@ -862,23 +822,7 @@
 
                     prefix = parentQName.getPrefix();
                     namespace = parentQName.getNamespaceURI();
-
-                    if ((namespace != null) &amp;&amp; (namespace.trim().length() > 0)) {
-                        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
-                        if (writerPrefix != null) {
-                            xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
-                        } else {
-                            if (prefix == null) {
-                                prefix = generatePrefix(namespace);
-                            }
-
-                            xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
-                            xmlWriter.writeNamespace(prefix, namespace);
-                            xmlWriter.setPrefix(prefix, namespace);
-                        }
-                    } else {
-                        xmlWriter.writeStartElement(parentQName.getLocalPart());
-                    }
+                    writeStartElement(prefix, namespace, parentQName.getLocalPart(), xmlWriter);
                 </xsl:if>
 
 
@@ -1018,26 +962,7 @@
                                 <xsl:when test="@nillable">
                                     if (<xsl:value-of select="$varName"/>==null){
 
-                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-
-                                        if (! namespace2.equals("")) {
-                                            java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                            if (prefix2 == null) {
-                                                prefix2 = generatePrefix(namespace2);
-
-                                                xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                xmlWriter.writeNamespace(prefix2, namespace2);
-                                                xmlWriter.setPrefix(prefix2, namespace2);
-
-                                            } else {
-                                                xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                            }
-
-                                        } else {
-                                            xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                        }
-
+                                        writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                        // write the nil attribute
                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1099,25 +1024,7 @@
                                                 } else {
                                                    <xsl:choose>
                                                     <xsl:when test="@nillable">
-                                                            // write null attribute
-                                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                                            if (! namespace2.equals("")) {
-                                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                                if (prefix2 == null) {
-                                                                    prefix2 = generatePrefix(namespace2);
-
-                                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                                    xmlWriter.writeNamespace(prefix2, namespace2);
-                                                                    xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                                } else {
-                                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                                }
-
-                                                            } else {
-                                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                            }
+                                                            writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                                            // write the nil attribute
                                                            writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1136,25 +1043,7 @@
                                      } else {
                                         <xsl:choose>
                                         <xsl:when test="@nillable">
-                                                // write null attribute
-                                                java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                                if (! namespace2.equals("")) {
-                                                    java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                    if (prefix2 == null) {
-                                                        prefix2 = generatePrefix(namespace2);
-
-                                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                        xmlWriter.writeNamespace(prefix2, namespace2);
-                                                        xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                    } else {
-                                                        xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                    }
-
-                                                } else {
-                                                    xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                }
+                                                writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                                // write the nil attribute
                                                writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1181,24 +1070,7 @@
                                                            new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                                            factory,xmlWriter,true);
                                             } else {
-                                                java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                                if (! namespace2.equals("")) {
-                                                    java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                    if (prefix2 == null) {
-                                                        prefix2 = generatePrefix(namespace2);
-
-                                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                        xmlWriter.writeNamespace(prefix2, namespace2);
-                                                        xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                    } else {
-                                                        xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                    }
-
-                                                } else {
-                                                    xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                }
+                                                writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                                 org.apache.axis2.databinding.utils.ConverterUtil.serializeAnyType(<xsl:value-of select="$varName"/>[i], xmlWriter);
                                                 xmlWriter.writeEndElement();
                                              }
@@ -1207,24 +1079,7 @@
                                        <xsl:choose>
                                        <xsl:when test="@nillable">
                                             // write null attribute
-                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                            if (! namespace2.equals("")) {
-                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                if (prefix2 == null) {
-                                                    prefix2 = generatePrefix(namespace2);
-
-                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                    xmlWriter.writeNamespace(prefix2, namespace2);
-                                                    xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                } else {
-                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                }
-
-                                            } else {
-                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                            }
+                                            writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                            // write the nil attribute
                                            writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1243,24 +1098,7 @@
                                  <xsl:choose>
                                    <xsl:when test="@nillable">
                                         // write null attribute
-                                        java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                        if (! namespace2.equals("")) {
-                                            java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                            if (prefix2 == null) {
-                                                prefix2 = generatePrefix(namespace2);
-
-                                                xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                xmlWriter.writeNamespace(prefix2, namespace2);
-                                                xmlWriter.setPrefix(prefix2, namespace2);
-
-                                            } else {
-                                                xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                            }
-
-                                        } else {
-                                            xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                        }
+                                        writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                        // write the nil attribute
                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1282,24 +1120,7 @@
                                                new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                                factory,xmlWriter,true);
                                  } else {
-                                    java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                    if (! namespace2.equals("")) {
-                                        java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                        if (prefix2 == null) {
-                                            prefix2 = generatePrefix(namespace2);
-
-                                            xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                            xmlWriter.writeNamespace(prefix2, namespace2);
-                                            xmlWriter.setPrefix(prefix2, namespace2);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                    }
+                                    writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                     org.apache.axis2.databinding.utils.ConverterUtil.serializeAnyType(<xsl:value-of select="$varName"/>, xmlWriter);
                                     xmlWriter.writeEndElement();
                                  }
@@ -1307,24 +1128,7 @@
                                 <xsl:choose>
                                  <xsl:when test="@nillable">
                                         // write null attribute
-                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                            if (! namespace2.equals("")) {
-                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                if (prefix2 == null) {
-                                                    prefix2 = generatePrefix(namespace2);
-
-                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                    xmlWriter.writeNamespace(prefix2, namespace2);
-                                                    xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                } else {
-                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                }
-
-                                            } else {
-                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                            }
+                                           writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                            // write the nil attribute
                                            writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1342,8 +1146,6 @@
                         <xsl:when test="@array and not(@any)">
                              if (<xsl:value-of select="$varName"/>!=null) {
                                    namespace = "<xsl:value-of select="$namespace"/>";
-                                   boolean emptyNamespace = namespace == null || namespace.length() == 0;
-                                   prefix =  emptyNamespace ? null : xmlWriter.getPrefix(namespace);
                                    for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         <xsl:if test="@primitive">
                                             <xsl:choose>
@@ -1376,21 +1178,7 @@
                                         <xsl:if test="not(@primitive)">
                                             if (<xsl:value-of select="$varName"/>[i] != null){
                                         </xsl:if>
-                                                if (!emptyNamespace) {
-                                                    if (prefix == null) {
-                                                        java.lang.String prefix2 = generatePrefix(namespace);
-
-                                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                        xmlWriter.writeNamespace(prefix2, namespace);
-                                                        xmlWriter.setPrefix(prefix2, namespace);
-
-                                                    } else {
-                                                        xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-                                                    }
-
-                                                } else {
-                                                    xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                }
+                                                writeStartElement(null, namespace, "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                             <xsl:if test="@primitive">
                                                 xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
@@ -1413,23 +1201,7 @@
                                                        <xsl:when test="@nillable">
                                                            // write null attribute
                                                             namespace = "<xsl:value-of select="$namespace"/>";
-                                                            if (! namespace.equals("")) {
-                                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace);
-
-                                                                if (prefix2 == null) {
-                                                                    prefix2 = generatePrefix(namespace);
-
-                                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                                    xmlWriter.writeNamespace(prefix2, namespace);
-                                                                    xmlWriter.setPrefix(prefix2, namespace);
-
-                                                                } else {
-                                                                    xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-                                                                }
-
-                                                            } else {
-                                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                            }
+                                                            writeStartElement(null, namespace, "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                                             writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                             xmlWriter.writeEndElement();
                                                        </xsl:when>
@@ -1449,24 +1221,7 @@
                                     <xsl:when test="@nillable">
                                          // write the null attribute
                                         // write null attribute
-                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
-                                            if (! namespace2.equals("")) {
-                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
-
-                                                if (prefix2 == null) {
-                                                    prefix2 = generatePrefix(namespace2);
-
-                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-                                                    xmlWriter.writeNamespace(prefix2, namespace2);
-                                                    xmlWriter.setPrefix(prefix2, namespace2);
-
-                                                } else {
-                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-                                                }
-
-                                            } else {
-                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                            }
+                                           writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                            // write the nil attribute
                                            writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1516,23 +1271,7 @@
                          <xsl:otherwise>
                              <xsl:if test="not($simple)">
                                     namespace = "<xsl:value-of select="$namespace"/>";
-                                    if (! namespace.equals("")) {
-                                        prefix = xmlWriter.getPrefix(namespace);
-
-                                        if (prefix == null) {
-                                            prefix = generatePrefix(namespace);
-
-                                            xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                            xmlWriter.writeNamespace(prefix, namespace);
-                                            xmlWriter.setPrefix(prefix, namespace);
-
-                                        } else {
-                                            xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-                                        }
-
-                                    } else {
-                                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                    }
+                                    writeStartElement(null, namespace, "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                 </xsl:if>
                              <xsl:choose>
                                  <!-- handle the binary case -->
@@ -1647,24 +1386,7 @@
                             <xsl:when test="$nillable">
                                       if (<xsl:value-of select="$varName"/>==null){
                                         java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-
-                                        if (! namespace.equals("")) {
-                                            java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                                            if (prefix == null) {
-                                                prefix = generatePrefix(namespace);
-
-                                                xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
-                                                xmlWriter.writeNamespace(prefix, namespace);
-                                                xmlWriter.setPrefix(prefix, namespace);
-
-                                            } else {
-                                                xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
-                                            }
-
-                                        } else {
-                                            xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
-                                        }
+                                        writeStartElement(null, namespace, "<xsl:value-of select="property/@name"/>", xmlWriter);
 
                                         // write the nil attribute
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -1691,23 +1413,7 @@
                             java.lang.String namespace = parentQName.getNamespaceURI();
                             java.lang.String localName = parentQName.getLocalPart();
                         </xsl:if>
-                            if (! namespace.equals("")) {
-                                java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                                if (prefix == null) {
-                                    prefix = generatePrefix(namespace);
-
-                                    xmlWriter.writeStartElement(prefix, localName, namespace);
-                                    xmlWriter.writeNamespace(prefix, namespace);
-                                    xmlWriter.setPrefix(prefix, namespace);
-
-                                } else {
-                                    xmlWriter.writeStartElement(namespace, localName);
-                                }
-
-                            } else {
-                                xmlWriter.writeStartElement(localName);
-                            }
+                            writeStartElement(null, namespace, localName, xmlWriter);
 
                             // add the type details if this is used in a simple type
                                if (serializeType){
@@ -1810,6 +1516,29 @@
 
         }
 
+        /**
+         * Utility method to write an element start tag.
+         */
+        private void writeStartElement(java.lang.String prefix, java.lang.String namespace, java.lang.String localPart,
+                                       javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+            if (namespace != null &amp;&amp; namespace.trim().length() > 0) {
+                java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
+                if (writerPrefix != null) {
+                    xmlWriter.writeStartElement(namespace, localPart);
+                } else {
+                    if (prefix == null) {
+                        prefix = generatePrefix(namespace);
+                    }
+
+                    xmlWriter.writeStartElement(prefix, localPart, namespace);
+                    xmlWriter.writeNamespace(prefix, namespace);
+                    xmlWriter.setPrefix(prefix, namespace);
+                }
+            } else {
+                xmlWriter.writeStartElement(localPart);
+            }
+        }
+        
          /**
           * Util method to write an attribute with the ns prefix
           */
