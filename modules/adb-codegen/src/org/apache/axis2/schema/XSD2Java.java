@@ -19,6 +19,13 @@
 
 package org.apache.axis2.schema;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.w3c.dom.Document;
@@ -27,10 +34,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.axis2.schema.i18n.SchemaCompilerMessages.getMessage;
 
 public class XSD2Java {
+    private static Options options;
+    private static CommandLine line;
 
     /**
      * for now the arguments this main method accepts is the source schema and the output
@@ -38,9 +49,35 @@ public class XSD2Java {
      *
      * @param args
      */
+    @SuppressWarnings("static-access")
     public static void main(String[] args) throws Exception {
+        options = new Options();
+        options.addOption(OptionBuilder.withArgName(getMessage("schema.ns2p.argname"))
+                                       .hasArgs(2)
+                                       .withValueSeparator()
+                                       .withDescription(getMessage("schema.ns2p.description"))
+                                       .create("ns2p"));
+        options.addOption(OptionBuilder.withArgName(getMessage("schema.mp.argname"))
+                                       .hasArg()
+                                       .withDescription(getMessage("schema.mp.description"))
+                                       .create("mp"));
+        options.addOption(OptionBuilder.withArgName(getMessage("schema.dp.argname"))
+                                       .hasArg()
+                                       .withDescription(getMessage("schema.dp.description"))
+                                       .create("dp"));
+        CommandLineParser parser = new GnuParser();
+        try {
+            line = parser.parse(options, args);
+        } catch (ParseException ex) {
+            System.out.println(ex.getLocalizedMessage());
+            System.out.println();
+            printUsage();
+            System.out.println(ex);
+            System.exit(1);
+        }
+        args = line.getArgs();
         if (args.length < 2) {
-            System.out.println(getMessage("schema.usage"));
+            printUsage();
             System.exit(1);
         } else {
             File outputFolder = new File(args[args.length-1]);
@@ -53,6 +90,11 @@ public class XSD2Java {
                 compile(xsdFile, outputFolder);
             }
         }
+    }
+    
+    private static void printUsage() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(getMessage("schema.usage"), options);
     }
 
     /**
@@ -84,11 +126,20 @@ public class XSD2Java {
             compilerOptions.setOutputLocation(outputFolder);
             compilerOptions.setGenerateAll(true);
 
-//            Map namespace2PackageMap = new HashMap();
-//            namespace2PackageMap.put("http://www.w3.org/2001/XMLSchema/schema",
-//                    "org.apache.axis2.databinding.types.xsd");
-//            compilerOptions.setNs2PackageMap(namespace2PackageMap);
-//            compilerOptions.setMapperClassPackage("org.apache.axis2.databinding.types.xsd");
+            Map ns2p = new HashMap();
+            if (line.hasOption("ns2p")) {
+                ns2p.putAll(line.getOptionProperties("ns2p"));
+            }
+            if (line.hasOption("dp")) {
+                ns2p.put("", line.getOptionValue("dp"));
+            }
+            if (!ns2p.isEmpty()) {
+                compilerOptions.setNs2PackageMap(ns2p);
+            }
+            
+            if (line.hasOption("mp")) {
+                compilerOptions.setMapperClassPackage(line.getOptionValue("mp"));
+            }
 
             //todo - this should come from the users preferences
              compilerOptions.setWrapClasses(false);
