@@ -213,7 +213,7 @@ public class PreProcessorInputStream extends InputStream {
             throws PreProcessorException {
         try {
             File incFile;
-            if (include.startsWith("\"") && include.startsWith("\"")) {
+            if (include.startsWith("\"") && include.endsWith("\"")) {
                 include = include.replaceAll("\"", "");
                 incFile = new File(include);
                 if (incFile.exists()) {
@@ -241,7 +241,7 @@ public class PreProcessorInputStream extends InputStream {
                 throw new PreProcessorException("Unable to resolve include "
                         + include + lineNoString);
 
-            } else if (include.startsWith("<") && include.startsWith(">")) {
+            } else if (include.startsWith("<") && include.endsWith(">")) {
                 include = include.replaceAll("<", "");
                 include = include.replaceAll(">", "");
 
