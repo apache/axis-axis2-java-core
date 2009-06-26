@@ -1067,8 +1067,8 @@
                 else
                 {
                     axiom_node_t *text_node = NULL;
-                    text_node = axiom_node_get_first_child(parent, env);
                     axiom_text_t *text_element = NULL;
+                    text_node = axiom_node_get_first_child(parent, env);
                     if (text_node &amp;&amp;
                             axiom_node_get_node_type(text_node, env) == AXIOM_TEXT)
                         text_element = (axiom_text_t*)axiom_node_get_data_element(text_node, env);
