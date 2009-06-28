@@ -63,7 +63,7 @@ public class BeanUtilTest extends TestCase {
     public void testProcessObjectAsSimpleType() throws Exception {
         omElement.setText("World");
         
-        Object result = BeanUtil.processObject(omElement, String.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, String.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof String);
         assertEquals("World", result);
     }
@@ -71,7 +71,7 @@ public class BeanUtilTest extends TestCase {
     public void testProcessObjectAsOmElement() throws Exception {
         omElement.setText("World");
         
-        Object result = BeanUtil.processObject(omElement, OMElement.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, OMElement.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof OMElement);
         assertEquals(omElement, result);
     }
@@ -80,14 +80,14 @@ public class BeanUtilTest extends TestCase {
         OMAttribute nilAttribute = omFactory.createOMAttribute("nil", xsiNamespace, "true");
         omElement.addAttribute(nilAttribute);
         
-        Object result = BeanUtil.processObject(omElement, String.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, String.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertNull(result);
     }
 
     public void testProcessObjectAsByteArray() throws Exception {
         omElement.setText("Word");
         
-        Object result = BeanUtil.processObject(omElement, byte.class, new MultirefHelper(omElement), true, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, byte.class, new MultirefHelper(omElement), true, objectSupplier, null);
         assertTrue(result instanceof byte[]);
         assertEquals(3, ((byte[]) result).length);
     }
@@ -96,7 +96,7 @@ public class BeanUtilTest extends TestCase {
         OMElement child = omFactory.createOMElement(new QName("child"), omElement);
         child.setText("World");
         
-        Object result = BeanUtil.processObject(omElement, List.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, List.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof List);
         assertEquals(1, ((List) result).size());
     }
@@ -104,7 +104,7 @@ public class BeanUtilTest extends TestCase {
     public void testProcessObjectAsDataHandler() throws Exception {
         omElement.setText("Word");
         
-        Object result = BeanUtil.processObject(omElement, DataHandler.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, DataHandler.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof DataHandler);
     }
 
@@ -112,7 +112,7 @@ public class BeanUtilTest extends TestCase {
         OMElement child = omFactory.createOMElement(new QName("child"), omElement);
         child.setText("World");
         
-        Object result = BeanUtil.processObject(omElement, ComplexType.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, ComplexType.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof ComplexType);
         assertEquals("World", ((ComplexType) result).getChild());
     }
@@ -123,7 +123,7 @@ public class BeanUtilTest extends TestCase {
         omElement.setText("World");
         omElement.addAttribute(createTypeAttribute("xs:string"));
         
-        Object result = BeanUtil.processObject(omElement, Object.class, new MultirefHelper(omElement), false, objectSupplier);
+        Object result = BeanUtil.processObject(omElement, Object.class, new MultirefHelper(omElement), false, objectSupplier, null);
         assertTrue(result instanceof OMText);
         assertEquals("World", ((OMText) result).getText());
     }

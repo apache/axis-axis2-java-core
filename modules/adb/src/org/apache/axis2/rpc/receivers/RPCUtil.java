@@ -45,6 +45,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -150,7 +151,7 @@ public class RPCUtil {
                                           Method method, ObjectSupplier objectSupplier, String[] parameterNames)
             throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        return BeanUtil.deserialize(methodElement, parameters, objectSupplier, parameterNames);
+        return BeanUtil.deserialize(methodElement, parameters, objectSupplier, parameterNames, method);
     }
 
     public static Object[] processRequest(OMElement methodElement,
