@@ -27,62 +27,68 @@ import java.io.StringReader;
 
 public class AnyTypeTest extends AbstractTestCase {
 
-    public void testAnyTypeElement1() throws Exception {
-        TestAnyTypeElement1 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement1();
+    public void testAnyTypeElement1_1() throws Exception {
+        TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement1();
+    public void testAnyTypeElement1_2() throws Exception {
+        TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1(null);
         
         assertSerializationFailure(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement2() throws Exception {
-        TestAnyTypeElement2 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement2();
+    public void testAnyTypeElement2_1() throws Exception {
+        TestAnyTypeElement2 testAnyTypeElement = new TestAnyTypeElement2();
         testAnyTypeElement.setTestAnyTypeElement2("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement2();
+    public void testAnyTypeElement2_2() throws Exception {
+        TestAnyTypeElement2 testAnyTypeElement = new TestAnyTypeElement2();
         testAnyTypeElement.setTestAnyTypeElement2(null);
         testSerializeDeserialize(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement3() throws Exception {
-        TestAnyTypeElement3 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement3();
+    public void testAnyTypeElement3_1() throws Exception {
+        TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
 
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement3();
+    public void testAnyTypeElement3_2() throws Exception {
+        TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(null);
 
         TestAnyTypeElement3 result = (TestAnyTypeElement3)serializeDeserialize(testAnyTypeElement);
         assertEquals(result.getParam1()[0],null);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement3();
+    public void testAnyTypeElement3_3() throws Exception {
+        TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
 
         testSerializeDeserialize(testAnyTypeElement);
     }
 
 
-     public void testAnyTypeElement4() throws Exception {
-        TestAnyTypeElement4 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement4();
+    public void testAnyTypeElement4_1() throws Exception {
+        TestAnyTypeElement4 testAnyTypeElement = new TestAnyTypeElement4();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement4();
+    public void testAnyTypeElement4_2() throws Exception {
+        TestAnyTypeElement4 testAnyTypeElement = new TestAnyTypeElement4();
         testAnyTypeElement.setParam1(null);
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement4();
+    public void testAnyTypeElement4_3() throws Exception {
+        TestAnyTypeElement4 testAnyTypeElement = new TestAnyTypeElement4();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
 
         TestAnyTypeElement4 result = (TestAnyTypeElement4)serializeDeserialize(testAnyTypeElement);
@@ -90,40 +96,46 @@ public class AnyTypeTest extends AbstractTestCase {
     }
 
 
-    public void testAnyTypeElement5() throws Exception {
-        TestAnyTypeElement5 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement5();
+    public void testAnyTypeElement5_1() throws Exception {
+        TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement5();
+    public void testAnyTypeElement5_2() throws Exception {
+        TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(null);
 
         TestAnyTypeElement5 result = (TestAnyTypeElement5)serializeDeserialize(testAnyTypeElement);
         assertEquals(result.getParam1()[0],null);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement5();
+    public void testAnyTypeElement5_3() throws Exception {
+        TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
         testSerializeDeserialize(testAnyTypeElement);
     }
 
 
-    public void testAnyTypeElement6() throws Exception {
-        TestAnyTypeElement6 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement6();
+    public void testAnyTypeElement6_1() throws Exception {
+        TestAnyTypeElement6 testAnyTypeElement = new TestAnyTypeElement6();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement6();
+    public void testAnyTypeElement6_2() throws Exception {
+        TestAnyTypeElement6 testAnyTypeElement = new TestAnyTypeElement6();
         testAnyTypeElement.setParam1(null);
         assertSerializationFailure(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement6();
+    public void testAnyTypeElement6_3() throws Exception {
+        TestAnyTypeElement6 testAnyTypeElement = new TestAnyTypeElement6();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
         assertSerializationFailure(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement61() throws Exception {
+    public void testAnyTypeElement6_4() throws Exception {
         TestAnyTypeElement6 testAnyTypeElement6 = new TestAnyTypeElement6();
 
         TestComplexParent[] testComplexParents = new TestComplexParent[2];
@@ -140,19 +152,19 @@ public class AnyTypeTest extends AbstractTestCase {
         testSerializeDeserialize(testAnyTypeElement6);
     }
 
-    public void testAnyTypeElement7() throws Exception {
-        TestAnyTypeElement7 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement7();
+    public void testAnyTypeElement7_1() throws Exception {
+        TestAnyTypeElement7 testAnyTypeElement = new TestAnyTypeElement7();
         testAnyTypeElement.setParam1("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement7();
+    public void testAnyTypeElement7_2() throws Exception {
+        TestAnyTypeElement7 testAnyTypeElement = new TestAnyTypeElement7();
         testAnyTypeElement.setParam1(null);
         testSerializeDeserialize(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement71() throws Exception {
+    public void testAnyTypeElement7_3() throws Exception {
         TestAnyTypeElement7 testAnyTypeElement7 = new TestAnyTypeElement7();
         TestComplexParent testComplexParent = new TestComplexParent();
         testComplexParent.setParam1("test param1");
@@ -160,54 +172,52 @@ public class AnyTypeTest extends AbstractTestCase {
         testSerializeDeserialize(testAnyTypeElement7);
     }
 
-    public void testAnyTypeElement8() throws Exception {
-        TestAnyTypeElement8 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement8();
+    public void testAnyTypeElement8_1() throws Exception {
+        TestAnyTypeElement8 testAnyTypeElement = new TestAnyTypeElement8();
         testAnyTypeElement.setParam1("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement8();
+    public void testAnyTypeElement8_2() throws Exception {
+        TestAnyTypeElement8 testAnyTypeElement = new TestAnyTypeElement8();
         testAnyTypeElement.setParam1(null);
         testSerializeDeserialize(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement9() throws Exception {
-        TestAnyTypeElement9 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement9();
+    public void testAnyTypeElement9_1() throws Exception {
+        TestAnyTypeElement9 testAnyTypeElement = new TestAnyTypeElement9();
         testAnyTypeElement.setParam1("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement9();
+    public void testAnyTypeElement9_2() throws Exception {
+        TestAnyTypeElement9 testAnyTypeElement = new TestAnyTypeElement9();
         testAnyTypeElement.setParam1(null);
         testSerializeDeserialize(testAnyTypeElement);
     }
 
-    public void testAnyTypeElement10() throws Exception {
-        TestAnyTypeElement10 testAnyTypeElement;
-
-        testAnyTypeElement = new TestAnyTypeElement10();
+    public void testAnyTypeElement10_1() throws Exception {
+        TestAnyTypeElement10 testAnyTypeElement = new TestAnyTypeElement10();
         testAnyTypeElement.setParam1("test");
         testSerializeDeserialize(testAnyTypeElement);
+    }
 
-        testAnyTypeElement = new TestAnyTypeElement10();
+    public void testAnyTypeElement10_2() throws Exception {
+        TestAnyTypeElement10 testAnyTypeElement = new TestAnyTypeElement10();
         testAnyTypeElement.setParam1(null);
         assertSerializationFailure(testAnyTypeElement);
     }
 
     public void testAnyElementInteger() throws Exception {
         // datatype tests
-        TestAnyTypeElement1 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement1();
+        TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1(new Integer(5));
         testSerializeDeserialize(testAnyTypeElement);
     }
 
     public void testAnyElementQName() throws Exception {
         // datatype tests
-        TestAnyTypeElement1 testAnyTypeElement;
-        testAnyTypeElement = new TestAnyTypeElement1();
+        TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1(new QName("http://wso2.org","testElement"));
         testSerializeDeserialize(testAnyTypeElement);
     }
