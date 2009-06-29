@@ -28,7 +28,8 @@ public class ChoiceTest extends AbstractTestCase {
         testChoice.setChoice1("test 2");
         testChoice.setChoice2(5);
         
-        TestChoice newTestChoice = (TestChoice)serializeDeserialize(testChoice);
-        assertEquals(5, newTestChoice.getChoice2());
+        TestChoice expectedResult = new TestChoice();
+        expectedResult.setChoice2(5);
+        testSerializeDeserialize(testChoice, expectedResult);
     }
 }

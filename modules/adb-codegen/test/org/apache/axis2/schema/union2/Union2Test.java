@@ -21,7 +21,9 @@ package org.apache.axis2.schema.union2;
 
 import org.apache.axis2.schema.AbstractTestCase;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Union2Test extends AbstractTestCase {
 
@@ -56,12 +58,21 @@ public class Union2Test extends AbstractTestCase {
 
     public void testFuzzDateType() throws Exception {
         TestFuzzyDateType testFuzzyDateType = new TestFuzzyDateType();
-
         FuzzyDateType fuzzyDateType = new FuzzyDateType();
         fuzzyDateType.setObject(new Date());
-
         testFuzzyDateType.setTestFuzzyDateType(fuzzyDateType);
 
-        TestFuzzyDateType result = (TestFuzzyDateType)serializeDeserialize(testFuzzyDateType);
+        // java.util.Date maps to xs:date, so we expect to loose the time information
+        TestFuzzyDateType expectedResult = new TestFuzzyDateType();
+        FuzzyDateType expectedFuzzyDateType = new FuzzyDateType();
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        expectedFuzzyDateType.setObject(cal.getTime());
+        expectedResult.setTestFuzzyDateType(expectedFuzzyDateType);
+        
+        testSerializeDeserialize(testFuzzyDateType, expectedResult);
     }
 }

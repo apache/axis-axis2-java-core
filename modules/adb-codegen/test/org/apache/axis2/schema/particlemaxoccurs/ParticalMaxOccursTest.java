@@ -80,15 +80,25 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType3.setTestParticalSequenceMaxOccursType3Sequence(testSequences);
 
-        TestParticalSequenceMaxOccurs3 result = (TestParticalSequenceMaxOccurs3)serializeDeserialize(testParticalMaxOccures3);
-        TestParticalSequenceMaxOccursType3Sequence[] resultSequences =
-                result.getTestParticalSequenceMaxOccurs3().getTestParticalSequenceMaxOccursType3Sequence();
-        assertEquals(resultSequences[0].getParm2()[0], "Param111");
-        assertEquals(resultSequences[0].getParm2()[1], null);
-        assertEquals(resultSequences[0].getParm2()[2], "Param113");
-        assertEquals(resultSequences[1].getParm1()[0], "Param121");
-        assertEquals(resultSequences[1].getParm1()[1], "Param122");
-        assertEquals(resultSequences[1].getParm1()[2], null);
+
+        TestParticalSequenceMaxOccurs3 expectedTestParticalMaxOccures3 = new TestParticalSequenceMaxOccurs3();
+        TestParticalSequenceMaxOccursType3 expectedTestParticalMaxOccursType3 = new TestParticalSequenceMaxOccursType3();
+        expectedTestParticalMaxOccures3.setTestParticalSequenceMaxOccurs3(expectedTestParticalMaxOccursType3);
+
+        TestParticalSequenceMaxOccursType3Sequence[] expectedTestSequences = new TestParticalSequenceMaxOccursType3Sequence[2];
+
+        expectedTestSequences[0] = new TestParticalSequenceMaxOccursType3Sequence();
+        expectedTestSequences[0].setParm1(new String[]{null});
+        expectedTestSequences[0].setParm2(new String[]{"Param111", null, "Param113"});
+
+        expectedTestSequences[1] = new TestParticalSequenceMaxOccursType3Sequence();
+        expectedTestSequences[1].setParm1(new String[]{"Param121", "Param122", null});
+        expectedTestSequences[1].setParm2(new String[]{null});
+
+        expectedTestParticalMaxOccursType3.setTestParticalSequenceMaxOccursType3Sequence(expectedTestSequences);
+        
+        
+        testSerializeDeserialize(testParticalMaxOccures3, expectedTestParticalMaxOccures3);
     }
 
     public void testParticleSequenceMaxOccurs4() throws Exception {

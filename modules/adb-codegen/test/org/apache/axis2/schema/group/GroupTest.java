@@ -62,8 +62,10 @@ public class GroupTest extends AbstractTestCase {
         testChoiceGroup.setChoiceParam1("choiceParam1");
         testGroupChoiceElement.setTestChoiceGroup(testChoiceGroup);
 
-        TestChoiceGroupElement result = (TestChoiceGroupElement)serializeDeserialize(testGroupChoiceElement);
-        assertEquals(result.getTestChoiceGroup().getChoiceParam1(),"choiceParam1");
+        TestChoiceGroupElement expectedResult = new TestChoiceGroupElement();
+        expectedResult.setTestChoiceGroup(testChoiceGroup);
+        
+        testSerializeDeserialize(testGroupChoiceElement, expectedResult);
     }
 
     public void testNestedChoiceGroupElement() throws Exception {
@@ -81,8 +83,17 @@ public class GroupTest extends AbstractTestCase {
 
         testChoiceNestedGroupElement.setTestChoiceNestedGroup(testChoiceNestedGroup);
 
-        TestChoiceNestedGroupElement result = (TestChoiceNestedGroupElement)serializeDeserialize(testChoiceNestedGroupElement);
-        assertEquals(result.getTestChoiceNestedGroup().getTestChoiceGroup().getChoiceParam1(),"choiceParam1");
+        TestChoiceNestedGroupElement expectedResult = new TestChoiceNestedGroupElement();
+        TestChoiceNestedGroup expectedChoiceNestedGroup = new TestChoiceNestedGroup();
+
+        TestChoiceGroup expectedChoiceGroup = new TestChoiceGroup();
+        expectedChoiceGroup.setChoiceParam1("choiceParam1");
+
+        expectedChoiceNestedGroup.setTestChoiceGroup(expectedChoiceGroup);
+
+        expectedResult.setTestChoiceNestedGroup(expectedChoiceNestedGroup);
+        
+        testSerializeDeserialize(testChoiceNestedGroupElement, expectedResult);
     }
 
      public void testAttributeGroup() throws Exception {

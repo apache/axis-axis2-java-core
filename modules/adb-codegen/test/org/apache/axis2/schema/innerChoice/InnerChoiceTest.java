@@ -19,15 +19,9 @@
 
 package org.apache.axis2.schema.innerChoice;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.schema.AbstractTestCase;
 
 import test.axis2.apache.org.*;
-
-import javax.xml.stream.XMLStreamWriter;
 
 public class InnerChoiceTest extends AbstractTestCase {
 
@@ -41,17 +35,15 @@ public class InnerChoiceTest extends AbstractTestCase {
         TestInnerSequence1Choice_type0.setChoice2(5);
         testSequence.setTestInnerSequence1Choice_type0(TestInnerSequence1Choice_type0);
 
-        TestInnerSequence1 result = (TestInnerSequence1)serializeDeserialize(testSequence);
-        assertEquals(result.getSequence1(), "test sequence");
-        assertEquals(result.getSequence2(), 3);
-        assertEquals(result.getTestInnerSequence1Choice_type0().getChoice2(), 5);
+        TestInnerSequence1 expectedSequence = new TestInnerSequence1();
+        expectedSequence.setSequence1("test sequence");
+        expectedSequence.setSequence2(3);
 
-        // writtig result back
-        XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(System.out);
-        MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
-        result.serialize(new javax.xml.namespace.QName("org.apache.axis2.test", "TestInnerSequence1", "foo")
-                , OMAbstractFactory.getSOAP11Factory(), mtomAwareXMLStreamWriter);
-        xmlStreamWriter.flush();
+        TestInnerSequence1Choice_type0 expectedTestInnerSequence1Choice_type0 = new TestInnerSequence1Choice_type0();
+        expectedTestInnerSequence1Choice_type0.setChoice2(5);
+        expectedSequence.setTestInnerSequence1Choice_type0(expectedTestInnerSequence1Choice_type0);
+        
+        testSerializeDeserialize(testSequence, expectedSequence);
     }
 
     public void testInnerChoice21() throws Exception {

@@ -63,8 +63,10 @@ public class AnyTypeTest extends AbstractTestCase {
         TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(null);
 
-        TestAnyTypeElement3 result = (TestAnyTypeElement3)serializeDeserialize(testAnyTypeElement);
-        assertEquals(result.getParam1()[0],null);
+        TestAnyTypeElement3 expectedResult = new TestAnyTypeElement3();
+        expectedResult.setParam1(new Object[] { null });
+        
+        testSerializeDeserialize(testAnyTypeElement, expectedResult);
     }
 
     public void testAnyTypeElement3_3() throws Exception {
@@ -91,8 +93,9 @@ public class AnyTypeTest extends AbstractTestCase {
         TestAnyTypeElement4 testAnyTypeElement = new TestAnyTypeElement4();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
 
-        TestAnyTypeElement4 result = (TestAnyTypeElement4)serializeDeserialize(testAnyTypeElement);
-        assertEquals(result.getParam1()[0],"test");
+        TestAnyTypeElement4 expectedResult = new TestAnyTypeElement4();
+        expectedResult.setParam1(new Object[] { "test" });
+        testSerializeDeserialize(testAnyTypeElement, expectedResult);
     }
 
 
@@ -106,8 +109,9 @@ public class AnyTypeTest extends AbstractTestCase {
         TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(null);
 
-        TestAnyTypeElement5 result = (TestAnyTypeElement5)serializeDeserialize(testAnyTypeElement);
-        assertEquals(result.getParam1()[0],null);
+        TestAnyTypeElement5 expectedResult = new TestAnyTypeElement5();
+        expectedResult.setParam1(new Object[] { null });
+        testSerializeDeserialize(testAnyTypeElement, expectedResult);
     }
 
     public void testAnyTypeElement5_3() throws Exception {
