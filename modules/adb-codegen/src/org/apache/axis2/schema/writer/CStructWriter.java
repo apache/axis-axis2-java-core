@@ -49,7 +49,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +66,7 @@ public class CStructWriter implements BeanWriter {
     private Templates sourceTemplateCache;
     private Templates headerTemplateCache;
 
-    private List namesList;
+    private List<String> namesList;
     private static int count = 0;
     private boolean wrapClasses = false;
     private boolean writeClasses = false;
@@ -172,8 +171,8 @@ public class CStructWriter implements BeanWriter {
      *
      */
     public String write(XmlSchemaElement element,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
@@ -197,8 +196,8 @@ public class CStructWriter implements BeanWriter {
      * @see org.apache.axis2.schema.writer.BeanWriter
      */
     public String write(QName qName,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf,
                         boolean isAbstract)
             throws SchemaCompilationException {
@@ -244,8 +243,8 @@ public class CStructWriter implements BeanWriter {
      *
      */
     public String write(XmlSchemaSimpleType simpleType,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
             //determine the package for this type.
@@ -277,7 +276,7 @@ public class CStructWriter implements BeanWriter {
             this.rootDir = rootDir;
         }
 
-        namesList = new ArrayList();
+        namesList = new ArrayList<String>();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
 
@@ -309,8 +308,8 @@ public class CStructWriter implements BeanWriter {
      */
     private String process(QName qName,
                         BeanWriterMetaInfoHolder metainf,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         boolean isElement,
                         boolean isAbstract)
             throws Exception {
@@ -321,7 +320,7 @@ public class CStructWriter implements BeanWriter {
 
 
         String originalName = qName == null? "" : qName.getLocalPart();
-        ArrayList propertyNames = new ArrayList();
+        ArrayList<String> propertyNames = new ArrayList<String>();
 
         if (!templateLoaded) {
             loadTemplate();
@@ -403,9 +402,9 @@ public class CStructWriter implements BeanWriter {
             boolean isElement,
             boolean isAbstract,
             BeanWriterMetaInfoHolder metainf,
-            ArrayList propertyNames,
-            Map typeMap,
-            Map groupTypeMap)
+            ArrayList<String> propertyNames,
+            Map<QName,String> typeMap,
+            Map<QName,String> groupTypeMap)
      throws SchemaCompilationException {
 
         Element rootElt = XSLTUtils.getElement(model, "class");
@@ -499,10 +498,10 @@ public class CStructWriter implements BeanWriter {
     protected void populateListInfo(BeanWriterMetaInfoHolder metainf,
                                     Document model,
                                     Element rootElement,
-                                    Map typeMap,
-                                    Map groupTypeMap) {
+                                    Map<QName,String> typeMap,
+                                    Map<QName,String> groupTypeMap) {
 
-        String cName = makeUniqueCStructName(new ArrayList(), metainf.getItemTypeQName().getLocalPart());
+        String cName = makeUniqueCStructName(new ArrayList<String>(), metainf.getItemTypeQName().getLocalPart());
         Element itemType = XSLTUtils.addChildElement(model, "itemtype", rootElement);
         XSLTUtils.addAttribute(model, "type", metainf.getItemTypeClassName(), itemType);
         XSLTUtils.addAttribute(model, "nsuri", metainf.getItemTypeQName().getNamespaceURI(), itemType);
@@ -522,12 +521,10 @@ public class CStructWriter implements BeanWriter {
     protected void populateMemberInfo(BeanWriterMetaInfoHolder metainf,
                                       Document model,
                                       Element rootElement,
-                                      Map typeMap) {
-        Map memberTypes = metainf.getMemberTypes();
-        QName memberQName;
-        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
-            memberQName = (QName) iter.next();
-            String memberClass = (String) memberTypes.get(memberQName);
+                                      Map<QName,String> typeMap) {
+        Map<QName,String> memberTypes = metainf.getMemberTypes();
+        for (QName memberQName : memberTypes.keySet()) {
+            String memberClass = memberTypes.get(memberQName);
 
 
         // add member type element
@@ -555,9 +552,9 @@ public class CStructWriter implements BeanWriter {
     private void populateInfo(BeanWriterMetaInfoHolder metainf,
                               Document model,
                               Element rootElt,
-                              ArrayList propertyNames,
-                              Map typeMap,
-                              Map groupTypeMap,
+                              ArrayList<String> propertyNames,
+                              Map<QName,String> typeMap,
+                              Map<QName,String> groupTypeMap,
                               boolean isInherited) throws SchemaCompilationException {
         if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple())))
         {
@@ -579,14 +576,14 @@ public class CStructWriter implements BeanWriter {
      */
     private void addPropertyEntries(BeanWriterMetaInfoHolder metainf,
                                     Document model, Element rootElt,
-                                    ArrayList propertyNames,
-                                    Map typeMap,
-                                    Map groupTypeMap,
+                                    ArrayList<String> propertyNames,
+                                    Map<QName,String> typeMap,
+                                    Map<QName,String> groupTypeMap,
                                     boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
         QName[] qName;
-        ArrayList missingQNames = new ArrayList();
-        ArrayList qNames = new ArrayList();
+        ArrayList<QName> missingQNames = new ArrayList<QName>();
+        ArrayList<QName> qNames = new ArrayList<QName>();
         BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
 
         if (metainf.isOrdered()) {
@@ -609,7 +606,7 @@ public class CStructWriter implements BeanWriter {
         for (int i = 0; i < qName.length; i++) {
             Element property = XSLTUtils.addChildElement(model, "property", rootElt);
             name = qName[i];
-            String xmlName = makeUniqueCStructName(new ArrayList(), name.getLocalPart());
+            String xmlName = makeUniqueCStructName(new ArrayList<String>(), name.getLocalPart());
 
             XSLTUtils.addAttribute(model, "name", name.getLocalPart(), property);
             XSLTUtils.addAttribute(model, "originalName", name.getLocalPart(), property);
@@ -757,8 +754,8 @@ public class CStructWriter implements BeanWriter {
                                              QName name,
                                              Document model,
                                              Element property,
-                                             Map typeMap,
-                                             Map groupTypeMap,
+                                             Map<QName,String> typeMap,
+                                             Map<QName,String> groupTypeMap,
                                              String CClassNameForElement) {
             // add an attribute that says the type is default
             if (metainf.getDefaultStatusForQName(name)) {
@@ -877,20 +874,16 @@ public class CStructWriter implements BeanWriter {
             if (!metainf.getEnumFacet().isEmpty()) {
                 boolean validJava = true;    // Assume all enum values are valid ids
 
-                Iterator iterator = metainf.getEnumFacet().iterator();
                 // Walk the values looking for invalid ids
-                while (iterator.hasNext()) {
-                    String value = (String) iterator.next();
+                for (String value : metainf.getEnumFacet()) {
                     if (!JavaUtils.isJavaId(value)) {
                         validJava = false;
                     }
                 }
 
                 int id = 0;
-                iterator = metainf.getEnumFacet().iterator();
-                while (iterator.hasNext()) {
+                for (String attribValue : metainf.getEnumFacet()) {
                     Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
-                    String attribValue = (String) iterator.next();
                     XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
                     if (validJava) {
                         XSLTUtils.addAttribute(model, "id", attribValue.toUpperCase(), enumFacet);
@@ -910,7 +903,7 @@ public class CStructWriter implements BeanWriter {
 
 
 
-    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList qName, ArrayList missingQNames) {
+    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList<QName> qName, ArrayList<QName> missingQNames) {
 
         QName[] qNames = null;
         QName[] pQNames = null;
@@ -986,7 +979,7 @@ public class CStructWriter implements BeanWriter {
      * @param xmlName
      * @return Returns String.
      */
-    private String makeUniqueCStructName(List listOfNames, String xmlName) {
+    private String makeUniqueCStructName(List<String> listOfNames, String xmlName) {
         String cName;
         if (CUtils.isCKeyword(xmlName)) {
             cName = CUtils.makeNonCKeyword(xmlName);
@@ -1022,7 +1015,7 @@ public class CStructWriter implements BeanWriter {
     private void loadTemplate() throws SchemaCompilationException {
 
         //first get the language specific property map
-        Class clazz = this.getClass();
+        Class<?> clazz = this.getClass();
         InputStream xslStream;
         String templateName = javaBeanTemplateName;
         if (templateName != null) {
@@ -1119,8 +1112,8 @@ public class CStructWriter implements BeanWriter {
     /**
      * Map of namespaces URI to prefix(es)
      */
-    HashMap mapURItoPrefix = new HashMap();
-    HashMap mapPrefixtoURI = new HashMap();
+    HashMap<String,String> mapURItoPrefix = new HashMap<String,String>();
+    HashMap<String,String> mapPrefixtoURI = new HashMap<String,String>();
 
     /**
      * Get a prefix for the given namespace URI.  If one has already been
@@ -1131,7 +1124,7 @@ public class CStructWriter implements BeanWriter {
     public String getPrefixForURI(String uri, String defaultPrefix) {
         if ((uri == null) || (uri.length() == 0))
             return null;
-        String prefix = (String) mapURItoPrefix.get(uri);
+        String prefix = mapURItoPrefix.get(uri);
         if (prefix == null) {
             if (defaultPrefix == null || defaultPrefix.length() == 0) {
                 prefix = "ns" + lastPrefixIndex++;

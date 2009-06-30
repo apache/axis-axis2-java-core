@@ -268,7 +268,7 @@ public class SchemaCompiler {
                 // if this name space exists in the ns2p list then we use it.
                 if ((options.getNs2PackageMap() != null)
                         && (options.getNs2PackageMap().containsKey(nsp))) {
-                    writer.registerExtensionMapperPackageName((String) options.getNs2PackageMap().get(nsp));
+                    writer.registerExtensionMapperPackageName(options.getNs2PackageMap().get(nsp));
                 } else {
                     writer.registerExtensionMapperPackageName(nsp == null ? null : URLProcessor.makePackageName(nsp));
                 }
@@ -1344,11 +1344,8 @@ public class SchemaCompiler {
                     // code as union
                     if (baseMetaInfoHolder.isUnion()) {
                         metaInfHolder.setUnion(true);
-                        Map memberTypes = baseMetaInfoHolder.getMemberTypes();
-                        Object qname;
-                        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
-                            qname = iter.next();
-                            metaInfHolder.addMemberType((QName) qname, (String) memberTypes.get(qname));
+                        for (Map.Entry<QName,String> entry : baseMetaInfoHolder.getMemberTypes().entrySet()) {
+                            metaInfHolder.addMemberType(entry.getKey(), entry.getValue());
                         }
                     }
 

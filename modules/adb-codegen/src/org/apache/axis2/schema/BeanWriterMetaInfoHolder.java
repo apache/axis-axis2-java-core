@@ -49,30 +49,31 @@ public class BeanWriterMetaInfoHolder {
     private String restrictionClassName = "";
     private QName extensionBaseType = null;
     private QName restrictionBaseType = null;
-    protected Map elementToSchemaQNameMap = new LinkedHashMap();
-    protected Map elementToJavaClassMap = new LinkedHashMap();
-    protected Map specialTypeFlagMap = new LinkedHashMap();
-    protected Map qNameMaxOccursCountMap = new LinkedHashMap();
-    protected Map qNameMinOccursCountMap = new LinkedHashMap();
-    protected Map qNameOrderMap = new LinkedHashMap();
+    protected Map<QName,QName> elementToSchemaQNameMap = new LinkedHashMap<QName,QName>();
+    protected Map<QName,String> elementToJavaClassMap = new LinkedHashMap<QName,String>();
+    protected Map<QName,Integer> specialTypeFlagMap = new LinkedHashMap<QName,Integer>();
+    protected Map<QName,Long> qNameMaxOccursCountMap = new LinkedHashMap<QName,Long>();
+    protected Map<QName,Long> qNameMinOccursCountMap = new LinkedHashMap<QName,Long>();
+    protected Map<Integer,QName> qNameOrderMap = new LinkedHashMap<Integer,QName>();
     protected QName ownQname = null;
     protected String ownClassName = null;
 
     protected long lengthFacet = -1;
     protected long maxLengthFacet = -1;
     protected long minLengthFacet = -1;
-    protected ArrayList enumFacet = new ArrayList();
+    protected ArrayList<String> enumFacet = new ArrayList<String>();
     protected String patternFacet = null;
     protected String maxExclusiveFacet = null;
     protected String minExclusiveFacet = null;
     protected String maxInclusiveFacet = null;
     protected String minInclusiveFacet = null;
 
-    protected Map memberTypes = new HashMap();
-    protected Map xmlNameJavaNameMap = new HashMap();
-    protected List memberTypesKeys = new ArrayList();
+    protected Map<QName,String> memberTypes = new HashMap<QName,String>();
+    protected Map<String,String> xmlNameJavaNameMap = new HashMap<String,String>();
+    // TODO: why do we need this (instead of using memberTypes.keySet()?
+    protected List<QName> memberTypesKeys = new ArrayList<QName>();
 
-    protected Map elementQNameToDefulatValueMap = new HashMap();
+    protected Map<QName,String> elementQNameToDefulatValueMap = new HashMap<QName,String>();
 
     protected QName itemTypeQName;
     protected String itemTypeClassName;
@@ -83,7 +84,7 @@ public class BeanWriterMetaInfoHolder {
     // keep whether this class has a partical class type variable
     protected boolean hasParticleType;
 
-    protected List nillableQNameList = new ArrayList();
+    protected List<QName> nillableQNameList = new ArrayList<QName>();
 
     //the parent metainfo holder, useful in handling extensions and
     //restrictions
@@ -250,7 +251,7 @@ public class BeanWriterMetaInfoHolder {
      * @param restrictionBaseType
      */
     public boolean isRestrictionBaseType(QName restrictionBaseType) {
-        QName baseTypeQName = (QName) this.elementToSchemaQNameMap.get(restrictionBaseType);
+        QName baseTypeQName = this.elementToSchemaQNameMap.get(restrictionBaseType);
         return (this.restrictionBaseType != null) && (baseTypeQName != null) &&
                 this.restrictionBaseType.equals(baseTypeQName);
     }
@@ -346,7 +347,7 @@ public class BeanWriterMetaInfoHolder {
      */
 
     public String getDefaultValueForQName(QName qname){
-        return (String) this.elementQNameToDefulatValueMap.get(qname);
+        return this.elementQNameToDefulatValueMap.get(qname);
     }
 
     /**
@@ -356,7 +357,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns QName.
      */
     public QName getSchemaQNameForQName(QName eltQName) {
-        return (QName) this.elementToSchemaQNameMap.get(eltQName);
+        return this.elementToSchemaQNameMap.get(eltQName);
     }
 
     /**
@@ -366,7 +367,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns String.
      */
     public String getClassNameForQName(QName eltQName) {
-        return (String) this.elementToJavaClassMap.get(eltQName);
+        return this.elementToJavaClassMap.get(eltQName);
     }
 
     /**
@@ -377,7 +378,7 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getAttributeStatusForQName(QName qName) {
 
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(), SchemaConstants.ATTRIBUTE_TYPE);
     }
 
@@ -390,7 +391,7 @@ public class BeanWriterMetaInfoHolder {
 
     public boolean getDefaultStatusForQName(QName qName) {
         boolean isDefault = false;
-        QName schemaTypeQName = (QName) this.elementToSchemaQNameMap.get(qName);
+        QName schemaTypeQName = this.elementToSchemaQNameMap.get(qName);
         if (schemaTypeQName != null) {
             isDefault = schemaTypeQName.equals(SchemaConstants.XSD_ANYTYPE);
         }
@@ -405,7 +406,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getAnyStatusForQName(QName qName) {
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(), SchemaConstants.ANY_TYPE);
     }
 
@@ -416,7 +417,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getArrayStatusForQName(QName qName) {
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.ARRAY_TYPE);
     }
@@ -428,7 +429,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getBinaryStatusForQName(QName qName) {
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.BINARY_TYPE);
     }
@@ -440,7 +441,7 @@ public class BeanWriterMetaInfoHolder {
      */
 
     public boolean getInnerChoiceStatusForQName(QName qName){
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.INNER_CHOICE_ELEMENT);
     }
@@ -452,7 +453,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getSimpleStatusForQName(QName qName) {
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
     }
@@ -464,7 +465,7 @@ public class BeanWriterMetaInfoHolder {
      */
 
     public boolean getParticleTypeStatusForQName(QName qName){
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.PARTICLE_TYPE_ELEMENT);
     }
@@ -487,7 +488,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns <code>true</code> if attribute has optional status
      */
     public boolean getOptionalAttributeStatusForQName(QName qName) {
-        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        Integer state = specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.OPTIONAL_TYPE);
     }
@@ -514,7 +515,7 @@ public class BeanWriterMetaInfoHolder {
      * @param minOccurs
      */
     public void addMinOccurs(QName qName, long minOccurs) {
-        this.qNameMinOccursCountMap.put(qName, new Long(minOccurs));
+        this.qNameMinOccursCountMap.put(qName, minOccurs);
     }
 
     /**
@@ -524,7 +525,7 @@ public class BeanWriterMetaInfoHolder {
      * @param index
      */
     public void registerQNameIndex(QName qName, int index) {
-        this.qNameOrderMap.put(new Integer(index), qName);
+        this.qNameOrderMap.put(index, qName);
     }
 
     /**
@@ -534,7 +535,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns long.
      */
     public long getMinOccurs(QName qName) {
-        Long l = (Long) this.qNameMinOccursCountMap.get(qName);
+        Long l = this.qNameMinOccursCountMap.get(qName);
         return l != null ? l.longValue() : 1; //default for min is 1
     }
 
@@ -545,7 +546,7 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns long.
      */
     public long getMaxOccurs(QName qName) {
-        Long l = (Long) this.qNameMaxOccursCountMap.get(qName);
+        Long l = this.qNameMaxOccursCountMap.get(qName);
         return l != null ? l.longValue() : 1; //default for max is 1
     }
 
@@ -556,14 +557,14 @@ public class BeanWriterMetaInfoHolder {
      * @param maxOccurs
      */
     public void addMaxOccurs(QName qName, long maxOccurs) {
-        this.qNameMaxOccursCountMap.put(qName, new Long(maxOccurs));
+        this.qNameMaxOccursCountMap.put(qName, maxOccurs);
     }
 
     /**
      * @return Returns Iterator.
      * @deprecated Use #getQNameArray
      */
-    public Iterator getElementQNameIterator() {
+    public Iterator<QName> getElementQNameIterator() {
         return elementToJavaClassMap.keySet().iterator();
     }
 
@@ -573,8 +574,8 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns QName[].
      */
     public QName[] getQNameArray() {
-        Set keySet = elementToJavaClassMap.keySet();
-        return (QName[]) keySet.toArray(new QName[keySet.size()]);
+        Set<QName> keySet = elementToJavaClassMap.keySet();
+        return keySet.toArray(new QName[keySet.size()]);
     }
 
     /**
@@ -585,13 +586,13 @@ public class BeanWriterMetaInfoHolder {
      */
     public QName[] getOrderedQNameArray() {
         //get the keys of the order map
-        Set set = qNameOrderMap.keySet();
+        Set<Integer> set = qNameOrderMap.keySet();
         int count = set.size();
-        Integer[] keys = (Integer[]) set.toArray(new Integer[count]);
+        Integer[] keys = set.toArray(new Integer[count]);
         Arrays.sort(keys);
 
         //Now refill the Ordered QName Array
-        List returnQNames = new ArrayList();
+        List<QName> returnQNames = new ArrayList<QName>();
         for (int i = 0; i < keys.length; i++) {
             returnQNames.add(qNameOrderMap.get(keys[i]));
         }
@@ -605,7 +606,7 @@ public class BeanWriterMetaInfoHolder {
             }
         }
 
-        return (QName[]) returnQNames.toArray(new QName[returnQNames.size()]);
+        return returnQNames.toArray(new QName[returnQNames.size()]);
     }
 
     /**
@@ -637,12 +638,11 @@ public class BeanWriterMetaInfoHolder {
      */
 
     public void addtStatus(QName type, int mask) {
-        Object obj = this.specialTypeFlagMap.get(type);
-        if (obj != null) {
-            int preValue = ((Integer) obj).intValue();
-            this.specialTypeFlagMap.put(type, new Integer((preValue | mask)));
+        Integer preValue = this.specialTypeFlagMap.get(type);
+        if (preValue != null) {
+            this.specialTypeFlagMap.put(type, preValue | mask);
         } else {
-            this.specialTypeFlagMap.put(type, new Integer(mask));
+            this.specialTypeFlagMap.put(type, mask);
         }
 
     }
@@ -785,7 +785,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param enumFacet
      */
-    public void setEnumFacet(ArrayList enumFacet) {
+    public void setEnumFacet(ArrayList<String> enumFacet) {
         this.enumFacet = enumFacet;
     }
 
@@ -803,7 +803,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns enumeration.
      */
-    public List getEnumFacet() {
+    public List<String> getEnumFacet() {
         return this.enumFacet;
     }
 
@@ -843,19 +843,19 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns memeber type in a union
      */
 
-    public Map getMemberTypes() {
+    public Map<QName,String> getMemberTypes() {
         return memberTypes;
     }
 
-    public void setMemberTypes(Map memberTypes) {
+    public void setMemberTypes(Map<QName,String> memberTypes) {
         this.memberTypes = memberTypes;
     }
 
-    public List getMemberTypesKeys() {
+    public List<QName> getMemberTypesKeys() {
         return memberTypesKeys;
     }
 
-    public void setMemberTypesKeys(List memberTypesKeys) {
+    public void setMemberTypesKeys(List<QName> memberTypesKeys) {
         this.memberTypesKeys = memberTypesKeys;
     }
 
@@ -913,7 +913,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     public String getJavaName(String xmlName){
-        return (String) this.xmlNameJavaNameMap.get(xmlName);
+        return this.xmlNameJavaNameMap.get(xmlName);
     }
 
 }

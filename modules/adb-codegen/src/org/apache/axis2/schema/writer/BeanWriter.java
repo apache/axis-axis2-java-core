@@ -73,8 +73,8 @@ public interface BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(QName qname,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf,
                         boolean isAbstract)
             throws SchemaCompilationException;
@@ -89,8 +89,8 @@ public interface BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
 
@@ -104,8 +104,8 @@ public interface BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaSimpleType simpleType,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
 

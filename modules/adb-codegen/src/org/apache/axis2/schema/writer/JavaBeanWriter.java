@@ -56,7 +56,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -77,9 +76,9 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Templates templateCache;
 
-    private List nameList;
+    private List<String> nameList;
 
-    private Map packageNameToClassNamesMap;
+    private Map<String,List<String>> packageNameToClassNamesMap;
 
     private static int count = 0;
 
@@ -101,7 +100,7 @@ public class JavaBeanWriter implements BeanWriter {
 
     private Map baseTypeMap = new JavaTypeMap().getTypeMap();
 
-    private Map ns2packageNameMap = new HashMap();
+    private Map<String,String> ns2packageNameMap = new HashMap<String,String>();
 
     private boolean isHelperMode = false;
 
@@ -163,7 +162,7 @@ public class JavaBeanWriter implements BeanWriter {
 
             // set all state variables to default values
             modelMap = new HashMap();
-            ns2packageNameMap = new HashMap();
+            ns2packageNameMap = new HashMap<String,String>();
             mappingClassPackage = null;
 
             initWithFile(options.getOutputLocation());
@@ -229,8 +228,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
@@ -254,8 +253,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(QName qName,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf,
                         boolean isAbstract)
             throws SchemaCompilationException {
@@ -306,8 +305,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaSimpleType simpleType,
-                        Map typeMap,
-                        Map groupTypeMap,
+                        Map<QName,String> typeMap,
+                        Map<QName,String> groupTypeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
             QName qName = simpleType.getQName();
@@ -335,8 +334,8 @@ public class JavaBeanWriter implements BeanWriter {
         } else {
             this.rootDir = rootDir;
         }
-        this.nameList = new ArrayList();
-        this.packageNameToClassNamesMap = new HashMap();
+        this.nameList = new ArrayList<String>();
+        this.packageNameToClassNamesMap = new HashMap<String,List<String>>();
         javaBeanTemplateName = SchemaPropertyLoader.getBeanTemplate();
     }
 
@@ -350,7 +349,6 @@ public class JavaBeanWriter implements BeanWriter {
     public String makeFullyQualifiedClassName(QName qName) {
 
         String namespaceURI = qName.getNamespaceURI();
-        String basePackageName;
 
         String packageName = getPackage(namespaceURI);
 
@@ -364,9 +362,9 @@ public class JavaBeanWriter implements BeanWriter {
             className = makeUniqueJavaClassName(this.nameList, originalName);
         } else {
             if (!this.packageNameToClassNamesMap.containsKey(packageName)) {
-                this.packageNameToClassNamesMap.put(packageName, new ArrayList());
+                this.packageNameToClassNamesMap.put(packageName, new ArrayList<String>());
             }
-            className = makeUniqueJavaClassName((List) this.packageNameToClassNamesMap.get(packageName), originalName);
+            className = makeUniqueJavaClassName(this.packageNameToClassNamesMap.get(packageName), originalName);
         }
 
 
@@ -392,7 +390,7 @@ public class JavaBeanWriter implements BeanWriter {
     private String getPackage(String namespaceURI) {
         String basePackageName;
         if ((ns2packageNameMap != null) && ns2packageNameMap.containsKey(namespaceURI)) {
-            basePackageName = (String) ns2packageNameMap.get(namespaceURI);
+            basePackageName = ns2packageNameMap.get(namespaceURI);
         } else {
             basePackageName = URLProcessor.makePackageName(namespaceURI);
         }
@@ -416,8 +414,8 @@ public class JavaBeanWriter implements BeanWriter {
      */
     private String process(QName qName,
                            BeanWriterMetaInfoHolder metainf,
-                           Map typeMap,
-                           Map groupTypeMap,
+                           Map<QName,String> typeMap,
+                           Map<QName,String> groupTypeMap,
                            boolean isElement,
                            boolean isAbstract)
             throws Exception {
@@ -437,7 +435,7 @@ public class JavaBeanWriter implements BeanWriter {
         }
 
         String originalName = qName == null ? "" : qName.getLocalPart();
-        ArrayList propertyNames = new ArrayList();
+        ArrayList<String> propertyNames = new ArrayList<String>();
 
         if (!templateLoaded) {
             loadTemplate();
@@ -516,9 +514,9 @@ public class JavaBeanWriter implements BeanWriter {
                                    boolean isElement,
                                    boolean isAbstract,
                                    BeanWriterMetaInfoHolder metainf,
-                                   ArrayList propertyNames,
-                                   Map typeMap,
-                                   Map groupTypeMap)
+                                   ArrayList<String> propertyNames,
+                                   Map<QName,String> typeMap,
+                                   Map<QName,String> groupTypeMap)
             throws SchemaCompilationException {
 
         Element rootElt = XSLTUtils.getElement(model, "bean");
@@ -618,10 +616,10 @@ public class JavaBeanWriter implements BeanWriter {
     protected void populateListInfo(BeanWriterMetaInfoHolder metainf,
                                     Document model,
                                     Element rootElement,
-                                    Map typeMap,
-                                    Map groupTypeMap) {
+                                    Map<QName,String> typeMap,
+                                    Map<QName,String> groupTypeMap) {
 
-        String javaName = makeUniqueJavaClassName(new ArrayList(), metainf.getItemTypeQName().getLocalPart());
+        String javaName = makeUniqueJavaClassName(new ArrayList<String>(), metainf.getItemTypeQName().getLocalPart());
         Element itemType = XSLTUtils.addChildElement(model, "itemtype", rootElement);
         XSLTUtils.addAttribute(model, "type", metainf.getItemTypeClassName(), itemType);
         XSLTUtils.addAttribute(model, "nsuri", metainf.getItemTypeQName().getNamespaceURI(), itemType);
@@ -645,12 +643,10 @@ public class JavaBeanWriter implements BeanWriter {
     protected void populateMemberInfo(BeanWriterMetaInfoHolder metainf,
                                       Document model,
                                       Element rootElement,
-                                      Map typeMap) {
-        Map memberTypes = metainf.getMemberTypes();
-        QName memberQName;
-        for (Iterator iter = metainf.getMemberTypesKeys().iterator(); iter.hasNext();) {
-            memberQName = (QName) iter.next();
-            String memberClass = (String) memberTypes.get(memberQName);
+                                      Map<QName,String> typeMap) {
+        Map<QName,String> memberTypes = metainf.getMemberTypes();
+        for (QName memberQName : metainf.getMemberTypesKeys()) {
+            String memberClass = memberTypes.get(memberQName);
             if (PrimitiveTypeFinder.isPrimitive(memberClass)) {
                 memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
             }
@@ -680,9 +676,9 @@ public class JavaBeanWriter implements BeanWriter {
     private void populateInfo(BeanWriterMetaInfoHolder metainf,
                               Document model,
                               Element rootElt,
-                              ArrayList propertyNames,
-                              Map typeMap,
-                              Map groupTypeMap,
+                              ArrayList<String> propertyNames,
+                              Map<QName,String> typeMap,
+                              Map<QName,String> groupTypeMap,
                               boolean isInherited) throws SchemaCompilationException {
         // we should add parent class details only if it is
         // an extension or simple restriction
@@ -707,15 +703,15 @@ public class JavaBeanWriter implements BeanWriter {
      */
     private void addPropertyEntries(BeanWriterMetaInfoHolder metainf,
                                     Document model, Element rootElt,
-                                    ArrayList propertyNames,
-                                    Map typeMap,
-                                    Map groupTypeMap,
+                                    ArrayList<String> propertyNames,
+                                    Map<QName,String> typeMap,
+                                    Map<QName,String> groupTypeMap,
                                     boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
         QName[] qName;
         String javaClassNameForElement;
-        ArrayList missingQNames = new ArrayList();
-        ArrayList qNames = new ArrayList();
+        ArrayList<QName> missingQNames = new ArrayList<QName>();
+        ArrayList<QName> qNames = new ArrayList<QName>();
 
         BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
 
@@ -734,10 +730,8 @@ public class JavaBeanWriter implements BeanWriter {
         if (metainf.isRestriction() && !metainf.isSimple()) {
             addMissingQNames(metainf, qNames, missingQNames);
         }
-        QName name;
-
-        for (int i = 0; i < qNames.size(); i++) {
-            name = (QName) qNames.get(i);
+        
+        for (QName name : qNames) {
             Element property = XSLTUtils.addChildElement(model, "property", rootElt);
 
             String xmlName = name.getLocalPart();
@@ -876,8 +870,8 @@ public class JavaBeanWriter implements BeanWriter {
                                          QName name,
                                          Document model,
                                          Element property,
-                                         Map typeMap,
-                                         Map groupTypeMap,
+                                         Map<QName,String> typeMap,
+                                         Map<QName,String> groupTypeMap,
                                          String javaClassNameForElement) {
         // add an attribute that says the type is default
         if (metainf.getDefaultStatusForQName(name)) {
@@ -992,20 +986,16 @@ public class JavaBeanWriter implements BeanWriter {
         if (!metainf.getEnumFacet().isEmpty()) {
             boolean validJava = true;    // Assume all enum values are valid ids
 
-            Iterator iterator = metainf.getEnumFacet().iterator();
             // Walk the values looking for invalid ids
-            while (iterator.hasNext()) {
-                String value = (String) iterator.next();
+            for (String value : metainf.getEnumFacet()) {
                 if (!JavaUtils.isJavaId(value)) {
                     validJava = false;
                 }
             }
 
             int id = 0;
-            iterator = metainf.getEnumFacet().iterator();
-            while (iterator.hasNext()) {
+            for (String attribValue : metainf.getEnumFacet()) {
                 Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
-                String attribValue = (String) iterator.next();
                 XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
                 if (validJava) {
                     XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
@@ -1021,7 +1011,7 @@ public class JavaBeanWriter implements BeanWriter {
         }
     }
 
-    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList qName, ArrayList missingQNames) {
+    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList<QName> qName, ArrayList<QName> missingQNames) {
 
         QName[] qNames = null;
         QName[] pQNames = null;
@@ -1076,7 +1066,7 @@ public class JavaBeanWriter implements BeanWriter {
         return !found;
     }
 
-    private boolean typeChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) {
+    private boolean typeChanged(QName qname, ArrayList<QName> missingQNames, BeanWriterMetaInfoHolder metainf) {
 
         boolean typeChanged = false;
         QName[] pQNames;
@@ -1118,7 +1108,7 @@ public class JavaBeanWriter implements BeanWriter {
         return typeChanged;
     }
 
-    private boolean minOccursChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    private boolean minOccursChanged(QName qname, ArrayList<QName> missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         boolean minChanged = false;
         QName[] pQNames;
@@ -1148,7 +1138,7 @@ public class JavaBeanWriter implements BeanWriter {
         return minChanged;
     }
 
-    private boolean maxOccursChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    private boolean maxOccursChanged(QName qname, ArrayList<QName> missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         boolean maxChanged = false;
         QName[] pQNames;
@@ -1197,7 +1187,7 @@ public class JavaBeanWriter implements BeanWriter {
      * @param xmlName
      * @return Returns String.
      */
-    private String makeUniqueJavaClassName(List listOfNames, String xmlName) {
+    private String makeUniqueJavaClassName(List<String> listOfNames, String xmlName) {
         String javaName;
         if (JavaUtils.isJavaKeyword(xmlName)) {
             javaName = JavaUtils.makeNonJavaKeyword(xmlName);
@@ -1227,7 +1217,7 @@ public class JavaBeanWriter implements BeanWriter {
     private void loadTemplate() throws SchemaCompilationException {
 
         // first get the language specific property map
-        Class clazz = this.getClass();
+        Class<?> clazz = this.getClass();
         InputStream xslStream;
         String templateName = javaBeanTemplateName;
         if (templateName != null) {
@@ -1309,9 +1299,9 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * Map of namespaces URI to prefix(es)
      */
-    HashMap mapURItoPrefix = new HashMap();
+    HashMap<String,String> mapURItoPrefix = new HashMap<String,String>();
 
-    HashMap mapPrefixtoURI = new HashMap();
+    HashMap<String,String> mapPrefixtoURI = new HashMap<String,String>();
 
     /**
      * Get a prefix for the given namespace URI. If one has already been defined
@@ -1322,7 +1312,7 @@ public class JavaBeanWriter implements BeanWriter {
     public String getPrefixForURI(String uri, String defaultPrefix) {
         if ((uri == null) || (uri.length() == 0))
             return null;
-        String prefix = (String) mapURItoPrefix.get(uri);
+        String prefix = mapURItoPrefix.get(uri);
         if (prefix == null) {
             if (defaultPrefix == null || defaultPrefix.length() == 0) {
                 prefix = "ns" + lastPrefixIndex++;

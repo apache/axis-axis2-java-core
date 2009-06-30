@@ -87,13 +87,13 @@ public class CompilerOptions {
     /**
      * Keep track of the namespace and packages mapping
      */
-    private Map ns2PackageMap = new HashMap();
+    private Map<String,String> ns2PackageMap = new HashMap<String,String>();
 
-    public Map getNs2PackageMap() {
+    public Map<String,String> getNs2PackageMap() {
         return ns2PackageMap;
     }
 
-    public void setNs2PackageMap(Map ns2PackageMap) {
+    public void setNs2PackageMap(Map<String,String> ns2PackageMap) {
         this.ns2PackageMap = ns2PackageMap;
     }
 
