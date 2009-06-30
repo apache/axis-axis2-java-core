@@ -67,17 +67,16 @@ public class ExtensionUtility {
 
 
     public static void invoke(CodeGenConfiguration configuration) throws Exception {
-        List schemaList = new ArrayList();
+        List<XmlSchema> schemaList = new ArrayList<XmlSchema>();
         // add all the schemas to the list
-        List services = configuration.getAxisServices();
-        for (Iterator iter = services.iterator();iter.hasNext();){
-            schemaList.addAll(((AxisService)iter.next()).getSchema());
+        for (AxisService service : configuration.getAxisServices()) {
+            schemaList.addAll(service.getSchema());
         }
 
         //hashmap that keeps the targetnamespace and the xmlSchema object
         //this is a convenience to locate the relevant schema quickly
         //by looking at the target namespace
-        Map schemaMap = new HashMap();
+        Map<String,XmlSchema> schemaMap = new HashMap<String,XmlSchema>();
         populateSchemaMap(schemaMap, schemaList);
 
         if (schemaList == null || schemaList.isEmpty()) {
@@ -119,12 +118,8 @@ public class ExtensionUtility {
 
         if (options.isWriteOutput()) {
             //get the processed element map and transfer it to the type mapper
-            Map processedMap = schemaCompiler.getProcessedElementMap();
-            Iterator processedkeys = processedMap.keySet().iterator();
-            QName qNameKey;
-            while (processedkeys.hasNext()) {
-                qNameKey = (QName) processedkeys.next();
-                mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
+            for (Map.Entry<QName,String> entry : schemaCompiler.getProcessedElementMap().entrySet()) {
+                mapper.addTypeMappingName(entry.getKey(), entry.getValue());
             }
 
         } else {
@@ -139,11 +134,8 @@ public class ExtensionUtility {
                 mapper.addTypeMappingObject(qNameKey, processedModelMap.get(qNameKey));
             }
 
-            Map processedMap = schemaCompiler.getProcessedElementMap();
-            processedkeys = processedMap.keySet().iterator();
-            while (processedkeys.hasNext()) {
-                qNameKey = (QName) processedkeys.next();
-                mapper.addTypeMappingName(qNameKey, processedMap.get(qNameKey).toString());
+            for (Map.Entry<QName,String> entry : schemaCompiler.getProcessedElementMap().entrySet()) {
+                mapper.addTypeMappingName(entry.getKey(), entry.getValue());
             }
 
             //get the ADB template from the schema compilers property bag and set the
@@ -157,13 +149,10 @@ public class ExtensionUtility {
         //process the unwrapped parameters
         if (!configuration.isParametersWrapped()) {
             //figure out the unwrapped operations
-            List axisServices = configuration.getAxisServices();
-            AxisService axisService;
-            for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
-                axisService = (AxisService) servicesIter.next();
-                for (Iterator operations = axisService.getOperations();
+            for (AxisService axisService : configuration.getAxisServices()) {
+                for (Iterator<AxisOperation> operations = axisService.getOperations();
                      operations.hasNext();) {
-                    AxisOperation op = (AxisOperation) operations.next();
+                    AxisOperation op = operations.next();
                     if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                         walkSchema(op.getMessage(
                                 WSDLConstants.MESSAGE_LABEL_IN_VALUE),
@@ -193,14 +182,11 @@ public class ExtensionUtility {
         //put the complext types for the top level elements having them
         // this is needed in unwrapping and to provide backwordCompatibility
         if (!configuration.isParametersWrapped() || configuration.isBackwordCompatibilityMode()) {
-            List axisServices = configuration.getAxisServices();
-            AxisService axisService;
-            for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
-                axisService = (AxisService) servicesIter.next();
+            for (AxisService axisService : configuration.getAxisServices()) {
                 AxisOperation axisOperation;
                 AxisMessage axisMessage;
-                for (Iterator operators = axisService.getOperations(); operators.hasNext();) {
-                    axisOperation = (AxisOperation) operators.next();
+                for (Iterator<AxisOperation> operators = axisService.getOperations(); operators.hasNext();) {
+                    axisOperation = operators.next();
                     if (WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
                         axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                         setComplexTypeName(axisMessage);
@@ -237,10 +223,7 @@ public class ExtensionUtility {
                     // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                     // the parent schema
                     AxisService axisService = axisMessage.getAxisOperation().getAxisService();
-                    ArrayList schemasList = axisService.getSchema();
-                    XmlSchema schema = null;
-                    for (Iterator iter = schemasList.iterator(); iter.hasNext();) {
-                        schema = (XmlSchema) iter.next();
+                    for (XmlSchema schema : axisService.getSchema()) {
                         schemaType = getSchemaType(schema, schemaTypeQname);
                         if (schemaType != null) {
                             break;
@@ -273,9 +256,8 @@ public class ExtensionUtility {
      * @param schemaMap
      * @param schemaList
      */
-    private static void populateSchemaMap(Map schemaMap, List schemaList) {
-        for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema xmlSchema = (XmlSchema) schemaList.get(i);
+    private static void populateSchemaMap(Map<String,XmlSchema> schemaMap, List<XmlSchema> schemaList) {
+        for (XmlSchema xmlSchema : schemaList) {
             schemaMap.put(xmlSchema.getTargetNamespace(), xmlSchema);
         }
     }
@@ -286,7 +268,7 @@ public class ExtensionUtility {
      */
     private static void walkSchema(AxisMessage message,
                                    TypeMapper mapper,
-                                   Map schemaMap,
+                                   Map<String,XmlSchema> schemaMap,
                                    String opName,
                                    String qnameSuffix) {
 
@@ -302,11 +284,7 @@ public class ExtensionUtility {
                     // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                     // the parent schema
                     AxisService axisService = message.getAxisOperation().getAxisService();
-                    ArrayList schemasList = axisService.getSchema();
-
-                    XmlSchema schema = null;
-                    for (Iterator iter = schemasList.iterator(); iter.hasNext();) {
-                        schema = (XmlSchema) iter.next();
+                    for (XmlSchema schema : axisService.getSchema()) {
                         schemaType = getSchemaType(schema, schemaTypeQname);
                         if (schemaType != null) {
                             break;
@@ -411,7 +389,7 @@ public class ExtensionUtility {
     private static void processComplexContentModel(XmlSchemaComplexType cmplxType,
                                                    TypeMapper mapper,
                                                    String opName,
-                                                   Map schemaMap,
+                                                   Map<String,XmlSchema> schemaMap,
                                                    String qnameSuffix) {
         XmlSchemaContentModel contentModel = cmplxType.getContentModel();
         if (contentModel instanceof XmlSchemaComplexContent) {
@@ -423,10 +401,8 @@ public class ExtensionUtility {
                 // process particles inside this extension, if any
                 processSchemaSequence(schemaExtension.getParticle(), mapper, opName, schemaMap, qnameSuffix);
 
-                XmlSchema xmlSchema = null;
                  XmlSchemaType extensionSchemaType = null;
-                for (Iterator iter = schemaMap.values().iterator();iter.hasNext();){
-                    xmlSchema = (XmlSchema) iter.next();
+                for (XmlSchema xmlSchema : schemaMap.values()) {
                     extensionSchemaType = getSchemaType(xmlSchema,schemaExtension.getBaseTypeName());
                     if (extensionSchemaType != null){
                         break;
@@ -441,7 +417,7 @@ public class ExtensionUtility {
     private static void processSchemaSequence(XmlSchemaParticle particle,
                                               TypeMapper mapper,
                                               String opName,
-                                              Map schemaMap,
+                                              Map<String,XmlSchema> schemaMap,
                                               String qnameSuffix) {
         if (particle instanceof XmlSchemaSequence) {
             XmlSchemaObjectCollection items = ((XmlSchemaSequence) particle).getItems();
@@ -545,9 +521,9 @@ public class ExtensionUtility {
      * @param schemaMap
      * @return null if the schema is not found
      */
-    private static XmlSchemaType findSchemaType(Map schemaMap, QName schemaTypeName) {
+    private static XmlSchemaType findSchemaType(Map<String,XmlSchema> schemaMap, QName schemaTypeName) {
         //find the schema
-        XmlSchema schema = (XmlSchema) schemaMap.get(schemaTypeName.getNamespaceURI());
+        XmlSchema schema = schemaMap.get(schemaTypeName.getNamespaceURI());
         if (schema != null) {
             return schema.getTypeByName(schemaTypeName);
         }
@@ -560,7 +536,7 @@ public class ExtensionUtility {
      * @param options
      */
     private static void populateUserparameters(CompilerOptions options, CodeGenConfiguration configuration) {
-        Map propertyMap = configuration.getProperties();
+        Map<Object,Object> propertyMap = configuration.getProperties();
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES)) {
             if (Boolean.valueOf(
                     propertyMap.get(SchemaConstants.SchemaCompilerArguments.WRAP_SCHEMA_CLASSES).toString()).
@@ -640,7 +616,7 @@ public class ExtensionUtility {
         /// these options need to be taken from the command line
         options.setOutputLocation(outputDir);
         options.setNs2PackageMap(configuration.getUri2PackageNameMap() == null ?
-                new HashMap() :
+                new HashMap<String,String>() :
                 configuration.getUri2PackageNameMap());
 
         //default setting is to set the wrap status depending on whether it's

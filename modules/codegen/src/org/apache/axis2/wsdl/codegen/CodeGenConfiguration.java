@@ -20,10 +20,12 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.wsdl.Definition;
 import java.io.File;
@@ -36,7 +38,7 @@ import java.util.Map;
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     /** Axis Services reference */
-    private List axisServices;
+    private List<AxisService> axisServices;
 
     /** Axis service to use */
     private AxisService axisService;
@@ -68,14 +70,14 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /** A map to keep the custom namespace and package name mappings */
-    private Map uri2PackageNameMap;
+    private Map<String,String> uri2PackageNameMap;
 
 
-    public Map getUri2PackageNameMap() {
+    public Map<String,String> getUri2PackageNameMap() {
         return uri2PackageNameMap;
     }
 
-    public void setUri2PackageNameMap(Map uri2PackageNameMap) {
+    public void setUri2PackageNameMap(Map<String,String> uri2PackageNameMap) {
         if (this.uri2PackageNameMap == null) {
             this.uri2PackageNameMap = uri2PackageNameMap;
         } else {
@@ -159,11 +161,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.baseURI = baseURI;
     }
 
-    public Map getConfigurationProperties() {
+    public Map<Object,Object> getConfigurationProperties() {
         return configurationProperties;
     }
 
-    public void setConfigurationProperties(Map configurationProperties) {
+    public void setConfigurationProperties(Map<Object,Object> configurationProperties) {
         this.configurationProperties = configurationProperties;
     }
 
@@ -269,7 +271,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     * A hashmap of properties that may be populated on the way. extensions can populate it
     * This can be used to keep non specific information
     */
-    private Map configurationProperties = new HashMap();
+    private Map<Object,Object> configurationProperties = new HashMap<Object,Object>();
 
 
     public boolean isGenerateAll() {
@@ -342,7 +344,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      *
      * @return Returns Map of all properties.
      */
-    public Map getProperties() {
+    public Map<Object,Object> getProperties() {
         return configurationProperties;
     }
 
@@ -375,10 +377,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      *
      * @param optionMap
      */
-    public CodeGenConfiguration(Map optionMap) {
+    public CodeGenConfiguration(Map<String,CommandLineOption> optionMap) {
         CodegenConfigLoader.loadConfig(this, optionMap);
-        this.axisServices = new ArrayList();
-        this.outputXmlFileNamesList = new ArrayList();
+        this.axisServices = new ArrayList<AxisService>();
+        this.outputXmlFileNamesList = new ArrayList<String>();
     }
 
 
@@ -461,11 +463,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return repositoryPath;
     }
 
-    public List getAxisServices() {
+    public List<AxisService> getAxisServices() {
         return axisServices;
     }
 
-    public void setAxisServices(List axisServices) {
+    public void setAxisServices(List<AxisService> axisServices) {
         this.axisServices = axisServices;
     }
 
@@ -478,7 +480,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         if (axisService != null) {
             return axisService;
         } else if ((axisServices != null) && (axisServices.size() > 0)) {
-            return (AxisService)axisServices.get(0);
+            return axisServices.get(0);
         } else {
             return null;
         }
@@ -516,16 +518,14 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public String getTargetNamespace() {
         String targetNamespace = null;
         if ((this.axisServices != null) && (this.axisServices.size() > 0)) {
-            targetNamespace = ((AxisService)this.axisServices.get(0)).getTargetNamespace();
+            targetNamespace = this.axisServices.get(0).getTargetNamespace();
         }
         return targetNamespace;
     }
 
-    public List getSchemaListForAllServices() {
-        List schemas = new ArrayList();
-        AxisService axisService;
-        for (Iterator iter = this.axisServices.iterator(); iter.hasNext();) {
-            axisService = (AxisService)iter.next();
+    public List<XmlSchema> getSchemaListForAllServices() {
+        List<XmlSchema> schemas = new ArrayList<XmlSchema>();
+        for (AxisService axisService : axisServices) {
             schemas.addAll(axisService.getSchema());
         }
         return schemas;
@@ -563,13 +563,13 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     // this is used to keep the generated xml file list to pretty print.
-    private List outputXmlFileNamesList;
+    private List<String> outputXmlFileNamesList;
 
-    public List getOutputXmlFileNamesList() {
+    public List<String> getOutputXmlFileNamesList() {
         return outputXmlFileNamesList;
     }
 
-    public void setOutputXmlFileNamesList(List outputXmlFileNamesList) {
+    public void setOutputXmlFileNamesList(List<String> outputXmlFileNamesList) {
         this.outputXmlFileNamesList = outputXmlFileNamesList;
     }
 

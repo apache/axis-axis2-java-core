@@ -28,13 +28,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 class CodegenConfigLoader implements CommandLineOptionConstants {
 
-    public static void loadConfig(CodeGenConfiguration config, Map optionMap) {
+    public static void loadConfig(CodeGenConfiguration config, Map<String,CommandLineOption> optionMap) {
         String outputLocation = "."; //default output directory is the current working directory
         CommandLineOption commandLineOption = loadOption(WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                                                          WSDL2JavaConstants.OUTPUT_LOCATION_OPTION_LONG,
@@ -185,7 +184,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                     String valuepairs[] = value.split(",");
                     if (valuepairs.length > 0) {
                         //put them in the hash map
-                        HashMap map = new HashMap(valuepairs.length);
+                        HashMap<String,String> map = new HashMap<String,String>(valuepairs.length);
                         for (int i = 0; i < valuepairs.length; i++) {
                             String values[] = valuepairs[i].split("=");
                             if (values.length == 2) {
@@ -199,7 +198,11 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
                     try {
                         Properties p = new Properties();//$NON-SEC-3
                         p.load(new FileInputStream(value));//$NON-SEC-2//$NON-SEC-3
-                        config.setUri2PackageNameMap(p);
+                        Map<String,String> map = new HashMap<String,String>();
+                        for (Map.Entry<Object,Object> entry : p.entrySet()) {
+                            map.put((String)entry.getKey(), (String)entry.getValue());
+                        }
+                        config.setUri2PackageNameMap(map);
                     } catch (IOException e) {
                         throw new RuntimeException(
                                 CodegenMessages.
@@ -314,14 +317,12 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
         // loop through the map and find parameters having the extra prefix.
         //put them in the property map
-        Iterator keyIterator = optionMap.keySet().iterator();
-        while (keyIterator.hasNext()) {
-            Object key = keyIterator.next();
-            CommandLineOption option = (CommandLineOption)optionMap.get(key);
-            if (key.toString().startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)) {
+        for (Map.Entry<String,CommandLineOption> entry : optionMap.entrySet()) {
+            String key = entry.getKey();
+            if (key.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)) {
                 //add this to the property map
-                config.getProperties().put(key.toString().replaceFirst(
-                        WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX, ""), option.getOptionValue());
+                config.getProperties().put(key.replaceFirst(
+                        WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX, ""), entry.getValue().getOptionValue());
             }
         }
 
@@ -329,17 +330,17 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
     }
 
     private static CommandLineOption loadOption(String shortOption, String longOption,
-                                                Map options) {
+                                                Map<String,CommandLineOption> options) {
         //short option gets precedence
         CommandLineOption option = null;
         if (longOption != null) {
-            option = (CommandLineOption)options.get(longOption);
+            option = options.get(longOption);
             if (option != null) {
                 return option;
             }
         }
         if (shortOption != null) {
-            option = (CommandLineOption)options.get(shortOption);
+            option = options.get(shortOption);
         }
 
         return option;
