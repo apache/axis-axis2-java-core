@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
+import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -240,7 +241,10 @@ public class JAXBDSContext {
     public ClassLoader getClassLoader() {
         MessageContext context = getMessageContext();
         if (context != null) {
-            return (ClassLoader) context.getProperty(Constants.CACHE_CLASSLOADER);
+            Parameter param = context.getParameter(Constants.CACHE_CLASSLOADER);
+            if (param != null) {
+                return (ClassLoader) param.getValue();
+            }
         }
         return null;
     }
