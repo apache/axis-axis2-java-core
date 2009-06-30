@@ -40,7 +40,7 @@ public class Base64BinaryTest extends AbstractTestCase {
         contentType_type0.setContentType_type0("test content type");
         base64Binary.setContentType(contentType_type0);
 
-        testSerializeDeserialize(testBase64Binary);
+        testSerializeDeserialize(testBase64Binary, false);
     }
 
     public void testHexBinary() throws Exception {
@@ -58,7 +58,7 @@ public class Base64BinaryTest extends AbstractTestCase {
         contentType_type0.setContentType_type0("test content type");
         hexBinary.setContentType(contentType_type0);
 
-        testSerializeDeserialize(testHexBinary);
+        testSerializeDeserialize(testHexBinary, false);
     }
 
     public void testBase64MultiElement() throws Exception {
@@ -70,6 +70,6 @@ public class Base64BinaryTest extends AbstractTestCase {
         testBase64MultiElement.setParam2("test string");
         testBase64MultiElement.setParam3(5);
 
-        testSerializeDeserialize(testBase64MultiElement);
+        testSerializeDeserialize(testBase64MultiElement, false);
     }
 }

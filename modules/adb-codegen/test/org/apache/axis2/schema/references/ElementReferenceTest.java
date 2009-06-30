@@ -33,7 +33,7 @@ public class ElementReferenceTest extends AbstractTestCase {
         atbRequestCheckEligibility.setExpirationDate("date");
         atbRequestCheckEligibility.setNameAsOnCard("cardname");
         atbRequestCheckEligibility.setYearOfRedemption(2);
-        testSerializeDeserialize(echCheckEligibility1);
+        testSerializeDeserialize(echCheckEligibility1, false);
     }
 
     public void testMultipleElementReference() throws Exception {
@@ -55,7 +55,7 @@ public class ElementReferenceTest extends AbstractTestCase {
         atbRequestCheckEligibility[1].setNameAsOnCard("cardname");
         atbRequestCheckEligibility[1].setYearOfRedemption(2);
 
-        testSerializeDeserialize(echCheckEligibility2);
+        testSerializeDeserialize(echCheckEligibility2, false);
     }
 
     public void testElement11() throws Exception {
@@ -88,7 +88,7 @@ public class ElementReferenceTest extends AbstractTestCase {
         element2_type1.setParam1("test string2");
         element2_type0.setElement2(element2_type1);
 
-        testSerializeDeserialize(element2);
+        testSerializeDeserialize(element2, false);
     }
 
     public void testSimpleReference() throws Exception {
@@ -101,6 +101,6 @@ public class ElementReferenceTest extends AbstractTestCase {
         discard_transferToken.setParam1("New parm");
         testSimpleReference.setTestSimpleReference(discard_transferToken);
 
-        testSerializeDeserialize(testSimpleReference);
+        testSerializeDeserialize(testSimpleReference, false);
     }
 }

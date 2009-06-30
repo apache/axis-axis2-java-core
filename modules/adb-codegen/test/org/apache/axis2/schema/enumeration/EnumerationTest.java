@@ -30,6 +30,6 @@ public class EnumerationTest extends AbstractTestCase {
         countPlacesInRect.setUpperleft("upperleft");
         countPlacesInRect.setPtype(PlaceType.River);
 
-        testSerializeDeserialize(countPlacesInRect);
+        testSerializeDeserialize(countPlacesInRect, false);
     }
 }

@@ -30,7 +30,7 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testAnyTypeElement1_1() throws Exception {
         TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement1_2() throws Exception {
@@ -43,20 +43,20 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testAnyTypeElement2_1() throws Exception {
         TestAnyTypeElement2 testAnyTypeElement = new TestAnyTypeElement2();
         testAnyTypeElement.setTestAnyTypeElement2("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement2_2() throws Exception {
         TestAnyTypeElement2 testAnyTypeElement = new TestAnyTypeElement2();
         testAnyTypeElement.setTestAnyTypeElement2(null);
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement3_1() throws Exception {
         TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
 
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement3_2() throws Exception {
@@ -73,14 +73,14 @@ public class AnyTypeTest extends AbstractTestCase {
         TestAnyTypeElement3 testAnyTypeElement = new TestAnyTypeElement3();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
 
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
 
     public void testAnyTypeElement4_1() throws Exception {
         TestAnyTypeElement4 testAnyTypeElement = new TestAnyTypeElement4();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement4_2() throws Exception {
@@ -95,14 +95,14 @@ public class AnyTypeTest extends AbstractTestCase {
 
         TestAnyTypeElement4 expectedResult = new TestAnyTypeElement4();
         expectedResult.setParam1(new Object[] { "test" });
-        testSerializeDeserialize(testAnyTypeElement, expectedResult);
+        testSerializeDeserialize(testAnyTypeElement, expectedResult, false);
     }
 
 
     public void testAnyTypeElement5_1() throws Exception {
         TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement5_2() throws Exception {
@@ -117,14 +117,14 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testAnyTypeElement5_3() throws Exception {
         TestAnyTypeElement5 testAnyTypeElement = new TestAnyTypeElement5();
         testAnyTypeElement.setParam1(new Object[]{"test",null});
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
 
     public void testAnyTypeElement6_1() throws Exception {
         TestAnyTypeElement6 testAnyTypeElement = new TestAnyTypeElement6();
         testAnyTypeElement.setParam1(new Object[]{"test1","test2"});
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement6_2() throws Exception {
@@ -153,13 +153,13 @@ public class AnyTypeTest extends AbstractTestCase {
 
         testAnyTypeElement6.setParam1(testComplexParents);
 
-        testSerializeDeserialize(testAnyTypeElement6);
+        testSerializeDeserialize(testAnyTypeElement6, false);
     }
 
     public void testAnyTypeElement7_1() throws Exception {
         TestAnyTypeElement7 testAnyTypeElement = new TestAnyTypeElement7();
         testAnyTypeElement.setParam1("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement7_2() throws Exception {
@@ -173,13 +173,13 @@ public class AnyTypeTest extends AbstractTestCase {
         TestComplexParent testComplexParent = new TestComplexParent();
         testComplexParent.setParam1("test param1");
         testAnyTypeElement7.setParam1(testComplexParent);
-        testSerializeDeserialize(testAnyTypeElement7);
+        testSerializeDeserialize(testAnyTypeElement7, false);
     }
 
     public void testAnyTypeElement8_1() throws Exception {
         TestAnyTypeElement8 testAnyTypeElement = new TestAnyTypeElement8();
         testAnyTypeElement.setParam1("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement8_2() throws Exception {
@@ -191,7 +191,7 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testAnyTypeElement9_1() throws Exception {
         TestAnyTypeElement9 testAnyTypeElement = new TestAnyTypeElement9();
         testAnyTypeElement.setParam1("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement9_2() throws Exception {
@@ -203,7 +203,7 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testAnyTypeElement10_1() throws Exception {
         TestAnyTypeElement10 testAnyTypeElement = new TestAnyTypeElement10();
         testAnyTypeElement.setParam1("test");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyTypeElement10_2() throws Exception {
@@ -216,14 +216,14 @@ public class AnyTypeTest extends AbstractTestCase {
         // datatype tests
         TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1(new Integer(5));
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testAnyElementQName() throws Exception {
         // datatype tests
         TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1(new QName("http://wso2.org","testElement"));
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 
     public void testTestElement() throws Exception {
@@ -251,7 +251,7 @@ public class AnyTypeTest extends AbstractTestCase {
 
         testElement.setParam1(dynamicProperties);
 
-        testSerializeDeserialize(testElement);
+        testSerializeDeserialize(testElement, false);
     }
     
     // Regression test for AXIS2-4273
@@ -269,7 +269,7 @@ public class AnyTypeTest extends AbstractTestCase {
     public void testEmptyString() throws Exception {
         TestAnyTypeElement1 testAnyTypeElement = new TestAnyTypeElement1();
         testAnyTypeElement.setTestAnyTypeElement1("");
-        testSerializeDeserialize(testAnyTypeElement);
+        testSerializeDeserialize(testAnyTypeElement, false);
     }
 }
 

@@ -42,7 +42,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType1.setTestParticalSequenceMaxOccursType1Sequence(testSequences);
 
-        testSerializeDeserialize(testParticalMaxOccures1);
+        testSerializeDeserialize(testParticalMaxOccures1, false);
     }
 
     public void testParticleSequenceMaxOccurs2() throws Exception {
@@ -62,7 +62,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType2.setTestParticalSequenceMaxOccursType2Sequence(testSequences);
 
-        testSerializeDeserialize(testParticalMaxOccures2);
+        testSerializeDeserialize(testParticalMaxOccures2, false);
     }
 
     public void testParticleSequenceMaxOccurs3() throws Exception {
@@ -98,7 +98,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         expectedTestParticalMaxOccursType3.setTestParticalSequenceMaxOccursType3Sequence(expectedTestSequences);
         
         
-        testSerializeDeserialize(testParticalMaxOccures3, expectedTestParticalMaxOccures3);
+        testSerializeDeserialize(testParticalMaxOccures3, expectedTestParticalMaxOccures3, false);
     }
 
     public void testParticleSequenceMaxOccurs4() throws Exception {
@@ -120,7 +120,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalSequenceMaxOccursType4Sequence[2] = new TestParticalSequenceMaxOccursType4Sequence();
         testParticalSequenceMaxOccursType4Sequence[2].setParm3(getNewCustomType());
 
-        testSerializeDeserialize(testParticalSequenceMaxOccurs4);
+        testSerializeDeserialize(testParticalSequenceMaxOccurs4, false);
     }
 
     public void testParticleSequenceMaxOccurs5() throws Exception {
@@ -147,7 +147,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalSequenceMaxOccursType5Sequence[2].setParm1(new TestCustomType[]{getNewCustomType()});
         testParticalSequenceMaxOccursType5Sequence[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-        testSerializeDeserialize(testParticalSequenceMaxOccurs5);
+        testSerializeDeserialize(testParticalSequenceMaxOccurs5, false);
     }
 
     public void testParticalSequenceMaxOccursTest6() throws Exception {
@@ -169,7 +169,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        testSerializeDeserialize(testParticalMaxOccures6);
+        testSerializeDeserialize(testParticalMaxOccures6, false);
     }
 
     public void testParticalMaxOccursTest() throws Exception {
@@ -179,7 +179,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalChoiceMaxOccursType.setParm1("Param1");
 
-        testSerializeDeserialize(testParticalChoiceMaxOccurs);
+        testSerializeDeserialize(testParticalChoiceMaxOccurs, false);
     }
 
     public void testParticalChoiceMaxOccursTest1() throws Exception {
@@ -197,7 +197,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType1.setTestParticalChoiceMaxOccursType1Choice(testChoices);
 
-        testSerializeDeserialize(testParticalMaxOccures1);
+        testSerializeDeserialize(testParticalMaxOccures1, false);
     }
 
     public void testParticleChoiceMaxOccurs2() throws Exception {
@@ -215,7 +215,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType2.setTestParticalChoiceMaxOccursType2Choice(testChoices);
 
-        testSerializeDeserialize(testParticalMaxOccures2);
+        testSerializeDeserialize(testParticalMaxOccures2, false);
     }
 
     public void testParticleChoiceMaxOccurs3() throws Exception {
@@ -233,7 +233,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
 
         testParticalMaxOccursType3.setTestParticalChoiceMaxOccursType3Choice(testChoices);
 
-        testSerializeDeserialize(testParticalMaxOccures3);
+        testSerializeDeserialize(testParticalMaxOccures3, false);
     }
 
     public void testParticleChoiceMaxOccurs4() throws Exception {
@@ -255,7 +255,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalChoiceMaxOccursType4Choice[2] = new TestParticalChoiceMaxOccursType4Choice();
         testParticalChoiceMaxOccursType4Choice[2].setParm3(getNewCustomType());
 
-        testSerializeDeserialize(testParticalChoiceMaxOccurs4);
+        testSerializeDeserialize(testParticalChoiceMaxOccurs4, false);
     }
 
     public void testParticleChoiceMaxOccurs5() throws Exception {
@@ -278,7 +278,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalChoiceMaxOccursType5Choice[2] = new TestParticalChoiceMaxOccursType5Choice();
         testParticalChoiceMaxOccursType5Choice[2].setParm3(new TestCustomType[]{getNewCustomType()});
 
-        testSerializeDeserialize(testParticalChoiceMaxOccurs5);
+        testSerializeDeserialize(testParticalChoiceMaxOccurs5, false);
     }
 
     public void testParticalChoiceMaxOccursTest6() throws Exception {
@@ -298,7 +298,7 @@ public class ParticalMaxOccursTest extends AbstractTestCase {
         testParticalMaxOccursType6.setAttribute1("Attribute1");
         testParticalMaxOccursType6.setAttribute2("Attribute2");
 
-        testSerializeDeserialize(testParticalMaxOccures6);
+        testSerializeDeserialize(testParticalMaxOccures6, false);
     }
 
     private TestCustomType getNewCustomType() {

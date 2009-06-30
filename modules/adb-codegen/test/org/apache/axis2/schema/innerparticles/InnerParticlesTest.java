@@ -33,7 +33,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         testInnerParticle1.setTestInnerParticle1Sequence_type0(testInnerParticle1Sequence_type0);
         testInnerParticle1.setParam4("Param4");
 
-        testSerializeDeserialize(testInnerParticle1);
+        testSerializeDeserialize(testInnerParticle1, false);
     }
 
     public void testInnerParticle2() throws Exception {
@@ -53,7 +53,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         expectedResult.setTestInnerParticle2Choice_type0(expectedInnerParticle2Choice_type1);
         expectedResult.setParam4("Param4");
         
-        testSerializeDeserialize(testInnerParticle2, expectedResult);
+        testSerializeDeserialize(testInnerParticle2, expectedResult, false);
     }
 
     public void testInnerParticle31() throws Exception {
@@ -61,7 +61,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         TestInnerParticle3 testInnerParticle3 = new TestInnerParticle3();
         testInnerParticle3.setParam1("Param1");
 
-        testSerializeDeserialize(testInnerParticle3);
+        testSerializeDeserialize(testInnerParticle3, false);
     }
 
     public void testInnerParticle32() throws Exception {
@@ -77,7 +77,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         expectedInnerParticle3Choice_type1.setParam3("Param3");
         expectedResult.setTestInnerParticle3Choice_type0(expectedInnerParticle3Choice_type1);
 
-        testSerializeDeserialize(testInnerParticle3, expectedResult);
+        testSerializeDeserialize(testInnerParticle3, expectedResult, false);
     }
 
     public void testInnerParticle33() throws Exception {
@@ -96,7 +96,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         expectedResult.setTestInnerParticle3Choice_type0(expectedInnerParticle3Choice_type1);
         expectedResult.setParam4("Param4");
         
-        testSerializeDeserialize(testInnerParticle3, expectedResult);
+        testSerializeDeserialize(testInnerParticle3, expectedResult, false);
     }
 
     public void testInnerParticle41() throws Exception {
@@ -104,7 +104,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam1("Param1");
 
-        testSerializeDeserialize(testInnerParticle4);
+        testSerializeDeserialize(testInnerParticle4, false);
     }
 
     public void testInnerParticle42() throws Exception {
@@ -115,7 +115,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         TestInnerParticle4Sequence_type0.setParam3("Param3");
         testInnerParticle4.setTestInnerParticle4Sequence_type0(TestInnerParticle4Sequence_type0);
 
-        testSerializeDeserialize(testInnerParticle4);
+        testSerializeDeserialize(testInnerParticle4, false);
     }
 
     public void testInnerParticle43() throws Exception {
@@ -123,7 +123,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         TestInnerParticle4 testInnerParticle4 = new TestInnerParticle4();
         testInnerParticle4.setParam4("Param4");
 
-        testSerializeDeserialize(testInnerParticle4);
+        testSerializeDeserialize(testInnerParticle4, false);
     }
 
     public void testInnerParticle5() throws Exception {
@@ -142,7 +142,7 @@ public class InnerParticlesTest extends AbstractTestCase {
         testInnerParticle5.setTestInnerParticle5Sequence_type1(testInnerParticle2Choice_type1);
         testInnerParticle5.setParam6("Param6");
 
-        testSerializeDeserialize(testInnerParticle5);
+        testSerializeDeserialize(testInnerParticle5, false);
     }
 
     public void testIntterParticalExtension() throws Exception {
@@ -172,7 +172,7 @@ public class InnerParticlesTest extends AbstractTestCase {
 
         expectedTestInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
         
-        testSerializeDeserialize(testInnterParticleExtension, expectedTestInnterParticleExtension);
+        testSerializeDeserialize(testInnterParticleExtension, expectedTestInnterParticleExtension, false);
     }
 
     public void testTestComplexTypeElement() throws Exception {
@@ -196,6 +196,6 @@ public class InnerParticlesTest extends AbstractTestCase {
 
         expectedTestComplexType.setTestElement(testElement_type0);
         
-        testSerializeDeserialize(testComplexTypeElement, expectedTestComplexTypeElement);
+        testSerializeDeserialize(testComplexTypeElement, expectedTestComplexTypeElement, false);
     }
 }

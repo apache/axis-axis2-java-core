@@ -26,6 +26,6 @@ public class NoNamespaceTest extends AbstractTestCase {
         TestElement el = new TestElement();
         el.setParam1("test1");
         el.setParam2("test2");
-        testSerializeDeserialize(el);
+        testSerializeDeserialize(el, false);
     }
 }

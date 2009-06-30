@@ -46,7 +46,7 @@ public class SimpleRestrictionTest extends AbstractTestCase {
         testSimpleAttribute.setAttrib1(parentSimpleType1);
         testSimpleAttribute.setAttrib2(parentSimpleType2);
 
-        testSerializeDeserialize(testSimpleAttributeElement);
+        testSerializeDeserialize(testSimpleAttributeElement, false);
     }
 
     public void testNormalSimpleTypeElement() throws Exception {
@@ -55,7 +55,7 @@ public class SimpleRestrictionTest extends AbstractTestCase {
         ParentNormalSimpleType parentNormalSimpleType = new ParentNormalSimpleType();
         normalSimpleTypeElement.setNormalSimpleTypeElement(parentNormalSimpleType);
         parentNormalSimpleType.setNormalSimpleType(new QName("http://wso2.com", "test"));
-        testSerializeDeserialize(normalSimpleTypeElement);
+        testSerializeDeserialize(normalSimpleTypeElement, false);
 
     }
 
@@ -63,7 +63,7 @@ public class SimpleRestrictionTest extends AbstractTestCase {
 
         EnumerationSimpleTypeElement enumerationSimpleTypeElement = new EnumerationSimpleTypeElement();
         enumerationSimpleTypeElement.setEnumerationSimpleTypeElement(ParentEnumerationSimpleType.value1);
-        testSerializeDeserialize(enumerationSimpleTypeElement);
+        testSerializeDeserialize(enumerationSimpleTypeElement, false);
 
     }
 
@@ -74,7 +74,7 @@ public class SimpleRestrictionTest extends AbstractTestCase {
         complexRestrictionTypeTestElement.setComplexRestrictionTypeTestElement(parentRestrictionType);
         parentRestrictionType.setBaseTypeElement1("test 1");
         parentRestrictionType.setBaseTypeElement2(5);
-        testSerializeDeserialize(complexRestrictionTypeTestElement);
+        testSerializeDeserialize(complexRestrictionTypeTestElement, false);
 
     }
 
@@ -104,6 +104,6 @@ public class SimpleRestrictionTest extends AbstractTestCase {
         address.setZip(ziptype);
         ziptype.setZip_type0("C");
 
-        testSerializeDeserialize(personElement);
+        testSerializeDeserialize(personElement, false);
     }
 }

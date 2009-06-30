@@ -51,6 +51,6 @@ public class TestInnerParticleExtension extends AbstractTestCase {
 
         testElement.setChildElement(childElement_type0);
 
-        testSerializeDeserialize(testElement);
+        testSerializeDeserialize(testElement, false);
     }
 }

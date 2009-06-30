@@ -26,14 +26,14 @@ public class BooleanTest extends AbstractTestCase {
     public void testBooleanTest1() throws Exception {
         TestBoolean1 testBoolean = new TestBoolean1();
         testBoolean.setTestBoolean1(true);
-        testSerializeDeserialize(testBoolean);
+        testSerializeDeserialize(testBoolean, false);
     }
 
     public void testBooleanTest2() throws Exception {
         TestBoolean2 testBoolean = new TestBoolean2();
         testBoolean.setParam1(false);
         testBoolean.setAttribute1(true);
-        testSerializeDeserialize(testBoolean);
+        testSerializeDeserialize(testBoolean, false);
     }
 
 }

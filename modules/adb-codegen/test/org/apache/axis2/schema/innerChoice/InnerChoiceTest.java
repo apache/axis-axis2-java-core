@@ -43,7 +43,7 @@ public class InnerChoiceTest extends AbstractTestCase {
         expectedTestInnerSequence1Choice_type0.setChoice2(5);
         expectedSequence.setTestInnerSequence1Choice_type0(expectedTestInnerSequence1Choice_type0);
         
-        testSerializeDeserialize(testSequence, expectedSequence);
+        testSerializeDeserialize(testSequence, expectedSequence, false);
     }
 
     public void testInnerChoice21() throws Exception {
@@ -54,7 +54,7 @@ public class InnerChoiceTest extends AbstractTestCase {
         testInnerSequence2Choice_type1.setChoice1(new String[]{"choice1", "choice2"});
         testSequence.setTestInnerSequence2Choice_type0(testInnerSequence2Choice_type1);
 
-        testSerializeDeserialize(testSequence);
+        testSerializeDeserialize(testSequence, false);
     }
 
     public void testInnerChoice22() throws Exception {
@@ -65,7 +65,7 @@ public class InnerChoiceTest extends AbstractTestCase {
         testInnerSequence2Choice_type1.setChoice2(new int[]{2, 4});
         testSequence.setTestInnerSequence2Choice_type0(testInnerSequence2Choice_type1);
 
-        testSerializeDeserialize(testSequence);
+        testSerializeDeserialize(testSequence, false);
     }
 
     public void testInnerChoice31() throws Exception {
@@ -76,7 +76,7 @@ public class InnerChoiceTest extends AbstractTestCase {
         testInnerSequence3Choice_type0.setChoice1(new String[]{"choice1", null, "choice2"});
         testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
-        testSerializeDeserialize(testSequence);
+        testSerializeDeserialize(testSequence, false);
     }
 
     public void testInnerChoice32() throws Exception {
@@ -87,6 +87,6 @@ public class InnerChoiceTest extends AbstractTestCase {
         testInnerSequence3Choice_type0.setChoice2(new int[]{2, Integer.MIN_VALUE, 6});
         testSequence.setTestInnerSequence3Choice_type0(testInnerSequence3Choice_type0);
 
-        testSerializeDeserialize(testSequence);
+        testSerializeDeserialize(testSequence, false);
     }
 }

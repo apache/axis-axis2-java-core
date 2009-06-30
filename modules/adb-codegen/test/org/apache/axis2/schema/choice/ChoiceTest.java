@@ -30,6 +30,6 @@ public class ChoiceTest extends AbstractTestCase {
         
         TestChoice expectedResult = new TestChoice();
         expectedResult.setChoice2(5);
-        testSerializeDeserialize(testChoice, expectedResult);
+        testSerializeDeserialize(testChoice, expectedResult, false);
     }
 }

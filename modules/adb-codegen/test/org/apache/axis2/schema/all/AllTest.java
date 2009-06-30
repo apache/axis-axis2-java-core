@@ -28,6 +28,6 @@ public class AllTest extends AbstractTestCase {
         update.setArg0("test");
         update.setArg1(true);
         update.setId(2);
-        testSerializeDeserialize(update);
+        testSerializeDeserialize(update, false);
     }
 }

@@ -195,12 +195,22 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserialize(bean, bean);
     }
     
+    public static void testSerializeDeserialize(ADBBean bean, boolean testGetPullParser) throws Exception {
+        testSerializeDeserialize(bean, bean, testGetPullParser);
+    }
+    
     public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult) throws Exception {
+        testSerializeDeserialize(bean, expectedResult, true);
+    }
+    
+    public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult, boolean testGetPullParser) throws Exception {
         testSerializeDeserialize1(bean, expectedResult);
         testSerializeDeserialize2(bean, expectedResult);
         
-        // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
-//        testSerializeDeserialize3(bean, expectedResult);
+        if (testGetPullParser) {
+            // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
+            testSerializeDeserialize3(bean, expectedResult);
+        }
         
         testSerializeDeserialize4(bean, expectedResult);
     }

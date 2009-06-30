@@ -34,7 +34,7 @@ public class ComplexExtenstionTest extends AbstractTestCase {
         extendedComplexType.setParentElement1("test1");
         extendedComplexType.setParentElement2("test2");
 
-        testSerializeDeserialize(testComplexElement);
+        testSerializeDeserialize(testComplexElement, false);
 
     }
 }
