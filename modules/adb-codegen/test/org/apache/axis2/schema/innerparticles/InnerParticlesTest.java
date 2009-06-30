@@ -145,34 +145,34 @@ public class InnerParticlesTest extends AbstractTestCase {
         testSerializeDeserialize(testInnerParticle5, false);
     }
 
-    public void testIntterParticalExtension() throws Exception {
-         TestInnterParticleExtension testInnterParticleExtension = new TestInnterParticleExtension();
+    public void testIntterParticleExtension() throws Exception {
+        TestInnerParticleExtension testInnerParticleExtension = new TestInnerParticleExtension();
 
-        TestInnterParticleExtensionChildComplexType testInnterParticleExtensionChildComplexType =
-                new TestInnterParticleExtensionChildComplexType();
-        testInnterParticleExtension.setTestInnterParticleExtension(testInnterParticleExtensionChildComplexType);
+        TestInnerParticleExtensionChildComplexType testInnerParticleExtensionChildComplexType =
+                new TestInnerParticleExtensionChildComplexType();
+        testInnerParticleExtension.setTestInnerParticleExtension(testInnerParticleExtensionChildComplexType);
 
-        TestInnterParticleExtensionParentComplexTypeChoice_type0 testInnterParticleExtensionParentComplexTypeChoice_type0 =
-                new TestInnterParticleExtensionParentComplexTypeChoice_type0();
-        testInnterParticleExtensionChildComplexType.setTestInnterParticleExtensionParentComplexTypeChoice_type0(testInnterParticleExtensionParentComplexTypeChoice_type0);
+        TestInnerParticleExtensionParentComplexTypeChoice_type0 testInnerParticleExtensionParentComplexTypeChoice_type0 =
+                new TestInnerParticleExtensionParentComplexTypeChoice_type0();
+        testInnerParticleExtensionChildComplexType.setTestInnerParticleExtensionParentComplexTypeChoice_type0(testInnerParticleExtensionParentComplexTypeChoice_type0);
 
-        testInnterParticleExtensionParentComplexTypeChoice_type0.setParam1("param1");
-        testInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
+        testInnerParticleExtensionParentComplexTypeChoice_type0.setParam1("param1");
+        testInnerParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
 
         
-        TestInnterParticleExtension expectedTestInnterParticleExtension = new TestInnterParticleExtension();
+        TestInnerParticleExtension expectedTestInnerParticleExtension = new TestInnerParticleExtension();
 
-        TestInnterParticleExtensionChildComplexType expectedTestInnterParticleExtensionChildComplexType =
-                new TestInnterParticleExtensionChildComplexType();
-        expectedTestInnterParticleExtension.setTestInnterParticleExtension(expectedTestInnterParticleExtensionChildComplexType);
+        TestInnerParticleExtensionChildComplexType expectedTestInnerParticleExtensionChildComplexType =
+                new TestInnerParticleExtensionChildComplexType();
+        expectedTestInnerParticleExtension.setTestInnerParticleExtension(expectedTestInnerParticleExtensionChildComplexType);
 
-        TestInnterParticleExtensionParentComplexTypeChoice_type0 expectedTestInnterParticleExtensionParentComplexTypeChoice_type0 =
-                new TestInnterParticleExtensionParentComplexTypeChoice_type0();
-        expectedTestInnterParticleExtensionChildComplexType.setTestInnterParticleExtensionParentComplexTypeChoice_type0(expectedTestInnterParticleExtensionParentComplexTypeChoice_type0);
+        TestInnerParticleExtensionParentComplexTypeChoice_type0 expectedTestInnerParticleExtensionParentComplexTypeChoice_type0 =
+                new TestInnerParticleExtensionParentComplexTypeChoice_type0();
+        expectedTestInnerParticleExtensionChildComplexType.setTestInnerParticleExtensionParentComplexTypeChoice_type0(expectedTestInnerParticleExtensionParentComplexTypeChoice_type0);
 
-        expectedTestInnterParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
+        expectedTestInnerParticleExtensionParentComplexTypeChoice_type0.setParam2("param2");
         
-        testSerializeDeserialize(testInnterParticleExtension, expectedTestInnterParticleExtension, false);
+        testSerializeDeserialize(testInnerParticleExtension, expectedTestInnerParticleExtension, false);
     }
 
     public void testTestComplexTypeElement() throws Exception {
