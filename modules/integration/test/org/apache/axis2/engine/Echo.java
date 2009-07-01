@@ -38,7 +38,12 @@ public class Echo {
     }
 
     public void echoOMElementNoResponse(OMElement omEle) {
+        System.setProperty("echoOMElementNoResponse", "echoOMElementNoResponse");
         log.info("echoOMElementNoResponse service called.");
+    }
+
+     public void echoWithExeption(OMElement omEle) throws Exception {
+        throw new Exception("Invoked the service");
     }
 
     public OMElement echoOMElement(OMElement omEle) {

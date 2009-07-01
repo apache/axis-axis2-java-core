@@ -50,7 +50,7 @@ public class AxisOperationFactory implements WSDLConstants {
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY : {
-                abOpdesc = new InOnlyAxisOperation();
+                abOpdesc = new InOutAxisOperation();
                 abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY);
                 break;
             }
