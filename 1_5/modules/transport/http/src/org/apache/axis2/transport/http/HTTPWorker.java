@@ -59,7 +59,6 @@ public class HTTPWorker implements Worker {
             final AxisHttpRequest request,
             final AxisHttpResponse response,
             final MessageContext msgContext) throws HttpException, IOException {
-
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
         final String servicePath = configurationContext.getServiceContextPath();
         final String contextPath =

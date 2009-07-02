@@ -76,6 +76,11 @@ public class TransportUtils {
      */
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
                                                  boolean detach) throws AxisFault {
+//        final SOAPEnvelope envelope = msgContext.getEnvelope();
+//        if (envelope != null) {
+//            if (envelope.isComplete())
+//                return envelope;
+//        }
         try {
             InputStream inStream = (InputStream) msgContext
                     .getProperty(MessageContext.TRANSPORT_IN);

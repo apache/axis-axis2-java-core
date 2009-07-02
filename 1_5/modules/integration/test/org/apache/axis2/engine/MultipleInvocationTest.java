@@ -78,6 +78,7 @@ public class MultipleInvocationTest extends UtilServerBasedTestCase implements T
         options.setTo(targetEPR);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setCallTransportCleanup(true);
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
