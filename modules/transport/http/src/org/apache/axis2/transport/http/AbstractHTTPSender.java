@@ -26,6 +26,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
@@ -48,6 +49,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -477,51 +479,36 @@ public abstract class AbstractHTTPSender {
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
         HttpClient httpClient;
-        Object reuse = msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
-        if (reuse == null) {
-            reuse = msgContext.getConfigurationContext().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
-        }
-        if (reuse != null && JavaUtils.isTrueExplicitly(reuse)) {
-            httpClient = (HttpClient) msgContext.getOptions().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+        final ConfigurationContext configContext = msgContext.getConfigurationContext();
+        synchronized (lock) {
+            httpClient = (HttpClient) configContext.getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
             if (httpClient == null) {
-                httpClient = (HttpClient) msgContext.getConfigurationContext()
-                        .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-            }
-            if (httpClient != null)
-                return httpClient;
-            MultiThreadedHttpConnectionManager connectionManager =
-                new MultiThreadedHttpConnectionManager();
-            httpClient = new HttpClient(connectionManager);
-            msgContext.getConfigurationContext()
-                .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
-        } else {
-            HttpConnectionManager connManager =
-                    (HttpConnectionManager) msgContext.getProperty(
-                            HTTPConstants.MULTITHREAD_HTTP_CONNECTION_MANAGER);
-            if (connManager == null) {
-                connManager =
-                        (HttpConnectionManager) msgContext.getProperty(
-                                HTTPConstants.MUTTITHREAD_HTTP_CONNECTION_MANAGER);
-            }
-            if(connManager != null){
-                httpClient = new HttpClient(connManager);
-            } else {
-                //Multi threaded http connection manager has set as the default 
-                connManager = new MultiThreadedHttpConnectionManager();
-                httpClient = new HttpClient(connManager);
-            }
-        }
+                log.trace("Making new ConnectionManager");
+                HttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
 
-        // Get the timeout values set in the runtime
-        initializeTimeouts(msgContext, httpClient);
+                // In case we need to set any params, do it here, but for now use defaults.
+//                HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+//                params.setMaxConnectionsPerHost(HostConfiguration.ANY_HOST_CONFIGURATION, 200);
+//                etc...
+//                connManager.setParams(params);
+
+                httpClient = new HttpClient(connManager);
+                configContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
+            }
+
+            // Get the timeout values set in the runtime
+            initializeTimeouts(msgContext, httpClient);
+        }
         return httpClient;
     }
 
+    static final Object lock = new Object();
     protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
                                  HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
 
-        msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
+        if (!msgContext.getOptions().isUseSeparateListener())
+            msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
 
         // set the custom headers, if available
         addCustomHeaders(method, msgContext);

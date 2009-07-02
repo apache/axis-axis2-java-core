@@ -30,8 +30,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -39,19 +38,18 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.threadpool.ThreadPool;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AsyncService2Test extends UtilServerBasedTestCase implements TestConstants {
 
@@ -61,13 +59,18 @@ public class AsyncService2Test extends UtilServerBasedTestCase implements TestCo
     EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
 //            "http://127.0.0.1:" + 5556
-                    + "/axis2/services/EchoXMLService/echoOMElement");
++ "/axis2/services/EchoXMLService/echoOMElement");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
     protected ServiceContext serviceContext;
     protected AxisService service;
-    private boolean finish = false;
+    Exception error;
+    // A (synchronized) place to hold the responses
+    final Map<String, String> responses =
+            Collections.synchronizedMap(new HashMap<String, String>());
+
+    protected final String PREFIX_TEXT = "Request number ";
 
     public static Test suite() {
         return getTestSetup(new TestSuite(AsyncService2Test.class));
@@ -87,10 +90,8 @@ public class AsyncService2Test extends UtilServerBasedTestCase implements TestCo
     }
 
     private static final int MILLISECONDS = 1000;
-    private static final Integer TIMEOUT = new Integer(
-            200 * MILLISECONDS);
-    private int counter = 0;
-    private static final int MAX_REQUESTS = 10;
+    private static final Integer TIMEOUT = 200 * MILLISECONDS;
+    private static final int MAX_REQUESTS = 9;
 
     public void testEchoXMLCompleteASyncWithLimitedNumberOfConnections() throws Exception {
         AxisService service =
@@ -98,26 +99,10 @@ public class AsyncService2Test extends UtilServerBasedTestCase implements TestCo
                                                    Echo.class.getName(),
                                                    operationName);
 
-        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
-        HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
-        // Maximum one socket connection to a specific host
-        connectionManagerParams.setDefaultMaxConnectionsPerHost(1);
-        connectionManagerParams.setTcpNoDelay(true);
-        connectionManagerParams.setStaleCheckingEnabled(true);
-        connectionManagerParams.setLinger(0);
-        connectionManager.setParams(connectionManagerParams);
-
-        HttpClient httpClient = new HttpClient(connectionManager);
-
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
         // Use max of 3 threads for the async thread pool
         configcontext.setThreadPool(new ThreadPool(1, 3));
-        configcontext.setProperty(HTTPConstants.REUSE_HTTP_CLIENT,
-                Boolean.TRUE);
-        configcontext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT,
-                httpClient);
-
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
         ServiceClient sender = null;
@@ -133,24 +118,49 @@ public class AsyncService2Test extends UtilServerBasedTestCase implements TestCo
             options.setProperty(HTTPConstants.SO_TIMEOUT, TIMEOUT);
             options.setProperty(HTTPConstants.CONNECTION_TIMEOUT, TIMEOUT);
             options.setProperty(HTTPConstants.REUSE_HTTP_CLIENT,
-                    Boolean.TRUE);
+                                Boolean.TRUE);
             options.setProperty(HTTPConstants.AUTO_RELEASE_CONNECTION,
-                    Boolean.TRUE);
+                                Boolean.TRUE);
+//            options.setProperty(ServiceClient.AUTO_OPERATION_CLEANUP, true);
 
+            AxisCallback callback = new AxisCallback() {
 
-            Callback callback = new Callback() {
-                public void onComplete(AsyncResult result) {
-                    TestingUtils.compareWithCreatedOMElement(
-                            result.getResponseEnvelope().getBody()
-                                    .getFirstElement());
-                    System.out.println("result = " + result.getResponseEnvelope().getBody()
-                            .getFirstElement());
-                    counter++;
+                public void onMessage(MessageContext msgContext) {
+                    final OMElement responseElement =
+                            msgContext.getEnvelope().getBody().getFirstElement();
+                    assertNotNull(responseElement);
+                    String textValue = responseElement.getFirstElement().getText();
+                    assertTrue(textValue.startsWith(PREFIX_TEXT));
+                    String whichOne = textValue.substring(PREFIX_TEXT.length());
+                    assertNull(responses.get(whichOne));
+                    responses.put(whichOne, textValue);
+                    synchronized (responses) {
+                        if (responses.size() == MAX_REQUESTS) {
+                            // All done!
+                            responses.notifyAll();
+                        }
+                    }
+                }
+
+                public void onFault(MessageContext msgContext) {
+                    // Whoops.
+                    synchronized (responses) {
+                        if (error != null) return; // Only take first error
+                        error = msgContext.getEnvelope().getBody().getFault().getException();
+                        responses.notify();
+                    }
+                }
+
+                public void onComplete() {
                 }
 
                 public void onError(Exception e) {
                     log.info(e.getMessage());
-                    counter++;
+                    synchronized (responses) {
+                        if (error != null) return; // Only take first error
+                        error = e;
+                        responses.notify();
+                    }
                 }
             };
 
@@ -160,20 +170,19 @@ public class AsyncService2Test extends UtilServerBasedTestCase implements TestCo
                 OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
                 OMElement method = fac.createOMElement("echoOMElement", omNs);
                 OMElement value = fac.createOMElement("myValue", omNs);
-                value.setText("Isaac Asimov, The Foundation Trilogy");
+                value.setText(PREFIX_TEXT + i);
                 method.addChild(value);
                 sender.sendReceiveNonBlocking(operationName, method, callback);
-                System.out.println("sent the request # : " + i);
+                log.trace("sent the request # : " + i);
             }
-            System.out.print("waiting");
-            int index = 0;
-            while (counter < MAX_REQUESTS) {
-                System.out.print('.');
-                Thread.sleep(1000);
-                index++;
-                if (index > 60) {
-                    throw new AxisFault(
-                            "Server was shutdown as the async response take too long to complete");
+            log.trace("waiting (max 1min)");
+            synchronized (responses) {
+                responses.wait(60 * 1000);
+                // Someone kicked us, so either we have a problem
+                if (responses.size() < MAX_REQUESTS) {
+                    if (error != null)
+                        throw error;
+                    throw new AxisFault("Timeout, did not receive all responses.");
                 }
             }
         } finally {

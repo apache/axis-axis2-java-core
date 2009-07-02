@@ -111,6 +111,7 @@ public class HTTPSender extends AbstractHTTPSender {
 
     private void cleanup(MessageContext msgContext, HttpMethod method) {
         if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
+            log.trace("AutoReleasing " + method);
             method.releaseConnection();
         }
     }
@@ -165,6 +166,9 @@ public class HTTPSender extends AbstractHTTPSender {
 */
 
         PostMethod postMethod = new PostMethod();
+        if (log.isTraceEnabled()) {
+            log.trace(Thread.currentThread() + " PostMethod " + postMethod + " / " + httpClient);
+        }
         MessageFormatter messageFormatter =
                 populateCommonProperties(msgContext, url, postMethod, httpClient, soapActionString);
 
@@ -192,6 +196,11 @@ public class HTTPSender extends AbstractHTTPSender {
             log.info("Unable to sendViaPost to url[" + url + "]", e);
             throw AxisFault.makeFault(e);
         } finally {
+            // If we're a dual-channel request, just auto-release the connection so it gets
+            // cleaned up and avoids starvation problems.
+            // TODO: Confirm this is OK with WS-RM, fix if not!
+            if (msgContext.getOptions().isUseSeparateListener())
+                msgContext.setProperty(HTTPConstants.AUTO_RELEASE_CONNECTION, true);
             cleanup(msgContext, postMethod);
         }
     }
@@ -259,8 +268,8 @@ public class HTTPSender extends AbstractHTTPSender {
      */
     private void handleResponse(MessageContext msgContext,
                                 HttpMethodBase method) throws IOException {
-
         int statusCode = method.getStatusCode();
+        log.trace("Handling response - " + statusCode);
         if (statusCode == HttpStatus.SC_OK) {
             processResponse(method, msgContext);
         } else if (statusCode == HttpStatus.SC_ACCEPTED) {
