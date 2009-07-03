@@ -86,6 +86,7 @@ public class CodeGenerationUtility {
             }
 
             final Map schemaToInputSourceMap = new HashMap();
+            final Map<String, StringBuffer> publicIDToStringMap = new HashMap<String, StringBuffer>();
 
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
@@ -138,6 +139,28 @@ public class CodeGenerationUtility {
                         if (systemId != null){
                             returnInputSource = new InputSource(systemId);
                             returnInputSource.setSystemId(systemId);
+                        }
+                    }
+
+                    if (returnInputSource == null) {
+                        if (publicId != null) {
+
+                            if (!publicIDToStringMap.containsKey(publicId)) {
+                                URL url = new URL(publicId);
+                                BufferedReader bufferedReader =
+                                        new BufferedReader(new InputStreamReader(url.openStream()));
+                                StringBuffer stringBuffer = new StringBuffer();
+                                String str = null;
+                                while ((str = bufferedReader.readLine()) != null) {
+                                    stringBuffer.append(str);
+                                }
+                                publicIDToStringMap.put(publicId, stringBuffer);
+                            }
+
+                            String schemaString = publicIDToStringMap.get(publicId).toString();
+                            returnInputSource = new InputSource(new StringReader(schemaString));
+                            returnInputSource.setPublicId(publicId);
+                            returnInputSource.setSystemId(publicId);
                         }
                     }
                     return returnInputSource;
