@@ -1389,6 +1389,282 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                 return dataSource;
             }
 
+     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName)
+        throws org.apache.axis2.databinding.ADBException{
+
+        <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
+         (<xsl:value-of select="@package"/>.<xsl:value-of select="@name"/>)beanObject;
+
+        <xsl:choose>
+            <xsl:when test="@type or @anon">
+                 java.util.ArrayList elementList = new java.util.ArrayList();
+                 java.util.ArrayList attribList = new java.util.ArrayList();
+
+                <xsl:for-each select="property[not(@attribute)]">
+                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                    <xsl:variable name="varName">bean.local<xsl:value-of select="@javaname"/></xsl:variable>
+                    <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
+                    <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                    <xsl:variable name="settingTracker">bean.local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
+
+
+                    <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="(@ours or @default) and not(@array)">
+                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                            <!-- Arraylist can handle null's -->
+                            <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    elementList.add(<xsl:value-of select="$varName"/>==null?null:
+                                    <xsl:value-of select="$varName"/>);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (<xsl:value-of select="$varName"/>==null){
+                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    }
+                                    elementList.add(<xsl:value-of select="$varName"/>);
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:when test="(@ours or @default) and @array">
+                             if (<xsl:value-of select="$varName"/>!=null) {
+                                 for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+
+                                    if (<xsl:value-of select="$varName"/>[i] != null){
+                                         elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
+                                         elementList.add(<xsl:value-of select="$varName"/>[i]);
+                                    } else {
+                                        <xsl:choose>
+                                            <xsl:when test="@nillable">
+                                                elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
+                                                elementList.add(null);
+                                            </xsl:when>
+                                            <xsl:when test="$min=0">
+                                                // nothing to do
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null !!");
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    }
+
+                                 }
+                             } else {
+                                 <xsl:choose>
+                                    <xsl:when test="@nillable">
+                                        elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
+                                        elementList.add(<xsl:value-of select="$varName"/>);
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                             }
+
+                        </xsl:when>
+                        <!-- handle non ADB arrays - Not any however -->
+                        <xsl:when test="@array and not(@any)">
+                            if (<xsl:value-of select="$varName"/>!=null){
+                                  for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                                      <xsl:if test="not(@primitive)">
+                                         if (<xsl:value-of select="$varName"/>[i] != null){
+                                          elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                              "<xsl:value-of select="$propertyName"/>"));
+                                          elementList.add(
+                                          org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                          } else {
+                                             <xsl:choose>
+                                                <xsl:when test="@nillable">
+                                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                              "<xsl:value-of select="$propertyName"/>"));
+                                                    elementList.add(null);
+                                                </xsl:when>
+                                                <xsl:when test="$min=0">
+                                                    // have to do nothing
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                          }
+                                      </xsl:if>
+                                      <xsl:if test="@primitive">
+                                          elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                                                                       "<xsl:value-of select="$propertyName"/>"));
+                                          elementList.add(
+                                          org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+
+                                      </xsl:if>
+
+                                  }
+                            } else {
+                              <xsl:choose>
+                                <xsl:when test="@nillable">
+                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                              "<xsl:value-of select="$propertyName"/>"));
+                                    elementList.add(null);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                </xsl:otherwise>
+                               </xsl:choose>
+                            }
+
+                        </xsl:when>
+
+                         <!-- handle non ADB arrays  - Any case  - any may not be
+                         nillable -->
+                        <xsl:when test="@array and @any">
+                            if (<xsl:value-of select="$varName"/> != null) {
+                                for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                                    if (<xsl:value-of select="$varName"/>[i] != null){
+                                       elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
+                                      elementList.add(
+                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                    } else {
+                                        <xsl:choose>
+                                            <xsl:when test="$min=0">
+                                                // have to do nothing
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    }
+
+                                }
+                            } else {
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                            }
+                        </xsl:when>
+                        <!-- handle any - non array case-->
+                         <xsl:when test="@any">
+                            if (<xsl:value-of select="$varName"/> != null){
+                                elementList.add(org.apache.axis2.databinding.utils.Constants.OM_ELEMENT_KEY);
+                                elementList.add(<xsl:value-of select="$varName"/>);
+                            } else {
+                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                            }
+                        </xsl:when>
+                        <!-- handle binary - Since it is a Datahandler, we can just add it to the list
+                          and the ADB pullparser would handle it right-->
+                         <xsl:when test="@binary">
+                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                            elementList.add(<xsl:value-of select="$varName"/>);
+                        </xsl:when>
+                        <!-- the usual case!!!!-->
+                        <xsl:otherwise>
+                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                      "<xsl:value-of select="$propertyName"/>"));
+                            <xsl:if test="@primitive">
+                                elementList.add(
+                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                            </xsl:if>
+                            <xsl:if test="not(@primitive)">
+                                 <xsl:choose>
+                                    <xsl:when test="@nillable">
+                                         elementList.add(<xsl:value-of select="$varName"/>==null?null:
+                                         org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        if (<xsl:value-of select="$varName"/> != null){
+                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                        } else {
+                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                        }
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                           </xsl:if>
+
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="$min=0 or $choice">}</xsl:if>
+                </xsl:for-each>
+
+                <xsl:for-each select="property[@attribute]">
+                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
+                    <xsl:variable name="varName">bean.local<xsl:value-of select="@javaname"/></xsl:variable>
+                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                    <xsl:choose>
+                        <xsl:when test="@any and not(@array)">
+                            attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
+                            attribList.add(<xsl:value-of select="$varName"/>);
+                        </xsl:when>
+                         <xsl:when test="@any and @array">
+                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+                               attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
+                               attribList.add(<xsl:value-of select="$varName"/>[i]);
+                             }
+                         </xsl:when>
+                        <xsl:otherwise>
+                            attribList.add(
+                            new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
+                            attribList.add(
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+
+                return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
+            <!-- end of when for type & anon -->
+            </xsl:when>
+            <!-- Not a type and not anon. So it better be only one inclusion-->
+            <xsl:otherwise>
+                <!-- if the element is associated with a type, then its gonna be only one -->
+                //We can safely assume an element has only one type associated with it
+                <xsl:variable name="varName">bean.local<xsl:value-of select="property/@javaname"/></xsl:variable>
+                <xsl:variable name="nillable" select="property/@nillable"></xsl:variable>
+                <xsl:variable name="primitive" select="property/@primitive"></xsl:variable>
+                <xsl:variable name="propertyType" select="property/@type"></xsl:variable>
+
+                <xsl:choose>
+                    <!-- This better be only one!!-->
+                    <xsl:when test="property/@ours">
+
+                        <xsl:choose>
+                            <xsl:when test="$nillable">
+                                if (<xsl:value-of select="$varName"/>==null){
+                                   return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
+                                }else{
+                                   return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);
+                                }
+                            </xsl:when>
+                            <xsl:otherwise>return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="$nillable and not($primitive)">
+                                if (<xsl:value-of select="$varName"/>==null){
+                                      return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
+                                }else{
+                                   return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
+                                       new java.lang.Object[]{
+                                      org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
+                                       org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                                       },
+                                       null);
+                                }
+                            </xsl:when>
+                            <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
+                            new java.lang.Object[]{
+                            org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
+                            },
+                            null);</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+
+        }
 
         /**
         * static method to create the object
@@ -2141,282 +2417,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         }
 
 
-     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName)
-        throws org.apache.axis2.databinding.ADBException{
-
-        <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
-         (<xsl:value-of select="@package"/>.<xsl:value-of select="@name"/>)beanObject;
-
-        <xsl:choose>
-            <xsl:when test="@type or @anon">
-                 java.util.ArrayList elementList = new java.util.ArrayList();
-                 java.util.ArrayList attribList = new java.util.ArrayList();
-
-                <xsl:for-each select="property[not(@attribute)]">
-                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
-                    <xsl:variable name="varName">bean.local<xsl:value-of select="@javaname"/></xsl:variable>
-                    <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
-                    <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
-                    <xsl:variable name="settingTracker">bean.local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
-
-
-                    <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
-                    <xsl:choose>
-                        <xsl:when test="(@ours or @default) and not(@array)">
-                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                      "<xsl:value-of select="$propertyName"/>"));
-                            <!-- Arraylist can handle null's -->
-                            <xsl:choose>
-                                <xsl:when test="@nillable">
-                                    elementList.add(<xsl:value-of select="$varName"/>==null?null:
-                                    <xsl:value-of select="$varName"/>);
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    if (<xsl:value-of select="$varName"/>==null){
-                                         throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                    }
-                                    elementList.add(<xsl:value-of select="$varName"/>);
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:when>
-                        <xsl:when test="(@ours or @default) and @array">
-                             if (<xsl:value-of select="$varName"/>!=null) {
-                                 for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-
-                                    if (<xsl:value-of select="$varName"/>[i] != null){
-                                         elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                          "<xsl:value-of select="$propertyName"/>"));
-                                         elementList.add(<xsl:value-of select="$varName"/>[i]);
-                                    } else {
-                                        <xsl:choose>
-                                            <xsl:when test="@nillable">
-                                                elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                          "<xsl:value-of select="$propertyName"/>"));
-                                                elementList.add(null);
-                                            </xsl:when>
-                                            <xsl:when test="$min=0">
-                                                // nothing to do
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null !!");
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    }
-
-                                 }
-                             } else {
-                                 <xsl:choose>
-                                    <xsl:when test="@nillable">
-                                        elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                          "<xsl:value-of select="$propertyName"/>"));
-                                        elementList.add(<xsl:value-of select="$varName"/>);
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                             }
-
-                        </xsl:when>
-                        <!-- handle non ADB arrays - Not any however -->
-                        <xsl:when test="@array and not(@any)">
-                            if (<xsl:value-of select="$varName"/>!=null){
-                                  for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                                      <xsl:if test="not(@primitive)">
-                                         if (<xsl:value-of select="$varName"/>[i] != null){
-                                          elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                              "<xsl:value-of select="$propertyName"/>"));
-                                          elementList.add(
-                                          org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-                                          } else {
-                                             <xsl:choose>
-                                                <xsl:when test="@nillable">
-                                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                              "<xsl:value-of select="$propertyName"/>"));
-                                                    elementList.add(null);
-                                                </xsl:when>
-                                                <xsl:when test="$min=0">
-                                                    // have to do nothing
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                          }
-                                      </xsl:if>
-                                      <xsl:if test="@primitive">
-                                          elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                                                                       "<xsl:value-of select="$propertyName"/>"));
-                                          elementList.add(
-                                          org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-
-                                      </xsl:if>
-
-                                  }
-                            } else {
-                              <xsl:choose>
-                                <xsl:when test="@nillable">
-                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                              "<xsl:value-of select="$propertyName"/>"));
-                                    elementList.add(null);
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                </xsl:otherwise>
-                               </xsl:choose>
-                            }
-
-                        </xsl:when>
-
-                         <!-- handle non ADB arrays  - Any case  - any may not be
-                         nillable -->
-                        <xsl:when test="@array and @any">
-                            if (<xsl:value-of select="$varName"/> != null) {
-                                for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                                    if (<xsl:value-of select="$varName"/>[i] != null){
-                                       elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                          "<xsl:value-of select="$propertyName"/>"));
-                                      elementList.add(
-                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-                                    } else {
-                                        <xsl:choose>
-                                            <xsl:when test="$min=0">
-                                                // have to do nothing
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    }
-
-                                }
-                            } else {
-                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                            }
-                        </xsl:when>
-                        <!-- handle any - non array case-->
-                         <xsl:when test="@any">
-                            if (<xsl:value-of select="$varName"/> != null){
-                                elementList.add(org.apache.axis2.databinding.utils.Constants.OM_ELEMENT_KEY);
-                                elementList.add(<xsl:value-of select="$varName"/>);
-                            } else {
-                               throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                            }
-                        </xsl:when>
-                        <!-- handle binary - Since it is a Datahandler, we can just add it to the list
-                          and the ADB pullparser would handle it right-->
-                         <xsl:when test="@binary">
-                            elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                      "<xsl:value-of select="$propertyName"/>"));
-                            elementList.add(<xsl:value-of select="$varName"/>);
-                        </xsl:when>
-                        <!-- the usual case!!!!-->
-                        <xsl:otherwise>
-                             elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                      "<xsl:value-of select="$propertyName"/>"));
-                            <xsl:if test="@primitive">
-                                elementList.add(
-                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                            </xsl:if>
-                            <xsl:if test="not(@primitive)">
-                                 <xsl:choose>
-                                    <xsl:when test="@nillable">
-                                         elementList.add(<xsl:value-of select="$varName"/>==null?null:
-                                         org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        if (<xsl:value-of select="$varName"/> != null){
-                                            elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                        } else {
-                                           throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                        }
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                           </xsl:if>
-
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <xsl:if test="$min=0 or $choice">}</xsl:if>
-                </xsl:for-each>
-
-                <xsl:for-each select="property[@attribute]">
-                    <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
-                    <xsl:variable name="varName">bean.local<xsl:value-of select="@javaname"/></xsl:variable>
-                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
-                    <xsl:choose>
-                        <xsl:when test="@any and not(@array)">
-                            attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
-                            attribList.add(<xsl:value-of select="$varName"/>);
-                        </xsl:when>
-                         <xsl:when test="@any and @array">
-                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-                               attribList.add(org.apache.axis2.databinding.utils.Constants.OM_ATTRIBUTE_KEY);
-                               attribList.add(<xsl:value-of select="$varName"/>[i]);
-                             }
-                         </xsl:when>
-                        <xsl:otherwise>
-                            attribList.add(
-                            new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
-                            attribList.add(
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:for-each>
-
-                return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), attribList.toArray());
-            <!-- end of when for type & anon -->
-            </xsl:when>
-            <!-- Not a type and not anon. So it better be only one inclusion-->
-            <xsl:otherwise>
-                <!-- if the element is associated with a type, then its gonna be only one -->
-                //We can safely assume an element has only one type associated with it
-                <xsl:variable name="varName">bean.local<xsl:value-of select="property/@javaname"/></xsl:variable>
-                <xsl:variable name="nillable" select="property/@nillable"></xsl:variable>
-                <xsl:variable name="primitive" select="property/@primitive"></xsl:variable>
-                <xsl:variable name="propertyType" select="property/@type"></xsl:variable>
-
-                <xsl:choose>
-                    <!-- This better be only one!!-->
-                    <xsl:when test="property/@ours">
-
-                        <xsl:choose>
-                            <xsl:when test="$nillable">
-                                if (<xsl:value-of select="$varName"/>==null){
-                                   return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
-                                }else{
-                                   return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);
-                                }
-                            </xsl:when>
-                            <xsl:otherwise>return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$nillable and not($primitive)">
-                                if (<xsl:value-of select="$varName"/>==null){
-                                      return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
-                                }else{
-                                   return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
-                                       new java.lang.Object[]{
-                                      org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
-                                       org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
-                                       },
-                                       null);
-                                }
-                            </xsl:when>
-                            <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
-                            new java.lang.Object[]{
-                            org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
-                            },
-                            null);</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:otherwise>
-        </xsl:choose>
-
-        }
 
 }
     </xsl:otherwise>
