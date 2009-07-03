@@ -65,6 +65,12 @@ public class XSD2Java {
                                        .hasArg()
                                        .withDescription(getMessage("schema.dp.description"))
                                        .create("dp"));
+        options.addOption(OptionBuilder.withDescription(getMessage("schema.h.description"))
+                                       .create("h"));
+        options.addOption(OptionBuilder.withArgName(getMessage("schema.p.argname"))
+                                       .hasArg()
+                                       .withDescription(getMessage("schema.p.description"))
+                                       .create("p"));
         CommandLineParser parser = new GnuParser();
         try {
             line = parser.parse(options, args);
@@ -141,6 +147,12 @@ public class XSD2Java {
                 compilerOptions.setMapperClassPackage(line.getOptionValue("mp"));
             }
 
+            compilerOptions.setHelperMode(line.hasOption("h"));
+            
+            if (line.hasOption("p")) {
+                compilerOptions.setPackageName(line.getOptionValue("p"));
+            }
+            
             //todo - this should come from the users preferences
              compilerOptions.setWrapClasses(false);
 
