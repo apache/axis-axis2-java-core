@@ -52,8 +52,8 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1218,13 +1218,14 @@ public class JavaBeanWriter implements BeanWriter {
 
         // first get the language specific property map
         Class<?> clazz = this.getClass();
-        InputStream xslStream;
         String templateName = javaBeanTemplateName;
         if (templateName != null) {
             try {
-                xslStream = clazz.getResourceAsStream(templateName);
+                // Use URL instead of InputStream here, so that the processor may resolve
+                // imports/includes with relative hrefs.
+                URL xsl = clazz.getResource(templateName);
                 templateCache = TransformerFactory.newInstance().newTemplates(
-                        new StreamSource(xslStream));
+                        new StreamSource(xsl.toExternalForm()));
                 templateLoaded = true;
             } catch (TransformerConfigurationException e) {
                 throw new SchemaCompilationException(SchemaCompilerMessages

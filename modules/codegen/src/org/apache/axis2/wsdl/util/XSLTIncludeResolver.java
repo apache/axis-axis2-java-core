@@ -27,7 +27,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -57,7 +57,6 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
         String templateName;
         Map externalPropertyMap = configuration.getProperties();
 
-        InputStream supporterTemplateStream;
         if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY.equals(href)) {
             //use the language name from the configuration to search the key
             //our search only consists of looking for the data binding name
@@ -78,19 +77,17 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
 
         if (externalPropertyMap.get(href) != null) {
             templateName = externalPropertyMap.get(href).toString();
-            if (templateName != null) {
-                supporterTemplateStream = getClass().getResourceAsStream(templateName);
-                return new StreamSource(supporterTemplateStream);
-            }
-        } else if ((href != null) && (!href.equals("externalTemplate"))){
-            Source source = getSourceFromTemplateName(href);
-            if ((source != null) && ((StreamSource)source).getInputStream() != null){
-                return source;
-            }
+            return getSourceFromTemplateName(templateName);
+        } else if (href.startsWith("/")) {
+            // This is a classpath resource
+            return getSourceFromTemplateName(href);
+        } else if (href.endsWith(".xsl")) {
+            // This is a relative import/include. Let the processor take care of resolving it.
+            return null;
+        } else {
+            // This is an unresolved property; return an empty source.
             return getEmptySource();
         }
-        //if nothing could be found return an empty source
-        return getEmptySource();
     }
 
     /**
@@ -101,10 +98,11 @@ public class XSLTIncludeResolver implements URIResolver, Constants {
      * @throws TransformerException
      */
     private Source getSourceFromTemplateName(String templateName) throws TransformerException {
-        InputStream supporterTemplateStream;
         if (templateName != null) {
-            supporterTemplateStream = getClass().getResourceAsStream(templateName);
-            return new StreamSource(supporterTemplateStream);
+            // Use URL instead of InputStream here, so that the processor may resolve
+            // imports/includes with relative hrefs.
+            URL templateUrl = getClass().getResource(templateName);
+            return templateUrl == null ? null : new StreamSource(templateUrl.toExternalForm());
         } else {
             throw new TransformerException(
                     CodegenMessages.getMessage("resolver.templateNotFound", templateName));
