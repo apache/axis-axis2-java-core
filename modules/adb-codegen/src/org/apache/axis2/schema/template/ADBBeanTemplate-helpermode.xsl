@@ -36,7 +36,8 @@
         <xsl:variable name="mapperClass" select="@mapperClass"/>
         <xsl:variable name="package" select="@package"/>
         <xsl:variable name="helpername"><xsl:value-of select="$name"/>Helper</xsl:variable>
-       <!-- write the class header. this should be done only when unwrapped -->
+
+        <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
 /**
@@ -47,6 +48,7 @@
  */
 
             package <xsl:value-of select="@package"/>;
+
             /**
             *  <xsl:value-of select="$name"/> bean class
             */
@@ -146,7 +148,7 @@
                </xsl:when>
                 <xsl:otherwise>
                    <xsl:choose>
-                      <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged)) and (not(@rewrite))">
+                       <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged)) and (not(@rewrite))">
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
 
@@ -461,53 +463,51 @@
                             </xsl:if>
 
                                <xsl:choose>
-                            <xsl:when test="(@restrictionBaseType)">
-                               <xsl:choose>
-                                <xsl:when test="(@patternFacet)">
-                                    if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new org.apache.axis2.databinding.ADBException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@lenFacet)">
-                                    if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new org.apache.axis2.databinding.ADBException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
+                                    <xsl:when test="(@restrictionBaseType)">
+                                       <xsl:choose>
+                                        <xsl:when test="(@patternFacet)">
+                                            if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new org.apache.axis2.databinding.ADBException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@lenFacet)">
+                                            if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new org.apache.axis2.databinding.ADBException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
+                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt; param.length()) </xsl:if>
+                                              <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (param.length() &gt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new org.apache.axis2.databinding.ADBException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
+                                            if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new org.apache.axis2.databinding.ADBException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                             this.<xsl:value-of select="$varName"/>=param;
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    </xsl:when>
 
-                                    if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt; param.length()) </xsl:if>
-                                        <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (param.length() &gt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new org.apache.axis2.databinding.ADBException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
-                                    if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
-
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new org.apache.axis2.databinding.ADBException();
-                                    }
-                                </xsl:when>
-                                <xsl:otherwise>
-                                     this.<xsl:value-of select="$varName"/>=param;
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            </xsl:when>
-
-                            <xsl:otherwise>
-                                    this.<xsl:value-of select="$varName"/>=param;
-                            </xsl:otherwise>
-                            </xsl:choose>
+                                    <xsl:otherwise>
+                                            this.<xsl:value-of select="$varName"/>=param;
+                                    </xsl:otherwise>
+                                </xsl:choose>
 
                                }
                             </xsl:otherwise>
@@ -542,20 +542,20 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
         }
 
-        /**
-            * isReaderMTOMAware
-            * @return true if the reader supports MTOM
-            */
-          public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
-               boolean isReaderMTOMAware = false;
-               <!-- workaround for the issues in the wstx reader!-->
-               try{
-                 isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
-               }catch(java.lang.IllegalArgumentException e){
-                 isReaderMTOMAware = false;
-               }
-               return isReaderMTOMAware;
-          }
+    /**
+     * isReaderMTOMAware
+     * @return true if the reader supports MTOM
+     */
+    public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+        boolean isReaderMTOMAware = false;
+        <!-- workaround for the issues in the wstx reader!-->
+        try{
+          isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
+        }catch(java.lang.IllegalArgumentException e){
+          isReaderMTOMAware = false;
+        }
+        return isReaderMTOMAware;
+    }
             <!-- ######################################################################################### -->
             <!-- get OMElement methods that allows direct writing -->
                /**
@@ -1129,7 +1129,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                         </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
-                                <xsl:if test="not($simple)">
+                             <xsl:if test="not($simple)">
                                     namespace = "<xsl:value-of select="$namespace"/>";
                                     if (! namespace.equals("")) {
                                         prefix = xmlWriter.getPrefix(namespace);
@@ -1148,18 +1148,16 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     } else {
                                         xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                     }
-                                </xsl:if>
+                             </xsl:if>
                              <xsl:choose>
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
-
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
                                         org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$javaname"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                                         <xsl:value-of select="$javaname"/>_binary.internalSerializeAndConsume(xmlWriter);
                                     }
-
                                  </xsl:when>
                                  <xsl:otherwise>
                                     <xsl:if test="not(@primitive)">
@@ -1236,7 +1234,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:when test="$nillable">
                                       if (<xsl:value-of select="$varName"/>==null){
                                         java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-
                                         if (! namespace.equals("")) {
                                             java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
@@ -1332,7 +1329,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:if test="$primitive">
                                xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                             </xsl:if>
-                       xmlWriter.writeEndElement();
+                            xmlWriter.writeEndElement();
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -1341,55 +1338,45 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         }
 
         /**
-                  * Util method to write an attribute with the ns prefix
-                  */
-                  private void writeAttribute(java.lang.String prefix,java.lang.String namespace,java.lang.String attName,
-                                              java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-                      if (xmlWriter.getPrefix(namespace) == null) {
-                               xmlWriter.writeNamespace(prefix, namespace);
-                               xmlWriter.setPrefix(prefix, namespace);
+         * Util method to write an attribute with the ns prefix
+         */
+        private void writeAttribute(java.lang.String prefix,java.lang.String namespace,java.lang.String attName,
+                                    java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
+            if (xmlWriter.getPrefix(namespace) == null) {
+                xmlWriter.writeNamespace(prefix, namespace);
+                xmlWriter.setPrefix(prefix, namespace);
+            }
+            xmlWriter.writeAttribute(namespace,attName,attValue);
+        }
 
-                      }
+        /**
+         * Util method to write an attribute without the ns prefix
+         */
+        private void writeAttribute(java.lang.String namespace,java.lang.String attName,
+                                    java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
+            if (namespace.equals("")) {
+                xmlWriter.writeAttribute(attName,attValue);
+            } else {
+                registerPrefix(xmlWriter, namespace);
+                xmlWriter.writeAttribute(namespace,attName,attValue);
+            }
+        }
 
-                      xmlWriter.writeAttribute(namespace,attName,attValue);
-
-                 }
-
-                 /**
-                  * Util method to write an attribute without the ns prefix
-                  */
-                  private void writeAttribute(java.lang.String namespace,java.lang.String attName,
-                                              java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-                        if (namespace.equals(""))
-                      {
-                          xmlWriter.writeAttribute(attName,attValue);
-                      }
-                      else
-                      {
-                          registerPrefix(xmlWriter, namespace);
-                          xmlWriter.writeAttribute(namespace,attName,attValue);
-                      }
-                  }
-
-                 /**
-                 * Register a namespace prefix
-                 */
-                 private java.lang.String registerPrefix(javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace) throws javax.xml.stream.XMLStreamException {
-                        java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                        if (prefix == null) {
-                            prefix = createPrefix();
-
-                            while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
-                                prefix = createPrefix();
-                            }
-
-                            xmlWriter.writeNamespace(prefix, namespace);
-                            xmlWriter.setPrefix(prefix, namespace);
-                        }
-
-                        return prefix;
-                    }
+        /**
+         * Register a namespace prefix
+         */
+        private java.lang.String registerPrefix(javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace) throws javax.xml.stream.XMLStreamException {
+            java.lang.String prefix = xmlWriter.getPrefix(namespace);
+            if (prefix == null) {
+                prefix = createPrefix();
+                while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
+                    prefix = createPrefix();
+                }
+                xmlWriter.writeNamespace(prefix, namespace);
+                xmlWriter.setPrefix(prefix, namespace);
+            }
+            return prefix;
+        }
 
                  /**
                   * Create a prefix
@@ -1437,7 +1424,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                    }
                 </xsl:if>
-                  <xsl:if test="$isType or $anon">
+                <xsl:if test="$isType or $anon">
                 if (reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","type")!=null){
                   java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                         "type");
@@ -2080,7 +2067,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             int index = content.indexOf(":");
                                             java.lang.String prefix ="";
                                             java.lang.String namespaceuri ="";
-                                            if(index >0){
+                                            if(index > 0){
                                                  prefix = content.substring(0,index);
                                                  namespaceuri = reader.getNamespaceURI(prefix);
                                              }
@@ -2096,7 +2083,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             </xsl:when>
                                             <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
-                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:if>
@@ -2435,5 +2422,5 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
     </xsl:otherwise>
     </xsl:choose>
            <!-- end of main template -->
-  </xsl:template>
+    </xsl:template>
 </xsl:stylesheet>

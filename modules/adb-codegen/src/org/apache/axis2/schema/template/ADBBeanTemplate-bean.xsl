@@ -39,7 +39,8 @@
         <xsl:variable name="particleClass" select="@particleClass"/>
         <xsl:variable name="hasParticleType" select="@hasParticleType"/>
         <xsl:variable name="usewrapperclasses" select="@usewrapperclasses"/>
-    <!-- write the class header. this should be done only when unwrapped -->
+
+        <!-- write the class header. this should be done only when unwrapped -->
 
         <xsl:if test="not(not(@unwrapped) or (@skip-write))">
 /**
@@ -48,6 +49,7 @@
  * This file was auto-generated from WSDL
  * by the Apache Axis2 version: #axisVersion# #today#
  */
+
             <xsl:if test="string-length(normalize-space(@package)) > 0">
                 package <xsl:value-of select="@package"/>;
             </xsl:if>
@@ -160,12 +162,12 @@
                          * Overridden from <xsl:value-of select="$restriction"/>
                          */
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                           <xsl:if test="not(@unbound) and @array">
+                         <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
                                 throw new java.lang.RuntimeException();
                               }
                          </xsl:if>
-                           <xsl:if test="$min!=0 and @array">
+                         <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
                                 throw new java.lang.RuntimeException();
                               }
@@ -564,7 +566,6 @@
                                                     throw new java.lang.RuntimeException();
                                                 }
                                             </xsl:if>
-
                                         </xsl:when>
                                         <xsl:otherwise>
                                              this.<xsl:value-of select="$varName"/>=param;
@@ -661,11 +662,11 @@
             }
         </xsl:if>
 
-     /**
+    /**
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
      */
-   public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+    public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
         boolean isReaderMTOMAware = false;
         <!-- workaround for the issues in the wstx reader!-->
         try{
@@ -674,7 +675,7 @@
           isReaderMTOMAware = false;
         }
         return isReaderMTOMAware;
-   }
+    }
      <!-- ######################################################################################### -->
      <!-- get OMElement methods that allows direct writing -->
         /**
@@ -1241,7 +1242,7 @@
                              <xsl:if test="not($simple)">
                                     namespace = "<xsl:value-of select="$namespace"/>";
                                     writeStartElement(null, namespace, "<xsl:value-of select="$propertyName"/>", xmlWriter);
-                                </xsl:if>
+                             </xsl:if>
                              <xsl:choose>
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
@@ -1477,7 +1478,6 @@
                                                }
                             </xsl:if>
                             xmlWriter.writeEndElement();
-
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -1506,36 +1506,30 @@
             }
         }
         
-         /**
-          * Util method to write an attribute with the ns prefix
-          */
-          private void writeAttribute(java.lang.String prefix,java.lang.String namespace,java.lang.String attName,
-                                      java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-              if (xmlWriter.getPrefix(namespace) == null) {
-                       xmlWriter.writeNamespace(prefix, namespace);
-                       xmlWriter.setPrefix(prefix, namespace);
-
-              }
-
-              xmlWriter.writeAttribute(namespace,attName,attValue);
-
-         }
+        /**
+         * Util method to write an attribute with the ns prefix
+         */
+        private void writeAttribute(java.lang.String prefix,java.lang.String namespace,java.lang.String attName,
+                                    java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
+            if (xmlWriter.getPrefix(namespace) == null) {
+                xmlWriter.writeNamespace(prefix, namespace);
+                xmlWriter.setPrefix(prefix, namespace);
+            }
+            xmlWriter.writeAttribute(namespace,attName,attValue);
+        }
 
         /**
-          * Util method to write an attribute without the ns prefix
-          */
-          private void writeAttribute(java.lang.String namespace,java.lang.String attName,
-                                      java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-                if (namespace.equals(""))
-              {
-                  xmlWriter.writeAttribute(attName,attValue);
-              }
-              else
-              {
-                  registerPrefix(xmlWriter, namespace);
-                  xmlWriter.writeAttribute(namespace,attName,attValue);
-              }
-          }
+         * Util method to write an attribute without the ns prefix
+         */
+        private void writeAttribute(java.lang.String namespace,java.lang.String attName,
+                                    java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
+            if (namespace.equals("")) {
+                xmlWriter.writeAttribute(attName,attValue);
+            } else {
+                registerPrefix(xmlWriter, namespace);
+                xmlWriter.writeAttribute(namespace,attName,attValue);
+            }
+        }
 
 
            /**
@@ -1628,25 +1622,21 @@
         }
 
 
-         /**
+        /**
          * Register a namespace prefix
          */
-         private java.lang.String registerPrefix(javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace) throws javax.xml.stream.XMLStreamException {
-                java.lang.String prefix = xmlWriter.getPrefix(namespace);
-
-                if (prefix == null) {
-                    prefix = generatePrefix(namespace);
-
-                    while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
-                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-                    }
-
-                    xmlWriter.writeNamespace(prefix, namespace);
-                    xmlWriter.setPrefix(prefix, namespace);
+        private java.lang.String registerPrefix(javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace) throws javax.xml.stream.XMLStreamException {
+            java.lang.String prefix = xmlWriter.getPrefix(namespace);
+            if (prefix == null) {
+                prefix = generatePrefix(namespace);
+                while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
+                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                 }
-
-                return prefix;
+                xmlWriter.writeNamespace(prefix, namespace);
+                xmlWriter.setPrefix(prefix, namespace);
             }
+            return prefix;
+        }
 
 
   <!-- ######################################################################################### -->
@@ -2336,7 +2326,7 @@
                 java.util.Vector handledAttributes = new java.util.Vector();
                 <!-- if this is an enumeration then we have to read attributes after-->
 
-                 <xsl:for-each select="property[@attribute]">
+                <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName" select="@name"/>
                     <xsl:variable name="propertyType" select="@type"/>
                     <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
@@ -2467,7 +2457,6 @@
                     </xsl:if>
 
                 </xsl:for-each>
-
 
                 <xsl:if test="($isType or $anon) and not($simple) and not($particleClass)">
                     <!-- Skip the outer start element in order to process the subelements. -->
@@ -3289,5 +3278,5 @@
 
         }
            <!-- end of main template -->
-          </xsl:template>
+    </xsl:template>
 </xsl:stylesheet>
