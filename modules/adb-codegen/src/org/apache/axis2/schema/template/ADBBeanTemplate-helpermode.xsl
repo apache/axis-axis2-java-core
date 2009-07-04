@@ -128,10 +128,10 @@
                * Auto generated getter method
                * Overridden from <xsl:value-of select="$restriction"/>
                *
-               * @throws org.apache.axis2.databinding.ADBException
+               * @throws RuntimeException
                */
                public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-                   throw new java.lang.org.apache.axis2.databinding.ADBException("property has removed");
+                   throw new java.lang.RuntimeException("The property has been removed by restriction");
                }
 
                /**
@@ -139,10 +139,10 @@
                * Overridden from <xsl:value-of select="$restriction"/>
                *
                * @param param <xsl:value-of select="$javaName"/>
-               * @throws org.apache.axis2.databinding.ADBException
+               * @throws RuntimeException
                */
                public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                      throw new org.apache.axis2.databinding.ADBException();
+                   throw new java.lang.RuntimeException("The property has been removed by restriction");
                }
 
                </xsl:when>
@@ -160,12 +160,12 @@
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                          <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new org.apache.axis2.databinding.ADBException();
+                                throw new java.lang.RuntimeException();
                               }
                          </xsl:if>
                          <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new org.apache.axis2.databinding.ADBException();
+                                throw new java.lang.RuntimeException();
                               }
                          </xsl:if>
                          }
@@ -335,12 +335,12 @@
                               protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                              <xsl:if test="not(@unbound)">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
-                                throw new org.apache.axis2.databinding.ADBException();
+                                throw new java.lang.RuntimeException();
                               }
                               </xsl:if>
                               <xsl:if test="$min!=0">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
-                                throw new org.apache.axis2.databinding.ADBException();
+                                throw new java.lang.RuntimeException();
                               }
                               </xsl:if>
                               }
@@ -470,7 +470,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new org.apache.axis2.databinding.ADBException();
+                                                throw new java.lang.RuntimeException();
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@lenFacet)">
@@ -478,7 +478,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new org.apache.axis2.databinding.ADBException();
+                                                throw new java.lang.RuntimeException();
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
@@ -487,7 +487,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new org.apache.axis2.databinding.ADBException();
+                                                throw new java.lang.RuntimeException();
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
@@ -495,7 +495,7 @@
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
-                                                throw new org.apache.axis2.databinding.ADBException();
+                                                throw new java.lang.RuntimeException();
                                             }
                                         </xsl:when>
                                         <xsl:otherwise>

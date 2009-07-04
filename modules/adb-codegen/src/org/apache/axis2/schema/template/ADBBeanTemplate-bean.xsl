@@ -135,7 +135,7 @@
                * @throws RuntimeException
                */
                public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-                   throw new java.lang.RuntimeException();
+                   throw new java.lang.RuntimeException("The property has been removed by restriction");
                }
 
                /**
@@ -146,7 +146,7 @@
                * @throws RuntimeException
                */
                public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                      throw new java.lang.RuntimeException();
+                   throw new java.lang.RuntimeException("The property has been removed by restriction");
                }
 
                </xsl:when>
