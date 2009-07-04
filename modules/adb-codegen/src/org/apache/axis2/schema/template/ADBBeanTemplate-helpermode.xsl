@@ -529,12 +529,21 @@
     </xsl:when>
     <xsl:otherwise>
     <!--  Start of helper generation part of the template-->
-public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$helpername"/> {
+public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$helpername"/>
+        implements org.apache.axis2.databinding.ADBHelper&lt;<xsl:value-of select="$name"/>&gt; {
 
      <!-- get OMElement methods that allows direct writing. generated inside the helper class-->
      <xsl:variable name="fullyQualifiedName"><xsl:value-of select="$package"/>.<xsl:value-of select="$name"/></xsl:variable>
      <xsl:variable name="fullyQualifiedHelperName"><xsl:value-of select="$package"/>.<xsl:value-of select="$helpername"/></xsl:variable>
 
+    public static final <xsl:value-of select="$helpername"/> INSTANCE = new <xsl:value-of select="$helpername"/>();
+
+    private <xsl:value-of select="$helpername"/>() {}
+
+    public java.lang.Class&lt;<xsl:value-of select="$fullyQualifiedName"/>&gt; getBeanClass() {
+        return <xsl:value-of select="$fullyQualifiedName"/>.class;
+    }
+    
         private static java.lang.String generatePrefix(java.lang.String namespace) {
             if(namespace.equals(<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getNamespaceURI())){
                 return <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getPrefix();
@@ -564,7 +573,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                * @param factory
                * @return org.apache.axiom.om.OMElement
                */
-              public static org.apache.axiom.om.OMElement getOMElement(
+              public org.apache.axiom.om.OMElement getOMElement(
                       final <xsl:value-of select="$fullyQualifiedName"/> bean,
                       final javax.xml.namespace.QName parentQName,
                       final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
@@ -597,12 +606,17 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
         org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
+            public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                INSTANCE.serialize((<xsl:value-of select="$fullyQualifiedName"/>)bean, parentQName, factory, xmlWriter);
+            }
+        };
 
-         public void serialize(
+        return dataSource;
+    }
+            
+         public void serialize(<xsl:value-of select="$fullyQualifiedName"/> typedBean,
+                           javax.xml.namespace.QName parentQName, org.apache.axiom.om.OMFactory factory,
                            javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-
-           <xsl:value-of select="$fullyQualifiedName"/> typedBean =
-                               (<xsl:value-of select="$fullyQualifiedName"/>)bean;
 
              <xsl:choose>
             <xsl:when test="@type or @anon">
@@ -1384,16 +1398,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                   private java.lang.String createPrefix() {
                         return "ns" + (int)Math.random();
                   }
-                };
 
-                return dataSource;
-            }
-
-     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName)
+     public javax.xml.stream.XMLStreamReader getPullParser(<xsl:value-of select="@name"/> bean, javax.xml.namespace.QName qName)
         throws org.apache.axis2.databinding.ADBException{
-
-        <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
-         (<xsl:value-of select="@package"/>.<xsl:value-of select="@name"/>)beanObject;
 
         <xsl:choose>
             <xsl:when test="@type or @anon">
@@ -1632,10 +1639,10 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 if (<xsl:value-of select="$varName"/>==null){
                                    return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
                                 }else{
-                                   return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);
+                                   return <xsl:value-of select="$propertyType"/>Helper.INSTANCE.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);
                                 }
                             </xsl:when>
-                            <xsl:otherwise>return <xsl:value-of select="$propertyType"/>Helper.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);</xsl:otherwise>
+                            <xsl:otherwise>return <xsl:value-of select="$propertyType"/>Helper.INSTANCE.getPullParser(<xsl:value-of select="$varName"/>,bean.MY_QNAME);</xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1673,7 +1680,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         * Postcondition: If this object is an element, the reader is positioned at its end element
         *                If this object is a complex type, the reader is positioned at the end element of its outer element
         */
-        public static <xsl:value-of select="$fullyQualifiedName"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
+        public <xsl:value-of select="$fullyQualifiedName"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
             <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$fullyQualifiedName"/> object = new <xsl:value-of select="$fullyQualifiedName"/>();</xsl:if>
             <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
@@ -1864,7 +1871,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                   reader.next();
                                               } else {
                                             </xsl:if>
-                                                <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>Helper.parse(reader));
+                                                <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>Helper.INSTANCE.parse(reader));
                                             <xsl:if test="@nillable">}</xsl:if>
                                             //loop until we find a start element that is not part of this array
                                             boolean <xsl:value-of select="$loopBoolName"/> = false;
@@ -1889,7 +1896,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                               reader.next();
                                                           } else {
                                                         </xsl:if>
-                                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>Helper.parse(reader));
+                                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>Helper.INSTANCE.parse(reader));
                                                         <xsl:if test="@nillable">}</xsl:if>
                                                     }else{
                                                         <xsl:value-of select="$loopBoolName"/> = true;
@@ -2244,7 +2251,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                           </xsl:if>
                                       }else{
                                     </xsl:if>
-                                        object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>Helper.parse(reader));
+                                        object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>Helper.INSTANCE.parse(reader));
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>

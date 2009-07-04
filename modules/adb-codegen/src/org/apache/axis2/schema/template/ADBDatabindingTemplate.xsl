@@ -42,7 +42,7 @@
             <xsl:choose>
                     <xsl:when test="$helpermode">
                          try{
-                            return <xsl:value-of select="@type"/>Helper.getOMElement(
+                            return <xsl:value-of select="@type"/>Helper.INSTANCE.getOMElement(
                                         param,
                                         <xsl:value-of select="@type"/>.MY_QNAME,
                                         org.apache.axiom.om.OMAbstractFactory.getOMFactory());
@@ -115,7 +115,7 @@
                                org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
                                   <xsl:choose>
                                     <xsl:when test="$helpermode">
-                                        emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
+                                        emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.INSTANCE.getOMElement(
                                         wrappedType,
                                         <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                     </xsl:when>
@@ -142,7 +142,7 @@
                                                 <xsl:when test="$helpermode">
                                                     try{
                                                         org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                                                        emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
+                                                        emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.INSTANCE.getOMElement(
                                                         param,
                                                         <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                                         return emptyEnvelope;
@@ -260,7 +260,7 @@
                            <xsl:choose>
                                 <xsl:when test="$helpermode">
                                     emptyEnvelope.getBody().addChild(
-                                    <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>Helper.getOMElement(
+                                    <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>Helper.INSTANCE.getOMElement(
                                     param,
                                     <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
                                 </xsl:when>
@@ -405,7 +405,7 @@
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
                 <xsl:choose>
                     <xsl:when test="$helpermode">
-                           return <xsl:value-of select="@type"/>Helper.parse(param.getXMLStreamReaderWithoutCaching());
+                           return <xsl:value-of select="@type"/>Helper.INSTANCE.parse(param.getXMLStreamReaderWithoutCaching());
                     </xsl:when>
                     <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
                            return param;

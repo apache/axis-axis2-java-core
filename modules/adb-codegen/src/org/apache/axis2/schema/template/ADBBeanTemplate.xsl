@@ -93,7 +93,7 @@
                   "<xsl:value-of select="@shortname"/>".equals(typeName)){
                    <xsl:choose>
                        <xsl:when test="$helperMode">
-                           return  <xsl:value-of select="@classname"/>Helper.parse(reader);
+                           return  <xsl:value-of select="@classname"/>Helper.INSTANCE.parse(reader);
                        </xsl:when>
                         <xsl:otherwise>
                             return  <xsl:value-of select="@classname"/>.Factory.parse(reader);

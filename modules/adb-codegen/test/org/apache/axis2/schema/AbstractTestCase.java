@@ -29,12 +29,15 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.activation.DataHandler;
@@ -63,25 +66,25 @@ public abstract class AbstractTestCase extends TestCase {
             URI.class, Language.class, HexBinary.class
     }));
     
-    private static QName getADBBeanQName(Class<? extends ADBBean> beanClass) throws Exception {
-        return (QName)beanClass.getField("MY_QNAME").get(null);
+    private static boolean isADBBean(Class<?> beanClass) {
+        return ADBBean.class.isAssignableFrom(beanClass) || beanClass.getName().startsWith("helper.");
     }
     
-    private static <T extends ADBBean> T parse(Class<T> beanClass, XMLStreamReader reader) throws Exception {
-        for (Class<?> clazz : beanClass.getDeclaredClasses()) {
-            if (clazz.getSimpleName().equals("Factory")) {
-                return beanClass.cast(clazz.getMethod("parse", XMLStreamReader.class).invoke(null, reader));
-            }
-        }
-        return null; // We should never get here
-    }
-    
-    private static boolean isEnum(Class<? extends ADBBean> beanClass) {
+    private static boolean isEnum(Class<?> beanClass) {
         try {
             beanClass.getDeclaredField("_table_");
             return true;
         } catch (NoSuchFieldException ex) {
             return false;
+        }
+    }
+    
+    private static BeanInfo getBeanInfo(Class<?> beanClass) {
+        try {
+            return Introspector.getBeanInfo(beanClass, Object.class);
+        } catch (IntrospectionException ex) {
+            fail("Failed to introspect " + beanClass);
+            return null; // Make compiler happy
         }
     }
     
@@ -93,21 +96,14 @@ public abstract class AbstractTestCase extends TestCase {
      * @param expected
      * @param actual
      */
-    public static void assertBeanEquals(ADBBean expected, ADBBean actual) {
+    public static void assertBeanEquals(Object expected, Object actual) {
         if (expected == null) {
             assertNull(actual);
             return;
         }
         Class<?> beanClass = expected.getClass();
         assertEquals(beanClass, actual.getClass());
-        BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(beanClass, Object.class);
-        } catch (IntrospectionException ex) {
-            fail("Failed to introspect " + beanClass);
-            return; // Make compiler happy
-        }
-        for (PropertyDescriptor desc : beanInfo.getPropertyDescriptors()) {
+        for (PropertyDescriptor desc : getBeanInfo(beanClass).getPropertyDescriptors()) {
             String propertyName = desc.getName();
 //            System.out.println("Comparing property " + propertyName);
             Method readMethod = desc.getReadMethod();
@@ -141,11 +137,11 @@ public abstract class AbstractTestCase extends TestCase {
                 assertEquals("value for " + message, expected, actual);
             } else if (DataHandler.class.isAssignableFrom(type)) {
                 assertDataHandlerEquals((DataHandler)expected, (DataHandler)actual);
-            } else if (ADBBean.class.isAssignableFrom(type)) {
-                if (isEnum(((ADBBean)expected).getClass())) {
+            } else if (isADBBean(type)) {
+                if (isEnum(type)) {
                     assertSame("enum value for " + message, expected, actual);
                 } else {
-                    assertBeanEquals((ADBBean)expected, (ADBBean)actual);
+                    assertBeanEquals(expected, actual);
                 }
             } else {
                 fail("Don't know how to compare values of type " + type.getName() + " for " + message);
@@ -167,6 +163,53 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
     
+    public static Object toHelperModeBean(ADBBean bean) throws Exception {
+        Class<?> beanClass = bean.getClass();
+        Object helperModeBean = null;
+        do {
+            Class<?> helperModeBeanClass = Class.forName("helper." + beanClass.getName());
+            if (helperModeBean == null) {
+                helperModeBean = helperModeBeanClass.newInstance();
+            }
+            for (Field field : beanClass.getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers())) {
+                    field.setAccessible(true);
+                    Object value = field.get(bean);
+                    if (value instanceof ADBBean) {
+                        // Try to get the _table_ field if this is an enumeration
+                        Map<?,?> enumValues;
+                        try {
+                            Field tableField = value.getClass().getDeclaredField("_table_");
+                            tableField.setAccessible(true);
+                            enumValues = (Map<?,?>)tableField.get(null);
+                        } catch (NoSuchFieldException ex) {
+                            enumValues = null;
+                        }
+                        if (enumValues == null) {
+                            // Not an enumeration => translate is as a bean
+                            value = toHelperModeBean((ADBBean)value);
+                        } else {
+                            Field tableField = Class.forName("helper." + value.getClass().getName()).getDeclaredField("_table_");
+                            tableField.setAccessible(true);
+                            Map<?,?> destEnumValues = (Map<?,?>)tableField.get(null);
+                            for (Map.Entry<?,?> entry : enumValues.entrySet()) {
+                                if (entry.getValue() == value) {
+                                    value = destEnumValues.get(entry.getKey());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    Field destField = helperModeBeanClass.getDeclaredField(field.getName());
+                    destField.setAccessible(true);
+                    destField.set(helperModeBean, value);
+                }
+            }
+            beanClass = beanClass.getSuperclass();
+        } while (!beanClass.equals(Object.class));
+        return helperModeBean;
+    }
+    
     /**
      * Serialize a bean to XML and then deserialize the XML.
      * 
@@ -176,11 +219,11 @@ public abstract class AbstractTestCase extends TestCase {
      */
     public static ADBBean serializeDeserialize(ADBBean bean) throws Exception {
         Class<? extends ADBBean> beanClass = bean.getClass();
-        OMElement omElement = bean.getOMElement(getADBBeanQName(beanClass), OMAbstractFactory.getOMFactory());
+        OMElement omElement = bean.getOMElement(ADBBeanUtil.getQName(beanClass), OMAbstractFactory.getOMFactory());
         String omElementString = omElement.toStringWithConsume();
 //        System.out.println("om string ==> " + omElementString);
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
-        return parse(beanClass, xmlReader);
+        return ADBBeanUtil.parse(beanClass, xmlReader);
     }
     
     /**
@@ -213,54 +256,55 @@ public abstract class AbstractTestCase extends TestCase {
         }
         
         testSerializeDeserialize4(bean, expectedResult);
+        
+        try {
+            Class.forName("helper." + bean.getClass().getName());
+        } catch (ClassNotFoundException ex) {
+            // Code has not been compiled in helper mode; skip the rest of the tests.
+            return;
+        }
+        
+        testSerializeDeserialize1(toHelperModeBean(bean), toHelperModeBean(expectedResult));
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
-    private static void testSerializeDeserialize1(ADBBean bean, ADBBean expectedResult) throws Exception {
-        Class<? extends ADBBean> beanClass = bean.getClass();
-        QName qname = getADBBeanQName(beanClass);
-        OMElement omElement = bean.getOMElement(qname, OMAbstractFactory.getOMFactory());
+    private static void testSerializeDeserialize1(Object bean, Object expectedResult) throws Exception {
+        OMElement omElement = ADBBeanUtil.getOMElement(bean);
         String omElementString = omElement.toStringWithConsume();
         System.out.println(omElementString);
-        assertBeanEquals(expectedResult, parse(beanClass,
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(),
                 StAXUtils.createXMLStreamReader(new StringReader(omElementString))));
     }
     
     // Deserialization approach 2: use an Axiom tree with caching. In this case the
     // XMLStreamReader implementation is OMStAXWrapper and we test interoperability
     // between ADB and Axiom's OMStAXWrapper.
-    private static void testSerializeDeserialize2(ADBBean bean, ADBBean expectedResult) throws Exception {
-        Class<? extends ADBBean> beanClass = bean.getClass();
-        QName qname = getADBBeanQName(beanClass);
-        OMElement omElement = bean.getOMElement(qname, OMAbstractFactory.getOMFactory());
+    private static void testSerializeDeserialize2(Object bean, Object expectedResult) throws Exception {
+        OMElement omElement = ADBBeanUtil.getOMElement(bean);
         String omElementString = omElement.toStringWithConsume();
         OMElement omElement2 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(
                 new StringReader(omElementString))).getDocumentElement();
-        assertBeanEquals(expectedResult, parse(beanClass, omElement2.getXMLStreamReader()));
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement2.getXMLStreamReader()));
     }
     
     // Deserialization approach 3: use the pull parser produced by ADB.
-    private static void testSerializeDeserialize3(ADBBean bean, ADBBean expectedResult) throws Exception {
-        Class<? extends ADBBean> beanClass = bean.getClass();
-        QName qname = getADBBeanQName(beanClass);
-        assertBeanEquals(expectedResult, parse(beanClass, bean.getPullParser(qname)));
+    private static void testSerializeDeserialize3(Object bean, Object expectedResult) throws Exception {
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), ADBBeanUtil.getPullParser(bean)));
     }
     
     // Approach 4: Serialize the bean as the child of an element that declares a default namespace.
     // If ADB behaves correctly, this should not have any impact. A failure here may be an indication
     // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
-    private static void testSerializeDeserialize4(ADBBean bean, ADBBean expectedResult) throws Exception {
-        Class<? extends ADBBean> beanClass = bean.getClass();
-        QName qname = getADBBeanQName(beanClass);
+    private static void testSerializeDeserialize4(Object bean, Object expectedResult) throws Exception {
         StringWriter sw = new StringWriter();
         MTOMAwareXMLStreamWriter writer = new MTOMAwareXMLSerializer(StAXUtils.createXMLStreamWriter(sw));
         writer.writeStartElement("", "root", "urn:test");
         writer.writeDefaultNamespace("urn:test");
-        bean.serialize(qname, null, writer);
+        ADBBeanUtil.serialize(bean, writer);
         writer.writeEndElement();
         writer.flush();
         OMElement omElement3 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(new StringReader(sw.toString()))).getDocumentElement();
-        assertBeanEquals(expectedResult, parse(beanClass, omElement3.getFirstElement().getXMLStreamReader()));
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement3.getFirstElement().getXMLStreamReader()));
     }
     
     /**
@@ -271,7 +315,7 @@ public abstract class AbstractTestCase extends TestCase {
      */
     public static void assertSerializationFailure(ADBBean bean) throws Exception {
         try {
-            OMElement omElement = bean.getOMElement(getADBBeanQName(bean.getClass()), OMAbstractFactory.getOMFactory());
+            OMElement omElement = bean.getOMElement(ADBBeanUtil.getQName(bean.getClass()), OMAbstractFactory.getOMFactory());
             omElement.toStringWithConsume();
             fail("Expected ADBException");
         } catch (ADBException ex) {
