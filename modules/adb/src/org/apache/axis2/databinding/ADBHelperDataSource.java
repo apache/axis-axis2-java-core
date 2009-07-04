@@ -42,7 +42,7 @@ import java.util.HashMap;
 public abstract class ADBHelperDataSource implements OMDataSourceExt {
 
     protected QName parentQName;
-    protected Object bean;
+    private Object bean;
     protected String helperClassName;
     
     HashMap map = null;  // Map of properties

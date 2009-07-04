@@ -551,20 +551,26 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         }
         return isReaderMTOMAware;
     }
-            <!-- ######################################################################################### -->
-            <!-- get OMElement methods that allows direct writing -->
-               /**
-               *
-               * @param parentQName
-               * @param factory
-               * @return org.apache.axiom.om.OMElement
-               */
-              public org.apache.axiom.om.OMElement getOMElement(
-                      final <xsl:value-of select="$fullyQualifiedName"/> bean,
-                      final javax.xml.namespace.QName parentQName,
-                      final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
+     <!-- ######################################################################################### -->
+     <!-- get OMElement methods that allows direct writing -->
+        /**
+        *
+        * @param parentQName
+        * @param factory
+        * @return org.apache.axiom.om.OMElement
+        */
+       public org.apache.axiom.om.OMElement getOMElement (
+               final <xsl:value-of select="$fullyQualifiedName"/> bean,
+               final javax.xml.namespace.QName parentQName,
+               final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
 
-               org.apache.axiom.om.OMDataSource dataSource = getOMDataSource(bean,parentQName, factory);
+               org.apache.axiom.om.OMDataSource dataSource =
+                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
+
+                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                       <xsl:value-of select="$helpername"/>.this.serialize(bean,parentQName,factory,xmlWriter);
+                 }
+               };
 
                <xsl:choose>
                    <xsl:when test="@type">
@@ -578,28 +584,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
               </xsl:choose>
               }
 
-   /**
-     *
-     * @param parentQName
-     * @param factory
-     * @return org.apache.axiom.om.OMElement
-     */
-    public static org.apache.axiom.om.OMDataSource getOMDataSource(
-            final <xsl:value-of select="$fullyQualifiedName"/> bean,
-            final javax.xml.namespace.QName parentQName,
-            final org.apache.axiom.om.OMFactory factory)throws org.apache.axis2.databinding.ADBException{
-
-
-        org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
-            public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                INSTANCE.serialize((<xsl:value-of select="$fullyQualifiedName"/>)bean, parentQName, factory, xmlWriter);
-            }
-        };
-
-        return dataSource;
-    }
-            
          public void serialize(<xsl:value-of select="$fullyQualifiedName"/> typedBean,
                            javax.xml.namespace.QName parentQName, org.apache.axiom.om.OMFactory factory,
                            javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
@@ -686,18 +670,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                       xmlWriter.writeEndElement();
                                     }else{
-                                     <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
+                                     <xsl:value-of select="@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                        factory).serialize(xmlWriter);
+                                        factory, xmlWriter);
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
                                          throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
-                                   <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
+                                   <xsl:value-of select="@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                       factory).serialize(xmlWriter);
+                                       factory, xmlWriter);
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -705,9 +689,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                              if (<xsl:value-of select="$varName"/>!=null){
                                     for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         if (<xsl:value-of select="$varName"/>[i] != null){
-                                         <xsl:value-of select="@arrayBaseType"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>[i],
+                                         <xsl:value-of select="@arrayBaseType"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>[i],
                                                    new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                   factory).serialize(xmlWriter);
+                                                   factory, xmlWriter);
                                         } else {
                                            <xsl:choose>
                                             <xsl:when test="@nillable">
@@ -1010,18 +994,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
-                                         <xsl:value-of select="property/@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
+                                         <xsl:value-of select="property/@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
-                                         factory).serialize(xmlWriter);
+                                         factory, xmlWriter);
                                        }
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
                                    throw new org.apache.axis2.databinding.ADBException("Property cannot be null!");
                                  }
-                                 <xsl:value-of select="property/@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
+                                 <xsl:value-of select="property/@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
-                                         factory).serialize(xmlWriter);
+                                         factory, xmlWriter);
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
