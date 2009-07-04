@@ -18,10 +18,9 @@
   -->
 
 <schema elementFormDefault="qualified"
-        targetNamespace="http://www.americanexpress.com/wsdl/ctn/utilities/atb"
-        xmlns:tns="http://www.americanexpress.com/wsdl/ctn/utilities/atb"
+        targetNamespace="http://apache.org/axis2/schema/references"
+        xmlns:tns="http://apache.org/axis2/schema/references"
         xmlns="http://www.w3.org/2001/XMLSchema">
-    <import namespace="http://www.americanexpress.com/schemas/ctn/utilities/atb"/>
 
     <element name="checkEligibility1">
         <complexType>

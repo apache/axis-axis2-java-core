@@ -26,9 +26,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.soapencoding.Array;
 import org.apache.axis2.databinding.types.soapencoding._double;
-import org.tempuri.soapencoding.TestComplexType;
-import org.tempuri.soapencoding.TestSoapElement1;
-import org.tempuri.soapencoding.TestSoapElement2;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -95,7 +92,7 @@ public class SoapEncodingTest extends TestCase {
     public void testSoapElement15() {
 
         Array array = new Array();
-        array.setArrayTypeQName(new QName("http://tempuri.org/soapencoding", "TestComplexType"));
+        array.setArrayTypeQName(new QName("http://apache.org/axis2/schema/soapencoding", "TestComplexType"));
         TestComplexType testComplexType;
         for (int i = 0; i < 10; i++) {
             testComplexType = new TestComplexType();

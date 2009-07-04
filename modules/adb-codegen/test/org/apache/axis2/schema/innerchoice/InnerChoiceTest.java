@@ -17,11 +17,9 @@
  * under the License.
  */
 
-package org.apache.axis2.schema.innerChoice;
+package org.apache.axis2.schema.innerchoice;
 
 import org.apache.axis2.schema.AbstractTestCase;
-
-import test.axis2.apache.org.*;
 
 public class InnerChoiceTest extends AbstractTestCase {
 

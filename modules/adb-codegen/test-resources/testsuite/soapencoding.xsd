@@ -21,8 +21,8 @@
           xmlns:s="http://www.w3.org/2001/XMLSchema"
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
           xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-          xmlns:s0="http://tempuri.org/soapencoding"
-          targetNamespace="http://tempuri.org/soapencoding">
+          xmlns:s0="http://apache.org/axis2/schema/soapencoding"
+          targetNamespace="http://apache.org/axis2/schema/soapencoding">
 
     <s:element name="TestSoapElement1" type="soapenc:Array"/>
     <s:element name="TestSoapElement2">

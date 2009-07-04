@@ -19,10 +19,9 @@
 
 package org.apache.axis2.schema.references;
 
-import com.americanexpress.www.wsdl.ctn.utilities.atb.*;
 import org.apache.axis2.schema.AbstractTestCase;
 
-public class ElementReferenceTest extends AbstractTestCase {
+public class ReferenceTest extends AbstractTestCase {
 
     public void testSingleElementReference() throws Exception {
         CheckEligibility1 echCheckEligibility1 = new CheckEligibility1();
