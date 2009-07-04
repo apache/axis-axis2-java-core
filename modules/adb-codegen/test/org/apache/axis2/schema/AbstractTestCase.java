@@ -264,7 +264,12 @@ public abstract class AbstractTestCase extends TestCase {
             return;
         }
         
-        testSerializeDeserialize1(toHelperModeBean(bean), toHelperModeBean(expectedResult));
+        Object helperModeBean = toHelperModeBean(bean);
+        Object helperModeExpectedResult = toHelperModeBean(expectedResult);
+        
+        testSerializeDeserialize1(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserialize2(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserialize4(helperModeBean, helperModeExpectedResult);
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
