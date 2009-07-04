@@ -76,13 +76,6 @@
             </xsl:otherwise>
         </xsl:choose>
 
-        private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
-                return "<xsl:value-of select="$nsprefix"/>";
-            }
-            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-        }
-
         <xsl:if test="$choice">
             /** Whenever a new property is set ensure all others are unset
              *  There can be only one choice and the last one wins
@@ -544,13 +537,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         return <xsl:value-of select="$fullyQualifiedName"/>.class;
     }
     
-        private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals(<xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getNamespaceURI())){
-                return <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME.getPrefix();
-            }
-            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-        }
-
     /**
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
@@ -1088,6 +1074,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             </xsl:otherwise>
         </xsl:choose>
 
+        }
+
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
+                return "<xsl:value-of select="$nsprefix"/>";
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
         }
 
         /**

@@ -77,13 +77,6 @@
             </xsl:otherwise>
         </xsl:choose>
 
-        private static java.lang.String generatePrefix(java.lang.String namespace) {
-            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
-                return "<xsl:value-of select="$nsprefix"/>";
-            }
-            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-        }
-
         <xsl:if test="$choice">
             /** Whenever a new property is set ensure all others are unset
              *  There can be only one choice and the last one wins
@@ -1483,6 +1476,13 @@
             </xsl:otherwise>
         </xsl:choose>
 
+        }
+
+        private static java.lang.String generatePrefix(java.lang.String namespace) {
+            if(namespace.equals("<xsl:value-of select="$nsuri"/>")){
+                return "<xsl:value-of select="$nsprefix"/>";
+            }
+            return org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
         }
 
         /**
