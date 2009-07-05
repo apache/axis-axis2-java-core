@@ -974,6 +974,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                 <xsl:variable name="nillable" select="property/@nillable"></xsl:variable>
                 <xsl:variable name="primitive" select="property/@primitive"></xsl:variable>
                 <xsl:variable name="propertyType"><xsl:value-of select="property/@type"/></xsl:variable>
+                <xsl:variable name="propertyName"><xsl:value-of select="property/@name"/></xsl:variable>
 
                 <xsl:choose>
                     <!-- This better be only one!!-->
@@ -982,7 +983,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:when test="$nillable">
                                       if (<xsl:value-of select="$varName"/>==null){
                                         java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-                                        writeStartElement(null, namespace, "<xsl:value-of select="property/@name"/>", xmlWriter);
+                                        writeStartElement(null, namespace, "<xsl:value-of select="$propertyName"/>", xmlWriter);
 
                                         // write the nil attribute
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
@@ -995,7 +996,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
-                                   throw new org.apache.axis2.databinding.ADBException("Property cannot be null!");
+                                   throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!");
                                  }
                                  <xsl:value-of select="property/@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
@@ -1007,7 +1008,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                     <xsl:otherwise>
                         <xsl:if test="not(property/@simple)">
                             java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-                            java.lang.String localName = "<xsl:value-of select="property/@name"/>";
+                            java.lang.String localName = "<xsl:value-of select="$propertyName"/>";
                         </xsl:if>
                         <xsl:if test="property/@simple">
                             java.lang.String namespace = parentQName.getNamespaceURI();
@@ -1023,7 +1024,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                     throw new org.apache.axis2.databinding.ADBException("Value cannot be null !!");
+                                                     throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null !!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                          }else{
