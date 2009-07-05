@@ -1119,9 +1119,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         private java.lang.String registerPrefix(javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace) throws javax.xml.stream.XMLStreamException {
             java.lang.String prefix = xmlWriter.getPrefix(namespace);
             if (prefix == null) {
-                prefix = createPrefix();
+                prefix = generatePrefix(namespace);
                 while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
-                    prefix = createPrefix();
+                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                 }
                 xmlWriter.writeNamespace(prefix, namespace);
                 xmlWriter.setPrefix(prefix, namespace);
@@ -1129,12 +1129,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             return prefix;
         }
 
-                 /**
-                  * Create a prefix
-                  */
-                  private java.lang.String createPrefix() {
-                        return "ns" + (int)Math.random();
-                  }
 
      public javax.xml.stream.XMLStreamReader getPullParser(<xsl:value-of select="@name"/> bean, javax.xml.namespace.QName qName)
         throws org.apache.axis2.databinding.ADBException{
