@@ -565,12 +565,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                final org.apache.axiom.om.OMFactory factory) throws org.apache.axis2.databinding.ADBException{
 
                org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$helpername"/>.this.serialize(bean,parentQName,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,this);
 
                <xsl:choose>
                    <xsl:when test="@type">

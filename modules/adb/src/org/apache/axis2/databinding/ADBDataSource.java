@@ -40,7 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
 
-public abstract class ADBDataSource implements OMDataSourceExt {
+public class ADBDataSource implements OMDataSourceExt {
     protected QName parentQName;
     private ADBBean bean;
     
@@ -51,7 +51,7 @@ public abstract class ADBDataSource implements OMDataSourceExt {
      *
      * @param bean
      */
-    protected ADBDataSource(ADBBean bean, QName parentQName) {
+    public ADBDataSource(ADBBean bean, QName parentQName) {
         this.bean = bean;
         this.parentQName = parentQName;
     }
@@ -90,12 +90,9 @@ public abstract class ADBDataSource implements OMDataSourceExt {
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException{
         MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlWriter);
-        serialize(mtomAwareXMLStreamWriter);
+        bean.serialize(parentQName, mtomAwareXMLStreamWriter);
         mtomAwareXMLStreamWriter.flush();
     }
-
-    public abstract void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
-
 
     /**
      * @throws XMLStreamException

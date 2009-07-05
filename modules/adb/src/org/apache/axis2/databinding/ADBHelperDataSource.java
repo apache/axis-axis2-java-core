@@ -37,15 +37,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
-public abstract class ADBHelperDataSource implements OMDataSourceExt {
+public class ADBHelperDataSource<T> implements OMDataSourceExt {
 
     protected QName parentQName;
-    private Object bean;
-    protected String helperClassName;
+    private T bean;
+    private final ADBHelper<T> helper;
     
     HashMap map = null;  // Map of properties
 
@@ -54,10 +52,10 @@ public abstract class ADBHelperDataSource implements OMDataSourceExt {
      *
      * @param bean
      */
-    protected ADBHelperDataSource(Object bean, QName parentQName, String helperClassName) {
+    public ADBHelperDataSource(T bean, QName parentQName, ADBHelper<T> helper) {
         this.bean = bean;
         this.parentQName = parentQName;
-        this.helperClassName = helperClassName;
+        this.helper = helper;
     }
 
 
@@ -95,34 +93,16 @@ public abstract class ADBHelperDataSource implements OMDataSourceExt {
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException{
         MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlWriter);
-        serialize(mtomAwareXMLStreamWriter);
+        helper.serialize(bean, parentQName, mtomAwareXMLStreamWriter);
         mtomAwareXMLStreamWriter.flush();
     }
-
-    public abstract void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
-
 
     /**
      * @throws XMLStreamException
      * @see org.apache.axiom.om.OMDataSource#getReader()
      */
     public XMLStreamReader getReader() throws XMLStreamException {
-        // since only ADBBeans related to elements can be serialized
-        try {
-            Class helperClass = Class.forName(helperClassName);
-            Method method = helperClass.getMethod("getPullParser", new Class[] { Object.class,
-                    QName.class });
-            return (XMLStreamReader)method.invoke(null, new Object[] { bean, parentQName });
-        } catch (ClassNotFoundException e) {
-            throw new XMLStreamException(e);
-        } catch (NoSuchMethodException e) {
-            throw new XMLStreamException(e);
-        } catch (IllegalAccessException e) {
-            throw new XMLStreamException(e);
-        } catch (InvocationTargetException e) {
-            throw new XMLStreamException(e);
-        }
-
+        return helper.getPullParser(bean, parentQName);
     }
 
     /**

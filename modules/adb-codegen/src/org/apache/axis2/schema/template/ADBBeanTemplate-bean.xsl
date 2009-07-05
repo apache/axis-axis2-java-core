@@ -685,12 +685,7 @@
         <xsl:choose>
             <xsl:when test="@type">
                org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$name"/>.this.serialize(parentQName,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                parentQName,factory,dataSource);
             </xsl:when>
