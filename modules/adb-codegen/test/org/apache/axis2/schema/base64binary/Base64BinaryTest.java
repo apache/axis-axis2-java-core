@@ -72,4 +72,14 @@ public class Base64BinaryTest extends AbstractTestCase {
 
         testSerializeDeserialize(testBase64MultiElement, false);
     }
+    
+    public void testBase64BinaryOnbounded() throws Exception {
+        TestBase64BinaryOnbounded bean = new TestBase64BinaryOnbounded();
+        bean.setParam(new DataHandler[] {
+                new DataHandler("DataHandler 1", "text/plain"),
+                new DataHandler("DataHandler 2", "text/plain"),
+                new DataHandler("DataHandler 3", "text/plain")
+        });
+        testSerializeDeserialize(bean);
+    }
 }
