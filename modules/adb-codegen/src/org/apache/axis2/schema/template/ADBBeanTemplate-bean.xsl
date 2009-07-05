@@ -691,12 +691,7 @@
             </xsl:when>
             <xsl:otherwise>
                 org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$name"/>.this.serialize(MY_QNAME,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             </xsl:otherwise>
