@@ -248,7 +248,7 @@ public class Array implements ADBBean {
 
         OMDataSource dataSource = new ADBDataSource(this, parentQName) {
             public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
-                Array.this.serialize(parentQName, factory, xmlWriter);
+                Array.this.serialize(parentQName, xmlWriter);
             }
         };
         return new OMSourcedElementImpl(parentQName, factory, dataSource);
@@ -256,13 +256,11 @@ public class Array implements ADBBean {
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException, ADBException {
-        serialize(parentQName, factory, xmlWriter, false);
+        serialize(parentQName, xmlWriter, false);
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter,
                           boolean serializeType) throws XMLStreamException, ADBException {
 
@@ -332,9 +330,9 @@ public class Array implements ADBBean {
                 if (arrayTypeQName != null) {
                     // if the array Type is given then each element does not have to
                     // write the type
-                    adbBean.serialize(new javax.xml.namespace.QName("", CHILD_LOCAL_NAME), factory, xmlWriter);
+                    adbBean.serialize(new javax.xml.namespace.QName("", CHILD_LOCAL_NAME), xmlWriter);
                 } else {
-                    adbBean.serialize(new javax.xml.namespace.QName("", CHILD_LOCAL_NAME), factory, xmlWriter, true);
+                    adbBean.serialize(new javax.xml.namespace.QName("", CHILD_LOCAL_NAME), xmlWriter, true);
                 }
 
             } else {

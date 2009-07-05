@@ -102,7 +102,7 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
                    new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
 
              public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                   EchoStringResponse.this.serialize(MY_QNAME,factory,xmlWriter);
+                   EchoStringResponse.this.serialize(MY_QNAME,xmlWriter);
              }
            };
            return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
@@ -111,14 +111,12 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
    }
 
     public void serialize(final QName parentQName,
-                          final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter)
             throws XMLStreamException, ADBException {
-        serialize(parentQName, factory, xmlWriter, false);
+        serialize(parentQName, xmlWriter, false);
     }
 
     public void serialize(final QName parentQName,
-                          final OMFactory factory,
                           MTOMAwareXMLStreamWriter xmlWriter,
                           boolean serializeType)
             throws XMLStreamException, ADBException {

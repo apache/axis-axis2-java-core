@@ -688,7 +688,7 @@
                        new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
 
                  public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$name"/>.this.serialize(parentQName,factory,xmlWriter);
+                       <xsl:value-of select="$name"/>.this.serialize(parentQName,xmlWriter);
                  }
                };
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
@@ -699,7 +699,7 @@
                        new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
 
                  public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$name"/>.this.serialize(MY_QNAME,factory,xmlWriter);
+                       <xsl:value-of select="$name"/>.this.serialize(MY_QNAME,xmlWriter);
                  }
                };
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
@@ -709,14 +709,12 @@
        }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                                       final org.apache.axiom.om.OMFactory factory,
                                        org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
                                 throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
-                           serialize(parentQName,factory,xmlWriter,false);
+                           serialize(parentQName,xmlWriter,false);
          }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                               final org.apache.axiom.om.OMFactory factory,
                                org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
                                boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
@@ -932,7 +930,7 @@
                                       xmlWriter.writeEndElement();
                                     }else{
                                      <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                        factory,xmlWriter);
+                                        xmlWriter);
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -941,14 +939,14 @@
                                             if (<xsl:value-of select="$varName"/>==null){
                                                  throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             }
-                                           <xsl:value-of select="$varName"/>.serialize(null,factory,xmlWriter);
+                                           <xsl:value-of select="$varName"/>.serialize(null,xmlWriter);
                                         </xsl:when>
                                         <xsl:otherwise>
                                             if (<xsl:value-of select="$varName"/>==null){
                                                  throw new org.apache.axis2.databinding.ADBException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                             }
                                            <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                               factory,xmlWriter);
+                                               xmlWriter);
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:otherwise>
@@ -961,7 +959,7 @@
                                       if (<xsl:value-of select="$varName"/>!=null){
                                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                                 if (<xsl:value-of select="$varName"/>[i] != null){
-                                                 <xsl:value-of select="$varName"/>[i].serialize(null,factory,xmlWriter);
+                                                 <xsl:value-of select="$varName"/>[i].serialize(null,xmlWriter);
                                                 } else {
                                                    <xsl:choose>
                                                     <xsl:when test="$min=0">
@@ -983,7 +981,7 @@
                                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                                 if (<xsl:value-of select="$varName"/>[i] != null){
                                                  <xsl:value-of select="$varName"/>[i].serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                           factory,xmlWriter);
+                                                           xmlWriter);
                                                 } else {
                                                    <xsl:choose>
                                                     <xsl:when test="@nillable">
@@ -1031,7 +1029,7 @@
                                            if (<xsl:value-of select="$varName"/>[i] instanceof org.apache.axis2.databinding.ADBBean){
                                                 ((org.apache.axis2.databinding.ADBBean)<xsl:value-of select="$varName"/>[i]).serialize(
                                                            new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                           factory,xmlWriter,true);
+                                                           xmlWriter,true);
                                             } else {
                                                 writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                                 org.apache.axis2.databinding.utils.ConverterUtil.serializeAnyType(<xsl:value-of select="$varName"/>[i], xmlWriter);
@@ -1081,7 +1079,7 @@
                                 if (<xsl:value-of select="$varName"/> instanceof org.apache.axis2.databinding.ADBBean){
                                     ((org.apache.axis2.databinding.ADBBean)<xsl:value-of select="$varName"/>).serialize(
                                                new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                               factory,xmlWriter,true);
+                                               xmlWriter,true);
                                  } else {
                                     writeStartElement(null, "<xsl:value-of select="$namespace"/>", "<xsl:value-of select="$propertyName"/>", xmlWriter);
                                     org.apache.axis2.databinding.utils.ConverterUtil.serializeAnyType(<xsl:value-of select="$varName"/>, xmlWriter);
@@ -1355,14 +1353,14 @@
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
-                                         <xsl:value-of select="$varName"/>.serialize(MY_QNAME,factory,xmlWriter);
+                                         <xsl:value-of select="$varName"/>.serialize(MY_QNAME,xmlWriter);
                                        }
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
                                    throw new org.apache.axis2.databinding.ADBException("Property cannot be null!");
                                  }
-                                 <xsl:value-of select="$varName"/>.serialize(MY_QNAME,factory,xmlWriter);
+                                 <xsl:value-of select="$varName"/>.serialize(MY_QNAME,xmlWriter);
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>

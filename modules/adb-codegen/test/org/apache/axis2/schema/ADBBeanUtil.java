@@ -89,14 +89,14 @@ public class ADBBeanUtil {
     
     public static void serialize(Object bean, QName qname, MTOMAwareXMLStreamWriter writer) throws Exception {
         if (bean instanceof ADBBean) {
-            ((ADBBean)bean).serialize(qname, null, writer);
+            ((ADBBean)bean).serialize(qname, writer);
         } else {
             serialize(bean, getHelper(bean.getClass()), qname, writer);
         }
     }
     
     private static <T> void serialize(Object bean, ADBHelper<T> helper, QName qname, MTOMAwareXMLStreamWriter writer) throws XMLStreamException {
-        helper.serialize(helper.getBeanClass().cast(bean), qname, null, writer);
+        helper.serialize(helper.getBeanClass().cast(bean), qname, writer);
     }
     
     public static void serialize(Object bean, MTOMAwareXMLStreamWriter writer) throws Exception {

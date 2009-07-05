@@ -568,7 +568,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                        new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
 
                  public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       <xsl:value-of select="$helpername"/>.this.serialize(bean,parentQName,factory,xmlWriter);
+                       <xsl:value-of select="$helpername"/>.this.serialize(bean,parentQName,xmlWriter);
                  }
                };
 
@@ -585,7 +585,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
               }
 
          public void serialize(<xsl:value-of select="$fullyQualifiedName"/> typedBean,
-                           javax.xml.namespace.QName parentQName, org.apache.axiom.om.OMFactory factory,
+                           javax.xml.namespace.QName parentQName,
                            org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
 
              <xsl:choose>
@@ -672,7 +672,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     }else{
                                      <xsl:value-of select="@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                        factory, xmlWriter);
+                                        xmlWriter);
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -681,7 +681,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     }
                                    <xsl:value-of select="@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                       factory, xmlWriter);
+                                       xmlWriter);
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -691,7 +691,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         if (<xsl:value-of select="$varName"/>[i] != null){
                                          <xsl:value-of select="@arrayBaseType"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>[i],
                                                    new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                   factory, xmlWriter);
+                                                   xmlWriter);
                                         } else {
                                            <xsl:choose>
                                             <xsl:when test="@nillable">
@@ -995,7 +995,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                        }else{
                                          <xsl:value-of select="property/@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
-                                         factory, xmlWriter);
+                                         xmlWriter);
                                        }
                             </xsl:when>
                             <xsl:otherwise>
@@ -1004,7 +1004,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                  }
                                  <xsl:value-of select="property/@type"/>Helper.INSTANCE.serialize(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
-                                         factory, xmlWriter);
+                                         xmlWriter);
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>

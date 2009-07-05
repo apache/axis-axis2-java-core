@@ -117,7 +117,7 @@ public class _int
                 new org.apache.axis2.databinding.ADBDataSource(this, parentQName) {
 
                     public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                        _int.this.serialize(parentQName, factory, xmlWriter);
+                        _int.this.serialize(parentQName, xmlWriter);
                     }
                 };
         return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
@@ -126,14 +126,12 @@ public class _int
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          final org.apache.axiom.om.OMFactory factory,
                           org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException {
-        serialize(parentQName, factory, xmlWriter, false);
+        serialize(parentQName, xmlWriter, false);
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          final org.apache.axiom.om.OMFactory factory,
                           org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
                           boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException {

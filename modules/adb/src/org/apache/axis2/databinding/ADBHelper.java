@@ -40,7 +40,7 @@ public interface ADBHelper<T> {
 
     OMElement getOMElement(T bean, QName parentQName, OMFactory factory) throws ADBException;
 
-    void serialize(T bean, QName parentQName, OMFactory factory, MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
+    void serialize(T bean, QName parentQName, MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
 
     T parse(XMLStreamReader reader) throws Exception;
 }
