@@ -24,6 +24,8 @@ import org.apache.axiom.om.OMDataSourceExt;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
+import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -91,8 +93,13 @@ public abstract class ADBHelperDataSource implements OMDataSourceExt {
      * @throws XMLStreamException
      * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
-    public abstract void serialize(XMLStreamWriter xmlWriter)
-            throws XMLStreamException;
+    public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException{
+        MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlWriter);
+        serialize(mtomAwareXMLStreamWriter);
+        mtomAwareXMLStreamWriter.flush();
+    }
+
+    public abstract void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException;
 
 
     /**

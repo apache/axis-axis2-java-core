@@ -567,7 +567,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                org.apache.axiom.om.OMDataSource dataSource =
                        new org.apache.axis2.databinding.ADBHelperDataSource(bean,parentQName,"<xsl:value-of select="$fullyQualifiedHelperName"/>"){
 
-                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
                        <xsl:value-of select="$helpername"/>.this.serialize(bean,parentQName,factory,xmlWriter);
                  }
                };
@@ -586,7 +586,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
          public void serialize(<xsl:value-of select="$fullyQualifiedName"/> typedBean,
                            javax.xml.namespace.QName parentQName, org.apache.axiom.om.OMFactory factory,
-                           javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                           org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
 
              <xsl:choose>
             <xsl:when test="@type or @anon">
@@ -909,8 +909,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
-                                        org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$javaname"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-                                        <xsl:value-of select="$javaname"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                       xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
                                     }
                                  </xsl:when>
                                  <xsl:otherwise>
