@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
@@ -111,8 +112,13 @@ public class HTTPSender extends AbstractHTTPSender {
 
     private void cleanup(MessageContext msgContext, HttpMethod method) {
         if (msgContext.isPropertyTrue(HTTPConstants.AUTO_RELEASE_CONNECTION)) {
-            log.trace("AutoReleasing " + method);
-            method.releaseConnection();
+            // Protect against synchronously waiting for a response, in which case
+            // this would result in trying to read a closed stream...!
+            if (!(msgContext.getAxisOperation() instanceof OutInAxisOperation) ||
+                msgContext.getOptions().isUseSeparateListener()) {
+                log.trace("AutoReleasing " + method);
+                method.releaseConnection();
+            }
         }
     }
 
