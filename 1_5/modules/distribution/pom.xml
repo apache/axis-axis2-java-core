@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-parent</artifactId>
-        <version>1.5</version>
+        <version>1.5.1</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -36,7 +36,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <docs.folder.version>1_4</docs.folder.version>
+        <docs.folder.version>1_5</docs.folder.version>
     </properties>
 
     <dependencies>
@@ -351,7 +351,7 @@
                                       tofile="target/tmp-repository/modules/mex-${mex.mar.version}.mar"/>
                                 <copy file="../../modules/scripting/target/axis2-scripting-${version}.mar"
                                       tofile="target/tmp-repository/modules/scripting-${scripting.mar.version}.mar"/>
-                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${mtompolicy.mar.version}.mar"
+                                <copy file="../../modules/mtompolicy-mar/target/mtompolicy-${version}.mar"
                                       tofile="target/tmp-repository/modules/mtompolicy-${mtompolicy.mar.version}.mar"/>
 
                                 <!-- generate modules.list -->
