@@ -84,6 +84,7 @@ public class TestUtil {
              ArchiveTestOptions=new Options();
              ArchiveTestOptions.setTo(new EndpointReference(TestUtil.ToArchiveTestEPR));
              ArchiveTestOptions.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+             ArchiveTestOptions.setCallTransportCleanup(true);
              return ArchiveTestOptions;
          }
 
@@ -122,6 +123,7 @@ public class TestUtil {
              pojoTestOptions=new Options();
              pojoTestOptions.setTo(new EndpointReference(TestUtil.ToPojoTestEPR));
              pojoTestOptions.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
+             pojoTestOptions.setCallTransportCleanup(true);
              return pojoTestOptions;
          }
 

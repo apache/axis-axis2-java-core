@@ -520,6 +520,8 @@ class OutInAxisOperationClient extends OperationClient {
             // method. Have to build the whole envelope including the
             // attachments at this stage. Data might get lost if the input
             // stream gets closed before building the whole envelope.
+
+            // TODO: Shouldn't need to do this - need to hook up stream closure to Axiom completion
             this.envelope = msgContext.getEnvelope();
             this.envelope.buildWithAttachments();
         }
@@ -530,7 +532,7 @@ class OutInAxisOperationClient extends OperationClient {
          * @param msgContext the MessageContext containing the fault.
          */
         public void onFault(MessageContext msgContext) {
-           error =Utils.getInboundFaultFromMessageContext(msgContext);
+           error = Utils.getInboundFaultFromMessageContext(msgContext);
         }
 
         /**

@@ -47,7 +47,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class RPCUtil {
 
@@ -169,7 +168,7 @@ public class RPCUtil {
             IllegalAccessException, InvocationTargetException {
         if (inAxisMessage.getElementQName() == null) {
             // method accept empty SOAPbody
-            return method.invoke(implClass, new Object[0]);
+            return method.invoke(implClass);
         } else {
             QName elementQName = inAxisMessage.getElementQName();
             messageNameSpace = elementQName.getNamespaceURI();
@@ -276,8 +275,8 @@ public class RPCUtil {
                         int size = collection.size();
                         Object values[] = new Object[size];
                         int count = 0;
-                        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-                            values[count] = iterator.next();
+                        for (Object aCollection : collection) {
+                            values[count] = aCollection;
                             count++;
 
                         }
@@ -330,7 +329,8 @@ public class RPCUtil {
      * This method is use to to crete the reposne when , the return value is null
      *
      * @param service  Current AxisService
-     * @param envelope response enevelop
+     * @param envelope response envelope
+     * @param partName
      */
     private static void processNullReturns(AxisService service,
                                            SOAPEnvelope envelope, String partName) {
@@ -419,8 +419,8 @@ public class RPCUtil {
                         int size = collection.size();
                         Object values[] = new Object[size];
                         int count = 0;
-                        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-                            values[count] = iterator.next();
+                        for (Object aCollection : collection) {
+                            values[count] = aCollection;
                             count++;
 
                         }

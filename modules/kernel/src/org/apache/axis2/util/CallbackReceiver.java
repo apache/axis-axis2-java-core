@@ -66,7 +66,7 @@ public class CallbackReceiver implements MessageReceiver {
      * @param callback The callback object.
      * @throws AxisFault If the message id was a duplicate.
      */
-    private final void putIfAbsent(String msgID, Object callback) throws AxisFault {
+    private void putIfAbsent(String msgID, Object callback) throws AxisFault {
     	if (callbackStore.putIfAbsent(msgID, callback) == null) {
     		if (log.isDebugEnabled()) {
                 log.debug("CallbackReceiver: add callback " + msgID + ", " + callback + " ," + this);

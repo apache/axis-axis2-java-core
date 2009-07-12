@@ -169,7 +169,7 @@ public abstract class AxisOperation extends AxisDescription
         if (moduleOperations != null) {
             Iterator<AxisOperation> moduleOperations_itr = moduleOperations.values().iterator();
             while (moduleOperations_itr.hasNext()) {
-                AxisOperation operation = (AxisOperation)moduleOperations_itr.next();
+                AxisOperation operation = moduleOperations_itr.next();
                 service.removeOperation(operation.getName());
             }
         }
@@ -358,7 +358,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public ModuleConfiguration getModuleConfig(String moduleName) {
-        return (ModuleConfiguration)moduleConfigmap.get(moduleName);
+        return moduleConfigmap.get(moduleName);
     }
 
     public ArrayList<String> getModuleRefs() {
@@ -486,7 +486,7 @@ public abstract class AxisOperation extends AxisDescription
             result = soapAction;
         } else {
             if (wsamappingList != null && !wsamappingList.isEmpty()) {
-                result = (String)wsamappingList.get(0);
+                result = wsamappingList.get(0);
             }
         }
         return result;
@@ -509,13 +509,13 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String getFaultAction(String faultName) {
-        return (String)faultActions.get(faultName);
+        return faultActions.get(faultName);
     }
 
     public String[] getFaultActionNames() {
         Set<String> keys = faultActions.keySet();
         String[] faultActionNames = new String[keys.size()];
-        faultActionNames = (String[])keys.toArray(faultActionNames);
+        faultActionNames = keys.toArray(faultActionNames);
         return faultActionNames;
     }
 
@@ -523,7 +523,7 @@ public abstract class AxisOperation extends AxisDescription
         String result = null;
         Iterator<String> iter = faultActions.values().iterator();
         if (iter.hasNext()) {
-            result = (String)iter.next();
+            result = iter.next();
         }
         return result;
     }

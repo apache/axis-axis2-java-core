@@ -194,6 +194,13 @@ public class SOAPConnectionImpl extends SOAPConnection {
                 response.addAttachmentPart(ap);
             }
         }
+
+        try {
+            requestMsgCtx.getTransportOut().getSender().cleanup(requestMsgCtx);
+        } catch (AxisFault axisFault) {
+            // log error
+        }
+
         return response;
     }
 

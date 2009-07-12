@@ -134,9 +134,9 @@ public class AxisMessage extends AxisDescription {
         XmlSchemaElement xmlSchemaElement = null;
         AxisService service = getAxisOperation().getAxisService();
         ArrayList schemas = service.getSchema();
-        for (Iterator schemaIter = schemas.iterator(); schemaIter.hasNext();){
-            xmlSchemaElement = getSchemaElement((XmlSchema) schemaIter.next());
-            if (xmlSchemaElement != null){
+        for (Object schema : schemas) {
+            xmlSchemaElement = getSchemaElement((XmlSchema)schema);
+            if (xmlSchemaElement != null) {
                 break;
             }
         }
@@ -183,6 +183,7 @@ public class AxisMessage extends AxisDescription {
 
     /**
      * This will return a list of WSDLExtensibilityAttribute
+     * @return
      */
     public List getExtensibilityAttributes() {
         // TODO : Deepal implement this properly.
@@ -250,7 +251,7 @@ public class AxisMessage extends AxisDescription {
 	}
 
 	public Policy calculateEffectivePolicy() {
-		PolicySubject policySubject = null;
+		PolicySubject policySubject;
 		ArrayList<PolicyComponent> policyList = new ArrayList<PolicyComponent>();
 
 		// AxisMessage
@@ -309,11 +310,8 @@ public class AxisMessage extends AxisDescription {
 		// AxisConfiguration
 		AxisConfiguration axisConfiguration = (axisService == null) ? null
 				: axisService.getAxisConfiguration();
-		if (axisConfiguration != null
-				&& axisConfiguration.getPolicySubject().getLastUpdatedTime()
-						.after(lastPolicyCalcuatedTime)) {
-			return true;
-		}
-		return false;
-	}
+        return axisConfiguration != null
+               && axisConfiguration.getPolicySubject().getLastUpdatedTime()
+                .after(lastPolicyCalcuatedTime);
+    }
 }
