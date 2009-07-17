@@ -125,10 +125,10 @@ public class MembershipManager {
      * @param member The new member that joined the cluster
      * @return true  If the member was added to the <code>members</code> array; false, otherwise.
      */
-    public synchronized boolean memberAdded(Member member) {
+    public boolean memberAdded(Member member) {
 
-        if(log.isDebugEnabled()){
-            log.debug("members.contains(member) =" + members.contains(member) );
+        if (log.isDebugEnabled()) {
+            log.debug("members.contains(member) =" + members.contains(member));
             log.debug("Is in my domain: " + TribesUtil.isInDomain(member, domain));
         }
 
@@ -177,12 +177,12 @@ public class MembershipManager {
 
                     // Once a response is received from the WKA member to the MEMBER_LIST message,
                     // if it does not belong to this domain, simply remove it from the members
-                    if(responses != null && responses.length > 0 && responses[0] != null){
+                    if (responses != null && responses.length > 0 && responses[0] != null) {
                         Member source = responses[0].getSource();
-                        if(!TribesUtil.areInSameDomain(source, member)){
-                            if(log.isDebugEnabled()){
+                        if (!TribesUtil.areInSameDomain(source, member)) {
+                            if (log.isDebugEnabled()) {
                                 log.debug("WKA Member " + TribesUtil.getName(source) +
-                                          " does not belong to local domain " + new String(domain)+
+                                          " does not belong to local domain " + new String(domain) +
                                           ". Hence removing it from the list.");
                             }
                             members.remove(member);
@@ -260,7 +260,7 @@ public class MembershipManager {
             throw new RemoteProcessException(errMsg, e);
         }
     }
-    
+
     private boolean isLocalMemberInitialized() {
         if (configContext == null) {
             return false;
@@ -275,7 +275,7 @@ public class MembershipManager {
      *
      * @param member The member that left the cluster
      */
-    public synchronized void memberDisappeared(Member member) {
+    public void memberDisappeared(Member member) {
         members.remove(member);
 
         // Is this an application domain member?
@@ -289,7 +289,7 @@ public class MembershipManager {
      *
      * @return list of current members
      */
-    public synchronized Member[] getMembers() {
+    public Member[] getMembers() {
         return members.toArray(new Member[members.size()]);
     }
 
@@ -298,7 +298,7 @@ public class MembershipManager {
      *
      * @return The member that has been alive for the longest time
      */
-    public synchronized Member getLongestLivingMember() {
+    public Member getLongestLivingMember() {
         Member longestLivingMember = null;
         if (members.size() > 0) {
             Member member0 = members.get(0);
@@ -319,7 +319,7 @@ public class MembershipManager {
      *
      * @return A random member from the list of current members
      */
-    public synchronized Member getRandomMember() {
+    public Member getRandomMember() {
         if (members.size() == 0) {
             return null;
         }
