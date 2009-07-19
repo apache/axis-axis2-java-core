@@ -30,6 +30,9 @@ public class CommandLineOption implements CommandLineOptionConstants {
         setOptionType(type);
         ArrayList arrayList = new ArrayList(values.length);
         for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                values[i] = values[i].trim();
+            }
             arrayList.add(values[i]);
         }
         this.optionValues = arrayList;
