@@ -31,37 +31,37 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 
-public class OMElementStreamWriterTest extends TestCase {
+public class MTOMAwareOMBuilderTest extends TestCase {
 
     private int prefixNum;
 
     public void testGetOMElement() {
 
-        OMElementStreamWriter omElementStreamWriter = new OMElementStreamWriter();
+        MTOMAwareOMBuilder writer = new MTOMAwareOMBuilder();
 
         try {
 
-            writeStartElement(null, "test1", omElementStreamWriter);
-            writeStartElement("http://apach.temp.uri", "test2", omElementStreamWriter);
-            writeStartElement("http://apach.temp.uri1", "test3", omElementStreamWriter);
-            omElementStreamWriter.writeCharacters("test string3");
-            writeAttribute("http://apach.temp.uri", "attribute1", "attrubteValue1", omElementStreamWriter);
+            writeStartElement(null, "test1", writer);
+            writeStartElement("http://apach.temp.uri", "test2", writer);
+            writeStartElement("http://apach.temp.uri1", "test3", writer);
+            writer.writeCharacters("test string3");
+            writeAttribute("http://apach.temp.uri", "attribute1", "attrubteValue1", writer);
             writeQNames(new QName[]{new QName("http://axis2.apach.org1", "testQName"),
-                    new QName("http://axis2.apach.org2", "testQName2")}, omElementStreamWriter);
-            omElementStreamWriter.writeEndElement();
-            writeStartElement("http://apach.temp.uri1", "test4", omElementStreamWriter);
-            writeAttribute(null, "attribute1", "attrubteValue1", omElementStreamWriter);
-            writeAttribute("ns1", "http://apach.temp.uri", "attribute1", "attrubteValue1", omElementStreamWriter);
-            omElementStreamWriter.writeCharacters("test string4");
-            omElementStreamWriter.writeEndElement();
-            writeStartElement("http://temp.new.org", "testattributeElement", omElementStreamWriter);
-            writeQNameAttribute(null, "testQname", new QName("http://temp.new.org", "testQName"), omElementStreamWriter);
-            writeQName(new QName("http://axis2.apach.org", "testQName"), omElementStreamWriter);
-            omElementStreamWriter.writeEndElement();
-            omElementStreamWriter.writeEndElement();
-            omElementStreamWriter.writeEndElement();
+                    new QName("http://axis2.apach.org2", "testQName2")}, writer);
+            writer.writeEndElement();
+            writeStartElement("http://apach.temp.uri1", "test4", writer);
+            writeAttribute(null, "attribute1", "attrubteValue1", writer);
+            writeAttribute("ns1", "http://apach.temp.uri", "attribute1", "attrubteValue1", writer);
+            writer.writeCharacters("test string4");
+            writer.writeEndElement();
+            writeStartElement("http://temp.new.org", "testattributeElement", writer);
+            writeQNameAttribute(null, "testQname", new QName("http://temp.new.org", "testQName"), writer);
+            writeQName(new QName("http://axis2.apach.org", "testQName"), writer);
+            writer.writeEndElement();
+            writer.writeEndElement();
+            writer.writeEndElement();
 
-            OMElement omElement = omElementStreamWriter.getOMElement();
+            OMElement omElement = writer.getOMElement();
             System.out.println("OM String ==> " + omElement.toString());
 
             XMLStreamReader xmlReader = omElement.getXMLStreamReader();

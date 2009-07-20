@@ -142,11 +142,6 @@ public class MTOMAwareOMBuilder implements MTOMAwareXMLStreamWriter {
 
     }
 
-    public void setDataHandler(DataHandler dataHandler) {
-        OMText omText = omFactory.createOMText(dataHandler, true);
-        currentOMElement.addChild(omText);
-    }
-
     public void writeAttribute(String attributeName, String attributeValue) throws XMLStreamException {
         writeAttribute(null, null, attributeName, attributeValue);
     }
