@@ -29,10 +29,10 @@
 
             import org.apache.axiom.om.OMFactory;
             import org.apache.axis2.databinding.ADBException;
-            import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
             import javax.xml.namespace.QName;
-            import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
             /**
             *  EchoString bean class
@@ -117,25 +117,20 @@
 
         
                 org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       EchoString.this.serialize(MY_QNAME,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             
        }
 
                 public void serialize(final QName parentQName,
-                                      MTOMAwareXMLStreamWriter xmlWriter)
+                                      XMLStreamWriter xmlWriter)
                         throws XMLStreamException, ADBException {
                     serialize(parentQName, xmlWriter, false);
                 }
 
                 public void serialize(final QName parentQName,
-                                      MTOMAwareXMLStreamWriter xmlWriter,
+                                      XMLStreamWriter xmlWriter,
                                       boolean serializeType)
                         throws XMLStreamException, ADBException {
                     throw new UnsupportedOperationException("Un implemented method");

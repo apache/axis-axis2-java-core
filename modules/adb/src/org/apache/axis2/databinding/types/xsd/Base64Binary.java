@@ -26,6 +26,13 @@
  */
             
                 package org.apache.axis2.databinding.types.xsd;
+
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.util.stax.XMLStreamWriterUtils;
             
 
             /**
@@ -116,25 +123,20 @@
 
         
                org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       Base64Binary.this.serialize(parentQName,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                parentQName,factory,dataSource);
             
        }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                                       org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
+                                       XMLStreamWriter xmlWriter)
                                 throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
                            serialize(parentQName,xmlWriter,false);
          }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                               org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
+                               XMLStreamWriter xmlWriter,
                                boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
             
@@ -184,7 +186,11 @@
                                         
                                     if (localBase64Binary!=null)
                                     {
-                                       xmlWriter.writeDataHandler(localBase64Binary);
+                                       try {
+                                           XMLStreamWriterUtils.writeDataHandler(xmlWriter, localBase64Binary, null, true);
+                                       } catch (IOException ex) {
+                                           throw new XMLStreamException(ex);
+                                       }
                                     }
                                  
                     xmlWriter.writeEndElement();

@@ -21,8 +21,6 @@ package org.apache.axis2.schema.defaultnamespaces;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -62,9 +60,8 @@ public class DefaultNamespacesTest extends TestCase {
         try {
 
             XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(stringWriter);
-            MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlStreamWriter);
             testElement1.getTestElement1().serialize(new QName(NS_URI, "TestElement1", "ns1"),
-                    mtomAwareXMLStreamWriter);
+                    xmlStreamWriter);
             xmlStreamWriter.flush();
             xmlStreamWriter.close();
             String omElementString = stringWriter.toString();

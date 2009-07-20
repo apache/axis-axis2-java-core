@@ -28,10 +28,10 @@ package org.apache.axis2.databinding;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /** ClientInfo bean class */
 
@@ -130,13 +130,13 @@ public class ClientInfo
     }
 
     public void serialize(final QName parentQName,
-                          MTOMAwareXMLStreamWriter xmlWriter)
+                          XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");

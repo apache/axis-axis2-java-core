@@ -685,13 +685,13 @@
        }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                                       org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
+                                       javax.xml.stream.XMLStreamWriter xmlWriter)
                                 throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
                            serialize(parentQName,xmlWriter,false);
          }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                               org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
+                               javax.xml.stream.XMLStreamWriter xmlWriter,
                                boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
             <xsl:choose>
@@ -1125,7 +1125,11 @@
                                             <xsl:if test="not(@primitive)">
                                                 <xsl:choose>
                                                     <xsl:when test="@binary">
-                                                        xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>[i]);
+                                                        try {
+                                                            org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>[i], null, true);
+                                                        } catch (java.io.IOException ex) {
+                                                            throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>[" + i + "]", ex);
+                                                        }
                                                     </xsl:when>
                                                     <xsl:otherwise>
                                                         xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
@@ -1216,7 +1220,11 @@
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
-                                       xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
+                                       try {
+                                           org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
+                                       } catch (java.io.IOException ex) {
+                                           throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
+                                       }
                                     }
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -1395,7 +1403,11 @@
                                                     <!-- Handling the null byte array -->
                                                 if (<xsl:value-of select="$varName"/>!=null)
                                                 {
-                                                    xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
+                                                    try {
+                                                        org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
+                                                    } catch (java.io.IOException ex) {
+                                                        throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
+                                                    }
                                                 }
                                              </xsl:when>
                                             <xsl:otherwise>

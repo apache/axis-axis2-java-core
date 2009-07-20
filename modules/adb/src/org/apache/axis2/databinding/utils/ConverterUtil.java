@@ -27,6 +27,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.util.stax.XMLStreamReaderUtils;
+import org.apache.axiom.util.stax.XMLStreamWriterUtils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.i18n.ADBMessages;
@@ -60,18 +61,17 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -1417,8 +1417,11 @@ public class ConverterUtil {
             serializeAnyType("decimal", value.toString(), xmlStreamWriter);
         } else if (value instanceof DataHandler) {
             addTypeAttribute(xmlStreamWriter,"base64Binary");
-            MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = (MTOMAwareXMLStreamWriter) xmlStreamWriter;
-            mtomAwareXMLStreamWriter.writeDataHandler((DataHandler)value);
+            try {
+                XMLStreamWriterUtils.writeDataHandler(xmlStreamWriter, (DataHandler)value, null, true);
+            } catch (IOException ex) {
+                throw new XMLStreamException("Unable to read data handler", ex);
+            }
         } else if (value instanceof QName) {
             QName qNameValue = (QName) value;
             String prefix = xmlStreamWriter.getPrefix(qNameValue.getNamespaceURI());

@@ -44,6 +44,7 @@ import java.util.Set;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -58,8 +59,6 @@ import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.types.Language;
 import org.apache.axis2.databinding.types.URI;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import junit.framework.TestCase;
 
@@ -338,7 +337,7 @@ public abstract class AbstractTestCase extends TestCase {
     // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
     private static void testSerializeDeserializeWrapped(Object bean, Object expectedResult) throws Exception {
         StringWriter sw = new StringWriter();
-        MTOMAwareXMLStreamWriter writer = new MTOMAwareXMLSerializer(StAXUtils.createXMLStreamWriter(sw));
+        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
         writer.writeStartElement("", "root", "urn:test");
         writer.writeDefaultNamespace("urn:test");
         ADBBeanUtil.serialize(bean, writer);

@@ -26,6 +26,8 @@
  */
             
                 package org.apache.axis2.databinding.types.soapencoding;
+
+import javax.xml.stream.XMLStreamWriter;
             
 
             /**
@@ -110,25 +112,20 @@
 
         
                 org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
-
-                 public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                       ArrayE.this.serialize(MY_QNAME,xmlWriter);
-                 }
-               };
+                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME);
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             
        }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                                       org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
+                                       XMLStreamWriter xmlWriter)
                                 throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
                            serialize(parentQName,xmlWriter,false);
          }
 
          public void serialize(final javax.xml.namespace.QName parentQName,
-                               org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
+                               XMLStreamWriter xmlWriter,
                                boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException{
             

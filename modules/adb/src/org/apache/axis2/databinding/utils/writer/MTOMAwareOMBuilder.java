@@ -19,6 +19,8 @@
 
 package org.apache.axis2.databinding.utils.writer;
 
+import org.apache.axiom.ext.stax.datahandler.DataHandlerProvider;
+import org.apache.axiom.ext.stax.datahandler.DataHandlerWriter;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -28,12 +30,15 @@ import org.apache.axiom.om.OMText;
 import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 
-public class MTOMAwareOMBuilder implements MTOMAwareXMLStreamWriter {
+public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
     // this is the om Element we are going to create
     private OMElement rootElement;
     private OMFactory omFactory;
@@ -232,12 +237,26 @@ public class MTOMAwareOMBuilder implements MTOMAwareXMLStreamWriter {
         return this.omStreamNamespaceContext;
     }
 
-    public Object getProperty(String string) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("this method has not yet been implemented");
+    public Object getProperty(String name) throws IllegalArgumentException {
+        if (DataHandlerWriter.PROPERTY.equals(name)) {
+            return this;
+        } else {
+            throw new IllegalArgumentException("Property " + name + " not supported");
+        }
     }
 
-    public void writeDataHandler(DataHandler dataHandler) throws XMLStreamException {
-        OMText omText = omFactory.createOMText(dataHandler, true);
+    public void writeDataHandler(DataHandler dataHandler, String contentID, boolean optimize)
+            throws IOException, XMLStreamException {
+        OMText omText = omFactory.createOMText(dataHandler, optimize);
+        if (contentID != null) {
+            omText.setContentID(contentID);
+        }
+        currentOMElement.addChild(omText);
+    }
+
+    public void writeDataHandler(DataHandlerProvider dataHandlerProvider, String contentID,
+            boolean optimize) throws IOException, XMLStreamException {
+        OMText omText = omFactory.createOMText(contentID, dataHandlerProvider, optimize);
         currentOMElement.addChild(omText);
     }
 }

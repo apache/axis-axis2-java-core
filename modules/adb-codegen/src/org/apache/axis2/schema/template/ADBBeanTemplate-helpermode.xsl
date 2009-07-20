@@ -567,7 +567,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
          public void serialize(<xsl:value-of select="$fullyQualifiedName"/> typedBean,
                            javax.xml.namespace.QName parentQName,
-                           org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                           javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
 
              <xsl:choose>
             <xsl:when test="@type or @anon">
@@ -890,7 +890,11 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         <!-- Handling the null byte array -->
                                     if (<xsl:value-of select="$varName"/>!=null)
                                     {
-                                       xmlWriter.writeDataHandler(<xsl:value-of select="$varName"/>);
+                                       try {
+                                           org.apache.axiom.util.stax.XMLStreamWriterUtils.writeDataHandler(xmlWriter, <xsl:value-of select="$varName"/>, null, true);
+                                       } catch (java.io.IOException ex) {
+                                           throw new javax.xml.stream.XMLStreamException("Unable to read data handler for <xsl:value-of select="$propertyName"/>", ex);
+                                       }
                                     }
                                  </xsl:when>
                                  <xsl:otherwise>

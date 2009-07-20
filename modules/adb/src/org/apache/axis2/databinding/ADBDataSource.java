@@ -25,8 +25,6 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.utils.writer.MTOMAwareOMBuilder;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLSerializer;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -89,9 +87,8 @@ public class ADBDataSource implements OMDataSourceExt {
      * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
     public void serialize(XMLStreamWriter xmlWriter) throws XMLStreamException{
-        MTOMAwareXMLStreamWriter mtomAwareXMLStreamWriter = new MTOMAwareXMLSerializer(xmlWriter);
-        bean.serialize(parentQName, mtomAwareXMLStreamWriter);
-        mtomAwareXMLStreamWriter.flush();
+        bean.serialize(parentQName, xmlWriter);
+        xmlWriter.flush();
     }
 
     /**

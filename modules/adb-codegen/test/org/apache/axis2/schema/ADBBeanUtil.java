@@ -22,6 +22,7 @@ package org.apache.axis2.schema;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -29,7 +30,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.ADBHelper;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 public class ADBBeanUtil {
     private ADBBeanUtil() {}
@@ -87,7 +87,7 @@ public class ADBBeanUtil {
         return getPullParser(bean, getQName(bean.getClass()));
     }
     
-    public static void serialize(Object bean, QName qname, MTOMAwareXMLStreamWriter writer) throws Exception {
+    public static void serialize(Object bean, QName qname, XMLStreamWriter writer) throws Exception {
         if (bean instanceof ADBBean) {
             ((ADBBean)bean).serialize(qname, writer);
         } else {
@@ -95,11 +95,11 @@ public class ADBBeanUtil {
         }
     }
     
-    private static <T> void serialize(Object bean, ADBHelper<T> helper, QName qname, MTOMAwareXMLStreamWriter writer) throws XMLStreamException {
+    private static <T> void serialize(Object bean, ADBHelper<T> helper, QName qname, XMLStreamWriter writer) throws XMLStreamException {
         helper.serialize(helper.getBeanClass().cast(bean), qname, writer);
     }
     
-    public static void serialize(Object bean, MTOMAwareXMLStreamWriter writer) throws Exception {
+    public static void serialize(Object bean, XMLStreamWriter writer) throws Exception {
         serialize(bean, getQName(bean.getClass()), writer);
     }
 }

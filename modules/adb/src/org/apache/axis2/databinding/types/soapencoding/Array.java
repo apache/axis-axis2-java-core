@@ -35,10 +35,11 @@ import org.apache.axis2.databinding.ADBDataSource;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.ConverterUtil;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -246,22 +247,18 @@ public class Array implements ADBBean {
             final OMFactory factory) throws ADBException {
 
 
-        OMDataSource dataSource = new ADBDataSource(this, parentQName) {
-            public void serialize(MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
-                Array.this.serialize(parentQName, xmlWriter);
-            }
-        };
+        OMDataSource dataSource = new ADBDataSource(this, parentQName);
         return new OMSourcedElementImpl(parentQName, factory, dataSource);
 
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException, ADBException {
+                          XMLStreamWriter xmlWriter) throws XMLStreamException, ADBException {
         serialize(parentQName, xmlWriter, false);
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          MTOMAwareXMLStreamWriter xmlWriter,
+                          XMLStreamWriter xmlWriter,
                           boolean serializeType) throws XMLStreamException, ADBException {
 
 
@@ -352,7 +349,7 @@ public class Array implements ADBBean {
     private void writeStartElement(java.lang.String namespace,
                                    java.lang.String localPart,
                                    java.lang.String prefix,
-                                   MTOMAwareXMLStreamWriter xmlWriter) throws XMLStreamException {
+                                   XMLStreamWriter xmlWriter) throws XMLStreamException {
         if ((namespace != null) && (namespace.trim().length() > 0)) {
             java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
             if (writerPrefix != null) {

@@ -26,6 +26,8 @@
 
 package org.apache.axis2.databinding.types.xsd;
 
+import javax.xml.stream.XMLStreamWriter;
+
 
 /**
  * _boolean bean class
@@ -114,25 +116,20 @@ public class _boolean
 
 
         org.apache.axiom.om.OMDataSource dataSource =
-                new org.apache.axis2.databinding.ADBDataSource(this, parentQName) {
-
-                    public void serialize(org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
-                        _boolean.this.serialize(parentQName, xmlWriter);
-                    }
-                };
+                new org.apache.axis2.databinding.ADBDataSource(this, parentQName);
         return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                 parentQName, factory, dataSource);
 
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter)
+                          XMLStreamWriter xmlWriter)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException {
         serialize(parentQName, xmlWriter, false);
     }
 
     public void serialize(final javax.xml.namespace.QName parentQName,
-                          org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter xmlWriter,
+                          XMLStreamWriter xmlWriter,
                           boolean serializeType)
             throws javax.xml.stream.XMLStreamException, org.apache.axis2.databinding.ADBException {
 

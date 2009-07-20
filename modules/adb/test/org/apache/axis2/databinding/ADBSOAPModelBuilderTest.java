@@ -29,7 +29,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.databinding.utils.PrintEvents;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -40,6 +39,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -198,13 +199,13 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter)
+                              XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");

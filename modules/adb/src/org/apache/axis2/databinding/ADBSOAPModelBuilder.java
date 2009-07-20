@@ -25,12 +25,12 @@ import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.databinding.utils.writer.MTOMAwareXMLStreamWriter;
 import org.apache.axis2.util.StreamWrapper;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 /** Builds a SOAPEnvelope around an ADB pull parser */
 public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
@@ -75,13 +75,13 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter)
+                              XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");
@@ -114,13 +114,13 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter)
+                              XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");
@@ -141,13 +141,13 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter)
+                              XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");
@@ -171,13 +171,13 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter)
+                              XMLStreamWriter xmlWriter)
                 throws XMLStreamException, ADBException {
             serialize(parentQName,xmlWriter,false);
         }
 
         public void serialize(final QName parentQName,
-                              MTOMAwareXMLStreamWriter xmlWriter,
+                              XMLStreamWriter xmlWriter,
                               boolean serializeType)
                 throws XMLStreamException, ADBException {
             throw new UnsupportedOperationException("Unimplemented method");
