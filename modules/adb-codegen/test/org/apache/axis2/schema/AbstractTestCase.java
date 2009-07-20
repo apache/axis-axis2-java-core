@@ -24,6 +24,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -44,10 +45,14 @@ import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
@@ -149,6 +154,33 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
     
+    private static int countDataHandlers(Object bean) throws Exception {
+        int count = 0;
+        for (PropertyDescriptor desc : getBeanInfo(bean.getClass()).getPropertyDescriptors()) {
+            Object value = desc.getReadMethod().invoke(bean);
+            if (value != null) {
+                if (value instanceof DataHandler) {
+                    count++;
+                } else if (value.getClass().isArray()) {
+                    int length = Array.getLength(value);
+                    for (int i=0; i<length; i++) {
+                        Object item = Array.get(value, i);
+                        if (item != null) {
+                            if (item instanceof DataHandler) {
+                                count++;
+                            } else if (isADBBean(item.getClass())) {
+                                count += countDataHandlers(item);
+                            }
+                        }
+                    }
+                } else if (isADBBean(value.getClass())) {
+                    count += countDataHandlers(value);
+                }
+            }
+        }
+        return count;
+    }
+    
     private static void assertDataHandlerEquals(DataHandler expected, DataHandler actual) {
         try {
             InputStream in1 = expected.getInputStream();
@@ -247,15 +279,17 @@ public abstract class AbstractTestCase extends TestCase {
     }
     
     public static void testSerializeDeserialize(ADBBean bean, ADBBean expectedResult, boolean testGetPullParser) throws Exception {
-        testSerializeDeserialize1(bean, expectedResult);
-        testSerializeDeserialize2(bean, expectedResult);
+        testSerializeDeserializeUsingStAX(bean, expectedResult);
+        testSerializeDeserializeUsingOMStAXWrapper(bean, expectedResult);
         
         if (testGetPullParser) {
             // TODO: this badly fails for many of the test cases => there are still issues to solve!!!
-            testSerializeDeserialize3(bean, expectedResult);
+            testSerializeDeserializeUsingPullParser(bean, expectedResult);
         }
         
-        testSerializeDeserialize4(bean, expectedResult);
+        testSerializeDeserializeWrapped(bean, expectedResult);
+        testSerializeDeserializeUsingMTOM(bean, expectedResult, true);
+        testSerializeDeserializeUsingMTOM(bean, expectedResult, false);
         
         try {
             Class.forName("helper." + bean.getClass().getName());
@@ -267,16 +301,18 @@ public abstract class AbstractTestCase extends TestCase {
         Object helperModeBean = toHelperModeBean(bean);
         Object helperModeExpectedResult = toHelperModeBean(expectedResult);
         
-        testSerializeDeserialize1(helperModeBean, helperModeExpectedResult);
-        testSerializeDeserialize2(helperModeBean, helperModeExpectedResult);
-        testSerializeDeserialize4(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserializeUsingStAX(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserializeUsingOMStAXWrapper(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserializeWrapped(helperModeBean, helperModeExpectedResult);
+        testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, true);
+        testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, false);
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
-    private static void testSerializeDeserialize1(Object bean, Object expectedResult) throws Exception {
+    private static void testSerializeDeserializeUsingStAX(Object bean, Object expectedResult) throws Exception {
         OMElement omElement = ADBBeanUtil.getOMElement(bean);
         String omElementString = omElement.toStringWithConsume();
-        System.out.println(omElementString);
+//        System.out.println(omElementString);
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(),
                 StAXUtils.createXMLStreamReader(new StringReader(omElementString))));
     }
@@ -284,7 +320,7 @@ public abstract class AbstractTestCase extends TestCase {
     // Deserialization approach 2: use an Axiom tree with caching. In this case the
     // XMLStreamReader implementation is OMStAXWrapper and we test interoperability
     // between ADB and Axiom's OMStAXWrapper.
-    private static void testSerializeDeserialize2(Object bean, Object expectedResult) throws Exception {
+    private static void testSerializeDeserializeUsingOMStAXWrapper(Object bean, Object expectedResult) throws Exception {
         OMElement omElement = ADBBeanUtil.getOMElement(bean);
         String omElementString = omElement.toStringWithConsume();
         OMElement omElement2 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(
@@ -293,14 +329,14 @@ public abstract class AbstractTestCase extends TestCase {
     }
     
     // Deserialization approach 3: use the pull parser produced by ADB.
-    private static void testSerializeDeserialize3(Object bean, Object expectedResult) throws Exception {
+    private static void testSerializeDeserializeUsingPullParser(Object bean, Object expectedResult) throws Exception {
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), ADBBeanUtil.getPullParser(bean)));
     }
     
     // Approach 4: Serialize the bean as the child of an element that declares a default namespace.
     // If ADB behaves correctly, this should not have any impact. A failure here may be an indication
     // of an incorrect usage of XMLStreamWriter#writeStartElement(String).
-    private static void testSerializeDeserialize4(Object bean, Object expectedResult) throws Exception {
+    private static void testSerializeDeserializeWrapped(Object bean, Object expectedResult) throws Exception {
         StringWriter sw = new StringWriter();
         MTOMAwareXMLStreamWriter writer = new MTOMAwareXMLSerializer(StAXUtils.createXMLStreamWriter(sw));
         writer.writeStartElement("", "root", "urn:test");
@@ -310,6 +346,22 @@ public abstract class AbstractTestCase extends TestCase {
         writer.flush();
         OMElement omElement3 = new StAXOMBuilder(StAXUtils.createXMLStreamReader(new StringReader(sw.toString()))).getDocumentElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), omElement3.getFirstElement().getXMLStreamReader()));
+    }
+    
+    private static void testSerializeDeserializeUsingMTOM(Object bean, Object expectedResult, boolean cache) throws Exception {
+        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        envelope.getBody().addChild(ADBBeanUtil.getOMElement(bean));
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        OMOutputFormat format = new OMOutputFormat();
+        format.setDoOptimize(true);
+        envelope.serialize(buffer, format);
+//        envelope.serialize(System.out, format);
+        String contentType = format.getContentTypeForMTOM("text/xml");
+        Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
+        assertEquals(countDataHandlers(bean) + 1, attachments.getAllContentIDs().length);
+        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream()), attachments);
+        OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), cache ? bodyElement.getXMLStreamReader() : bodyElement.getXMLStreamReaderWithoutCaching()));
     }
     
     /**
