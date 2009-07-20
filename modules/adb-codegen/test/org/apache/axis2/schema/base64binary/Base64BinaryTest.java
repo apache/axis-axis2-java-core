@@ -80,6 +80,6 @@ public class Base64BinaryTest extends AbstractTestCase {
                 new DataHandler("DataHandler 2", "text/plain"),
                 new DataHandler("DataHandler 3", "text/plain")
         });
-        testSerializeDeserialize(bean);
+        testSerializeDeserialize(bean, false);
     }
 }

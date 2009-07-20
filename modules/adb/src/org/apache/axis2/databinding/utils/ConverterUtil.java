@@ -22,15 +22,11 @@ package org.apache.axis2.databinding.utils;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMConstants;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.OMStAXWrapper;
 import org.apache.axiom.om.util.Base64;
-import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.i18n.ADBMessages;
@@ -1526,8 +1522,7 @@ public class ConverterUtil {
 
                 if (Constants.XSD_NAMESPACE.equals(attributeNameSpace)) {
                     if ("base64Binary".equals(attributeType)) {
-                        xmlStreamReader.next();
-                        returnObject = getDataHandlerObject(xmlStreamReader);
+                        returnObject = XMLStreamReaderUtils.getDataHandlerFromElement(xmlStreamReader);
                     } else {
                         String attribValue = xmlStreamReader.getElementText();
                         if (attribValue != null) {
@@ -1616,26 +1611,6 @@ public class ConverterUtil {
             }
         }
         return returnObject;
-    }
-
-    private static Object getDataHandlerObject(XMLStreamReader reader) throws XMLStreamException {
-        Object dataHandler = null;
-        if (Boolean.TRUE.equals(reader.getProperty(OMConstants.IS_DATA_HANDLERS_AWARE))
-                && Boolean.TRUE.equals(reader.getProperty(OMConstants.IS_BINARY))) {
-            dataHandler = reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER);
-        } else {
-            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
-                    reader.getName().equals(new QName(MTOMConstants.XOP_NAMESPACE_URI, MTOMConstants.XOP_INCLUDE))) {
-                String id = ElementHelper.getContentID(reader, "UTF-8");
-                dataHandler = ((MTOMStAXSOAPModelBuilder) ((OMStAXWrapper) reader).getBuilder()).getDataHandler(id);
-                reader.next();
-            } else if (reader.hasText()) {
-                String content = reader.getText();
-                dataHandler = ConverterUtil.convertToBase64Binary(content);
-
-            }
-        }
-        return dataHandler;
     }
 
     static {

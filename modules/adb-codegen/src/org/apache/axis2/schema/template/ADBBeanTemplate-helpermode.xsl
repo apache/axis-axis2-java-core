@@ -537,20 +537,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         return <xsl:value-of select="$fullyQualifiedName"/>.class;
     }
     
-    /**
-     * isReaderMTOMAware
-     * @return true if the reader supports MTOM
-     */
-    public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
-        boolean isReaderMTOMAware = false;
-        <!-- workaround for the issues in the wstx reader!-->
-        try{
-          isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
-        }catch(java.lang.IllegalArgumentException e){
-          isReaderMTOMAware = false;
-        }
-        return isReaderMTOMAware;
-    }
      <!-- ######################################################################################### -->
      <!-- get OMElement methods that allows direct writing -->
         /**
@@ -1752,34 +1738,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                   } else {
                                                 </xsl:if>
 
-                                                    if (isReaderMTOMAware(reader)
-                                                            &amp;&amp;
-                                                            java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
-                                                    {
-                                                        //MTOM aware reader - get the datahandler directly and put it in the object
-                                                        <xsl:value-of select="$listName"/>.add(
-                                                                (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
-                                                    } else {
-                                                        // Step in
-                                                        if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())) {
-                                                            reader.next();
-                                                        }
-                                                        if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
-                                                        {
-                                                            java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
-                                                            <xsl:value-of select="$listName"/>.add(((org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
-                                                            reader.next();
-                                                            reader.next();
-                                                        } else if(reader.hasText()) {
-                                                            //Do the usual conversion
-                                                            java.lang.String content = reader.getText();
-                                                            <xsl:value-of select="$listName"/>.add(
-                                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                                                    reader.next();
-                                                        }
-
-                                                    }
-
+                                                    <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
 
                                                 <xsl:if test="@nillable">}</xsl:if>
                                                 //loop until we find a start element that is not part of this array
@@ -1807,30 +1766,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                               } else {
                                                             </xsl:if>
 
-                                                                <xsl:if test="not($simple)">reader.next();</xsl:if>
-                                                                if (isReaderMTOMAware(reader)
-                                                                        &amp;&amp;
-                                                                        java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
-                                                                {
-                                                                    //MTOM aware reader - get the datahandler directly and put it in the object
-                                                                    <xsl:value-of select="$listName"/>.add(
-                                                                            (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
-                                                                } else {
-                                                                    if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
-                                                                    {
-                                                                        java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
-                                                                        <xsl:value-of select="$listName"/>.add(((org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
-                                                                        reader.next();
-                                                                        reader.next();
-                                                                    } else if(reader.hasText()) {
-                                                                        //Do the usual conversion
-                                                                        java.lang.String content = reader.getText();
-                                                                        <xsl:value-of select="$listName"/>.add(
-                                                                                org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                                                                reader.next();
-                                                                    }
-
-                                                                }
+                                                                <xsl:value-of select="$listName"/>.add(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
 
                                                             <xsl:if test="@nillable">}</xsl:if>
                                                         }else{
@@ -2031,35 +1967,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                    <xsl:if test="not($simple)">reader.next();</xsl:if>
-                                    if (isReaderMTOMAware(reader)
-                                            &amp;&amp;
-                                            java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
-                                    {
-                                        //MTOM aware reader - get the datahandler directly and put it in the object
-                                        object.set<xsl:value-of select="$javaName"/>(
-                                                (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
-                                    } else {
-                                        if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
-                                        {
-                                            java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
-                                            object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
-                                            reader.next();
-                                            <xsl:if test="($isType or $anon) and not($simple)">
-                                                reader.next();
-                                            </xsl:if>
-                                        } else if(reader.hasText()) {
-                                            //Do the usual conversion
-                                            java.lang.String content = reader.getText();
-                                            object.set<xsl:value-of select="$javaName"/>(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                            <xsl:if test="($isType or $anon) and not($simple)">
-                                                reader.next();
-                                            </xsl:if>
-                                        }
-                                    }
+                                    object.set<xsl:value-of select="$javaName"/>(org.apache.axiom.util.stax.XMLStreamReaderUtils.getDataHandlerFromElement(reader));
 
-                                    <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
+                                    <xsl:if test="($isType or $anon) and not($simple)">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
                                 </xsl:when>
