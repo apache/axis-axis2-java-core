@@ -42,6 +42,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.description.Version;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
@@ -57,9 +58,11 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Enumeration;
+import java.util.Map;
 import java.net.SocketException;
 import java.net.NetworkInterface;
 import java.net.InetAddress;
@@ -286,52 +289,6 @@ public class Utils {
         }
     }
 
-    /**
-     * Get the name of the module , where archive name is combination of module name + its version
-     * The format of the name is as follows:
-     * moduleName-00.0000
-     * Example: "addressing-01.0001.mar" would return "addressing"
-     *
-     * @param moduleName the name of the module archive
-     * @return the module name parsed out of the file name
-     */
-    public static String getModuleName(String moduleName) {
-        if (moduleName.endsWith("-SNAPSHOT")) {
-            return moduleName.substring(0, moduleName.indexOf("-SNAPSHOT"));
-        }
-        char delimiter = '-';
-        int version_index = moduleName.lastIndexOf(delimiter);
-        if (version_index > 0) {
-            String versionString = getModuleVersion(moduleName);
-            if (versionString == null) {
-                return moduleName;
-            } else {
-                return moduleName.substring(0, version_index);
-            }
-        } else {
-            return moduleName;
-        }
-    }
-
-    public static String getModuleVersion(String moduleName) {
-        if (moduleName.endsWith("-SNAPSHOT")) {
-            return "SNAPSHOT";
-        }
-        char version_seperator = '-';
-        int version_index = moduleName.lastIndexOf(version_seperator);
-        if (version_index > 0) {
-            String versionString = moduleName.substring(version_index + 1, moduleName.length());
-            try {
-                Float.parseFloat(versionString);
-                return versionString;
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
     public static String getModuleName(String moduleName, String moduleVersion) {
         if (moduleVersion != null && moduleVersion.length() != 0) {
             moduleName = moduleName + "-" + moduleVersion;
@@ -344,8 +301,8 @@ public class Utils {
      * - else it will return true
      *
      */
-    public static boolean checkVersion(String module1version,
-                                       String module2version) throws AxisFault {
+    public static boolean checkVersion(Version module1version,
+                                       Version module2version) throws AxisFault {
         if ((module1version !=null && !module1version.equals(module2version)) ||
                 module2version !=null && !module2version.equals(module1version)) {
             throw new AxisFault("trying to engage two different module versions " +
@@ -357,61 +314,22 @@ public class Utils {
     public static void calculateDefaultModuleVersion(HashMap modules,
                                                      AxisConfiguration axisConfig) {
         Iterator allModules = modules.values().iterator();
-        HashMap defaultModules = new HashMap();
+        Map<String,Version> defaultModules = new HashMap<String,Version>();
         while (allModules.hasNext()) {
             AxisModule axisModule = (AxisModule) allModules.next();
-            String moduleName = axisModule.getName();
-            String moduleNameString;
-            String moduleVersionString;
-            if (AxisModule.VERSION_SNAPSHOT.equals(axisModule.getVersion())) {
-                moduleNameString = axisModule.getName();
-                moduleVersionString = axisModule.getVersion();
-            } else {
-                if (axisModule.getVersion() == null) {
-                    moduleNameString = getModuleName(moduleName);
-                    moduleVersionString = getModuleVersion(moduleName);
-                    if (moduleVersionString != null) {
-                        try {
-                            Float.valueOf(moduleVersionString);
-                            axisModule.setVersion(moduleVersionString);
-                            axisModule.setName(moduleName);
-                        } catch (NumberFormatException e) {
-                            moduleVersionString = null;
-                        }
-                    }
-                } else {
-                    moduleNameString = axisModule.getName();
-                    moduleVersionString = axisModule.getVersion();
-                }
+            String name = axisModule.getName();
+            Version currentDefaultVersion = defaultModules.get(name);
+            Version version = axisModule.getVersion();
+            if (currentDefaultVersion == null ||
+                    (version != null && version.compareTo(currentDefaultVersion) > 0)) {
+                defaultModules.put(name, version);
             }
-            String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
-            if (currentDefaultVerison != null) {
-                // if the module version is null then , that will be ignore in this case
-                if (!AxisModule.VERSION_SNAPSHOT.equals(currentDefaultVerison)) {
-                    if (moduleVersionString != null &&
-                        isLatest(moduleVersionString, currentDefaultVerison)) {
-                        defaultModules.put(moduleNameString, moduleVersionString);
-                    }
-                }
-            } else {
-                defaultModules.put(moduleNameString, moduleVersionString);
-            }
-
         }
         Iterator def_mod_itr = defaultModules.keySet().iterator();
         while (def_mod_itr.hasNext()) {
             String moduleName = (String) def_mod_itr.next();
-            axisConfig.addDefaultModuleVersion(moduleName, (String) defaultModules.get(moduleName));
-        }
-    }
-
-    public static boolean isLatest(String moduleVersion, String currentDefaultVersion) {
-        if (AxisModule.VERSION_SNAPSHOT.equals(moduleVersion)) {
-            return true;
-        } else {
-            float m_version = Float.parseFloat(moduleVersion);
-            float m_c_vresion = Float.parseFloat(currentDefaultVersion);
-            return m_version > m_c_vresion;
+            Version version = defaultModules.get(moduleName);
+            axisConfig.addDefaultModuleVersion(moduleName, version == null ? null : version.toString());
         }
     }
 

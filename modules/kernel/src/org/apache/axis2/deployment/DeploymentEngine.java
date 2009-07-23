@@ -265,7 +265,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
                     log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                                 org.apache.axis2.util.Utils.getModuleName(serviceGroup.getServiceGroupName()),
+                                                 serviceGroup.getServiceGroupName(),
                                                  servicesURL.toString()));
                 }
             }
@@ -307,16 +307,12 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
                     String moduleFile = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                    if (module.getName() == null) {
-                        module.setName(org.apache.axis2.util.Utils.getModuleName(moduleFile));
-                        module.setVersion(org.apache.axis2.util.Utils.getModuleVersion(moduleFile));
-                    }
+                    module.setArchiveName(moduleFile);
                     populateModule(module, moduleurl);
                     module.setFileName(moduleurl);
                     addNewModule(module, axisConfig);
                     log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                                                 org.apache.axis2.util.Utils.getModuleName(module.getName(),
-                                                                                           module.getVersion()),
+                                                 module.getArchiveName(),
                                                  moduleurl.toString()));
                 }
             }

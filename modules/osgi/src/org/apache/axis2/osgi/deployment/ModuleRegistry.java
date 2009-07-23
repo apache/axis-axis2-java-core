@@ -24,6 +24,7 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Version;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.modules.Module;
 import static org.apache.axis2.osgi.deployment.OSGiAxis2Constants.OSGi_BUNDLE_ID;
@@ -169,7 +170,6 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                     }
                     String bundleVersion = (String) headers.get("Bundle-Version");
                     if (bundleVersion != null && bundleVersion.length() != 0) {
-                        String moduleVersion = "SNAPSHOT";
                         /*
                             Bundle version is defined as
                             version ::=
@@ -178,21 +178,14 @@ public class ModuleRegistry extends AbstractRegistry<AxisModule> {
                                 minor ::= number
                                 micro ::= number
                                 qualifier ::= ( alphanum | ’_’ | '-' )+
-
-                            Hence, in order to sync up with Axis2 module versioning, which is a floating
-                            point number, following logic is used to create the version
-                            version := major(.minormircor)
                          */
                         String[] versionSplit = bundleVersion.split("\\.");
-                        if (versionSplit.length == 3) {
-                            moduleVersion =
-                                    versionSplit[0] + "." + versionSplit[1] + versionSplit[2];
-                        } else if (versionSplit.length == 2) {
-                            moduleVersion = versionSplit[0] + "." + versionSplit[1];
-                        } else if (versionSplit.length == 1) {
-                            moduleVersion = versionSplit[0];
+                        int[] components = new int[Math.min(versionSplit.length, 3)];
+                        for (int i=0; i<components.length; i++) {
+                            components[i] = Integer.parseInt(versionSplit[i]);
                         }
-                        axismodule.setVersion(moduleVersion);
+                        axismodule.setVersion(new Version(components, versionSplit.length > 3 ?
+                                versionSplit[3] : null));
                     }
                     builder.populateModule();
                     axismodule.setParent(axisConfig);

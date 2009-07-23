@@ -73,8 +73,7 @@ public class ModuleDeployer implements Deployer {
             metaData.setFileName(url);
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                                         Utils.getModuleName(metaData.getName(),
-                                                             metaData.getVersion()),
+                                         metaData.getArchiveName(),
                                          url.toString()));
         } catch (DeploymentException e) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,

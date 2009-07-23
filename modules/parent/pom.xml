@@ -83,12 +83,12 @@
         <version>1.5.1</version>
 
         <!-- Version #'s for the mars that we generate -->
-        <addressing.mar.version>1.51</addressing.mar.version>
-        <soapmonitor.mar.version>1.51</soapmonitor.mar.version>
-        <mex.mar.version>1.51</mex.mar.version>
-        <ping.mar.version>1.51</ping.mar.version>
-        <scripting.mar.version>1.51</scripting.mar.version>
-        <mtompolicy.mar.version>1.51</mtompolicy.mar.version>
+        <addressing.mar.version>1.5.1</addressing.mar.version>
+        <soapmonitor.mar.version>1.5.1</soapmonitor.mar.version>
+        <mex.mar.version>1.5.1</mex.mar.version>
+        <ping.mar.version>1.5.1</ping.mar.version>
+        <scripting.mar.version>1.5.1</scripting.mar.version>
+        <mtompolicy.mar.version>1.5.1</mtompolicy.mar.version>
 
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
