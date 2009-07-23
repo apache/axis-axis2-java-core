@@ -25,9 +25,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,7 +65,7 @@ public class AxisModule implements ParameterInclude {
 
     //This is to keep the version number of the module, if the module name is a-b-c-1.3.mar ,
     // then the module version would be 1.3
-    private String version;
+    private Version version;
 
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
     private HashMap<QName, AxisOperation> operations = new HashMap<QName, AxisOperation>();
@@ -98,6 +100,94 @@ public class AxisModule implements ParameterInclude {
      */
     public AxisModule(String name) {
         this.name = name;
+    }
+
+    /**
+     * Get the name of this module.
+     * Note that it is possible to deploy several versions of the same module. Therefore,
+     * the name of a module is not unique in the scope of a given {@link AxisConfiguration}.
+     * 
+     * @return the name of the module
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the name of this module.
+     * 
+     * @param name the name of the module
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Get the archive name of this module. The archive name is the combination
+     * of the module name and version (if available). In general it is equal to the
+     * name of the module archive file without the suffix.
+     * 
+     * @return the archive name of the module
+     */
+    public String getArchiveName() {
+        return version == null ? name : (name + "-" + version);
+    }
+
+    /**
+     * Set the archive name of this module. This method will split the archive name
+     * to extract the module name and version (which can be retrieved using
+     * {@link #getName()} and {@link #getVersion()}).
+     * 
+     * @param archiveName the archive name of the module
+     */
+    public void setArchiveName(String archiveName) {
+        int index = 0;
+        // First look for a part that starts with a digit
+        while ((index = archiveName.indexOf('-', index)) != -1) {
+            char c = archiveName.charAt(++index);
+            if ('0' <= c && c <= '9') {
+                break;
+            }
+        }
+        // Also support SNAPSHOT
+        if (index == -1 && archiveName.endsWith("-SNAPSHOT")) {
+            index = archiveName.length()-8;
+        }
+        
+        if (index == -1) {
+            name = archiveName;
+            version = null;
+        } else {
+            try {
+                version = new Version(archiveName.substring(index));
+            } catch (ParseException ex) {
+                version = null;
+            }
+            if (version == null) {
+                name = archiveName;
+            } else {
+                name = archiveName.substring(0, index-1);
+            }
+        }
+    }
+
+    /**
+     * Get the version of this module.
+     * 
+     * @return the version of the module, or <code>null</code> if the module doesn't have a
+     *         version number
+     */
+    public Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Set the version of this module.
+     * 
+     * @param version the version of the module
+     */
+    public void setVersion(Version version) {
+        this.version = version;
     }
 
     public void addOperation(AxisOperation axisOperation) {
@@ -154,14 +244,6 @@ public class AxisModule implements ParameterInclude {
 
     public ClassLoader getModuleClassLoader() {
         return moduleClassLoader;
-    }
-
-    /**
-     * Get the name of this Module
-     * @return a String name.
-     */
-    public String getName() {
-        return name;
     }
 
     public HashMap<QName, AxisOperation> getOperations() {
@@ -238,13 +320,6 @@ public class AxisModule implements ParameterInclude {
         this.moduleClassLoader = moduleClassLoader;
     }
 
-    /**
-     * @param name  : Setting name of the module
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setOutFlow(Flow outFlow) {
         flowInclude.setOutFlow(outFlow);
     }
@@ -298,14 +373,5 @@ public class AxisModule implements ParameterInclude {
 
     public void setFileName(URL fileName) {
         this.fileName = fileName;
-    }
-
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

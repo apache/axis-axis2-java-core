@@ -45,23 +45,23 @@ public class ModuleversionTest extends TestCase {
     public void testCalculateDefaultModuleVersions() throws AxisFault {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         AxisModule module1 = new AxisModule();
-        module1.setName("Module1");
+        module1.setArchiveName("Module1");
         axisConfiguration.addModule(module1);
 
         AxisModule module2 = new AxisModule();
-        module2.setName("Module2-0.94");
+        module2.setArchiveName("Module2-0.94");
         axisConfiguration.addModule(module2);
 
         AxisModule module3 = new AxisModule();
-        module3.setName("Module2-0.95");
+        module3.setArchiveName("Module2-0.95");
         axisConfiguration.addModule(module3);
 
         AxisModule module4 = new AxisModule();
-        module4.setName("Module2-0.93");
+        module4.setArchiveName("Module2-0.93");
         axisConfiguration.addModule(module4);
 
         AxisModule module5 = new AxisModule();
-        module5.setName("testModule-1.93");
+        module5.setArchiveName("testModule-1.93");
         axisConfiguration.addModule(module5);
 
         Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
@@ -77,7 +77,7 @@ public class ModuleversionTest extends TestCase {
         boolean found2 = false;
         boolean found3 = false;
         while (engageModules.hasNext()) {
-            String name = ((AxisModule)engageModules.next()).getName();
+            String name = ((AxisModule)engageModules.next()).getArchiveName();
             if (name.equals("Module2-0.95")) {
                 found1 = true;
             }
@@ -103,15 +103,15 @@ public class ModuleversionTest extends TestCase {
      public void testModuleWithSNAPSHOT() throws AxisFault {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         AxisModule module1 = new AxisModule();
-        module1.setName("Module1");
+        module1.setArchiveName("Module1");
         axisConfiguration.addModule(module1);
 
         AxisModule module2 = new AxisModule();
-        module2.setName("Module1-SNAPSHOT");
+        module2.setArchiveName("Module1-SNAPSHOT");
         axisConfiguration.addModule(module2);
 
         AxisModule module3 = new AxisModule();
-        module3.setName("Module1-0.95");
+        module3.setArchiveName("Module1-0.95");
         axisConfiguration.addModule(module3);
         Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
         assertEquals(module2, axisConfiguration.getDefaultModule("Module1"));
@@ -121,15 +121,15 @@ public class ModuleversionTest extends TestCase {
      public void testModuleWithSNAPSHOT2() throws AxisFault {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         AxisModule module1 = new AxisModule();
-        module1.setName("Module1-a");
+        module1.setArchiveName("Module1-a");
         axisConfiguration.addModule(module1);
 
         AxisModule module2 = new AxisModule();
-        module2.setName("Module1-a-SNAPSHOT");
+        module2.setArchiveName("Module1-a-SNAPSHOT");
         axisConfiguration.addModule(module2);
 
         AxisModule module3 = new AxisModule();
-        module3.setName("Module1-a-0.95");
+        module3.setArchiveName("Module1-a-0.95");
         axisConfiguration.addModule(module3);
         Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
         Utils.calculateDefaultModuleVersion(axisConfiguration.getModules(), axisConfiguration);
