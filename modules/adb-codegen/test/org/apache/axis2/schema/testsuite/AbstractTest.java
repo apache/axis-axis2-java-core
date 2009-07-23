@@ -19,15 +19,16 @@
 
 package org.apache.axis2.schema.testsuite;
 
-import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.schema.AbstractTestCase;
+
 import services.echo.types.BookInformation;
 
 
-public class AbstractTest  extends TestCase {
+public class AbstractTest  extends AbstractTestCase {
 
      protected OMElement getOMElement(){
         OMFactory fac = OMAbstractFactory.getSOAP12Factory();
@@ -35,16 +36,6 @@ public class AbstractTest  extends TestCase {
         OMElement omElement = fac.createOMElement("TestValue", omNamespace);
         omElement.addChild(fac.createOMText("testString"));
         return omElement;
-    }
-
-    protected boolean isOMElementsEqual(OMElement omElement1,OMElement omElement2){
-        boolean isEqual = false;
-        if ((omElement1 == null) || (omElement2 == null)){
-            isEqual = (omElement1 == omElement2);
-        } else {
-            isEqual = omElement1.getLocalName().equals(omElement2.getLocalName());
-        }
-        return isEqual;
     }
 
      protected boolean isObjectsEqual(Object object1,Object object2){

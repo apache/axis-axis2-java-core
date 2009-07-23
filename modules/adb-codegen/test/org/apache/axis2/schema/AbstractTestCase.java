@@ -141,6 +141,8 @@ public abstract class AbstractTestCase extends TestCase {
                 assertEquals("value for " + message, expected, actual);
             } else if (DataHandler.class.isAssignableFrom(type)) {
                 assertDataHandlerEquals((DataHandler)expected, (DataHandler)actual);
+            } else if (OMElement.class.isAssignableFrom(type)) {
+                assertTrue(isOMElementsEqual((OMElement)expected, (OMElement)actual));
             } else if (isADBBean(type)) {
                 if (isEnum(type)) {
                     assertSame("enum value for " + message, expected, actual);
@@ -153,6 +155,16 @@ public abstract class AbstractTestCase extends TestCase {
         }
     }
     
+    protected static boolean isOMElementsEqual(OMElement omElement1,OMElement omElement2){
+        boolean isEqual = false;
+        if ((omElement1 == null) || (omElement2 == null)){
+            isEqual = (omElement1 == omElement2);
+        } else {
+            isEqual = omElement1.getLocalName().equals(omElement2.getLocalName());
+        }
+        return isEqual;
+    }
+
     private static int countDataHandlers(Object bean) throws Exception {
         int count = 0;
         for (PropertyDescriptor desc : getBeanInfo(bean.getClass()).getPropertyDescriptors()) {
