@@ -59,6 +59,7 @@ import org.apache.axis2.databinding.ADBException;
 import org.apache.axis2.databinding.types.HexBinary;
 import org.apache.axis2.databinding.types.Language;
 import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.util.XMLPrettyPrinter;
 
 import junit.framework.TestCase;
 
@@ -301,6 +302,7 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserializeWrapped(bean, expectedResult);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, true);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, false);
+        testSerializeDeserializePrettified(bean, expectedResult);
         
         try {
             Class.forName("helper." + bean.getClass().getName());
@@ -317,6 +319,7 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserializeWrapped(helperModeBean, helperModeExpectedResult);
         testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, true);
         testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, false);
+        testSerializeDeserializePrettified(helperModeBean, helperModeExpectedResult);
     }
     
     // Deserialization approach 1: use an XMLStreamReader produced by the StAX parser.
@@ -373,6 +376,16 @@ public abstract class AbstractTestCase extends TestCase {
         MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream()), attachments);
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), cache ? bodyElement.getXMLStreamReader() : bodyElement.getXMLStreamReaderWithoutCaching()));
+    }
+    
+    // This is used to check that ADB correctly handles element whitespace
+    private static void testSerializeDeserializePrettified(Object bean, Object expectedResult) throws Exception {
+        OMElement omElement = ADBBeanUtil.getOMElement(bean);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLPrettyPrinter.prettify(omElement, baos);
+//        System.out.write(baos.toByteArray());
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(),
+                StAXUtils.createXMLStreamReader(new ByteArrayInputStream(baos.toByteArray()))));
     }
     
     /**
