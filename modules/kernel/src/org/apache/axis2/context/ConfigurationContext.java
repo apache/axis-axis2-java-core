@@ -224,8 +224,7 @@ public class ConfigurationContext extends AbstractContext {
             String scope = axisService.getScope();
             if (Constants.SCOPE_APPLICATION.equals(scope)) {
                 String serviceGroupName = axisService.getAxisServiceGroup().getServiceGroupName();
-                serviceGroupContext =
-                        (ServiceGroupContext)applicationSessionServiceGroupContexts.get(
+                serviceGroupContext =applicationSessionServiceGroupContexts.get(
                                 serviceGroupName);
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
@@ -334,7 +333,7 @@ public class ConfigurationContext extends AbstractContext {
             HashMap<String, MessageContext> msgContextMap = mepContext.getMessageContexts();
             Iterator<MessageContext> msgContextIterator = msgContextMap.values().iterator();
             while (msgContextIterator.hasNext()) {
-                MessageContext msgContext = (MessageContext)msgContextIterator.next();
+                MessageContext msgContext = msgContextIterator.next();
                 log.debug("msgContext: " + msgContext + " action: " + msgContext.getWSAAction());
             }
         }
@@ -352,7 +351,7 @@ public class ConfigurationContext extends AbstractContext {
                 log.debug("messageID is null.");
             }
         } else {
-            OperationContext opCtx = (OperationContext)operationContextMap.remove(messageID);
+            OperationContext opCtx = operationContextMap.remove(messageID);
             contextRemoved(opCtx);
         }
     }
@@ -420,7 +419,7 @@ public class ConfigurationContext extends AbstractContext {
      * @return an active OperationContext, or null
      */
     public OperationContext getOperationContext(String messageID) {
-        return (OperationContext)this.operationContextMap.get(messageID);
+        return this.operationContextMap.get(messageID);
     }
 
     /**
@@ -447,7 +446,7 @@ public class ConfigurationContext extends AbstractContext {
         Iterator<OperationContext> it = operationContextMap.values().iterator();
 
         while (it.hasNext()) {
-            OperationContext value = (OperationContext)it.next();
+            OperationContext value = it.next();
 
             String valueOperationName;
             String valueServiceName;
@@ -532,7 +531,7 @@ public class ConfigurationContext extends AbstractContext {
             String serviceGroupContextId,
             MessageContext msgContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext =
-                (ServiceGroupContext)serviceGroupContextMap.get(serviceGroupContextId);
+                serviceGroupContextMap.get(serviceGroupContextId);
 
         if (serviceGroupContext != null) {
             serviceGroupContext.touch();
@@ -561,13 +560,11 @@ public class ConfigurationContext extends AbstractContext {
         ServiceGroupContext serviceGroupContext = null;
 
         if (serviceGroupContextMap != null) {
-            serviceGroupContext =
-                    (ServiceGroupContext)serviceGroupContextMap.get(serviceGroupCtxId);
+            serviceGroupContext =serviceGroupContextMap.get(serviceGroupCtxId);
             if (serviceGroupContext != null) {
                 serviceGroupContext.touch();
             } else {
-                serviceGroupContext =
-                        (ServiceGroupContext)applicationSessionServiceGroupContexts
+                serviceGroupContext =applicationSessionServiceGroupContexts
                                 .get(serviceGroupCtxId);
                 if (serviceGroupContext != null) {
                     serviceGroupContext.touch();
@@ -652,8 +649,7 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContextMap == null) {
             return;
         }
-        ServiceGroupContext serviceGroupContext =
-                (ServiceGroupContext)serviceGroupContextMap.get(serviceGroupContextId);
+        ServiceGroupContext serviceGroupContext =serviceGroupContextMap.get(serviceGroupContextId);
         serviceGroupContextMap.remove(serviceGroupContextId);
         cleanupServiceContexts(serviceGroupContext);
     }
@@ -667,9 +663,8 @@ public class ConfigurationContext extends AbstractContext {
         synchronized (serviceGroupContextMap) {
             for (Iterator<String> sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
                  sgCtxtMapKeyIter.hasNext();) {
-                String sgCtxtId = (String)sgCtxtMapKeyIter.next();
-                ServiceGroupContext serviceGroupContext =
-                        (ServiceGroupContext)serviceGroupContextMap.get(sgCtxtId);
+                String sgCtxtId = sgCtxtMapKeyIter.next();
+                ServiceGroupContext serviceGroupContext =serviceGroupContextMap.get(sgCtxtId);
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
                     getServiceGroupContextTimeoutInterval()) {
                     sgCtxtMapKeyIter.remove();
@@ -707,7 +702,7 @@ public class ConfigurationContext extends AbstractContext {
             return;
         }
         while (serviceContextIter.hasNext()) {
-            ServiceContext serviceContext = (ServiceContext)serviceContextIter.next();
+            ServiceContext serviceContext = serviceContextIter.next();
             DependencyManager.destroyServiceObject(serviceContext);
         }
     }
@@ -754,7 +749,7 @@ public class ConfigurationContext extends AbstractContext {
         File tempFile = (File)axisConfiguration.getParameterValue(
                 Constants.Configuration.ARTIFACTS_TEMP_DIR);
         if (tempFile == null) {
-            String property = (String)AccessController.doPrivileged(
+            String property = AccessController.doPrivileged(
                     new PrivilegedAction<String>() {
                         public String run() {
                             return System.getProperty("java.io.tmpdir");
@@ -767,7 +762,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private void deleteTempFiles(final File dir) {
-        Boolean isDir = (Boolean)AccessController.doPrivileged(
+        Boolean isDir = AccessController.doPrivileged(
                 new PrivilegedAction<Boolean>() {
                     public Boolean run() {
                         return dir.isDirectory();
@@ -775,7 +770,7 @@ public class ConfigurationContext extends AbstractContext {
                 }
         );
         if (isDir) {
-            String[] children = (String[])AccessController.doPrivileged(
+            String[] children = AccessController.doPrivileged(
                     new PrivilegedAction<String[]>() {
                         public String[] run() {
                             return dir.list();
@@ -910,8 +905,7 @@ public class ConfigurationContext extends AbstractContext {
         ArrayList<String> toBeRemovedList = new ArrayList<String>();
         Iterator<ServiceGroupContext> serviceGroupContexts = serviceGroupContextMap.values().iterator();
         while (serviceGroupContexts.hasNext()) {
-            ServiceGroupContext serviceGroupContext =
-                    (ServiceGroupContext)serviceGroupContexts.next();
+            ServiceGroupContext serviceGroupContext =serviceGroupContexts.next();
             if (serviceGroupContext.getDescription().equals(serviceGroup)) {
                 toBeRemovedList.add(serviceGroupContext.getId());
             }
