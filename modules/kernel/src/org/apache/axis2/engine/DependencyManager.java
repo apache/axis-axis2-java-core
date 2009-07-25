@@ -129,7 +129,7 @@ public class DependencyManager {
                     serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
                     initServiceObject(serviceImpl, serviceContext);
                 } catch (Exception e) {
-                    AxisFault.makeFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             }
         }
