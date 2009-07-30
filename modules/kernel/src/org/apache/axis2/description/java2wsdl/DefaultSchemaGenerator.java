@@ -442,7 +442,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 if (AxisFault.class.getName().equals(extype.getName())) {
                     continue;
                 }
-                String partQname = extype.getSimpleName();
+                String partQname = getSimpleClassName(extype);
                 methodSchemaType = createSchemaTypeForFault(partQname);
                 QName elementName =
                         new QName(this.schemaTargetNameSpace, partQname, this.schema_namespace_prefix);
@@ -459,7 +459,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     resolveSchemaNamespace(Exception.class.getPackage().getName());
                     addImport(getXmlSchema(schemaTargetNameSpace), schemaTypeName);
                 } else {
-                    generateSchemaForType(sequence, extype, extype.getSimpleName());
+                    generateSchemaForType(sequence, extype, getSimpleClassName(extype));
                     methodSchemaType.setParticle(sequence);
                 }
 
@@ -469,7 +469,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     continue;
                 }
                 AxisMessage faultMessage = new AxisMessage();
-                faultMessage.setName(extype.getSimpleName());
+                faultMessage.setName(getSimpleClassName(extype));
                 faultMessage.setElementQName(typeTable.getQNamefortheType(partQname));
                 axisOperation.setFaultMessages(faultMessage);
             }
@@ -486,7 +486,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         String name = getClassName(javaType);
         QName schemaTypeName = typeTable.getComplexSchemaType(name);
         if (schemaTypeName == null) {
-            String simpleName = javaType.getSimpleName();
+            String simpleName = getSimpleClassName(javaType);
 
             String packageName = getQualifiedName(javaType.getPackage());
             String targetNameSpace = resolveSchemaNamespace(packageName);
@@ -514,7 +514,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     && !(getQualifiedName(sup.getPackage()).indexOf("java.util") > 0))
             {
                 String superClassName = sup.getName();
-                String superclassname = sup.getSimpleName();
+                String superclassname = getSimpleClassName(sup);
                 String tgtNamespace;
                 String tgtNamespacepfx;
                 QName qName = typeTable.getSimpleSchemaTypeName(superClassName);
@@ -636,7 +636,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     simpleTypeName += "ArrayOf";
                     simpleType = simpleType.getComponentType();
                 }
-                simpleTypeName += simpleType.getSimpleName();
+                simpleTypeName += getSimpleClassName(simpleType);
 
                 if (xmlSchema.getTypeByName(simpleTypeName) == null) {
                     XmlSchemaComplexType xmlSchemaComplexType = new XmlSchemaComplexType(xmlSchema);
@@ -952,7 +952,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                     simpleTypeName += "ArrayOf";
                     simpleType = simpleType.getComponentType();
                 }
-                simpleTypeName += simpleType.getSimpleName();
+                simpleTypeName += getSimpleClassName(simpleType);
 
                 return processParameterArrayTypes(sequence, type, partName, simpleTypeName);
 
@@ -1453,6 +1453,16 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             name = name.replace('$', '_');
         }
         return name;
+    }
+    
+    protected String getSimpleClassName(Class type) {
+        String simpleClassName = type.getName();
+        int idx = simpleClassName.lastIndexOf('.');
+        if (idx != -1 && idx < (simpleClassName.length() - 1)) {
+            simpleClassName = simpleClassName.substring(idx + 1);
+        }
+        
+        return simpleClassName.replace('$', '_');
     }
 
     protected String getQualifiedName(Package packagez) {

@@ -36,10 +36,6 @@ public class DefaultSchemaGeneratorTest extends TestCase {
         
     }
     
-    public static class ExtraClass {
-        
-    }
-    
     public void testGeneratesExtraClass() throws Exception {
         
         AxisService axisService = new AxisService();
