@@ -279,8 +279,7 @@ public class RepositoryListener implements DeploymentConstants {
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        if (!file.isDirectory() && extension
-                                .equals(DeploymentFileData.getFileExtension(file.getName()))) {
+                        if (extension.equals(DeploymentFileData.getFileExtension(file.getName()))) {
                             addFileToDeploy(file,
                                             deploymentEngine.getDeployer(dir, extension),
                                             WSInfo.TYPE_CUSTOM);

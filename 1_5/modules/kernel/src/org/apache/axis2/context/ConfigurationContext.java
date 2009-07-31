@@ -686,6 +686,12 @@ public class ConfigurationContext extends AbstractContext {
      * @return Returns the ListenerManager
      */
     public ListenerManager getListenerManager() {
+        synchronized (this) {
+            if (listenerManager == null) {
+                listenerManager = new ListenerManager();
+                listenerManager.init(this);
+            }
+        }
         return listenerManager;
     }
 
