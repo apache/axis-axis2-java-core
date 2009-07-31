@@ -169,13 +169,9 @@ public class SimpleHTTPServer implements TransportListener {
             SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
-            ListenerManager listenerManager = configctx .getListenerManager();
             TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_HTTP);
             trsIn.setReceiver(receiver);
-            if (listenerManager == null) {
-                listenerManager = new ListenerManager();
-                listenerManager.init(configctx);
-            }
+            ListenerManager listenerManager = configctx.getListenerManager();
             listenerManager.addListener(trsIn, true);
 
             // should all transports be started? specified as "-t all"

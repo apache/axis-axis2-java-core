@@ -82,10 +82,6 @@ public class UtilServer {
                 ListenerManager listenerManager = er.getListenerManager();
                 TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_HTTP);
                 trsIn.setReceiver(receiver);
-                if (listenerManager == null) {
-                    listenerManager = new ListenerManager();
-                    listenerManager.init(er);
-                }
                 listenerManager.addListener(trsIn, true);
                 System.out.print("Server started on port "
                         + TESTING_PORT + ".....");

@@ -155,11 +155,8 @@ public class ServiceClient {
         hashCode = (int)anonServiceCounter.incrementAndGet();
 
         // Initialize transports
-        ListenerManager transportManager = configContext.getListenerManager();
-        if (transportManager == null) {
-            transportManager = new ListenerManager();
-            transportManager.init(this.configContext);
-        }
+        // TODO : do we need this?
+        configContext.getListenerManager();
 
         // save the axisConfig and service
         axisConfig = configContext.getAxisConfiguration();

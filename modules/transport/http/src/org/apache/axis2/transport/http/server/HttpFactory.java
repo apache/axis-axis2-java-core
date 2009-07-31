@@ -210,12 +210,7 @@ public class HttpFactory {
      * Return the configured listener manager or create and configure one with configurationContext
      */
     public ListenerManager getListenerManager() {
-        ListenerManager lm = configurationContext.getListenerManager();
-        if (lm == null) {
-            lm = new ListenerManager();
-            lm.init(configurationContext);
-        }
-        return lm;
+        return configurationContext.getListenerManager();
     }
 
     /**
