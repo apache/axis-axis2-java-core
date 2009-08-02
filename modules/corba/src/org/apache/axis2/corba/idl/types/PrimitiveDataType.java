@@ -75,7 +75,11 @@ public class PrimitiveDataType extends DataType {
     }
 
     public static PrimitiveDataType getPrimitiveDataType(String typeName) {
-        return new PrimitiveDataType(getTypeCode(typeName));
+        TypeCode typeCode = getTypeCode(typeName);
+        if (typeCode == null) {
+            return null;
+        }
+        return new PrimitiveDataType(typeCode);
     }
 
     public PrimitiveDataType(TypeCode typeCode){

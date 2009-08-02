@@ -20,22 +20,7 @@
 package org.apache.axis2.corba.idl.parser;
 
 import antlr.collections.AST;
-import org.apache.axis2.corba.idl.types.ArrayType;
-import org.apache.axis2.corba.idl.types.CompositeDataType;
-import org.apache.axis2.corba.idl.types.DataType;
-import org.apache.axis2.corba.idl.types.EnumType;
-import org.apache.axis2.corba.idl.types.ExceptionType;
-import org.apache.axis2.corba.idl.types.IDL;
-import org.apache.axis2.corba.idl.types.Interface;
-import org.apache.axis2.corba.idl.types.Member;
-import org.apache.axis2.corba.idl.types.Operation;
-import org.apache.axis2.corba.idl.types.PrimitiveDataType;
-import org.apache.axis2.corba.idl.types.SequenceType;
-import org.apache.axis2.corba.idl.types.Struct;
-import org.apache.axis2.corba.idl.types.Typedef;
-import org.apache.axis2.corba.idl.types.UnionMember;
-import org.apache.axis2.corba.idl.types.UnionType;
-import org.apache.axis2.corba.idl.types.ValueType;
+import org.apache.axis2.corba.idl.types.*;
 import org.apache.axis2.corba.exceptions.InvalidIDLException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,6 +94,11 @@ public class IDLVisitor /*implements ASTVisitor*/ {
 
                 case IDLTokenTypes.LITERAL_typedef: {
                     visitAndAddTypedefs(node, module);
+                    break;
+                }
+
+                case IDLTokenTypes.LITERAL_const: {
+                    idl.addType(visitConst(node));
                     break;
                 }
 
@@ -363,8 +353,7 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             return typedef;
         }
 
-        DataType dataType = null;
-        Map compositeDataTypes = idl.getCompositeDataTypes();
+        DataType dataType;
 
         String typeName;
         if (typeNode.getType() == IDLTokenTypes.LITERAL_unsigned) {
@@ -377,9 +366,7 @@ public class IDLVisitor /*implements ASTVisitor*/ {
                 typeName = "ushort";
             } else if (nextNode.getType() == IDLTokenTypes.LITERAL_long) {
                 AST nextToLong = nextNode.getNextSibling();
-                if (nextToLong == null) {
-                    throw new InvalidIDLException("an identifier is required after the 'long' keyword");
-                } else if (nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
+                if (nextToLong != null && nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
                     typeNode.setNextSibling(nextToLong.getNextSibling());
                     typeNode.setFirstChild(nextToLong.getFirstChild());
                     typeName = "ulonglong";
@@ -393,9 +380,7 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             }
         } else if (typeNode.getType() == IDLTokenTypes.LITERAL_long) {
             AST nextToLong = typeNode.getNextSibling();
-            if (nextToLong == null) {
-                throw new InvalidIDLException("an identifier is required after the 'long' keyword");
-            } else if (nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
+            if (nextToLong != null && nextToLong.getType() == IDLTokenTypes.LITERAL_long) {
                 typeNode.setNextSibling(nextToLong.getNextSibling());
                 typeNode.setFirstChild(nextToLong.getFirstChild());
                 typeName = "longlong";
@@ -407,7 +392,8 @@ public class IDLVisitor /*implements ASTVisitor*/ {
         }
 
 
-        if (compositeDataTypes!=null) {
+       /*   Map compositeDataTypes = idl.getCompositeDataTypes();
+            if (compositeDataTypes!=null) {
             if (!module.equals("")) {
                 if (!typeName.startsWith(module)) {
                     dataType = (DataType) idl.getCompositeDataTypes().get(module + typeName);
@@ -424,11 +410,59 @@ public class IDLVisitor /*implements ASTVisitor*/ {
                 dataType = (DataType) idl.getCompositeDataTypes().get(typeName);
         }
 
-        if (dataType==null)
+
+        if (dataType == null)
             dataType = PrimitiveDataType.getPrimitiveDataType(typeName);
 
         if (dataType == null)
             throw new InvalidIDLException("Invalid data type: " + typeName);
+        }
+
+        */
+        dataType = getDataType(typeName);
+
+        return dataType;
+    }
+
+    DataType getDataType(String typeName) throws InvalidIDLException {
+        DataType dataType = null;
+        Map compositeDataTypes = idl.getCompositeDataTypes();
+
+        if (compositeDataTypes != null) {
+            if (moduleForInnerTypes!=null) {
+                if (!typeName.startsWith(module)) {
+                    dataType = (DataType) compositeDataTypes.get(moduleForInnerTypes + typeName);
+                }
+            }
+
+            String tempModule = module;
+            int modSepLen = CompositeDataType.MODULE_SEPERATOR.length();
+            while (dataType == null) {
+                dataType = (DataType) idl.getCompositeDataTypes().get(tempModule + typeName);
+                if (dataType == null && !tempModule.isEmpty()) {
+                    if (tempModule.endsWith(CompositeDataType.MODULE_SEPERATOR)) {
+                        tempModule = tempModule.substring(0, tempModule.length() - modSepLen);    
+                    }
+                    int modSepPos = tempModule.lastIndexOf(CompositeDataType.MODULE_SEPERATOR);
+                    if (modSepPos < 0) {
+                        tempModule = "";
+                    } else {
+                        tempModule = tempModule.substring(0, modSepPos + modSepLen);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (dataType == null) {
+            dataType = PrimitiveDataType.getPrimitiveDataType(typeName);
+        }
+
+        if (dataType == null) {
+            throw new InvalidIDLException("Invalid data type: " + typeName);
+        }
+
         return dataType;
     }
 
@@ -471,7 +505,8 @@ public class IDLVisitor /*implements ASTVisitor*/ {
         unionType.setModule(module);
         unionType.setName(unName);
         AST switchTypeNode = unNode.getNextSibling();
-        unionType.setDiscriminatorType(findDataType(switchTypeNode, unName));
+        DataType discrimType = findDataType(switchTypeNode, unName);
+        unionType.setDiscriminatorType(discrimType);
         AST caseOrDefaultNode = switchTypeNode.getNextSibling();
         while (caseOrDefaultNode != null) {
             UnionMember unionMember = new UnionMember();
@@ -482,7 +517,17 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             } else {
                 unionMember.setDefault(false);
                 AST caseValueNode = caseOrDefaultNode.getFirstChild();
-                unionMember.setDiscriminatorValue(caseValueNode.getText());
+                String caseNodeText = caseValueNode.getText();
+                if (!(discrimType instanceof EnumType) && IDLTokenTypes.IDENT == caseValueNode.getType()) {
+                    //Get const value
+                    DataType constType = getDataType(caseNodeText);
+                    if (constType instanceof ConstType) {
+                        caseNodeText = ((ConstType) constType).getValue().toString();
+                    } else {
+                        throw new InvalidIDLException(caseNodeText + "is not a constant name");
+                    }
+                }
+                unionMember.setDiscriminatorValue(caseNodeText);
                 typeNode = caseValueNode.getNextSibling();
             }
 
@@ -576,13 +621,54 @@ public class IDLVisitor /*implements ASTVisitor*/ {
 
         AST countNode = typeNode.getNextSibling();
         if (countNode!=null) {
-            sequenceType.setElementCount(Integer.parseInt(countNode.getText()));
+            int count;
+            if (IDLTokenTypes.IDENT == countNode.getType()) {
+                //Get const value
+                String constName = countNode.getText();
+                DataType constType = getDataType(constName);
+                if (constType instanceof ConstType) {
+                    Object countValue = ((ConstType) constType).getValue();
+                    if (countValue instanceof Integer) {
+                        count = ((Integer) countValue).intValue();
+                    } else {
+                        throw new InvalidIDLException(constName + "is not a long");
+                    }
+                } else {
+                    throw new InvalidIDLException(constName + "is not a constant name");
+                }
+            } else {
+                count = Integer.parseInt(countNode.getText());
+            }
+            sequenceType.setElementCount(count);
             //sequenceType.setBounded(true);
         } else {
             sequenceType.setElementCount(0);
             //sequenceType.setBounded(false);
         }
         return sequenceType;
+    }
+
+    private ConstType visitConst(AST node) throws InvalidIDLException {
+        AST constTypeNode = node.getFirstChild();
+        AST constNameNode = constTypeNode.getNextSibling();
+        while (constNameNode != null && IDLTokenTypes.IDENT != constNameNode.getType()) {
+            constNameNode = constNameNode.getNextSibling();    
+        }
+
+        if (constNameNode == null) {
+            throw new InvalidIDLException("Constant name not found");
+        }
+
+        String constName = constNameNode.toString();
+        ConstType constType = new ConstType();
+        constType.setModule(module);
+        constType.setName(constName);
+        DataType type = findDataType(constTypeNode, constName);
+        constType.setDataType(type);
+        AST constValueNode = constNameNode.getNextSibling();
+        constType.setValue(ExpressionUtil.eval(constValueNode, type, this));
+        //System.out.println(constType.getValue());
+        return constType;
     }
 
 }

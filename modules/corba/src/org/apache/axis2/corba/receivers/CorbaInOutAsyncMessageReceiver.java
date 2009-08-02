@@ -42,6 +42,11 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is takes care of the IN-OUT sync MEP in the server side
+ *
+ * @deprecated no longer needed, going away after 1.3
+ */
 public class CorbaInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver implements CorbaConstants {
 
     private static Log log = LogFactory.getLog(CorbaInOutAsyncMessageReceiver.class);
