@@ -2049,10 +2049,14 @@
                                   current_element = (axiom_element_t *)axiom_node_get_data_element(current_node, env);
                                   qname = axiom_element_get_qname(current_element, env, current_node);
 
-                                  if (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)
+                                  if (<xsl:if test="@ours"><xsl:value-of select="substring-before(@type, '_t*')"/>_is_particle() || </xsl:if> <!-- is particle test should be done here -->
+                                    (current_node &amp;&amp; current_element &amp;&amp; (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>)))
                                   {
                                   </xsl:if>
-                                      is_early_node_valid = AXIS2_TRUE;
+                                      if( current_node &amp;&amp; current_element &amp;&amp; (axutil_qname_equals(element_qname, env, qname)<xsl:if test="not(@nsuri) or @nsuri=''"> || !axutil_strcmp("<xsl:value-of select="$propertyName"/>", axiom_element_get_localname(current_element, env))</xsl:if>))
+                                      {
+                                          is_early_node_valid = AXIS2_TRUE;
+                                      }
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
