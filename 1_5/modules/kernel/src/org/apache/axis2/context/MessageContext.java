@@ -1606,8 +1606,17 @@ public class MessageContext extends AbstractContext
                        return null;
                     }
 
-                    String direction = axisMessage.getDirection();
-					AxisBindingMessage axisBindingMessage = null;
+                    String direction;
+                    if (axisMessage != null) {
+                        direction = axisMessage.getDirection();
+                    } else {
+                        if ((FLOW == IN_FLOW) || (FLOW == IN_FAULT_FLOW)) {
+                            direction = WSDLConstants.WSDL_MESSAGE_DIRECTION_IN;
+                        } else {
+                            direction = WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT;
+                        }
+                    }
+					AxisBindingMessage axisBindingMessage;
 					if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN
 							.equals(direction)
 							&& WSDLUtil
@@ -2204,7 +2213,7 @@ public class MessageContext extends AbstractContext
      * able to find matching objects when the message
      * context is re-constituted.
      *
-     * @param out The stream to write the object contents to
+     * @param o The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput o) throws IOException {
@@ -2790,7 +2799,7 @@ public class MessageContext extends AbstractContext
      * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in The stream to read the object contents from
+     * @param inObject
      * @throws IOException
      * @throws ClassNotFoundException
      */
