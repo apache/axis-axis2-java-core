@@ -60,6 +60,7 @@ import java.util.Map;
 public class CStructWriter implements BeanWriter {
 
     public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
+    public static final String EXTENSION_MAPPER_CLASSNAME = "extension_mapper";
     public static final String AXIS2_PREFIX = "adb_";
     private String javaBeanTemplateName = null;
     private boolean templateLoaded = false;
@@ -223,8 +224,8 @@ public class CStructWriter implements BeanWriter {
         try {
             if (wrapClasses) {
 
-                File outSource = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".c");
-                File outHeader = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".h");
+                File outSource = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".c", null);
+                File outHeader = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".h", null);
                 //parse with the template and create the files
                 parseSource(globalWrappedSourceDocument, outSource);
                 parseHeader(globalWrappedHeaderDocument, outHeader);
@@ -354,8 +355,8 @@ public class CStructWriter implements BeanWriter {
             if (writeClasses) {
                 //create the file
                 String fileName = className.substring(4, className.length() -3);
-                File outSource = createOutFile(fileName, ".c");
-                File outHeader = createOutFile(fileName, ".h");
+                File outSource = createOutFile(fileName, ".c", null);
+                File outHeader = createOutFile(fileName, ".h", null);
                 //parse with the template and create the files
                 parseSource(modelSource, outSource);
                 parseHeader(modelHeader, outHeader);
@@ -1045,10 +1046,10 @@ public class CStructWriter implements BeanWriter {
      * @param extension
      * @throws Exception
      */
-    protected File createOutFile(String fileName, String extension) throws Exception {
+    protected File createOutFile(String fileName, String extension, String prefix) throws Exception {
         return org.apache.axis2.util.FileWriter.createClassFile(this.rootDir,
                 "",
-                AXIS2_PREFIX + fileName,
+                (prefix == null ? AXIS2_PREFIX : prefix) + fileName,
                 extension);
     }
 
@@ -1159,13 +1160,87 @@ public class CStructWriter implements BeanWriter {
     }
 
     /**
-     * Keep unimplemented
-     *
+     * Generate the Extension Mapper module. This provides pseudo-polymorphism
+     * support to the generated code, allowing to send and receive derived
+     * classes in requests/replies that expect a base class.
      * @param metainfArray
      * @see BeanWriter#writeExtensionMapper(org.apache.axis2.schema.BeanWriterMetaInfoHolder[])
      */
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException {
-        //unimplemented
+        // generate the element
+        try {
+            Document model = XSLTUtils.getDocument();
+            Element rootElt = XSLTUtils.getElement(model, "mapper");
+            Element rootElt2 = XSLTUtils.getElement(model, "mapper");
+            String extMapperName = CStructWriter.EXTENSION_MAPPER_CLASSNAME;
+
+            if (!wrapClasses) {
+                XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
+            }
+
+            if (!writeClasses) {
+                XSLTUtils.addAttribute(model, "skip-write", "yes", rootElt);
+            }
+
+            for (BeanWriterMetaInfoHolder metainf : metainfArray) {
+                QName ownQname = metainf.getOwnQname();
+                String className = metainf.getOwnClassName();
+                //do  not add when the qname is not availble
+                if (ownQname != null) {
+                    Element typeChild = XSLTUtils.addChildElement(model, "type", rootElt);
+                    XSLTUtils.addAttribute(model, "nsuri", ownQname.getNamespaceURI(), typeChild);
+                    XSLTUtils.addAttribute(model, "classname", className == null ? "" : className, typeChild);
+                    XSLTUtils.addAttribute(model, "shortname", ownQname == null ? "" :
+                            ownQname.getLocalPart(), typeChild);
+                }
+            }
+
+            model.appendChild(rootElt);
+
+            if (!templateLoaded) {
+                loadTemplate();
+            }
+
+            // if wrapped then do not write the classes now but add the models to a global document. However in order to write the
+            // global class that is generated, one needs to call the writeBatch() method
+            if (wrapClasses) {
+                rootElt2 = (Element) globalWrappedSourceDocument.importNode(rootElt, true);
+                // add to the global wrapped document
+                globalWrappedSourceDocument.getDocumentElement().appendChild(rootElt2);
+                XSLTUtils.addAttribute(globalWrappedSourceDocument, "name", extMapperName, rootElt2);
+                XSLTUtils.addAttribute(globalWrappedSourceDocument, "caps-name", extMapperName.toUpperCase(), rootElt2);
+
+                rootElt2 = (Element) globalWrappedHeaderDocument.importNode(rootElt, true);
+                // add to the global wrapped document
+                globalWrappedHeaderDocument.getDocumentElement().appendChild(rootElt2);
+                XSLTUtils.addAttribute(globalWrappedHeaderDocument, "name", extMapperName, rootElt2);
+                XSLTUtils.addAttribute(globalWrappedHeaderDocument, "caps-name", extMapperName.toUpperCase(), rootElt2);
+        } else {
+
+            XSLTUtils.addAttribute(model, "name", extMapperName, model.getDocumentElement());
+            XSLTUtils.addAttribute(model, "caps-name", extMapperName.toUpperCase(), rootElt);
+
+            if (writeClasses) {
+                // create the files
+                File outSource = createOutFile(extMapperName, ".c", "axis2_");
+                File outHeader = createOutFile(extMapperName, ".h", "axis2_");
+                // parse with the templates
+                parseSource(model, outSource);
+                parseHeader(model, outHeader);
+            }
+
+            // add the model to the model map
+            modelMap.put(new QName(extMapperName), model);
+            modelMap.put(new QName(extMapperName), model);
+
+        }
+
+        } catch (ParserConfigurationException e) {
+            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.document.error"), e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SchemaCompilationException(e);
+        }
     }
 
     /**

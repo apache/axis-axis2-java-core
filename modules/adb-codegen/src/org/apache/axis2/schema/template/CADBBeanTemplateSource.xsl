@@ -42,6 +42,7 @@
 
     <xsl:template match="class">
         <xsl:variable name="name">_<xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="type_name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="just_name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="axis2_name">adb_<xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="istype"><xsl:value-of select="@type"/></xsl:variable>
@@ -95,6 +96,8 @@
 
         struct <xsl:value-of select="$axis2_name"/>
         {
+            axis2_char_t *property_Type;
+
             <xsl:if test="not($istype)">
                 axutil_qname_t* qname;
             </xsl:if>
@@ -221,6 +224,7 @@
 
             memset(<xsl:value-of select="$name"/>, 0, sizeof(<xsl:value-of select="$axis2_name"/>_t));
 
+            <xsl:value-of select="$name"/>->property_Type = axutil_strdup(env, "<xsl:value-of select="$axis2_name"></xsl:value-of>");
             <xsl:for-each select="property">
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
                 <xsl:choose>
@@ -356,6 +360,27 @@
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env)
         {
+            <!-- Only use the extension mapper for actual types -->
+            <xsl:choose>
+            <xsl:when test="@type = 'yes'">
+            return axis2_extension_mapper_free(
+                (adb_type_t*) <xsl:value-of select="$name"/>,
+                env,
+                "<xsl:value-of select="$axis2_name"/>");
+            </xsl:when>
+            <xsl:otherwise>
+            return <xsl:value-of select="$axis2_name"/>_free_obj(
+                <xsl:value-of select="$name"/>,
+                env);
+            </xsl:otherwise>
+            </xsl:choose>
+        }
+
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_free_obj(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env)
+        {
             <xsl:if test="property/@isarray">
                 int i = 0;
                 int count = 0;
@@ -364,6 +389,11 @@
 
             AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
             AXIS2_PARAM_CHECK(env->error, <xsl:value-of select="$name"/>, AXIS2_FAILURE);
+
+            if (<xsl:value-of select="$name"/>->property_Type != NULL)
+            {
+              AXIS2_FREE(env->allocator, <xsl:value-of select="$name"/>->property_Type);
+            }
 
             <xsl:for-each select="property">
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
@@ -1016,6 +1046,36 @@
                 axis2_bool_t *dp_is_early_node_valid,
                 axis2_bool_t dont_care_minoccurs)
         {
+            <!-- Only use the extension mapper for actual types -->
+            <xsl:choose>
+            <xsl:when test="@type = 'yes'">
+            return axis2_extension_mapper_deserialize(
+                (adb_type_t*) <xsl:value-of select="$name"/>,
+                env,
+                dp_parent,
+                dp_is_early_node_valid,
+                dont_care_minoccurs,
+                "<xsl:value-of select="$axis2_name"/>");
+            </xsl:when>
+            <xsl:otherwise>
+            return <xsl:value-of select="$axis2_name"/>_deserialize_obj(
+                <xsl:value-of select="$name"/>,
+                env,
+                dp_parent,
+                dp_is_early_node_valid,
+                dont_care_minoccurs);
+            </xsl:otherwise>
+            </xsl:choose>
+        }
+
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_deserialize_obj(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env,
+                axiom_node_t **dp_parent,
+                axis2_bool_t *dp_is_early_node_valid,
+                axis2_bool_t dont_care_minoccurs)
+        {
           axiom_node_t *parent = *dp_parent;
           
           axis2_status_t status = AXIS2_SUCCESS;
@@ -1593,7 +1653,7 @@
                               <!-- changes to following choose tag should be changed in another 2 places -->
                                  <xsl:choose>
                                     <xsl:when test="@ours">
-                                      element = (void*)<xsl:value-of select="substring-before(@type, '_t*')"/>_create(env);
+                                      element = (void*)axis2_extension_mapper_create_from_node(env, &amp;current_node, "<xsl:value-of select="substring-before(@type, '_t*')"/>");
 
                                       status =  <xsl:value-of select="substring-before(@type, '_t*')"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element,
                                                                             env, &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
@@ -2060,7 +2120,7 @@
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
-                                          element = (void*)<xsl:value-of select="substring-before(@type, '_t*')"/>_create(env);
+                                          element = (void*)axis2_extension_mapper_create_from_node(env, &amp;current_node, "<xsl:value-of select="substring-before(@type, '_t*')"/>");
                                           
                                           status =  <xsl:value-of select="substring-before(@type, '_t*')"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
                                                                                  &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
@@ -2551,7 +2611,7 @@
                                       <!-- changes to following choose tag should be changed in another 2 places -->
                                      <xsl:choose>
                                         <xsl:when test="@ours">
-                                          element = (void*)<xsl:value-of select="substring-before(@type, '_t*')"/>_create(env);
+                                          element = (void*)axis2_extension_mapper_create_from_node(env, &amp;current_node, "<xsl:value-of select="substring-before(@type, '_t*')"/>");
                                           
                                           status =  <xsl:value-of select="substring-before(@type, '_t*')"/>_deserialize((<xsl:value-of select="$nativePropertyType"/>)element, env,
                                                                                  &amp;current_node, &amp;is_early_node_valid, <xsl:choose><xsl:when test="$choice">AXIS2_TRUE</xsl:when><xsl:otherwise>AXIS2_FALSE</xsl:otherwise></xsl:choose>);
@@ -3549,6 +3609,32 @@
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axutil_env_t *env, axiom_node_t *parent, axiom_element_t *parent_element, int parent_tag_closed, axutil_hash_t *namespaces, int *next_ns_index)
         {
+            <!-- Only use the extension mapper for actual types -->
+            <xsl:choose>
+            <xsl:when test="@type = 'yes'">
+            if (<xsl:value-of select="$name"/> == NULL)
+            {
+                return <xsl:value-of select="$axis2_name"/>_serialize_obj(
+                    <xsl:value-of select="$name"/>, env, parent, parent_element, parent_tag_closed, namespaces, next_ns_index);
+            }
+            else
+            {
+                return axis2_extension_mapper_serialize(
+                    (adb_type_t*) <xsl:value-of select="$name"/>, env, parent, parent_element, parent_tag_closed, namespaces, next_ns_index, "<xsl:value-of select="$axis2_name"/>");
+            }
+            </xsl:when>
+            <xsl:otherwise>
+                return <xsl:value-of select="$axis2_name"/>_serialize_obj(
+                    <xsl:value-of select="$name"/>, env, parent, parent_element, parent_tag_closed, namespaces, next_ns_index);
+            </xsl:otherwise>
+            </xsl:choose>
+        }
+
+        axiom_node_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_serialize_obj(
+                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+                const axutil_env_t *env, axiom_node_t *parent, axiom_element_t *parent_element, int parent_tag_closed, axutil_hash_t *namespaces, int *next_ns_index)
+        {
             <!-- first declaration part -->
             <xsl:for-each select="property/@attribute">
              <xsl:if test="position()=1">
@@ -3559,9 +3645,16 @@
              axis2_char_t *string_to_stream;
             </xsl:if>
          
-         axiom_node_t *current_node = NULL;
+         axiom_node_t* current_node = NULL;
          int tag_closed = 0;
-
+         <xsl:if test="@type or $isUnion">
+         axis2_char_t* xsi_prefix = NULL;
+         </xsl:if>
+         <xsl:if test="@type">
+         axis2_char_t* type_attrib = NULL;
+         axiom_namespace_t* xsi_ns = NULL;
+         axiom_attribute_t* xsi_type_attri = NULL;
+         </xsl:if>
          <!--now distinguise the properties specific to simple types -->
          <xsl:choose>
            <xsl:when test="@simple">
@@ -4025,6 +4118,28 @@
 
 
             <xsl:if test="@type">
+              <!-- now put the xsi:type to identify the types on polymorphic cases -->
+ 
+              if(!(xsi_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING)))
+              {
+                  /* it is better to stick with the standard prefix */
+                  xsi_prefix = (axis2_char_t*)axutil_strdup(env, "xsi");
+                  
+                  axutil_hash_set(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING, xsi_prefix);
+
+                  if(parent_element)
+                  {
+                        axiom_namespace_t *element_ns = NULL;
+                        element_ns = axiom_namespace_create(env, "http://www.w3.org/2001/XMLSchema-instance",
+                                                            xsi_prefix);
+                        axiom_element_declare_namespace_assume_param_ownership(parent_element, env, element_ns);
+                  }
+              }
+              type_attrib = axutil_strcat(env, xsi_prefix, ":type=\"<xsl:value-of select="$type_name"/>\"", NULL);
+              axutil_stream_write(stream, env, type_attrib, axutil_strlen(type_attrib));
+
+              AXIS2_FREE(env->allocator, type_attrib);
+                
               string_to_stream = "&gt;"; <!-- The ending tag of the parent -->
               axutil_stream_write(stream, env, string_to_stream, axutil_strlen(string_to_stream));
               tag_closed = 1;
@@ -4033,14 +4148,37 @@
              <!-- end bracket for if(!parent_tag_closed)-->
             <xsl:if test="count(property[@attribute])!=0 or @type">
             }
-            </xsl:if>
+            else {
+              /* if the parent tag closed we would be able to declare the type directly on the parent element */ 
+              if(!(xsi_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING)))
+              {
+                  /* it is better to stick with the standard prefix */
+                  xsi_prefix = (axis2_char_t*)axutil_strdup(env, "xsi");
+                  
+                  axutil_hash_set(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING, xsi_prefix);
+
+                  if(parent_element)
+                  {
+                        axiom_namespace_t *element_ns = NULL;
+                        element_ns = axiom_namespace_create(env, "http://www.w3.org/2001/XMLSchema-instance",
+                                                            xsi_prefix);
+                        axiom_element_declare_namespace_assume_param_ownership(parent_element, env, element_ns);
+                  }
+              }
+            }
+            xsi_ns = axiom_namespace_create (env,
+                                 "<xsl:value-of select="@nsuri"/>",
+                                 xsi_prefix);
+            xsi_type_attri = axiom_attribute_create (env, "type", "<xsl:value-of select="$type_name"/>", xsi_ns);
+            <!-- TODO: parent here can be data_source node, not element node should be fixed -->
+            axiom_element_add_attribute (parent_element, env, xsi_type_attri, parent);
+        </xsl:if>
 
             <xsl:if test="$isUnion">
             /* here we need to declare the union type in the xsi:type field */
             
             if(axutil_strcmp(<xsl:value-of select="$name"/>->current_value, ""))
             {
-                axis2_char_t *xsi_prefix = NULL;
 
                 if(!(xsi_prefix = (axis2_char_t*)axutil_hash_get(namespaces, "http://www.w3.org/2001/XMLSchema-instance", AXIS2_HASH_KEY_STRING)))
                 {
@@ -4087,7 +4225,7 @@
 
                        if(!parent_tag_closed &amp;&amp; !tag_closed)
                        {
-                            text_value = axutil_strcat(env, xsi_prefix, " type=", ns_prefix, ":", <xsl:value-of select="$name"/>->current_value, NULL);
+                            text_value = axutil_strcat(env, xsi_prefix, ":type=", ns_prefix, ":", <xsl:value-of select="$name"/>->current_value, NULL);
                             axutil_stream_write(stream, env, text_value, axutil_strlen(text_value));
 
                             AXIS2_FREE(env->allocator, text_value);
@@ -6469,6 +6607,218 @@
         }
         </xsl:if>
 
+    </xsl:template>
+
+    <xsl:template match="mapper">
+        <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+        <xsl:variable name="axis2_name">axis2_<xsl:value-of select="@name"/></xsl:variable>
+
+        /**
+         * <xsl:value-of select="$axis2_name"/>.c
+         *
+         * This file was auto-generated from WSDL
+         * by the Apache Axis2/Java version: #axisVersion# #today#
+         */
+
+        #include "<xsl:value-of select="$axis2_name"/>.h"
+
+        <xsl:for-each select="type">#include "adb_<xsl:value-of select="@shortname"/>.h"
+        </xsl:for-each>
+
+        struct adb_type
+        {
+            axis2_char_t *property_Type;
+        };
+
+        /**
+         * Auxiliary function to determine an ADB object type from its Axiom node.
+         * @param env pointer to environment struct
+         * @param node double pointer to the parent node to deserialize
+         * @return type name on success, else NULL
+         */
+        axis2_char_t *AXIS2_CALL
+        axis2_extension_mapper_type_from_node(
+            const axutil_env_t *env,
+            axiom_node_t** node)
+        {
+            axiom_node_t *parent = *node;
+            axutil_qname_t *element_qname = NULL;
+            axiom_element_t *element = NULL;
+
+            axutil_hash_index_t *hi;
+            void *val;
+            axiom_attribute_t *type_attr;
+            axutil_hash_t *ht;
+            axis2_char_t *temp;
+            axis2_char_t *type;
+
+            while(parent &amp;&amp; axiom_node_get_node_type(parent, env) != AXIOM_ELEMENT)
+            {
+                parent = axiom_node_get_next_sibling(parent, env);
+            }
+
+            if (NULL == parent)
+            {
+                /* This should be checked before everything */
+                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI,
+                            "Failed in building adb object : "
+                            "NULL elemenet can not be passed to deserialize");
+                return AXIS2_FAILURE;
+            }
+
+            element = (axiom_element_t *)axiom_node_get_data_element(parent, env);
+
+            ht = axiom_element_get_all_attributes(element, env);
+
+            if (ht == NULL)
+                return NULL;
+
+            for (hi = axutil_hash_first(ht, env); hi; hi = axutil_hash_next(env, hi)) {
+                axis2_char_t *localpart;
+                axutil_hash_this(hi, NULL, NULL, &amp;val);
+                type_attr = (axiom_attribute_t *)val;
+                localpart = axutil_qname_get_localpart(axiom_attribute_get_qname(type_attr, env), env);
+                if (axutil_strcmp(localpart, "type") == 0) break;
+            }
+
+            type = axiom_attribute_get_value(type_attr, env);
+            if (type != NULL &amp;&amp; (temp = axutil_strchr(type, ':')) != NULL)
+            {
+                if (axutil_strchr(temp, ':') != NULL)
+                    type = temp + 1; /* Pointer arithmetic */
+            }
+
+            return type;
+        }
+
+        axis2_char_t* AXIS2_CALL
+        adb_type_get_type(const adb_type_t *object)
+        {
+            if (object != NULL)
+              return object->property_Type;
+
+            return NULL;
+        }
+
+        adb_type_t* AXIS2_CALL
+        axis2_extension_mapper_create_from_node(
+            const axutil_env_t *env,
+            axiom_node_t** node,
+            axis2_char_t *default_type)
+        {
+            axis2_char_t *type = axis2_extension_mapper_type_from_node(env, node);
+
+            if (type != NULL)
+            {
+              <xsl:for-each select="type">
+              if (axutil_strcmp(type, "<xsl:value-of select="@shortname"/>") == 0)
+              {
+                  return (adb_type_t*) adb_<xsl:value-of select="@shortname"/>_create(env);
+              }
+              </xsl:for-each>
+            }
+
+            <xsl:for-each select="type">
+            if (axutil_strcmp(default_type, "adb_<xsl:value-of select="@shortname"/>") == 0)
+            {
+                return (adb_type_t*) adb_<xsl:value-of select="@shortname"/>_create(env);
+            }
+            </xsl:for-each>
+
+            return NULL;
+        }
+
+        axis2_status_t AXIS2_CALL
+        axis2_extension_mapper_free(
+            adb_type_t* _object,
+            const axutil_env_t *env,
+            axis2_char_t *default_type)
+        {
+            if (_object != NULL &amp;&amp; adb_type_get_type(_object) != NULL)
+            {
+            <xsl:for-each select="type">
+                if (axutil_strcmp(adb_type_get_type(_object), "adb_<xsl:value-of select="@shortname"/>") == 0)
+                {
+                    return adb_<xsl:value-of select="@shortname"/>_free_obj(
+                    (<xsl:value-of select="@classname"/>) _object, env);
+                }
+            </xsl:for-each>
+            }
+
+            <xsl:for-each select="type">
+            if (axutil_strcmp(default_type, "adb_<xsl:value-of select="@shortname"/>") == 0)
+            {
+                return adb_<xsl:value-of select="@shortname"/>_free_obj(
+                (<xsl:value-of select="@classname"/>) _object, env);
+            }
+            </xsl:for-each>
+
+            return AXIS2_FAILURE;
+        }
+
+        axis2_status_t AXIS2_CALL
+        axis2_extension_mapper_deserialize(
+            adb_type_t* _object,
+            const axutil_env_t *env,
+            axiom_node_t** dp_parent,
+            axis2_bool_t *dp_is_early_node_valid,
+            axis2_bool_t dont_care_minoccurs,
+            axis2_char_t *default_type)
+        {
+            if (_object != NULL &amp;&amp; adb_type_get_type(_object) != NULL)
+            {
+            <xsl:for-each select="type">
+                if (axutil_strcmp(adb_type_get_type(_object), "adb_<xsl:value-of select="@shortname"/>") == 0)
+                {
+                    return adb_<xsl:value-of select="@shortname"/>_deserialize_obj(
+                    (<xsl:value-of select="@classname"/>) _object, env, dp_parent, dp_is_early_node_valid, dont_care_minoccurs);
+                }
+            </xsl:for-each>
+            }
+
+            <xsl:for-each select="type">
+            if (axutil_strcmp(default_type, "adb_<xsl:value-of select="@shortname"/>") == 0)
+            {
+                return adb_<xsl:value-of select="@shortname"/>_deserialize_obj(
+                (<xsl:value-of select="@classname"/>) _object, env, dp_parent, dp_is_early_node_valid, dont_care_minoccurs);
+            }
+            </xsl:for-each>
+
+            return AXIS2_FAILURE;
+        }
+
+        axiom_node_t* AXIS2_CALL
+        axis2_extension_mapper_serialize(
+            adb_type_t* _object,
+            const axutil_env_t *env,
+            axiom_node_t* om_node,
+            axiom_element_t *om_element,
+            int tag_closed,
+            axutil_hash_t *namespaces,
+            int *next_ns_index,
+            axis2_char_t *default_type)
+        {
+            if (_object != NULL &amp;&amp; adb_type_get_type(_object) != NULL)
+            {
+                <xsl:for-each select="type">
+                if (axutil_strcmp(adb_type_get_type(_object), "adb_<xsl:value-of select="@shortname"/>") == 0)
+                {
+                    return adb_<xsl:value-of select="@shortname"/>_serialize_obj(
+                    (<xsl:value-of select="@classname"/>) _object, env, om_node, om_element, tag_closed, namespaces, next_ns_index);
+                }
+            </xsl:for-each>
+            }
+
+            <xsl:for-each select="type">
+            if (axutil_strcmp(default_type, "adb_<xsl:value-of select="@shortname"/>") == 0)
+            {
+                return adb_<xsl:value-of select="@shortname"/>_serialize_obj(
+                (<xsl:value-of select="@classname"/>) _object, env, om_node, om_element, tag_closed, namespaces, next_ns_index);
+            }
+            </xsl:for-each>
+
+            return AXIS2_FAILURE;
+        }
     </xsl:template>
 
 </xsl:stylesheet>
