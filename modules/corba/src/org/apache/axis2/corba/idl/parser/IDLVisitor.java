@@ -439,7 +439,7 @@ public class IDLVisitor /*implements ASTVisitor*/ {
             int modSepLen = CompositeDataType.MODULE_SEPERATOR.length();
             while (dataType == null) {
                 dataType = (DataType) idl.getCompositeDataTypes().get(tempModule + typeName);
-                if (dataType == null && !tempModule.isEmpty()) {
+                if (dataType == null && tempModule.length() > 0) {
                     if (tempModule.endsWith(CompositeDataType.MODULE_SEPERATOR)) {
                         tempModule = tempModule.substring(0, tempModule.length() - modSepLen);    
                     }
