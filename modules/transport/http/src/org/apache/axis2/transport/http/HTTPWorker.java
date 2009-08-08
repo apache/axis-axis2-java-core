@@ -223,12 +223,12 @@ public class HTTPWorker implements Worker {
             if (uri.indexOf("?wsdl2=") > 0) {
                 String serviceName =
                         uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl2="));
-                if (processInternalWSDL(uri, configurationContext, serviceName, response)) return;
+                if (processInternalWSDL(uri, configurationContext, serviceName, response, getHost(request))) return;
             }
             if (uri.indexOf("?wsdl=") > 0) {
                 String serviceName =
                         uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?wsdl="));
-                if (processInternalWSDL(uri, configurationContext, serviceName, response)) return;
+                if (processInternalWSDL(uri, configurationContext, serviceName, response, getHost(request))) return;
             }
 
             String contentType = null;
@@ -325,7 +325,7 @@ public class HTTPWorker implements Worker {
     }
 
     private boolean processInternalWSDL(String uri, ConfigurationContext configurationContext, 
-                                        String serviceName, AxisHttpResponse response) 
+                                        String serviceName, AxisHttpResponse response, String ip) 
     throws IOException {
         String wsdlName = uri.substring(uri.lastIndexOf("=") + 1);
 
@@ -335,7 +335,7 @@ public class HTTPWorker implements Worker {
         if (service != null) {
             response.setStatus(HttpStatus.SC_OK);
             response.setContentType("text/xml");
-            service.printUserWSDL(response.getOutputStream(), wsdlName);
+            service.printUserWSDL(response.getOutputStream(), wsdlName, ip);
             response.getOutputStream().flush();
             return true;
 

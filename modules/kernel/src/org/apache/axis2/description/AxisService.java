@@ -1018,6 +1018,11 @@ public class AxisService extends AxisDescription {
 
 	public void printUserWSDL(OutputStream out, String wsdlName)
 			throws AxisFault {
+			printUserWSDL(out, wsdlName, null);
+	}
+
+	public void printUserWSDL(OutputStream out, String wsdlName, String ip)
+			throws AxisFault {
 		Definition definition = null;
 		// first find the correct wsdl definition
 		Parameter wsdlParameter = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
@@ -1028,7 +1033,7 @@ public class AxisService extends AxisDescription {
 		if (definition != null) {
 			try {
 				printDefinitionObject(getWSDLDefinition(definition, wsdlName),
-						out, null);
+						out, ip);
 			} catch (WSDLException e) {
 				throw AxisFault.makeFault(e);
 			}
@@ -1303,7 +1308,7 @@ public class AxisService extends AxisDescription {
 	public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
 		// If we're looking for pre-existing WSDL, use that.
 		if (isUseUserWSDL()) {
-			printUserWSDL(out, null);
+			printUserWSDL(out, null, requestIP);
 			return;
 		}
 
@@ -1371,7 +1376,7 @@ public class AxisService extends AxisDescription {
 							if (endpoint != null) {
 								((SOAPAddress) extensibilityEle)
 										.setLocationURI(endpoint
-												.calculateEndpointURL());
+												.calculateEndpointURL(requestIP));
 							} else {
 								((SOAPAddress) extensibilityEle)
 										.setLocationURI(getEPRs()[0]);
@@ -1391,7 +1396,7 @@ public class AxisService extends AxisDescription {
 								if (endpoint != null) {
 									((SOAPAddress) extensibilityEle)
 											.setLocationURI(endpoint
-													.calculateEndpointURL());
+													.calculateEndpointURL(requestIP));
 								} else {
 									((SOAPAddress) extensibilityEle)
 											.setLocationURI(getLocationURI(
@@ -1418,7 +1423,7 @@ public class AxisService extends AxisDescription {
 							if (endpoint != null) {
 								((SOAP12Address) extensibilityEle)
 										.setLocationURI(endpoint
-												.calculateEndpointURL());
+												.calculateEndpointURL(requestIP));
 							} else {
 								((SOAP12Address) extensibilityEle)
 										.setLocationURI(getLocationURI(
@@ -1444,7 +1449,7 @@ public class AxisService extends AxisDescription {
 							if (endpoint != null) {
 								((HTTPAddress) extensibilityEle)
 										.setLocationURI(endpoint
-												.calculateEndpointURL());
+												.calculateEndpointURL(requestIP));
 							} else {
 								((HTTPAddress) extensibilityEle)
 										.setLocationURI(getLocationURI(
