@@ -55,6 +55,23 @@ public class MembershipManager {
     private GroupManagementAgent groupManagementAgent;
     private ConfigurationContext configContext;
 
+
+    /**
+     * List of current members in the cluster. Only the members who are alive will be in this
+     * list
+     */
+    private final List<Member> members = new ArrayList<Member>();
+
+    /**
+     * List of Well-Known members. These members may or may not be alive at a given moment.
+     */
+    private final List<Member> wkaMembers = new ArrayList<Member>();
+
+    /**
+     * The member representing this node
+     */
+    private Member localMember;
+
     public MembershipManager(ConfigurationContext configContext) {
         this.configContext = configContext;
     }
@@ -86,22 +103,6 @@ public class MembershipManager {
     public byte[] getDomain() {
         return domain;
     }
-
-    /**
-     * List of current members in the cluster. Only the members who are alive will be in this
-     * list
-     */
-    private final List<Member> members = new ArrayList<Member>();
-
-    /**
-     * List of Well-Known members. These members may or may not be alive at a given moment.
-     */
-    private List<Member> wkaMembers = new ArrayList<Member>();
-
-    /**
-     * The member representing this node
-     */
-    private Member localMember;
 
     public Member getLocalMember() {
         return localMember;

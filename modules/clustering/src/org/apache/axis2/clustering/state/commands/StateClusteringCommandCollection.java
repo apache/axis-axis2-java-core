@@ -30,7 +30,7 @@ import java.util.ArrayList;
  */
 public class StateClusteringCommandCollection extends StateClusteringCommand {
 
-    private ArrayList commands;
+    private final ArrayList commands;
 
     public StateClusteringCommandCollection(ArrayList commands) {
         this.commands = commands;

@@ -29,10 +29,10 @@ import java.util.List;
  */
 public class ApplicationMode implements OperationMode {
 
-     private static final Log log = LogFactory.getLog(ClusterManagementMode.class);
+    private static final Log log = LogFactory.getLog(ClusterManagementMode.class);
 
-    private byte[] domain;
-    private MembershipManager membershipManager;
+    private final byte[] domain;
+    private final MembershipManager membershipManager;
 
     public ApplicationMode(byte[] domain, MembershipManager membershipManager) {
         this.domain = domain;

@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 public class ClusteringContextListener implements ContextListener {
     private static final Log log = LogFactory.getLog(ClusteringContextListener.class);
 
-    private MessageSender sender;
+    private final MessageSender sender;
 
     public ClusteringContextListener(MessageSender sender) {
         this.sender = sender;

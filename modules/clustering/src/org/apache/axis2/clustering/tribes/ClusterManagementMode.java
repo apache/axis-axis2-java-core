@@ -38,10 +38,10 @@ public class ClusterManagementMode implements OperationMode {
 
     private static final Log log = LogFactory.getLog(ClusterManagementMode.class);
 
-    private byte[] clusterManagerDomain;
-    private Map<String, GroupManagementAgent> groupManagementAgents;
-    private List<MembershipManager> membershipManagers = new ArrayList<MembershipManager>();
-    private MembershipManager primaryMembershipManager;
+    private final byte[] clusterManagerDomain;
+    private final Map<String, GroupManagementAgent> groupManagementAgents;
+    private final List<MembershipManager> membershipManagers = new ArrayList<MembershipManager>();
+    private final MembershipManager primaryMembershipManager;
 
     public ClusterManagementMode(byte[] clusterManagerDomain,
                             Map<String, GroupManagementAgent> groupManagementAgents,

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 public class TribesMembershipListener implements MembershipListener {
 
     private static Log log = LogFactory.getLog(TribesMembershipListener.class);
-    private MembershipManager membershipManager;
+    private final MembershipManager membershipManager;
 
     public TribesMembershipListener(MembershipManager membershipManager) {
         this.membershipManager = membershipManager;

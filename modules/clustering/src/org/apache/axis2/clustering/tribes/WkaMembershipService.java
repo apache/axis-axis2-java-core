@@ -30,7 +30,7 @@ import java.util.Properties;
  */
 public class WkaMembershipService implements MembershipService {
 
-    private MembershipManager membershipManager;
+    private final MembershipManager membershipManager;
 
 
     /**

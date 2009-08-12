@@ -38,7 +38,7 @@ public class DefaultNodeManager implements NodeManager {
 
     private MessageSender sender;
     private ConfigurationContext configurationContext;
-    private Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+    private final Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 
     public DefaultNodeManager() {
     }

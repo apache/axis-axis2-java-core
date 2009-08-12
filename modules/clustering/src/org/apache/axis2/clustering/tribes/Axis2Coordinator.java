@@ -24,7 +24,7 @@ import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
  */
 public class Axis2Coordinator extends NonBlockingCoordinator {
 
-    private MembershipListener membershipListener;
+    private final MembershipListener membershipListener;
 
     public Axis2Coordinator(MembershipListener membershipListener) {
         this.membershipListener = membershipListener;

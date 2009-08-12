@@ -42,22 +42,22 @@ public class MulticastBasedMembershipScheme implements MembershipScheme {
     /**
      * The Tribes channel
      */
-    private ManagedChannel channel;
-    private Map<String, Parameter> parameters;
+    private final ManagedChannel channel;
+    private final Map<String, Parameter> parameters;
 
     /**
      * The domain to which this node belongs to
      */
-    private byte[] domain;
+    private final byte[] domain;
 
     /**
      * The mode in which this member operates such as "loadBalance" or "application"
      */
-    private OperationMode mode;
+    private final OperationMode mode;
 
     //    private MembershipListener membershipListener;
-    private boolean atmostOnceMessageSemantics;
-    private boolean preserverMsgOrder;
+    private final boolean atmostOnceMessageSemantics;
+    private final boolean preserverMsgOrder;
 
     public MulticastBasedMembershipScheme(ManagedChannel channel,
                                           OperationMode mode,

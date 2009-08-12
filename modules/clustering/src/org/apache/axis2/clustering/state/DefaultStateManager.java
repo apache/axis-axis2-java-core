@@ -39,11 +39,11 @@ public class DefaultStateManager implements StateManager {
 
     private ConfigurationContext configContext;
 
-    private Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+    private final Map<String, Parameter> parameters = new HashMap<String, Parameter>();
 
     private ChannelSender sender;
 
-    private Map<String, List> excludedReplicationPatterns = new HashMap<String, List>();
+    private final Map<String, List> excludedReplicationPatterns = new HashMap<String, List>();
 
     //TODO: Try to use an interface
     public void setSender(ChannelSender sender) {

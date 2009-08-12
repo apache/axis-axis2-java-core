@@ -58,29 +58,29 @@ public class WkaBasedMembershipScheme implements MembershipScheme {
     /**
      * The Tribes channel
      */
-    private ManagedChannel channel;
-    private MembershipManager primaryMembershipManager;
-    private List<MembershipManager> applicationDomainMembershipManagers;
+    private final ManagedChannel channel;
+    private final MembershipManager primaryMembershipManager;
+    private final List<MembershipManager> applicationDomainMembershipManagers;
     private StaticMembershipInterceptor staticMembershipInterceptor;
-    private Map<String, Parameter> parameters;
+    private final Map<String, Parameter> parameters;
 
     /**
      * The loadBalancerDomain to which the members belong to
      */
-    private byte[] localDomain;
+    private final byte[] localDomain;
 
     /**
      * The static(well-known) members
      */
-    private List<Member> members;
+    private final List<Member> members;
 
     /**
      * The mode in which this member operates such as "loadBalance" or "application"
      */
-    private OperationMode mode;
+    private final OperationMode mode;
 
-    private boolean atmostOnceMessageSemantics;
-    private boolean preserverMsgOrder;
+    private final boolean atmostOnceMessageSemantics;
+    private final boolean preserverMsgOrder;
 
     public WkaBasedMembershipScheme(ManagedChannel channel,
                                     OperationMode mode,

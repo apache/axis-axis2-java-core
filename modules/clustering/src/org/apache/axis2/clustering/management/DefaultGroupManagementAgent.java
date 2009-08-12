@@ -39,7 +39,7 @@ import java.util.List;
 public class DefaultGroupManagementAgent implements GroupManagementAgent {
 
     private static final Log log = LogFactory.getLog(DefaultGroupManagementAgent.class);
-    private List<Member> members = new ArrayList<Member>();
+    private final List<Member> members = new ArrayList<Member>();
     private ChannelSender sender;
     private MembershipManager membershipManager;
     private RpcChannel rpcChannel; //TODO

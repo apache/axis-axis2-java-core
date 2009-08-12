@@ -80,7 +80,7 @@ public class TribesClusteringAgent implements ClusteringAgent {
     private DefaultNodeManager configurationManager;
     private DefaultStateManager contextManager;
 
-    private HashMap<String, Parameter> parameters;
+    private final HashMap<String, Parameter> parameters;
     private ManagedChannel channel;
     private RpcChannel rpcInitChannel;
     private ConfigurationContext configurationContext;
