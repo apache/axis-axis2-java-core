@@ -19,8 +19,8 @@
 
 package org.apache.axis2.clustering.state.commands;
 
-import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.clustering.state.PropertyUpdater;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.PropertyDifference;
 
 import java.util.HashMap;

@@ -20,7 +20,6 @@
 package org.apache.axis2.clustering.control.wka;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.MembershipScheme;
 import org.apache.axis2.clustering.tribes.MembershipManager;
 import org.apache.axis2.clustering.tribes.TribesUtil;
 import org.apache.axis2.clustering.tribes.WkaBasedMembershipScheme;

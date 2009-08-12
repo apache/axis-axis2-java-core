@@ -18,7 +18,6 @@ package org.apache.axis2.clustering.tribes;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.MembershipScheme;
-import org.apache.axis2.clustering.MembershipListener;
 import org.apache.axis2.clustering.control.wka.JoinGroupCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
 import org.apache.axis2.clustering.control.wka.RpcMembershipRequestHandler;

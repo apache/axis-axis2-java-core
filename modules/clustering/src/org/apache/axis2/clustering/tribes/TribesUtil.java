@@ -19,19 +19,19 @@
 
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.ClusteringConstants;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.util.Utils;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.clustering.ClusteringConstants;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.util.Utils;
 
-import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Properties;
 
 public class TribesUtil {
 

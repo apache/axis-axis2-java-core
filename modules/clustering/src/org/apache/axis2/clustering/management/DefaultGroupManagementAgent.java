@@ -15,17 +15,15 @@
  */
 package org.apache.axis2.clustering.management;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.clustering.management.GroupManagementAgent;
-import org.apache.axis2.clustering.management.GroupManagementCommand;
-import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.Member;
 import org.apache.axis2.clustering.tribes.ChannelSender;
-import org.apache.axis2.clustering.tribes.TribesConstants;
 import org.apache.axis2.clustering.tribes.MembershipManager;
+import org.apache.axis2.clustering.tribes.TribesConstants;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.group.RpcChannel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;

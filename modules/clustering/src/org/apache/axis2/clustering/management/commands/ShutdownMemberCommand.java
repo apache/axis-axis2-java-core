@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.clustering.management.commands;
 
-import org.apache.axis2.clustering.management.GroupManagementCommand;
 import org.apache.axis2.clustering.ClusteringFault;
+import org.apache.axis2.clustering.management.GroupManagementCommand;
 import org.apache.axis2.context.ConfigurationContext;
 
 /**

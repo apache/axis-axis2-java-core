@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.clustering.tribes;
 
+import org.apache.axis2.clustering.MembershipListener;
 import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.interceptors.NonBlockingCoordinator;
-import org.apache.axis2.clustering.MembershipListener;
 
 /**
  * The non-blocking coordinator interceptor

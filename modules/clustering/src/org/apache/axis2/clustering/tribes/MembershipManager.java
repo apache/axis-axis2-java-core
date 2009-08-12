@@ -20,9 +20,9 @@
 package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
-import org.apache.axis2.clustering.management.GroupManagementAgent;
 import org.apache.axis2.clustering.control.wka.MemberJoinedCommand;
 import org.apache.axis2.clustering.control.wka.MemberListCommand;
+import org.apache.axis2.clustering.management.GroupManagementAgent;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.Member;

@@ -20,12 +20,12 @@
 package org.apache.axis2.clustering.state;
 
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.state.commands.StateClusteringCommandCollection;
 import org.apache.axis2.clustering.state.commands.DeleteServiceGroupStateCommand;
+import org.apache.axis2.clustering.state.commands.StateClusteringCommandCollection;
 import org.apache.axis2.clustering.state.commands.UpdateConfigurationStateCommand;
-import org.apache.axis2.clustering.state.commands.UpdateStateCommand;
-import org.apache.axis2.clustering.state.commands.UpdateServiceStateCommand;
 import org.apache.axis2.clustering.state.commands.UpdateServiceGroupStateCommand;
+import org.apache.axis2.clustering.state.commands.UpdateServiceStateCommand;
+import org.apache.axis2.clustering.state.commands.UpdateStateCommand;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.PropertyDifference;
@@ -35,10 +35,8 @@ import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.Serializable;
-import java.io.ObjectOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

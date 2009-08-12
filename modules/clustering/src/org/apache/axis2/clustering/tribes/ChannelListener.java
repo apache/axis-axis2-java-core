@@ -21,11 +21,11 @@ package org.apache.axis2.clustering.tribes;
 
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.ClusteringFault;
-import org.apache.axis2.clustering.management.NodeManagementCommand;
 import org.apache.axis2.clustering.management.DefaultNodeManager;
 import org.apache.axis2.clustering.management.GroupManagementCommand;
-import org.apache.axis2.clustering.state.StateClusteringCommand;
+import org.apache.axis2.clustering.management.NodeManagementCommand;
 import org.apache.axis2.clustering.state.DefaultStateManager;
+import org.apache.axis2.clustering.state.StateClusteringCommand;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
