@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>1.5.1</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>axis2-integration</artifactId>
+    <name>Apache Axis2 - Integration</name>
+    <description>Axis2 Integration</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-clustering</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-http</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-transport-local</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-activation_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-scripting</artifactId>
+            <type>mar</type>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxbri</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <version>${version}</version>
+            <artifactId>axis2-jaxws</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <version>${version}</version>
+            <artifactId>axis2-jaxws-integration</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <version>${version}</version>
+            <artifactId>axis2-jibx</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-json</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-metadata</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-mtompolicy</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>org.apache.axis2.osgi</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-xmlbeans</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-kernel</artifactId>
+            <version>${version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.woden</groupId>
+            <artifactId>woden-impl-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr173</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr173</artifactId>
+                    <groupId>javax.xml</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>java15</id>
+            <activation>
+                <jdk>1.5</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <skip>false</skip>
+
+                            <!-- The pertest forkMode is not ideal but seems to be necessary
+                       because the test server doesn't shut down properly :-(
+                       Should be removed if possible -->
+                            <forkMode>pertest</forkMode>
+                            <argLine>-Xms256m -Xmx512m</argLine>
+                            <!-- Enable the next 2 lines if you want to attach a debugger
+                         <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*Abstract*.java</exclude>
+                                <exclude>**/*Util*.java</exclude>
+                                <exclude>**/*InteropStubTest.java</exclude>
+                                <exclude>**/*ServiceGroupContextTest.java</exclude>
+                                <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
+                                <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
+                                <exclude>**/ScenarioST1Test.java</exclude>
+                                <exclude>**/samples/wsdl/perf2/*.java</exclude>
+                                <exclude>**/ComplexDataTypesDocLitBareTest.java</exclude>
+                            </excludes>
+                            <systemProperties>
+                                <property>
+                                    <name>build.repository</name>
+                                    <value>./target/test-classes</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>java16</id>
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <skip>false</skip>
+
+                            <!-- The pertest forkMode is not ideal but seems to be necessary
+                       because the test server doesn't shut down properly :-(
+                       Should be removed if possible -->
+                            <forkMode>pertest</forkMode>
+                            <argLine>-Xms256m -Xmx512m</argLine>
+                            <!-- Enable the next 2 lines if you want to attach a debugger
+                         <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*Abstract*.java</exclude>
+                                <exclude>**/*Util*.java</exclude>
+                                <exclude>**/*InteropStubTest.java</exclude>
+                                <exclude>**/*ServiceGroupContextTest.java</exclude>
+                                <exclude>**/*EchoRawSwAFileInputTest.java</exclude>
+                                <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.java</exclude>
+                                <exclude>**/ScenarioST1Test.java</exclude>
+                                <exclude>**/samples/wsdl/perf2/*.java</exclude>
+                                <exclude>**/ComplexDataTypesDocLitBareTest.java</exclude>
+                                <exclude>**/ComplexDataTypesTest.java</exclude>
+                            </excludes>
+                            <systemProperties>
+                                <property>
+                                    <name>build.repository</name>
+                                    <value>./target/test-classes</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>enterprise</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>gen-enterprise-ts</id>
+                                <phase>generate-test-sources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <!-- Set a property that can be picked up from the ant build.xml's -->
+                                        <property name="maven.class.path" refid="maven.runtime.classpath"/>
+                                        <echo>Building enterprise WSDLs...</echo>
+                                        <property name="axis2.home" value="${basedir}/target"/>
+                                        <property name="maven.junit.jvmargs" value=""/>
+                                        <path id="maven.dependency.classpath">
+                                            <path refid="maven.compile.classpath"/>
+                                        </path>
+                                        <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
+                                             dir="." target="enterprise-wsdl-codegen"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>conf</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.wsdl</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>gen-ts</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <condition property="test.skip">
+                                    <equals arg1="true" arg2="${maven.test.skip}"/>
+                                </condition>
+                                <echo>${test.skip}</echo>
+                                <property name="addressing_version" value="${version}"/>
+                                <property name="maven.class.path" refid="maven.runtime.classpath"/>
+                                <property name="maven.test.path" refid="maven.compile.classpath"/>
+                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
+                                     dir="." target="generate-test-sources"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-repo</id>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <tasks>
+                                <condition property="test.skip">
+                                    <equals arg1="true" arg2="${maven.test.skip}"/>
+                                </condition>
+                                <echo>${test.skip}</echo>
+                                <property name="addressing_version" value="${version}"/>
+                                <property name="groovy.all.version" value="${groovy.all.version}"/>
+                                <property name="maven.repo.local" value="${settings.localRepository}"/>
+                                <path id="maven.dependency.classpath">
+                                    <path refid="maven.compile.classpath"/>
+                                    <path refid="maven.runtime.classpath"/>
+                                </path>
+                                <ant antfile="itest-build.xml" inheritall="true" inheritrefs="true"
+                                     dir="." target="build-repos"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
