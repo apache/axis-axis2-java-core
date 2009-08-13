@@ -4,9 +4,17 @@ Apache Axis2 @axisVersion@ build  (@TODAY@)
 http://ws.apache.org/axis2
 ------------------------------------------------------
 
-___________________
-Building
-===================
+Welcome to Axis2!
+
+For information specific to this release, please check out the
+release-notes.html file in this directory.
+
+Full documentation can be found in the docs distribution of this release
+(separate download), or on the main website at http://ws.apache.org/axis2.
+
+____________________
+Building from Source
+====================
 
 We use Maven 2 (http://maven.apache.org) to build, and you'll find a
 pom.xml in each module, as well as at the top level.  Use "mvn install"
@@ -27,13 +35,6 @@ of the following:
      
      modules/tool/axis2-mar-maven-plugin
      modules/tool/axis2-aar-maven-plugin
-
-___________________
-Documentation
-===================
- 
-Documentation can be found in the 'docs' distribution of this release 
-and in the main site.
 
 ___________________
 Deploying
