@@ -445,13 +445,16 @@
             <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
-
         <contributor>
             <name>Shivantha Huruggamuwa</name>
             <email>shivanthah AT gmail.com</email>
             <organization>University Of Peradeniya , Sri Lanka</organization>
         </contributor>
-
+        <contributor>
+            <name>Dobri Kitipov</name>
+            <email>kdobrik AT gmail.com</email>
+            <organization>Software AG</organization>
+        </contributor>
     </contributors>
     <repositories>
         <!--
