@@ -83,6 +83,7 @@
 			<arg file="${testsuite.source.dir}/nonamespace.xsd"/> <!-- compile only; no tests -->
 			<arg file="${testsuite.source.dir}/unqualified.xsd"/>
 			<arg file="${testsuite.source.dir}/unqualified/companyservice.xsd"/>
+			<arg file="${testsuite.source.dir}/names.xsd"/> <!-- compile only; no tests -->
 			<arg file="${schema.generated.src.dir}"/>
 		</java>
 		<java classname="org.apache.axis2.schema.XSD2Java" fork="true">
@@ -115,6 +116,7 @@
 			<arg file="${testsuite.source.dir}/innerParticleExtension.xsd"/>
 			<arg file="${testsuite.source.dir}/unqualified.xsd"/>
 			<arg file="${testsuite.source.dir}/unqualified/companyservice.xsd"/>
+			<arg file="${testsuite.source.dir}/names.xsd"/> <!-- compile only; no tests -->
 			<arg file="${schema.generated.src.dir}"/>
 		</java>
     </target>
