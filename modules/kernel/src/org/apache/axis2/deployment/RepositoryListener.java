@@ -195,8 +195,20 @@ public class RepositoryListener implements DeploymentConstants {
                         // Log this?
                     }
                     File file = new File(path.replace('/', File.separatorChar).replace('|', ':'));
-                    if (file.isFile()) {
-                        if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
+                    // If there is a security manager, then it is highly probable that it will deny
+                    // read access to some files in the class loader hierarchy. Therefore we first
+                    // check if the name matches that of a module archive and only then check if we
+                    // can access it. If the security manager denies access, we log a warning.
+                    if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
+                        boolean isFile;
+                        try {
+                            isFile = file.isFile();
+                        } catch (SecurityException ex) {
+                            log.warn("Not deploying " + file.getName() +
+                                    " because security manager denies access", ex);
+                            isFile = false;
+                        }
+                        if (isFile) {
                             //adding modules in the class path
                             addFileToDeploy(file, deployer, WSInfo.TYPE_MODULE);
                         }
