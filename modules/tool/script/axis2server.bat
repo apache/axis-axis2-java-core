@@ -38,9 +38,28 @@ set DEFAULT_AXIS2_HOME=%~dp0..
 if "%AXIS2_HOME%"=="" set AXIS2_HOME=%DEFAULT_AXIS2_HOME%
 set DEFAULT_AXIS2_HOME=
 
+if ""%1""==""-xdebug"" goto xdebug
+if ""%1""==""-h"" goto help
+if ""%1""=="""" goto checkConf
+
+:xdebug
+set JAVA_OPTS= %JAVA_OPTS% -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000
+goto checkConf
+
+:help
+echo  Usage: axis2server.bat
+   
+echo  commands:    
+echo   -xdebug  Start Axis2 Server under JPDA debugger
+    
+echo   -h       help
+goto end
+
+
+
 rem find AXIS2_HOME if it does not exist due to either an invalid value passed
 rem by the user or the %0 problem on Windows 9x
-
+:checkConf
 if exist "%AXIS2_HOME%\conf\axis2.xml" goto checkJava
 
 :noAxis2Home
