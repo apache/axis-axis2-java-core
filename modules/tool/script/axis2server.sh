@@ -32,30 +32,33 @@
 # Get the context and from that find the location of setenv.sh
 . `dirname $0`/setenv.sh
 
+JAVA_OPTS=""
 while [ $# -ge 1 ]; do
-
-if [ "$1" = "-xdebug" ]; then
-    XDEBUG="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000"
-    shift
-
-elif [ "$1" = "-h" ]; then
-    echo "Usage: axis2server.sh"
-    echo "commands:"
-    echo "  -xdebug            Start Axis2 Server under JPDA debugger"
-    echo "  -h                 help"
-    shift
-    exit 0
-
-  else
-    echo "Error: unknown command:$1"
-    echo "For help: axis2server.sh -h"
-    shift
-    exit 1
-  fi
-
+    case $1 in
+        -xdebug)
+            JAVA_OPTS="$JAVA_OPTS -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000"
+            shift
+        ;;
+        -security)
+            JAVA_OPTS="$JAVA_OPTS -Djava.security.manager -Djava.security.policy=$AXIS2_HOME/conf/axis2.policy -Daxis2.home=$AXIS2_HOME"
+            shift
+        ;;
+        -h)
+            echo "Usage: axis2server.sh"
+            echo "commands:"
+            echo "  -xdebug    Start Axis2 Server under JPDA debugger"
+            echo "  -security  Enable Java 2 security"
+            echo "  -h         help"
+            shift
+            exit 0
+        ;;
+        *)
+            echo "Error: unknown command:$1"
+            echo "For help: axis2server.sh -h"
+            shift
+            exit 1
+    esac
 done
 
-
-
-java $XDEBUG -classpath "$AXIS2_CLASSPATH" org.apache.axis2.transport.SimpleAxis2Server \
-	-repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*
+java $JAVA_OPTS -classpath "$AXIS2_CLASSPATH" org.apache.axis2.transport.SimpleAxis2Server \
+    -repo "$AXIS2_HOME"/repository -conf "$AXIS2_HOME"/conf/axis2.xml $*

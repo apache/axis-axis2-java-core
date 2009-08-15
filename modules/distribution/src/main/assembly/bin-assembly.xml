@@ -57,13 +57,17 @@
         </fileSet>
 
         <!--********************** creating the conf ********************** -->
-        <!-- copy the axis2.xml into conf directoy -->
+        <!-- copy axis2.xml and axis2.policy into conf directoy -->
         <fileSet>
             <directory>../../modules/kernel/conf</directory>
             <outputDirectory>conf</outputDirectory>
             <includes>
                 <include>axis2.xml</include>
             </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/files/conf</directory>
+            <outputDirectory>conf</outputDirectory>
         </fileSet>
 
         <!--********************** creating the webappp ********************** -->
