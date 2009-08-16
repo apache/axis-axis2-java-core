@@ -28,6 +28,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.AbstractAgent;
@@ -46,11 +47,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides methods to process axis2 admin requests.
@@ -104,6 +104,7 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
+    @Override
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
@@ -118,6 +119,7 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
+    @Override
     public void processIndex(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         renderView(ADMIN_JSP_NAME, req, res);
@@ -144,9 +146,9 @@ public class AdminAgent extends AbstractAgent {
                 FileItemFactory factory = new DiskFileItemFactory();
                 //Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload(factory);
-                List items = upload.parseRequest(req);
+                List<?> items = upload.parseRequest(req);
                 // Process the uploaded items
-                Iterator iter = items.iterator();
+                Iterator<?> iter = items.iterator();
                 while (iter.hasNext()) {
                     FileItem item = (FileItem) iter.next();
                     if (!item.isFormField()) {
@@ -219,21 +221,16 @@ public class AdminAgent extends AbstractAgent {
         if (req.getParameter("changePara") != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
             if (service != null) {
-                ArrayList service_para = service.getParameters();
-
-                for (int i = 0; i < service_para.size(); i++) {
-                    Parameter parameter = (Parameter) service_para.get(i);
+                for (Parameter parameter : service.getParameters()) {
                     String para = req.getParameter(serviceName + "_" + parameter.getName());
                     service.addParameter(new Parameter(parameter.getName(), para));
                 }
 
-                for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
-                    AxisOperation axisOperation = (AxisOperation) iterator.next();
+                for (Iterator<AxisOperation> iterator = service.getOperations(); iterator.hasNext();) {
+                    AxisOperation axisOperation = iterator.next();
                     String op_name = axisOperation.getName().getLocalPart();
-                    ArrayList operation_para = axisOperation.getParameters();
 
-                    for (int i = 0; i < operation_para.size(); i++) {
-                        Parameter parameter = (Parameter) operation_para.get(i);
+                    for (Parameter parameter : axisOperation.getParameters()) {
                         String para = req.getParameter(op_name + "_" + parameter.getName());
 
                         axisOperation.addParameter(new Parameter(parameter.getName(), para));
@@ -263,7 +260,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap modules = configContext.getAxisConfiguration().getModules();
+        Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -288,7 +285,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processListOperations(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap modules = configContext.getAxisConfiguration().getModules();
+        Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -334,7 +331,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processEngageToService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap modules = configContext.getAxisConfiguration().getModules();
+        Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         populateSessionInformation(req);
@@ -367,11 +364,11 @@ public class AdminAgent extends AbstractAgent {
 
     public void processEngageToServiceGroup(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap modules = configContext.getAxisConfiguration().getModules();
+        Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
-        Iterator services = configContext.getAxisConfiguration().getServiceGroups();
+        Iterator<AxisServiceGroup> services = configContext.getAxisConfiguration().getServiceGroups();
 
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, services);
 
@@ -512,7 +509,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processListServiceGroups(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        Iterator serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
+        Iterator<AxisServiceGroup> serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
 
@@ -548,7 +545,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processglobalModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        Collection modules = configContext.getAxisConfiguration().getEngagedModules();
+        Collection<AxisModule> modules = configContext.getAxisConfiguration().getEngagedModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
 
@@ -557,7 +554,7 @@ public class AdminAgent extends AbstractAgent {
 
     public void processListModules(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap modules = configContext.getAxisConfiguration().getModules();
+        Map<String,AxisModule> modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,

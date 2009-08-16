@@ -34,14 +34,17 @@ import java.io.IOException;
  *
  */
 public class AxisAdminServlet extends AxisServlet {
-
+    private static final long serialVersionUID = -6740625806509755370L;
+    
     protected transient AdminAgent agent;
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         doGet(req, res);
     }
 
+    @Override
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -52,6 +55,7 @@ public class AxisAdminServlet extends AxisServlet {
         }
     }
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext servletContext = config.getServletContext();
@@ -62,6 +66,7 @@ public class AxisAdminServlet extends AxisServlet {
         this.servletConfig = config;
     }
 
+    @Override
     public void init() throws ServletException {
         if (this.servletConfig != null) {
             init(this.servletConfig);
