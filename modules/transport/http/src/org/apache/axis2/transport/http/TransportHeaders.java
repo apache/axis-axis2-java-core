@@ -23,22 +23,21 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Pass-Thru / delayed get and put of the values from HttpServletRequest
  */
-public class TransportHeaders implements Map {
+public class TransportHeaders implements Map<String,String> {
     HttpServletRequest req;
     // This map contains the headers from the request; it will be filled in lazily if needed, 
     // for performance 
-    HashMap headerMap = null;
+    Map<String,String> headerMap = null;
     // This map contains properties that have been put onto the map; it is not populated by values
     // from the HttpServletRequest.  A null value means the headerMap has been fully populated and
     // any values that were in localHeaderMap have been migrated to headerMap.
-    HashMap localHeaderMap = new HashMap();
+    Map<String,String> localHeaderMap = new HashMap<String,String>();
 
     public TransportHeaders(HttpServletRequest req) {
         this.req = req;
@@ -56,8 +55,8 @@ public class TransportHeaders implements Map {
      * After that localHeaderMap is released and only headerMap is used after that. 
      */
     private void init() {
-        headerMap = new HashMap();
-        Enumeration headerNames = req.getHeaderNames();
+        headerMap = new HashMap<String,String>();
+        Enumeration<?> headerNames = req.getHeaderNames();
 
         while (headerNames.hasMoreElements()) {
             String key = (String) headerNames.nextElement();
@@ -68,10 +67,7 @@ public class TransportHeaders implements Map {
         
         // Migrate any previously set local properties to the newly created hashmap then release
         // the local hashmap
-        Set localHeaderSet = localHeaderMap.entrySet();
-        Iterator localHeaderIterator = localHeaderSet.iterator();
-        while (localHeaderIterator.hasNext()) {
-            Map.Entry localHeaderEntry = (Map.Entry) localHeaderIterator.next();
+        for (Map.Entry<String,String> localHeaderEntry : localHeaderMap.entrySet()) {
             headerMap.put(localHeaderEntry.getKey(), localHeaderEntry.getValue());
         }
         localHeaderMap = null;
@@ -114,38 +110,38 @@ public class TransportHeaders implements Map {
         return headerMap.containsValue(value);
     }
 
-    public Collection values() {
+    public Collection<String> values() {
         if (headerMap == null) {
             init();
         }
         return headerMap.values();
     }
 
-    public void putAll(Map t) {
+    public void putAll(Map<? extends String,? extends String> t) {
         if (headerMap == null) {
             init();
         }
         headerMap.putAll(t);
     }
 
-    public Set entrySet() {
+    public Set<Map.Entry<String,String>> entrySet() {
         if (headerMap == null) {
             init();
         }
         return headerMap.entrySet();
     }
 
-    public Set keySet() {
+    public Set<String> keySet() {
         if (headerMap == null) {
             init();
         }
         return headerMap.keySet();
     }
 
-    public Object get(Object key) {
+    public String get(Object key) {
         // If there is a local map, look there first.
         if (localHeaderMap != null) {
-            Object returnValue = null;
+            String returnValue = null;
             returnValue = localHeaderMap.get(key);
             if (returnValue != null) {
                 return returnValue;
@@ -157,14 +153,14 @@ public class TransportHeaders implements Map {
         return headerMap.get(key);
     }
 
-    public Object remove(Object key) {
+    public String remove(Object key) {
         if (headerMap == null) {
             init();
         }
         return headerMap.remove(key);
     }
 
-    public Object put(Object key, Object value) {
+    public String put(String key, String value) {
         if (localHeaderMap != null) {
             return localHeaderMap.put(key, value);
         }

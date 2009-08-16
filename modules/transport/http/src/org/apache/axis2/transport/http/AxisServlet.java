@@ -66,7 +66,6 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.SocketException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -77,8 +76,9 @@ import java.util.concurrent.CountDownLatch;
  * Class AxisServlet
  */
 public class AxisServlet extends HttpServlet implements TransportListener {
-
-    private static final Log log = LogFactory.getLog(AxisServlet.class);
+    private static final long serialVersionUID = 3105135058353738906L;
+    
+    static final Log log = LogFactory.getLog(AxisServlet.class);
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     
@@ -110,6 +110,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      * @throws IOException
      */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //set the initial buffer for a larger value
@@ -226,7 +227,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      * @throws IOException
      */
-
+    @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
 
@@ -272,7 +273,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      * @throws IOException
      */
-
+    @Override
     protected void doDelete(HttpServletRequest request,
                             HttpServletResponse response) throws ServletException, IOException {
 
@@ -294,6 +295,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @throws ServletException
      * @throws IOException
      */
+    @Override
     protected void doPut(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
 
@@ -327,7 +329,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param messageContext
      * @throws ServletException
      */
-    private void closeStaxBuilder(MessageContext messageContext) throws ServletException {
+    void closeStaxBuilder(MessageContext messageContext) throws ServletException {
         if (closeReader && messageContext != null) {
             try {
                 SOAPEnvelope envelope = messageContext.getEnvelope();
@@ -351,8 +353,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param out
      * @param e
      */
-    private void processAxisFault(MessageContext msgContext, HttpServletResponse res,
-                                  OutputStream out, AxisFault e) {
+    void processAxisFault(MessageContext msgContext, HttpServletResponse res,
+                          OutputStream out, AxisFault e) {
         try {
             // If the fault is not going along the back channel we should be 202ing
             if (AddressingHelper.isFaultRedirected(msgContext)) {
@@ -427,6 +429,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param config
      * @throws ServletException
      */
+    @Override
     public void init(ServletConfig config) throws ServletException {
         
         // prevent this method from being called more than once per instance
@@ -463,6 +466,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     /**
      * distroy the ConfigurationContext
      */
+    @Override
     public void destroy() {
         //stoping listner manager
         try {
@@ -503,6 +507,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      *
      * @throws ServletException
      */
+    @Override
     public void init() throws ServletException {
         if (this.servletConfig != null
                 &&
@@ -563,7 +568,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param req
      * @return Map
      */
-    protected Map getTransportHeaders(HttpServletRequest req) {
+    protected Map<String,String> getTransportHeaders(HttpServletRequest req) {
         return new TransportHeaders(req);
     }
 
@@ -671,7 +676,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         //setting the RequestResponseTransport object
         msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                new ServletRequestResponseTransport(response));
+                new ServletRequestResponseTransport());
 
         return msgContext;
     }
@@ -715,7 +720,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     protected class ServletRequestResponseTransport implements RequestResponseTransport {
-        private HttpServletResponse response;
         private boolean responseWritten = false;
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
 		// The initial status must be WAITING, as the main servlet will do some other
@@ -723,10 +727,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 		// signals that come in before this thread gets to the awaitResponse call.
         private RequestResponseTransportStatus status = RequestResponseTransportStatus.WAITING;
         AxisFault faultToBeThrownOut = null;
-
-        ServletRequestResponseTransport(HttpServletResponse response) {
-            this.response = response;
-        }
 
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             status = RequestResponseTransportStatus.ACKED;
@@ -768,7 +768,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         
     }
 
-    private void setResponseState(MessageContext messageContext, HttpServletResponse response) {
+    void setResponseState(MessageContext messageContext, HttpServletResponse response) {
         String state = (String) messageContext.getProperty(Constants.HTTP_RESPONSE_STATE);
         if (state != null) {
             int stateInt = Integer.parseInt(state);
