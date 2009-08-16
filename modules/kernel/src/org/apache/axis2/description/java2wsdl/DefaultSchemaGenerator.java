@@ -27,6 +27,11 @@ import org.apache.axis2.deployment.util.BeanExcludeInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.description.java2wsdl.bytecode.MethodTable;
+import org.apache.axis2.jsr181.JSR181Helper;
+import org.apache.axis2.jsr181.WebMethodAnnotation;
+import org.apache.axis2.jsr181.WebParamAnnotation;
+import org.apache.axis2.jsr181.WebResultAnnotation;
+import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,10 +41,6 @@ import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.w3c.dom.Document;
 
 import javax.activation.DataHandler;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
@@ -243,14 +244,15 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
          * nothing will happen) 2. In the next stage for all the methods
          * messages and port types will be creteated
          */
-        WebService webervice = serviceClass.getAnnotation(WebService.class);
-        if (webervice != null) {
-            String tns = webervice.targetNamespace();
+        WebServiceAnnotation webservice =
+                JSR181Helper.INSTANCE.getWebServiceAnnotation(serviceClass);
+        if (webservice != null) {
+            String tns = webservice.getTargetNamespace();
             if (tns != null && !"".equals(tns)) {
                 targetNamespace = tns;
                 schemaTargetNameSpace = tns;
             }
-            service.setName(Utils.getAnnotatedServiceName(serviceClass, webervice));
+            service.setName(Utils.getAnnotatedServiceName(serviceClass, webservice));
         }
         classModel= JAXRSUtils.getClassModel(serviceClass);
         methods = processMethods(serviceClass.getDeclaredMethods());
@@ -277,9 +279,9 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
         XmlSchemaSequence sequence = null;
 
         for (Method jMethod : declaredMethods) {
-            WebMethod methodAnnon = jMethod.getAnnotation(WebMethod.class);
+            WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
             if (methodAnnon != null) {
-                if (methodAnnon.exclude()) {
+                if (methodAnnon.isExclude()) {
                     continue;
                 }
             }
@@ -370,10 +372,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                         createSchemaTypeForMethodPart(partQname);
                 sequence = new XmlSchemaSequence();
                 methodSchemaType.setParticle(sequence);
-                WebResult returnAnnon = jMethod.getAnnotation(WebResult.class);
+                WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);
                 String returnName = "return";
                 if (returnAnnon != null) {
-                    returnName = returnAnnon.name();
+                    returnName = returnAnnon.getName();
                     if (returnName != null && !"".equals(returnName)) {
                         returnName = "return";
                     }
@@ -1505,12 +1507,10 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                                       String[] parameterNames) {
         String parameterName = null;
         if (parameterAnnotation.length > 0) {
-            Annotation[] tempAnnon = parameterAnnotation[j];
-            if ((tempAnnon.length > 0) && (tempAnnon[0] instanceof WebParam)) {
-                WebParam para = (WebParam) tempAnnon[0];
-                if (para != null) {
-                    parameterName = para.name();
-                }
+            WebParamAnnotation annotation =
+                    JSR181Helper.INSTANCE.getWebParamAnnotation(parameterAnnotation[j]);
+            if (annotation != null) {
+                parameterName = annotation.getName();
             }
         }
         if (parameterName == null || "".equals(parameterName)) {

@@ -25,6 +25,9 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.jsr181.JSR181Helper;
+import org.apache.axis2.jsr181.WebMethodAnnotation;
+import org.apache.axis2.jsr181.WebResultAnnotation;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,8 +37,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 
-import javax.jws.WebMethod;
-import javax.jws.WebResult;
 import javax.xml.namespace.QName;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -71,9 +72,9 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
         XmlSchemaSequence sequence;
 
         for (Method jMethod : declaredMethods) {
-            WebMethod methodAnnon = jMethod.getAnnotation(WebMethod.class);
+            WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(jMethod);
             if (methodAnnon != null) {
-                if (methodAnnon.exclude()) {
+                if (methodAnnon.isExclude()) {
                     continue;
                 }
             }
@@ -185,10 +186,10 @@ public class DocLitBareSchemaGenerator extends DefaultSchemaGenerator {
                             createSchemaTypeForMethodPart(jMethod.getName() + RESULT);
                     sequence = new XmlSchemaSequence();
                     methodSchemaType.setParticle(sequence);
-                    WebResult returnAnnon = jMethod.getAnnotation(WebResult.class);
+                    WebResultAnnotation returnAnnon = JSR181Helper.INSTANCE.getWebResultAnnotation(jMethod);
                     String returnName = "return";
                     if (returnAnnon != null) {
-                        returnName = returnAnnon.name();
+                        returnName = returnAnnon.getName();
                         if (returnName != null && !"".equals(returnName)) {
                             returnName = "return";
                         }

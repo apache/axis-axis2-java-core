@@ -30,11 +30,12 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.jsr181.JSR181Helper;
+import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.WebService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
@@ -87,7 +88,8 @@ public class POJODeployer implements Deployer {
                  * nothing will happen) 2. In the next stage for all the methods
                  * messages and port types will be creteated
                  */
-                WebService annotation = (WebService) clazz.getAnnotation(WebService.class);
+                WebServiceAnnotation annotation =
+                        JSR181Helper.INSTANCE.getWebServiceAnnotation(clazz);
                 if (annotation != null) {
                     // try to see whether JAX-WS jars in the class path , if so use them
                     // to process annotated pojo else use annogen to process the pojo class
@@ -163,7 +165,8 @@ public class POJODeployer implements Deployer {
                      * nothing will happen) 2. In the next stage for all the methods
                      * messages and port types will be creteated
                      */
-                    WebService annotation = (WebService)clazz.getAnnotation(WebService.class);
+                    WebServiceAnnotation annotation =
+                            JSR181Helper.INSTANCE.getWebServiceAnnotation(clazz);
                     if (annotation != null) {
                         AxisService axisService;
                         axisService =

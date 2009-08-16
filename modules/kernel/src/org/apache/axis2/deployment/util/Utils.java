@@ -42,6 +42,9 @@ import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.jsr181.JSR181Helper;
+import org.apache.axis2.jsr181.WebMethodAnnotation;
+import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
@@ -52,8 +55,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -569,9 +570,9 @@ public class Utils {
         }
         String opName = method.getName();
         operation.setName(new QName(opName));
-        WebMethod methodAnnon = method.getAnnotation(WebMethod.class);
+        WebMethodAnnotation methodAnnon = JSR181Helper.INSTANCE.getWebMethodAnnotation(method);
         if (methodAnnon != null) {
-            String action = methodAnnon.action();
+            String action = methodAnnon.getAction();
             if (action != null && !"".equals(action)) {
                 operation.setSoapAction(action);
             }
@@ -970,10 +971,10 @@ public class Utils {
      * @param serviceAnnotation a WebService annotation, or null
      * @return String version of the ServiceName according to the JSR 181 spec
      */
-    public static String getAnnotatedServiceName(Class serviceClass, WebService serviceAnnotation) {
+    public static String getAnnotatedServiceName(Class serviceClass, WebServiceAnnotation serviceAnnotation) {
         String serviceName = "";
-        if (serviceAnnotation != null && serviceAnnotation.serviceName() != null) {
-            serviceName = serviceAnnotation.serviceName();
+        if (serviceAnnotation != null && serviceAnnotation.getServiceName() != null) {
+            serviceName = serviceAnnotation.getServiceName();
         }
         if (serviceName.equals("")) {
             serviceName = serviceClass.getName();
