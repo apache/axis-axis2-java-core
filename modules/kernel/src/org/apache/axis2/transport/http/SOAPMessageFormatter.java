@@ -64,7 +64,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
         }	        
 
         try {
-            if (!(format.isOptimized()) & format.isDoingSWA()) {
+            if (!(format.isOptimized()) && format.isDoingSWA()) {
                 StringWriter bufferedSOAPBody = new StringWriter();
                 if (preserve) {
                     element.serialize(bufferedSOAPBody, format);
