@@ -414,8 +414,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             } catch (UnsupportedClassVersionError ex) {
                 log.info("Disabled - " + deployerClassName + " - " + ex.getMessage());
                 continue;
-            } catch (Exception e) {
-                log.info("Unable to instantiate deployer " + deployerClassName);
+            } catch (Throwable e) {
+                log.warn("Unable to instantiate deployer " + deployerClassName +
+                        "; see debug logs for more details");
                 log.debug(e.getMessage(), e);
                 continue;
             }
