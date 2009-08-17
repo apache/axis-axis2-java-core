@@ -167,20 +167,22 @@ public class ServiceClient {
         if (axisService == null) {
             axisService = createAnonymousService();
         }
-        this.axisService = axisService;
+
         // axis service is removed from the configuration context
         // only if user has not added it to configuration context.
         if (axisConfig.getService(axisService.getName()) == null) {
             axisService.setClientSide(true);
             axisConfig.addService(axisService);
             removeAxisService = true;
+            this.axisService = axisService;
         } else {
             axisService.setClientSide(true);
             removeAxisService = false;
+            this.axisService = axisConfig.getService(axisService.getName());
         }
-        AxisServiceGroup axisServiceGroup = axisService.getAxisServiceGroup();
+        AxisServiceGroup axisServiceGroup = this.axisService.getAxisServiceGroup();
         ServiceGroupContext sgc = configContext.createServiceGroupContext(axisServiceGroup);
-        serviceContext = sgc.getServiceContext(axisService);
+        serviceContext = sgc.getServiceContext(this.axisService);
     }
 
 
