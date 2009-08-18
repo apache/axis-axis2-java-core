@@ -38,21 +38,29 @@ set DEFAULT_AXIS2_HOME=%~dp0..
 if "%AXIS2_HOME%"=="" set AXIS2_HOME=%DEFAULT_AXIS2_HOME%
 set DEFAULT_AXIS2_HOME=
 
+:loop
 if ""%1""==""-xdebug"" goto xdebug
+if ""%1""==""-security"" goto security
 if ""%1""==""-h"" goto help
 if ""%1""=="""" goto checkConf
 
 :xdebug
 set JAVA_OPTS= %JAVA_OPTS% -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,address=8000
-goto checkConf
+shift
+goto loop
+
+:security
+set JAVA_OPTS=%JAVA_OPTS% -Djava.security.manager -Djava.security.policy=%AXIS2_HOME%\conf\axis2.policy -Daxis2.home=%AXIS2_HOME%
+shift
+goto loop
 
 :help
 echo  Usage: axis2server.bat
    
 echo  commands:    
-echo   -xdebug  Start Axis2 Server under JPDA debugger
-    
-echo   -h       help
+echo   -xdebug    Start Axis2 Server under JPDA debugger
+echo   -security  Enable Java 2 security
+echo   -h         help
 goto end
 
 
