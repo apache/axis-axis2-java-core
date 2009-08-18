@@ -20,14 +20,11 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.IOUtils;
 import org.apache.commons.logging.Log;
@@ -59,33 +56,13 @@ public class ListingAgent extends AbstractAgent {
             "listSingleService.jsp";
     private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
-    public static final String RUNNING_PORT = "RUNNING_PORT";
-
     public ListingAgent(ConfigurationContext aConfigContext) {
         super(aConfigContext);
-    }
-
-    private void addTransportListener(String schema, int port) {
-        try {
-            TransportInDescription trsIn =
-                    configContext.getAxisConfiguration().getTransportIn(schema);
-            if (trsIn == null) {
-                trsIn = new TransportInDescription(schema);
-                CustomListener httspReceiver = new CustomListener(port, schema);
-                httspReceiver.init(configContext, trsIn);
-                trsIn.setReceiver(httspReceiver);
-                configContext.getListenerManager().addListener(trsIn, true);
-            }
-        } catch (AxisFault axisFault) {
-            //
-        }
     }
 
     public void handle(HttpServletRequest httpServletRequest,
                        HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
-
-        initTransportListener(httpServletRequest);
 
         String query = httpServletRequest.getQueryString();
         if (query != null) {
@@ -97,35 +74,6 @@ public class ListingAgent extends AbstractAgent {
             }
         } else {
             super.handle(httpServletRequest, httpServletResponse);
-        }
-    }
-
-    protected void initTransportListener(HttpServletRequest httpServletRequest) {
-        // httpServletRequest.getLocalPort() , giving me a build error so I had to use the followin
-        String filePart;
-        try {
-            filePart = httpServletRequest.getRequestURL().toString();
-        } catch (Throwable t){
-            log.info("Old Servlet API (fallback to HttpServletRequest.getRequestURI) :" + t);    
-            filePart = httpServletRequest.getRequestURI();
-        }
-        int ipindex = filePart.indexOf("//");
-        String ip;
-        if (ipindex >= 0) {
-            ip = filePart.substring(ipindex + 2, filePart.length());
-            int seperatorIndex = ip.indexOf(":");
-            int slashIndex = ip.indexOf("/");
-            String portstr;
-            if (seperatorIndex >= 0) {
-                portstr = ip.substring(seperatorIndex + 1, slashIndex);
-            } else {
-                portstr = "80";
-            }
-            try {
-                addTransportListener(httpServletRequest.getScheme(), Integer.parseInt(portstr));
-            } catch (NumberFormatException e) {
-                log.debug(e.toString(), e);
-            }
         }
     }
 
@@ -150,23 +98,17 @@ public class ListingAgent extends AbstractAgent {
         processListServices(httpServletRequest, httpServletResponse);
     }
 
-    private String extractHostAndPort(String filePart, boolean isHttp) {
+    private String extractHost(String filePart) {
         int ipindex = filePart.indexOf("//");
         String ip = null;
         if (ipindex >= 0) {
             ip = filePart.substring(ipindex + 2, filePart.length());
             int seperatorIndex = ip.indexOf(":");
             int slashIndex = ip.indexOf("/");
-            String port;
             if (seperatorIndex >= 0) {
-                port = ip.substring(seperatorIndex + 1, slashIndex);
                 ip = ip.substring(0, seperatorIndex);
             } else {
                 ip = ip.substring(0, slashIndex);
-                port = "80";
-            }
-            if (isHttp) {
-                configContext.setProperty(RUNNING_PORT, port);
             }
         }
         return ip;
@@ -243,10 +185,9 @@ public class ListingAgent extends AbstractAgent {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
                 AxisService axisService = (AxisService) serviceObj;
-                boolean isHttp = "http".equals(req.getScheme());
                 if (wsdl2 >= 0) {
                     res.setContentType("text/xml");
-                    String ip = extractHostAndPort(url, isHttp);
+                    String ip = extractHost(url);
                     String wsdlName = req.getParameter("wsdl2");
                     
                     int ret = axisService.printWSDL2(res.getOutputStream(), ip, wsdlName);
@@ -259,7 +200,7 @@ public class ListingAgent extends AbstractAgent {
                 } else if (wsdl >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-                    String ip = extractHostAndPort(url, isHttp);
+                    String ip = extractHost(url);
                     String wsdlName = req.getParameter("wsdl");
 
                     if (wsdlName != null && wsdlName.length()>0) {

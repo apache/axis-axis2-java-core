@@ -34,29 +34,53 @@ import org.apache.commons.logging.LogFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This class is used just to add additional transports at runtime if user sends a request using
- * alternate schemes, example to handle http/https separately
+ * {@link TransportListener} implementation for {@link AxisServlet}. There will be one instance
+ * of this class for each protocol (HTTP and/or HTTPS) accepted by the servlet.
  */
-public class CustomListener implements TransportListener {
+public class AxisServletListener implements TransportListener {
 
-    private static final Log log = LogFactory.getLog(CustomListener.class);
+    private static final Log log = LogFactory.getLog(AxisServletListener.class);
     
+    /**
+     * The URL scheme which can be either <tt>http</tt> or <tt>https</tt>. This is the same as the
+     * transport name.
+     */
+    private String scheme;
+    
+    /**
+     * The port number. <code>-1</code> means that the port number will be autodetected.
+     */
     private int port;
-    private String schema;
-    private ConfigurationContext axisConf;
+    
+    private ConfigurationContext configurationContext;
+    private TransportInDescription transportInDescription;
 
-    public CustomListener(int port, String schema) {
-        this.port = port;
-        this.schema = schema;
+    public void init(ConfigurationContext configurationContext,
+                     TransportInDescription transportInDescription) throws AxisFault {
+        this.configurationContext = configurationContext;
+        this.transportInDescription = transportInDescription;
+        scheme = transportInDescription.getName();
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            throw new AxisFault(AxisServletListener.class.getName() + " can only be used for http or https");
+        }
+        Parameter param = transportInDescription.getParameter(PARAM_PORT);
+        if (param != null) {
+            try {
+                port = Integer.parseInt((String) param.getValue());
+            } catch (NumberFormatException ex) {
+                throw new AxisFault("Invalid port number");
+            }
+        } else {
+            port = -1;
+        }
     }
 
-    public void init(ConfigurationContext axisConf,
-                     TransportInDescription transprtIn) throws AxisFault {
-        this.axisConf = axisConf;
-        Parameter param = transprtIn.getParameter(PARAM_PORT);
-        if (param != null) {
-            this.port = Integer.parseInt((String) param.getValue());
-        }
+    public int getPort() {
+        return port;
+    }
+    
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public void start() throws AxisFault {
@@ -65,13 +89,12 @@ public class CustomListener implements TransportListener {
     public void stop() throws AxisFault {
     }
 
-    public EndpointReference[] getEPRsForService(String serviceName, String ip)
-            throws AxisFault {
-        String path = axisConf.getServiceContextPath() + "/" + serviceName;
-        if(path.charAt(0)!='/'){
-            path = '/' + path;
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
+        if (port == -1) {
+            throw new AxisFault("Port number for transport " + scheme + " has not yet been detected");
         }
-        return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + path + "/" )};
+        return HTTPTransportUtils.getEPRsForService(configurationContext, transportInDescription,
+                serviceName, ip, port);
     }
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {

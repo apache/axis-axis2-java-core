@@ -32,7 +32,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.description.AxisBindingMessage;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -73,9 +72,19 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Class AxisServlet
+ * Servlet implementing the HTTP and HTTPS transport. Note that this class doesn't implement
+ * {@link TransportListener}. There are two reasons for this:
+ * <ul>
+ * <li>There must be one instance of {@link TransportListener} for each protocol, but this servlet
+ * may implement both HTTP and HTTPS.
+ * <li>There is a collision between {@link TransportListener#destroy()} and
+ * {@link javax.servlet.Servlet#destroy()}.
+ * </ul>
+ * The {@link TransportListener} implementation is provided by {@link AxisServletListener}. An
+ * instance of that class must be declared in <tt>axis2.xml</tt> for each protocol (HTTP/HTTPS) that
+ * the servlet should accept.
  */
-public class AxisServlet extends HttpServlet implements TransportListener {
+public class AxisServlet extends HttpServlet {
     private static final long serialVersionUID = 3105135058353738906L;
     
     static final Log log = LogFactory.getLog(AxisServlet.class);
@@ -101,6 +110,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private static final int BUFFER_SIZE = 1024 * 8;
     
     private boolean initCalled = false;
+    
+    private transient AxisServletListener httpListener;
+    private transient AxisServletListener httpsListener;
 
     /**
      * Implementaion of POST interface
@@ -120,7 +132,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             log.info("Old Servlet API :" + t);
         }
 
-        initContextRoot(request);
+        preprocessRequest(request);
 
         MessageContext msgContext;
         OutputStream out = response.getOutputStream();
@@ -231,7 +243,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
 
-        initContextRoot(request);
+        preprocessRequest(request);
 
         // this method is also used to serve for the listServices request.
 
@@ -244,7 +256,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // 3. REST requests.
         if ((query != null) && new QueryStringParser(query).search(metadataQueryParamNames)) {
             // handling meta data exchange stuff
-            agent.initTransportListener(request);
             agent.processListService(request, response);
         } else if (requestURI.endsWith(".xsd") ||
                 requestURI.endsWith(".wsdl")) {
@@ -277,7 +288,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void doDelete(HttpServletRequest request,
                             HttpServletResponse response) throws ServletException, IOException {
 
-        initContextRoot(request);
+        preprocessRequest(request);
         // this method is also used to serve for the listServices request.
         if (!disableREST) {
             new RestRequestProcessor(Constants.Configuration.HTTP_METHOD_DELETE, request, response)
@@ -299,7 +310,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void doPut(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {
 
-        initContextRoot(request);
+        preprocessRequest(request);
         // this method is also used to serve for the listServices request.
         if (!disableREST) {
             new RestRequestProcessor(Constants.Configuration.HTTP_METHOD_PUT, request, response)
@@ -446,12 +457,28 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
             axisConfiguration = configContext.getAxisConfiguration();
 
+            httpListener = getAxisServletListener(Constants.TRANSPORT_HTTP);
+            httpsListener = getAxisServletListener(Constants.TRANSPORT_HTTPS);
+            
+            if (httpListener == null && httpsListener == null) {
+                log.warn("No transportReceiver for " + AxisServletListener.class.getName() +
+                        " found. An instance for HTTP will be configured automatically. " +
+                        "Please update your axis2.xml file!");
+                httpListener = new AxisServletListener();
+                TransportInDescription transportInDescription = new TransportInDescription(
+                        Constants.TRANSPORT_HTTP);
+                transportInDescription.setReceiver(httpListener);
+                axisConfiguration.addTransportIn(transportInDescription);
+            } else if (httpListener != null && httpsListener != null
+                    && httpListener.getPort() == -1 && httpsListener.getPort() == -1) {
+                log.warn("If more than one transportReceiver for " +
+                        AxisServletListener.class.getName() + " exists, then all instances " +
+                        "must be configured with a port number. WSDL generation will be " +
+                        "unreliable.");
+            }
+            
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
-            TransportInDescription transportInDescription = new TransportInDescription(
-                    Constants.TRANSPORT_HTTP);
-            transportInDescription.setReceiver(this);
-            listenerManager.addListener(transportInDescription, true);
             listenerManager.start();
             ListenerManager.defaultConfigurationContext = configContext;
             agent = new ListingAgent(configContext);
@@ -460,6 +487,19 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+    }
+    
+    private AxisServletListener getAxisServletListener(String name) {
+        TransportInDescription desc = axisConfiguration.getTransportIn(name);
+        if (desc == null) {
+            return null;
+        }
+        TransportListener receiver = desc.getReceiver();
+        if (receiver instanceof AxisServletListener) {
+            return (AxisServletListener)receiver;
+        } else {
+            return null;
         }
     }
 
@@ -537,29 +577,44 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     /**
-     * Set the context root if it is not set already.
-     *
-     * @param req
+     * Preprocess the request. This will:
+     * <ul>
+     * <li>Set the context root if it is not set already.
+     * <li>Remember the port number if port autodetection is enabled.
+     * <li>Reject the request if no {@link AxisServletListener} has been registered for the
+     * protocol.
+     * </ul>
+     * 
+     * @param req the request to preprocess
      */
-    public void initContextRoot(HttpServletRequest req) {
-        if (contextRoot != null && contextRoot.trim().length() != 0) {
-            return;
+    private void preprocessRequest(HttpServletRequest req) throws ServletException {
+        if (contextRoot == null || contextRoot.trim().length() == 0) {
+            String contextPath = null;
+            // Support older servlet API's
+            try {
+                contextPath = req.getContextPath();
+            } catch (Throwable t) {
+                log.info("Old Servlet API (Fallback to HttpServletRequest.getServletPath) :" + t);    
+                contextPath = req.getServletPath();
+            }
+            //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
+            if (contextPath != null && contextPath.length() == 0) {
+                contextPath = "/";
+            }
+            this.contextRoot = contextPath;
+    
+            configContext.setContextRoot(contextRoot);
         }
-        String contextPath = null;
-        // Support older servlet API's
-        try {
-            contextPath = req.getContextPath();
-        } catch (Throwable t) {
-            log.info("Old Servlet API (Fallback to HttpServletRequest.getServletPath) :" + t);    
-            contextPath = req.getServletPath();
+        
+        AxisServletListener listener = req.isSecure() ? httpsListener : httpListener;
+        if (listener == null) {
+            throw new ServletException(req.getScheme() + " is forbidden");
+        } else {
+            // Autodetect the port number if necessary
+            if (listener.getPort() == -1) {
+                listener.setPort(req.getServerPort());
+            }
         }
-        //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
-        if (contextPath != null && contextPath.length() == 0) {
-            contextPath = "/";
-        }
-        this.contextRoot = contextPath;
-
-        configContext.setContextRoot(contextRoot);
     }
 
     /**
@@ -570,37 +625,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     protected Map<String,String> getTransportHeaders(HttpServletRequest req) {
         return new TransportHeaders(req);
-    }
-
-
-    public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return getEPRsForService(serviceName, ip)[0];
-    }
-
-    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        //RUNNING_PORT
-        String portString = (String) configContext.getProperty(ListingAgent.RUNNING_PORT);
-        // TODO: there is something strange here because we never generate EPRs for https
-        return HTTPTransportUtils.getEPRsForService(configContext,
-                configContext.getAxisConfiguration().getTransportIn("http"),
-                serviceName, ip, portString == null ? 8080 : Integer.parseInt(portString));
-    }
-
-    /**
-     * init(); start() and stop() wouldn't do anything.
-     *
-     * @param axisConf
-     * @param transprtIn
-     * @throws AxisFault
-     */
-    public void init(ConfigurationContext axisConf,
-                     TransportInDescription transprtIn) throws AxisFault {
-    }
-
-    public void start() throws AxisFault {
-    }
-
-    public void stop() throws AxisFault {
     }
 
     /**
@@ -693,30 +717,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected MessageContext createMessageContext(HttpServletRequest req,
                                                   HttpServletResponse resp) throws IOException {
         return createMessageContext(req, resp, true);
-    }
-
-    /**
-     * Transport session management.
-     *
-     * @param messageContext
-     * @return SessionContext
-     */
-    public SessionContext getSessionContext(MessageContext messageContext) {
-        HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
-                HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        SessionContext sessionContext =
-                (SessionContext) req.getSession(true).getAttribute(
-                        Constants.SESSION_CONTEXT_PROPERTY);
-        String sessionId = req.getSession().getId();
-        if (sessionContext == null) {
-            sessionContext = new SessionContext(null);
-            sessionContext.setCookieID(sessionId);
-            req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
-        }
-        messageContext.setSessionContext(sessionContext);
-        messageContext.setProperty(SESSION_ID, sessionId);
-        return sessionContext;
     }
 
     protected class ServletRequestResponseTransport implements RequestResponseTransport {
