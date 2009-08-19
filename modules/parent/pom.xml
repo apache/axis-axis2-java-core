@@ -1012,11 +1012,6 @@
     </dependencyManagement>
     <!-- Top level dependencies that will be needed in all sub mvn modules -->
     <dependencies>
-           <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>

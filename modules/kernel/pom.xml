@@ -111,6 +111,11 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
