@@ -67,10 +67,6 @@
             <artifactId>geronimo-javamail_1.4_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
             <scope>test</scope>
