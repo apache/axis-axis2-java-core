@@ -38,17 +38,17 @@ public class AxisEvent {
     public static final int MODULE_DISENGAGED = 7;
 
     /**
-     * hold a reference to the AxisDiscription
+     * hold a reference to the AxisDescription
      * that the AxisEvent must carry ot the Observer
      * this referrece can be null of not needed
      */
-    private AxisDescription axisDiscription;
+    private AxisDescription axisDescription;
     
     private int EVENT_TYPE;
 
     public AxisEvent(int EVENT_TYPE , AxisDescription axisDescription) {
         this.EVENT_TYPE = EVENT_TYPE;
-        this.axisDiscription = axisDiscription;
+        this.axisDescription = axisDescription;
 
     }
 
@@ -56,8 +56,8 @@ public class AxisEvent {
         return EVENT_TYPE;
     }
     
-    public AxisDescription getAxisDiscription() {
-       return axisDiscription;
+    public AxisDescription getAxisDescription() {
+       return axisDescription;
     }
 
 }
