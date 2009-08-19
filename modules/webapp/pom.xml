@@ -1380,9 +1380,7 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>${maven.war.version}</version>
                 <configuration>
                     <warName>axis2</warName>
                     <archive>
