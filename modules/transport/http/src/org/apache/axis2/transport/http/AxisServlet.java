@@ -577,9 +577,36 @@ public class AxisServlet extends HttpServlet {
     }
 
     /**
+     * Set the context root if it is not set already.
+     *
+     * @param req
+     */
+    public void initContextRoot(HttpServletRequest req) {
+        if (contextRoot != null && contextRoot.trim().length() != 0) {
+            return;
+        }
+        String contextPath = null;
+        // Support older servlet API's
+        try {
+            contextPath = req.getContextPath();
+        } catch (Throwable t) {
+            log.info("Old Servlet API (Fallback to HttpServletRequest.getServletPath) :" + t);    
+            contextPath = req.getServletPath();
+        }
+        //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
+        if (contextPath != null && contextPath.length() == 0) {
+            contextPath = "/";
+        }
+        this.contextRoot = contextPath;
+
+        configContext.setContextRoot(contextRoot);
+    }
+    
+    /**
      * Preprocess the request. This will:
      * <ul>
-     * <li>Set the context root if it is not set already.
+     * <li>Set the context root if it is not set already (by calling
+     * {@link #initContextRoot(HttpServletRequest)}).
      * <li>Remember the port number if port autodetection is enabled.
      * <li>Reject the request if no {@link AxisServletListener} has been registered for the
      * protocol.
@@ -587,24 +614,11 @@ public class AxisServlet extends HttpServlet {
      * 
      * @param req the request to preprocess
      */
-    protected void preprocessRequest(HttpServletRequest req) throws ServletException {
-        if (contextRoot == null || contextRoot.trim().length() == 0) {
-            String contextPath = null;
-            // Support older servlet API's
-            try {
-                contextPath = req.getContextPath();
-            } catch (Throwable t) {
-                log.info("Old Servlet API (Fallback to HttpServletRequest.getServletPath) :" + t);    
-                contextPath = req.getServletPath();
-            }
-            //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
-            if (contextPath != null && contextPath.length() == 0) {
-                contextPath = "/";
-            }
-            this.contextRoot = contextPath;
-    
-            configContext.setContextRoot(contextRoot);
-        }
+    // This method should not be part of the public API. In particular we must not allow subclasses
+    // to override this method because we don't make any guarantees as to when exactly this method
+    // is called.
+    private void preprocessRequest(HttpServletRequest req) throws ServletException {
+        initContextRoot(req);
         
         AxisServletListener listener = req.isSecure() ? httpsListener : httpListener;
         if (listener == null) {
