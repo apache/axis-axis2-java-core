@@ -587,7 +587,7 @@ public class AxisServlet extends HttpServlet {
      * 
      * @param req the request to preprocess
      */
-    private void preprocessRequest(HttpServletRequest req) throws ServletException {
+    protected void preprocessRequest(HttpServletRequest req) throws ServletException {
         if (contextRoot == null || contextRoot.trim().length() == 0) {
             String contextPath = null;
             // Support older servlet API's
