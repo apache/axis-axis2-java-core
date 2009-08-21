@@ -72,7 +72,7 @@ public class ClassFinderImpl implements ClassFinder {
                                     clazzName = clazzName.replace('/', '.').replace('\\', '.')
                                             .replace(':', '.');
                                     //We are only going to add the class that belong to the provided package.
-                                    if (clazzName.startsWith(pkg)) {
+                                    if (clazzName.startsWith(pkg + ".")) {
                                         try {
                                             Class clazz = forName(clazzName, false, cl);
                                             // Don't add any interfaces or JAXWS specific classes.
