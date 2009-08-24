@@ -62,7 +62,7 @@
             <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-mar-maven-plugin</artifactId>
-                <version>${version}</version>
+                <version>${mar.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <includeDependencies>false</includeDependencies>

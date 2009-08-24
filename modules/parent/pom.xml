@@ -88,6 +88,9 @@
         <xmlschema.version>SNAPSHOT</xmlschema.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
 
+        <mar.plugin.version>1.5</mar.plugin.version>
+        <aar.plugin.version>1.5</aar.plugin.version>
+
 	<!-- Use released versions for these projects -->
         <ant.version>1.7.0</ant.version>
         <antlr.version>2.7.7</antlr.version>
