@@ -619,16 +619,23 @@ public class AxisServlet extends HttpServlet {
     // is called.
     private void preprocessRequest(HttpServletRequest req) throws ServletException {
         initContextRoot(req);
-        
-        AxisServletListener listener = req.isSecure() ? httpsListener : httpListener;
-        if (listener == null) {
+
+        TransportInDescription transportInDescription =
+                req.isSecure()? this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTP) :
+                        this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTPS);
+
+        if (transportInDescription == null){
             throw new ServletException(req.getScheme() + " is forbidden");
         } else {
-            // Autodetect the port number if necessary
-            if (listener.getPort() == -1) {
-                listener.setPort(req.getServerPort());
+            if (transportInDescription.getReceiver() instanceof AxisServletListener){
+                AxisServletListener listner = (AxisServletListener) transportInDescription.getReceiver();
+                // Autodetect the port number if necessary
+                if (listner.getPort() == -1){
+                    listner.setPort(req.getServerPort());
+                }
             }
         }
+        
     }
 
     /**
