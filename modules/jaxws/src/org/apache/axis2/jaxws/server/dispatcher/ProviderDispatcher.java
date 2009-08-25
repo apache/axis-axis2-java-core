@@ -339,6 +339,14 @@ public class ProviderDispatcher extends JavaDispatcher {
         return requestParamValue;
     }
     
+    /**
+     * Create a MessageContext for the response. This could be a normal response
+     * or a fault response depending on the characteristics of output
+     * @param request MessageContext
+     * @param input[] input Objects
+     * @param output Object representing output of Provider
+     * @return MessageContext for normal or fault path
+     */
     public MessageContext createResponse(MessageContext request, Object[] input, Object output) {
         if (log.isDebugEnabled()) {
             log.debug("Start createResponse");
@@ -357,9 +365,6 @@ public class ProviderDispatcher extends JavaDispatcher {
             throw ExceptionFactory.makeWebServiceException(t);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Response message is created.");
-        }
         
         MessageContext response = null;
         try {
@@ -368,8 +373,17 @@ public class ProviderDispatcher extends JavaDispatcher {
                 m.setMTOMEnabled(true);
             }
             
-
-            response = MessageContextUtils.createResponseMessageContext(request);
+            if (!m.isFault()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Non-Fault Response MessageContext is created.");
+                }
+                response = MessageContextUtils.createResponseMessageContext(request);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Fault Response MessageContext is created.");
+                }
+                response = MessageContextUtils.createFaultMessageContext(request);
+            }
             initMessageContext(response, m, output);
         } catch (RuntimeException e) {
             if (log.isDebugEnabled()) {
