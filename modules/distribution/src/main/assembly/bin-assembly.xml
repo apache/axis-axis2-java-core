@@ -230,14 +230,12 @@
                  <exclude>xmlpull:xmlpull:jar</exclude>
                  <exclude>xerces:xmlParserAPIs:jar</exclude>
                  <exclude>org.apache.xbean:xbean-spring:jar</exclude>
-                 <exclude>org.apache.tomcat:tribes:jar</exclude>
                  <exclude>org.springframework:spring:jar</exclude>	
                  <exclude>org.springframework:spring-beans:jar</exclude>
                  <exclude>org.springframework:spring-context:jar</exclude>	
                  <exclude>org.springframework:spring-core:jar</exclude>	
                  <exclude>org.springframework:spring-web:jar</exclude>	
                  <exclude>logkit:logkit:jar</exclude>	
-                 <exclude>org.apache.tomcat:juli:jar</exclude>	
                  <exclude>javax.xml.bind:jsr173_api:jar</exclude>	
                  <exclude>jrms:jrms:jar</exclude>	
                  <exclude>activemq:jmdns:jar</exclude>	
