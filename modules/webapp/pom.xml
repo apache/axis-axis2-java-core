@@ -1351,6 +1351,11 @@
             <version>${version}</version>
             <type>mar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-clustering</artifactId>
+            <version>${version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>axis2-${version}</finalName>
