@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -438,6 +439,18 @@ public class Utils {
                 // Have use the soap body as the exception
                 if (messageContext.isDoingREST() && soapBody.getFirstElement() != null) {
                     return new AxisFault(soapBody.getFirstElement().toString());
+                }
+
+                // if axis2 receives an rest type fault for an soap message then message context
+                // has not been set to isDoingREST() but in this case we can detect it by using
+                // the message type. so if the message type is application/xml we assum it as an rest call
+                if ((messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE) != null) &&
+                        messageContext.getProperty(Constants.Configuration.MESSAGE_TYPE).equals(HTTPConstants.MEDIA_TYPE_APPLICATION_XML)){
+                     if (soapBody.getFirstElement() != null){
+                         return new AxisFault(soapBody.getFirstElement().toString());
+                     } else {
+                         return new AxisFault("application/xml type error received.");
+                     }
                 }
             }
             // Not going to be able to
