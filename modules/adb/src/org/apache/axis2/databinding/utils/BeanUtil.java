@@ -362,7 +362,14 @@ public class BeanUtil {
                             continue;
 
                         Object partObj;
+                        boolean isNil = false;
                         if (attribute != null) {
+                            String nilValue = attribute.getAttributeValue();
+                            if ("true".equals(nilValue) || "1".equals(nilValue)) {
+                                isNil = true;
+                            }
+                        }
+                        if (isNil) {
                             partObj = null;
                         } else {
                             if (SimpleTypeMapper.isSimpleType(parameters)) {
