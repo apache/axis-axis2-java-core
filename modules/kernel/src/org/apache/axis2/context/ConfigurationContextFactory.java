@@ -98,6 +98,10 @@ public class ConfigurationContextFactory {
         // TODO: THIS NEEDS A TEST CASE!
         initApplicationScopeServices(configContext);
 
+        //Check whether there are any faulty services due to modules and trasports,
+        //If any, let the user know.
+        Utils.logFaultyServiceInfo(axisConfig);
+
         axisConfig.setStart(true);
         if (deploymentLifeCycleListener != null){
             deploymentLifeCycleListener.postDeploy(configContext);

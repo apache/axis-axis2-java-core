@@ -674,6 +674,19 @@ public class AxisConfiguration extends AxisDescription {
                 faultyServicesMap.put(faultyServiceData.getServiceGroupName(), faultyServiceData);
                 faultyServicesDueToModules.put(moduleName, faultyServicesMap);
             }
+
+            //Adding the faulty service to default service map
+            String serviceStatus = "Error:\n" + "Engaged module not found :" + moduleName;
+
+            String serviceLocation = null;
+            if(faultyServiceData.getCurrentDeploymentFile() != null){
+                serviceLocation = faultyServiceData.getCurrentDeploymentFile().getFile().getAbsolutePath();
+            }
+
+            if(serviceLocation == null){
+                serviceLocation = faultyServiceData.getServiceGroupName();
+            }
+            faultyServices.put(serviceLocation, serviceStatus);
         }
     }
 
@@ -710,13 +723,24 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void removeFaultyServiceDuetoModule(String moduleName, String serviceGroupName) {
         synchronized (faultyServicesDueToModules) {
-            Map<String, FaultyServiceData> faultyServices =
-                    faultyServicesDueToModules.get(moduleName);
+            Map<String, FaultyServiceData> faultyServicesDueToModule = faultyServicesDueToModules.get(moduleName);
+            FaultyServiceData faultyServiceData = faultyServicesDueToModule.get(serviceGroupName);
 
-            if (faultyServices != null) {
-                faultyServices.remove(serviceGroupName);
+            if (faultyServicesDueToModule != null) {
+                faultyServicesDueToModule.remove(serviceGroupName);
 
-                if(faultyServices.isEmpty()){
+                //Removing from the default faulty services map.
+                String serviceLocation = null;
+                if (faultyServiceData.getCurrentDeploymentFile() != null) {
+                    serviceLocation = faultyServiceData.getCurrentDeploymentFile().getFile().getAbsolutePath();
+                }
+
+                if (serviceLocation == null) {
+                    serviceLocation = faultyServiceData.getServiceGroupName();
+                }
+                faultyServices.remove(serviceLocation);
+
+                if (faultyServicesDueToModule.isEmpty()) {
                     faultyServicesDueToModules.remove(moduleName);
                 }
             }

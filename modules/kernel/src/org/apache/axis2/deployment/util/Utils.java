@@ -48,6 +48,7 @@ import org.apache.axis2.jsr181.WebServiceAnnotation;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.FaultyServiceData;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
@@ -1859,5 +1860,19 @@ public class Utils {
 
     }
 
-
+    /**
+     * Log faulty services info due to unavailability of modules and transports
+     * @param axisConfig
+     */
+    public static void logFaultyServiceInfo(AxisConfiguration axisConfig){
+        Map<String, Map<String, FaultyServiceData>> faultyServices = axisConfig.getFaultyServicesDuetoModules();
+        if (faultyServices != null && !faultyServices.isEmpty()) {
+            for (String moduleName : faultyServices.keySet()) {
+                Map<String, FaultyServiceData> faultyServicesDueToModule = faultyServices.get(moduleName);
+                for (String s : faultyServicesDueToModule.keySet()) {
+                    log.warn("Service :" + s + " is faulty, due to unavailability of the module :" + moduleName);        
+                }
+            }
+        }
+    }
 }
