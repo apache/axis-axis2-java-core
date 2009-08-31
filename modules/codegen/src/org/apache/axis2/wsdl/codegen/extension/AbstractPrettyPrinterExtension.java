@@ -46,11 +46,13 @@ public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerat
      */
     protected void prettify(File file, CodeGenConfiguration configuration) {
 
-        List xmlFileList = configuration.getOutputXmlFileNamesList();
+        List fileList = configuration.getOutputFileNamesList();
         String fileName = null;
-        for (Iterator iter = xmlFileList.iterator();iter.hasNext();){
+        for (Iterator iter = fileList.iterator();iter.hasNext();){
             fileName = (String) iter.next();
-            prettifyFile(new File(fileName));
+            if (fileName.toLowerCase().endsWith(fileExtension)) {
+                prettifyFile(new File(fileName));
+            }
         }
 
     }

@@ -380,7 +380,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     public CodeGenConfiguration(Map<String,CommandLineOption> optionMap) {
         CodegenConfigLoader.loadConfig(this, optionMap);
         this.axisServices = new ArrayList<AxisService>();
-        this.outputXmlFileNamesList = new ArrayList<String>();
+        this.outputFileNamesList = new ArrayList<String>();
     }
 
 
@@ -563,18 +563,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     // this is used to keep the generated xml file list to pretty print.
-    private List<String> outputXmlFileNamesList;
+    private List<String> outputFileNamesList;
 
-    public List<String> getOutputXmlFileNamesList() {
-        return outputXmlFileNamesList;
+    public List<String> getOutputFileNamesList() {
+        return outputFileNamesList;
     }
 
-    public void setOutputXmlFileNamesList(List<String> outputXmlFileNamesList) {
-        this.outputXmlFileNamesList = outputXmlFileNamesList;
+    public void setOutputFileNamesList(List<String> outputXmlFileNamesList) {
+        this.outputFileNamesList = outputXmlFileNamesList;
     }
 
-    public void addXmlFileName(String fileName){
-       this.outputXmlFileNamesList.add(fileName);
+    public void addOutputFileName(String fileName){
+       this.outputFileNamesList.add(fileName);
     }
     public void setoutputSourceLocation(boolean setoutputsourcelocation)
     {
