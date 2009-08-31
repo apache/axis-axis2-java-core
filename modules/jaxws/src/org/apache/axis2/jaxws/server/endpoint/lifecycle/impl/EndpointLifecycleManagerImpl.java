@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
@@ -155,6 +156,9 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
         //Add the MessageContext for current invocation
         if (ws != null) {
             updateWebServiceContext(ws, soapMessageContext);
+            // Store the WebServiceContext on the MessageContext so that its resource
+            // can be freed after the web service method completes.
+            mc.setProperty(WEBSERVICE_MESSAGE_CONTEXT, ws);
         }
     }
 
@@ -177,6 +181,10 @@ public class EndpointLifecycleManagerImpl extends BaseLifecycleManager implement
         WebServiceContextImpl wsContext = new WebServiceContextImpl();
         //Add MessageContext for this request.
         wsContext.setSoapMessageContext(soapMessageContext);
+        
+        // Store the WebServiceContext on the MessageContext so that its resource
+        // can be freed after the web service method completes.
+        mc.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
         return wsContext;
     }
 

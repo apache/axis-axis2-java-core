@@ -351,7 +351,8 @@ public class JAXBDSContext {
                               writer,
                               getProcessType(),
                               isxmlList(),
-                              getConstructionType());
+                              getConstructionType(),
+                              true); // Attempt to optimize by writing to OutputStream
             }
 
             // Successfully marshalled the data
@@ -376,10 +377,6 @@ public class JAXBDSContext {
                 // XMLStreamWriter. 
                 // Take advantage of this optimization if there is an output stream.
                 try {
-                    if (!optimize) {
-                        log.trace(JavaUtils.stackToString());
-                        getOutputStream(writer);
-                    }
                     OutputStream os = (optimize) ? getOutputStream(writer) : null;
                     if (os != null) {
                         if (DEBUG_ENABLED) {
@@ -722,11 +719,17 @@ public class JAXBDSContext {
      * schema (i.e. rpc)
      * @param m Marshaller
      * @param writer XMLStreamWriter
-     * @param type
+     * @param type Class
+     * @param isList true if this is an XmlList
+     * @param ctype CONSTRUCTION_TYPE
+     * @param optimize boolean set to true if optimization directly to 
+     * outputstream should be attempted.
      */
     private static void marshalByType(final Object b, final Marshaller m,
                                       final XMLStreamWriter writer, final Class type,
-                                      final boolean isList, final JAXBUtils.CONSTRUCTION_TYPE ctype)
+                                      final boolean isList, 
+                                      final JAXBUtils.CONSTRUCTION_TYPE ctype,
+                                      final boolean optimize) 
         throws WebServiceException {
         AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
@@ -819,16 +822,23 @@ public class JAXBDSContext {
                         }
                     }
 
-                    if (DEBUG_ENABLED) {
-                        log.debug("Invoking marshalByType.  " +
-                                        "Marshaling to an XMLStreamWriter. Object is "
-                                + getDebugName(b));
+                    // If the output stream is available, marshal directly to it
+                    OutputStream os = (optimize) ? getOutputStream(writer) : null;
+                    if (os == null){ 
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByType.  " +
+                                    "Marshaling to an XMLStreamWriter. Object is "
+                                    + getDebugName(jbo));
+                        }   
+                        m.marshal(jbo, writer);
+                    } else {
+                        if (DEBUG_ENABLED) {
+                            log.debug("Invoking marshalByType.  " +
+                                    "Marshaling to an OutputStream. Object is "
+                                    + getDebugName(jbo));
+                        }   
+                        m.marshal(jbo, os);
                     }
-                    
-                    /// TODO 
-                    // For the cases like enum and list, should we 
-                    // intercept exceptions and try a different approach ?
-                    m.marshal(jbo, writer);
 
                 } catch (OMException e) {
                     throw e;

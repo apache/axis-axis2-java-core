@@ -48,6 +48,14 @@ public class WebServiceContextImpl implements WebServiceContext {
      * @see javax.xml.ws.WebServiceContext#getMessageContext()
      */
     public MessageContext getMessageContext() {
+        
+        // Note that the MessageContext might not be set up yet, or it
+        // may have been released because the lifetime of the WebServiceContext is completed.
+        if (log.isDebugEnabled()) {
+            if (soapMessageContext == null) {
+                log.debug("The MessageContext is not available");
+            }
+        }
         return soapMessageContext;
     }
 
@@ -55,6 +63,15 @@ public class WebServiceContextImpl implements WebServiceContext {
      * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
      */
     public Principal getUserPrincipal() {
+        
+        // Note that the MessageContext might not be set up yet, or it
+        // may have been released because the lifetime of the WebServiceContext is completed.
+        if (log.isDebugEnabled()) {
+            if (soapMessageContext == null) {
+                log.debug("The MessageContext is not available");
+            }
+        }
+        
         if (soapMessageContext != null) {
             HttpServletRequest request = (HttpServletRequest) soapMessageContext.get(MessageContext.SERVLET_REQUEST);
             if (request != null) {
@@ -77,6 +94,15 @@ public class WebServiceContextImpl implements WebServiceContext {
      * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
      */
     public boolean isUserInRole(String user) {
+        
+        // Note that the MessageContext might not be set up yet, or it
+        // may have been released because the lifetime of the WebServiceContext is completed.
+        if (log.isDebugEnabled()) {
+            if (soapMessageContext == null) {
+                log.debug("The MessageContext is not available");
+            }
+        }
+        
         if (soapMessageContext != null) {
             HttpServletRequest request = (HttpServletRequest) soapMessageContext.get(MessageContext.SERVLET_REQUEST);
             if (request != null) {
@@ -100,6 +126,15 @@ public class WebServiceContextImpl implements WebServiceContext {
     }
 
     public <T extends EndpointReference> T getEndpointReference(Class<T> clazz, Element... referenceParameters) {
+        
+        // Note that the MessageContext might not be set up yet, or it
+        // may have been released because the lifetime of the WebServiceContext is completed.
+        if (log.isDebugEnabled()) {
+            if (soapMessageContext == null) {
+                log.debug("The MessageContext is not available");
+            }
+        }
+        
         EndpointReference jaxwsEPR = null;
         String addressingNamespace = EndpointReferenceUtils.getAddressingNamespace(clazz);
         
@@ -129,5 +164,15 @@ public class WebServiceContextImpl implements WebServiceContext {
 
     public EndpointReference getEndpointReference(Element... referenceParameters) {
         return getEndpointReference(W3CEndpointReference.class, referenceParameters);
+    }
+    
+    /**
+     * Release objects held by WebServiceContext so that they can be garbage collected.
+     */
+    public void releaseResources() {
+        if (log.isDebugEnabled()) {
+            log.debug("Releasing WebServiceContextImpl resources");
+        }
+        soapMessageContext = null; // unlink the soapMessageContxt so that it can be gc'd
     }
 }

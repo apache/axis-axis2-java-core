@@ -22,6 +22,7 @@ package org.apache.axis2.jaxws.context.utils;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.jaxws.addressing.util.ReferenceParameterList;
+import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -50,6 +51,8 @@ import java.util.List;
 
 public class ContextUtils {
     private static final Log log = LogFactory.getLog(ContextUtils.class);
+    
+    private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
 
     /**
      * Adds the appropriate properties to the MessageContext that the user will see
@@ -251,6 +254,29 @@ public class ContextUtils {
         context.setScope(name, Scope.APPLICATION);
         if (logMessage && log.isDebugEnabled()) {
             log.debug(name + " :" + value);
+        }
+    }
+    
+    /**
+     * Release the contents of the WebServiceContext.
+     * @param mc
+     */
+    public static void releaseWebServiceContextResources(MessageContext mc) {
+        if (log.isDebugEnabled()) {
+            log.debug("Find and release WebServiceContext resources");
+        }
+        WebServiceContext wsc = null;
+        // If a WebServiceContext was created, get it from the MessageContext
+        if (mc != null) {
+            wsc = (WebServiceContext) mc.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
+        } 
+        
+        if (wsc != null && wsc instanceof WebServiceContextImpl) {
+            ((WebServiceContextImpl) wsc).releaseResources();
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("A WebServiceContext was not found");
+            }
         }
     }
 }

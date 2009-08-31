@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.context.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axis2.jaxws.context.MessageContextImpl;
 import org.apache.axis2.jaxws.context.sei.MessageContext;
 import org.apache.axis2.jaxws.context.sei.MessageContextService;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
@@ -29,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceContext;
 
 public class MessageContextTests extends AbstractTestCase {
 
@@ -85,6 +88,13 @@ public class MessageContextTests extends AbstractTestCase {
         System.out.println("Type = " + type.value + "/" + exType);
 
         assertTrue("WebServiceContext did not expose " + propertyName.value, isFound.value);
+        
+        // Make sure that the WebServiceContext's contents don't persist after the
+        // invocation.  This is necessary to ensure proper gc and avoid accidental misuse.
+        WebServiceContext wsc = org.apache.axis2.jaxws.context.MessageContextImpl.webServiceContext;
+        
+        assertTrue("WebServiceContext resources were not freed",
+                   wsc.getMessageContext() == null);
 
         if (exType != null)
             assertTrue("Type of " + propertyName.value + " does not match [" + type.value + ", " + exType + "]",

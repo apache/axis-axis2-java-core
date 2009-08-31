@@ -34,14 +34,21 @@ public class MessageContextImpl implements MessageContext {
 
     @Resource
     WebServiceContext ctxt;
+    
+    public static WebServiceContext webServiceContext = null;
 
     public void isPropertyPresent(
             Holder<String> propertyName,
             Holder<String> value,
             Holder<String> type,
             Holder<Boolean> isFound) {
-        System.out.println(">> isPropertyPresent(" + propertyName.value + ")");
+        
+        // Put the context in the static variable so that the test can 
+        // make sure that its contents don't persist past the method invocation
+        webServiceContext = ctxt;
+        
         javax.xml.ws.handler.MessageContext msgCtxt = ctxt.getMessageContext();
+        
         if (msgCtxt != null) {
             isFound.value = msgCtxt.containsKey(propertyName.value);
             Object val = msgCtxt.get(propertyName.value);
@@ -53,6 +60,5 @@ public class MessageContextImpl implements MessageContext {
                 value.value = val.toString();
             }
         }
-        System.out.println("<< isPropertyPresent()");
     }
 }

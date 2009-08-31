@@ -28,6 +28,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -128,6 +129,8 @@ public class EndpointController {
             } else {
                 destroyHandlers(eic, request);
             }
+            // Release WebServiceContextResources if available
+            ContextUtils.releaseWebServiceContextResources(request);
         }
         
         return eic;

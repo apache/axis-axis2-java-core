@@ -23,6 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvocationContext;
@@ -47,24 +48,34 @@ public class EndpointCallback {
                 responseMsgCtx.getAxisMessageContext();
 
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("start handleResponse");
+            }
             invokeOutboundHandlerFlow(eic);
             responseReady(eic);
             MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
                                                     axisResponseMsgCtx);
 
             OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
-            opCtx.addMessageContext(axisResponseMsgCtx);            
+            opCtx.addMessageContext(axisResponseMsgCtx);         
             
+            
+            if (log.isDebugEnabled()) {
+                log.debug("perform thread migration");
+            }
             // This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                                                                 axisResponseMsgCtx);
     
-            //Create the AxisEngine for the reponse and send it.
+            //Create the AxisEngine for the response and send it.
             if (log.isDebugEnabled()) {
                 log.debug("Sending async response.");
             }
             AxisEngine.send(axisResponseMsgCtx);
             
+            if (log.isDebugEnabled()) {
+                log.debug("perform thread cleanup");
+            }
             //This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                                                             axisResponseMsgCtx);
@@ -79,13 +90,22 @@ public class EndpointCallback {
                 t = faultMessage;
             }
             eic.getResponseMessageContext().setCausedByException(AxisFault.makeFault(t));
-            
+           
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                 eic.getRequestMessageContext().getAxisMessageContext());
             
             // FIXME (NLG): This is probably not right
             handleFaultResponse(eic);
-        } 
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("release resources");
+            }
+            ContextUtils.releaseWebServiceContextResources(eic.getRequestMessageContext());
+            
+            if (log.isDebugEnabled()) {
+                log.debug("end handleResponse");
+            }
+        }
     }
     
     public void handleFaultResponse(EndpointInvocationContext eic) {
@@ -94,6 +114,10 @@ public class EndpointCallback {
                 responseMsgCtx.getAxisMessageContext();
         
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("start handleFaultResponse");
+            }
+            
             responseReady(eic);
             MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(),
                 axisResponseMsgCtx);
@@ -101,6 +125,9 @@ public class EndpointCallback {
             OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
             opCtx.addMessageContext(axisResponseMsgCtx);
             
+            if (log.isDebugEnabled()) {
+                log.debug("perform thread cleanup");
+            }
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,
                 eic.getRequestMessageContext().getAxisMessageContext());
             
@@ -114,6 +141,14 @@ public class EndpointCallback {
             }
             
             throw ExceptionFactory.makeWebServiceException(AxisFault.makeFault(t));
+        } finally {
+            if (log.isDebugEnabled()) {
+                log.debug("release resources");
+            }
+            ContextUtils.releaseWebServiceContextResources(eic.getRequestMessageContext());
+            if (log.isDebugEnabled()) {
+                log.debug("end handleFaultResponse");
+            }
         }
     }
     

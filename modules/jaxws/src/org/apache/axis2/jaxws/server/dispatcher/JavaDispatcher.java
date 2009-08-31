@@ -23,6 +23,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.Constants;
 import org.apache.axis2.jaxws.WebServiceExceptionLogger;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.server.EndpointCallback;
 import org.apache.axis2.jaxws.server.EndpointInvocationContext;
@@ -144,7 +145,13 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 // If this is a one way invocation, we are done and just need to return.
                 if (eic.isOneWay()) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Invocation pattern was one way, work complete.");
+                        log.debug("Completed invoke of one-way operation");
+                        log.debug("Release resources");
+                    }
+                    ContextUtils.releaseWebServiceContextResources(eic.getRequestMessageContext());
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("Indicate Response ready");
                     }
                     
                     responseReady(eic);
