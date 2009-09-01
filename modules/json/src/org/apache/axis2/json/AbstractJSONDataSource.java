@@ -170,11 +170,13 @@ public abstract class AbstractJSONDataSource implements OMDataSource {
         } else {
             try {
                 char temp = (char)jsonReader.read();
-                jsonString = "";
+                // use a buffer to support long json strings better..
+                StringBuilder sb = new StringBuilder(100);
                 while ((int)temp != 65535) {
-                    jsonString += temp;
+                    sb.append(temp);
                     temp = (char)jsonReader.read();
                 }
+                jsonString = sb.toString();
             } catch (IOException e) {
                 throw new OMException();
             }
