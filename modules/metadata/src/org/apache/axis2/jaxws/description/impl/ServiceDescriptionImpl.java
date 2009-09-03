@@ -221,7 +221,8 @@ class ServiceDescriptionImpl
             }
             this.wsdlURL = sparseCompositeWsdlURL.toString();
         } else {
-            this.wsdlURL = wsdlURL == null ? null : wsdlURL.toString();
+            // need to call getWSDLURL here to flow through XML catalog during WSDL processing
+            this.wsdlURL = wsdlURL == null ? null : getWSDLURL(wsdlURL.toString()).toString();
         }
         if (log.isDebugEnabled()) {
             log.debug("Wsdl Location value used: " + this.wsdlURL);
