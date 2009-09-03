@@ -159,7 +159,15 @@ public class OASISCatalogManager extends CatalogManager implements JAXWSCatalogM
             return url.toString();
         }
         // have not returned -- perhaps we're in an EJB?
-        url = classLoader.getResource(DEFAULT_CATALOG_EJB);
+        try {
+            final ClassLoader privClassLoader = classLoader;
+            url = (URL)AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws Exception {
+                    return privClassLoader.getResource(DEFAULT_CATALOG_EJB);
+                }});
+        } catch (PrivilegedActionException pae) {
+            throw ExceptionFactory.makeWebServiceException(pae.getException());
+        }
         return url == null? null: url.toString();
 
     }
