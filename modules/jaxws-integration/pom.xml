@@ -1297,7 +1297,21 @@
 								<zip destfile="target/test-classes/servicejars/HandlerHeaderService.jar"
 									basedir="${pom.basedir}/target/test-classes/servicejars/HandlerHeaderService"
 								/>
+								
 								<delete dir="target/test-classes/servicejars/HandlerHeaderService"/>
+								
+                                <copy toDir="target/test-classes/servicejars/JAXBStringService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/jaxb/string/**"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="target/test-classes/servicejars/JAXBStringService.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/JAXBStringService"
+                                        />
+                                        
+                                <delete dir="target/test-classes/servicejars/JAXBStringService"/>
+                                
                                 <copy toDir="target/test-classes/servicejars/OMProviderService/">
 									<fileset dir="target/test-classes">
 									   <include name="org/apache/axis2/jaxws/provider/om/**"/>

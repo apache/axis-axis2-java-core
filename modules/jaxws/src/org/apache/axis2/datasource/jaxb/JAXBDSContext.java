@@ -328,6 +328,16 @@ public class JAXBDSContext {
             // Very easy, use the Context to get the Marshaller.
             // Use the marshaller to write the object.
             Marshaller m = JAXBUtils.getJAXBMarshaller(getJAXBContext(cl));
+            if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
+                String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
+                if (encoding != null && !"UTF-8".equalsIgnoreCase(encoding)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Setting the Marshaller.JAXB_ENCODING to " + encoding);
+                    }
+    
+                    m.setProperty(Marshaller.JAXB_ENCODING, encoding);
+                }
+            }
             
             AttachmentMarshaller am = createAttachmentMarshaller(writer);
             if (am != null) {
