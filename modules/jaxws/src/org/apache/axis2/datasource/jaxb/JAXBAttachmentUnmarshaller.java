@@ -50,6 +50,7 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
     public JAXBAttachmentUnmarshaller(MessageContext msgContext, 
                                       XMLStreamReader xmlStreamReader) {
         this.msgContext = msgContext;
+        this.xmlStreamReader = xmlStreamReader;
     }
 
     public boolean isXOPPackage() {
@@ -57,12 +58,6 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         // Any message that is received might contain MTOM.
         // So always return true.
         boolean value = true;
-        
-        // Have the OM XMLStreamReader (OMStAXWrapper)
-        // sent xop:include events
-        if (xmlStreamReader instanceof OMXMLStreamReader) {
-            ((OMXMLStreamReader) xmlStreamReader).setInlineMTOM(true);
-        }
     
         if (log.isDebugEnabled()){ 
             log.debug("isXOPPackage returns " + value);
