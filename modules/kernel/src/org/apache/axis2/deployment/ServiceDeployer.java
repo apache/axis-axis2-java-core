@@ -45,6 +45,7 @@ public class ServiceDeployer implements Deployer {
     private static final Log log = LogFactory.getLog(ServiceDeployer.class);
     private AxisConfiguration axisConfig;
     private ConfigurationContext configCtx;
+    private String directory;
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
@@ -84,6 +85,20 @@ public class ServiceDeployer implements Deployer {
                     serviceGroup, isDirectory, wsdlservice,
                     configCtx);
             URL location = deploymentFileData.getFile().toURL();
+
+            // Add the hierarchical path to the service group
+            if (location != null) {
+                String serviceHierarchy = Utils.getServiceHierarchy(location.getPath(),
+                        this.directory);
+                if (!"".equals(serviceHierarchy)) {
+                    serviceGroup.setServiceGroupName(serviceHierarchy
+                            + serviceGroup.getServiceGroupName());
+                    for (Object o : serviceList) {
+                        AxisService axisService = (AxisService) o;
+                        axisService.setName(serviceHierarchy + axisService.getName());
+                    }
+                }
+            }
             DeploymentEngine.addServiceGroup(serviceGroup,
                                              serviceList,
                                              location,
@@ -154,6 +169,7 @@ public class ServiceDeployer implements Deployer {
     }
 
     public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     public void setExtension(String extension) {
@@ -161,8 +177,11 @@ public class ServiceDeployer implements Deployer {
 
     public void unDeploy(String fileName) throws DeploymentException {
         try {
+            //find the hierarchical part of the service group name
+            String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
             fileName = Utils.getShortFileName(fileName);
             fileName = DeploymentEngine.getAxisServiceName(fileName);
+            fileName = serviceHierarchy + fileName;
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
             if (serviceGroup != null) {
                 configCtx.removeServiceGroupContext(serviceGroup);

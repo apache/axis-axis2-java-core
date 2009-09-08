@@ -1875,4 +1875,41 @@ public class Utils {
             }
         }
     }
+
+    /**
+     * Computes the hierarchical part of the service name if this is such a service path.
+     * In this hierarchical path, we use '!' instead of '/'.
+     * Ex:  filePath = .../repository/services/foo/1.0.0/version.aar -> "foo!1.0.0"
+     *      filePath = .../repository/services/version.aar -> ""
+     * @param filePath - input file path of the deploying file
+     * @param serviceDir - 'services', 'pojo', 'servicejars' etc..
+     * @return hierarchical path. either "" or a '/' separated string (Ex: foo!1.0.0)
+     */
+    public static String getServiceHierarchy(String filePath, String serviceDir) {
+        if (filePath == null || serviceDir == null) {
+            return "";
+        }
+        String[] splited = filePath.split(serviceDir + "/");
+        String serviceHierarchy = null;
+        if (splited.length > 1) {
+            String temp = splited[splited.length - 1];
+            //if this is a directory, there can be a '/' at the end. Remove it..
+            if (temp.endsWith("/")) {
+                temp = temp.substring(0, temp.length() - 1);
+            }
+            //if this is not a hierarchical path, return a 0 length string
+            if (temp.lastIndexOf('/') == -1) {
+                return "";
+            }
+            serviceHierarchy = temp.substring(0, temp.lastIndexOf('/') + 1);
+
+            /**
+             * Now replace '/' using the special charactor '!'. This is to overcome the issues
+             * in dispatching. If we use '/', it is hard to find service and operation by looking
+             * at the EPR, in dispatch time.
+             */
+            serviceHierarchy = serviceHierarchy.replace('/', '!');
+        }
+        return serviceHierarchy;
+    }
 }

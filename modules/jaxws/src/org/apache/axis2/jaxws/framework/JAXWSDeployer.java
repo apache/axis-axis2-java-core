@@ -72,6 +72,7 @@ public class JAXWSDeployer implements Deployer {
 
     protected ConfigurationContext configCtx;
     protected AxisConfiguration axisConfig;
+    private String directory;
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
@@ -139,7 +140,7 @@ public class JAXWSDeployer implements Deployer {
             String groupName = deploymentFileData.getName();
             URL location = deploymentFileData.getFile().toURL();
             if (isJar(deploymentFileData.getFile())) {
-                log.info("Deploying artifact : " + deploymentFileData.getName());
+                log.info("Deploying artifact : " + deploymentFileData.getAbsolutePath());
                 ArrayList urls = new ArrayList();
                 urls.add(deploymentFileData.getFile().toURL());
                 urls.add(axisConfig.getRepository());
@@ -157,7 +158,7 @@ public class JAXWSDeployer implements Deployer {
                 Thread.currentThread().setContextClassLoader(classLoader);
 
                 ArrayList classList = getListOfClasses(deploymentFileData);
-                AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList); 
+                AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList);
                 
                 if(serviceGroup == null) {
                     String msg = "Error:\n No annotated classes found in the jar: " +
@@ -181,6 +182,8 @@ public class JAXWSDeployer implements Deployer {
     protected AxisServiceGroup deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
         ArrayList axisServiceList = new ArrayList();
+        // Get the hierarchical path of the service
+        String serviceHierarchy = Utils.getServiceHierarchy(location.getPath(), this.directory);
         for (int i = 0, size = classList.size(); i < size; i++) {
             String className = (String) classList.get(i);
             Class pojoClass;
@@ -206,7 +209,8 @@ public class JAXWSDeployer implements Deployer {
                                 className,
                                 location);
                 if(axisService != null) {
-                    log.info("Deploying JAXWS annotated class " + className + " as a service - " + axisService.getName());
+                    log.info("Deploying JAXWS annotated class " + className + " as a service - "
+                            + serviceHierarchy + axisService.getName());
                     axisServiceList.add(axisService);
                 }
             }
@@ -215,10 +219,12 @@ public class JAXWSDeployer implements Deployer {
         if (size <= 0) {
             return null;
         }
+        //creating service group by considering the hierarchical path also
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
-        serviceGroup.setServiceGroupName(groupName);
+        serviceGroup.setServiceGroupName(serviceHierarchy + groupName);
         for (int i = 0; i < size; i++) {
             AxisService axisService = (AxisService) axisServiceList.get(i);
+            axisService.setName(serviceHierarchy + axisService.getName());
             serviceGroup.addService(axisService);
             Utils.addEndpointsToService(axisService, axisConfig);
         }
@@ -300,35 +306,36 @@ public class JAXWSDeployer implements Deployer {
     }
 
     public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     public void setExtension(String extension) {
     }
 
     public void unDeploy(String fileName) {
-        fileName = Utils.getShortFileName(fileName);
-        if (isJar(new File(fileName))) {
-            try {
-                AxisServiceGroup serviceGroup =
-                        axisConfig.removeServiceGroup(fileName);
-                if(configCtx != null) {
-                    configCtx.removeServiceGroupContext(serviceGroup);
-                }
-                log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                        fileName));
-            } catch (AxisFault axisFault) {
-                //May be a faulty service
-                log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL, 
-                        axisFault.getMessage()), axisFault);
-                axisConfig.removeFaultyService(fileName);
+        //find the hierarchical part of the service group name
+        String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
+        fileName = serviceHierarchy + Utils.getShortFileName(fileName);
+        try {
+            AxisServiceGroup serviceGroup =
+                    axisConfig.removeServiceGroup(fileName);
+            if(configCtx != null) {
+                configCtx.removeServiceGroupContext(serviceGroup);
             }
+            log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                    fileName));
+        } catch (AxisFault axisFault) {
+            //May be a faulty service
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,
+                    axisFault.getMessage()), axisFault);
+            axisConfig.removeFaultyService(fileName);
         }
     }
 
     /**
      * Check if this inputstream is a jar/zip
      *
-     * @param is
+     * @param f - file
      * @return true if inputstream is a jar
      */
     public static boolean isJar(File f) {

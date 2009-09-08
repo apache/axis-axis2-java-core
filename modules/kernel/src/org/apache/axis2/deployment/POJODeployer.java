@@ -53,6 +53,7 @@ public class POJODeployer implements Deployer {
     private static Log log = LogFactory.getLog(POJODeployer.class);
 
     private ConfigurationContext configCtx;
+    private String directory;
 
     //To initialize the deployer
     public void init(ConfigurationContext configCtx) {
@@ -61,6 +62,9 @@ public class POJODeployer implements Deployer {
 
     public void deploy(DeploymentFileData deploymentFileData) {
         ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+        // Get the hierarchical path of the service
+        String serviceHierarchy = Utils.getServiceHierarchy(deploymentFileData.getAbsolutePath(), 
+                this.directory);
         try {
             String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
             if ("class".equals(extension)) {
@@ -76,7 +80,7 @@ public class POJODeployer implements Deployer {
                 className = className.replaceAll(".class", "");
                 Class clazz = Loader.loadClass(className);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
-                        className,
+                        serviceHierarchy + className,
                         deploymentFileData.getFile().getAbsolutePath()));
 
 
@@ -90,22 +94,23 @@ public class POJODeployer implements Deployer {
                  */
                 WebServiceAnnotation annotation =
                         JSR181Helper.INSTANCE.getWebServiceAnnotation(clazz);
+                AxisService axisService;
                 if (annotation != null) {
                     // try to see whether JAX-WS jars in the class path , if so use them
                     // to process annotated pojo else use annogen to process the pojo class
-                    AxisService axisService;
                     axisService =
                             createAxisService(classLoader,
                                     className,
                                     deploymentFileData.getFile().toURL());
-                    configCtx.getAxisConfiguration().addService(axisService);
                 } else {
-                    AxisService axisService =
+                    axisService =
                             createAxisServiceUsingAnnogen(className,
                                     classLoader,
                                     deploymentFileData.getFile().toURL());
-                    configCtx.getAxisConfiguration().addService(axisService);
                 }
+                //add the hierarchical path to the service name
+                axisService.setName(serviceHierarchy + axisService.getName());
+                configCtx.getAxisConfiguration().addService(axisService);
 
             } else if ("jar".equals(extension)) {
                 ArrayList classList;
@@ -178,10 +183,13 @@ public class POJODeployer implements Deployer {
                 }
 
                 if (axisServiceList.size() > 0) {
+                    //create the service group considering the hierarchical path also
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                    serviceGroup.setServiceGroupName(deploymentFileData.getName());
+                    serviceGroup.setServiceGroupName(serviceHierarchy +
+                            deploymentFileData.getName());
                     for (Object anAxisServiceList : axisServiceList) {
                         AxisService axisService = (AxisService)anAxisServiceList;
+                        axisService.setName(serviceHierarchy + axisService.getName());
                         serviceGroup.addService(axisService);
                     }
                     configCtx.getAxisConfiguration().addServiceGroup(serviceGroup);
@@ -329,27 +337,32 @@ public class POJODeployer implements Deployer {
     }
 
     public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
     public void setExtension(String extension) {
     }
 
     public void unDeploy(String fileName) {
+        //find the hierarchical part of the service group name
+        String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
         fileName = Utils.getShortFileName(fileName);
         if (fileName.endsWith(".class")) {
             String className = fileName.replaceAll(".class", "");
+            className = serviceHierarchy + className;
             try {
                 AxisServiceGroup serviceGroup =
                         configCtx.getAxisConfiguration().removeServiceGroup(className);
                 configCtx.removeServiceGroupContext(serviceGroup);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                        fileName));
+                        className));
             } catch (AxisFault axisFault) {
                 //May be a faulty service
                 log.debug(Messages.getMessage(DeploymentErrorMsgs.FAULTY_SERVICE_REMOVAL,axisFault.getMessage()),axisFault);
                 configCtx.getAxisConfiguration().removeFaultyService(fileName);
             }
         } else if (fileName.endsWith(".jar")) {
+            fileName = serviceHierarchy + fileName;
             try {
                 AxisServiceGroup serviceGroup =
                         configCtx.getAxisConfiguration().removeServiceGroup(fileName);

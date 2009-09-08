@@ -25,6 +25,7 @@ import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -248,7 +249,7 @@ public class RepositoryListener implements DeploymentConstants {
 
     /** Finds a list of services in the folder and adds to wsInfoList. */
     public void checkServices() {
-        findServicesInDirectory();
+        findServicesInDirectory(deploymentEngine.getServicesDir());
         loadOtherDirectories();
         update();
     }
@@ -270,19 +271,22 @@ public class RepositoryListener implements DeploymentConstants {
             String directory = entry.getKey();
             Map<String, Deployer> extensionMap = entry.getValue();
             for (String extension : extensionMap.keySet()) {
-                findFileForGivenDirectory(directory, extension);
+                String[] strings = directory.split("/");
+                File dirToSearch = new File(deploymentEngine.getRepositoryDir(),
+                        strings[strings.length - 1]);
+                findFileForGivenDirectory(dirToSearch, extension, directory);
             }
         }
     }
 
-    private void findFileForGivenDirectory(String dir, String extension) {
+    /**
+     * Recursively finds files with the provided extension and adds them to be deployed
+     * @param directory - directory to search
+     * @param extension - extension to look for
+     * @param dir - dir given in the axis2.xml this is used to find the correct deployer
+     */
+    private void findFileForGivenDirectory(File directory, String extension, String dir) {
         try {
-            File directory = deploymentEngine.getRepositoryDir();
-            String[] strings = dir.split("/");
-            for (int i = 0; i < strings.length; i++) {
-                directory = new File(directory, strings[i]);
-            }
-
             if (directory.exists()) {
                 File[] files = directory.listFiles();
                 if (files != null && files.length > 0) {
@@ -293,9 +297,12 @@ public class RepositoryListener implements DeploymentConstants {
                         }
                         if (!file.isDirectory() && extension
                                 .equals(DeploymentFileData.getFileExtension(file.getName()))) {
-                            addFileToDeploy(file,
-                                            deploymentEngine.getDeployer(dir, extension),
-                                            WSInfo.TYPE_CUSTOM);
+                            Deployer deployer = deploymentEngine.getDeployer(dir, extension);
+                            deployer.setDirectory(dir);
+                            addFileToDeploy(file, deployer, WSInfo.TYPE_CUSTOM);
+                        } else if (file.isDirectory()) {
+                            //look in the child directory also
+                            findFileForGivenDirectory(file, extension, dir);
                         }
                     }
                 }
@@ -305,14 +312,29 @@ public class RepositoryListener implements DeploymentConstants {
         }
     }
 
-    /** Searches a given folder for jar files and adds them to a list in the WSInfolist class. */
-    protected void findServicesInDirectory() {
-        File root = deploymentEngine.getServicesDir();
+    /**
+     * Searches a given folder for jar files and adds them to a list in the WSInfolist class.
+     * If sub folders found, those are also searched for services.
+     * Ex : repository/services/foo/1.0.0/echo.aar
+     *      repository/services/foo/1.0.1/echo.aar
+     *      repository/services/echo.aar 
+     * @param root - directory from which we start searching for services
+     */
+    protected void findServicesInDirectory(File root) {
+        // flag to identify whether this is the services folder
+        boolean servicesDir = false;
+        if (deploymentEngine.getServicesDir().getAbsolutePath().equals(root.getAbsolutePath())) {
+            servicesDir = true;
+        }
         File[] files = root.listFiles();
 
         if (files != null && files.length > 0) {
-            for (int i = 0; i < files.length; i++) {
-                File file = files[i];
+            /**
+             * This undeployableDir flag is used to check whether this folder (root) doesn't contain
+             * any deployable artifacts.
+             */
+            boolean undeployableDir = true;
+            for (File file : files) {
                 if (isSourceControlDir(file)) {
                     continue;
                 }
@@ -320,21 +342,37 @@ public class RepositoryListener implements DeploymentConstants {
                     if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
                         addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
                                         WSInfo.TYPE_SERVICE);
+                        undeployableDir = false;
                     } else {
                         String ext = DeploymentFileData.getFileExtension(file.getName());
                         Deployer deployer = deploymentEngine.getDeployerForExtension(ext);
                         // If we found a deployer for this type of file, use it.  Otherwise
                         // ignore the file.
                         if (deployer != null) {
+                            deployer.setDirectory(deploymentEngine.getServicesDir().getName());
                             addFileToDeploy(file, deployer, WSInfo.TYPE_SERVICE);
+                            undeployableDir = false;
                         }
                     }
                 } else {
-                    if (!"lib".equalsIgnoreCase(file.getName())) {
-                        addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
-                                        WSInfo.TYPE_SERVICE);
+                    if (!(servicesDir && "lib".equalsIgnoreCase(file.getName()))) {
+                        File servicesXML = new File(file, DeploymentConstants.SERVICES_XML);
+                        if (!servicesXML.exists()) {
+                            servicesXML =
+                                    new File(file, DeploymentConstants.SERVICES_XML.toLowerCase());
+                        }
+                        if (servicesXML.exists()) {
+                            addFileToDeploy(file, deploymentEngine.getServiceDeployer(),
+                                    WSInfo.TYPE_SERVICE);
+                        } else {
+                            findServicesInDirectory(file);
+                        }
+                        undeployableDir = false;
                     }
                 }
+            }
+            if (undeployableDir) {
+                log.error(Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
             }
         }
     }
@@ -351,7 +389,7 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
     public void updateRemote() throws Exception {
-        findServicesInDirectory();
+        findServicesInDirectory(deploymentEngine.getServicesDir());
         update();
     }
 

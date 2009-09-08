@@ -1124,7 +1124,10 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
     private void initializeDeployers(ConfigurationContext configContext) {
         serviceDeployer = new ServiceDeployer();
-        serviceDeployer.init(configContext);        
+        serviceDeployer.init(configContext);
+        if (this.servicesDir != null) {
+            serviceDeployer.setDirectory(this.servicesDir.getName());
+        }
         for (Map<String, Deployer> extensionMap : deployerMap.values()) {
             for (Deployer deployer : extensionMap.values()) {
                 deployer.init(configContext);
