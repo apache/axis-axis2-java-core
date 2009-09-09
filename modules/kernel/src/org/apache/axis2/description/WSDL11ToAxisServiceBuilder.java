@@ -2418,6 +2418,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             .getMessage());
 
                     if (msg == null) {
+                        msg = getMessage(wsdl4jDefinition, soapHeader
+                            .getMessage(), new HashSet());
+                    }
+                    
+                    if (msg == null) {
                         // TODO i18n this
                         throw new AxisFault("message "
                                             + soapHeader.getMessage()
@@ -2464,6 +2469,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // find the relevant schema part from the messages
                     Message msg = wsdl4jDefinition.getMessage(soapHeader
                             .getMessage());
+                    
+                    if (msg == null) {
+                        msg = getMessage(wsdl4jDefinition, soapHeader
+                            .getMessage(), new HashSet());
+                    }
+
                     if (msg == null) {
                         // todo i18n this
                         throw new AxisFault("message "
@@ -2573,6 +2584,40 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     messageSerialization);
             }
         }
+    }
+    
+    /**
+     * Look deeper in the imports to find the requested Message. Use a HashSet to make 
+     * sure we don't traverse the same Definition object twice (avoid recursion).
+     * 
+     * @param definition
+     * @param message
+     * @param instances
+     * @return
+     */
+    private Message getMessage(Definition definition, QName message, Set instances) {
+        Message msg = definition.getMessage(message);
+        if (msg != null) {
+            return msg;
+        }
+        Iterator iter = definition.getImports().values().iterator();
+        while (iter.hasNext()) {
+            Vector values = (Vector) iter.next();
+            for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
+                Import wsdlImport = (Import) valuesIter.next();
+                Definition innerDefinition = wsdlImport.getDefinition();
+                msg = innerDefinition.getMessage(message);
+                if (msg != null) {
+                    return msg;
+                } else {
+                    if(!instances.contains(definition)){
+                        instances.add(definition);
+                        return getMessage(definition, message, instances);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private int getPolicyAttachmentPoint(AxisDescription description,
