@@ -371,8 +371,9 @@ public class RepositoryListener implements DeploymentConstants {
                     }
                 }
             }
-            if (undeployableDir) {
-                log.error(Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND));
+            if (!servicesDir && undeployableDir) {
+                log.error(Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND,
+                        root.getName()));
             }
         }
     }
