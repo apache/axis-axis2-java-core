@@ -518,7 +518,13 @@ public class MessageContextBuilder {
             if (context.isSOAP11()) {
                 fault.getCode().setText(soapFaultCode);
             } else {
-                fault.getCode().getValue().setText(soapFaultCode);
+                SOAPFaultValue value = fault.getCode().getValue();
+                if(log.isDebugEnabled()){
+                    log.debug("soapFaultCode originally was set to : " + soapFaultCode);
+                }
+                OMNamespace namespace = value.getNamespace();
+                soapFaultCode = switchNamespacePrefix(soapFaultCode, namespace);
+                value.setText(soapFaultCode);
             }
         }
         
@@ -639,7 +645,49 @@ public class MessageContextBuilder {
 
         return envelope;
     }
+    
+    /**
+     * Switch the namespace prefix in the soap fault code. It should match the prefix used
+     * by the outgoing soap envelope.
+     * 
+     * @param soapFaultCode
+     * @param namespace
+     * @return
+     */
+    public static String switchNamespacePrefix(String soapFaultCode, OMNamespace namespace) {
+        if(soapFaultCode != null && 
+                soapFaultCode.endsWith(":" + SOAPConstants.FAULT_CODE_VERSION_MISMATCH)) {
+            String prefix = namespace.getPrefix();
+            if(log.isDebugEnabled()){
+                log.debug("prefix being used in the outgoing soap envelope is : " + prefix);
+            }
+            // The following methods set the prefix of the incoming soap envelope in soapFaultCode 
+            //    validateSOAPVersion method in BuilderUtil or 
+            //    identifySOAPVersion method in StAXSOAPModelBuilder 
+            // But the outgoing envelope may have a different prefix, if it does then
+            // we need to strip the prefix set by those methods and add the
+            // correct one.
+            if (!soapFaultCode.startsWith(prefix + ":")) {
+                if(log.isDebugEnabled()){
+                    log.debug("stripping old prefix and adding the new one - " + prefix);
+                }
+                // Strip the orginal prefix 
+                int index = soapFaultCode.indexOf(':') + 1;
+                soapFaultCode = soapFaultCode.substring(index);
+                // Use the correct prefix for the outgoing soap envelope namespace 
+                soapFaultCode = prefix + ":" + soapFaultCode;
+            }
+        }
+        if(log.isDebugEnabled()){
+                    log.debug("soapFaultCode is being set to : " + soapFaultCode);
+        }
+        return soapFaultCode;
+    }
 
+
+    
+    
+    
     /**
      * By the time the exception comes here it can be wrapped by so many levels. This will crip down
      * to the root cause and get the initial error depending on the property
