@@ -2595,31 +2595,48 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param instances
      * @return
      */
-    private Message getMessage(Definition definition, QName message, Set instances) {
+    private Message getMessage(Definition definition, QName message, Set seen) {
+        
         Message msg = definition.getMessage(message);
-        if (msg != null) {
+        
+        if (msg != null) { 
+            if (log.isDebugEnabled()) {
+                log.debug("getMessage returning = " + ((message.getLocalPart() != null) ? message.getLocalPart(): "NULL"));
+            }
+
             return msg;
         }
+        
+        seen.add(definition);
+        
         Iterator iter = definition.getImports().values().iterator();
+        
         while (iter.hasNext()) {
             Vector values = (Vector) iter.next();
             for (Iterator valuesIter = values.iterator(); valuesIter.hasNext();) {
                 Import wsdlImport = (Import) valuesIter.next();
                 Definition innerDefinition = wsdlImport.getDefinition();
-                msg = innerDefinition.getMessage(message);
-                if (msg != null) {
-                    return msg;
-                } else {
-                    if(!instances.contains(definition)){
-                        instances.add(definition);
-                        return getMessage(definition, message, instances);
-                    }
+                
+                if (seen.contains(innerDefinition)) { 
+                    continue; // Skip seen
+                }
+                Message result = getMessage(innerDefinition, message, seen);
+                if (result != null) { 
+                    return result;
                 }
             }
         }
+
+        if (log.isDebugEnabled()) {
+            log.debug("getMessage: Unable to find message, returning NULL");
+        }
+
         return null;
     }
-
+ 
+    
+    
+    
     private int getPolicyAttachmentPoint(AxisDescription description,
                                          String originOfExtensibilityElements) {
         int result = -1; // Attachment Point Not Identified
