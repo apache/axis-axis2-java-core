@@ -1753,6 +1753,25 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         Document ownerDocument = schemaElement.getOwnerDocument();
 
+        String newElementName = newElement.getAttribute(XSD_NAME);
+
+        // check whether this element already exists.
+        NodeList nodeList = schemaElement.getChildNodes();
+        Element nodeElement = null;
+        for (int i = 1; i < nodeList.getLength(); i++) {
+            if (nodeList.item(i) instanceof Element){
+                nodeElement = (Element) nodeList.item(i);
+                if (nodeElement.getLocalName().equals(XML_SCHEMA_ELEMENT_LOCAL_NAME)){
+                    if (nodeElement.getAttribute(XSD_NAME).equals(newElementName)){
+                        // if the element already exists we do not add this element
+                        // and just return.
+                        return;
+                    }
+                }
+            }
+
+        }
+
         // loop through the namespace declarations first and add them
         String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
                 .keySet().toArray(new String[namespacePrefixMap.size()]);
