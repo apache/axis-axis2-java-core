@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  */
 public class UpdateServiceStateCommand extends UpdateStateCommand {
 
@@ -63,6 +63,7 @@ public class UpdateServiceStateCommand extends UpdateStateCommand {
             try {
                 AxisService axisService =
                         configurationContext.getAxisConfiguration().getService(serviceName);
+                validateAxisService(axisService);
                 ServiceContext serviceContext = sgCtx.getServiceContext(axisService);
                 propertyUpdater.updateProperties(serviceContext);
             } catch (AxisFault e) {
@@ -76,6 +77,7 @@ public class UpdateServiceStateCommand extends UpdateStateCommand {
             } catch (AxisFault axisFault) {
                 throw new ClusteringFault(axisFault);
             }
+            validateAxisService(axisService);
             String scope = axisService.getScope();
             if (sgCtx == null) {
                 AxisServiceGroup serviceGroup =
@@ -99,6 +101,14 @@ public class UpdateServiceStateCommand extends UpdateStateCommand {
             } catch (AxisFault axisFault) {
                 throw new ClusteringFault(axisFault);
             }
+        }
+    }
+
+    private void validateAxisService(AxisService axisService) throws ClusteringFault {
+        if (axisService == null){
+            String msg = "Service " + serviceName + " not found";
+            log.error(msg);
+            throw new ClusteringFault(msg);
         }
     }
 
