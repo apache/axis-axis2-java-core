@@ -20,6 +20,7 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -52,32 +53,57 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
                         toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
-            //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                                                                          messageContext
-                                                                                  .getConfigurationContext().getServiceContextPath());
 
-            if ((values.length >= 1) && (values[0] != null)) {
+            //Get the service/operation part from the request URL
+            String serviceOpPart = Utils.getServiceAndOperationPart(filePart,
+                    messageContext.getConfigurationContext().getServiceContextPath());
+
+            if (serviceOpPart != null) {
             	
-            	AxisConfiguration registry =
-            		configurationContext.getAxisConfiguration();
+                AxisConfiguration registry =
+                        configurationContext.getAxisConfiguration();
 
-            	AxisService axisService = registry.getService(values[0]);
+                /**
+                 * Split the serviceOpPart from '/' and add part by part and check whether we have
+                 * a service. This is because we are supporting hierarchical services. We can't
+                 * decide the service name just by looking at the request URL.
+                 */
+                AxisService axisService = null;
+                String[] parts = serviceOpPart.split("/");
+                String serviceName = "";
+                int count = 0;
 
-            	// If the axisService is not null we get the binding that the request came to add
-            	// add it as a property to the messageContext
-            	if (axisService != null) {
-            		Map endpoints = axisService.getEndpoints();
-            		if (endpoints != null) {
-            			if (endpoints.size() == 1) {
-            				messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
-            						endpoints.get(
+                /**
+                 * To avoid performance issues if an incorrect URL comes in with a long service name
+                 * including lots of '/' separated strings, we limit the hierarchical depth to 10
+                 */
+                while (axisService == null && count < parts.length &&
+                        count < Constants.MAX_HIERARCHICAL_DEPTH) {
+                    serviceName = count == 0 ? serviceName + parts[count] :
+                            serviceName + "/" + parts[count];
+                    axisService = registry.getService(serviceName);
+                    count++;
+                }
+
+                // If the axisService is not null we get the binding that the request came to add
+                // add it as a property to the messageContext
+                if (axisService != null) {
+                    Map endpoints = axisService.getEndpoints();
+                    if (endpoints != null) {
+                        if (endpoints.size() == 1) {
+                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                    endpoints.get(
             								axisService.getEndpointName()));
             			} else {
-            				String endpointName = values[0].substring(values[0].indexOf(".") + 1);
-            				messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
-            						endpoints.get(endpointName));
+                            String[] temp = serviceName.split("/");
+                            int periodIndex = temp[temp.length - 1].lastIndexOf('.');
+                            if (periodIndex != -1) {
+                                String endpointName
+                                        = temp[temp.length - 1].substring(periodIndex + 1);
+                                messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                        endpoints.get(endpointName));
+                            }
             			}
             		}
             	}

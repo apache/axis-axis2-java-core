@@ -50,12 +50,10 @@ public class RequestURIBasedOperationDispatcher extends AbstractOperationDispatc
         EndpointReference toEPR = messageContext.getTo();
         if (toEPR != null) {
             String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                                                                          messageContext
-                                                                                  .getConfigurationContext().getServiceContextPath());
+            String operation  = Utils.getOperationName(filePart, service.getName());
 
-            if ((values.length >= 2) && (values[1] != null)) {
-                QName operationName = new QName(values[1]);
+            if (operation != null) {
+                QName operationName = new QName(operation);
                 log.debug(messageContext.getLogIDString() +
                         " Checking for Operation using QName(target endpoint URI fragment) : " +
                         operationName);

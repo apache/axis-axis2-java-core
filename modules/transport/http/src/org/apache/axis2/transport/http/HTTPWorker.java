@@ -125,7 +125,13 @@ public class HTTPWorker implements Worker {
                 }
             }
             if (uri.endsWith("?wsdl")) {
-                String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 5);
+                /**
+                 * service name can be hierarchical (axis2/services/foo/1.0.0/Version?wsdl) or
+                 * normal (axis2/services/Version?wsdl).
+                 */
+                String[] temp = uri.split(configurationContext.getServiceContextPath() + "/");
+                String serviceName = temp[1].substring(0, temp[1].length() - 5);
+                
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {

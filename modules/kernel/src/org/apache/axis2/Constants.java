@@ -308,6 +308,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
    public static final String JSR311_ANNOTATIONS="JAXRSAnnotaion";
 
+    /**
+     * Dispatching constants
+     */
+    public static int MAX_HIERARCHICAL_DEPTH = 10;
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_HTTP_CONTENT_NEGOTIATION = "httpContentNegotiation";

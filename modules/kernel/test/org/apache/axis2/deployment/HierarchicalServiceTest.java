@@ -21,19 +21,19 @@ public class HierarchicalServiceTest extends TestCase {
 
     public void testHierarchicalServices() throws AxisFault {
         //Test for foo/bar/1.0.0 hierarchy
-        AxisServiceGroup sg100 = axisConfig.getServiceGroup("foo!bar!1.0.0!testService");
+        AxisServiceGroup sg100 = axisConfig.getServiceGroup("foo/bar/1.0.0/testService");
         assertNotNull(sg100);
-        AxisService hie100service1 = axisConfig.getService("foo!bar!1.0.0!Hie100Service1");
+        AxisService hie100service1 = axisConfig.getService("foo/bar/1.0.0/Hie100Service1");
         assertNotNull(hie100service1);
-        AxisService hie100service2 = axisConfig.getService("foo!bar!1.0.0!Hie100Service2");
+        AxisService hie100service2 = axisConfig.getService("foo/bar/1.0.0/Hie100Service2");
         assertNotNull(hie100service2);
 
         //Test for foo/bar/1.0.1 hierarchy
-        AxisServiceGroup sg101 = axisConfig.getServiceGroup("foo!bar!1.0.1!testService");
+        AxisServiceGroup sg101 = axisConfig.getServiceGroup("foo/bar/1.0.1/testService");
         assertNotNull(sg101);
-        AxisService hie101service1 = axisConfig.getService("foo!bar!1.0.1!Hie101Service1");
+        AxisService hie101service1 = axisConfig.getService("foo/bar/1.0.1/Hie101Service1");
         assertNotNull(hie101service1);
-        AxisService hie101service2 = axisConfig.getService("foo!bar!1.0.1!Hie101Service2");
+        AxisService hie101service2 = axisConfig.getService("foo/bar/1.0.1/Hie101Service2");
         assertNotNull(hie101service2);
     }
 

@@ -247,6 +247,78 @@ public class Utils {
         return values;
     }
 
+    /**
+     * Gives the service/operation part from the incoming EPR
+     * Ex: ..services/foo/bar/Version/getVersion -> foo/bar/Version/getVersion
+     * @param path - incoming EPR
+     * @param servicePath - Ex: 'services'
+     * @return - service/operation part
+     */
+    public static String getServiceAndOperationPart(String path, String servicePath) {
+        if (path == null) {
+            return null;
+        }
+        int index = path.lastIndexOf(servicePath);
+        String serviceOpPart = null;
+
+        if (-1 != index) {
+            int serviceStart = index + servicePath.length();
+
+            //get the string after services path
+            if (path.length() > serviceStart + 1) {
+                serviceOpPart = path.substring(serviceStart + 1);
+
+                //remove everything after ?
+                int queryIndex = serviceOpPart.indexOf('?');
+                if (queryIndex > 0) {
+                    serviceOpPart = serviceOpPart.substring(0, queryIndex);
+                }
+            }
+        }
+        return serviceOpPart;
+    }
+
+    /**
+     * Compute the operation path from request URI using the servince name. Service name can be a
+     * normal one or a hierarchical one.
+     * Ex:  ../services/Echo/echoString -> echoString
+     *      ../services/foo/1.0.0/Echo/echoString -> echoString
+     *      ../services/Echo/ -> null
+     * @param path - request URI
+     * @param serviceName - service name
+     * @return - operation name if any, else null
+     */
+    public static String getOperationName(String path, String serviceName) {
+        if (path == null || serviceName == null) {
+            return null;
+        }
+        String[] temp = path.split(serviceName + "/");
+        String operationName = null;
+        if (temp.length > 1) {
+            operationName = temp[temp.length - 1];
+        } else {
+            //this scenario occurs if the endpoint name is there in the URL after service name
+            temp = path.split(serviceName + ".");
+            if (temp.length > 1) {
+                operationName = temp[temp.length - 1];
+                operationName = operationName.substring(operationName.indexOf('/') + 1);
+            }
+        }
+
+        if (operationName != null) {
+            //remove everyting after '?'
+            int queryIndex = operationName.indexOf('?');
+            if (queryIndex > 0) {
+                operationName = operationName.substring(0, queryIndex);
+            }
+            //remove last '/'
+            if (operationName.endsWith("/")) {
+                operationName = operationName.substring(0, operationName.length() - 1);
+            }
+        }
+        return operationName;
+    }
+
     public static ConfigurationContext getNewConfigurationContext(String repositry)
             throws Exception {
         final File file = new File(repositry);

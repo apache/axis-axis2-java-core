@@ -54,8 +54,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
         AxisService axisService = messageContext.getAxisService();
         if (axisService != null && messageContext.getTo() != null) {
             String uri = messageContext.getTo().getAddress();
-            String httpLocation = parseRequestURL(uri, messageContext
-                    .getConfigurationContext().getServiceContextPath());
+            String httpLocation = parseRequestURL(uri, axisService.getName());
             String httpMethod = (String) messageContext.getProperty(HTTPConstants.HTTP_METHOD);
 
             if (httpLocation != null) {
@@ -97,30 +96,31 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    private String parseRequestURL(String path, String servicePath) {
+    private String parseRequestURL(String path, String serviceName) {
 
-        int index = path.lastIndexOf(servicePath);
-        String service = null;
+        serviceName = "/" + serviceName;
+        int index = path.lastIndexOf(serviceName);
+        String httpLocation = null;
 
         if (-1 != index) {
-            int serviceStart = index + servicePath.length();
+            int serviceStart = index + serviceName.length();
             if (path.length() > serviceStart + 1) {
-                service = path.substring(serviceStart + 1);
+                httpLocation = path.substring(serviceStart);
             }
         }
 
-        if (service != null) {
-            index = service.indexOf("/");
+        if (httpLocation != null) {
+            index = httpLocation.indexOf("/");
             if (-1 != index) {
-                service = service.substring(index);
+                httpLocation = httpLocation.substring(index);
             } else {
-                int queryIndex = service.indexOf("?");
+                int queryIndex = httpLocation.indexOf("?");
                 if (queryIndex != -1) {
-                    service = service.substring(queryIndex);
+                    httpLocation = httpLocation.substring(queryIndex);
                 }
             }
         }
-        return service;
+        return httpLocation;
     }
 
     /**
