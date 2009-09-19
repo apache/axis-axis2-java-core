@@ -813,6 +813,14 @@
                         <groupId>xerces</groupId>
                         <artifactId>xmlParserAPIs</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -828,6 +836,16 @@
                         <groupId>xerces</groupId>
                         <artifactId>xmlParserAPIs</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <!-- For the moment, woden-impl-dom really depends on Xerces; see WODEN-152.
+                         Once this is fixed, we can also exclude xerces:xercesImpl. -->
+                    <!-- exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion -->
                 </exclusions>
             </dependency>
             <dependency>
