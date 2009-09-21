@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.builder.CustomBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.Constants;
+import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -105,21 +106,14 @@ public class JAXBCustomBuilder implements CustomBuilder {
      * @return true if this ns and local part is acceptable for unmarshalling
      */
     private boolean shouldUnmarshal(String namespace, String localPart) {
-        Object value = null;
-        MessageContext msgCtx = jdsContext.getMessageContext();
-        if (msgCtx != null) {
-            value = msgCtx.getProperty(Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING);
-        }
-        if (value != null && value instanceof Boolean) {
-            boolean streamingEnabled = ((Boolean) value).booleanValue();
-            if (!streamingEnabled) {
-                if (log.isDebugEnabled()) {
-                    log.debug("JAXB payload streaming disabled by messageContext property "
-                              + Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING
-                              + " set to " + streamingEnabled);
-                }
-                return false;
+        boolean isHighFidelity = HandlerUtils.isHighFidelity(jdsContext.getMessageContext());
+
+        if (isHighFidelity) {
+            if (log.isDebugEnabled()) {
+                log.debug("JAXB payload streaming disabled because high fidelity messages are requested.");
             }
+            return false;
+
         }
         
         // Don't unmarshall SOAPFaults or anything else in the SOAP 

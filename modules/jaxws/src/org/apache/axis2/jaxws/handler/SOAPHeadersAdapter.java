@@ -129,8 +129,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
 
     // These @Override annotations break JDK 1.5 compilation... AFAIK we have not discussed
     // forcing Axis2 devs to JDK 1.6, so commenting them out for now... --gdaniels
-
-    // @Override
     public void clear() {
         // Throw unsupported operation exception per Map javadoc
         // for any method that is not supported.
@@ -141,13 +139,11 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
         throw new UnsupportedOperationException();
     }
     
-    // @Override
     public boolean containsKey(Object key) {
         Set<QName> keys = this.keySet();
         return keys.contains(key);
     }
     
-    // @Override
     public boolean containsValue(Object value) {
         Set<QName> keys = this.keySet();
         for(QName key: keys) {
@@ -162,7 +158,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
     }
     
 
-    // @Override
     public Set<Entry<QName, List<String>>> entrySet() {
         // Previous implementation of this method called tempMap.putAll(this), which resulted
         // in an infinite loop due to Map calling back into this entrySet() method.  So, don't do that!
@@ -183,7 +178,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
      * headers on the message.
      * @param _key Object -- QName key of header XML strings you intend to retrieve
      */
-    // @Override
     public List<String> get(Object _key) {
         // notify the HandlerChainProcessor that a transformation has occurred possibly due to a handler method call into here
         HandlerChainProcessor.trackInternalCall(mc, HandlerChainProcessor.TRACKER.SOAP_HEADERS_ADAPTER_CALLED);
@@ -216,12 +210,10 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
         }
     }
     
-    // @Override
     public boolean isEmpty() {
         return this.keySet().isEmpty();
     }
     
-    // @Override
     public Set<QName> keySet() {
         // notify the HandlerChainProcessor that a transformation has occurred possibly due to a handler method call into here
         HandlerChainProcessor.trackInternalCall(mc, HandlerChainProcessor.TRACKER.SOAP_HEADERS_ADAPTER_CALLED);
@@ -234,7 +226,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
      * @param key Object -- QName key of header XML strings you wish to be put on the SOAP header
      * @param values List<String> -- list of XML strings that have the same namespace as the QName key
      */
-    // @Override
     public List<String> put(QName key, List<String> values) {
         // notify the HandlerChainProcessor that a transformation has occurred possibly due to a handler method call into here
         HandlerChainProcessor.trackInternalCall(mc, HandlerChainProcessor.TRACKER.SOAP_HEADERS_ADAPTER_CALLED);
@@ -265,7 +256,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
     /**
      * putAll will inject the headers into the SOAP message immediately
      */
-    // @Override
     public void putAll(Map<? extends QName, ? extends List<String>> t) {
         for(Entry<? extends QName, ? extends List<String>> entry: t.entrySet()) {
             QName key = entry.getKey();
@@ -279,7 +269,6 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
      * remove will immediately remove the headers from the SOAP message that match the QName key
      * @param _key Object -- QName key of header XML strings you wish to remove from the SOAP header
      */
-    // @Override
     public List<String> remove(Object _key) {
         // notify the HandlerChainProcessor that a transformation has occurred possibly due to a handler method call into here
         HandlerChainProcessor.trackInternalCall(mc, HandlerChainProcessor.TRACKER.SOAP_HEADERS_ADAPTER_CALLED);
@@ -326,12 +315,10 @@ public class SOAPHeadersAdapter implements Map<QName, List<String>> {
     	
     }
     
-    // @Override
     public int size() {
         return this.keySet().size();
     }
     
-    // @Override
     public Collection<List<String>> values() {
     	/*
     	 * Previous implementation of this method called tempMap.putAll(this), which resulted

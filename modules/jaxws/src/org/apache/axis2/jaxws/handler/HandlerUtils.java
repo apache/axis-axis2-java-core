@@ -28,11 +28,14 @@ import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -223,7 +226,131 @@ public class HandlerUtils {
         }
 
     }
+
+    /**
+     * isHighFidelity
+     * 
+     * The JAX-WS engine attempts to stream data as fast as possible.
+     * For example, the message payload may be transformed into a JAXB object early in the processing.
+     * Unfortunately such transformations are lossy, some information is lost.
+     * An installed SOAP handler will see different namespaces (etc) then the original message.
+     * 
+     * If the a customer enables the "jaxws.payload.highFidelity" flag, then lossy transformations are
+     * avoided until necessary.  
+     * 
+     * @see Constants.JAXWS_HIGH_FIDELITY
+     * 
+     * @param mc
+     * @return true if high fidelity is requested
+     */
+    public static boolean isHighFidelity(MessageContext mc) {
+        boolean rc = _isHighFidelity(mc);
+        
+        // If not true, check the OUT MessageContext.
+        // On the client, we need this setting when we receive (inbound)
+        // the message; however the customer set it on the outbound context.
+        if (!rc) {
+            rc = _isHighFidelity(getRelatedMessageContext(mc));
+        }
+        return rc;
+    }
+    
+    /**
+     * @param mc
+     * @return
+     */
+    private static MessageContext getRelatedMessageContext(MessageContext mc) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter getRelatedMessageContext for:" + mc);
+        }
+        MessageContext relatedMC = null;
+        if (mc != null) {
+            OperationContext oc = mc.getOperationContext();
+            if (oc != null) {
+                try {
+                    relatedMC = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    if (relatedMC == mc) {
+                        relatedMC = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    }
+                } catch (AxisFault e) {
+                    // TODO This should never occur in this scenario, swallow and continue
+                }
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit getRelatedMessageContext related messageContext is" + relatedMC);
+        }
+        return relatedMC;
+    }
+
+    /**
+     * isHighFidelity
+     * 
+     * The JAX-WS engine attempts to stream data as fast as possible.
+     * For example, the message payload may be transformed into a JAXB object early in the processing.
+     * Unfortunately such transformations are lossy, some information is lost.
+     * An installed SOAP handler will see different namespaces (etc) then the original message.
+     * 
+     * If the a customer enables the "jaxws.payload.highFidelity" flag, then lossy transformations are
+     * avoided until necessary.  
+     * 
+     * @see Constants.JAXWS_HIGH_FIDELITY
+     * 
+     * @param mc
+     * @return true if high fidelity is requested
+     */
+    private static boolean _isHighFidelity(MessageContext mc) {
+        
+        boolean value = false;
+        if (mc == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("_isHighFidelity returns false due to missing MessageContext");
+            }
+            return false;
+        }
+        
+        // First examine the high fidelity flag on the context hierarchy
+        Boolean highFidelity = (Boolean) mc.getProperty(
+                org.apache.axis2.jaxws.Constants.JAXWS_PAYLOAD_HIGH_FIDELITY);
+        if (highFidelity != null) {
+            value = highFidelity.booleanValue();
+            if (log.isDebugEnabled()) {
+                log.debug("_isHighFidelity returns " + value + " per Context property " + 
+                        org.apache.axis2.jaxws.Constants.JAXWS_PAYLOAD_HIGH_FIDELITY);
+            }
+            return value;
+        }
+        
+        // Second examine the deprecated jaxb streaming flag
+        Boolean jaxbStreaming = (Boolean) mc.getProperty(
+                org.apache.axis2.jaxws.Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING);
+        if (jaxbStreaming != null) {
+            value = !jaxbStreaming.booleanValue();
+            if (log.isDebugEnabled()) {
+                log.debug("_isHighFidelity returns " + value + " per inspection of Context property " + 
+                        org.apache.axis2.jaxws.Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING);
+            }
+            return value;
+        }
+        
+        // Now look at the high fidelity parameter
+        Parameter p = mc.getParameter(org.apache.axis2.jaxws.Constants.JAXWS_PAYLOAD_HIGH_FIDELITY);
+        if (p != null) {
+            value = JavaUtils.isTrue(p.getValue());
+            if (log.isDebugEnabled()) {
+                log.debug("_isHighFidelity returns " + value + " per inspection of Configuration property " + 
+                        org.apache.axis2.jaxws.Constants.JAXWS_PAYLOAD_HIGH_FIDELITY);
+            }
+            return value;
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("_isHighFidelity returns the default: false");
+        }
+        return false;
+    }
 }
+
 class HandlerRolePlayer implements RolePlayer {
     List<String> roles = new ArrayList<String>();
 

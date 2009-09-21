@@ -432,6 +432,49 @@ public class WrapTests extends AbstractTestCase {
         }
         
         /**
+         * Test to validate whether a JAXBCustomBuilder is plugged and used
+         * on the client
+         */
+        public void testJAXBCB_Client_withHighFidelity(){
+            TestLogger.logger.debug("------------------------------");
+            TestLogger.logger.debug("Test  : " + getName());
+            try{
+                String reqString = "JAXBCustomBuilderClient";
+                DocLitWrap proxy = getProxy();
+                
+                BindingProvider p = (BindingProvider) proxy;
+                p.getRequestContext().put(org.apache.axis2.jaxws.Constants.JAXWS_PAYLOAD_HIGH_FIDELITY, Boolean.TRUE);
+                
+                // Start Monitoring
+                JAXBCustomBuilderMonitor.setMonitoring(true);
+                JAXBCustomBuilderMonitor.clear();
+                
+                // Invoke the web services
+                proxy.twoWay(reqString);
+                
+                // The second invoke should trigger the fast
+                // unmarshalling of the response
+                proxy.twoWay(reqString);
+                
+                
+                // The returned response unmarshalling should try
+                // the JAXBCustomBuilder
+                int totalBuilders = JAXBCustomBuilderMonitor.getTotalBuilders();
+                assertTrue(totalBuilders >= 1);
+                int totalCreates = JAXBCustomBuilderMonitor.getTotalCreates();
+                assertTrue("Expected 0, but received " + totalCreates, totalCreates == 0);
+                
+                TestLogger.logger.debug("------------------------------");
+                
+            }catch(Exception e){
+                e.printStackTrace();
+                fail();
+            } finally {
+                JAXBCustomBuilderMonitor.setMonitoring(false);
+            }
+        }
+        
+        /**
          * Test to validate whether a JAXBCustomBuilder is plugged in
          * on the client.  Also makes sure that the JAXBCustomBuilder
          * falls back to normal processing when faults are thrown.

@@ -44,9 +44,40 @@ public interface Constants {
      * objects.
      * 
      * The default value is Boolean(true) if this property is not set.  
+     * @deprecated see JAXWS_PAYLOAD_HIGH_FIDELITY
      */
     public static final String JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING = 
         "org.apache.axis2.jaxws.enableJAXBPayloadStreaming";
+    
+    /**
+     * Context Property:
+     * Name: jaxws.payload.highFidelity
+     * Value: Boolean.TRUE or Boolean.FALSE
+     * Default: null, which is interpreted as FALSE....engine may set this to TRUE in some cases.
+     * 
+     * Configuration Parameter
+     * Name: jaxws.payload.highFidelity
+     * Value: String or Boolean representing true or false
+     * Default: null, which is interpreted as FALSE
+     * 
+     * Description:
+     * If the value is false, the jax-ws engine will transform the message in the most
+     * performant manner.  In some cases these transformations will cause the loss of some information.
+     * For example, JAX-B transformations are lossy.  
+     * 
+     * If the value is true, the jax-ws engine will transform the message in the most loss-less manner.
+     * In some cases this will result in slower performance.  The message in such cases is "high fidelity",
+     * which means that it is a close replica of the original message.
+     * 
+     * Customers should accept the default behavior (false), and only set the value to true if it is
+     * necessary for a SOAP Handler or other code requires a high fidelity message.
+     * 
+     * The engine will first examine the Context property.  If not set, the value of the Configuration
+     * property is used.
+     */
+    public static final String JAXWS_PAYLOAD_HIGH_FIDELITY =
+        "jaxws.payload.highFidelity";
+    
     public static final String MEP_CONTEXT = 
         "org.apache.axis2.jaxws.handler.MEPContext";
     

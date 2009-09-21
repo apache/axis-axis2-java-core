@@ -19,6 +19,7 @@
 package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.Constants;
 
 import javax.xml.namespace.NamespaceContext;
@@ -40,6 +41,42 @@ public class JAXBCustomBuilderDisableStreamingTests extends TestCase {
         MessageContext msgCtx = new MessageContext();
         // Disable the JAXB Payload streaming
         msgCtx.setProperty(Constants.JAXWS_ENABLE_JAXB_PAYLOAD_STREAMING, new Boolean(false));
+        jaxbDSC.setMessageContext(msgCtx);
+        try {
+            assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
+        } catch (Exception e) {
+            // Since we didn't set up the JAXBDSContext fully, if the disabling of it didn't
+            // work, then we'll get some sort of exception.
+            fail("JAXB Payload streaming was not disabled");
+        }
+    }
+    
+    public void testDisableJAXBPayloadStreamingWithHighFidelity() {
+        
+        JAXBDSContext jaxbDSC = new JAXBDSContext(null, null);
+        JAXBCustomBuilder jaxbCB = new JAXBCustomBuilder(jaxbDSC);
+        MessageContext msgCtx = new MessageContext();
+        // Disable the JAXB Payload streaming
+        msgCtx.setProperty(Constants.JAXWS_PAYLOAD_HIGH_FIDELITY, new Boolean(true));
+        jaxbDSC.setMessageContext(msgCtx);
+        try {
+            assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
+        } catch (Exception e) {
+            // Since we didn't set up the JAXBDSContext fully, if the disabling of it didn't
+            // work, then we'll get some sort of exception.
+            fail("JAXB Payload streaming was not disabled");
+        }
+    }
+    
+    public void testDisableJAXBPayloadStreamingWithHighFidelityParameter() throws Exception {
+        
+        JAXBDSContext jaxbDSC = new JAXBDSContext(null, null);
+        JAXBCustomBuilder jaxbCB = new JAXBCustomBuilder(jaxbDSC);
+        MessageContext msgCtx = new MessageContext();
+        AxisService service = new AxisService();
+        msgCtx.setAxisService(service);
+        service.addParameter(Constants.JAXWS_PAYLOAD_HIGH_FIDELITY, "true");
+        
         jaxbDSC.setMessageContext(msgCtx);
         try {
             assertNull(jaxbCB.create("ns", "lp", null, new MockXMLStreamReader(), null));
