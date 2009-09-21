@@ -123,14 +123,19 @@ border="0" /></a>[end] The currently selected mirror is
 please select another mirror. If all mirrors are failing, there are
 <i>backup</i> mirrors (at the end of the mirrors list) that should
 be available.</p>
-<form action="[location]" method="get" id="SelectMirror" name=
-"SelectMirror">Other mirrors: <select name="Preferred">
-<option value="[http]" selected="selected">[http]</option>
-<option value="[ftp]">[ftp]</option>
-<option value="[backup]">[backup] (backup)</option>
-</select> <input type="submit" value="Change" /></form>
-<p>You may also consult the <a href=
-"http://www.apache.org/mirrors/">complete list of mirrors</a>.</p>
+<form action="[location]" method="get" id="SelectMirror" name="SelectMirror">
+Other mirrors: <select name="Preferred">
+[if-any http]
+  [for http]<option value="[http]">[http]</option>[end]
+[end]  
+[if-any ftp]
+  [for ftp]<option value="[ftp]">[ftp]</option>[end]
+[end]
+[if-any backup]
+  [for backup]<option value="[backup]">[backup] (backup)</option>[end]
+[end]
+</select><input type="submit" value="Change"/></form>
+<p>You may also consult the <a class="externalLink" href="http://www.apache.org/mirrors/">complete list of mirrors</a></p>
 <p><strong>Note:</strong> when downloading from a mirror please
 check the <a href=
 "http://www.apache.org/dev/release-signing#md5">md5sum</a> and
