@@ -223,7 +223,14 @@ public class MessageImpl implements Message {
                 while (it.hasNext()) {
                     Map.Entry entry = (Map.Entry) it.next();
                     String key = (String) entry.getKey();
-                    if (entry.getValue() instanceof String) {
+                    if (entry.getValue() == null) {
+                        // This is not necessarily a problem; log it and make sure not to NPE
+                        if (log.isDebugEnabled()) {
+                            log.debug("  Not added to transport header. header =" + key + 
+                                      " because value is null;");
+                        }
+                    }
+                    else if (entry.getValue() instanceof String) {
                         // Normally there is one value per key
                         if (log.isDebugEnabled()) {
                             log.debug("  add transport header. header =" + key + 
