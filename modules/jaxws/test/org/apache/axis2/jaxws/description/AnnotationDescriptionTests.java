@@ -21,11 +21,14 @@
 package org.apache.axis2.jaxws.description;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
-
+import java.lang.reflect.Method;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
-import java.lang.reflect.Method;
+
+import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
+import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file.
@@ -90,6 +93,14 @@ public class AnnotationDescriptionTests extends TestCase {
         // Verify an SEI method lookup works
         operationResult = endpointInterfaceDescription.getOperation(seiMethods[0]);
         assertNotNull(operationResult);
+        
+        //Verify OneWay Method is not minimal when there is a request wrapper        
+        OperationDescription oneWayOperation = endpointInterfaceDescription.getOperation("oneWayVoid");
+        
+        MethodMarshaller methodMarshaller = MethodMarshallerFactory.getMarshaller(oneWayOperation, false);
+       
+        assertEquals("Method Marshaller class is incorrect for oneWay Doc/Lit/Wrapped operation", DocLitWrappedMethodMarshaller.class, methodMarshaller.getClass());
+        
         // Verify a non-SEI method returns a null
         operationResult = endpointInterfaceDescription.getOperation(this.getClass().getMethods()[0]);
         assertNull(operationResult);

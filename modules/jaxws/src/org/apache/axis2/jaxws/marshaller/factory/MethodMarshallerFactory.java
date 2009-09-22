@@ -238,23 +238,38 @@ public class MethodMarshallerFactory {
             MarshalServiceRuntimeDescription marshalDesc =
                     MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
             String requestWrapper = marshalDesc.getRequestWrapperClassName(op);
-            if (!exists(requestWrapper)) {
-            	if(log.isDebugEnabled()){
-            		log.debug("Request wrapper class name is NULL.");
-            	}
-                return true;
-            }
+            
+            
+            if (op.isOneWay()) {
+                if (!exists(requestWrapper)) {
+                        if(log.isDebugEnabled()){
+                                log.debug("OneWay Request wrapper class name is NULL.");
+                        }
+                        return true;
+                } 
+                
+                return false;
+            } else  { //This is 2-way or async so both wrappers should exist
+                if (!exists(requestWrapper)) {
+                    if(log.isDebugEnabled()){
+                        log.debug("Request wrapper class name is NULL.");
+                    }
+                    return true;
+                } 
 
-            //String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
-            String responseWrapper = marshalDesc.getResponseWrapperClassName(op);
-            if (!exists(responseWrapper)) {
-            	if(log.isDebugEnabled()){
-            		log.debug("Response wrapper class name is NULL.");
-            	}
-                return true;
+                String responseWrapper = marshalDesc.getResponseWrapperClassName(op);
+                if (!exists(responseWrapper)) {
+                    if(log.isDebugEnabled()){
+                        log.debug("Response wrapper class name is NULL.");
+                    }
+                    return true;
+                }
+                
+                return false;
             }
             // TODO Do the same for the fault beans
         }
+        
         return false;
     }
 
