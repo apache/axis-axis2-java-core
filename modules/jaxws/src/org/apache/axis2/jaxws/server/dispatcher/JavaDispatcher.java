@@ -38,6 +38,8 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.concurrent.Callable;
 /**
@@ -74,7 +76,14 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
     protected Object invokeTargetOperation(Method method, Object[] args) throws Throwable {
         Object output = null;
         try {
+            if (log.isDebugEnabled()) {
+                log.debug(logContextClassLoader("Before invocation"));
+            }
             output = method.invoke(serviceInstance, args);
+            
+            if (log.isDebugEnabled()) {
+                log.debug(logContextClassLoader("After invocation"));
+            }
         } catch (Throwable t) {
             
             // Delegate logging the exception to the WebServiceExceptionLogger.
@@ -88,6 +97,9 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                                           serviceInstance,
                                           args);
                                                          
+            if (log.isDebugEnabled()) {
+                logContextClassLoader("After invocation caught exception " + t.toString());
+            }
             throw t;
         }
         
@@ -95,6 +107,57 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
     }
     
     
+    /**
+     * Return a string with the current context class loader on the thread.  The string is intended
+     * to be used in debug logging statements.
+     * @param logString appended to the string to be returned
+     * @return a string to be logged into debug logging trace.
+     */
+    String logContextClassLoader(String appendString) {
+        String logMessage = null;
+        try {
+            logMessage = "Current ThreadContextClassLoader";
+            if (appendString != null) {
+                logMessage += ": " + appendString;
+            }
+            logMessage += ": " + getCurrentContextClassLoader();
+        } catch (Throwable t) {
+            // We don't want any exceptions in logging to cause trouble for the application
+            logMessage = "Unable to log current thread context classloader due to Throwable: " + t.toString();
+        }
+        return logMessage;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getCurrentContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws ClassNotFoundException {
+                    return Thread.currentThread().getContextClassLoader();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            // The privileged method will throw a PriviledgedActionException which
+            // contains the actual exception.
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            Exception wrappedE = e.getException();
+            if (wrappedE instanceof RuntimeException) {
+                throw (RuntimeException) wrappedE;
+            } else {
+                throw new RuntimeException(wrappedE);
+            }
+        }
+        
+        return cl;
+    }
+
+
     protected class AsyncInvocationWorker implements Callable {
         
         private Method method;
