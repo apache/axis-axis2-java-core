@@ -436,7 +436,10 @@ public class MessageContextBuilder {
      */
     private static SOAPEnvelope createFaultEnvelope(MessageContext context, Throwable e) {
         SOAPEnvelope envelope;
-
+        
+        if(log.isDebugEnabled()){
+        	log.debug("start createFaultEnvelope()");
+        }
         if (context.isSOAP11()) {
             envelope = OMAbstractFactory.getSOAP11Factory().getDefaultFaultEnvelope();
         } else {
@@ -444,7 +447,6 @@ public class MessageContextBuilder {
             envelope = OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
         }
         SOAPFault fault = envelope.getBody().getFault();
-
         SOAPProcessingException soapException = null;
         AxisFault axisFault = null;
 
@@ -479,17 +481,83 @@ public class MessageContextBuilder {
         String soapFaultCode = "";
 
         if (faultCode != null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("faultCode != null");
+        	}
             fault.setCode((SOAPFaultCode) faultCode);
         } else if (soapException != null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("soapException != null");
+        	}
             soapFaultCode = soapException.getFaultCode();
+            OMNamespace namespace = null;
+            if(envelope!=null){
+            	if(log.isDebugEnabled()){
+            		log.debug("envelope!=null");
+            	}	
+            	namespace = envelope.getNamespace();
+            }
+            
+            if (namespace != null){
+                String sfcLocalPart = soapFaultCode.substring(soapFaultCode.lastIndexOf(":")+1);
+      
+                //If the fault code is one of the predefined ones that make sure the prefix 
+                //matches that of the envelope NS
+                if (sfcLocalPart.equals(SOAPConstants.FAULT_CODE_VERSION_MISMATCH) ||
+                    sfcLocalPart.equals(SOAPConstants.FAULT_CODE_MUST_UNDERSTAND) ||
+                    sfcLocalPart.equals(SOAPConstants.FAULT_CODE_DATA_ENCODING_UNKNOWN) ||
+                    sfcLocalPart.equals(SOAPConstants.FAULT_CODE_RECEIVER) ||
+                    sfcLocalPart.equals(SOAPConstants.FAULT_CODE_SENDER)) {
+                
+                    if(log.isDebugEnabled()){
+                        log.debug("SoapFaultCode local part= " +sfcLocalPart);
+                    }
+
+                    String prefix = namespace.getPrefix() + ":";
+
+                    if (!soapFaultCode.contains(":")) {
+                        soapFaultCode = prefix + soapFaultCode;
+                    } else {
+                        soapFaultCode = prefix + soapFaultCode.substring(soapFaultCode.indexOf(":")+1);
+                    }
+
+                    if(log.isDebugEnabled()){
+                        log.debug("SoapFaultCode reset to " +soapFaultCode);
+                    }
+
+                }
+            } else {
+                if(log.isDebugEnabled()){
+                    log.debug("Namespace is null, cannot attach prefix to SOAPFaultCode");
+                }
+            }
+            
+            if(log.isDebugEnabled()){        	
+                log.debug("SoapFaultCode ="+soapFaultCode);        	
+            }
+        	
         } else if (axisFault != null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("axisFault != null");
+        	}
             if (axisFault.getFaultCodeElement() != null) {
                 fault.setCode(axisFault.getFaultCodeElement());
             } else {
                 QName faultCodeQName = axisFault.getFaultCode();
                 if (faultCodeQName != null) {
+                	if(log.isDebugEnabled()){
+                		log.debug("prefix ="+faultCodeQName.getPrefix());
+                		log.debug("Fault Code namespace ="+faultCodeQName.getNamespaceURI());
+                		log.debug("Fault Code ="+faultCodeQName.getLocalPart());
+                	}
                     if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
+                    	if(log.isDebugEnabled()){
+                    		log.debug("faultCodeQName.getLocalPart().indexOf(\":\") == -1");
+                    	}
                         String prefix = faultCodeQName.getPrefix();
+                        if(log.isDebugEnabled()){
+                        	log.debug("prefix = "+prefix);
+                        }
                         String uri = faultCodeQName.getNamespaceURI();
                         // Get the specified prefix and uri
                         prefix = prefix == null ? "" : prefix;
@@ -499,6 +567,9 @@ public class MessageContextBuilder {
                         // get the resulting prefix.
                         prefix = fault.declareNamespace(uri, prefix).getPrefix();
                         soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
+                        if(log.isDebugEnabled()){
+                        	log.debug("Altered soapFaultCode ="+soapFaultCode);
+                        }
                     } else {
                         soapFaultCode = faultCodeQName.getLocalPart();
                     }
@@ -515,9 +586,35 @@ public class MessageContextBuilder {
         }
         
         if (faultCode == null) {
+        	if(log.isDebugEnabled()){
+        		log.debug("faultCode == null");
+        	}
             if (context.isSOAP11()) {
+            	if(log.isDebugEnabled()){
+            		log.debug("context.isSOAP11() = true");
+            		SOAPFaultCode code = (fault!=null)?fault.getCode():null;
+            		SOAPFaultValue value = (code!=null)?code.getValue():null;
+            		if(value !=null){
+            			QName name = value.getQName();
+            			log.debug("prefix ="+name.getPrefix());
+            			log.debug("Fault Code namespace ="+name.getNamespaceURI());
+            			log.debug("Fault Code ="+name.getLocalPart());
+            		}
+            	}
+
                 fault.getCode().setText(soapFaultCode);
             } else {
+            	if(log.isDebugEnabled()){
+            		log.debug("context.isSOAP11() = false");
+            		SOAPFaultCode code = (fault!=null)?fault.getCode():null;
+            		SOAPFaultValue value = (code!=null)?code.getValue():null;
+            		if(value !=null){
+            			QName name = value.getQName();
+            			log.debug("prefix ="+name.getPrefix());
+            			log.debug("Fault Code namespace ="+name.getNamespaceURI());
+            			log.debug("Fault Code ="+name.getLocalPart());
+            		}
+            	}
                 SOAPFaultValue value = fault.getCode().getValue();
                 if(log.isDebugEnabled()){
                     log.debug("soapFaultCode originally was set to : " + soapFaultCode);
@@ -642,7 +739,9 @@ public class MessageContextBuilder {
                 fault.setException(new Exception(e));
             }
         }
-
+        
+        if(log.isDebugEnabled())
+            log.debug("End createFaultEnvelope()");
         return envelope;
     }
     
@@ -685,7 +784,6 @@ public class MessageContextBuilder {
     }
 
 
-    
     
     
     /**
