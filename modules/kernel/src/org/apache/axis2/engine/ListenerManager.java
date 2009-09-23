@@ -184,6 +184,9 @@ public class ListenerManager {
         }
 
         // Stop the transport senders
+        if(log.isDebugEnabled()){
+            log.debug("Start invoke transport sender shutdown.");
+        }
         HashMap<String, TransportOutDescription> outTransports =
                 configctx.getAxisConfiguration().getTransportsOut();
         if (outTransports.size() > 0) {
@@ -196,30 +199,17 @@ public class ListenerManager {
                 }
             }
         }
-
-        // Shut down the services
-        for (Object o : configctx.getAxisConfiguration().getServices().values()) {
-            AxisService axisService = (AxisService)o;
-            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
-            if (serviceLifeCycle != null) {
-                serviceLifeCycle.shutDown(configctx, axisService);
-            }
+        if(log.isDebugEnabled()){
+            log.debug("End Invoke transport sender shutdown.");
         }
-        
-        // Shut down the modules
-        HashMap<String, AxisModule> modules = configctx.getAxisConfiguration().getModules();
-        if (modules != null) {
-            Iterator<AxisModule> moduleitr = modules.values().iterator();
-            while (moduleitr.hasNext()) {
-                AxisModule axisModule = moduleitr.next();
-                Module module = axisModule.getModule();
-                if (module != null) {
-                    module.shutdown(configctx);
-                }
-            }
+        /*Shutdown modules and Services */
+        if(log.isDebugEnabled()){
+            log.debug("Start Invoke modules and services shutdown.");
         }
-        configctx.cleanupContexts();
-
+        configctx.shutdownModulesAndServices();
+        if(log.isDebugEnabled()){
+            log.debug("End Invoke modules and services shutdown.");
+        }
         stopped = true;
     }
 

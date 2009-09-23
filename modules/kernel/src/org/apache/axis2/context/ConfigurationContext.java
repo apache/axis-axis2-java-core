@@ -27,14 +27,17 @@ import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.axis2.clustering.ClusteringConstants;
 import org.apache.axis2.clustering.management.NodeManager;
 import org.apache.axis2.clustering.state.StateManager;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
@@ -85,7 +88,8 @@ public class ConfigurationContext extends AbstractContext {
 
     private String cachedServicePath = null;
     protected List<ContextListener> contextListeners;
-
+    private boolean stopped = false;
+    
     /**
      * Constructor
      *
@@ -727,7 +731,43 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContextMap.clear();
         }
     }
-
+    /**
+     * Called during shutdown to clean up all Contexts
+     */
+    public void shutdownModulesAndServices() throws AxisFault{
+        if(stopped){
+            return;
+        }
+        /*Shut down the modules*/
+        if(log.isDebugEnabled()){
+            log.debug("Invoke modules shutdown.");
+        }
+        HashMap modules = axisConfiguration.getModules();
+        if (modules != null) {
+            Iterator moduleitr = modules.values().iterator();
+            while (moduleitr.hasNext()) {
+                AxisModule axisModule = (AxisModule) moduleitr.next();
+                Module module = axisModule.getModule();
+                if (module != null) {
+                    module.shutdown(this);
+                }
+            }
+        }
+        cleanupContexts();
+        /*Shut down the services*/
+        if(log.isDebugEnabled()){
+            log.debug("Invoke services shutdown.");
+        }
+        for (Iterator services = axisConfiguration.getServices().values().iterator();
+        services.hasNext();) {
+            AxisService axisService = (AxisService) services.next();
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.shutDown(this, axisService);
+            }
+        }
+        stopped = true;
+    }
     /**
      * Invoked during shutdown to stop the ListenerManager and perform configuration cleanup
      *
@@ -736,6 +776,14 @@ public class ConfigurationContext extends AbstractContext {
     public void terminate() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.stop();
+        }else{
+            if(log.isDebugEnabled()){
+                log.debug("Start Invoke modules and services shutdown.");
+            }
+            shutdownModulesAndServices();
+            if(log.isDebugEnabled()){
+                log.debug("End Invoke modules and services shutdown.");
+            }
         }
         axisConfiguration.cleanup();
         cleanupTemp();
