@@ -19,7 +19,13 @@
 
 package org.apache.axis2.jaxws.client;
 
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service.Mode;
+
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.client.dispatch.BaseDispatch;
+import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.commons.logging.Log;
@@ -76,5 +82,34 @@ public class ClientUtils {
 
         return null;
     }
-
+    /**
+     * The operation is used to make sure Option is property configured for ThrowingExceptionOnFault
+     * @param msgContext
+     */
+    public static boolean getExceptionToBeThrownOnSOAPFault(org.apache.axis2.context.MessageContext msgContext){
+    	if(log.isDebugEnabled()){
+    		log.debug("start getExceptionToBeThrownOnSOAPFault(MsgContext)");
+    	}
+    	BindingProvider bp = (BindingProvider)msgContext.getProperty(BindingProvider.BINDING_PROVIDER);
+    	if(bp == null){
+    		return true;
+    	}
+    	//ThrowExceptionIfSOAPFault should be checked only for message Mode.
+    	if(bp instanceof BaseDispatch){
+    		if(((BaseDispatch)bp).getMode()!= Mode.MESSAGE){
+    			if(log.isDebugEnabled()){
+    	    		log.debug("throwExceptionIfSOAPFault will not be checked as Dispatch is not set to Mode.MESSAGE");
+    	    		log.debug("End getExceptionToBeThrownOnSOAPFault(MsgContext)");
+    	    	}
+    			return true;
+    		}
+    	}
+        Object value = msgContext.getProperty(org.apache.axis2.jaxws.Constants.THROW_EXCEPTION_IF_SOAP_FAULT);
+        boolean throwExceptionIfSOAPFault = (value!=null && value instanceof Boolean)?(Boolean)value:Boolean.TRUE;
+    	if(log.isDebugEnabled()){
+    		log.debug("throwExceptionIfSOAPFault ="+throwExceptionIfSOAPFault);
+    		log.debug("End getExceptionToBeThrownOnSOAPFault(MsgContext)");
+    	}
+        return throwExceptionIfSOAPFault;
+    }
 }

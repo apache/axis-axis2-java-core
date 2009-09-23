@@ -102,4 +102,10 @@ public interface Constants {
      * messages.
      */
     public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
+    
+    /**
+     * This constant will be used to determine if a Exception will be throw by
+     * JAX-WS layer when a SOAP Fault is received on response. 
+     */
+    public static final String THROW_EXCEPTION_IF_SOAP_FAULT = "jaxws.response.throwExceptionIfSOAPFault";
 }

@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.ClientUtils;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
@@ -180,7 +181,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ApplicationContextMigratorUtil.performMigrationFromMessageContext(
                     Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID,
                     getResponseContext(), responseMsgCtx);
-
+            
             if (hasFaultResponse(responseMsgCtx)) {
                 WebServiceException wse = BaseDispatch.getFaultResponse(responseMsgCtx);
                 throw wse;
@@ -640,6 +641,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * @return
      */
     public boolean hasFaultResponse(MessageContext msgCtx) {
+    	if(!msgCtx.getAxisMessageContext().getOptions().isExceptionToBeThrownOnSOAPFault()){
+        	if(log.isDebugEnabled()){
+        		log.debug("msgCtx.Options.isExceptionToBeThrownOnSOAPFault set to false; Exception will not be thrown on fault");
+        	}
+    		return false;
+    	}
         if (msgCtx.getMessage() != null && msgCtx.getMessage().isFault())
             return true;
         else if (msgCtx.getLocalException() != null)

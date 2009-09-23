@@ -19,6 +19,7 @@
 
 package org.apache.axis2.jaxws.core.controller.impl;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
@@ -31,6 +32,7 @@ import org.apache.axis2.jaxws.client.ClientUtils;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
+import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -50,8 +52,11 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Future;
@@ -549,7 +554,15 @@ public class AxisInvocationController extends InvocationControllerImpl {
         try {
             // Pre-Execute logging and setup
             preExecute(opClient, block, msgContext);
-
+            //check if Exception should be thrown on SOAPFault
+            if(log.isDebugEnabled()){
+            	log.debug("Read throwExceptionIfSOAPFault property");
+            }
+            boolean exceptionToBeThrownOnSOAPFault= ClientUtils.getExceptionToBeThrownOnSOAPFault(msgContext);
+            if(log.isDebugEnabled()){
+            	log.debug("throwExceptionIfSOAPFault property set on OperationClient.options "+ exceptionToBeThrownOnSOAPFault);
+            }
+            opClient.getOptions().setExceptionToBeThrownOnSOAPFault(exceptionToBeThrownOnSOAPFault);
             // Invoke the OperationClient
             opClient.execute(block);
         } catch (Throwable e) {

@@ -531,7 +531,7 @@ public class Options implements Externalizable, SafeSerializable {
      */
     public boolean isExceptionToBeThrownOnSOAPFault() {
         if (isExceptionToBeThrownOnSOAPFault == null && parent != null) {
-            isExceptionToBeThrownOnSOAPFault = parent.isExceptionToBeThrownOnSOAPFault;
+            isExceptionToBeThrownOnSOAPFault = parent.isExceptionToBeThrownOnSOAPFault();
         }
 
         return isExceptionToBeThrownOnSOAPFault == null
