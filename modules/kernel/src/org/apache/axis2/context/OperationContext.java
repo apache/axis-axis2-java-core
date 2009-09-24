@@ -645,7 +645,8 @@ public class OperationContext extends AbstractContext
 
         if (metaAxisService != null) {
             axisService = ActivateUtils.findService(axisConfig, metaAxisService.getClassName(),
-                                                       metaAxisService.getQNameAsString());
+                                                       metaAxisService.getQNameAsString(),
+                                                       metaAxisService.getExtraName());
         }
 
         // We previously saved metaAxisOperation; restore it

@@ -493,7 +493,8 @@ public class ServiceContext extends AbstractContext
 
         if (metaAxisService != null) {
             axisService = ActivateUtils.findService(axisConfig, metaAxisService.getClassName(),
-                                                       metaAxisService.getQNameAsString());
+                                                       metaAxisService.getQNameAsString(),
+                                                       metaAxisService.getExtraName());
         }
 
         // the parent ServiceGroupContext object was saved

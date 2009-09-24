@@ -29,11 +29,14 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.transport.TransportListener;
@@ -79,10 +82,10 @@ public class ActivateUtils {
         Iterator its = axisConfig.getServiceGroups();
 
         while (its.hasNext()) {
-            AxisServiceGroup serviceGroup = (AxisServiceGroup) its.next();
+            AxisServiceGroup checkServiceGroup = (AxisServiceGroup) its.next();
 
-            String tmpSGClassName = serviceGroup.getClass().getName();
-            String tmpSGName = serviceGroup.getServiceGroupName();
+            String tmpSGClassName = checkServiceGroup.getClass().getName();
+            String tmpSGName = checkServiceGroup.getServiceGroupName();
 
             if (tmpSGClassName.equals(serviceGrpClassName)) {
                 boolean found = false;
@@ -93,6 +96,8 @@ public class ActivateUtils {
                     found = true;
                 } else if ((tmpSGName != null) && (tmpSGName.equals(serviceGrpName))) {
                     found = true;
+                } else if (containsExternalizedAxisServiceName(checkServiceGroup, serviceGrpName)) {
+                    found = true;
                 }
 
                 if (found) {
@@ -102,7 +107,7 @@ public class ActivateUtils {
                                 + serviceGrpClassName + "]   [" + serviceGrpName + "]");
                     }
 
-                    return serviceGroup;
+                    return checkServiceGroup;
                 }
             }
         }
@@ -117,6 +122,36 @@ public class ActivateUtils {
     }
     
     /**
+     * Answer if there are any AxisServices in the specified ServiceGroup that have an externalized
+     * name that matches the service group name.    
+     * 
+     * @param checkServiceGroup The AxisServiceGroup containing the AxisServies to check
+     * @param serviceGrpName The name to check as the externalized name of the AxisService
+     * @return true if the group contains an AxisService with that name; false otherwise.
+     */
+    private static boolean containsExternalizedAxisServiceName(
+            AxisServiceGroup checkServiceGroup, String serviceGrpName) {
+        boolean containsAxisService = false;
+        if (serviceGrpName != null && checkServiceGroup != null) {
+            // Get a list of AxisServices on the group
+            // Iterate over them to see if any have the Externalized Name Parameter
+            // If so and it mathces, then this service group name then use this service group
+            Iterator axisServicesInGroup = checkServiceGroup.getServices();
+            while (axisServicesInGroup.hasNext()) {
+                AxisService checkService = (AxisService) axisServicesInGroup.next();
+                String externalizedServiceName = 
+                    (String) checkService.getParameterValue(EXTERNALIZED_AXIS_SERVICE_NAME);
+                if (externalizedServiceName != null && 
+                        externalizedServiceName.equals(serviceGrpName)) {
+                    containsAxisService = true;
+                    break;
+                }
+            }
+        }
+        return containsAxisService;
+    }
+
+    /**
      * Find the AxisService object that matches the criteria
      * 
      * @param axisConfig The AxisConfiguration object
@@ -126,7 +161,18 @@ public class ActivateUtils {
      * @return the AxisService object that matches the criteria
      */
     public static AxisService findService(AxisConfiguration axisConfig, String serviceClassName,
-                                          String serviceName) {
+            String serviceName) {
+        return findService(axisConfig, serviceClassName, serviceName, null);
+    }
+    private static final String EXTERNALIZED_AXIS_SERVICE_NAME 
+        = "org.apache.axis2.context.externalize.AxisServiceName";
+    public static AxisService findService(AxisConfiguration axisConfig, String serviceClassName,
+                                          String serviceName, String extraName) {
+        if (log.isDebugEnabled()) {
+            log.debug("ActivateUtils.findService serviceName: " + serviceName +", extraName: "
+                + extraName);
+        }
+
         HashMap services = axisConfig.getServices();
 
         Iterator its = services.values().iterator();
@@ -134,11 +180,19 @@ public class ActivateUtils {
         while (its.hasNext()) {
             AxisService service = (AxisService) its.next();
 
-            String tmpServClassName = service.getClass().getName();
-            String tmpServName = service.getName();
-
-            if ((tmpServClassName.equals(serviceClassName)) && (tmpServName.equals(serviceName))) {
-                // trace point
+            if (checkAxisService(service, serviceClassName, serviceName, extraName)) {
+                // Store the original serviceName on the service for use in findServiceGroup
+                // This is the name from when the service was originally externalized.
+                try {
+                    service.addParameter(EXTERNALIZED_AXIS_SERVICE_NAME, serviceName);
+                } catch (AxisFault e) {
+                    // I don't think this can actually ever happen.  The exception occurs if the
+                    // parameter is locked, but this is the only code that references that parameter
+                    if (log.isDebugEnabled()) {
+                        log.debug("Got fault trying to add parameter " + EXTERNALIZED_AXIS_SERVICE_NAME +
+                                " for service name " + serviceName + " to AxisService " + service, e); 
+                    }
+                }
                 if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:findService(): returning  [" + serviceClassName
                             + "]   [" + serviceName + "]");
@@ -157,6 +211,79 @@ public class ActivateUtils {
         return null;
     }
     
+    private static boolean checkAxisService(AxisService serviceToCheck,
+            String serviceClassName, String externalizedServiceName, String externalizedExtraName) {
+        boolean serviceIsSame = false;
+
+        String checkServiceClassName = serviceToCheck.getClass().getName();
+        String checkServiceName = serviceToCheck.getName();
+        String checkServiceExtraName = getAxisServiceExternalizeExtraName(serviceToCheck);
+
+        if (checkServiceClassName.equals(serviceClassName)) {
+            if ((externalizedExtraName == null || checkServiceExtraName == null)
+                    && checkServiceName.equals(externalizedServiceName)) {
+                // If we don't have an externalized extra name or there is no
+                // externalized extra name information in the current Axis Service, then 
+                // check the simple case where the AxisService names match
+                serviceIsSame = true;
+            } else if (externalizedExtraName != null && checkServiceExtraName != null
+                    && checkServiceExtraName.equals(externalizedExtraName)){
+                // If the ServiceQname and Port Name match, then this is the right service
+                serviceIsSame = true;
+            } else {
+                // This is not an error necessarily; just iterating through all of AxisServices
+                // and some won't match.
+                if (log.isDebugEnabled()) {
+                    log.debug("No match: checking Externalized AxisService name: " + externalizedServiceName 
+                            + " and extraName: " + externalizedServiceName 
+                            + " against existing AxisService name: " + checkServiceName
+                            + " and extrAname: " + checkServiceExtraName);
+                }
+            }
+        }
+        return serviceIsSame;
+        
+    }
+
+    // This String separates the ServiceQName and the Port LocalName in the extraName field
+    // It is not a valid value in a QName so it can not accidently appear in a valid QName.
+    private static String DELIMITER_SERVICE_PORT = " ";
+    /**
+     * Return a Sring that contains the service QName and port local name of an AxisService
+     * seperated by a delimiter.  This value can be used as part of externalizing an AxisService
+     * to provide additional information during deserialization in cases where the AxisService
+     * name is not unique or does not match for whatever reasons.  
+     * 
+     * @param axisService The AxisService to create the externalized name
+     * @return a String with the ServiceQName and port local name separated by DELIMITER_SERVICE_PORT
+     * if both values exist as parameters on the service; null otherwise.
+     */
+    public static String getAxisServiceExternalizeExtraName(AxisService axisService) {
+        String extraName = null;
+        String serviceQName = null;
+        String portName = null;
+        
+        Parameter serviceQNameParameter = 
+            axisService.getParameter(WSDL11ToAllAxisServicesBuilder.WSDL_SERVICE_QNAME);
+        if (serviceQNameParameter != null) {
+            serviceQName = serviceQNameParameter.getValue().toString();
+        }
+        
+        Parameter portNameParameter = 
+            axisService.getParameter(WSDL11ToAllAxisServicesBuilder.WSDL_PORT); 
+        if (portNameParameter != null) {
+            portName = (String) portNameParameter.getValue();
+        }
+        
+        if (serviceQName != null && portName != null) {
+            extraName = serviceQName + DELIMITER_SERVICE_PORT +  portName;
+        }
+        
+        return extraName;
+    }
+    
+
+
     /**
      * Find the AxisOperation object that matches the criteria
      * 
