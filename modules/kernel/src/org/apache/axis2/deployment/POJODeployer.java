@@ -65,6 +65,11 @@ public class POJODeployer implements Deployer {
         // Get the hierarchical path of the service
         String serviceHierarchy = Utils.getServiceHierarchy(deploymentFileData.getAbsolutePath(), 
                 this.directory);
+
+        if (serviceHierarchy == null){
+            serviceHierarchy = "";
+        }
+        
         try {
             String extension = DeploymentFileData.getFileExtension(deploymentFileData.getName());
             if ("class".equals(extension)) {
@@ -346,6 +351,11 @@ public class POJODeployer implements Deployer {
     public void unDeploy(String fileName) {
         //find the hierarchical part of the service group name
         String serviceHierarchy = Utils.getServiceHierarchy(fileName, this.directory);
+        
+        if (serviceHierarchy == null){
+            serviceHierarchy = "";
+        }
+        
         fileName = Utils.getShortFileName(fileName);
         if (fileName.endsWith(".class")) {
             String className = fileName.replaceAll(".class", "");
