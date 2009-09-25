@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.handler.factory.impl.HandlerPreInvokerFactoryImpl;
 import org.apache.axis2.jaxws.handler.lifecycle.factory.HandlerLifecycleManagerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
+import org.apache.axis2.jaxws.message.databinding.impl.ParsedEntityReaderImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SourceBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.XMLStringBlockFactoryImpl;
@@ -42,6 +43,7 @@ import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
+import org.apache.axis2.jaxws.message.factory.ParsedEntityReaderFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -120,7 +122,7 @@ public class FactoryRegistry {
         table.put(InvocationControllerFactory.class, new InvocationControllerFactoryImpl());
         table.put(HandlerPreInvokerFactory.class, new HandlerPreInvokerFactoryImpl());
         table.put(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
-        
+        table.put(ParsedEntityReaderFactory.class, new ParsedEntityReaderFactory());
         // register the implementation responsible for both WebServiceContext 
         // injection and the updating of the WebServiceContext instances that
         // have already been injected, we will register these by two different
