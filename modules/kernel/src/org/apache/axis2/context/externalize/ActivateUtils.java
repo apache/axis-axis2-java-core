@@ -172,34 +172,53 @@ public class ActivateUtils {
             log.debug("ActivateUtils.findService serviceName: " + serviceName +", extraName: "
                 + extraName);
         }
-
         HashMap services = axisConfig.getServices();
 
         Iterator its = services.values().iterator();
 
-        while (its.hasNext()) {
+        // We loop through all the axis services looking for an exact match of the name, and if 
+        // it exists, the extra information of the fully qualified Service QName and the port
+        // name.  If we find an exact match, including the name of the service, we stop looking.
+        // If no exact match is found after searching the entire list, then we use the first 
+        // match of the extra information we found.  Note that picking the first one found is arbitrary.
+        boolean exactServiceNameMatch = false;
+        AxisService foundService = null;
+        while (its.hasNext() && !exactServiceNameMatch) {
             AxisService service = (AxisService) its.next();
-
-            if (checkAxisService(service, serviceClassName, serviceName, extraName)) {
-                // Store the original serviceName on the service for use in findServiceGroup
-                // This is the name from when the service was originally externalized.
-                try {
-                    service.addParameter(EXTERNALIZED_AXIS_SERVICE_NAME, serviceName);
-                } catch (AxisFault e) {
-                    // I don't think this can actually ever happen.  The exception occurs if the
-                    // parameter is locked, but this is the only code that references that parameter
-                    if (log.isDebugEnabled()) {
-                        log.debug("Got fault trying to add parameter " + EXTERNALIZED_AXIS_SERVICE_NAME +
-                                " for service name " + serviceName + " to AxisService " + service, e); 
-                    }
+            switch(checkAxisService(service, serviceClassName, serviceName, extraName)) {
+            case NAME_MATCH:
+                foundService = service;
+                exactServiceNameMatch = true;
+                break;
+            case SERVICE_PORT_MATCH:
+                if (foundService == null) {
+                    foundService = service;
                 }
-                if (log.isTraceEnabled()) {
-                    log.trace("ObjectStateUtils:findService(): returning  [" + serviceClassName
-                            + "]   [" + serviceName + "]");
-                }
-
-                return service;
+                break;
+            case NONE:
+                break;
             }
+        }
+        if (foundService != null) {
+            // Store the original serviceName on the service for use in findServiceGroup
+            // This is the name from when the service was originally externalized.
+            try {
+                foundService.addParameter(EXTERNALIZED_AXIS_SERVICE_NAME, serviceName);
+            } catch (AxisFault e) {
+                // I don't think this can actually ever happen.  The exception occurs if the
+                // parameter is locked, but this is the only code that references that parameter
+                if (log.isDebugEnabled()) {
+                    log.debug("Got fault trying to add parameter " + EXTERNALIZED_AXIS_SERVICE_NAME +
+                            " for service name " + serviceName + " to AxisService " + foundService, e); 
+                }
+            }
+            if (log.isTraceEnabled()) {
+                log.trace("ObjectStateUtils:findService(): returning  [" + serviceClassName
+                        + "]   [" + serviceName + "] AxisService name [" + foundService.getName()
+                        + "]");
+            }
+
+            return foundService;
         }
 
         // trace point
@@ -207,40 +226,59 @@ public class ActivateUtils {
             log.trace("ObjectStateUtils:findService(): [" + serviceClassName + "]   ["
                     + serviceName + "]  returning  [null]");
         }
-
         return null;
     }
+    // NONE means no match at all, NAME_MATCH means the service names match and the service and
+    // port names match if they exist, and SERVICE_PORT_MATCH means only the service and port names
+    // match (not the service names).
+    private enum MatchType {NONE, NAME_MATCH, SERVICE_PORT_MATCH};
     
-    private static boolean checkAxisService(AxisService serviceToCheck,
+    /**
+     * Determine if the AxisService passed in is a match for the name information passed in.
+     * The type of match is returned as an enum.
+     * 
+     * @param serviceToCheck The AxisService to check against the other parameters
+     * @param serviceClassName The name of class to look for
+     * @param externalizedServiceName The name of the Service to look for.
+     * @param externalizedExtraName Additional information beyond the name of the service to look 
+     *  for
+     * @return MatchType indication of the type of match for the passed in AxisService.
+     */
+    private static MatchType checkAxisService(AxisService serviceToCheck,
             String serviceClassName, String externalizedServiceName, String externalizedExtraName) {
-        boolean serviceIsSame = false;
+        MatchType serviceIsSame = MatchType.NONE;
 
         String checkServiceClassName = serviceToCheck.getClass().getName();
         String checkServiceName = serviceToCheck.getName();
         String checkServiceExtraName = getAxisServiceExternalizeExtraName(serviceToCheck);
-
         if (checkServiceClassName.equals(serviceClassName)) {
             if ((externalizedExtraName == null || checkServiceExtraName == null)
                     && checkServiceName.equals(externalizedServiceName)) {
                 // If we don't have an externalized extra name or there is no
                 // externalized extra name information in the current Axis Service, then 
                 // check the simple case where the AxisService names match
-                serviceIsSame = true;
+                serviceIsSame = MatchType.NAME_MATCH;
             } else if (externalizedExtraName != null && checkServiceExtraName != null
                     && checkServiceExtraName.equals(externalizedExtraName)){
-                // If the ServiceQname and Port Name match, then this is the right service
-                serviceIsSame = true;
+                // If the service names also match each other, then consider this a name match
+                // otherwise it is just a service & port match
+                if (checkServiceName.equals(externalizedServiceName)) {
+                    serviceIsSame = MatchType.NAME_MATCH;
+                } else {
+                    serviceIsSame = MatchType.SERVICE_PORT_MATCH;
+                }
             } else {
                 // This is not an error necessarily; just iterating through all of AxisServices
                 // and some won't match.
                 if (log.isDebugEnabled()) {
                     log.debug("No match: checking Externalized AxisService name: " + externalizedServiceName 
-                            + " and extraName: " + externalizedServiceName 
+                            + " and extraName: " + externalizedExtraName 
                             + " against existing AxisService name: " + checkServiceName
-                            + " and extrAname: " + checkServiceExtraName);
+                            + " and extraName: " + checkServiceExtraName);
                 }
             }
         }
+
         return serviceIsSame;
         
     }

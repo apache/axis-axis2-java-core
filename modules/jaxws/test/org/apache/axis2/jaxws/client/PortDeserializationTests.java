@@ -178,8 +178,23 @@ public class PortDeserializationTests extends TestCase {
             // Read in the message contexts and activate them, which is required by message
             // context deserialization to connect the message context to existing runtime 
             // objects such as AxisService
+            // Note that we do them in reverse order to make sure the logic is order-independent
+            
+            // Do the same for the second Message Context
+            MessageContext mcRead2 = deserializeMessageContext(baos2);
+            ConfigurationContext configContext2 = endpointDesc2.getServiceDescription().getAxisConfigContext();
+            assertNotNull(configContext2);
+            mcRead2.activate(configContext2);
+            AxisService asRead2 = mcRead2.getAxisService();
+            assertNotNull(asRead2);
+            assertEquals(axisService2.getName(), asRead2.getName());
+            assertSame(axisService2, asRead2);
+            AxisServiceGroup agRead2 = mcRead2.getAxisServiceGroup();
+            assertNotNull(agRead2);
+
             MessageContext mcRead1 = deserializeMessageContext(baos1);
             ConfigurationContext configContext1 = endpointDesc1.getServiceDescription().getAxisConfigContext();
+            assertSame(configContext1, configContext2);
             assertNotNull(configContext1);
             mcRead1.activate(configContext1);
             AxisService asRead1 = mcRead1.getAxisService();
@@ -189,19 +204,6 @@ public class PortDeserializationTests extends TestCase {
             AxisServiceGroup agRead1 = mcRead1.getAxisServiceGroup();
             assertNotNull(agRead1);
 
-            
-            // Do the same for the second Message Context
-            MessageContext mcRead2 = deserializeMessageContext(baos2);
-            ConfigurationContext configContext2 = endpointDesc2.getServiceDescription().getAxisConfigContext();
-            assertNotNull(configContext2);
-            assertSame(configContext1, configContext2);
-            mcRead2.activate(configContext2);
-            AxisService asRead2 = mcRead2.getAxisService();
-            assertNotNull(asRead2);
-            assertEquals(axisService2.getName(), asRead2.getName());
-            assertSame(axisService2, asRead2);
-            AxisServiceGroup agRead2 = mcRead2.getAxisServiceGroup();
-            assertNotNull(agRead2);
             
             // These keep the ports from being GC'd before the test method completes and
             // freeing up the AxisServices
@@ -215,6 +217,107 @@ public class PortDeserializationTests extends TestCase {
             ClientMetadataTest.restoreOriginalFactory();
         }
     }
+    /**
+     * Validate that a message context can be serialized and deserialized with the Axis2 
+     * and JAX-WS description objects not being recreated.  This is similar to a message
+     * being serialized and deserialized without the server being stopped.
+     * 
+     * This test uses two services with the same namespaces, each with a dynamic port of the
+     * same name.
+     */
+    public void testDynamicPortMultipleServiceNoRecreateSameNS() {
+        try {
+            ClientMetadataTest.installCachingFactory();
+            QName svc1QN = new QName(namespaceURI + "?1", svcLocalPart);
+            QName svc2QN = new QName(namespaceURI + "?1", svcLocalPart);
+
+            Service svc1 = Service.create(svc1QN);
+            Service svc2 = Service.create(svc2QN);
+
+            // Create the same port under the two different services.  Each port gets a unique
+            // EPR so it will cause a new port to be created (rather than shared) which in 
+            // turn causes a new AxisService to be crated.
+            QName portQN = new QName(namespaceURI, dynamicPort + "_1");
+            svc1.addPort(portQN, bindingID, epr + "1");
+            Dispatch<String> port1 = svc1.createDispatch(portQN, String.class, Service.Mode.PAYLOAD);
+            svc2.addPort(portQN, bindingID, epr + "2");
+            Dispatch<String> port2 = svc2.createDispatch(portQN, String.class, Service.Mode.PAYLOAD);
+            
+            // We need to get the AxisService so we can set in on a MessageContext and test 
+            // serialization / deserialization.  We do this using NON-Public, INTERNAL SPIs
+            // since we need to get at the internals of the engine
+            
+            // Check the AxisService created for both ports.
+            org.apache.axis2.jaxws.spi.BindingProvider bindingProvider1 = 
+                (org.apache.axis2.jaxws.spi.BindingProvider) port1;
+            EndpointDescription endpointDesc1 = bindingProvider1.getEndpointDescription();
+            AxisService axisService1 = endpointDesc1.getAxisService();
+            assertNotNull(axisService1);
+            assertEquals(svc1QN.getLocalPart()+ "." + portQN.getLocalPart(), axisService1.getName());
+            
+            org.apache.axis2.jaxws.spi.BindingProvider bindingProvider2 = 
+                (org.apache.axis2.jaxws.spi.BindingProvider) port2;
+            EndpointDescription endpointDesc2 = bindingProvider2.getEndpointDescription();
+            AxisService axisService2 = endpointDesc2.getAxisService();
+            assertNotNull(axisService2);
+            assertNotSame(axisService1, axisService2);
+            // The 2nd AxisService created gets a unique ID appended to the name
+            String baseName = svc2QN.getLocalPart()+ "." + portQN.getLocalPart();
+            assertFalse(baseName.equals(axisService2.getName()));
+            assertTrue(axisService2.getName().startsWith(baseName));
+            
+            // Now that the AxisService is setup, create two Axis2 message contexts, set the
+            // AxisServices on them.  Serialize them out
+            MessageContext msgCtx1 = new MessageContext();
+            msgCtx1.setAxisService(axisService1);
+            msgCtx1.setAxisServiceGroup(axisService1.getAxisServiceGroup());
+            ByteArrayOutputStream baos1 = serializeMessageContext(msgCtx1);
+            
+            MessageContext msgCtx2 = new MessageContext();
+            msgCtx2.setAxisService(axisService2);
+            msgCtx2.setAxisServiceGroup(axisService2.getAxisServiceGroup());
+            ByteArrayOutputStream baos2 = serializeMessageContext(msgCtx2);
+            
+            // Read in the message contexts and activate them, which is required by message
+            // context deserialization to connect the message context to existing runtime 
+            // objects such as AxisService
+            MessageContext mcRead1 = deserializeMessageContext(baos1);
+            ConfigurationContext configContext1 = endpointDesc1.getServiceDescription().getAxisConfigContext();
+            assertNotNull(configContext1);
+            mcRead1.activate(configContext1);
+            AxisService asRead1 = mcRead1.getAxisService();
+            assertNotNull(asRead1);
+            assertEquals(axisService1.getName(), asRead1.getName());
+            assertSame(axisService1, asRead1);
+            AxisServiceGroup agRead1 = mcRead1.getAxisServiceGroup();
+            assertNotNull(agRead1);
+           
+            // Do the same for the second Message Context
+            MessageContext mcRead2 = deserializeMessageContext(baos2);
+            ConfigurationContext configContext2 = endpointDesc2.getServiceDescription().getAxisConfigContext();
+            assertSame(configContext1, configContext2);
+            assertNotNull(configContext2);
+            mcRead2.activate(configContext2);
+            AxisService asRead2 = mcRead2.getAxisService();
+            assertNotNull(asRead2);
+            assertEquals(axisService2.getName(), asRead2.getName());
+            assertSame(axisService2, asRead2);
+            AxisServiceGroup agRead2 = mcRead2.getAxisServiceGroup();
+            assertNotNull(agRead2);
+
+            // These keep the ports from being GC'd before the test method completes and
+            // freeing up the AxisServices
+            assertNotNull(port1);
+            assertNotNull(port2);
+            
+        } catch (Exception t) {
+            t.printStackTrace();
+            fail("Caught throwable " + t);
+        } finally {
+            ClientMetadataTest.restoreOriginalFactory();
+        }
+    }
+
     /**
      * Validate that a message context can be serialized and deserialized with the Axis2 
      * and JAX-WS description objects being recreated before the deserialization.  This is 
