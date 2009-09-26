@@ -20,6 +20,26 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.wsdl.Definition;
+import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
@@ -30,34 +50,20 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.MethodRetriever;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.util.WSToolingUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.wsdl.Definition;
-import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 /** @see ../EndpointInterfaceDescription */
-class EndpointInterfaceDescriptionImpl
+public class EndpointInterfaceDescriptionImpl
         implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava,
         EndpointInterfaceDescriptionWSDL {
     private EndpointDescriptionImpl parentEndpointDescription;
@@ -95,6 +101,10 @@ class EndpointInterfaceDescriptionImpl
     public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
             javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 
+    private static String newRulesFlag = null;
+    
+    private static String newSunRulesFlag = null;
+    
     /**
      * Add the operationDescription to the list of operations.  Note that we can not create the
      * list of dispatchable operations at this points.
@@ -211,11 +221,16 @@ class EndpointInterfaceDescriptionImpl
         //For every MethodDescriptionComposite in this list, call OperationDescription 
         //constructor for it, then add this operation
 
-        //Retrieve the relevent method composites for this dbc (and those in the superclass chain)
-        Iterator<MethodDescriptionComposite> iter = retrieveReleventMethods(dbc);
+        //Retrieve the relevant method composites for this dbc (and those in the superclass chain)
+        
+        MethodRetriever methodRetriever = getMethodRetriever();
 
-        if (log.isDebugEnabled())
+        Iterator<MethodDescriptionComposite> iter = methodRetriever.retrieveMethods();
+        
+        if (log.isDebugEnabled()) {
             log.debug("EndpointInterfaceDescriptionImpl: Finished retrieving methods");
+        }
+        
         MethodDescriptionComposite mdc = null;
 
         while (iter.hasNext()) {
@@ -433,7 +448,7 @@ class EndpointInterfaceDescriptionImpl
         return operationDescriptions.toArray(new OperationDescription[0]);
     }
 
-    EndpointDescriptionImpl getEndpointDescriptionImpl() {
+    public EndpointDescriptionImpl getEndpointDescriptionImpl() {
         return (EndpointDescriptionImpl)parentEndpointDescription;
     }
 
@@ -627,337 +642,6 @@ class EndpointInterfaceDescriptionImpl
         return soapParameterStyle;
     }
 
-    /*
-    * Returns a non-null (possibly empty) list of MethodDescriptionComposites
-    */
-    Iterator<MethodDescriptionComposite> retrieveReleventMethods(DescriptionBuilderComposite dbc) {
-
-        /*
-        * Depending on whether this is an implicit SEI or an actual SEI, Gather up and build a
-        * list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
-        * MDC's that are public methods in the chain of extended classes.
-        * If this is an implicit SEI, then starting with this DBC,
-        *  1. If a false exclude is found, then take only those that have false excludes
-        *  2. Assuming no false excludes, take all public methods that don't have exclude == true
-        *  3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
-        *    But, if WebService not present, grab only MDC's that are annotated.
-        */
-        if (log.isTraceEnabled()) {
-            log.trace("retrieveReleventMethods: Enter");
-        }
-
-        ArrayList<MethodDescriptionComposite> retrieveList =
-                new ArrayList<MethodDescriptionComposite>();
-
-        if (dbc.isInterface()) {
-            if(log.isDebugEnabled()) {
-                log.debug("Removing overridden methods for interface: " + dbc.getClassName() + 
-                          " with super interface: " + dbc.getSuperClassName());
-            }
-            
-            // make sure we retrieve all the methods, then remove the overridden
-            // methods that exist in the base interface
-            retrieveList = retrieveSEIMethodsChain(dbc);
-            retrieveList = removeOverriddenMethods(retrieveList, dbc);
-            
-        } else {
-            //this is an implied SEI...rules are more complicated
-
-            retrieveList = retrieveImplicitSEIMethods(dbc);
-
-            //Now, continue to build this list with relevent methods in the chain of
-            //superclasses. If the logic for processing superclasses is the same as for
-            //the original SEI, then we can combine this code with above code. But, its possible
-            //the logic is different for superclasses...keeping separate for now.
-            DescriptionBuilderComposite tempDBC = dbc;
-
-            while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
-
-                //verify that this superclass name is not
-                //      java.lang.object, if so, then we're done processing
-                if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName())
-                        .equals(MDQConstants.OBJECT_CLASS_NAME))
-                    break;
-
-                DescriptionBuilderComposite superDBC =
-                        getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap()
-                                .get(tempDBC.getSuperClassName());
-
-                if (log.isTraceEnabled())
-                    log.trace("superclass name for this DBC is:" + tempDBC.getSuperClassName());
-
-                //Verify that we can find the SEI in the composite list
-                if (superDBC == null) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("seiNotFoundErr"));
-                }
-
-                //If the superclass contains a WebService annotation then retrieve its methods
-                //as we would for the impl class, otherwise ignore the methods of this
-                //superclass
-                if (superDBC.getWebServiceAnnot() != null) {
-                    //Now, gather the list of Methods just like we do for the lowest subclass
-                    retrieveList.addAll(retrieveImplicitSEIMethods(superDBC));
-                }
-                tempDBC = superDBC;
-            } //Done with implied SEI's superclasses
-            retrieveList = removeOverriddenMethods(retrieveList, dbc);
-        }//Done with implied SEI's
-
-        return retrieveList.iterator();
-    }
-
-
-    /**
-     * This method will establish a <code>HashMap</code> that represents a class name of a composite
-     * and an integer value for the entry. The integer represents the classes level in the Java
-     * hierarchy. 0 represents the most basic class with n representing the highest level class.
-     *
-     * @param dbc - <code>DescriptionBuilderComposite</code>
-     * @return - <code>HashMap</code>
-     */
-    private HashMap<String, Integer> getClassHierarchy(DescriptionBuilderComposite dbc) {
-        HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
-                getServiceDescriptionImpl().getDBCMap();
-        HashMap<String, Integer> hierarchyMap = new HashMap<String, Integer>();
-        if (log.isDebugEnabled()) {
-            log.debug("Putting class at base level: " + dbc.getClassName());
-        }
-        hierarchyMap.put(dbc.getClassName(), Integer.valueOf(0));
-        DescriptionBuilderComposite superDBC = dbcMap.get((dbc.getSuperClassName()));
-        int i = 1;
-        while (superDBC != null && !superDBC.getClassName().equals("java.lang.Object")) {
-            hierarchyMap.put(superDBC.getClassName(), Integer.valueOf(i));
-            if (log.isDebugEnabled()) {
-                log.debug("Putting class: " + superDBC.getClassName() + " at hierarchy rank: " +
-                        i);
-            }
-            i++;
-            superDBC = dbcMap.get(superDBC.getSuperClassName());
-        }
-        return hierarchyMap;
-    }
-    
-    /**
-     * This method drives the establishment of the hierarchy of interfaces for an SEI.
-     */
-    private Map<String, Integer> getInterfaceHierarchy(DescriptionBuilderComposite dbc) {
-        if(log.isDebugEnabled()) {
-            log.debug("Getting interface hierarchy for: " + dbc.getClassName());
-        }
-        Map<String, Integer> hierarchyMap = new HashMap<String, Integer>();
-        hierarchyMap.put(dbc.getClassName(), 0);
-        return getInterfaceHierarchy(dbc.getInterfacesList(), 
-                                     hierarchyMap, 
-                                     1);
-    }
-
-    /**
-     * Recursive method that builds the hierarchy of interfaces. This begins with an
-     * SEI and walks all of its super interfaces.
-     */
-    private Map<String, Integer> getInterfaceHierarchy(List<String> interfaces,
-                                                           Map<String, Integer> hierarchyMap,
-                                                           int level) {
-        HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
-            getServiceDescriptionImpl().getDBCMap();
-        
-        // walk through all of the interfaces
-        if(interfaces != null
-                &&
-                !interfaces.isEmpty()) {
-            for(String interfaze : interfaces) {
-                DescriptionBuilderComposite interDBC = dbcMap.get(interfaze);
-                if(interDBC != null) {
-                    if(log.isDebugEnabled()) {
-                        log.debug("Inserting super interface " + interDBC.getClassName() + 
-                                  " at level " + level);
-                    }
-                    hierarchyMap.put(interDBC.getClassName(), level);
-                    return getInterfaceHierarchy(interDBC.getInterfacesList(), hierarchyMap, level++);
-                }
-            }
-        }
-        return hierarchyMap;
-    }
-
-    /**
-     * This method will loop through each method that was previously determined as being relevant to
-     * the current composite. It will then drive the call to determine if this represents a method
-     * that has been overridden. If it represents an overriding method declaration it will remove
-     * the inherited methods from the list leaving only the most basic method declaration.
-     *
-     * @param methodList - <code>ArrayList</code> list of relevant methods
-     * @param dbc        - <code>DescriptionBuilderComposite</code> current composite
-     * @return - <code>ArrayList</code>
-     */
-    private ArrayList<MethodDescriptionComposite> removeOverriddenMethods(
-            ArrayList<MethodDescriptionComposite>
-                    methodList, DescriptionBuilderComposite dbc) {
-        Map<String, Integer> hierarchyMap = dbc.isInterface() ? getInterfaceHierarchy(dbc) : 
-            getClassHierarchy(dbc);
-        ArrayList<MethodDescriptionComposite> returnMethods =
-                new ArrayList<MethodDescriptionComposite>();
-        for (int i = 0; i < methodList.size(); i++) {
-            if (notFound(returnMethods, methodList.get(i))) {
-                returnMethods.add(getBaseMethod(methodList.get(i), i, methodList, hierarchyMap));
-            }
-
-        }
-        return returnMethods;
-    }
-
-    /**
-     * This method will loop through each method we have already identified as a base method and
-     * compare the current method.
-     *
-     * @param mdcList - <code>ArrayList</code> identified base methods
-     * @param mdc     - <code>MethodDescriptionComposite</code> current method
-     * @return - boolean
-     */
-    private boolean notFound(ArrayList<MethodDescriptionComposite> mdcList,
-                             MethodDescriptionComposite mdc) {
-        for (MethodDescriptionComposite method : mdcList) {
-            if (mdc.compare(method)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * This method is responsible for determining the most basic level of a method declaration in
-     * the <code>DescriptionBuilderComposite</code> hierarchy.
-     *
-     * @param mdc          - <code>MethodDescriptionComposite</code> current method
-     * @param index        - <code>int</code> current location in method list
-     * @param methodList   - <code>List</code> list of methods available on this composite
-     * @param hierarchyMap - <code>HashMap</code> map that represents the hierarchy of the current
-     *                     <code>DescriptionBuilderComposite</code>
-     * @return - <code>MethodDescriptionComposite</code> most basic method declaration
-     */
-    private static MethodDescriptionComposite getBaseMethod(MethodDescriptionComposite mdc,
-                                                            int index,
-                                                            ArrayList<MethodDescriptionComposite> methodList,
-                                                            Map<String, Integer>
-                                                                    hierarchyMap) {
-        int baseLevel = hierarchyMap.get(mdc.getDeclaringClass());
-        if (log.isDebugEnabled()) {
-            log.debug("Base method: " + mdc.getMethodName() + " initial level: " + baseLevel);
-        }
-        for (; index < methodList.size(); index++) {
-            MethodDescriptionComposite compareMDC = methodList.get(index);
-            // If the two methods are the same method that means we have found an inherited
-            // overridden case
-            if (mdc.equals(compareMDC)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found equivalent methods: " + mdc.getMethodName());
-                }
-                // get the declaration level of the method we are comparing to
-                int compareLevel = hierarchyMap.get(compareMDC.getDeclaringClass());
-                // if the method was declared by a class in a lower level of the hierarchy it
-                // becomes the method that we will compare other methods to
-                if (compareLevel < baseLevel) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Found method lower in hierarchy chain: " +
-                                compareMDC.getMethodName()
-                                + " of class: " + compareMDC.getMethodName());
-                    }
-                    mdc = compareMDC;
-                    baseLevel = compareLevel;
-                }
-            }
-        }
-        return mdc;
-    }
-
-    /*
-    * This is called when we know that this DBC is an implicit SEI
-    */
-    private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(
-            DescriptionBuilderComposite dbc) {
-
-        ArrayList<MethodDescriptionComposite> retrieveList =
-                new ArrayList<MethodDescriptionComposite>();
-
-        retrieveList = DescriptionUtils.getMethodsWithFalseExclusions(dbc);
-
-        //If this list is empty, then there are no false exclusions, so gather
-        //all composites that don't have exclude == true
-        //If the list is not empty, then it means we found at least one method with 'exclude==false'
-        //so the list should contain only those methods
-        if (retrieveList == null || retrieveList.size() == 0) {
-            Iterator<MethodDescriptionComposite> iter = null;
-            List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
-
-            if (mdcList != null) {
-                iter = dbc.getMethodDescriptionsList().iterator();
-                while (iter.hasNext()) {
-                    MethodDescriptionComposite mdc = iter.next();
-
-                    if (!DescriptionUtils.isExcludeTrue(mdc)) {
-                        mdc.setDeclaringClass(dbc.getClassName());
-                        retrieveList.add(mdc);
-                    }
-                }
-            }
-        }
-
-        return retrieveList;
-    }
-
-    private ArrayList<MethodDescriptionComposite> retrieveSEIMethods(
-            DescriptionBuilderComposite dbc) {
-
-        //Rules for retrieving Methods on an SEI (or a superclass of an SEI) are simple
-        //Just retrieve all methods regardless of WebMethod annotations
-        ArrayList<MethodDescriptionComposite> retrieveList =
-                new ArrayList<MethodDescriptionComposite>();
-
-        Iterator<MethodDescriptionComposite> iter = null;
-        List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
-
-        if (mdcList != null) {
-            iter = dbc.getMethodDescriptionsList().iterator();
-            while (iter.hasNext()) {
-                MethodDescriptionComposite mdc = iter.next();
-                mdc.setDeclaringClass(dbc.getClassName());
-                retrieveList.add(mdc);
-            }
-        }
-
-        return retrieveList;
-    }
-
-    private ArrayList<MethodDescriptionComposite> retrieveSEIMethodsChain(
-            DescriptionBuilderComposite tmpDBC) {
-
-        DescriptionBuilderComposite dbc = tmpDBC;
-        ArrayList<MethodDescriptionComposite> retrieveList =
-                new ArrayList<MethodDescriptionComposite>();
-
-        retrieveList = retrieveSEIMethods(dbc);
-
-        //Since this is an interface, anything that is in the extends clause will actually appear
-        // in the interfaces list instead.
-        Iterator<String> iter = null;
-        List<String> interfacesList = dbc.getInterfacesList();
-        if (interfacesList != null) {
-            iter = dbc.getInterfacesList().iterator();
-
-            while (iter.hasNext()) {
-
-                String interfaceName = iter.next();
-                DescriptionBuilderComposite superInterface =
-                        getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap()
-                                .get(interfaceName);
-
-                retrieveList.addAll(retrieveSEIMethodsChain(superInterface));
-            }
-        }
-
-        return retrieveList;
-    }
-
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL)getEndpointDescription().getServiceDescription())
                 .getWSDLDefinition();
@@ -1086,4 +770,149 @@ class EndpointInterfaceDescriptionImpl
             }
         });
     }
+    
+    
+    /*
+     * This method returns a method retriever that properly implements the specified behavior, 
+     * which is determined by a user-defined system property
+     */
+    private MethodRetriever getMethodRetriever () {
+
+        MethodRetriever methodRetriever = null;
+        boolean newSunBehavior = false;
+
+        //If the user has a setting for the property flag then that overrides and possible setting
+        //of the SUN flag. Assuming no
+        //property, we will still honor the setting of the SUN property.
+        
+        //REVIEW: We are making the assumption that the system property always overrides the manifest
+        //        property. So, if both are set than the manifest property will be ignored
+        if (WSToolingUtils.hasValue(getNewRulesFlag())) {
+            if (newRulesFlag.equalsIgnoreCase("false")) {
+                if (log.isDebugEnabled()){
+                    log.debug("EndpointInterfaceDescriptionImpl: System property USE_LEGACY_WEB_METHOD_RULES set to false" );
+                }
+                newSunBehavior = isNewSunBehavior(MDQConstants.USE_LEGACY_WEB_METHOD_RULES);
+            }
+        } else if (WSToolingUtils.hasValue(getNewSunRulesFlag())) {
+            if (getNewSunRulesFlag().equalsIgnoreCase("false")) {
+                if (log.isDebugEnabled()){
+                    log.debug("EndpointInterfaceDescriptionImpl: System property USE_LEGACY_WEB_METHOD_RULES_SUN set to false" );
+                }
+                newSunBehavior = isNewSunBehavior(MDQConstants.USE_LEGACY_WEB_METHOD_RULES_SUN);
+            }
+        }
+        
+        methodRetriever = newSunBehavior ? new PostRI216MethodRetrieverImpl(dbc, this) : new LegacyMethodRetrieverImpl(dbc, this);
+        
+        if(log.isDebugEnabled()) {
+            if (newSunBehavior) {
+                log.debug("getMethodRetriever: returning a PostRI216MethodRetrieverImpl");
+            } else {
+                log.debug("getMethodRetriever: returning a LegacyMethodRetrieverImpl");
+            }
+        }
+        
+        return methodRetriever;
+    }
+    
+    /**
+     * The user has indicated that they want to use the new Sun behavior (regardless) of which flag 
+     * they were using.
+     * This method determines whether we have the proper JDK version for using the new SUN behavior for
+     * retrieving methods. We determine this by checking the version of WsGen.
+     * @param propertyToSet
+     * @return
+     */
+    private boolean isNewSunBehavior(String propertyToSet) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("isNewSunBehavior: Validating that JDK version can be used with property: " +propertyToSet);
+
+        }
+        
+        boolean versionValid = false;
+
+        try {
+            
+            String wsGenVersion = WSToolingUtils.getWsGenVersion();
+            
+            versionValid = WSToolingUtils.isValidVersion(wsGenVersion);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("isNewSunBehavior: versionValid is: " +versionValid);
+            }
+            
+            if (!versionValid) {
+
+                if (log.isWarnEnabled()) {
+                    log.warn("You are attempting set a property: "
+                        + propertyToSet
+                        + " This property is not supported with this version of the JDK");
+                }
+            }
+
+            // We don't want to affect existing systems, if anything goes
+            // wrong just display
+            // a warning and default to old behavior
+        } catch (ClassNotFoundException e) {
+            if (log.isWarnEnabled()) {
+                log.warn(" Unable to determine WsGen version being used");
+            }
+        } catch (IOException ioex) {
+            if (log.isWarnEnabled()) {
+                log.warn(" Unable to determine WsGen version being used");
+            }
+        }
+        
+        return versionValid;
+    }
+    
+    private static String getNewRulesFlag () {
+        
+        if (newRulesFlag != null) {
+            return newRulesFlag;
+        }
+            
+        try {
+            newRulesFlag = (String) AccessController.doPrivileged(
+                new PrivilegedExceptionAction() {
+                    public Object run() {
+                        return (System.getProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES));
+                    }
+                });
+        } catch (PrivilegedActionException e) {
+            // Swallow and continue
+            if (log.isWarnEnabled()) {
+                log.debug("Exception getting USE_LEGACY_WEB_METHOD_RULES system property: " +e.getException());
+            }
+        }
+        
+        return newRulesFlag;
+    }
+    
+    private static String getNewSunRulesFlag () {
+        
+        if (newSunRulesFlag != null) {
+            return newSunRulesFlag;
+        }
+            
+        try {
+            newSunRulesFlag = (String) AccessController.doPrivileged(
+                new PrivilegedExceptionAction() {
+                    public Object run() {
+                        return (System.getProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES_SUN));
+                    }
+                });
+        } catch (PrivilegedActionException e) {
+            // Swallow and continue
+            if (log.isWarnEnabled()) {
+                log.debug("Exception getting USE_LEGACY_WEB_METHOD_RULES_SUN system property: " +e.getException());
+            }
+        }
+        
+        return newRulesFlag;
+    }
+    
+
 }

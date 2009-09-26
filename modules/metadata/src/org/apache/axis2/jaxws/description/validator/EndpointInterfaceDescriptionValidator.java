@@ -23,6 +23,8 @@ import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
@@ -38,6 +40,7 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
     EndpointInterfaceDescriptionJava epInterfaceDescJava;
     EndpointInterfaceDescriptionWSDL epInterfaceDescWSDL;
 
+    private static final Log log = LogFactory.getLog(EndpointInterfaceDescriptionValidator.class);
     public EndpointInterfaceDescriptionValidator(EndpointInterfaceDescription toValidate) {
         epInterfaceDesc = toValidate;
         epInterfaceDescJava = (EndpointInterfaceDescriptionJava)epInterfaceDesc;
@@ -72,12 +75,52 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
                 epInterfaceDesc.getDispatchableOperations();
     
             if (wsdlOperationList.size() != dispatchableOpDescArray.length) {
-                addValidationFailure(this, "The number of operations in the WSDL " +
-                        "portType does not match the number of methods in the SEI or " +
-                        "Web service implementation class.  " +
-                        "wsdl operations = [" + toString(wsdlOperationList) +"] " +
-                        "dispatch operations = [" + toString(dispatchableOpDescArray) +"]");
-                return INVALID;
+                //We used to throw a Validation error here.
+                //I am removing the validation error due to new interpretations
+                // of @WebMethod annotations introduced in 2.2 TCK and newer RI/JDK wsgen tools,
+                //where it's possilbe for a wsdl to have more operations than what the jaxws 
+                //runtime exposes from the SEI impl.
+                
+                //For Example server endpoint defines the following operations
+                // @WebService
+                // public MySEIImpl {
+                //public boolean x() {...}
+                //@WebMethod(exclude=false)
+                //public boolean y(){ ...}
+                //public String z(){ ...} 
+                // ..}
+                
+                //A wsGen run on this will generate a wsdl with following operations
+                //<operation name="x">
+                //<operation name="y">
+                //<operation name="z">
+                
+                // And this is the WSDL Provider would return in a ?wsld request,
+                // even though the provider may only allow you to dispatch to operation y.
+
+                // To avoid security exposure, the provider may not be
+                // able to expose operations x & z, unless it's specifically
+                // requested to do so by service application.  If client neglects to regen their 
+                // artifacts, it's SEI will only contain operation y.
+                // This is the reason why we need to relax this error.
+                
+                // The additional 
+                // operation can be invoked using JAX-WS Dispatch client, 
+                // or by regenerating the client artifacts (wsimport)
+                // and only when the service chooses for the runtime to expose those
+                // operations via custom settings.
+
+                //If TCK tests complaint here, we might have to reverse this
+                //change and add the validaiton back.
+                                 
+                if(log.isWarnEnabled()){
+                    log.warn("The number of operations in the WSDL " +
+                            "portType does not match the number of methods in the SEI or " +
+                            "Web service implementation class.  " +
+                            "wsdl operations = [" + toString(wsdlOperationList) +"] " +
+                            "dispatch operations = [" + toString(dispatchableOpDescArray) +"]");
+                }
+                return VALID;
             }
 
             // If they are the same size, let's check to see if the operation names match

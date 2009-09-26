@@ -81,7 +81,12 @@ public class ValidateWSDLTests extends TestCase {
         try {
             List<ServiceDescription> serviceDescList =
                     DescriptionFactory.createServiceDescriptionFromDBCMap(dbcMap);
-            fail();
+            
+            //Removing the fail() call here as we removed the Valdiation Error from
+            //EndpointInterfaceDescriptionValidator.
+            
+            //Expected code path
+            
         }
         catch (WebServiceException e) {
             // Expected code path

@@ -68,4 +68,10 @@ public class MDQConstants {
     public static final String SOAP11JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
     public static final String SOAP12JMS_MTOM_BINDING = "http://http://www.example.org/2006/06/soap/bindings/JMS/?mtom=true";
     public static final String SOAP_HTTP_BINDING ="SOAP_HTTP_BINDING";
+    
+    public static final String USE_LEGACY_WEB_METHOD_RULES_SUN = "com.sun.xml.ws.model.RuntimeModeler.legacyWebMethod";
+    public static final String USE_LEGACY_WEB_METHOD_RULES = "jaxws.runtime.legacyWebMethod";
+    public static final String USE_MANIFEST_LEGACY_WEB_METHOD_RULES = "LegacyWebMethod";
+    public static final String SUN_WEB_METHOD_BEHAVIOR_CHANGE_VERSION = "2.1.6";
+
 }

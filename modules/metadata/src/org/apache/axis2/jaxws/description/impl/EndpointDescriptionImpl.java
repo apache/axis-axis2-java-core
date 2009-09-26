@@ -98,7 +98,7 @@ import java.util.TreeSet;
  * fixed, that will probably have an impact on this class.  In particular, I think this should be created 
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
-class EndpointDescriptionImpl
+public class EndpointDescriptionImpl
         implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
 
     private ServiceDescriptionImpl parentServiceDescription;
@@ -723,7 +723,7 @@ class EndpointDescriptionImpl
         return parentServiceDescription;
     }
 
-    ServiceDescriptionImpl getServiceDescriptionImpl() {
+    public ServiceDescriptionImpl getServiceDescriptionImpl() {
         return (ServiceDescriptionImpl)parentServiceDescription;
     }
 

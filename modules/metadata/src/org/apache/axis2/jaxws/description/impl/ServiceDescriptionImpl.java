@@ -92,7 +92,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /** @see ../ServiceDescription */
-class ServiceDescriptionImpl
+public class ServiceDescriptionImpl
         implements ServiceDescription, ServiceDescriptionWSDL, ServiceDescriptionJava {
     private ClientConfigurationFactory clientConfigFactory;
     private ConfigurationContext configContext;
@@ -1387,7 +1387,7 @@ class ServiceDescriptionImpl
         return isServerSide;
     }
 
-    HashMap<String, DescriptionBuilderComposite> getDBCMap() {
+    public HashMap<String, DescriptionBuilderComposite> getDBCMap() {
         return dbcMap;
     }
 

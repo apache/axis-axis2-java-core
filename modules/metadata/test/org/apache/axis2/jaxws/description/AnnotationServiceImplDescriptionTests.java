@@ -23,7 +23,9 @@ package org.apache.axis2.jaxws.description;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.echo.EchoServiceImplWithSEI;
+import org.apache.axis2.jaxws.util.WSToolingUtils;
 import org.apache.log4j.BasicConfigurator;
 
 import javax.jws.Oneway;
@@ -35,6 +37,8 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+
+import java.io.IOException;
 
 /**
  * Tests the creation of the Description classes based on a service implementation bean and various
@@ -526,6 +530,191 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNull(operationDescs);
 
     }
+    
+    
+    //Verify that 
+    // 1. Wsgen version 2.1.6 is valid for using the new behavior
+    // 2. Something greater than 2.1.6 is also valid
+    // 3. Something less that 2.1.6 is not valid
+    public void testValidWsgenVersion() {
+        
+        assertTrue(WSToolingUtils.isValidVersion(MDQConstants.SUN_WEB_METHOD_BEHAVIOR_CHANGE_VERSION));
+
+        //This should be true because it converts to something greater than 2.1.6
+        assertTrue(WSToolingUtils.isValidVersion("2.12.6.1"));
+        
+        //Less than 2.1.6 so should fail
+        assertFalse(WSToolingUtils.isValidVersion("2.1.1"));
+    }
+
+    //This test verifies that the old WebMethod behavior has not changed if the system flag is
+    //not set, slightly redundant but still a safety check
+    public void testWebMethodOldBehavior1() {
+        
+        try {
+            //If the version is valid then try the new behavior
+            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
+                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "false");
+                //Try new behavior
+            }            
+        } catch (ClassNotFoundException e) {
+        } catch (IOException ioex) {
+        }
+        
+        
+        EndpointInterfaceDescription testEndpointInterfaceDesc =
+                getEndpointInterfaceDesc(WebMethodTestImpl.class);
+        
+
+        // Test results from method with no annotation
+        OperationDescription[] operationDescs =
+                testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
+
+        assertNull(operationDescs);
+
+        OperationDescription operationDesc =
+                testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod2", operationDesc.getOperationName());
+        assertEquals("", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method3", operationDesc.getOperationName());
+        assertEquals("ActionMethod3", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getOperationName());
+        assertEquals("ActionMethod4", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getOperationName());
+        assertEquals("ActionMethod4", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method5");
+        assertNull(operationDescs);
+
+    }
+
+    //This test verifies that, if we do have the appropriate JDK installed but we do not set
+    //the System property then the old behavior remains unchanged
+    public void testWebMethodOldBehavior2() {
+        
+        try {
+            //If the version is valid then try the new behavior
+            if (WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion())) {
+                //Set the property to empty just to make sure we are not trying the new behavior
+                //In order for the new behavior to work, this must be set explicitly to 'false'
+                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "");
+                //Try new behavior
+            } else {
+                //At this point, just return as it would be redundant to continue...already tested
+                // in testWebMethodOldBehavior1
+                return;
+            }
+        } catch (ClassNotFoundException e) {
+        } catch (IOException ioex) {
+        }
+        
+        
+        EndpointInterfaceDescription testEndpointInterfaceDesc =
+                getEndpointInterfaceDesc(WebMethodTestImpl.class);
+        
+
+        // Test results from method with no annotation
+        OperationDescription[] operationDescs =
+                testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
+
+        assertNull(operationDescs);
+
+        OperationDescription operationDesc =
+                testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod2", operationDesc.getOperationName());
+        assertEquals("", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method3", operationDesc.getOperationName());
+        assertEquals("ActionMethod3", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getOperationName());
+        assertEquals("ActionMethod4", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getOperationName());
+        assertEquals("ActionMethod4", operationDesc.getAction());
+        assertFalse(operationDesc.isExcluded());
+
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method5");
+        assertNull(operationDescs);
+
+    }
+    
+    //This test verifies that, if we do have the appropriate JDK installed and we do set the
+    //system property flag, then the new behavior will be realized. 
+    //NOTE: This method can be forced to run thru the tests by temporarily changing
+    //the "newSunBehavior" flag inside of EndpointInterfaceDescriptionImpl.getMethodRetriever()
+    //    and
+    // in this method, by forcing "validVersion" to true. Realize that by doing this other tests
+    // will fail...So this should be considered temporary for testing this method
+    public void testWebMethodNewBehavior1() {
+        
+        try {
+            boolean validVersion = WSToolingUtils.isValidVersion(WSToolingUtils.getWsGenVersion());
+            //If the version is valid then try the new behavior
+            
+            if (validVersion) {
+                //Try new behavior
+                System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "false");
+            } else {
+                //At this point, just return since the test would be guaranteed to fail as we
+                //testing new rules
+                return;
+            }
+        } catch (ClassNotFoundException e) {
+        } catch (IOException ioex) {
+        }
+        
+        EndpointInterfaceDescription testEndpointInterfaceDesc =
+                getEndpointInterfaceDesc(WebMethodTestImpl1.class);
+        
+        // All tests here will be using the new behavior
+
+        //We should be able to see this even though there are false exclusions
+        OperationDescription[] operationDescs =
+            testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
+
+        assertNotNull(operationDescs);
+        
+        operationDescs =
+            testEndpointInterfaceDesc.getOperationForJavaMethod("shouldBeExcludedMethod");
+
+        assertNull(operationDescs);
+        
+        operationDescs =
+            testEndpointInterfaceDesc.getOperations();
+        assertEquals(operationDescs.length, 4);
+        
+        //Need to make sure we don't mess up the other tests, so set this back to using the
+        //legacy behavior
+        System.setProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES, "true");
+
+    }
+
+
 
     public void testWebResult() {
         EndpointInterfaceDescription testEndpointInterfaceDesc =
@@ -1269,6 +1458,42 @@ class ReqRspWrapperTestImpl {
 
     }
 }
+
+//=============================================================================
+//testWebMethod service implementaiton class
+//=============================================================================
+
+//This an implied SEI which will be used to test the new Sun Behavior
+@WebService
+class WebMethodTestImpl1 {
+// No web method annotation
+public String method1(String s) {
+   return s;
+}
+
+@WebMethod(operationName = "renamedMethod2")
+public String method2(String s) {
+   return s;
+}
+
+@WebMethod(action = "ActionMethod3")
+public String method3(String s) {
+   return s;
+}
+
+@WebMethod(operationName = "renamedMethod4", action = "ActionMethod4")
+public String method4(String s) {
+   return s;
+}
+
+@WebMethod(operationName = "shouldBeExcludedMethod", exclude = true)
+public String method5(String s) {
+   return s;
+}
+}
+
+
+
 
 // =============================================================================
 // testWebMethod service implementaiton class
