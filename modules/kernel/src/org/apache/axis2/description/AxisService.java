@@ -1328,10 +1328,31 @@ public class AxisService extends AxisDescription {
 			return;
 		}
 
+        if (isSetEndpointsToAllUsedBindings()) {
+            Utils.setEndpointsToAllUsedBindings(this);
+        }
+
 		// Otherwise, generate WSDL ourselves
 		String[] eprArray = requestIP == null ? new String[] { this.endpointName }
 				: calculateEPRs(requestIP);
 		getWSDL(out, eprArray);
+	}
+
+    /**
+     * users can use this parameter when they supply a wsdl file with the .aar file
+     * but wants to generate the endpoints for all available transports. here it assume
+     * that the user has not set the useOriginalwsdl
+     * @return
+     */
+	public boolean isSetEndpointsToAllUsedBindings() {
+		Parameter parameter = getParameter("setEndpointsToAllUsedBindings");
+		if (parameter != null) {
+			String value = (String) parameter.getValue();
+			if ("true".equals(value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

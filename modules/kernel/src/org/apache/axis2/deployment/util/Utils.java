@@ -1069,6 +1069,50 @@ public class Utils {
         }
     }
 
+    public static void setEndpointsToAllUsedBindings(AxisService axisService) {
+
+        Map<QName, AxisBinding> usedBindings = new HashMap<QName, AxisBinding>();
+        AxisBinding axisBinding = null;
+        for (AxisEndpoint axisEndpoint : axisService.getEndpoints().values()) {
+            axisBinding = axisEndpoint.getBinding();
+            if (!usedBindings.containsKey(axisBinding.getName())) {
+                usedBindings.put(axisBinding.getName(), axisBinding);
+            }
+        }
+
+        // now remove all existing end points
+        axisService.getEndpoints().clear();
+
+        // add new end points according to the available transports
+        List<String> availableTransports = new ArrayList<String>();
+        if (axisService.isEnableAllTransports()) {
+            AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
+            for (TransportInDescription transportIn : axisConfiguration.getTransportsIn().values()) {
+                availableTransports.add(transportIn.getName());
+            }
+        } else {
+            availableTransports = axisService.getExposedTransports();
+        }
+
+        // add an end point per service per transport description
+        for (AxisBinding usedAxisBinding : usedBindings.values()) {
+
+            for (String transportIn : availableTransports) {
+                String bindingType = usedAxisBinding.getType();
+                // for http bindings we can use only the http transport
+                if (WSDL2Constants.URI_WSDL2_HTTP.equals(bindingType) && !transportIn.startsWith("http")){
+                    continue;
+                }
+                AxisEndpoint axisEndpoint = new AxisEndpoint();
+                axisEndpoint.setName(axisService.getName() + transportIn + usedAxisBinding.getName().getLocalPart() + "Endpoint");
+                axisEndpoint.setBinding(usedAxisBinding);
+                axisEndpoint.setTransportInDescription(transportIn);
+                axisEndpoint.setParent(axisService);
+                axisService.addEndpoint(axisEndpoint.getName(), axisEndpoint);
+            }
+        }
+    }
+
     public static void addEndpointsToService(AxisService axisService,
                                              AxisConfiguration axisConfiguration) throws AxisFault {
 
