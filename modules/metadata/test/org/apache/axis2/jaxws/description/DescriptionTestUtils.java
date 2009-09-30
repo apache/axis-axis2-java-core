@@ -65,7 +65,7 @@ public class DescriptionTestUtils {
         return wsdlURL;
     }
 
-    static Definition createWSDLDefinition(URL wsdlURL) {
+    static public Definition createWSDLDefinition(URL wsdlURL) {
         Definition wsdlDefinition = null;
         try {
             WSDLFactory factory = WSDLFactory.newInstance();

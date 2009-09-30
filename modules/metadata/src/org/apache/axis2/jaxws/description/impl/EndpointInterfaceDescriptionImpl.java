@@ -247,7 +247,7 @@ public class EndpointInterfaceDescriptionImpl
 
                 AxisService axisService = getEndpointDescription().getAxisService();
                 AxisOperation axisOperation = axisService
-                        .getOperation(OperationDescriptionImpl.determineOperationQName(mdc));
+                        .getOperation(OperationDescriptionImpl.determineOperationQName(this, mdc));
 
                 OperationDescription operation =
                         new OperationDescriptionImpl(mdc, this, axisOperation);

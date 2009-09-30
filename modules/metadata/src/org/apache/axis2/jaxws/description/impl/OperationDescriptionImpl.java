@@ -391,7 +391,7 @@ class OperationDescriptionImpl
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("clientAxisOprErr"), e);
         }
 
-        newAxisOperation.setName(determineOperationQName(this.methodComposite));
+        newAxisOperation.setName(determineOperationQName(getEndpointInterfaceDescriptionImpl(),this.methodComposite));
         newAxisOperation.setSoapAction(this.getAction());
 
         //*************************************************************************************
@@ -821,13 +821,27 @@ class OperationDescriptionImpl
     }
 
     static QName determineOperationQName(Method javaMethod) {
+        if (log.isDebugEnabled())
+        {
+          log.debug("Operation QName determined to be: "+new QName(determineOperationName(javaMethod)));
+        }
+
         return new QName(determineOperationName(javaMethod));
     }
 
-    public static QName determineOperationQName(MethodDescriptionComposite mdc) {
-        return new QName(determineOperationName(mdc));
+    //According to section 4.1.1 of JSR181, the Operation should inherit
+    //the target namespace from the @WebService annotation on the SEI or
+    //service implementation bean.  However, changing the above method
+    //currently causes problems with the clients and leaving it as is
+    //does not seem to have produced any issues (as of yet.)
+    public static QName determineOperationQName(EndpointInterfaceDescription eid, MethodDescriptionComposite mdc) {
+        if (log.isDebugEnabled())
+        {
+          log.debug("Operation QName determined to be: "+((eid!= null)?new QName(eid.getTargetNamespace(), determineOperationName(mdc)):new QName(determineOperationName(mdc))));
+        }
+        return ((eid!= null)?new QName(eid.getTargetNamespace(), determineOperationName(mdc)):new QName(determineOperationName(mdc)));
     }
-
+    
     private static String determineOperationName(Method javaMethod) {
 
         String operationName = null;
