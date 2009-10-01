@@ -623,8 +623,19 @@ public class CodeGenerationUtility {
             try {
                 for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
+
                     if (schema.getSourceURI() != null &&
                             schema.getSourceURI().endsWith(systemId.replaceAll("\\\\", "/"))) {
+
+                        // if source uri does not contain any / then it should match
+                        // with the final part of the system ID
+                        if (schema.getSourceURI().indexOf("/") == -1){
+                            String systemIDFinalPath = systemId.substring(systemId.indexOf("/") + 1);
+                            if (!systemIDFinalPath.equals(schema.getSourceURI())){
+                                continue;
+                            }
+                        }
+
                         String path = schema.getSourceURI();
                         File f = getFileFromURI(path);
                         if(f.exists()){
