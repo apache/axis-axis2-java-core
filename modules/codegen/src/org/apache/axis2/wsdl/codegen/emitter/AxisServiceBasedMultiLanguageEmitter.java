@@ -2807,7 +2807,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
                             inputElt);
                 } catch (Exception ex) {
-                    throw new RuntimeException("can't serialize the policy ..");
+                    throw new RuntimeException("can't serialize the policy ..", ex);
                 }
             }
 
@@ -2880,7 +2880,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
                             outputElt);
                 } catch (Exception ex) {
-                    throw new RuntimeException("can't serialize the policy ..");
+                    throw new RuntimeException("can't serialize the policy ..", ex);
                 }
             }
         }
