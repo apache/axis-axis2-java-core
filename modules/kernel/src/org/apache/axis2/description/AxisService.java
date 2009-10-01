@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
@@ -58,6 +59,7 @@ import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -1478,8 +1480,37 @@ public class AxisService extends AxisDescription {
 												exsistingAddress));
 							}
 						}
-					}
-					// TODO : change the Endpoint refrence addess as well.
+					} else if (extensibilityEle instanceof UnknownExtensibilityElement){
+                        UnknownExtensibilityElement unknownExtensibilityElement = (UnknownExtensibilityElement) extensibilityEle;
+                        Element element = unknownExtensibilityElement.getElement();
+                        if (AddressingConstants.ENDPOINT_REFERENCE.equals(element.getLocalName())){
+                            NodeList nodeList = element.getChildNodes();
+                            Node node = null;
+                            Element currentElement = null;
+                            for (int j = 0; j < nodeList.getLength(); j++) {
+                                node = nodeList.item(j);
+                                if (node instanceof Element){
+                                    currentElement = (Element) node;
+                                    if (AddressingConstants.EPR_ADDRESS.equals(currentElement.getLocalName())) {
+                                        String exsistingAddress = currentElement.getTextContent();
+                                        if (requestIP == null) {
+                                            if (endpoint != null) {
+                                                currentElement.setTextContent(endpoint.calculateEndpointURL());
+                                            } else {
+                                                currentElement.setTextContent(getLocationURI(getEPRs(), exsistingAddress));
+                                            }
+                                        } else {
+                                            if (endpoint != null) {
+                                                currentElement.setTextContent(endpoint.calculateEndpointURL(requestIP));
+                                            } else {
+                                                currentElement.setTextContent(getLocationURI(calculateEPRs(requestIP),exsistingAddress));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 				}
 			}
 		}
