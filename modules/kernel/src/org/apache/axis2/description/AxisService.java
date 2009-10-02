@@ -543,7 +543,31 @@ public class AxisService extends AxisDescription {
 				if (wsamappings != null) {
 					for (int j = 0, size = wsamappings.size(); j < size; j++) {
 						String mapping = (String) wsamappings.get(j);
-						mapActionToOperation(mapping, axisOperation);
+                        //If there is already an operation with this action
+						//mapping (e.g. if the service has a matching operation)
+						//then we're going to check to see if the module's
+						//operation says that it's OK to be overridden and
+						//if so, we'll simply ignore the mapping, otherwise
+						//we continue as before
+						AxisOperation mappedOperation = getOperationByAction(mapping);
+						if ((mappedOperation != null)
+						    && (axisOperation.isParameterTrue(DeploymentConstants.TAG_ALLOWOVERRIDE))) {
+						  if (log.isDebugEnabled()) {
+						    log
+						    .debug("addModuleOperations: Mapping already exists for action: "
+						           + mapping
+						           + " to operation: "
+						           + axisOperation
+						           + " named: "
+						           + axisOperation.getName()
+						           + " and an override is allowed, so the module mapping for module: "
+						           + module.getName()
+						           + " is being ignored.");
+						    log.debug(JavaUtils.callStackToString());
+						  }
+						} else {
+						  mapActionToOperation(mapping, axisOperation);
+						}
 					}
 				}
 				// If we've set the "expose" parameter for this operation, it's
@@ -793,6 +817,29 @@ public class AxisService extends AxisDescription {
 							+ "; operation: "
 							+ axisOperation
 							+ "named: " + axisOperation.getName());
+              log.debug(JavaUtils.callStackToString());
+		}
+                      
+		//If there is already an operation with this action
+		//mapping then we're going to check to see if the
+		//operation says that it's OK to be overridden and
+		//if so, we'll simply ignore the mapping, otherwise
+		//we continue as before
+		AxisOperation mappedOperation = getOperationByAction(action);
+		if ((mappedOperation != null)
+		    && (axisOperation.isParameterTrue(DeploymentConstants.TAG_ALLOWOVERRIDE))) {
+		  if (log.isDebugEnabled()) {
+		    log
+		    .debug("addModuleOperations: Mapping already exists for action: "
+		           + action
+		           + " to operation: "
+		           + axisOperation
+		           + " named: "
+		           + axisOperation.getName()
+		           + " and an override is allowed, so the mapping is being ignored.");
+		    log.debug(JavaUtils.callStackToString());
+		  }
+		  return;		
 		}
 
 		// First check if this action has already been flagged as invalid

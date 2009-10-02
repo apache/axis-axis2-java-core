@@ -24,6 +24,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
@@ -173,6 +174,32 @@ public class AxisServiceTest extends TestCase {
         
         // Verify success
         assertTrue("SUCCESSFUL".equals(mc.getProperty("MESSAGE_PROPERTY")));
+    }
+    
+    public void testOperationActionMapping() throws Exception {
+        AxisService service = new AxisService();
+                
+        AxisOperation op1 = new InOutAxisOperation();
+        AxisOperation op2 = new InOutAxisOperation();
+        op2.addParameter(DeploymentConstants.TAG_ALLOWOVERRIDE, "true");
+        AxisOperation op3 = new InOutAxisOperation();
+        
+        service.mapActionToOperation("testaction1", op1);
+        assertEquals(service.getOperationByAction("testaction1"), op1);
+        //Test duplicate registration with same operation
+        service.mapActionToOperation("testaction1", op1);
+        assertEquals(service.getOperationByAction("testaction1"), op1);
+        //Test duplicate registration with different operation and allowOverride
+        service.mapActionToOperation("testaction1", op2);
+        assertEquals(service.getOperationByAction("testaction1"), op1);
+        //Test registration of new operation with allowOverride
+        service.mapActionToOperation("testaction2", op2);
+        assertEquals(service.getOperationByAction("testaction1"), op1);
+        assertEquals(service.getOperationByAction("testaction2"), op2);
+        //Test duplicate registration with different operation and no allowOverride
+        service.mapActionToOperation("testaction1", op3);
+        assertNull(service.getOperationByAction("testaction1"));
+        assertEquals(service.getOperationByAction("testaction2"), op2);
     }
     
     /**

@@ -35,6 +35,8 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -49,6 +51,7 @@ import java.util.Iterator;
  * Builds a module description from OM
  */
 public class ModuleBuilder extends DescriptionBuilder {
+    private static final Log log = LogFactory.getLog(ModuleBuilder.class);
     private AxisModule module;
 
     public ModuleBuilder(InputStream serviceInputStream, AxisModule module,
@@ -129,7 +132,12 @@ public class ModuleBuilder extends DescriptionBuilder {
                     module.setName(moduleName);
                 }
             }
-
+            
+            if (log.isDebugEnabled()) {
+              log.debug("populateModule: Building module description for: "
+                        + module.getName());
+            }
+                        
             // Process service description
             OMElement descriptionElement =
                     moduleElement.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -216,6 +224,10 @@ public class ModuleBuilder extends DescriptionBuilder {
                 module.addOperation(op);
             }
 
+            if (log.isDebugEnabled()) {
+              log.debug("populateModule: Done building module description");
+            }
+                        
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch(AxisFault e) {
@@ -259,6 +271,26 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             op_descrip.setName(new QName(opname));
 
+            //Check for the allowOverride attribute
+            OMAttribute op_allowOverride_att = operation.getAttribute(new QName(TAG_ALLOWOVERRIDE));
+            if (op_allowOverride_att != null) {
+              try {
+                op_descrip.addParameter(TAG_ALLOWOVERRIDE, op_allowOverride_att.getAttributeValue());
+              } catch (AxisFault axisFault) {
+                throw new DeploymentException(
+                            Messages.getMessage(
+                                    Messages.getMessage(
+                                            DeploymentErrorMsgs.PARAMETER_LOCKED,
+                                            axisFault.getMessage())));
+                      
+              }
+              if (log.isDebugEnabled()) {
+                log.debug("processOperations: allowOverride set to "
+                          + op_allowOverride_att.getAttributeValue()
+                          + " for operation: "+opname);
+              }
+            }
+            
             // Operation Parameters
             Iterator parameters = operation.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(parameters, op_descrip, module);
