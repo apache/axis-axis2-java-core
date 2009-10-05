@@ -1453,7 +1453,7 @@
                             </includes>
                         </resource>
                         <resource>
-                            <directory>${basedir}/../kernel/conf</directory>
+                            <directory>${basedir}/conf</directory>
                             <targetPath>WEB-INF/conf</targetPath>
                             <includes>
                                 <include>axis2.xml</include>
