@@ -621,8 +621,8 @@ public class AxisServlet extends HttpServlet {
         initContextRoot(req);
 
         TransportInDescription transportInDescription =
-                req.isSecure()? this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTP) :
-                        this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTPS);
+                req.isSecure()? this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTPS) :
+                        this.axisConfiguration.getTransportIn(Constants.TRANSPORT_HTTP);
 
         if (transportInDescription == null){
             throw new ServletException(req.getScheme() + " is forbidden");
