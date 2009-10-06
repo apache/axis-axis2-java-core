@@ -35,9 +35,11 @@ the 1.5 release.
 
 <ul>
  <li>Fix for the dreaded "CLOSE_WAIT" problem (JIRA issues 935, 2883, etc).  We now share an instance of HTTPClient across each ConfigurationContext (i.e. each Axis2 server or ServiceClient) - connection reuse is now automatic.  This means <b>the REUSE_HTTP_CLIENT flag is no longer necessary or useful, nor is creating your own MultithreadedHttpConnectionManager</b>.</li>
+ <li>Another important part of this fix involves automatically releasing the last OperationContext's resources each time ServiceClient.sendReceive() is called for blocking operations.  This behavior is controlled by setting the ServiceClient.AUTO_RELEASE_CONNECTION property in the Options class - the default is true, but if you want to turn it off you can call <code>options.setProperty(ServiceClient.AUTO_RELEASE_CONNECTION, false)</code> (note that if you do this you'll need to ensure that the transport connection is cleaned up some other way, such as by manually calling cleanupTransport() on your client or stub).</li>
  <li>Transport deployer is now actually functional, and getListenerManager() in ConfigurationContext now creates a new LM if there isn't one already.</li>
  <li>Fix for AXIS2-4034, module versions now support real versions like "1.5.1"</li>
  <li>NPE problem (see AXIS2-4114) fixed in MessageContext while retrieving policy.</li>
+ <li>Fix a dependency problem with the JavaDocs build</li>
 </ul>
 
 <h4>Known Issues and Limitations in the @axisVersion@ Release:</h4>
