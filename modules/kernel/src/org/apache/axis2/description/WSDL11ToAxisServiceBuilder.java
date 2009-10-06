@@ -2043,6 +2043,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                              xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             // always child attribute should be in no namespace
             child.setAttribute("form", "unqualified");
+            child.setAttribute("nillable", "true");
 
             String prefix;
             if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())) {
