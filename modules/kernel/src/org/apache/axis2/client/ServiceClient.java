@@ -50,6 +50,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.Counter;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,6 +70,9 @@ public class ServiceClient {
 
     /** Base name used for a service created without an existing configuration. */
     public static final String ANON_SERVICE = "anonService";
+
+    /** Option property name for automatically cleaning up old OperationContexts */
+    public static final String AUTO_OPERATION_CLEANUP = "ServiceClient.autoOperationCleanup";
 
     /** Counter used to generate the anonymous service name. */
     private static Counter anonServiceCounter = new Counter();
@@ -654,6 +658,13 @@ public class ServiceClient {
      * @throws AxisFault if the operation is not found
      */
     public OperationClient createClient(QName operationQName) throws AxisFault {
+        // If we're configured to do so, clean up the last OperationContext (thus
+        // releasing its resources) each time we create a new one.
+        if (JavaUtils.isTrue(getOptions().getProperty(AUTO_OPERATION_CLEANUP), true) &&
+                !getOptions().isUseSeparateListener()) {
+            cleanupTransport();
+        }
+
         AxisOperation axisOperation = axisService.getOperation(operationQName);
         if (axisOperation == null) {
             throw new AxisFault(Messages
@@ -790,8 +801,11 @@ public class ServiceClient {
     }
 
     protected void finalize() throws Throwable {
-        super.finalize();
-        cleanup();
+        try {
+            cleanup();
+        } finally {
+            super.finalize();
+        }
     }
 
     /**
@@ -837,9 +851,10 @@ public class ServiceClient {
      * @throws AxisFault
      */
     public void cleanupTransport() throws AxisFault {
-        if (getLastOperationContext() != null) {
+        final OperationContext lastOperationContext = getLastOperationContext();
+        if (lastOperationContext != null) {
             MessageContext outMessageContext =
-                    getLastOperationContext()
+                    lastOperationContext
                             .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             if (outMessageContext != null) {
                 outMessageContext.getTransportOut().getSender().cleanup(outMessageContext);
