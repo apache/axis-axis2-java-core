@@ -59,8 +59,6 @@ the Server and Client APIs. As its name implies, it is based on <a
 For maximum flexibility, this sender supports both the HTTP GET and POST interfaces.
 (REST in Axis2 also supports both interfaces.)</p>
 
-<h3>Reuse and Releasing Connections</h3>
-
 <p>Axis2 uses a single HTTPClient instance per ConfigurationContext (which usually means per instance
 of ServiceClient).  This pattern allows for HTTP 1.1 to automatically reuse TCP connections - in earlier versions of Axis2 the REUSE_HTTP_CLIENT configuration property was necessary to enable this functionality, but as of 1.5 this is no longer necessary.</p>
 
