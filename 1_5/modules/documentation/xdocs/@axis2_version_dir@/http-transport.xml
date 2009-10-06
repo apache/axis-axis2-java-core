@@ -19,7 +19,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" version="-//W3C//DTDXHTML1.1//EN">
 <head>
   <meta http-equiv="content-type" content=""/>
   <title>HTTP transports</title>
@@ -54,11 +54,18 @@ as the transport mechanism.</p>
 <h2>CommonsHTTPTransportSender</h2>
 
 <p>CommonsHTTPTransportSender is the transport sender that is used by default in both
-the Server and Client APIs. As its name implies, it is based on commons-httpclient-3.0.1. 
+the Server and Client APIs. As its name implies, it is based on <a
+        xmlns="http://www.w3.org/1999/xhtml" xml:space="preserve" href="http://hc.apache.org/httpclient-3.x/">commons-httpclient-3.1</a>.
 For maximum flexibility, this sender supports both the HTTP GET and POST interfaces.
 (REST in Axis2 also supports both interfaces.)</p>
 
+<h3>Reuse and Releasing Connections</h3>
+
+<p>Axis2 uses a single HTTPClient instance per ConfigurationContext (which usually means per instance
+of ServiceClient).  This pattern allows for HTTP 1.1 to automatically reuse TCP connections - in earlier versions of Axis2 the REUSE_HTTP_CLIENT configuration property was necessary to enable this functionality, but as of 1.5 this is no longer necessary.</p>
+
 <p>Commons HttpClient also provides HTTP 1.1, Chunking and KeepAlive support for Axis2.</p>
+
 
 <p>The &lt;transportSender/&gt; element defines transport senders in
 the axis2.xml configuration file as follows:</p>
