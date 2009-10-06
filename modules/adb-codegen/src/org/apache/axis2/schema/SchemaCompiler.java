@@ -470,6 +470,12 @@ public class SchemaCompiler {
             //find the class name
             String className = findClassName(qName, isArray(xsElt));
 
+            // element declared at the top level and have simple types may
+            // use primitive type if we do not add this check
+            if (options.isUseWrapperClasses() && PrimitiveTypeFinder.isPrimitive(className)) {
+                className = PrimitiveTypeWrapper.getWrapper(className);
+            }
+
             //this means the schema type actually returns a different QName
             if (changedTypeMap.containsKey(qName)) {
                 metainf.registerMapping(xsElt.getQName(),
@@ -597,9 +603,7 @@ public class SchemaCompiler {
 
                     // always store the class name in the element meta Info itself
                     // this details only needed by the unwrappig to set the complex type
-                    if (options.isUseWrapperClasses() &&
-                            PrimitiveTypeFinder.isPrimitive(className) &&
-                            ((xsElt.getMinOccurs() == 0) || (xsElt.isNillable()))) {
+                    if (options.isUseWrapperClasses() && PrimitiveTypeFinder.isPrimitive(className)) {
                           className = PrimitiveTypeWrapper.getWrapper(className);
                     }
                     schemaType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
