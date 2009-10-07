@@ -577,6 +577,7 @@ public class SchemaCompiler {
                     SchemaCompilerMessages.getMessage("schema.elementNull"));
         }
 
+
         //The processing element logic seems to be quite simple. Look at the relevant schema type
         //for each and every element and process that accordingly.
         //this means that any unused type definitions would not be generated!
