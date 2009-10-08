@@ -21,6 +21,9 @@ package org.apache.axis2.jaxws.message;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * This is a value class that is an agnostic representation of a fault. The XMLFault can be added to
@@ -33,6 +36,8 @@ import javax.xml.namespace.QName;
  */
 public class XMLFault {
 
+    private static Log log = LogFactory.getLog(XMLFault.class);
+    
     // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
     // structure of XMLFault.
     // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
@@ -102,6 +107,9 @@ public class XMLFault {
         this.code = code;
         this.reason = reason;
         this.detailBlocks = detailBlocks;
+        if (log.isDebugEnabled()) {
+            log.debug("Created XMLFault:" + this.dump(""));
+        }
     }
 
 
@@ -181,5 +189,35 @@ public class XMLFault {
         this.subCodes = subCodes;
     }
 
+    /**
+     * dump contents, used for debugging
+     * @return String containing contents of XMLFault
+     */
+    public String dump(String indent) {
+        String text = "";
+        final String NL = "\n";
+        try {
+            text += indent + "XMLFault " + this + NL;
+            text += indent + " code=   " + code.toQName("") + NL;
+            if (reason != null) {
+                text += indent + " reason= " + reason.getText() + NL;
+            } else {
+                text += indent + " reason= null" + NL;
+            }
+            text += indent + " role   =" + role + NL;
+            text += indent + " node   =" + node + NL;
+            if (detailBlocks == null) {
+                text += indent + " no detail blocks" + NL;
+            } else {
+                for (int i=0; i<detailBlocks.length; i++) {
+                    text += indent + " detail= " + detailBlocks[i].getQName();
+                }
+            }
+            
+        } catch (Exception e) {
+            text += "Could not dump the XMLFault due to exception " + e;
+        }
+        return text;
+    }
 }
 

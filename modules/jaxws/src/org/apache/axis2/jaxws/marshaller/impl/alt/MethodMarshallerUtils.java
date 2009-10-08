@@ -1167,8 +1167,25 @@ public class MethodMarshallerUtils {
 
         // If there is only one block, get the element name of that block.
         QName elementQName = null;
-        if (detailBlocks != null && detailBlocks.length == 1) {
+        if (detailBlocks != null && detailBlocks.length >= 1) {
             elementQName = detailBlocks[0].getQName();
+            if (log.isDebugEnabled()) {
+                if (detailBlocks.length > 1) {
+                    log.debug("The detail element has multiple child elements.  " +
+                            "Only the first child is examined to determine if this is a service exception.  " + 
+                            "If this first detail child is mapped to a service exception, " + 
+                            "the information in other detail children may be ignored.  " + 
+                            "The most common scenario is that the second child is a " +
+                            "{http://jax-ws.dev.java.net/}exception element, which is used " +
+                            "by some vendors for debugging. ");
+                }
+            }
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("element QName which will be used to find a service exception = " + elementQName);
+            log.debug("XMLFault Dump = " +xmlfault.dump(""));
+            log.debug("OperationDesc Dump =" + operationDesc);
         }
 
         // Use the element name to find the matching FaultDescriptor
