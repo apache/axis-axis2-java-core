@@ -27,20 +27,25 @@ import javax.activation.DataHandler;
 
 public class Base64BinaryTest extends AbstractTestCase {
 
-    public void testBase64Binary() throws Exception {
+    private void testBase64Binary(DataHandler dataHandler) throws Exception {
         TestBase64Binary testBase64Binary = new TestBase64Binary();
         Base64Binary base64Binary = new Base64Binary();
         testBase64Binary.setTestBase64Binary(base64Binary);
 
-        String testString = "new test string";
-
-        DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(testString.getBytes()));
         base64Binary.setBase64Binary(dataHandler);
         ContentType_type0 contentType_type0 = new ContentType_type0();
         contentType_type0.setContentType_type0("test content type");
         base64Binary.setContentType(contentType_type0);
 
         testSerializeDeserialize(testBase64Binary, false);
+    }
+
+    public void testBase64Binary() throws Exception {
+        testBase64Binary(new DataHandler(new ByteArrayDataSource("new test string".getBytes())));
+    }
+
+    public void testBase64BinaryEmpty() throws Exception {
+        testBase64Binary(new DataHandler(new ByteArrayDataSource(new byte[0])));
     }
 
     public void testHexBinary() throws Exception {

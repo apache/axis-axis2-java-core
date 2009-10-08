@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -47,9 +48,12 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.mime.MultipartWriter;
+import org.apache.axiom.mime.impl.javamail.JavaMailMultipartWriterFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.OMMultipartWriter;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -302,6 +306,7 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserializeWrapped(bean, expectedResult);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, true);
         testSerializeDeserializeUsingMTOM(bean, expectedResult, false);
+        testSerializeDeserializeUsingMTOMWithoutOptimize(bean, expectedResult);
         testSerializeDeserializePrettified(bean, expectedResult);
         
         try {
@@ -319,6 +324,7 @@ public abstract class AbstractTestCase extends TestCase {
         testSerializeDeserializeWrapped(helperModeBean, helperModeExpectedResult);
         testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, true);
         testSerializeDeserializeUsingMTOM(helperModeBean, helperModeExpectedResult, false);
+        testSerializeDeserializeUsingMTOMWithoutOptimize(helperModeBean, helperModeExpectedResult);
         testSerializeDeserializePrettified(helperModeBean, helperModeExpectedResult);
     }
     
@@ -376,6 +382,26 @@ public abstract class AbstractTestCase extends TestCase {
         MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream()), attachments);
         OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
         assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), cache ? bodyElement.getXMLStreamReader() : bodyElement.getXMLStreamReaderWithoutCaching()));
+    }
+    
+    // This is a bit special: it serializes the message using MTOM, but without using any xop:Include. This checks
+    // that MTOM decoding works properly even if the client uses unoptimized base64.
+    private static void testSerializeDeserializeUsingMTOMWithoutOptimize(Object bean, Object expectedResult) throws Exception {
+        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        envelope.getBody().addChild(ADBBeanUtil.getOMElement(bean));
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        OMOutputFormat format = new OMOutputFormat();
+        MultipartWriter mpWriter = JavaMailMultipartWriterFactory.INSTANCE.createMultipartWriter(buffer, format.getMimeBoundary());
+        OutputStream rootPartWriter = mpWriter.writePart("application/xop+xml; charset=UTF-8; type=\"text/xml\"", "binary", format.getRootContentId());
+        envelope.serialize(rootPartWriter, format);
+        rootPartWriter.close();
+        mpWriter.complete();
+        System.out.write(buffer.toByteArray());
+        String contentType = format.getContentTypeForMTOM("text/xml");
+        Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
+        MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream()), attachments);
+        OMElement bodyElement = builder.getSOAPEnvelope().getBody().getFirstElement();
+        assertBeanEquals(expectedResult, ADBBeanUtil.parse(bean.getClass(), bodyElement.getXMLStreamReaderWithoutCaching()));
     }
     
     // This is used to check that ADB correctly handles element whitespace
