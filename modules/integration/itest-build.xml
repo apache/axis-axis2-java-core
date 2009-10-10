@@ -153,7 +153,7 @@
 	<target name="wsdl20-codegen">
 		<echo>Running codegen for WSDL 2.0</echo>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-			<classpath refid="maven.dependency.classpath"/>
+			<classpath refid="maven.runtime.classpath"/>
 			<arg line="-wv 2.0 -ap -o target/wsdl20-test -s -uri test-resources/wsdl20/HotelReservationService.wsdl"/>
 		</java>
 		<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl20-test"
