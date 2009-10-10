@@ -396,7 +396,7 @@ public abstract class AbstractTestCase extends TestCase {
         envelope.serialize(rootPartWriter, format);
         rootPartWriter.close();
         mpWriter.complete();
-        System.out.write(buffer.toByteArray());
+//        System.out.write(buffer.toByteArray());
         String contentType = format.getContentTypeForMTOM("text/xml");
         Attachments attachments = new Attachments(new ByteArrayInputStream(buffer.toByteArray()), contentType);
         MTOMStAXSOAPModelBuilder builder = new MTOMStAXSOAPModelBuilder(StAXUtils.createXMLStreamReader(attachments.getSOAPPartInputStream()), attachments);
