@@ -50,6 +50,7 @@ import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -493,6 +494,10 @@ public abstract class AbstractHTTPSender {
 //                connManager.setParams(params);
 
                 httpClient = new HttpClient(connManager);
+                HttpClientParams clientParams = new HttpClientParams();
+                // Set the default timeout in case we have a connection pool starvation to 30sec
+                clientParams.setConnectionManagerTimeout(30000);
+                httpClient.setParams(clientParams);
                 configContext.setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
             }
 
