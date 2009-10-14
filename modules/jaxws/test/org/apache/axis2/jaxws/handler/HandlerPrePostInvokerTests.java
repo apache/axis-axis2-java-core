@@ -45,6 +45,7 @@ public class HandlerPrePostInvokerTests extends TestCase {
 	private MessageContext mc = null;
 	private boolean preInvokerCalled = false;
 	private boolean postInvokerCalled = false;
+    private boolean messageAccessed = false;
 	
 	private static final String soap11env = "http://schemas.xmlsoap.org/soap/envelope/";
 	
@@ -113,13 +114,40 @@ public class HandlerPrePostInvokerTests extends TestCase {
         assertTrue("processChain should have succeeded", success);
         assertTrue("preInvoker should have been called", preInvokerCalled);
         assertTrue("postInvoker should have been called", postInvokerCalled);
+        assertTrue("Handler did not access message but messageAccessed property is true.", !messageAccessed);
 
 	}
-	
-	/*****************************************
-	 * Classes needed for junit testcase     *
-	 *****************************************/
-	
+
+    public void testPostInvokerMessageAccessed() {
+        
+        FactoryRegistry.setFactory(HandlerPostInvokerFactory.class, new HandlerPostInvokerFactoryImpl());
+        
+        ArrayList<Handler> handlers = new ArrayList<Handler>();
+        handlers.add(new SOAPHandlerGetsMessage());
+        HandlerChainProcessor processor =
+                new HandlerChainProcessor(handlers, Protocol.soap11);
+        boolean success = true;
+        try {
+            // server-side incoming request
+            success = processor.processChain(mc.getMEPContext(),
+                                    HandlerChainProcessor.Direction.IN,
+                                    HandlerChainProcessor.MEP.REQUEST,
+                                    true);
+        } catch (Exception e) {
+            assertNull(e);  // should not get exception
+        }
+        
+        assertTrue("processChain should have succeeded", success);
+        assertTrue("postInvoker should have been called", postInvokerCalled);
+        assertTrue("Handler did access message but messageAccessed property is false.", messageAccessed);
+
+
+    }
+
+    /*****************************************
+     * Classes needed for junit testcase     *
+     *****************************************/
+    
     private class SOAPHandler1 implements SOAPHandler<SOAPMessageContext> {
 
         public Set getHeaders() {
@@ -134,7 +162,30 @@ public class HandlerPrePostInvokerTests extends TestCase {
         }
 
         public boolean handleMessage(SOAPMessageContext messagecontext) {
-        	return true;
+            return true;
+        }
+
+    }
+    /*****************************************
+     * Classes needed for junit testcase     *
+     *****************************************/
+    
+    private class SOAPHandlerGetsMessage implements SOAPHandler<SOAPMessageContext> {
+
+        public Set getHeaders() {
+            return null;
+        }
+
+        public void close(javax.xml.ws.handler.MessageContext messagecontext) {
+        }
+
+        public boolean handleFault(SOAPMessageContext messagecontext) {
+            return true;
+        }
+
+        public boolean handleMessage(SOAPMessageContext messagecontext) {
+            messagecontext.getMessage();
+            return true;
         }
 
     }
@@ -160,6 +211,15 @@ public class HandlerPrePostInvokerTests extends TestCase {
     private class HandlerPostInvokerImpl implements HandlerPostInvoker {
 		public void postInvoke(javax.xml.ws.handler.MessageContext mc) {
 			postInvokerCalled = true;
+            if (mc instanceof SoapMessageContext) {
+                SoapMessageContext smc = (SoapMessageContext) mc;
+                // PK96521 - before getting the message (which is expensive) check first to 
+                // see if it was actually accessed by the handlers
+                messageAccessed = false;
+                if (smc.containsKey("jaxws.isMessageAccessed")) {
+                    messageAccessed = (Boolean)(smc.get("jaxws.isMessageAccessed"));
+                }
+            }
 		}
     }
 }

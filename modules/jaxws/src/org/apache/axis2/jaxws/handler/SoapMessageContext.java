@@ -128,6 +128,11 @@ public class SoapMessageContext extends BaseMessageContext implements
     }
 
     public SOAPMessage getMessage() {
+        // set a property to indicate that we are accessing the message
+        if(log.isDebugEnabled()){
+            log.debug("getMessage - accessing message.");
+        }
+        this.put("jaxws.isMessageAccessed", true);
         Message msg = messageCtx.getMEPContext().getMessageObject();
         if (msg != cachedMessage) {
             cachedMessage = msg;
