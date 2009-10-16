@@ -675,7 +675,7 @@ public class XMLFaultUtils {
         // Set the Node...only applicable for SOAP 1.2
         if (xmlFault.getNode() != null && protocolNS.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE))
         {
-            soapFault.setFaultRole(xmlFault.getNode());
+            soapFault.setFaultNode(xmlFault.getNode());
         }
 
         return soapFault;

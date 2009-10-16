@@ -91,4 +91,37 @@ public class XMLFaultTest extends TestCase {
 
     }
     
+    /**
+     * Tests that Role and Node
+     * are set properly on SOAP 1.2 Fault.
+     * @throws Exception
+     */
+    public void testCustomRoleNodeFault12() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage sm = mf.createMessage();
+        SOAPBody body = sm.getSOAPBody();
+        
+        SOAPFault fault = body.addFault();
+        fault.setFaultRole("TestRole");
+        fault.setFaultNode("http://XMLFaultTest/testCustomRoleNodeFault/");
+        
+        XMLFault xmlFault = XMLFaultUtils.createXMLFault(fault);
+        
+        SOAPFault retFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
+        
+        assertTrue(retFault != null);
+        
+        String role = retFault.getFaultRole();
+        assertTrue(role != null);
+        assertTrue(role.equals("TestRole"));
+        
+        // Actor and role should be the same
+        String actor = retFault.getFaultActor();
+        assertTrue(actor != null);
+        assertTrue(actor.equals("TestRole"));
+
+        String node = retFault.getFaultNode();
+        assertTrue(node != null);
+        assertTrue(node.equals("http://XMLFaultTest/testCustomRoleNodeFault/"));
+    }
 }
