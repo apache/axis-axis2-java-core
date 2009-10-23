@@ -30,22 +30,23 @@ media="all" />
 </head>
 <body lang="en" xml:lang="en">
 <h1>Welcome to Apache Axis2/Java</h1>
-<p>Based on the Axis2 architecture, there are two implementations
+<p>Axis2 is a Web Services / SOAP / WSDL engine, the successor to the
+widely used <a href=
+"http://ws.apache.org/axis/">Apache Axis</a> SOAP stack.
+There are two implementations
 of the Apache Axis2 Web services engine - Apache Axis2/Java and
 Apache Axis2/C</p>
 <p>While you will find all the information on Apache Axis2/Java
 here, you can visit the <a href=
 "http://ws.apache.org/axis2/c/"><strong>Apache Axis2/C</strong></a>
 Web site for Axis2/C implementation information.</p>
-<h2>May 29, 2009 - Apache Axis2/Java Version 1.5 Released!</h2>
-<p>The 1.5 version fixes a large number of <a href="http://issues.apache.org/jira/browse/AXIS2">bugs</a>, adds better pluggability for transports, and includes clustering upgrades (including clustering support on EC2).</p>
+<h3>October 23, 2009 - Apache Axis2/Java Version 1.5.1 Released!</h3>
+<p>The 1.5.1 version fixes some <a href="http://issues.apache.org/jira/browse/AXIS2">bugs</a>, including most notably a connection starvation issue that would cause a large number of sockets stuck in CLOSE_WAIT or TIME_WAIT.</p>
+<p><b>PLEASE NOTE:</b> As of Axis2 1.5, we now <i>require</i> JDK 1.5 or above.  JDKs 1.4 or previous are no longer supported.</p>
 <p>[ <a href=
 "http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
-] | [ <a href="1_5/index.html"><strong>Documents Home</strong></a>
+] | [ <a href="1_5_1/contents.html"><strong>Documents Home</strong></a>
 ]</p>
-<p>Apache Axis2 is the core engine for Web services. It is a
-complete re-design and re-write of the widely used <a href=
-"http://ws.apache.org/axis/">Apache Axis</a> SOAP stack.</p>
 <p>Please see the <a href="http://ws.apache.org/axis/ref.html">Axis
 Reference Library</a> for a list of technical resources that should
 prove useful on this project.</p>
