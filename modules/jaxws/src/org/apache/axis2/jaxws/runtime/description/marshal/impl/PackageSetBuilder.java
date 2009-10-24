@@ -295,33 +295,75 @@ public class PackageSetBuilder {
         }
 
         // Also consider the request and response wrappers
-        String pkg = getPackageFromClassName(msrd.getRequestWrapperClassName(opDesc));
+        String requestWrapperPkg = getPackageFromClassName(msrd.getRequestWrapperClassName(opDesc));
         if (log.isDebugEnabled()) {
-            log.debug("Package from Request Wrapper annotation = " + pkg);
+            log.debug("Package from Request Wrapper annotation = " + requestWrapperPkg);
         }
-        if (pkg != null) {
-            set.add(pkg);
+        if (requestWrapperPkg != null) {
+            set.add(requestWrapperPkg);
         }
-        pkg = getPackageFromClassName(msrd.getResponseWrapperClassName(opDesc));
+        String responseWrapperPkg = getPackageFromClassName(msrd.getResponseWrapperClassName(opDesc));
         if (log.isDebugEnabled()) {
-            log.debug("Package from Response Wrapper annotation = " + pkg);
+            log.debug("Package from Response Wrapper annotation = " + responseWrapperPkg);
         }
-        if (pkg != null) {
-            set.add(pkg);
+        if (responseWrapperPkg != null) {
+            set.add(responseWrapperPkg);
+        }
+        
+        // In most doc/literal cases, the @RequestWrapper or @ResponseWrapper classes are successfully found.
+        // The wrapper classes contain the representation of the parameters, thus the parameters don't need
+        // to be separately processed.
+        // However if the @RequestWrapper or @ResponseWrappers are not found, then the parameters must be examined.
+        if (requestWrapperPkg == null || responseWrapperPkg == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Collect the packages of the parameters");
+            }
+            addPackagesFromParameters(set, opDesc) ;          
         }
 
         // Finally consider the result type
         Class cls = opDesc.getResultActualType();
         if (cls != null && cls != void.class && cls != Void.class) {
-            Package returnTypePkg = cls.getPackage();
+            String pkg = getPackageFromClass(cls);
             if (log.isDebugEnabled()) {
                 log.debug("Package from Return Type = " + pkg);
             }
-            if (returnTypePkg != null) {
-                pkg = returnTypePkg.getName();
+            if (pkg != null) {
                 set.add(pkg);
             }
         }
+    }
+    
+    
+    /**
+     * addPackagesFromParameters
+     * @param set  Set of packages
+     * @param opDesc OperationDesc containing ParameterDescs
+     */
+    private static void addPackagesFromParameters(TreeSet<String> set, OperationDescription opDesc) {
+        ParameterDescription[] pDescs = opDesc.getParameterDescriptions();
+        if (pDescs != null) {
+            for (int i=0; i<pDescs.length; i++) {
+                ParameterDescription pDesc = pDescs[i];
+                if (pDesc != null) {
+                    // Get the actual type of the parameter.
+                    // For example if the parameter is Holder<A>, the A.class is
+                    // returned.
+                    // TODO Unfortunately the ParameterDescriptor only provides
+                    // the class, not the full generic.  So if the parameter
+                    // is List<A>, only List is returned.  The ParameterDescriptor
+                    // and this logic will need to be improved to handle that case.
+                    Class paramClass = pDesc.getParameterActualType();
+                    String pkg = getPackageFromClass(paramClass);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Package from Parameter (" + paramClass + ") = " + pkg);
+                    }
+                    if (pkg != null) {
+                        set.add(pkg);
+                    }
+                }
+            }
+        }    
     }
 
     /**
@@ -488,16 +530,38 @@ public class PackageSetBuilder {
 
     /**
      * Return the package associated with the class name.  The className may not be specified (in
-     * which case a null Package is returned). if class has unnamed package return ""
+     * which case a null Package is returned). 
+     * If class has anunnamed package return ""
      *
      * @param className String (may be null or empty)
-     * @return Package or null if problems occur
+     * @return String or null if problems occur
      */
-    private static String getPackageFromClassName(String className) {
+    public static String getPackageFromClassName(String className) {
         Class clz = loadClass(className);
-        String pkg =
-                (clz == null) ? null : (clz.getPackage() == null) ? "" : clz.getPackage().getName();
+        String pkg = getPackageFromClass(clz);
         return pkg;
+    }
+    
+    /**
+     * Return the package associated with the class name.  The className may not be specified (in
+     * which case a null Package is returned). if class has unnamed package return ""
+     *
+     * @param cls Class
+     * @return String or null 
+     */
+    public static String getPackageFromClass(Class cls) {
+        String pkgName = null;
+        if (cls == null) {
+            pkgName = null;
+        } else if (cls.isArray()) {
+            pkgName = getPackageFromClass(cls.getComponentType());
+        } else if (cls.isPrimitive()) {
+            pkgName = null;
+        } else {
+            pkgName =
+                (cls.getPackage() == null) ? "" : cls.getPackage().getName(); 
+        }
+        return pkgName;
     }
 
     private static void addXmlSeeAlsoPackages(Class clz, 

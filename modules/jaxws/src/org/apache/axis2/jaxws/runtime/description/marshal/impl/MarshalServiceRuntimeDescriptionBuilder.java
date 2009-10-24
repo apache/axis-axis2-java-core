@@ -81,6 +81,7 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         marshalDesc.setRequestWrapperMap(artifactProcessor.getRequestWrapperMap());
         marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());
         marshalDesc.setFaultBeanDescMap(artifactProcessor.getFaultBeanDescMap());
+        marshalDesc.setMethodMap(artifactProcessor.getMethodMap());
 
         if (log.isDebugEnabled()) {
     		log.debug("Build the annotations map");

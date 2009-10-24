@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.message.OccurrenceArray;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.util.XMLStreamWriterWithOS;
 import org.apache.axis2.jaxws.spi.Constants;
@@ -31,6 +32,8 @@ import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.ibm.keymanager.audit.m;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -139,6 +142,7 @@ public class JAXBDSContext {
     }
     
     public JAXBContext getJAXBContext() throws JAXBException {
+        
         return getJAXBContext(null);
     }
 
@@ -147,6 +151,16 @@ public class JAXBDSContext {
      * @throws JAXBException
      */
     public JAXBContext getJAXBContext(ClassLoader cl) throws JAXBException {
+        return getJAXBContext(null, false);
+    }
+    
+    /**
+     * @param ClassLoader
+     * @param forceArrays boolean (if true, then JAXBContext will automatically contain arrays)
+     * @return get the JAXBContext
+     * @throws JAXBException
+     */
+    public JAXBContext getJAXBContext(ClassLoader cl, boolean forceArrays) throws JAXBException {
         if (customerJAXBContext != null) {
             return customerJAXBContext;
         }
@@ -157,10 +171,19 @@ public class JAXBDSContext {
             jc = autoJAXBContext.get();
         }
         
+        if (forceArrays && 
+                jc != null &&
+                constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+            if (log.isDebugEnabled()) {
+                log.debug("A JAXBContext exists but it was not constructed with array class.  " +
+                    "The JAXBContext will be rebuilt.");
+            }
+            jc = null;
+        }
+        
         if (jc == null) {
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "A JAXBContext did not exist, creating a new one with the context packages.");
+                log.debug("Creating a JAXBContext with the context packages.");
             }
             Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType =
                     new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
@@ -168,7 +191,7 @@ public class JAXBDSContext {
             
             /*
              * We set the default namespace to the web service namespace to fix an
-             * obscur bug.
+             * obscure bug.
              * 
              * If the class representing a JAXB data object does not define a namespace
              * (via an annotation like @XmlType or via ObjectFactory or schema gen information)
@@ -187,7 +210,7 @@ public class JAXBDSContext {
                 properties = new HashMap<String, Object>();
                 properties.put(JAXBUtils.DEFAULT_NAMESPACE_REMAP, this.webServiceNamespace);
             }
-            jc = JAXBUtils.getJAXBContext(contextPackages, constructType, 
+            jc = JAXBUtils.getJAXBContext(contextPackages, constructType, forceArrays,
                                           contextPackagesKey, cl, properties);
             constructionType = constructType.value;
             autoJAXBContext = new WeakReference<JAXBContext>(jc);
@@ -321,13 +344,17 @@ public class JAXBDSContext {
      */
     public void marshal(Object obj, 
                         XMLStreamWriter writer) throws JAXBException {
+            if (log.isDebugEnabled()) {
+                log.debug("enter marshal");
+            }
             // There may be a preferred classloader that should be used
             ClassLoader cl = getClassLoader();
             
             
             // Very easy, use the Context to get the Marshaller.
             // Use the marshaller to write the object.
-            Marshaller m = JAXBUtils.getJAXBMarshaller(getJAXBContext(cl));
+            JAXBContext jbc = getJAXBContext(cl);
+            Marshaller m = JAXBUtils.getJAXBMarshaller(jbc);
             if (writer instanceof MTOMXMLStreamWriter && ((MTOMXMLStreamWriter) writer).getOutputFormat() != null) {
                 String encoding = ((MTOMXMLStreamWriter) writer).getOutputFormat().getCharSetEncoding();
                 if (encoding != null && !"UTF-8".equalsIgnoreCase(encoding)) {
@@ -364,9 +391,12 @@ public class JAXBDSContext {
                               getConstructionType(),
                               true); // Attempt to optimize by writing to OutputStream
             }
-
-            // Successfully marshalled the data
-            JAXBUtils.releaseJAXBMarshaller(getJAXBContext(cl), m);
+            
+            JAXBUtils.releaseJAXBMarshaller(jbc, m);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("exit marshal");
+            }
     }
     
     
@@ -416,8 +446,17 @@ public class JAXBDSContext {
             }});
     }
     
+    /**
+     * Print out the name of the class of the specified object
+     * @param o Object
+     * @return text to use for debugging
+     */
     private static String getDebugName(Object o) {
-        return (o == null) ? "null" : o.getClass().getCanonicalName();
+        String name = (o == null) ? "null" : o.getClass().getCanonicalName();
+        if (o instanceof JAXBElement) {
+            name += " containing " + getDebugName(((JAXBElement) o).getValue());
+        }
+        return name;
     }
 
     /**
@@ -671,7 +710,7 @@ public class JAXBDSContext {
         
         
             if (DEBUG_ENABLED) {
-                log.debug("Invoking unmarshaArray");
+                log.debug("Invoking unmarshalAsListOrArray");
             }
             
             // If this is an xsd:list, we need to return the appropriate
@@ -722,6 +761,11 @@ public class JAXBDSContext {
         return obj;
     }
 
+    private static boolean isOccurrenceArray(Object obj) {
+        return (obj instanceof JAXBElement) &&
+            (((JAXBElement)obj).getValue() instanceof OccurrenceArray);
+                
+    }
     /**
      * Marshal objects by type
      * 
@@ -735,12 +779,26 @@ public class JAXBDSContext {
      * @param optimize boolean set to true if optimization directly to 
      * outputstream should be attempted.
      */
-    private static void marshalByType(final Object b, final Marshaller m,
+    private void marshalByType(final Object b, final Marshaller m,
                                       final XMLStreamWriter writer, final Class type,
                                       final boolean isList, 
                                       final JAXBUtils.CONSTRUCTION_TYPE ctype,
                                       final boolean optimize) 
         throws WebServiceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter marshalByType b=" + getDebugName(b) + 
+                        " type=" + type + 
+                        " marshaller=" + m +
+                        " writer=" + writer +
+                        " isList=" + isList +
+                        " ctype=" + ctype +
+                        " optimize=" + optimize);
+                        
+        }
+        if (isOccurrenceArray(b)) {
+            marshalOccurrenceArray((JAXBElement) b, m, writer);
+            return;
+        }
         AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 try {
@@ -772,7 +830,7 @@ public class JAXBDSContext {
                     // <foo>1 2 3</foo>
                     Object jbo = b;
                     if(DEBUG_ENABLED){
-                    	log.debug("check if marshalling type list or array object type = "+ (( b!=null )? b.getClass().getName():"null"));
+                    	log.debug("check if marshalling list or array object, type = "+ (( b!=null )? b.getClass().getName():"null"));
                     }
                     if (isList) {                   	
                         if (DEBUG_ENABLED) {
@@ -860,6 +918,85 @@ public class JAXBDSContext {
         });
     }
 
+    /**
+     * Marshal array objects by type
+     * 
+     * Invoke marshalByType for each element in the array
+     * 
+     * @param jaxb_in JAXBElement containing a value that is a List or array
+     * @param m_in Marshaller
+     * @param writer_in XMLStreamWriter
+     */
+    private void marshalOccurrenceArray(
+                final JAXBElement jbe_in, 
+                final Marshaller m_in,
+                final XMLStreamWriter writer_in) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Enter marshalOccurrenceArray");
+            log.debug("  Marshaller = " + JavaUtils.getObjectIdentity(m_in));
+        }
+        
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                try {
+                    
+                    Marshaller m = m_in;
+                    JAXBContext newJBC = null;
+                    if (getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+                        // Rebuild JAXBContext
+                        // There may be a preferred classloader that should be used
+                        if (log.isDebugEnabled()) {
+                            log.debug("Building a JAXBContext with array capability");
+                        }
+                        ClassLoader cl = getClassLoader();
+                        newJBC = getJAXBContext(cl, true);
+                        m = JAXBUtils.getJAXBMarshaller(newJBC);
+                        if (log.isDebugEnabled()) {
+                            log.debug("The new JAXBContext was constructed with " + getConstructionType());
+                        }
+                    }
+                    
+
+                    OccurrenceArray occurArray = (OccurrenceArray) jbe_in.getValue();
+
+                    // Create a new JAXBElement.
+                    // The name is the name of the individual occurence elements
+                    // Type type is Object[]
+                    // The value is the array of Object[] representing each element
+                    JAXBElement jbe = new JAXBElement(jbe_in.getName(), 
+                            Object[].class, 
+                            occurArray.getAsArray());
+
+                    // The jaxb marshal command cannot write out a list/array
+                    // of occurence elements.  So we marshal it as a single
+                    // element containing items...and then put a filter on the
+                    // writer to transform it into a stream of occurence elements
+                    XMLStreamWriterArrayFilter writer = new XMLStreamWriterArrayFilter(writer_in);
+
+
+                    m.marshal(jbe, writer);
+                    
+                    if (newJBC != null) {
+                        JAXBUtils.releaseJAXBMarshaller(newJBC, m);
+                    }
+
+                    return null;
+                } catch (OMException e) {
+                    throw e;
+                } catch (Throwable t) {
+                    throw new OMException(t);
+                }
+            }
+            });
+            
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Exit marshalOccurrenceArray");
+        }
+        
+    }
+    
     /**
      * Preferred way to unmarshal objects
      * 

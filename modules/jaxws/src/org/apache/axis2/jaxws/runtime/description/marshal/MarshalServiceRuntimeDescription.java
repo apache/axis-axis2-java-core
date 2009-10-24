@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -76,6 +77,13 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
      * @return FaultBeanDescriptor that describes the fault bean
      */
     public FaultBeanDesc getFaultBeanDesc(FaultDescription faultDesc);
+    
+    /**
+     * @param opDesc
+     * @return Method
+     */
+    public Method getMethod(OperationDescription opDesc);
+    
 
     /** @return MessageFactory for this Marshaller */
     public MessageFactory getMessageFactory();

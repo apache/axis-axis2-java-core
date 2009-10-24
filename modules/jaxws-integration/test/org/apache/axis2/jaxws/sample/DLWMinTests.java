@@ -35,6 +35,13 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+/**
+ * 
+ * Tests to verify Document/Literal Wrapped Minimal Scenarios
+ * Document/Literal Wrapped is a JAX-WS style.
+ * "Minimal" indicates that no wrapper beans are associated with the JAX-WS method.
+ * In most enterprise scenarios, wrapper beans are packaged with the JAX-WS application.
+ */
 public class DLWMinTests extends AbstractTestCase {
 
     private static final String NAMESPACE = "http://apache.org/axis2/jaxws/sample/dlwmin";
@@ -126,7 +133,7 @@ public class DLWMinTests extends AbstractTestCase {
     }
     
     /**
-     * Test simple greetMe method 
+     * Test simpleTest method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testSimpleTest() {
@@ -134,22 +141,25 @@ public class DLWMinTests extends AbstractTestCase {
         Greeter proxy = getProxy("simpleTest");
         
         String name = "user1";
-        byte[] bytes = new byte[100];
+        byte[] bytes = new byte[5];
+        for (int i=0; i< bytes.length; i++) {
+            bytes[i] = (byte) i;
+        }
         String response = proxy.simpleTest(name, bytes);
         System.out.println(response);
         assertTrue(response.contains("name=user1"));
-        assertTrue(response.contains("numbytes=100"));
+        assertTrue(response.contains("numbytes=5"));
         
         // Try the call again
         response = proxy.simpleTest(name, bytes);
         System.out.println(response);
         assertTrue(response.contains("name=user1"));
-        assertTrue(response.contains("numbytes=100"));
+        assertTrue(response.contains("numbytes=5"));
     }
     
     
     /**
-     * Test simple greetMe method 
+     * Test simpleTest method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testSimpleTestNoName() {
@@ -173,7 +183,7 @@ public class DLWMinTests extends AbstractTestCase {
     }
     
     /**
-     * Test simple greetMe method with dispatch 
+     * Test simpleTest method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testSimple_Dispatch() {
@@ -183,7 +193,9 @@ public class DLWMinTests extends AbstractTestCase {
         String request =
             "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
             "<pre:name>user1</pre:name>" +
-            "<pre:bytes>AAAAAA</pre:bytes>" +
+            "<pre:bytes>1</pre:bytes>" +
+            "<pre:bytes>2</pre:bytes>" +
+            "<pre:bytes>3</pre:bytes>" +
             "</pre:simpleTest>";
         TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);
@@ -205,7 +217,7 @@ public class DLWMinTests extends AbstractTestCase {
     }
     
     /**
-     * Test simple greetMe method with dispatch 
+     * Test simpleTest method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testSimpleNoName_Dispatch() {
@@ -214,7 +226,9 @@ public class DLWMinTests extends AbstractTestCase {
         
         String request =
             "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
-            "<pre:bytes>AAAAAA</pre:bytes>" +
+            "<pre:bytes>1</pre:bytes>" +
+            "<pre:bytes>2</pre:bytes>" +
+            "<pre:bytes>3</pre:bytes>" +
             "</pre:simpleTest>";
         TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);
@@ -237,7 +251,7 @@ public class DLWMinTests extends AbstractTestCase {
     
     
     /**
-     * Test simple greetMe method 
+     * Test simpleUnqualified method 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testUnqualified() {
@@ -254,7 +268,7 @@ public class DLWMinTests extends AbstractTestCase {
     }
     
     /**
-     * Test simple greetMe method with dispatch 
+     * Test simpleUnqualified method with dispatch 
      * with style doc/lit wrapped without the presence of wrapper classes.
      */
     public void testUnqualified_Dispatch() {

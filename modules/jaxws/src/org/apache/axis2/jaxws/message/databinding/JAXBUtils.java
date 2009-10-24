@@ -44,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
@@ -97,7 +98,10 @@ public class JAXBUtils {
 
     // Construction Type
     public enum CONSTRUCTION_TYPE {
-        BY_CLASS_ARRAY, BY_CONTEXT_PATH, UNKNOWN}
+        BY_CLASS_ARRAY,   // New Instance with Class[] 
+        BY_CONTEXT_PATH,  // New Instance with context path string (preferred)
+        BY_CLASS_ARRAY_PLUS_ARRAYS, // New Instance with Class[] plus arrays of each class are added
+        UNKNOWN}
 
     ;
     
@@ -164,11 +168,38 @@ public class JAXBUtils {
      * @throws JAXBException
      */
     public static JAXBContext getJAXBContext(TreeSet<String> contextPackages,
-                                             Holder<CONSTRUCTION_TYPE> constructionType, 
+                                             Holder<CONSTRUCTION_TYPE> constructionType,
                                              String key,
                                              ClassLoader cacheKey,
                                              Map<String, ?> properties)
             throws JAXBException {
+        return getJAXBContext(contextPackages, 
+                        constructionType, 
+                        false, 
+                        key, 
+                        cacheKey, 
+                        properties);
+    }
+    /**
+     * Get a JAXBContext for the class
+     *
+     * Note: The contextPackage object is used by multiple threads.  It should be considered immutable
+     * and not altered by this method.
+     * 
+     * @param contextPackage  Set<Package> 
+     * @param contructionType (output value that indicates how the context was constructed)
+     * @param forceArrays (forces the returned JAXBContext to include the array types)
+     * @param cacheKey ClassLoader
+     * @return JAXBContext
+     * @throws JAXBException
+     */
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages,
+                                             Holder<CONSTRUCTION_TYPE> constructionType, 
+                                             boolean forceArrays,
+                                             String key,
+                                             ClassLoader cacheKey,
+                                             Map<String, ?> properties) 
+        throws JAXBException {
         // JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if (log.isDebugEnabled()) {
             log.debug("Following packages are in this batch of getJAXBContext() :");
@@ -220,7 +251,18 @@ public class JAXBUtils {
             contextValue = innerMap.get(cl);
         }
       
-        
+        // If the context value is found, but the caller requested that the JAXBContext
+        // contain arrays, then rebuild the JAXBContext value
+        if (forceArrays &&
+            contextValue != null && 
+            contextValue.constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+            if(log.isDebugEnabled()) {
+                log.debug("Found a JAXBContextValue with constructionType=" + 
+                            contextValue.constructionType + "  but the caller requested a JAXBContext " +
+                          " that includes arrays.  A new JAXBContext will be built");
+            }
+            contextValue = null;
+        }
 
         if (contextPackages == null) {
             contextPackages = new TreeSet<String>();
@@ -231,6 +273,11 @@ public class JAXBUtils {
                 ClassLoader clKey = (cacheKey != null) ? cacheKey:cl;
                 contextValue = innerMap.get(clKey);
                 adjustPoolSize(innerMap);
+                if (forceArrays &&
+                        contextValue != null && 
+                        contextValue.constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+                    contextValue = null;
+                }
                 if (contextValue==null) {
                     // Create a copy of the contextPackages.  This new TreeSet will
                     // contain only the valid contextPackages.
@@ -240,13 +287,14 @@ public class JAXBUtils {
                     TreeSet<String> validContextPackages = new TreeSet<String>(contextPackages); 
                     
                     ClassLoader tryCl = cl;
-                    contextValue = createJAXBContextValue(validContextPackages, cl, properties);
+                    contextValue = createJAXBContextValue(validContextPackages, cl, forceArrays, properties);
 
                     // If we don't get all the classes, try the cached classloader 
                     if (cacheKey != null && validContextPackages.size() != contextPackages.size()) {
                         tryCl = cacheKey;
                         validContextPackages = new TreeSet<String>(contextPackages);
-                        contextValue = createJAXBContextValue(validContextPackages, cacheKey, properties);
+                        contextValue = createJAXBContextValue(validContextPackages, cacheKey, 
+                                                              forceArrays, properties);
                     }
                     synchronized (jaxbMap) {
                         // Add the context value with the original package set
@@ -254,7 +302,7 @@ public class JAXBUtils {
                         SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
                         softRef1 = jaxbMap.get(key);
                         if (softRef1 != null) {
-                            map1 = softRef.get();
+                            map1 = softRef1.get();
                         }
                         if (map1 == null) {
                             map1 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
@@ -271,13 +319,13 @@ public class JAXBUtils {
                         SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>> 
                         softRef2 = jaxbMap.get(validPackagesKey);
                         if (softRef2 != null) {
-                            map2 = softRef.get();
+                            map2 = softRef2.get();
                         }
                         if (map2 == null) {
                             map2 = new ConcurrentHashMap<ClassLoader, JAXBContextValue>();
                             softRef2 = 
                                 new SoftReference<ConcurrentHashMap<ClassLoader, JAXBContextValue>>(map2);
-                            jaxbMap.put(key, softRef2);
+                            jaxbMap.put(validPackagesKey, softRef2);
                         }
                         map2.put(clKey, contextValue);
                         
@@ -293,6 +341,11 @@ public class JAXBUtils {
                 log.debug("JAXBContext [from pool] for " + key);
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("JAXBContext constructionType= " + contextValue.constructionType);
+            log.debug("JAXBContextValue = " + JavaUtils.getObjectIdentity(contextValue));
+            log.debug("JAXBContext = " + JavaUtils.getObjectIdentity(contextValue.jaxbContext));
+        }
         constructionType.value = contextValue.constructionType;
         return contextValue.jaxbContext;
     }
@@ -302,11 +355,14 @@ public class JAXBUtils {
      *
      * @param contextPackages Set<String>
      * @param cl              ClassLoader
+     * @param forceArrays     boolean (true if JAXBContext must include all arrays)
+     * @param properties      Map of properties for the JAXBContext.newInstance creation method
      * @return JAXBContextValue (JAXBContext + constructionType)
      * @throws JAXBException
      */
     private static JAXBContextValue createJAXBContextValue(TreeSet<String> contextPackages,
                                                            ClassLoader cl,
+                                                           boolean forceArrays,
                                                            Map<String, ?> properties) throws JAXBException {
 
         JAXBContextValue contextValue = null;
@@ -374,7 +430,7 @@ public class JAXBUtils {
         // The packages are examined to see if they have ObjectFactory/package-info classes.
         // Invalid packages are removed from the list
         it = contextPackages.iterator();
-        boolean contextConstruction = true;
+        boolean contextConstruction = (!forceArrays);
         boolean isJAXBFound = false;
         while (it.hasNext()) {
             String p = it.next();
@@ -413,7 +469,7 @@ public class JAXBUtils {
 
         if (!isJAXBFound) {
             if (log.isDebugEnabled()) {
-                log.debug("Both ObjectFactory & package-info not found in package hierachy");
+                log.debug("ObjectFactory & package-info are not found in package hierachy");
             }
         }
 
@@ -428,6 +484,17 @@ public class JAXBUtils {
         
         if (innerMap != null) {
             contextValue = innerMap.get(cl);
+            if (forceArrays &&
+                    contextValue != null && 
+                    contextValue.constructionType != JAXBUtils.CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Found a JAXBContextValue with constructionType=" + 
+                            contextValue.constructionType + "  but the caller requested a JAXBContext " +
+                    " that includes arrays.  A new JAXBContext will be built");
+                }
+                contextValue = null;
+            } 
+            
             if (contextValue != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Successfully found JAXBContext with updated context list:" +
@@ -458,7 +525,11 @@ public class JAXBUtils {
             Class[] classArray = fullList.toArray(new Class[0]);
             JAXBContext context = JAXBContext_newInstance(classArray, cl, properties);
             if (context != null) {
-                contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
+                if (forceArrays) {
+                    contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY_PLUS_ARRAYS);
+                } else {
+                    contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
+                }
             }
         }
         if (log.isDebugEnabled()) {
@@ -553,6 +624,7 @@ public class JAXBUtils {
      */
     public static Marshaller getJAXBMarshaller(JAXBContext context) throws JAXBException {
         Marshaller m = null;
+        
         if (!ENABLE_MARSHALL_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("Marshaller created [no pooling]");
@@ -585,6 +657,8 @@ public class JAXBUtils {
     public static void releaseJAXBMarshaller(JAXBContext context, Marshaller marshaller) {
         if (log.isDebugEnabled()) {
             log.debug("Marshaller placed back into pool");
+            log.debug("  Marshaller = " + JavaUtils.getObjectIdentity(marshaller));
+            log.debug("  JAXBContext = " + JavaUtils.getObjectIdentity(context));
         }
         if (ENABLE_MARSHALL_POOLING) {
             marshaller.setAttachmentMarshaller(null);
@@ -933,6 +1007,7 @@ public class JAXBUtils {
             "javax.xml.namespace.QName[]" };
 
     private static void addCommonArrayClasses(List<Class> list) {
+        
         // Add common primitives arrays (necessary for RPC list type support)
         ClassLoader cl = getContextClassLoader();
 
@@ -954,7 +1029,10 @@ public class JAXBUtils {
                 }
             }
         }
+        
     }
+    
+    
 
     /** @return ClassLoader */
     private static ClassLoader getContextClassLoader() {

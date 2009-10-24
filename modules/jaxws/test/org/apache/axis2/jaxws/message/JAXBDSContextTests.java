@@ -134,5 +134,64 @@ public class JAXBDSContextTests extends TestCase {
         assertTrue(baos.toString().indexOf("</root>") > 0);
     }
     
+    /**
+     * Create a Block representing an JAXB and simulate a 
+     * normal Dispatch<JAXB> flow
+     * @throws Exception
+     */
+    public void testMarshalArray() throws Exception {
+        
+        // Create a JAXBDSContext for the package containing Data
+        TreeSet<String> packages = new TreeSet<String>();
+        packages.add(Data.class.getPackage().getName());
+        JAXBDSContext context = new JAXBDSContext(packages);
+        
+        System.out.println(context.getJAXBContext().toString());
+        
+        // Force marshal by type
+        context.setProcessType(Data[].class);
+        
+        // Create an Data value
+        ObjectFactory factory = new ObjectFactory();
+        Data value[] = new Data[3];
+        value[0] = factory.createData(); 
+        value[0].setInput("Hello");
+        value[1] = factory.createData(); 
+        value[1].setInput("Beautiful");
+        value[2] = factory.createData(); 
+        value[2].setInput("World");
+        
+        // Create a JAXBElement.
+        // To indicate "occurrence elements", the value is wrapped in
+        // an OccurrenceArray
+        QName qName = new QName("urn://sample", "data");
+        OccurrenceArray occurrenceArray = new OccurrenceArray(value);
+        JAXBElement jaxbElement = new JAXBElement(qName, Data[].class, occurrenceArray);
+
+        // Create a writer
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OMOutputFormat format = new OMOutputFormat();
+        format.setDoOptimize(true);
+        MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(baos, format);
+        
+        // Marshal the value
+        writer.writeStartElement("root");
+        context.marshal(jaxbElement, writer);
+        writer.writeEndElement();
+
+        writer.flush();
+        
+        String outputText = baos.toString();
+        String subText = outputText;
+        int count = 0;
+        while (subText.indexOf("data") > 0) {
+            count++;
+            subText = subText.substring(subText.indexOf("data") + 1);
+        }
+        // 3 data refs for start tag name
+        // 3 data refs for end tag name
+        // 3 xsi type refs
+        assertTrue("Expected 9 data tags but found "+count+"  Text is:"+outputText, count == 9);
+    }
    
 }

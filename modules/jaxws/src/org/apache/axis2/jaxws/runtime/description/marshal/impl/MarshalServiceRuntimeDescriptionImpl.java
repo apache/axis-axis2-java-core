@@ -31,11 +31,20 @@ import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeD
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
 
+/**
+ * @author scheu
+ *
+ */
+/**
+ * @author scheu
+ *
+ */
 public class MarshalServiceRuntimeDescriptionImpl implements
         MarshalServiceRuntimeDescription {
 
@@ -48,6 +57,7 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     private Map<OperationDescription, String> requestWrapperMap = null;
     private Map<OperationDescription, String> responseWrapperMap = null;
     private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap = null;
+    private Map<OperationDescription, Method> methodMap = null;
     private MessageFactory messageFactory =
             (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 
@@ -144,6 +154,21 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     void setFaultBeanDescMap(Map<FaultDescription, FaultBeanDesc> map) {
         faultBeanDescMap = map;
     }
+    
+    
+    /**
+     * Get the Method for the specified OperationDescription
+     */
+    public Method getMethod(OperationDescription operationDesc) {
+        return methodMap.get(operationDesc);
+    }
+    
+    /**
+     * Set the Map containing the OperationDescription->Method mapping
+     */
+    void setMethodMap(Map<OperationDescription, Method> map) {
+        methodMap = map;
+    }
 
     public String toString() {
         try {
@@ -198,6 +223,13 @@ public class MarshalServiceRuntimeDescriptionImpl implements
                 string.append("    FaultException:" + entry.getKey().getExceptionClassName());
                 string.append(newline);
                 string.append(entry.getValue().toString());
+            }
+            
+            string.append("    Methods");
+            for (Entry<OperationDescription, Method> entry : this.methodMap.entrySet()) {
+                string.append(newline);
+                string.append("    Method Name:" + entry.getKey().getJavaMethodName() +
+                        " Method:" + entry.getValue().toString());
             }
 
 

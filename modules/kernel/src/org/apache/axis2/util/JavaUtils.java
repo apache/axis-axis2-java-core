@@ -582,4 +582,25 @@ public class JavaUtils {
         text = replace(text, "at ", "DEBUG_FRAME = ");
         return text;
     }
+    
+    /**
+     * Mimics the default Object.toString() produces a string of the form:
+     * 
+     *      obj.getClass().getName() + "@" + object's hashCode.
+     * 
+     * This method can be used to print the debug message when you want
+     * just the short name or if using the toString will cause full expansion
+     * of underlying data structures.
+     * 
+     * The returned value can also be used as an identity key.
+     * 
+     * @return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
+     */
+    public static String getObjectIdentity(Object obj) {
+        if (obj == null) {
+            return "null";
+        }
+        return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
+    }
+
 }

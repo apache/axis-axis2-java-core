@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
@@ -50,6 +51,8 @@ class ArtifactProcessor {
             new HashMap<OperationDescription, String>();
     private Map<OperationDescription, String> responseWrapperMap =
             new HashMap<OperationDescription, String>();
+    private Map<OperationDescription, Method> methodMap =
+        new HashMap<OperationDescription, Method>();
     private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap =
             new HashMap<FaultDescription, FaultBeanDesc>();
 
@@ -73,6 +76,10 @@ class ArtifactProcessor {
     Map<FaultDescription, FaultBeanDesc> getFaultBeanDescMap() {
         return faultBeanDescMap;
     }
+    
+    Map<OperationDescription, Method> getMethodMap() {
+        return methodMap;
+    }
 
     void build() {
         for (EndpointDescription ed : serviceDesc.getEndpointDescriptions()) {
@@ -84,6 +91,7 @@ class ArtifactProcessor {
                     String packageName = getPackageName(declaringClassName);
                     String simpleName = getSimpleClassName(declaringClassName);
                     String methodName = opDesc.getJavaMethodName();
+                    
 
                     // There is no default for @RequestWrapper/@ResponseWrapper classname  None is listed in Sec. 7.3 on p. 80 of
                     // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
@@ -137,10 +145,41 @@ class ArtifactProcessor {
                         FaultBeanDesc faultBeanDesc = create(ed, faultDesc, opDesc);
                         faultBeanDescMap.put(faultDesc, faultBeanDesc);
                     }
+                    
+                    // Get the Method
+                    Class cls = null;
+                    try {
+                        cls = loadClass(declaringClassName, getContextClassLoader());
+                    } catch(Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Class " + declaringClassName + " was not found by the Context ClassLoader.  " +
+                            		"Will use the ClassLoader associated with the service.  The exception is: " +e);
+                        }
+                    }
+                    
+                    if (cls == null) {
+                        try {
+                            cls = loadClass(declaringClassName, ed.getAxisService().getClassLoader());
+                        } catch(Exception e) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Class " + declaringClassName + " was not found by the AxisService ClassLoader.  " +
+                                        "Processing continues.  The exception is:" +e);
+                            }
+                            
+                        }
+                    }
+                    if (cls != null) {
+                        Method method = getMethod(opDesc.getJavaMethodName(), cls);
+                        if (method != null) {
+                            methodMap.put(opDesc, method);
+                        }
+                    }
+                    
                 }
             }
         }
     }
+    
 
     private FaultBeanDesc create(EndpointDescription ed, FaultDescription faultDesc, OperationDescription opDesc) {
         /* FaultBeanClass algorithm
@@ -395,6 +434,39 @@ class ArtifactProcessor {
         }
 
         return cl;
+    }
+    
+    /**
+     * Return the Method matching the method name or null
+     * @param methodName String containing method name
+     * @param cls Class of the class that declares the method
+     *
+     * @return Method or null
+     */
+    private static Method getMethod(final String methodName, final Class cls) {
+        // NOTE: This method must remain protected because it uses AccessController
+        Method method = null;
+        try {
+            method = (Method)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run()  {
+                            Method[] methods = cls.getMethods();
+                            if (methods != null) {
+                                for (int i=0; i<methods.length; i++) {
+                                    if (methods[i].getName().equals(methodName)) {
+                                        return methods[i];
+                                    }
+                                }
+                            }
+                            return null;
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            
+        }
+
+        return method;
     }
 
     /** @return ClassLoader */

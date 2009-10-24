@@ -964,6 +964,22 @@
                                      basedir="${pom.basedir}/target/test-classes/servicejars/GreeterService"
                                         />
                                 <delete dir="target/test-classes/servicejars/GreeterService"/>
+                                
+                                <copy toDir="target/test-classes/servicejars/GenericService/">
+                                    <fileset dir="target/test-classes">
+                                        <include name="org/apache/axis2/jaxws/sample/dlwminArrays/**"/>
+                                        <exclude name="org/apache/axis2/jaxws/sample/dlwminArrays/META-INF/services.xml"/>
+                                    </fileset>
+                                    <fileset dir="test/org/apache/axis2/jaxws/sample/dlwminArrays">
+                                        <include name="META-INF/**"/>
+                                        <exclude name="META-INF/services.xml"/>
+                                    </fileset>
+                                </copy>
+
+                                <zip destfile="target/test-classes/servicejars/GenericService.jar"
+                                     basedir="${pom.basedir}/target/test-classes/servicejars/GenericService"
+                                        />
+                                <delete dir="target/test-classes/servicejars/GenericService"/>
 
                                 <copy toDir="target/test-classes/servicejars/AsyncService/">
                                     <fileset dir="target/test-classes">
@@ -1360,6 +1376,7 @@
                         <include>**/HeadersHandlerTests.java</include>
                         <include>**/AddNumbersTests.java</include>
                         <include>**/DLWMinTests.java</include>
+                        <include>**/DLWMinArrayTests.java</include>
                         <include>**/FaultsServiceTests.java</include>
                         <include>**/WrapTests.java</include>
                         <include>**/SoapMessageProviderTests.java</include>
@@ -1403,7 +1420,7 @@
                         <include>**/SoapMessageProviderTests.java</include>
                         <include>**/StringProviderTests.java</include>
                         <include>**/OMProviderTests.java</include>
-                        
+                       
                     </includes>
                     <systemProperties>
                         <property>

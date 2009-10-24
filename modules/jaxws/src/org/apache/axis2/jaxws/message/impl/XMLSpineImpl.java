@@ -571,6 +571,9 @@ class XMLSpineImpl implements XMLSpine {
                                                            operationQName.getPrefix());
             opElement.setLocalName(operationQName.getLocalPart());
             opElement.setNamespace(ns);
+            
+            // Necessary to avoid duplicate namespaces later.
+            opElement.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         }
     }
 
