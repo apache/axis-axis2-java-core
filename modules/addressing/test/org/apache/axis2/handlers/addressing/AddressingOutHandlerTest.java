@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.util.XMLComparator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -34,11 +35,17 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.util.TestUtil;
 
 import javax.xml.namespace.QName;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
     private AddressingOutHandler outHandler;
@@ -398,5 +405,237 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
             i++;
         }
         assertEquals("Both reply and custom should be found.", 2, i);
+    }
+    
+    public void testAxis2DisableAddressingForOutMessagesTrue() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") +
+                "/test-resources/axis2-disableAddressingForOutMessagesTrue.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        
+        // Need to add a SOAP Header to stop this error from XMLComparator:
+        // "There is no Header element under Envelope"
+        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        SOAPHeaderBlock soapHeaderBlock = envelope.getHeader().addHeaderBlock(
+                "testHeader", new OMNamespaceImpl("http://test.com", "test"));
+        msgCtxt.setEnvelope(envelope);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingDisabledTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testAxis2DisableAddressingForOutMessagesFalse() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") +
+                "/test-resources/axis2-disableAddressingForOutMessagesFalse.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingEnabledTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testAxis2IncludeOptionalHeadersTrue() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") +
+                "/test-resources/axis2-IncludeOptionalHeadersTrue.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("withOptionalHeadersTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testAxis2IncludeOptionalHeadersFalse() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") +
+                "/test-resources/axis2-IncludeOptionalHeadersFalse.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingEnabledTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testModuleDisableAddressingForOutMessagesTrue() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") + 
+                "/test-resources/axis2-noParameters.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        AxisConfiguration config = cfgCtx.getAxisConfiguration();
+        
+        // Can't test with a module.xml file in test-resources because it gets
+        // overridden by target\classes\META-INF\module.xml, so create our own
+        // AxisModule with the required parameter value
+        AxisModule module = config.getModule("addressing");
+        module.addParameter(new Parameter("disableAddressingForOutMessages", "true"));
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        
+        // Need to add a SOAP Header to stop this error from XMLComparator:
+        // "There is no Header element under Envelope"
+        SOAPEnvelope envelope = OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope();
+        SOAPHeaderBlock soapHeaderBlock = envelope.getHeader().addHeaderBlock(
+                "testHeader", new OMNamespaceImpl("http://test.com", "test"));
+        msgCtxt.setEnvelope(envelope);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingDisabledTest.xml")
+                .getDocumentElement()));
+    }
+    
+    public void testModuleDisableAddressingForOutMessagesFalse() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") + 
+                "/test-resources/axis2-noParameters.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        AxisConfiguration config = cfgCtx.getAxisConfiguration();
+
+        // Can't test with a module.xml file in test-resources because it gets
+        // overridden by target\classes\META-INF\module.xml, so create our own
+        // AxisModule with the required parameter value
+        AxisModule module = config.getModule("addressing");
+        module.addParameter(new Parameter("disableAddressingForOutMessages", "false"));
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingEnabledTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testModuleIncludeOptionalHeadersTrue() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") + 
+                "/test-resources/axis2-noParameters.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        AxisConfiguration config = cfgCtx.getAxisConfiguration();
+
+        // Can't test with a module.xml file in test-resources because it gets
+        // overridden by target\classes\META-INF\module.xml, so create our own
+        // AxisModule with the required parameter value
+        AxisModule module = config.getModule("addressing");
+        module.addParameter(new Parameter("includeOptionalHeaders", "true"));
+
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("withOptionalHeadersTest.xml")
+                .getDocumentElement()));   
+    }
+    
+    public void testModuleIncludeOptionalHeadersFalse() throws Exception {
+        File configFile = new File(System.getProperty("basedir",".") + 
+                "/test-resources/axis2-noParameters.xml");
+        ConfigurationContext cfgCtx = ConfigurationContextFactory
+        .createConfigurationContextFromFileSystem("target/test-classes",
+                configFile.getAbsolutePath());
+        AxisConfiguration config = cfgCtx.getAxisConfiguration();
+
+        // Can't test with a module.xml file in test-resources because it gets
+        // overridden by target\classes\META-INF\module.xml, so create our own
+        // AxisModule with the required parameter value
+        AxisModule module = config.getModule("addressing");
+        module.addParameter(new Parameter("includeOptionalHeaders", "false"));
+        
+        msgCtxt = cfgCtx.createMessageContext();
+        msgCtxt.setEnvelope(OMAbstractFactory.getSOAP11Factory().getDefaultEnvelope());
+        msgCtxt.setTo(new EndpointReference("http://www.to.org/service/"));
+        msgCtxt.setFrom(new EndpointReference("http://www.from.org/service/"));
+        msgCtxt.setReplyTo(new EndpointReference("http://www.replyTo.org/service/"));
+        msgCtxt.setFaultTo(new EndpointReference("http://www.faultTo.org/service/"));
+        msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("123456-7890");
+        msgCtxt.addRelatesTo(new RelatesTo("http://www.relatesTo.org/service/"));
+        msgCtxt.setProperty(WS_ADDRESSING_VERSION, Final.WSA_NAMESPACE);
+        
+        outHandler.invoke(msgCtxt);
+
+        XMLComparator xmlComparator = new XMLComparator();
+        assertTrue(xmlComparator.compare(msgCtxt.getEnvelope(), testUtil
+                .getOMBuilder("addressingEnabledTest.xml")
+                .getDocumentElement()));   
     }
 }

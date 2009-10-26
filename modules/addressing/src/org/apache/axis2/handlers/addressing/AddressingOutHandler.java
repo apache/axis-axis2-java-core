@@ -41,6 +41,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.LoggingControl;
@@ -64,11 +65,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         //determine whether outbound addressing has been disabled or not.
+        // Get default value from module.xml or axis2.xml files
+        Parameter param = msgContext.getModuleParameter(
+                DISABLE_ADDRESSING_FOR_OUT_MESSAGES, MODULE_NAME, handlerDesc);
         boolean disableAddressing =
-            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES)
-             || JavaUtils.isTrueExplicitly(Utils.getParameterValue(
-                     msgContext.getModuleParameter(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
-                     MODULE_NAME, handlerDesc)));
+            msgContext.isPropertyTrue(DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+                    JavaUtils.isTrueExplicitly(Utils.getParameterValue(param)));
 
         if (disableAddressing) {
             if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled()) {
@@ -88,11 +90,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
 
         // Determine whether to include optional addressing headers in the output.
+        // Get default value from module.xml or axis2.xml files
+        param = msgContext.getModuleParameter(
+                INCLUDE_OPTIONAL_HEADERS, MODULE_NAME, handlerDesc);
         boolean includeOptionalHeaders =
-            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS)
-             || JavaUtils.isTrueExplicitly(Utils.getParameterValue(
-                     msgContext.getModuleParameter(INCLUDE_OPTIONAL_HEADERS, MODULE_NAME,
-                     handlerDesc)));
+            msgContext.isPropertyTrue(INCLUDE_OPTIONAL_HEADERS,
+                    JavaUtils.isTrueExplicitly(Utils.getParameterValue(param)));
 
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug("includeOptionalHeaders=" + includeOptionalHeaders);
