@@ -174,6 +174,7 @@ public abstract class BlockImpl implements Block {
                         busObject = null;
                         StAXOMBuilder builder = new StAXOMBuilder(newReader);
                         omElement = builder.getDocumentElement();
+                        omElement.close(true);
                     } catch (Exception e) {
                         // Some blocks may represent non-element data
                         if (log.isDebugEnabled()) {
