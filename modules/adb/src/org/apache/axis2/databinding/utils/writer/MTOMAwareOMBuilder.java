@@ -81,10 +81,7 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
             } else {
                 if (prefix == null) {
                     prefix = "ns" + ++prefixNum;
-                } else if (this.omStreamNamespaceContext.getNamespaceURI(prefix) != null) {
-                    throw new XMLStreamException("the prefix ==> " + prefix +
-                            " Already exists for namespace ==> " + namespace);
-                }
+                } 
                 omNamespace = omFactory.createOMNamespace(namespace, prefix);
                 this.omStreamNamespaceContext.registerNamespace(namespace, prefix);
                 namespaceOMNamesapceMap.put(namespace, omNamespace);
