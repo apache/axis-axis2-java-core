@@ -81,14 +81,23 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
         try{
             ParsedEntityReaderFactory perf = (ParsedEntityReaderFactory)FactoryRegistry.getFactory(ParsedEntityReaderFactory.class);
             ParsedEntityReader entityReader = perf.getParsedEntityReader();
+            if (log.isDebugEnabled()) {
+                log.debug("ParsedEntityReader = " + entityReader);
+            }
             //Do not user custom builder if Parser does not have ability to read sub content.
             if(!entityReader.isParsedEntityStreamAvailable()){
+                if (log.isDebugEnabled()) {
+                    log.debug("Stream not available");
+                }
                 return null;
             }
             // Create an OMSourcedElement backed by the ParsedData
             InputStream parsedStream = getPayloadContent(reader, entityReader);
             if(parsedStream == null){
                 //cant read content from EntityReader, returning null.
+                if (log.isDebugEnabled()) {
+                    log.debug("No content available");
+                }
                 return null;
             }
             //read the payload. Lets move the parser forward.

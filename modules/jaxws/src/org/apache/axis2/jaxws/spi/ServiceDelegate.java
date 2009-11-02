@@ -53,6 +53,7 @@ import org.apache.axis2.jaxws.client.PropertyMigrator;
 import org.apache.axis2.jaxws.client.dispatch.JAXBDispatch;
 import org.apache.axis2.jaxws.client.dispatch.XMLDispatch;
 import org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler;
+import org.apache.axis2.jaxws.context.listener.ProviderOMContextListener;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -275,6 +276,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     @Override
     public <T> Dispatch<T> createDispatch(EndpointReference jaxwsEPR, Class<T> type, Mode mode, WebServiceFeature... features) {
+        if (log.isDebugEnabled()) {
+            log.debug("Create Dispatch with epr: " + jaxwsEPR);
+        }
+        
         verifyServiceDescriptionActive();
         if (jaxwsEPR == null) {
             throw ExceptionFactory
@@ -325,6 +330,13 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
         if (serviceClient == null)
             serviceClient = getServiceClient(endpointDesc.getPortQName());
+        
+        if(type == OMElement.class) {
+            if (log.isDebugEnabled()) {
+                log.debug("This a Dispatch<OMElement>. The custom builder is installed.");
+            }
+            ProviderOMContextListener.create(serviceClient.getServiceContext());
+        }
 
         dispatch.setServiceClient(serviceClient);
         dispatch.setType(type);
@@ -333,6 +345,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     @Override
     public Dispatch<Object> createDispatch(EndpointReference jaxwsEPR, JAXBContext context, Mode mode, WebServiceFeature... features) {
+        if (log.isDebugEnabled()) {
+            log.debug("Create Dispatch with epr 2: " + jaxwsEPR);
+        }
         verifyServiceDescriptionActive();
         if (jaxwsEPR == null) {
             throw ExceptionFactory
@@ -382,6 +397,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     @Override
     public <T> Dispatch<T> createDispatch(QName portName, Class<T> type, Mode mode, WebServiceFeature... features) {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Create Dispatch with portName: " + portName);
+        }
         verifyServiceDescriptionActive();
         if (portName == null) {
             throw ExceptionFactory
@@ -421,6 +440,12 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if (serviceClient == null)
             serviceClient = getServiceClient(portName);
 
+        if(type == OMElement.class) {
+            if (log.isDebugEnabled()) {
+                log.debug("This a Dispatch<OMElement>. The custom builder is installed.");
+            }
+            ProviderOMContextListener.create(serviceClient.getServiceContext());
+        }
         dispatch.setServiceClient(serviceClient);
         dispatch.setType(type);
         return dispatch;
@@ -428,6 +453,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     @Override
     public Dispatch<Object> createDispatch(QName portName, JAXBContext context, Mode mode, WebServiceFeature... features) {
+        if (log.isDebugEnabled()) {
+            log.debug("Create Dispatch with jaxbcontext and portName: " + portName);
+        }
+        
         verifyServiceDescriptionActive();
         if (portName == null) {
             throw ExceptionFactory

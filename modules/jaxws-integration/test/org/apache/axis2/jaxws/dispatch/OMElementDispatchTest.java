@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.dispatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 
 import javax.xml.namespace.QName;
@@ -40,10 +41,15 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.framework.AbstractTestCase;
+import org.apache.axis2.jaxws.message.databinding.ParsedEntityReader;
+import org.apache.axis2.jaxws.message.factory.ParsedEntityReaderFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * This class uses the JAX-WS Dispatch API to test sending and receiving
@@ -60,6 +66,10 @@ public class OMElementDispatchTest extends AbstractTestCase {
     private static final String sampleRequest = 
         "<test:echoOMElement xmlns:test=\"http://org/apache/axis2/jaxws/test/OMELEMENT\">" +
         "<test:input>SAMPLE REQUEST MESSAGE</test:input>" +
+        "</test:echoOMElement>";
+    private static final String testResponse = 
+        "<test:echoOMElement xmlns:test=\"http://org/apache/axis2/jaxws/test/OMELEMENT\">" +
+        "<test:output>TEST RESPONSE MESSAGE</test:output>" +
         "</test:echoOMElement>";
     private static final String sampleEnvelopeHead = 
         "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\">" +
@@ -318,4 +328,79 @@ public class OMElementDispatchTest extends AbstractTestCase {
         assertTrue(!responseText.contains("http://schemas.xmlsoap.org/soap/envelope"));
     }
     
+    /**
+     * Test sending a SOAP 1.2 request in MESSAGE mode with
+     * a Parser that can provide the InputStream for the payload
+     */
+    public void testOMElementDispatchWithParsedEntityReader() throws Exception {
+        
+        // Subsitute a ParsedEntityReader that will provide the
+        // payload InputStream.  This simulates parsers that provide this
+        // feature.
+        ParsedEntityReaderFactory factory = (ParsedEntityReaderFactory)
+        FactoryRegistry.getFactory(ParsedEntityReaderFactory.class);
+        ParsedEntityReader per = new ParsedEntityReaderTest();
+        factory.setParsetEntityReader(per);
+        
+        try {
+            // Create the JAX-WS client needed to send the request
+            Service service = Service.create(QNAME_SERVICE);
+            service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+            Dispatch<OMElement> dispatch = service.createDispatch(
+                    QNAME_PORT, OMElement.class, Mode.MESSAGE);
+
+            // Create the OMElement object with the payload contents.  Since
+            // we're in PAYLOAD mode, we don't have to worry about the envelope.
+            StringReader sr = new StringReader(sampleEnvelope);
+            XMLStreamReader inputReader = inputFactory.createXMLStreamReader(sr);
+            StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inputReader, null); 
+            SOAPEnvelope soap12Envelope = (SOAPEnvelope) builder.getDocumentElement();
+
+
+            // Invoke
+            OMElement response = dispatch.invoke(soap12Envelope);
+            
+
+            SOAPEnvelope responseEnv = (SOAPEnvelope) response;
+            SOAPBody responseBody = responseEnv.getBody();
+            OMElement payload = responseBody.getFirstElement();
+
+            // At this point, the payload should be an OMSourcedElement
+            // that was created from the ParsedEntityReader's stream
+            assertTrue(payload instanceof OMSourcedElement);
+
+
+            // Check to make sure the contents of the message are correct
+            String responseText = payload.toStringWithConsume();
+            assertTrue(responseText.contains("TEST RESPONSE"));
+        } finally {
+            
+            // Uninstall the Test ParsedEntityReader
+            factory.setParsetEntityReader(null);
+        }
+    }
+    
+    /**
+     * The purpose of a ParsedEntityReader is to get the 
+     * InputStream from the parser if it is available.
+     * Woodstox and other parsers don't provide that feature.
+     * To simulate this feature, this ParserEntityReaderTest is
+     * inserted to simulate getting a response from the Parser.
+     */
+    public class ParsedEntityReaderTest implements ParsedEntityReader {
+        int count =0;
+        public boolean isParsedEntityStreamAvailable() {
+            return true;
+        }
+
+        public InputStream readParsedEntityStream(XMLStreamReader reader) {
+            count++;
+            if (count == 2) {
+                return new ByteArrayInputStream(testResponse.getBytes()); 
+            } else  {
+                return null;
+            }
+        }
+
+    }
 }

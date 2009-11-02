@@ -39,7 +39,7 @@ public class ParsedEntityReaderFactory {
 	}
 	
 	public void setParsetEntityReader(ParsedEntityReader per){
-		if(this.per == null){
+		if(this.per == null || this.per != per){
 			this.per = per;
 		}
 	}
