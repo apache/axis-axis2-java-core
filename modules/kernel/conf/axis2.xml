@@ -209,24 +209,13 @@
         <!-- <parameter name="threadKeepAliveTimeUnit">MILLISECONDS</parameter>            -->
     </transportReceiver>
 
-    <!--Uncomment if you want to have TCP transport support-->
-    <!--transportReceiver name="tcp"
-                       class="org.apache.axis2.transport.tcp.TCPServer">
-        <parameter name="port">6060</parameter-->>
-    <!--If you want to give your own host address for EPR generation-->
-    <!--uncomment the following paramter , and set it as you required.-->
-    <!--<parameter name="hostname">tcp://myApp.com/ws</parameter>-->
-    <!-- /transportReceiver -->
+    <!-- This is where you'd put custom transports.  See the transports project -->
+    <!-- for more.  http://ws.apache.org/commons/transport                      -->
 
     <!-- ================================================= -->
     <!-- Transport Outs -->
     <!-- ================================================= -->
 
-    <!--Uncomment if you want to have TCP transport support-->
-    <!--
-    <transportSender name="tcp"
-                     class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
-    -->
     <transportSender name="local"
                      class="org.apache.axis2.transport.local.LocalTransportSender"/>
     <transportSender name="http"
