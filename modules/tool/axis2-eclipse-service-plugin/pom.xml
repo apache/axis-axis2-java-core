@@ -30,7 +30,6 @@
     </parent>
     <artifactId>axis2.eclipse.service.plugin</artifactId>
     <name>Apache Axis2 - tool - Eclipse service Plugin</name>
-    <packaging>maven-plugin</packaging>
     <description>The Axis 2 Eclipse Service Plugin for Service archive creation</description>
     <dependencies>
         <dependency>

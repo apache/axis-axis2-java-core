@@ -275,8 +275,8 @@
         </repository>
         <repository>
             <id>java.net</id>
-            <url>https://maven-repository.dev.java.net/nonav/repository/</url>
-            <layout>legacy</layout>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
