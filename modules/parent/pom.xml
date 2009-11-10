@@ -84,8 +84,8 @@
 
 	<!-- Tracking SNAPSHOT(s) of a few projects -->
         <axiom.version>1.2.9-SNAPSHOT</axiom.version>
-        <neethi.version>SNAPSHOT</neethi.version>
-        <xmlschema.version>SNAPSHOT</xmlschema.version>
+        <neethi.version>3.0.0-SNAPSHOT</neethi.version>
+        <xmlschema.version>1.4.6-SNAPSHOT</xmlschema.version>
         <woden.version>1.0-SNAPSHOT</woden.version>
 
         <mar.plugin.version>1.5</mar.plugin.version>
