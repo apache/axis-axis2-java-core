@@ -660,7 +660,7 @@ public class ServiceClient {
     public OperationClient createClient(QName operationQName) throws AxisFault {
         // If we're configured to do so, clean up the last OperationContext (thus
         // releasing its resources) each time we create a new one.
-        if (JavaUtils.isTrue(getOptions().getProperty(AUTO_OPERATION_CLEANUP), true) &&
+        if (JavaUtils.isTrue(getOptions().getProperty(AUTO_OPERATION_CLEANUP), false) &&
                 !getOptions().isUseSeparateListener()) {
             cleanupTransport();
         }
