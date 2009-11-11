@@ -126,13 +126,13 @@ FAQ</a>.</p>
 </table>
 </div>
 <p><strong>Axis2 Distributions : <a href=
-"http://cvs.apache.org/dist/axis2/nightly">Nightly
+"http://people.apache.org/repo/m2-snapshot-repository/org/apache/axis2/">Nightly
 builds</a></strong></p>
 <p><strong>Axis2 Maven Repository: <a href=
 "http://people.apache.org/repo/m1-ibiblio-rsync-repository/org.apache.axis2/">
 Released Axis2 jars</a> | <a href=
 "http://cvs.apache.org/repository/org.apache.axis2/jars/">Nightly
 SNAPSHOT</a><a href=
-"http://cvs.apache.org/repository/org.apache.axis2/jars/"></a></strong></p>
+"http://people.apache.org/repo/m2-snapshot-repository/org/apache/axis2/"></a></strong></p>
 </body>
 </html>
