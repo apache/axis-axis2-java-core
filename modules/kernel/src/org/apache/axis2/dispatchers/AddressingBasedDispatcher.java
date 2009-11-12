@@ -20,6 +20,7 @@
 package org.apache.axis2.dispatchers;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
@@ -91,6 +92,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 //                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
 //                    }
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
+                    msgctx.setAxisMessage(operationContext.getAxisOperation().getMessage(
+                                                                WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setAxisService(
