@@ -511,7 +511,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
+        <!--repository>
             <id>java.net</id>
             <url>http://download.java.net/maven/2/</url>
             <layout>default</layout>
@@ -521,7 +521,18 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
-        </repository>
+        </repository-->
+	<repository>
+            <id>java.net</id>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
