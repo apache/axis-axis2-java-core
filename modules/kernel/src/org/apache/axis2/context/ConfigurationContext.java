@@ -740,7 +740,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     public void terminate() throws AxisFault {
         if (listenerManager != null) {
-            listenerManager.destroy();
+            listenerManager.stop();
         }
         axisConfiguration.cleanup();
         cleanupTemp();

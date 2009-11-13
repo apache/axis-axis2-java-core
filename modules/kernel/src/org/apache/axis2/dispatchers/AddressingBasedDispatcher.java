@@ -92,8 +92,6 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 //                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
 //                    }
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
-                    msgctx.setAxisMessage(operationContext.getAxisOperation().getMessage(
-                                                                WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setAxisService(
