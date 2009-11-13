@@ -309,7 +309,7 @@ public class SimpleTypeMapper {
     }
 
     public static Object makeDate(String source) {
-        return ConverterUtil.convertToDateTime(source).getTime();
+        return ConverterUtil.convertToDate(source);
     }
 
 }
