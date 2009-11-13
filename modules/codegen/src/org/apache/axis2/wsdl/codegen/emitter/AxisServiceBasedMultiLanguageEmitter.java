@@ -93,6 +93,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
+import java.lang.reflect.ParameterizedType;
 
 
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
@@ -1108,7 +1110,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         for (int i = 0; i < constructors.length; i++) {
             Element constructorElement = doc.createElement("constructor");
             faultElement.appendChild(constructorElement);
-            Class[] parameters = constructors[i].getParameterTypes();
+            Type[] parameters = constructors[i].getGenericParameterTypes();
             List existingParamNames = new ArrayList();
             for (int j = 0; j < parameters.length; j++){
                 Element parameterElement = doc.createElement("param");
@@ -1122,31 +1124,44 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-    private String getParameterName(Class type, List existingParamNames) {
+    private String getParameterName(Type type, List existingParamNames) {
         String paramName = null;
-        if (type.isArray()) {
-            paramName = getParameterName(type.getComponentType(), existingParamNames);
-        } else {
-            String className = type.getName();
-            if (className.lastIndexOf(".") > 0) {
-                className = className.substring(className.lastIndexOf(".") + 1);
+        if (type instanceof Class) {
+            Class classType = (Class) type;
+            if (classType.isArray()) {
+                paramName = getParameterName(classType.getComponentType(), existingParamNames);
+            } else {
+                String className = classType.getName();
+                if (className.lastIndexOf(".") > 0) {
+                    className = className.substring(className.lastIndexOf(".") + 1);
+                }
+                paramName = JavaUtils.xmlNameToJavaIdentifier(className);
+                if (existingParamNames.contains(paramName)) {
+                    paramName = paramName + existingParamNames.size();
+                }
+                existingParamNames.add(paramName);
             }
-            paramName = JavaUtils.xmlNameToJavaIdentifier(className);
-            if (existingParamNames.contains(paramName)){
-               paramName = paramName + existingParamNames.size();
-            }
-            existingParamNames.add(paramName);
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            paramName = getParameterName(parameterizedType.getRawType(), existingParamNames);
         }
         return paramName;
     }
 
-    private String getTypeName(Class type){
+    private String getTypeName(Type type) {
         String typeName = null;
-        if (type.isArray()){
-            typeName = getTypeName(type.getComponentType()) + "[]";
-        } else {
-            typeName = type.getName();
+        if (type instanceof Class) {
+            Class classType = (Class) type;
+            if (classType.isArray()) {
+                typeName = getTypeName(classType.getComponentType()) + "[]";
+            } else {
+                typeName = classType.getName();
+            }
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            typeName = parameterizedType.toString();
         }
+
         return typeName;
     }
 
