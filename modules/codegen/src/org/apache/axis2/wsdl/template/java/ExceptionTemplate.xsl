@@ -30,6 +30,8 @@
 package <xsl:value-of select="@package"/>;
 
 public class <xsl:value-of select="@shortName"/> extends <xsl:value-of select="@exceptionBaseClass"/>{
+
+    private static final long serialVersionUID = <xsl:value-of select="@serialVersionUID"/>L;
     
     private <xsl:value-of select="@type"/> faultMessage;
 
