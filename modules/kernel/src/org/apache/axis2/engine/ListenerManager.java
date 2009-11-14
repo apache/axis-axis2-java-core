@@ -133,7 +133,10 @@ public class ListenerManager {
 
     /** To start all the transports */
     public synchronized void start() {
-        if (!stopped) return;
+        if (!stopped) {
+            log.error("Couldn't start ListenerManager, it seems to be already started!");
+            return;
+        }
 
         if (configctx == null) {
             log.error("Can't start uninitialized ListenerManager!");
