@@ -22,12 +22,10 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
@@ -53,32 +51,57 @@ public class ListenerManager {
     private HashMap<String, TransportListener> startedTransports =
             new HashMap<String, TransportListener>();
 
-    // We're stopped at first.
+    /**
+     * We're stopped at first. This is the flag to check whether the listener manager is
+     * started or not
+     */
     private boolean stopped = true;
 
-    // need to preserve the default behavior of requiring a shutdown hook
+    /**
+     * need to preserve the default behavior of requiring a shutdown hook, at the same time
+     * providing the flexibility to not to add the shutdown hook
+     */
     private boolean shutdownHookRequired = true;
 
+    /**
+     * Initializes the listener manager and the defined transports in the
+     * <code>AxisConfiguration</code>
+     *
+     * @param configCtx used for the initialization
+     */
     public void init(ConfigurationContext configCtx) {
-        if (this.configctx != null) return;
+
+        if (this.configctx != null) {
+            log.warn("ConfigurationContext provided for the ListenerManager " +
+                    "initialization is null. ListenerManager will not be initialized");
+            return;
+        }
 
         configCtx.setTransportManager(this);
         this.configctx = configCtx;
 
         // initialize all the transport listeners
-        for (Object o : configctx.getAxisConfiguration().getTransportsIn().values()) {
+        for (TransportInDescription transportIn :
+                configctx.getAxisConfiguration().getTransportsIn().values()) {
+            
             try {
-                TransportInDescription transportIn = (TransportInDescription)o;
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null && startedTransports.get(transportIn.getName()) == null) {
                     listener.init(configctx, transportIn);
                 }
             } catch (Exception e) {
-                log.info(e.getMessage(), e);
+                log.error("Couldn't initialize the "
+                        + transportIn.getName() + "transport listener", e);
             }
         }
     }
 
+    /**
+     * Returns the ConfigurationContext used for the initalization of the listener manager. It
+     * should be the current ConfigurationContext in use in most of the time.
+     *
+     * @return the ConfigurationContext used for the ListenerManager initialization
+     */
     public ConfigurationContext getConfigctx() {
         return configctx;
     }
@@ -217,9 +240,23 @@ public class ListenerManager {
     }
 
     /**
-     * @param trsIn   : Transport in description (which contains Transport Listener)
-     * @param started : whether transport Listener running or not
-     * @throws AxisFault : will throw AxisFault if something goes wrong
+     * Adds the listener described in the provided <code>TransportInDescription</code>. Further
+     * if the listener represented by the TransportInDescription has already been initialized and
+     * started the boolean <code>started</code> input parameter has to be provided as
+     * <code>true</code>.</p>
+     *
+     * <p>It is not possible to add a listener which is already initialized but not started to the
+     * listener manager, even though the above is a condition that has to be satisfied there is no
+     * means of enforcing that, becuase the {@link org.apache.axis2.transport.TransportListener}
+     * API doesn't provide a mechanism to test whether it is initialized or started.</p>
+     *
+     * <p>If the caller is using an already intialized listener, then it is the responsability of
+     * the caller to start the listener before adding it to the listener manager and pass the
+     * <code>started</code> parameter value as <code>true</code>.
+     *
+     * @param trsIn Transport in description (which contains Transport Listener) to be added
+     * @param started whether the transport Listener that is being added is already started or not
+     * @throws AxisFault will throw AxisFault if something goes wrong
      */
     public synchronized void addListener(TransportInDescription trsIn,
                                          boolean started) throws AxisFault {
