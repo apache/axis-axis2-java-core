@@ -62,7 +62,8 @@ import java.util.ArrayList;
 
 /**
  * Client access to a service. Each instance of this class is associated with a particular {@link
- * org.apache.axis2.description.AxisService}, and the methods support operations using that service.
+ * org.apache.axis2.description.AxisService}, and the methods support operations using that service. Note that
+ * these instances are not intended to be thread-safe.
  * {@link Options} instances are used to configure various aspects of the service access.
  */
 public class ServiceClient {
@@ -660,7 +661,7 @@ public class ServiceClient {
     public OperationClient createClient(QName operationQName) throws AxisFault {
         // If we're configured to do so, clean up the last OperationContext (thus
         // releasing its resources) each time we create a new one.
-        if (JavaUtils.isTrue(getOptions().getProperty(AUTO_OPERATION_CLEANUP), false) &&
+        if (JavaUtils.isTrue(getOptions().getProperty(AUTO_OPERATION_CLEANUP), true) &&
                 !getOptions().isUseSeparateListener()) {
             cleanupTransport();
         }
