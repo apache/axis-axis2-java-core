@@ -106,7 +106,6 @@ public class DynamicPortCachingTests extends TestCase {
             ClientMetadataTest.installCachingFactory();
             for (int i = 0; i < 5000 ; i++) {
                 Service svc1 = Service.create(svcQN);
-                System.out.println("Port number " + i);
                 svc1.addPort(new QName(namespaceURI, dynamicPort1 + "_" /*+ i*/),
                              bindingID1,
                              epr1);
