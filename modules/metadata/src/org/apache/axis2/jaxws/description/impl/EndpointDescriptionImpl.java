@@ -1207,6 +1207,10 @@ public class EndpointDescriptionImpl
                         }
                     }
                     serviceClient = new ServiceClient(configCtx, axisSvc);
+                    // Disable automatic cleanup to avoid threading issues in Axis2 during the cleanup.  JAXWS will
+                    // drive the cleanup based on ServiceDelegate finalization
+                    serviceClient.getOptions().setProperty(ServiceClient.AUTO_OPERATION_CLEANUP, false);
+
                 }
             }
         } catch (AxisFault e) {
