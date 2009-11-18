@@ -97,6 +97,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.ParameterizedType;
 
 
+
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected static final String CALL_BACK_HANDLER_SUFFIX = "CallbackHandler";
@@ -2977,6 +2978,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
                 addAttribute(doc, "value", getParamInitializer(typeMapping),
                         paramElement);
+
+                addAttribute(doc, "operationName", operation.getName().getLocalPart(), paramElement);
 
                 Iterator iter = msg.getExtensibilityAttributes().iterator();
                 while (iter.hasNext()) {
