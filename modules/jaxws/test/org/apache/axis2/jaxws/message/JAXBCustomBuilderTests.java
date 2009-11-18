@@ -28,6 +28,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBCustomBuilder;
 import org.apache.axis2.datasource.jaxb.JAXBDSContext;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import test.EchoString;
 import test.ObjectFactory;
@@ -130,9 +131,9 @@ public class JAXBCustomBuilderTests extends TestCase {
         
         // Make sure the prefix is consistent with the output
         String prefix = omNS.getPrefix();
-        System.out.println(prefix);
+        TestLogger.logger.debug(prefix);
         String text = om.toString();
-        System.out.println(text);
+        TestLogger.logger.debug(text);
         String searchString = (prefix == null || prefix.length() == 0) ? 
                     "</echoString>" :
                     "</" + prefix + ":echoString>";

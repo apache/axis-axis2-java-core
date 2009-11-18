@@ -755,7 +755,7 @@ public class MessageTests extends TestCase {
         //JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
         JAXBBlockContext context = new JAXBBlockContext("javax.xml.ws.wsaddressing");
         
-        System.out.println("JAXBContext= " + context);
+        TestLogger.logger.debug("JAXBContext= " + context);
         
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
@@ -792,7 +792,7 @@ public class MessageTests extends TestCase {
         // To check that the output is correct, get the String contents of the 
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("http://somewhere.com/somehow"));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));

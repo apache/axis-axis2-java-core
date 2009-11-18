@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -318,7 +319,7 @@ public class FaultTests extends TestCase {
         byte[] bytes = _getBytes(content);
         String faultContent = new String(bytes);
         
-        System.out.println(">> fault content: " + faultContent); 
+        TestLogger.logger.debug(">> fault content: " + faultContent); 
         assertTrue(faultContent.indexOf("faultcode") > 0);
         assertTrue(faultContent.indexOf("faultstring") > 0);
     }

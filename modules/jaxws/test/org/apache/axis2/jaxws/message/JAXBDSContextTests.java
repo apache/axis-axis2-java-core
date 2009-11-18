@@ -102,7 +102,7 @@ public class JAXBDSContextTests extends TestCase {
         packages.add(Data.class.getPackage().getName());
         JAXBDSContext context = new JAXBDSContext(packages);
         
-        System.out.println(context.getJAXBContext().toString());
+        TestLogger.logger.debug(context.getJAXBContext().toString());
         
         // Force marshal by type
         context.setProcessType(Data.class);
@@ -146,7 +146,7 @@ public class JAXBDSContextTests extends TestCase {
         packages.add(Data.class.getPackage().getName());
         JAXBDSContext context = new JAXBDSContext(packages);
         
-        System.out.println(context.getJAXBContext().toString());
+        TestLogger.logger.debug(context.getJAXBContext().toString());
         
         // Force marshal by type
         context.setProcessType(Data[].class);

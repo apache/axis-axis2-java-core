@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.spi.handler;
 
+import org.apache.axis2.jaxws.unitTest.TestLogger;
+
 import javax.annotation.PostConstruct;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.LogicalMessageContext;
@@ -28,7 +30,7 @@ public class DummyLogicalHandler implements LogicalHandler<LogicalMessageContext
     
     @PostConstruct
     public void setup() {
-        System.out.println("@PostConstruct method invoked.");
+        TestLogger.logger.debug("@PostConstruct method invoked.");
     }
 
 	public boolean handleMessage(LogicalMessageContext context) {

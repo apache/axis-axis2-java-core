@@ -33,6 +33,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.datasource.jaxb.JAXBDataSource;
+import org.apache.axis2.jaxws.unitTest.TestLogger;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
@@ -145,7 +146,7 @@ public class MessagePersistanceTests extends TestCase {
         theFile = File.createTempFile("MessagePersistTest", null);
         //theFile.deleteOnExit();
         theFilename = theFile.getName();
-        System.out.println("temp file = [" + theFilename + "]");
+        TestLogger.logger.debug("temp file = [" + theFilename + "]");
         
         // Setup an output stream to a physical file
         FileOutputStream outStream = new FileOutputStream(theFile);
@@ -155,7 +156,7 @@ public class MessagePersistanceTests extends TestCase {
         ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
         // Try to save the message context
-        System.out.println("saving message context.....");
+        TestLogger.logger.debug("saving message context.....");
         outObjStream.writeObject(axisMC);
 
         // Close out the streams
@@ -163,9 +164,9 @@ public class MessagePersistanceTests extends TestCase {
         outObjStream.close();
         outStream.flush();
         outStream.close();
-        System.out.println("....saved message context.....");
+        TestLogger.logger.debug("....saved message context.....");
         long filesize = theFile.length();
-        System.out.println("file size after save [" + filesize
+        TestLogger.logger.debug("file size after save [" + filesize
                 + "]   temp file = [" + theFilename + "]");
         
         // Make sure the Axiom structure is intact.  
@@ -185,7 +186,7 @@ public class MessagePersistanceTests extends TestCase {
         // To check that the output is correct, get the String contents of the
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleJAXBText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
@@ -201,13 +202,13 @@ public class MessagePersistanceTests extends TestCase {
         ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
         // try to restore the message context
-        System.out.println("restoring a message context.....");
+        TestLogger.logger.debug("restoring a message context.....");
 
         org.apache.axis2.context.MessageContext restoredMC = 
             (org.apache.axis2.context.MessageContext) inObjStream.readObject();
         inObjStream.close();
         inStream.close();
-        System.out.println("....restored message context.....");
+        TestLogger.logger.debug("....restored message context.....");
         
         // At this point in time, the restoredMessage will be a full tree.
         // TODO If this changes, please add more assertions here.
@@ -234,7 +235,7 @@ public class MessagePersistanceTests extends TestCase {
         env = restoredMC.getEnvelope();
         env.serializeAndConsume(baos, new OMOutputFormat());
         String restoredText = baos.toString();
-        System.out.println(restoredText);
+        TestLogger.logger.debug(restoredText);
         assertTrue(restoredText.contains(sampleJAXBText));
         assertTrue(restoredText.contains("soap"));
         assertTrue(restoredText.contains("Envelope"));
@@ -309,7 +310,7 @@ public class MessagePersistanceTests extends TestCase {
         // To check that the output is correct, get the String contents of the
         // reader
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains(sampleJAXBText));
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
@@ -329,7 +330,7 @@ public class MessagePersistanceTests extends TestCase {
         baos = new ByteArrayOutputStream();
         env2.serializeAndConsume(baos, new OMOutputFormat());
         String restoredText = baos.toString();
-        System.out.println(restoredText);
+        TestLogger.logger.debug(restoredText);
         assertTrue(restoredText.contains(sampleJAXBText));
         assertTrue(restoredText.contains("soap"));
         assertTrue(restoredText.contains("Envelope"));
@@ -399,7 +400,7 @@ public class MessagePersistanceTests extends TestCase {
         theFile = File.createTempFile("MessagePersistTest", null);
         //theFile.deleteOnExit();
         theFilename = theFile.getName();
-        System.out.println("temp file = [" + theFilename + "]");
+        TestLogger.logger.debug("temp file = [" + theFilename + "]");
         
         // Setup an output stream to a physical file
         FileOutputStream outStream = new FileOutputStream(theFile);
@@ -409,7 +410,7 @@ public class MessagePersistanceTests extends TestCase {
         ObjectOutputStream outObjStream = new ObjectOutputStream(outStream);
 
         // Try to save the message context
-        System.out.println("saving message context.....");
+        TestLogger.logger.debug("saving message context.....");
         outObjStream.writeObject(axisMC);
 
         // Close out the streams
@@ -417,9 +418,9 @@ public class MessagePersistanceTests extends TestCase {
         outObjStream.close();
         outStream.flush();
         outStream.close();
-        System.out.println("....saved message context.....");
+        TestLogger.logger.debug("....saved message context.....");
         long filesize = theFile.length();
-        System.out.println("file size after save [" + filesize
+        TestLogger.logger.debug("file size after save [" + filesize
                 + "]   temp file = [" + theFilename + "]");
         
         // Make sure the Axiom structure is intact.  
@@ -441,7 +442,7 @@ public class MessagePersistanceTests extends TestCase {
 
         // Make sure the output is correct
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
         assertTrue(newText.contains("Body"));
@@ -459,13 +460,13 @@ public class MessagePersistanceTests extends TestCase {
         ObjectInputStream inObjStream = new ObjectInputStream(inStream);
 
         // try to restore the message context
-        System.out.println("restoring a message context.....");
+        TestLogger.logger.debug("restoring a message context.....");
 
         org.apache.axis2.context.MessageContext restoredMC = 
             (org.apache.axis2.context.MessageContext) inObjStream.readObject();
         inObjStream.close();
         inStream.close();
-        System.out.println("....restored message context.....");
+        TestLogger.logger.debug("....restored message context.....");
         
         // At this point in time, the restoredMessage will be a full tree.
         // TODO If this changes, please add more assertions here.
@@ -478,7 +479,7 @@ public class MessagePersistanceTests extends TestCase {
         outputFormat.setMimeBoundary("MIMEBoundary_Axis2Rocks");
         env.serializeAndConsume(baos, outputFormat);
         String restoredText = baos.toString();
-        System.out.println(restoredText);
+        TestLogger.logger.debug(restoredText);
         assertTrue(restoredText.contains("soap"));
         assertTrue(restoredText.contains("Envelope"));
         assertTrue(restoredText.contains("Body"));
@@ -495,13 +496,13 @@ public class MessagePersistanceTests extends TestCase {
         // attach a stream capable of reading objects from the 
         // stream connected to the file
         inObjStream = new ObjectInputStream(inStream);
-        System.out.println("restoring a message context again.....");
+        TestLogger.logger.debug("restoring a message context again.....");
 
         restoredMC = 
             (org.apache.axis2.context.MessageContext) inObjStream.readObject();
         inObjStream.close();
         inStream.close();
-        System.out.println("....restored message context.....");    
+        TestLogger.logger.debug("....restored message context.....");    
         env = restoredMC.getEnvelope();
         env.build();
         
@@ -604,7 +605,7 @@ public class MessagePersistanceTests extends TestCase {
         env.serializeAndConsume(baos, outputFormat);
 
         String newText = baos.toString();
-        System.out.println(newText);
+        TestLogger.logger.debug(newText);
         assertTrue(newText.contains("soap"));
         assertTrue(newText.contains("Envelope"));
         assertTrue(newText.contains("Body"));
@@ -628,7 +629,7 @@ public class MessagePersistanceTests extends TestCase {
         outputFormat.setMimeBoundary("MIMEBoundary_Axis2Rocks");
         env2.serializeAndConsume(baos, outputFormat);
         String restoredText = baos.toString();
-        System.out.println(restoredText);
+        TestLogger.logger.debug(restoredText);
         assertTrue(restoredText.contains("soap"));
         assertTrue(restoredText.contains("Envelope"));
         assertTrue(restoredText.contains("Body"));

@@ -19,6 +19,8 @@
 
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.axis2.jaxws.unitTest.TestLogger;
+
 import java.awt.Image;
 import java.io.File;
 
@@ -40,7 +42,7 @@ public class AttachmentUtilityTests extends TestCase {
 			Image img1=ImageIO.read(img1File) ;
 			Image img2= ImageIO.read(img2File);
 			assertFalse(AttachmentUtils.compareImages(img1, img2));
-			System.out.println("Image Compared successfully");
+			TestLogger.logger.debug("Image Compared successfully");
 		}catch(Exception e){
 			System.out.println("Image Compare Failed");
 			e.printStackTrace();
@@ -59,7 +61,7 @@ public class AttachmentUtilityTests extends TestCase {
 			Image img2= ImageIO.read(img2File);
 			
 			assertTrue(AttachmentUtils.compareImages(img1, img1));
-			System.out.println("Image Compared successfully");
+			TestLogger.logger.debug("Image Compared successfully");
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println("Image Compare Failed");
