@@ -189,6 +189,17 @@ public class SchemaCompiler {
             this.options = options;
         }
 
+        Map<String, String> nsp2PackageMap = this.options.getNs2PackageMap();
+
+        if (nsp2PackageMap == null){
+            nsp2PackageMap = new HashMap();
+            this.options.setNs2PackageMap(nsp2PackageMap);
+        }
+
+        if (!nsp2PackageMap.containsKey("")){
+            nsp2PackageMap.put("","axis2.apache.org");
+        }
+
         //instantiate the maps
         processedTypemap = new HashMap<QName,String>();
         processedGroupTypeMap = new HashMap<QName,String>();
@@ -318,7 +329,16 @@ public class SchemaCompiler {
             //set a mapper package if not avaialable
             if (writer.getExtensionMapperPackageName() == null) {
                 String ns = schema.getTargetNamespace();
-                writer.registerExtensionMapperPackageName(ns == null ? null : URLProcessor.makePackageName(ns));
+                if (ns == null) {
+                    ns = URLProcessor.DEFAULT_PACKAGE;
+                }
+                // if this name space exists in the ns2p list then we use it.
+                if ((options.getNs2PackageMap() != null)
+                        && (options.getNs2PackageMap().containsKey(ns))) {
+                    writer.registerExtensionMapperPackageName(options.getNs2PackageMap().get(ns));
+                } else {
+                    writer.registerExtensionMapperPackageName(URLProcessor.makePackageName(ns));
+                }
             }
         }
 
