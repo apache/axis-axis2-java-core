@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.context.listener;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -87,7 +89,7 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
             //Do not user custom builder if Parser does not have ability to read sub content.
             if(!entityReader.isParsedEntityStreamAvailable()){
                 if (log.isDebugEnabled()) {
-                    log.debug("Stream not available");
+                    log.debug("ParsedEntityStream is not available, defaulting to normal build");
                 }
                 return null;
             }
@@ -96,10 +98,13 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
             if(parsedStream == null){
                 //cant read content from EntityReader, returning null.
                 if (log.isDebugEnabled()) {
-                    log.debug("No content available");
+                    log.debug("Unable to read content from the entity reader, defaulting to normal build");
                 }
                 return null;
             }
+            HashMap<String, String> nsElementDecls = getElementNamespaceDeclarations(reader);
+            HashMap<String, String> attrElementDecls = getElementAttributeDeclarations(reader);
+            
             //read the payload. Lets move the parser forward.
             if(reader.hasNext()){
                 reader.next();
@@ -113,7 +118,8 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
                 }
             }
             OMNamespace ns = factory.createOMNamespace(namespace, reader.getPrefix());
-            InputStream payload = ContextListenerUtils.createPayloadElement(parsedStream, ns, localPart, parent);
+            InputStream payload = ContextListenerUtils.createPayloadElement(parsedStream, ns, localPart, parent, 
+                        nsElementDecls, attrElementDecls);
 
             ParserInputStreamDataSource ds = new ParserInputStreamDataSource(payload, encoding);
             OMSourcedElement om = null;
@@ -182,6 +188,121 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
         }
     }
 
+    private HashMap<String, String> getElementNamespaceDeclarations(XMLStreamReader reader)
+    {
+      HashMap<String, String> nsElementDecls = new HashMap<String, String>();
+      int count = reader.getNamespaceCount();
+      for (int i = 0; i < count; i++){
+        String prefix = reader.getNamespacePrefix(i);
+        String namespace = reader.getNamespaceURI(i);
+        if (namespace != null && namespace.length() > 0){
+          nsElementDecls.put(prefix == null ? "":prefix, namespace);
+        }
+      }
+      return nsElementDecls;
+    }
+    
+    private HashMap<String, String> getElementAttributeDeclarations(XMLStreamReader reader)
+    {
+      HashMap<String, String> attrElementDecls = new HashMap<String, String>();
+      int count = reader.getAttributeCount();
+
+      for (int i = 0; i < count; i++) {
+        String prefix = reader.getAttributePrefix(i);
+        String name = reader.getAttributeLocalName(i);
+        String value = convertEntityReferences(reader.getAttributeValue(i));
+        String compoundName;
+        if (prefix != null && prefix.length() > 0){
+          compoundName = prefix+":"+name;
+        }
+        else {
+          compoundName = name;
+        }
+        attrElementDecls.put(compoundName, value);
+      }
+      return attrElementDecls;
+    }
+    
+    protected String convertEntityReferences(String value)
+    {
+      if ((value == null) || (value.length() == 0))
+        return value;
+      
+      int valueLen = value.length();
+      
+      int[] positionsToChange = null;
+      int numChanged = 0;
+      
+      for (int i = 0; i < valueLen; i++) {
+        switch (value.charAt(i)) {
+          case '<':
+          case '>':
+          case '&':
+          case '\"':
+          case '\'':
+            if (positionsToChange == null)
+            {
+              positionsToChange = new int[valueLen];
+            }
+            positionsToChange[numChanged++]=i;
+            break;
+        }
+      }
+
+      if (numChanged == 0) {
+        if(log.isDebugEnabled())
+        {
+          log.debug("No entity references were found in "+value);
+        }
+        return value;
+      }
+      else {
+        if(log.isDebugEnabled())
+        {
+          log.debug("Found "+numChanged+" entity references in "+value);
+        }
+        
+        //We'll create the new builder assuming the size of the worst case
+        StringBuilder changedValue = new StringBuilder(valueLen+numChanged*5);
+        int changedPos = 0; 
+        for (int i = 0; i < valueLen; i++) {
+          if (i == positionsToChange[changedPos]) {
+            switch (value.charAt(i)) {
+              case '<':
+                changedValue.append("&lt;");
+                changedPos++;
+                break;
+              case '>':
+                changedValue.append("&gt;");
+                changedPos++;
+                break;
+              case '&':
+                changedValue.append("&amp;");
+                changedPos++;
+                break;
+              case '\'':
+                changedValue.append("&apos;");
+                changedPos++;
+                break;
+              case '\"':
+                changedValue.append("&quot;");
+                changedPos++;
+                break;
+            }
+          }
+          else {
+            changedValue.append(value.charAt(i));
+          }
+        }
+
+        if(log.isDebugEnabled())
+        {
+          log.debug("Converted to "+changedValue.toString());
+        }
+
+        return changedValue.toString();
+      }
+    }
     /*
      * Read content from entityReader.
      */

@@ -50,9 +50,9 @@ public class ContextListenerUtils {
         ProviderOMContextListener.create(mc.getAxisMessageContext().getServiceContext());
     }
     
-    public static InputStream createPayloadElement(InputStream payloadContent, OMNamespace ns, String localPart, OMContainer parent){
+    public static InputStream createPayloadElement(InputStream payloadContent, OMNamespace ns, String localPart, OMContainer parent, HashMap<String, String> nsElementDecls, HashMap<String, String> attrElementDecls){
         CompositeInputStream inputStream = new CompositeInputStream();
-        InputStream startTag = getStartTag(ns, localPart, parent);
+        InputStream startTag = getStartTag(ns, localPart, parent, nsElementDecls, attrElementDecls);
         InputStream endTag = getEndTag(ns, localPart);
         //Add Element startTag
         ((CompositeInputStream)inputStream).append(startTag);
@@ -96,7 +96,7 @@ public class ContextListenerUtils {
     /*
      * get startElement using namespace and local part. Add all namespace prefixes from parent elements.
      */
-    private static InputStream getStartTag(OMNamespace ns, String localPart, OMContainer parent){
+    private static InputStream getStartTag(OMNamespace ns, String localPart, OMContainer parent, HashMap<String, String> nsElementDecls, HashMap<String, String> attrElementDecls){
         if(log.isDebugEnabled()){
             log.debug("Start ParsedEntityDataSource.Data.getStartTag()");
         }            
@@ -104,17 +104,28 @@ public class ContextListenerUtils {
         StringBuffer startElement = new StringBuffer();
         String prefix = (ns!=null)?ns.getPrefix():null;
         String uri = (ns!=null)?ns.getNamespaceURI():null;
+        
+        HashMap<String, String> nsDecls = new HashMap<String, String>();
+        //Get all of the namespaces associated with Body, envelope, etc
+        getParentnsdeclarations(nsDecls, parent);
+        
+        nsDecls.putAll(nsElementDecls);
+        
         if(prefix!=null && prefix.length()>0){
-            startElement.append("<"+prefix+":"+localPart+ " xmlns:"+prefix+"=\""+uri+"\"");
-            addParentNs(startElement, parent);
-
+            startElement.append("<"+prefix+":"+localPart+ " ");
+            if (!nsDecls.containsKey(prefix) || !nsDecls.get(prefix).equals(uri)){
+              nsDecls.put(prefix, uri);
+            }
         }else{
-            startElement.append("<"+localPart+" xmlns=\""+uri+"\"");
-            addParentNs(startElement, parent);
+            startElement.append("<"+localPart + " ");
         }
+        addParentNs(startElement, parent, nsDecls);
+        addAttrs(startElement, attrElementDecls);
+        
         if(log.isDebugEnabled()){
-            log.debug("StartElement ="+startElement);
+          log.debug("StartElement ="+startElement);
         }
+
         if(log.isDebugEnabled()){
             log.debug("End ParsedEntityDataSource.Data.getStartTag()");
         }
@@ -134,8 +145,9 @@ public class ContextListenerUtils {
                 OMNamespace omn = (OMNamespace) ite.next();
                 String prefix = omn.getPrefix();
                 String nsUri = omn.getNamespaceURI();
-                if (!nsDecls.containsKey(prefix))
+                if (!nsDecls.containsKey(prefix)) {
                     nsDecls.put(prefix, nsUri);
+                }
             }
             parent = omElement.getParent();
         }
@@ -143,10 +155,7 @@ public class ContextListenerUtils {
     /*
      * add all parent namespace declarations to the element
      */
-    private static void addParentNs(StringBuffer startElement, OMContainer parent){
-        HashMap<String, String> nsDecls = new HashMap<String, String>();
-        //Get all the namespaces associated with Body, envelope etc.
-        getParentnsdeclarations(nsDecls, parent);
+    private static void addParentNs(StringBuffer startElement, OMContainer parent, HashMap<String, String> nsDecls){
         Iterator<Map.Entry<String, String>> iter = nsDecls.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<String, String> entry = iter.next();
@@ -162,7 +171,21 @@ public class ContextListenerUtils {
             startElement.append(uri);
             startElement.append("\"");
         }
-        startElement.append(">");
     }
 
+    private static void addAttrs(StringBuffer startElement, HashMap<String, String> attrDecls)
+    {
+      Iterator<Map.Entry<String, String>> iter = attrDecls.entrySet().iterator();
+      while (iter.hasNext()) {
+        Map.Entry<String, String> entry = iter.next();
+        String compoundName = entry.getKey();
+        String value = entry.getValue();
+        startElement.append(" ");
+        startElement.append(compoundName);
+        startElement.append("=\"");
+        startElement.append(value);
+        startElement.append("\"");
+      }
+      startElement.append(">");
+    }
 }

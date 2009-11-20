@@ -74,6 +74,35 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
 		}
 	}
 
+	/**
+     * Tests that ParsedEntityCustomBuilder.convertEntityReferences works as expected.
+     */
+    public void testConvertEntityReferences(){
+        try{
+            ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+            // test that all expected chars are converted
+            String expectedString1 = "&lt;,&gt;,&quot;,&apos;,&amp;";
+            String convertedString = customBuilder.convertEntityReferences("<,>,\",',&");
+            assertTrue("Special chars didn't get converted!  " +
+                    "Expected: \""+expectedString1+"\" but received: \""+convertedString+"\"", 
+                    convertedString.equals(expectedString1));
+            // test that a string with no special chars is unchanged
+            String simpleString = "This is a simple string";
+            convertedString = customBuilder.convertEntityReferences(simpleString);
+            assertTrue("Simple string was changed unexpectedly.  " +
+                    "Expected: \""+simpleString+"\" but received: \""+convertedString+"\"", 
+                    convertedString.equals(simpleString));
+            
+            // test that the mockenvelope gets converted correctly
+            String expectedString2 = "&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;invokeOp&gt;Hello Provider OM&lt;/invokeOp&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;";
+            convertedString = customBuilder.convertEntityReferences(mockenvelope);
+            assertTrue("mockenvelope was not converted as expected.  " +
+                    "Expected: \""+expectedString2+"\" but received: \""+convertedString+"\"", 
+                    convertedString.equals(expectedString2));
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
 	private SOAPEnvelope getMockEnvelope() throws Exception{
 		SOAPEnvelope env = (SOAPEnvelope)getOMBuilder().getDocumentElement();
 		return env;
