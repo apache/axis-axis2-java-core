@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.xml.soap.SOAPConstants;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
@@ -33,6 +34,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMSourcedElement;
 import org.apache.axiom.om.ds.ParserInputStreamDataSource;
 import org.apache.axiom.om.impl.builder.CustomBuilder;
+import org.apache.axis2.datasource.jaxb.JAXBCustomBuilderMonitor;
+import org.apache.axis2.jaxws.handler.HandlerUtils;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.jaxws.message.databinding.ParsedEntityReader;
@@ -75,6 +78,14 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
             log.debug("  localPart = " + localPart);
             log.debug("  reader = " + reader.getClass());
         }
+        
+        if (!shouldUnmarshal(namespace, localPart)) {
+            if (log.isDebugEnabled()) {
+                log.debug("This element won't be unmarshalled with the custom builder");
+            }
+            return null;
+        }
+        
         /*
          * 1) Use the the parser to fetch the inputStream
          * 2) Use the inputStream to create a DataSource, delay reading of content as much as you can.
@@ -169,6 +180,12 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
                     //still cant find the namespace, just set it to "";
                     namespace = "";
                 }
+            }
+            if (!shouldUnmarshal(namespace, localPart)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("This element won't be unmarshalled with the custom builder");
+                }
+                return null;
             }
             OMNamespace ns = factory.createOMNamespace(namespace, reader.getPrefix());
             ParserInputStreamDataSource ds = new ParserInputStreamDataSource(payload, encoding);
@@ -325,5 +342,46 @@ public class ParserInputStreamCustomBuilder implements CustomBuilder {
             }
         }
         return parsedStream;
+    }
+    
+    /**
+     * @param namespace
+     * @param localPart
+     * @return true if this ns and local part is acceptable for unmarshalling
+     */
+    private boolean shouldUnmarshal(String namespace, String localPart) {
+        
+        /**
+         * The stream preserves the original message, so I think
+         * we want to do unmarshal even if high fidelity is specified.
+         
+        boolean isHighFidelity = HandlerUtils.isHighFidelity(msgContext);
+
+        if (isHighFidelity) {
+            return false;
+        }
+        */
+        
+        // Don't unmarshal SOAPFaults.
+        // If there is no localPart, this also indicates a potential problem...so don't 
+        // use the custom builder
+        if (localPart == null || 
+            (localPart.equals("Fault") &&
+             (SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE.equals(namespace) ||
+              SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE.equals(namespace)))) {
+            return false;
+        }
+       
+        
+        /**
+         * For JAXB custom building, we ignore security elements.
+         * I don't think it matters for parsed entities since they preserve all the content
+        if (localPart.equals("EncryptedData")) {
+            return false;
+        }
+        */
+        
+        return true;
+                
     }
 }

@@ -50,29 +50,52 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
 	private String mockenvelope= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
 	"<soapenv:Header/>"+
 	"<soapenv:Body>"+
-	"<invokeOp>Hello Provider OM</invokeOp>"+
+	"<ns:invokeOp xmlns:=\"urn:sample\">Hello Provider OM</ns:invokeOp>"+
 	"</soapenv:Body>"+
 	"</soapenv:Envelope>";
+	
+	private String ENVELOPE= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"+
+	    "<soapenv:Header/>"+
+	    "<soapenv:Body>"+
+	    "<invokeOp>Hello Provider OM</invokeOp>"+
+	    "</soapenv:Body>"+
+	    "</soapenv:Envelope>";
         
-        String mockPayload = "<invokeOp>Hello Provider OM</invokeOp>";
+	String mockPayload = "<invokeOp>Hello Provider OM</invokeOp>";
 	
 	public void testCustomBuilder(){
-		try{
-                        SOAPEnvelope env = getMockEnvelope();
-                        SOAPHeader header = env.getHeader();
-                        SOAPBody body = env.getBody();
-			ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
-                        InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
-			OMElement om= customBuilder.create(null, "invokeOp",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
-			assertTrue(om!=null);
-			assertTrue(om instanceof OMSourcedElement);
-			OMSourcedElement ose = (OMSourcedElement)om;
-			assertNotNull(ose.getDataSource());
-			assertTrue((ose.getDataSource()) instanceof ParserInputStreamDataSource);
-		}catch(Exception e){
-			fail(e.getMessage());
-		}
+	    try{
+	        SOAPEnvelope env = getMockEnvelope();
+	        SOAPHeader header = env.getHeader();
+	        SOAPBody body = env.getBody();
+	        ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+	        InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
+	        OMElement om= customBuilder.create("urn:sample", "invokeOp",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
+	        assertTrue(om!=null);
+	        assertTrue(om instanceof OMSourcedElement);
+	        OMSourcedElement ose = (OMSourcedElement)om;
+	        assertNotNull(ose.getDataSource());
+	        assertTrue((ose.getDataSource()) instanceof ParserInputStreamDataSource);
+	    }catch(Exception e){
+	        fail(e.getMessage());
+	    }
 	}
+	
+    public void testCustomBuilderSOAPENVNamespace(){
+        try{
+            SOAPEnvelope env = getMockEnvelope();
+            SOAPHeader header = env.getHeader();
+            SOAPBody body = env.getBody();
+            ParserInputStreamCustomBuilder customBuilder = new ParserInputStreamCustomBuilder("UTF-8");
+            InputStream payload = new ByteArrayInputStream(mockPayload.getBytes());
+
+            // If there is no namespace, the customer building should not occur.
+            OMElement om= customBuilder.create("http://www.w3.org/2003/05/soap-envelope", "Fault",(OMContainer) body, parser, OMAbstractFactory.getOMFactory(), payload);
+            assertTrue(om==null);
+        }catch(Exception e){
+            fail(e.getMessage());
+        }
+    }
 
 	/**
      * Tests that ParsedEntityCustomBuilder.convertEntityReferences works as expected.
@@ -95,7 +118,7 @@ public class ParserInputStreamCustomBuilderTests extends TestCase {
             
             // test that the mockenvelope gets converted correctly
             String expectedString2 = "&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&gt;&lt;soapenv:Header/&gt;&lt;soapenv:Body&gt;&lt;invokeOp&gt;Hello Provider OM&lt;/invokeOp&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;";
-            convertedString = customBuilder.convertEntityReferences(mockenvelope);
+            convertedString = customBuilder.convertEntityReferences(ENVELOPE);
             assertTrue("mockenvelope was not converted as expected.  " +
                     "Expected: \""+expectedString2+"\" but received: \""+convertedString+"\"", 
                     convertedString.equals(expectedString2));
