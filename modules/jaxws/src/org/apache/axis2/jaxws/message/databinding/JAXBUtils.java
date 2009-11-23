@@ -879,6 +879,7 @@ public class JAXBUtils {
                      getAnnotation(cls, XmlType.class) != null ||
                      ClassUtils.getDefaultPublicConstructor(cls) != null) &&
                 !ClassUtils.isJAXWSClass(cls) &&
+                !isSkipClass(cls) &&
                 cls.getPackage().getName().equals(pkg)) {
                 i++; // Acceptable class
             } else {
@@ -945,6 +946,7 @@ public class JAXBUtils {
                                         getAnnotation(clazz, XmlType.class) != null ||
                                         ClassUtils.getDefaultPublicConstructor(clazz) != null)
                                     && !ClassUtils.isJAXWSClass(clazz)
+                                    && !isSkipClass(clazz) 
                                     && !java.lang.Exception.class.isAssignableFrom(clazz)) {
 
                                 // Ensure that all the referenced classes are loadable too
@@ -1054,6 +1056,73 @@ public class JAXBUtils {
         }
 
         return cl;
+    }
+    
+    
+    /**
+     * @return true if clazz is a class that should be skipped (should not
+     * be a considered for JAXB)
+     */
+    private static boolean isSkipClass(Class clazz) {
+       
+        Class cls = clazz;
+        while (cls != null) {
+            // Check the name of the class to see if it should be excluded.
+            String clsName = cls.getCanonicalName();
+            if (clsName != null && 
+                    (clsName.equals("javax.ejb.SessionBean")  ||
+                            clsName.equals("org.apache.axis2.jaxws.spi.JAXBExclude"))) {
+                if (log.isDebugEnabled()) {
+                    log.debug("isSkipClass returns true for : " + clazz);
+                    log.debug("  (It is skipped because the class extends " + clsName);
+                }
+                return true;
+            }
+            
+            // Check the interfaces of the class to see if it should be excluded
+            Class[] intferfaces = getInterfaces_priv(cls);
+            if (intferfaces != null) {
+                for (int i=0; i<intferfaces.length; i++) {
+                    clsName = intferfaces[i].getCanonicalName();
+                    if (clsName != null && 
+                            (clsName.equals("javax.ejb.SessionBean")  ||
+                                    clsName.equals("org.apache.axis2.jaxws.spi.JAXBExclude"))) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("isSkipClass returns true for : " + clazz);
+                            log.debug("  (It is skipped because the class implements " + clsName);
+                        }
+                        return true;
+                    } 
+                }
+            }
+            cls = cls.getSuperclass();  // Proceed up the hierarchy
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("isSkipClass returns false for : " + clazz);
+        }
+        return false;
+    }
+    
+    private static Class[] getInterfaces_priv(final Class cls) {
+        Class[] intferfaces = null;
+        if (cls == null) {
+            return null;
+        }
+        try {
+            intferfaces = (Class[]) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return cls.getInterfaces();
+                        }
+                    }
+            );
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+                log.debug("Exception is ignored.");
+            }
+        }
+        return intferfaces;
     }
 
     /**
