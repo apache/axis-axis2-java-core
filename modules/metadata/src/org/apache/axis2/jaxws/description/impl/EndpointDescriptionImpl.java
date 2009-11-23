@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -1032,7 +1033,11 @@ public class EndpointDescriptionImpl
             }
 
             this.axisService = axisServiceBuilder.populateService();
-            axisService.setName(createAxisServiceName());
+            axisService.setName(getServiceDescription().getServiceQName().getLocalPart());
+            axisService.setParent(axisConfig);
+
+            //populate all existing bindings..
+            Utils.setEndpointsToAllUsedBindings(axisService);
 
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages
