@@ -59,6 +59,7 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -309,6 +310,25 @@ public class PackageSetBuilder {
         if (responseWrapperPkg != null) {
             set.add(responseWrapperPkg);
         }
+      
+        // The wrapper class and the element defining the wrapper may be 
+        // in different namespaces and packages.  So also look at the namespaces.
+        String ns = opDesc.getRequestWrapperTargetNamespace();
+        if (ns != null && ns.length() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("TargetNamespace from Request Wrapper annotation = " + ns);
+            }
+            List packages = makePackages(ns);
+            set.addAll(packages);
+        }
+        ns = opDesc.getResponseWrapperTargetNamespace();
+        if (ns != null && ns.length() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("TargetNamespace from Response Wrapper annotation = " + ns);
+            }
+            List packages = makePackages(ns);
+            set.addAll(packages);
+        }
         
         // In most doc/literal cases, the @RequestWrapper or @ResponseWrapper classes are successfully found.
         // The wrapper classes contain the representation of the parameters, thus the parameters don't need
@@ -458,9 +478,9 @@ public class PackageSetBuilder {
                 // in doc/lit wrapped.  The package is determined from the wrapper element in such casses.
                 if (namespace != null && namespace.length() > 0) {
                     // Use default namespace to package algorithm
-                    String pkg = makePackage(namespace);
-                    if (pkg != null) {
-                        set.add(pkg);
+                    List pkgs = makePackages(namespace);
+                    if (pkgs != null) {
+                        set.addAll(pkgs);
                     }
                 }
             } else {
@@ -521,12 +541,12 @@ public class PackageSetBuilder {
      * Default Namespace to Package algorithm
      *
      * @param ns
-     * @return
+     * @return List of one or more packages
      */
-    private static String makePackage(String ns) {
-        String pkgName = JavaUtils.getPackageFromNamespace(ns);
-        return pkgName;
-    }
+    private static List makePackages(String ns) {
+        List packages = JavaUtils.getPackagesFromNamespace(ns);
+        return packages;
+     }
 
     /**
      * Return the package associated with the class name.  The className may not be specified (in

@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /** Common Java Utilites */
@@ -39,13 +40,44 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
     private JavaUtils() {
     }
 
+       
+    /**
+     * @param namespace
+     * @return List of String containing 1 or 2 packages
+     */
+    public static List getPackagesFromNamespace(String namespace) {
+        List list = new ArrayList();
+        // Get a package using JAXB Rules
+        String jaxbPkg = getPackageFromNamespace(namespace, true);
+        list.add(jaxbPkg);
+        if (jaxbPkg.contains("_")) {
+            if (log.isDebugEnabled()) {
+                log.debug("Calling getPackageFromNamespace with wsimport rule:" + namespace);
+            }
+            String altPkg = getPackageFromNamespace(namespace, false);  // Using wsimport rule
+            list.add(altPkg);
+        }
+        return list;    
+    }
+
     /**
      * Namespace 2 Package algorithm as defined by the JAXB Specification
      *
      * @param Namespace
-     * @return String represeting Namespace
+     * @return String representing Namespace
+     * @see getPackagesFromNamespace
      */
     public static String getPackageFromNamespace(String namespace) {
+        return getPackageFromNamespace(namespace, true);
+    }
+      
+    /**
+     * @param Namespace
+     * @param apend underscore to keyword
+     * @return String representing Namespace
+     */
+    public static String getPackageFromNamespace(String namespace, 
+            boolean appendUnderscoreToKeyword) {
         // The following steps correspond to steps described in the JAXB Specification
 
         if (log.isDebugEnabled()) {
@@ -151,7 +183,11 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
 
             // 8b: Append _ to java keywords
             if (JavaUtils.isJavaKeyword(word)) {
-                word = word + "_";
+                if (appendUnderscoreToKeyword) {
+                    word = word + "_";  // This is defined by the JAXB Spec
+                } else {
+                    word = "_" +word;  // Apparently wsimport can generate this style
+                }
             }
             // 8c: prepend _ if first character cannot be the first character of a java identifier
             if (!Character.isJavaIdentifierStart(word.charAt(0))) {

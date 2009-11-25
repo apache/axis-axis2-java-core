@@ -23,6 +23,7 @@
 package org.apache.axis2.jaxws.misc;
 
 import junit.framework.TestCase;
+import java.util.List;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 
 /**
@@ -35,8 +36,24 @@ public class NS2PkgTest extends TestCase {
         String ns1 = "http://example.org/NewBusiness/";
         String expectedPkg1 = "org.example.newbusiness";
         
-        String pkg = JavaUtils.getPackageFromNamespace(ns1);
-        assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
+        // Test legacy utility method
+        String packageString = JavaUtils.getPackageFromNamespace(ns1);
+        assertTrue(expectedPkg1.equals(packageString));
+        
+        // Test new utility method
+        List pkgs = JavaUtils.getPackagesFromNamespace(ns1);
+        assertTrue(pkgs.size() == 1);
+        assertTrue(expectedPkg1.equals(pkgs.get(0)));
+        
+        String ns2 = "http://interface.org/NewBusiness/";
+        String expectedPkg2_jaxb = "org.interface_.newbusiness";
+        String expectedPkg2_other = "org._interface.newbusiness";
+        
+        // Test new utility for a case where 2 packages will be returned.
+        pkgs = JavaUtils.getPackagesFromNamespace(ns2);
+        assertTrue(pkgs.size() == 2);
+        assertTrue(expectedPkg2_jaxb.equals(pkgs.get(0)));
+        assertTrue(expectedPkg2_other.equals(pkgs.get(1)));
     }
     
     public void test02() throws Exception {

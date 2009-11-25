@@ -79,8 +79,10 @@ public class SchemaReaderImpl implements SchemaReader {
         Set<String> packageList = new TreeSet<String>();
         //Add WSDL TargetNamespace
         String namespace = wsdlDefinition.getTargetNamespace();
-        String packageString = JavaUtils.getPackageFromNamespace(namespace);
-        packageList.add(packageString);
+        List packages = JavaUtils.getPackagesFromNamespace(namespace);
+        if (packages != null && packages.size() > 0) {
+            packageList.addAll(packages);   
+        }
 
         //Read All Schema Definition in wsdl;
         Types types = wsdlDefinition.getTypes();
@@ -114,6 +116,7 @@ public class SchemaReaderImpl implements SchemaReader {
         //Check if there is Binding customization and read package from it.
         String packageString = readSchemaBindingPackageName(schema);
         //No binding customization present then get the Targetnamespace of Schema
+        List packages = null;
         if (packageString == null) {
             //no Schema Binding package name found, this means no jaxb customizations in schema, lets read wsdl
             //targetnamespace. Thats what will be used by RI tooling to store java Beans
@@ -127,7 +130,7 @@ public class SchemaReaderImpl implements SchemaReader {
                 return;
             }
             if (namespace != null) {
-                packageString = JavaUtils.getPackageFromNamespace(namespace);
+                packages = JavaUtils.getPackagesFromNamespace(namespace);
             }
         }
         //Gather all imports and process Schema from these imports
@@ -151,6 +154,9 @@ public class SchemaReaderImpl implements SchemaReader {
         //Package String could be null if there is no schema defintion inside types
         if (packageString != null) {
             packageList.add(packageString);
+        }
+        if (packages != null && packages.size() > 0) {
+            packageList.addAll(packages);
         }
         for (SchemaImport si : importList) {
             processImport(si, schemaList, packageList);
