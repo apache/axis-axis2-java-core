@@ -533,6 +533,10 @@
                 <enabled>true</enabled>
             </releases>
          </repository>
+	<repository>
+            <id>wso2-maven2-repository</id>
+            <url>http://dist.wso2.org/maven2</url>
+         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
