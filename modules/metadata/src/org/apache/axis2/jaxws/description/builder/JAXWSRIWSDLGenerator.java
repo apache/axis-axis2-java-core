@@ -504,7 +504,14 @@ public class JAXWSRIWSDLGenerator implements SchemaSupplier, WSDLSupplier {
         URL serviceArchive = axisService.getFileName();
         if(serviceArchive != null) {
             try {
-                classpath.add(Utils.toFile(serviceArchive).getCanonicalPath());
+                /**
+                 * If the service contains libraries in the 'lib' folder, we have to add those also
+                 * into classpath
+                 */
+                URL[] urls = Utils.getURLsForAllJars(serviceArchive, null);
+                for (URL url : urls) {
+                    classpath.add(Utils.toFile(url).getCanonicalPath());
+                }
             } catch (UnsupportedEncodingException e) {
                 log.error(e.getMessage(), e);
             } catch (IOException e) {
