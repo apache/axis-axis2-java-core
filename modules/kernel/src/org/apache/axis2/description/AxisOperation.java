@@ -438,9 +438,17 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    public void setWsamappingList(ArrayList<String> wsamappingList) {
+    public void setWsamappingList(ArrayList wsamappingList) {
+        if (log.isDebugEnabled()) {
+            log.debug("setWsamappinglist");
+        }
         this.wsamappingList = wsamappingList;
-    }
+        if (wsamappingList != null && !wsamappingList.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug(" wsa action is " + (String)wsamappingList.get(0));
+            }
+        }
+     }
 
     /**
      * Return an OperationClient suitable for this AxisOperation.
@@ -469,7 +477,13 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public void setSoapAction(String soapAction) {
+        if(log.isDebugEnabled()) {
+            log.debug("Entry: AxisOperation::setSoapAction, previous soapAction: " + this.soapAction + " updated soapAction: " + soapAction);
+        }
         this.soapAction = soapAction;
+        if(log.isDebugEnabled()) {
+            log.debug("Exit: AxisOperation::setSoapAction");
+        }
     }
 
     /*
@@ -481,13 +495,29 @@ public abstract class AxisOperation extends AxisDescription
     * when you want to get the wsa input action.
     */
     public String getInputAction() {
+        if(log.isDebugEnabled()) {
+            log.debug("Entry: AxisOperation::getInputAction");
+        }
         String result = null;
         if (soapAction != null && !"".equals(soapAction)) {
+            if(log.isDebugEnabled()) {
+                log.debug("Debug: AxisOperation::getInputAction - using soapAction");  // so we know which path was taken
+                // log wsa map to see if it matches or is set
+                if (wsamappingList != null && !wsamappingList.isEmpty()) {
+                    log.debug(" but WSA map indicates " + (String)wsamappingList.get(0));
+                }
+            }
             result = soapAction;
         } else {
             if (wsamappingList != null && !wsamappingList.isEmpty()) {
+                if(log.isDebugEnabled()) {
+                    log.debug("Debug: AxisOperation::getInputAction - using wsamappingList");
+                }
                 result = wsamappingList.get(0);
             }
+        }
+        if(log.isDebugEnabled()) {
+            log.debug("Exit: AxisOperation::getInputAction " + result);
         }
         return result;
     }
@@ -547,6 +577,9 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String getSoapAction() {
+        if(log.isDebugEnabled()) {
+            log.debug("AxisOperation::getSoapAction " + soapAction);
+        }
         /*
          * This AxisOperation instance may be used for the client OUT-IN or for
          * the server IN-OUT.  If the below code were changed to getInputActions, and the

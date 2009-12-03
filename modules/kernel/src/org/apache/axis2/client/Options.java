@@ -242,6 +242,9 @@ public class Options implements Externalizable, SafeSerializable {
         if (action == null && parent != null) {
             return parent.getAction();
         }
+        if (log.isDebugEnabled()) { 
+            log.debug("getAction (" + action + ") from " + this);
+        }
         return action;
     }
 
@@ -582,6 +585,19 @@ public class Options implements Externalizable, SafeSerializable {
      * @param action
      */
     public void setAction(String action) {
+        if (log.isDebugEnabled()) {
+            log.debug("setAction Old action is (" + this.action + ")");
+            log.debug("setAction New action is (" + action + ")");
+            
+            // It is unusual for a non-null action to be set to a different
+            // non-null action.  This *might* indicate an error, so the 
+            // call stack is dumped in this unusual case.
+            if ((this.action != null && this.action.length() > 0) &&
+                 (action != null && action.length() > 0) &&
+                 !action.equals(this.action)) {
+                log.debug(" The call stack is:" + JavaUtils.callStackToString());
+            }
+        }
         this.action = action;
     }
 

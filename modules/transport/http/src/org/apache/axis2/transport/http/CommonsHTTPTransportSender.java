@@ -429,11 +429,27 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         if (!JavaUtils.isTrueExplicitly(disableSoapAction)) {
             // first try to get the SOAP action from message context
             soapActionString = messageContext.getSoapAction();
+            if (log.isDebugEnabled()) {
+                log.debug("SOAP Action from messageContext : (" + soapActionString + ")");
+                
+            }
+            if (soapActionString != null &&
+                    (soapActionString.equals("urn:anonOutInOp") ||
+                     soapActionString.equals("anonOutInOp") ||
+                     soapActionString.equals("urn:anonOutonlyOp") ||
+                     soapActionString.equals("anonOutonlyOp") ||
+                     soapActionString.equals("urn:anonRobustOp") ||
+                     soapActionString.equals("anonRobustOp"))) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Will not use SOAP Action because (" + soapActionString + ") was auto-generated");
+                }
+                soapActionString = null;
+            }
             if ((soapActionString == null) || (soapActionString.length() == 0)) {
                 // now let's try to get WSA action
                 soapActionString = messageContext.getWSAAction();
                 if (log.isDebugEnabled()) {
-                    log.debug("SOAP Action from getWSAAction was : " + soapActionString);
+                    log.debug("SOAP Action from getWSAAction was : (" + soapActionString + ")");
                 }
                 if (messageContext.getAxisOperation() != null
                         && ((soapActionString == null) || (soapActionString
@@ -442,13 +458,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     String axisOpSOAPAction = messageContext.getAxisOperation().
                         getSoapAction();
                     if (log.isDebugEnabled()) {
-                        log.debug("SOAP Action from AxisOperation was : " + axisOpSOAPAction);
+                        log.debug("SOAP Action from AxisOperation was : (" + axisOpSOAPAction + ")");
                     }
                     if (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction)
-                        || (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction))
-                        || (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction))) {
+                            || (ServiceClient.ANON_OUT_IN_OP.equals(axisOpSOAPAction))
+                            || (ServiceClient.ANON_ROBUST_OUT_ONLY_OP.equals(axisOpSOAPAction))) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Will not override SOAP Action because " + axisOpSOAPAction + " in AxisOperation was auto-generated");
+                            log.debug("Will not override SOAP Action because (" + axisOpSOAPAction + ") in AxisOperation was auto-generated");
                         }   
                     } else {
                         soapActionString = axisOpSOAPAction;

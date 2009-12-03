@@ -1096,7 +1096,11 @@ public class MessageContext extends AbstractContext
      * @return Returns soap action.
      */
     public String getSoapAction() {
-        return options.getAction();
+        String action = options.getAction();
+        if (log.isDebugEnabled()) {
+            log.debug("SoapAction is (" + action + ")");
+        }
+        return action;
     }
 
     /**
@@ -1127,7 +1131,11 @@ public class MessageContext extends AbstractContext
     }
 
     public String getWSAAction() {
-        return options.getAction();
+        String action = options.getAction();
+        if (log.isDebugEnabled()) {
+            log.debug("WASAction is (" + action + ")");
+        }
+        return action;
     }
 
     /**
@@ -1494,6 +1502,10 @@ public class MessageContext extends AbstractContext
      * @param soapAction
      */
     public void setSoapAction(String soapAction) {
+        if (log.isDebugEnabled()) {
+            log.debug("Old SoapAction is (" + options.getAction() + ")");
+            log.debug("New SoapAction is (" + soapAction + ")");
+        }
         options.setAction(soapAction);
     }
 
@@ -1522,6 +1534,10 @@ public class MessageContext extends AbstractContext
      * setWSAAction
      */
     public void setWSAAction(String actionURI) {
+        if (log.isDebugEnabled()) {
+            log.debug("Old WSAAction is (" + options.getAction() + ")");
+            log.debug("New WSAAction is (" + actionURI + ")");
+        }
         options.setAction(actionURI);
     }
 
