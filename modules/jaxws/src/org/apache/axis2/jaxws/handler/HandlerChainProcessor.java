@@ -70,7 +70,9 @@ public class HandlerChainProcessor {
 
     private MEPContext mepCtx;
 
+    // Copy of the handler chain used by HandlerChainProcessor
     private List<Handler> handlers = null;
+    private static final List<Handler> EMPTY_CHAIN = new ArrayList<Handler>(); 
     
     // for tracking purposes -- see trackInternalCall
     private static Handler currentHandler = null;
@@ -103,27 +105,42 @@ public class HandlerChainProcessor {
     private static boolean saaj_called = false;
 
     /*
-      * HandlerChainProcess expects null, empty list, or an already-sorted
-      * list.  If the chain passed into here came from our HandlerChainResolver,
-      * it is sorted already.  If a client app created or manipulated the list,
-      * it may not be sorted.  The processChain and processFault methods check
-      * for this by calling verifyChain.
+     * The HandlerChainProcessor is constructed with the handler chain.
+     * The handler chain may be null, empty or already sorted.
+     * It also may be shared.  For this reason a copy of chain is made
+     * so that the sort and other manipulation does not affect the original
+     * chain.
+     * @param chain Handler chain
+     * @param proto Protocol
       */
 	public HandlerChainProcessor(List<Handler> chain, Protocol proto) {
-        if (chain == null) {
-            handlers = new ArrayList<Handler>();
-		}
-		else
-            handlers = chain;
+	    if (chain != null) {
+            synchronized (chain) {
+                if (chain.size() == 0) {
+                    // Use empty chain to avoid excessive garbage collection
+                    this.handlers = EMPTY_CHAIN;
+                } else {
+                    this.handlers = new ArrayList<Handler>(); 
+                    this.handlers.addAll(chain);
+                }
+            }
+        } else {
+            handlers = EMPTY_CHAIN;
+        }
         this.proto = proto;
     }
 
-    /*
-      * sortChain will properly sort the chain, logical then protocol, since it may be
-      * a chain built or modified by a client application.  Also keep track of
-      * start/end for each type of handler.
-      */
+	/*
+	 * sortChain sorts the local copy of the handlers chain.
+	 * The logical handlers are first followed by the protocol handlers.
+	 * sortChain also keeps track of the start/end of each type of handler.
+	 */
 	private void sortChain() throws WebServiceException {
+        
+        if (handlers.size() == 0) {
+            logicalLength = 0;
+            return;
+        }
         
         ArrayList<Handler> logicalHandlers = new ArrayList<Handler>();
         ArrayList<Handler> protocolHandlers = new ArrayList<Handler>();

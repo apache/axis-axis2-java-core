@@ -29,18 +29,24 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.ClientConfiguratorRegistry;
 import org.apache.axis2.jaxws.spi.Binding;
 import org.apache.axis2.jaxws.spi.BindingProvider;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Classes that would normally "implement javax.xml.ws.Binding"
  * should extend this class instead.
  */
 public abstract class BindingImpl implements Binding {
+    
+    private static final Log log = LogFactory.getLog(BindingImpl.class);
+    
     // an unsorted list of handlers
     private List<Handler> handlers;
 
@@ -79,7 +85,12 @@ public abstract class BindingImpl implements Binding {
         if (handlers == null) {
             // non-null so client apps can manipulate
             handlers =
-                    new HandlerResolverImpl(endpointDesc.getServiceDescription()).getHandlerChain(endpointDesc.getPortInfo());
+                    new HandlerResolverImpl(endpointDesc.getServiceDescription()).
+                        getHandlerChain(endpointDesc.getPortInfo());
+            if (log.isDebugEnabled()) {
+                log.debug("handers list constructed from HandlerResolverImpl.  The list is:" + 
+                        JavaUtils.getObjectIdentity(handlers));
+            }
         }
         return handlers;
     }
@@ -89,7 +100,19 @@ public abstract class BindingImpl implements Binding {
         if (list == null) {
             handlers = new ArrayList<Handler>(); // non-null, but rather
                                                     // empty
+            if (log.isDebugEnabled()) {
+                log.debug("setHandlerChain called with a null list.  " +
+                        "A empty list is created:" + JavaUtils.getObjectIdentity(handlers));
+            }
         } else {
+            // Use the handler list provided by the caller.
+            // The JAX-WS runtime nor user should ever modify this list or a ConcurrentModificationException 
+            // may occur.
+            // @see org.apache.axis2.jaxws.handler.HandlerChainProcessor which makes a copy of
+            // the handler chain to avoid potential CMEs.
+            if (log.isDebugEnabled()) {
+                log.debug("setHandlerChain called with a list:" + JavaUtils.getObjectIdentity(list));
+            }
             this.handlers = list;
         }
     }
