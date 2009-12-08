@@ -400,8 +400,13 @@ public class OperationContext extends AbstractContext
         AxisService axisService = axisOperation.getAxisService();
 
         if (axisService != null) {
+            String serviceAndPortNames = ActivateUtils.getAxisServiceExternalizeExtraName(axisService);
+            // If there is a service & port QName stored on the AxisService then write it out so 
+            // it can be used during deserialization to hook up the message context to the 
+            // correct AxisService.
             metaAxisService =
-                    new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
+                    new MetaDataEntry(axisService.getClass().getName(), axisService.getName(),
+                            serviceAndPortNames);
         }
         out.writeObject(metaAxisService);
 
