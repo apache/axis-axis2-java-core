@@ -66,10 +66,10 @@ public class TransportUtils {
     public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
         return createSOAPMessage(msgContext, false);
     }
-    
+
     /**
      * This method will create a SOAPEnvelope based on the InputStream stored on
-     * the MessageContext. The 'detach' parameter controls whether or not the 
+     * the MessageContext. The 'detach' parameter controls whether or not the
      * underlying DetachableInputStream is detached at the end of the method. Note,
      * detaching the DetachableInputStream closes the underlying InputStream that
      * is stored on the MessageContext.
@@ -106,7 +106,7 @@ public class TransportUtils {
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
             SOAPEnvelope env = createSOAPMessage(msgContext, inStream, contentType);
-            
+
             // if we were told to detach, we will make the call here, this is only applicable
             // if a DetachableInputStream instance is found on the MessageContext
             if(detach) {
@@ -156,7 +156,9 @@ public class TransportUtils {
             // SOAPEnvelope.
             SOAPFactory soapFactory = new SOAP11Factory();
             envelope = soapFactory.getDefaultEnvelope();
-            envelope.getBody().addChild(documentElement);
+            if (documentElement != null) {
+                envelope.getBody().addChild(documentElement);
+            }
         }
         return envelope;
     }
@@ -164,6 +166,13 @@ public class TransportUtils {
     public static OMElement createDocumentElement(String contentType,
                                                   MessageContext msgContext,
                                                   InputStream inStream) throws AxisFault, XMLStreamException {
+        // If we are handling a REST request, and the dispatchAndVerify method was not able to
+        // locate the relevant service/operation, we should not try to build a document element
+        if (msgContext.isDoingREST() &&
+            (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null)) {
+            return null;
+        }
+
         OMElement documentElement = null;
         String type = null;
         if (contentType != null) {
@@ -191,7 +200,7 @@ public class TransportUtils {
             Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
             if (builder != null) {
 	            if (log.isDebugEnabled()) {
-	                log.debug("createSOAPEnvelope using Builder (" + 
+	                log.debug("createSOAPEnvelope using Builder (" +
 	                          builder.getClass() + ") selected from type (" + type +")");
 	            }
                 documentElement = builder.processDocument(inStream, contentType, msgContext);
@@ -435,8 +444,8 @@ public class TransportUtils {
         }
         return messageFormatterProperty;
     }
-    
-    
+
+
         /**
          * This is a helper method to get the response written flag from the RequestResponseTransport
          * instance.
@@ -456,7 +465,7 @@ public class TransportUtils {
                 return false;
             }
         }
-    
+
        /**
          * This is a helper method to set the response written flag on the RequestResponseTransport
          * instance.
@@ -474,7 +483,7 @@ public class TransportUtils {
                }
            }
        }
-   
+
        /**
         * This is an internal helper method to retrieve the RequestResponseTransport instance
         * from the MessageContext object. The MessageContext may be the response MessageContext so
@@ -484,7 +493,7 @@ public class TransportUtils {
     	   try {
     		   // If this is the request MessageContext we should find it directly by the getProperty()
                // method
-               if (messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL) 
+               if (messageContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)
             		   != null) {
                    return (RequestResponseTransport) messageContext.getProperty(
                 		   RequestResponseTransport.TRANSPORT_CONTROL);
@@ -497,10 +506,10 @@ public class TransportUtils {
         						getOperationContext().getMessageContext(
         								WSDLConstants.MESSAGE_LABEL_IN_VALUE).getProperty(
         										RequestResponseTransport.TRANSPORT_CONTROL);
-        		} 
+        		}
         		else {
         			return null;
-        		} 
+        		}
     	   }
            catch(AxisFault af) {
            	// probably should not be fatal, so just log the message
@@ -509,16 +518,16 @@ public class TransportUtils {
            	return null;
            }
     }
-       
+
        /**
-        * Clean up cached attachment file 
+        * Clean up cached attachment file
         * @param msgContext
         */
        public static void deleteAttachments(MessageContext msgContext) {
        	if (log.isDebugEnabled()) {
                log.debug("Entering deleteAttachments()");
            }
-           
+
        	Attachments attachments = msgContext.getAttachmentMap();
        	LifecycleManager lcm = (LifecycleManager)msgContext.getRootContext().getAxisConfiguration().getParameterValue(DeploymentConstants.ATTACHMENTS_LIFECYCLE_MANAGER);
            if (attachments != null) {
@@ -555,7 +564,7 @@ public class TransportUtils {
 
                            if (file != null) {
                                if(lcm!=null){
-                                   try{                        			   
+                                   try{
                                        lcm.deleteOnExit(file);
                                    }catch(Exception ex){
                                        file.deleteOnExit();
@@ -569,16 +578,16 @@ public class TransportUtils {
                    }
                }
            }
-           
+
            if (log.isDebugEnabled()) {
                log.debug("Exiting deleteAttachments()");
            }
        }
-       
+
        /**
         * This method can be called by components wishing to detach the DetachableInputStream
         * object that is present on the MessageContext. This is meant to shield components
-        * from any logic that needs to be executed on the DetachableInputStream in order to 
+        * from any logic that needs to be executed on the DetachableInputStream in order to
         * have it effectively detached. If the DetachableInputStream is not present, or if
         * the supplied MessageContext is null, no action will be taken.
         */
@@ -597,7 +606,7 @@ public class TransportUtils {
                    if(log.isDebugEnabled()) {
                        log.debug("Detach not performed for MessageContext: " + msgContext);
                    }
-               }  
+               }
            }
            catch(Throwable t) {
                throw AxisFault.makeFault(t);
@@ -642,8 +651,8 @@ public class TransportUtils {
                 if (msgContext.isServerSide()) {
                     if (msgContext.isDoingMTOM()) {
                         enableMTOM = true;
-                    } 
-                    // in the client side, we enable MTOM if it is optional    
+                    }
+                    // in the client side, we enable MTOM if it is optional
                 } else {
                     enableMTOM = true;
                 }
@@ -699,7 +708,7 @@ public class TransportUtils {
         if (msgContext.isDoingREST()) {
             return true;
         }
-        
+
         Object enableRESTProperty = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
         if (enableRESTProperty != null) {
             enableREST = JavaUtils.isTrueExplicitly(enableRESTProperty);
@@ -739,3 +748,4 @@ public class TransportUtils {
     }
 
 }
+	
