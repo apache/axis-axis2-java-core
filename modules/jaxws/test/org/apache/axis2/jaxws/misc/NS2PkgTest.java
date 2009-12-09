@@ -58,7 +58,7 @@ public class NS2PkgTest extends TestCase {
     
     public void test02() throws Exception {
         String ns1 = "urn://example-org/NewBusiness";
-        String expectedPkg1 = "org.example";
+        String expectedPkg1 = "org.example.newbusiness";
         
         String pkg = JavaUtils.getPackageFromNamespace(ns1);
         assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
@@ -70,5 +70,19 @@ public class NS2PkgTest extends TestCase {
         
         String pkg = JavaUtils.getPackageFromNamespace(ns1);
         assertTrue("Expected " + expectedPkg1 + "Received " +pkg, expectedPkg1.equals(pkg));
+    }
+    public void test04() throws Exception {
+        
+        // In this cases the namespace is not a valid URL (urn) and
+        // it has some additional trickiness (v1.0, camel case and java keyword).
+        String ns2 = "urn:acme/interface/InsuranceReport/Detail/v1.0";
+        String expectedPkg2_jaxb = "acme.interface_.insurancereport.detail.v1";
+        String expectedPkg2_other = "acme._interface.insurancereport.detail.v1";
+        
+        // Test new utility for a case where 2 packages will be returned.
+        List pkgs = JavaUtils.getPackagesFromNamespace(ns2);
+        assertTrue(pkgs.size() == 2);
+        assertTrue(expectedPkg2_jaxb.equals(pkgs.get(0)));
+        assertTrue(expectedPkg2_other.equals(pkgs.get(1)));
     }
 }

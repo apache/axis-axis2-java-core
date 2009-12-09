@@ -93,6 +93,11 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         }
         catch (MalformedURLException e) {
             // No FFDC code needed
+            // If a MalformedURLException occurs, then
+            // just simply get one string and put it in the hostname.
+            // In such cases the path will remain empty.
+            // This code is necessary so that we can process namespaces
+            // like "urn:acme" or simply "sampleNamespace"
             if (namespace.indexOf(":") > -1) {
                 // Brain-dead code to skip over the protocol
                 hostname = namespace.substring(namespace.indexOf(":") + 1);
@@ -112,7 +117,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         ArrayList<String> wordList = new ArrayList<String>();
 
         //Read Hostname first.
-        for (int i = 0; st != null && i < st.countTokens(); ++i) {
+        while (st != null && st.hasMoreTokens()) {
             wordList.add(st.nextToken());
         }
         //Read rest Of the path now
