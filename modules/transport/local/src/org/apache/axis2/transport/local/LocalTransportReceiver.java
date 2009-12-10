@@ -50,6 +50,17 @@ public class LocalTransportReceiver {
         this(CONFIG_CONTEXT);
     }
 
+    public void processMessage(ConfigurationContext configurationContext,
+                               InputStream in,
+                               EndpointReference to,
+                               String action,
+                               OutputStream response) throws AxisFault {
+        if (this.confContext == null) {
+            this.confContext = configurationContext;
+        }
+        processMessage(in, to, action, response);
+    }
+
     public void processMessage(InputStream in, EndpointReference to, String action, OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
@@ -57,13 +68,13 @@ public class LocalTransportReceiver {
                 Constants.TRANSPORT_LOCAL);
         TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
                 Constants.TRANSPORT_LOCAL);
-                
+
         // CAUTION : When using Local Transport of Axis2,  class LocalTransportReceiver changed the name of LocalTransportSender's class in configContext.
         // We escaped this problem by the following code.
         LocalResponseTransportOutDescription localTransportResOut = new LocalResponseTransportOutDescription(
                 tOut);
         localTransportResOut.setSender(new LocalResponder(response));
-        
+
         try {
             msgCtx.setTransportIn(tIn);
             msgCtx.setTransportOut(localTransportResOut);
