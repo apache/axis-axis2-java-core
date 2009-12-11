@@ -65,7 +65,7 @@ public class SOAPMessageTest extends Assert {
 //    public static final QName OPERATION_NAME = new QName("echo");
 //
 //    public static final String SAAJ_REPO =
-//            System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
+//            System.getProperty("basedir", ".") + "/" + "target/test-classes/saaj-repo";
 //
 //    public SOAPMessageTest(String name) {
 //        super(name);
