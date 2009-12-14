@@ -1109,6 +1109,8 @@ public class Utils {
                 axisEndpoint.setTransportInDescription(transportIn);
                 axisEndpoint.setParent(axisService);
                 axisService.addEndpoint(axisEndpoint.getName(), axisEndpoint);
+                //set a valid endpoint name as the default endpoint of the service
+                axisService.setEndpointName(axisEndpoint.getName());
             }
         }
     }
