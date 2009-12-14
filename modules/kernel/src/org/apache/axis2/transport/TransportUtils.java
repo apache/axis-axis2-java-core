@@ -166,13 +166,6 @@ public class TransportUtils {
     public static OMElement createDocumentElement(String contentType,
                                                   MessageContext msgContext,
                                                   InputStream inStream) throws AxisFault, XMLStreamException {
-        // If we are handling a REST request, and the dispatchAndVerify method was not able to
-        // locate the relevant service/operation, we should not try to build a document element
-        if (msgContext.isDoingREST() &&
-            (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null)) {
-            return null;
-        }
-
         OMElement documentElement = null;
         String type = null;
         if (contentType != null) {
