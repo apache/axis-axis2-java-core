@@ -58,8 +58,13 @@ public class RESTUtil {
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
             dispatchAndVerify(msgContext);
             in = HTTPTransportUtils.handleGZip(msgContext, in);
-            SOAPEnvelope soapEnvelope = TransportUtils
-                    .createSOAPMessage(msgContext, in, contentType);
+            SOAPEnvelope soapEnvelope;
+            if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
+                soapEnvelope = TransportUtils.createSOAPEnvelope(null);
+            } else {
+                soapEnvelope = TransportUtils.createSOAPMessage(msgContext, in, contentType);
+            }
+
             msgContext.setEnvelope(soapEnvelope);
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,
                                    contentType);
@@ -103,11 +108,14 @@ public class RESTUtil {
             // 1. First dispatchAndVerify and find out the service and the operation.
             dispatchAndVerify(msgContext);
             SOAPEnvelope soapEnvelope;
-            try {
-                soapEnvelope = TransportUtils
-                        .createSOAPMessage(msgContext, null, contentType);
-            } catch (XMLStreamException e) {
-                throw AxisFault.makeFault(e);
+            if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
+                soapEnvelope = TransportUtils.createSOAPEnvelope(null);
+            } else {
+                try {
+                    soapEnvelope = TransportUtils.createSOAPMessage(msgContext, null, contentType);
+                } catch (XMLStreamException e) {
+                    throw AxisFault.makeFault(e);
+                }
             }
 
             msgContext.setEnvelope(soapEnvelope);
