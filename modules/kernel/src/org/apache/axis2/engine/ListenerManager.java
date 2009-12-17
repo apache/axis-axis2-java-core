@@ -287,10 +287,15 @@ public class ListenerManager {
     public void destroy() throws AxisFault {
         stop();
         this.configctx.setTransportManager(null);
-        for (Object o : startedTransports.values()) {
-            TransportListener transportListener = (TransportListener)o;
+        // need to destory all the transports not only the started ones
+        // most of the transports create the worker pool at the init method.
+        TransportInDescription transportInDescription;
+        for (Object o : configctx.getAxisConfiguration().getAxisConfiguration().getTransportsIn().values()) {
+            transportInDescription = (TransportInDescription) o;
+            TransportListener transportListener = transportInDescription.getReceiver();
             transportListener.destroy();
         }
+
         this.startedTransports.clear();
         this.configctx = null;
         defaultConfigurationContext = null;
