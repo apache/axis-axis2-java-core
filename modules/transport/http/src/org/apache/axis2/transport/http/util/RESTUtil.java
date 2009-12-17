@@ -59,7 +59,7 @@ public class RESTUtil {
             dispatchAndVerify(msgContext);
             in = HTTPTransportUtils.handleGZip(msgContext, in);
             SOAPEnvelope soapEnvelope;
-            if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
+            if (msgContext.getAxisService() == null) {
                 soapEnvelope = TransportUtils.createSOAPEnvelope(null);
             } else {
                 soapEnvelope = TransportUtils.createSOAPMessage(msgContext, in, contentType);
@@ -108,7 +108,7 @@ public class RESTUtil {
             // 1. First dispatchAndVerify and find out the service and the operation.
             dispatchAndVerify(msgContext);
             SOAPEnvelope soapEnvelope;
-            if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
+            if (msgContext.getAxisService() == null) {
                 soapEnvelope = TransportUtils.createSOAPEnvelope(null);
             } else {
                 try {
