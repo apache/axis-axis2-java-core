@@ -413,6 +413,40 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         }
     }
 
+    /**
+     * @param actionString
+     * @return true if the specified String represents a generated (anonymous name)
+     */
+    public static boolean isGeneratedName(String actionString) {
+        if (actionString == null) {
+            return false;
+        }
+        
+        // Different releases may have different constructed names or 
+        // namespaces or quames.  However all equal or end with the following
+        // sequences
+        if (actionString.indexOf("anon") >= 0) {
+            if (actionString.equals("anonOutInOp") ||
+                actionString.endsWith(":anonOutInOp") ||
+                actionString.endsWith("/anonOutInOp") ||
+                actionString.endsWith("}anonOutInOp") ||
+
+                actionString.equals("anonOutonlyOp") ||
+                actionString.endsWith(":anonOutonlyOp") ||
+                actionString.endsWith("/anonOutonlyOp") ||
+                actionString.endsWith("}anonOutonlyOp") ||
+
+                actionString.equals("anonRobustOp") ||
+                actionString.endsWith(":anonRobustOp") ||
+                actionString.endsWith("/anonRobustOp") ||
+                actionString.endsWith("}anonRobustOp") ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    
     private static String findSOAPAction(MessageContext messageContext) {
         String soapActionString = null;
 
@@ -433,13 +467,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 log.debug("SOAP Action from messageContext : (" + soapActionString + ")");
                 
             }
-            if (soapActionString != null &&
-                    (soapActionString.equals("urn:anonOutInOp") ||
-                     soapActionString.equals("anonOutInOp") ||
-                     soapActionString.equals("urn:anonOutonlyOp") ||
-                     soapActionString.equals("anonOutonlyOp") ||
-                     soapActionString.equals("urn:anonRobustOp") ||
-                     soapActionString.equals("anonRobustOp"))) {
+            if (isGeneratedName(soapActionString)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Will not use SOAP Action because (" + soapActionString + ") was auto-generated");
                 }
@@ -460,9 +488,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     if (log.isDebugEnabled()) {
                         log.debug("SOAP Action from AxisOperation was : (" + axisOpSOAPAction + ")");
                     }
-                    if (ServiceClient.ANON_OUT_ONLY_OP.equals(axisOpSOAPAction)
-                            || (ServiceClient.ANON_OUT_IN_OP.equals(axisOpSOAPAction))
-                            || (ServiceClient.ANON_ROBUST_OUT_ONLY_OP.equals(axisOpSOAPAction))) {
+                    if (isGeneratedName(axisOpSOAPAction)) {
                         if (log.isDebugEnabled()) {
                             log.debug("Will not override SOAP Action because (" + axisOpSOAPAction + ") in AxisOperation was auto-generated");
                         }   
