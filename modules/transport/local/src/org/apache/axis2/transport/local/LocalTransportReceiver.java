@@ -59,7 +59,7 @@ public class LocalTransportReceiver {
             this.confContext = inMessageContext.getConfigurationContext();
         }
         this.inMessageContext = inMessageContext;
-        EndpointReference to =  inMessageContext.getTo();
+        EndpointReference to = inMessageContext.getTo();
         String action = inMessageContext.getOptions().getAction();
         processMessage(in, to, action, response);
     }
@@ -75,12 +75,16 @@ public class LocalTransportReceiver {
         processMessage(in, to, action, response);
     }
 
-    public void processMessage(InputStream in, EndpointReference to, String action, OutputStream response)
+    public void processMessage(InputStream in, EndpointReference to, String action,
+                               OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
         if (inMessageContext != null) {
             msgCtx.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST,
                                inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
+            msgCtx.setProperty(MessageContext.REMOTE_ADDR,
+                               inMessageContext.getProperty(MessageContext.REMOTE_ADDR));
+
         }
 
         TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
