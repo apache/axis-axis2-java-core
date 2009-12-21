@@ -31,6 +31,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
 
 import javax.xml.stream.XMLStreamException;
@@ -41,6 +42,7 @@ import java.io.OutputStream;
 public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;
     private ConfigurationContext confContext;
+    private MessageContext inMessageContext;
 
     public LocalTransportReceiver(ConfigurationContext configContext) {
         confContext = configContext;
@@ -48,6 +50,18 @@ public class LocalTransportReceiver {
 
     public LocalTransportReceiver(LocalTransportSender sender) {
         this(CONFIG_CONTEXT);
+    }
+
+    public void processMessage(MessageContext inMessageContext,
+                               InputStream in,
+                               OutputStream response) throws AxisFault {
+        if (this.confContext == null) {
+            this.confContext = inMessageContext.getConfigurationContext();
+        }
+        this.inMessageContext = inMessageContext;
+        EndpointReference to =  inMessageContext.getTo();
+        String action = inMessageContext.getOptions().getAction();
+        processMessage(in, to, action, response);
     }
 
     public void processMessage(ConfigurationContext configurationContext,
@@ -64,6 +78,11 @@ public class LocalTransportReceiver {
     public void processMessage(InputStream in, EndpointReference to, String action, OutputStream response)
             throws AxisFault {
         MessageContext msgCtx = confContext.createMessageContext();
+        if (inMessageContext != null) {
+            msgCtx.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST,
+                               inMessageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
+        }
+
         TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
                 Constants.TRANSPORT_LOCAL);
         TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(

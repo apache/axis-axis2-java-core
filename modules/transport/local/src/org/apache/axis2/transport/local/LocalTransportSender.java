@@ -101,11 +101,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
             ByteArrayOutputStream response = new ByteArrayOutputStream();
 
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
-             localTransportReceiver.processMessage(msgContext.getConfigurationContext(),
-                                                  in,
-                                                  msgContext.getTo(),
-                                                  msgContext.getOptions().getAction(),
-                                                  response);
+            localTransportReceiver.processMessage(msgContext, in, response);
 
             in.close();
             out.close();
