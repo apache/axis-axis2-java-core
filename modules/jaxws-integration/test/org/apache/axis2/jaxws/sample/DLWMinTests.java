@@ -193,9 +193,7 @@ public class DLWMinTests extends AbstractTestCase {
         String request =
             "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
             "<pre:name>user1</pre:name>" +
-            "<pre:bytes>1</pre:bytes>" +
-            "<pre:bytes>2</pre:bytes>" +
-            "<pre:bytes>3</pre:bytes>" +
+            "<pre:bytes>010203</pre:bytes>" +
             "</pre:simpleTest>";
         TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);
@@ -226,9 +224,7 @@ public class DLWMinTests extends AbstractTestCase {
         
         String request =
             "<pre:simpleTest xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
-            "<pre:bytes>1</pre:bytes>" +
-            "<pre:bytes>2</pre:bytes>" +
-            "<pre:bytes>3</pre:bytes>" +
+            "<pre:bytes>010203</pre:bytes>" +
             "</pre:simpleTest>";
         TestLogger.logger.debug("Doc/Lit Wrapped Minimal Request =" + request);
         String response = dispatch.invoke(request);

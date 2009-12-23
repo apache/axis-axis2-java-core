@@ -350,7 +350,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 }
                 Element returnElement = null;
                 QName returnQName = new QName(returnNS, returnLocalPart);
-                if (isListOrArray(returnObject)) {
+                if (representAsOccurrence(returnObject)) {
                     if (log.isDebugEnabled()) {
                         log.debug("Return element isListOrArray");
                     }
@@ -436,7 +436,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             if (elementValue instanceof JAXBElement) {
                 JAXBElement jaxb = (JAXBElement) elementValue;
                 Object value = jaxb.getValue();
-                if (isListOrArray(value)) {
+                if (representAsOccurrence(value)) {
                     if (log.isDebugEnabled()) {
                         log.debug("Build OccurrentArray");
                     }
@@ -455,13 +455,26 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
     
     /**
      * @param value
-     * @return true if List or Array
+     * @return true if this value should be represented as a series of occurrence
+     * elements
      */
-    private static boolean isListOrArray (Object value) {
-        boolean rc =(value instanceof List) || 
-                (value != null && value.getClass().isArray());
+    private static boolean representAsOccurrence(Object value) {
+        // Represent as a series of occurrence elements if not List/Array
+        // but not a byte[].  A byte[] has its own encoding.
+        
+        boolean rc = false;
+        
+        if (value == null) {
+            rc = false;
+        } else if (value instanceof List) {
+            rc = true;
+        } else if (value.getClass().equals(byte[].class)) {
+            rc = false;  // assume base64binary
+        } else if (value.getClass().isArray()) {
+            rc = true;
+        }
         if (log.isDebugEnabled()) {
-            log.debug("isListOrArray for " + JavaUtils.getObjectIdentity(value) + " " + rc);
+            log.debug("representAsOccurrence for " + JavaUtils.getObjectIdentity(value) + " " + rc);
         }
         return rc;
     }
@@ -799,11 +812,16 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 AttachmentDescription attachmentDesc = pd.getAttachmentDescription();
                 if (attachmentDesc == null) {
                     
+                    boolean isBase64Binary = byte[].class.equals(javaType[i]);
+                    
+                    
                     // In most cases the entire java object is unmarshalled.
                     // But in some cases, the java object is a series of
                     // elements.
                     boolean unmarshalComponents = false;
-                    if (pd.isListType() || javaComponentType[i] == null) {
+                    if (pd.isListType() || 
+                        javaComponentType[i] == null ||
+                        isBase64Binary) {
                         context.setProcessType(javaType[i]);
                         context.setIsxmlList(pd.isListType());
                     } else {
