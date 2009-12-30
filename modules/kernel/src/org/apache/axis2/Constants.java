@@ -149,6 +149,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
     public static final String USER_NAME = "userName";
     public static final String ADMIN_SECURITY_DISABLED = "disableAdminSecurity";
+    public static final String ADMIN_SERVICE_LISTING_DISABLED = "disableServiceList";
 
     /**
      * Field SINGLE_SERVICE

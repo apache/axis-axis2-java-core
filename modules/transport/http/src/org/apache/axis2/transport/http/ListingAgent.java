@@ -25,6 +25,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.IOUtils;
 import org.apache.commons.logging.Log;
@@ -334,7 +335,9 @@ public class ListingAgent extends AbstractAgent {
     protected void processListServices(HttpServletRequest req,
                                        HttpServletResponse res)
             throws IOException, ServletException {
-
+        if(listServiceDisabled()){
+           return;
+        }
         populateSessionInformation(req);
         try {
             req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
@@ -382,6 +385,12 @@ public class ListingAgent extends AbstractAgent {
         }
 
         return null;
+    }
+
+    private boolean listServiceDisabled () {
+        Parameter parameter = configContext.getAxisConfiguration()
+                .getParameter(Constants.ADMIN_SERVICE_LISTING_DISABLED);
+          return parameter != null && "true".equals(parameter.getValue());
     }
 
 }
