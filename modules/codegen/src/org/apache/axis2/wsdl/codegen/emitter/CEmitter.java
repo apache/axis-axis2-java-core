@@ -41,6 +41,7 @@ import org.apache.axis2.wsdl.codegen.writer.CSkelSourceWriter;
 import org.apache.axis2.wsdl.codegen.writer.CStubHeaderWriter;
 import org.apache.axis2.wsdl.codegen.writer.CStubSourceWriter;
 import org.apache.axis2.wsdl.codegen.writer.CSvcSkeletonWriter;
+import org.apache.axis2.wsdl.codegen.writer.CVCProjectWriter;
 import org.apache.axis2.wsdl.codegen.writer.FileWriter;
 import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
@@ -106,6 +107,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             // write interface implementations
             writeCStub();
 
+           writeVCProjectFile();
+
         } catch (Exception e) {
             //log the error here
             e.printStackTrace();
@@ -130,6 +133,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             emitBuildScript();
 
             writeServiceXml();
+
+            writeVCProjectFile();
             
         }
         catch (Exception e) {
@@ -200,6 +205,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 this.codeGenConfiguration.getOutputLanguage());
 
         writeFile(skeletonModel, skeletonWriterStub);
+
+
     }
 
     /** @throws Exception  */
@@ -213,6 +220,43 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         writeFile(skeletonModel, writer);
 
+        //writeVCProjectFile();
+
+    }
+
+    /**
+     *   Write VC Projects
+     */
+
+    protected void writeVCProjectFile() throws Exception {
+        Document doc = createDOMDocumentForInterfaceImplementation();
+        CodeGenConfiguration codegen = this.codeGenConfiguration;
+        Element rootElement = doc.getDocumentElement();
+        String outputLocation = codegen.getOutputLocation().getPath();
+        String targetSourceLocation = codegen.getSourceLocation();
+        addAttribute(doc, "targetSourceLocation",targetSourceLocation, rootElement);
+        if(codegen.isSetoutputSourceLocation() && !outputLocation.equals(".") && !outputLocation.equals("")){
+            if(!codegen.isFlattenFiles()){
+                addAttribute(doc,"option","1",rootElement);
+            } else{
+                addAttribute(doc,"option","0",rootElement);
+            }
+            addAttribute(doc,"outputlocation",outputLocation,rootElement);
+        }
+        else
+        {
+            addAttribute(doc,"option","0",rootElement);
+        }
+        addAttribute(doc,"isServer",codeGenConfiguration.isServerSide() ? "1": "0", rootElement);
+        CVCProjectWriter writer = new CVCProjectWriter(
+                getOutputDirectory(
+                    this.codeGenConfiguration.getOutputLocation(),
+                    this.codeGenConfiguration.getSourceLocation()),
+                    this.codeGenConfiguration.getOutputLanguage(),
+                axisService.getName(),
+                this.codeGenConfiguration.isServerSide()
+                );
+        writeFile(doc, writer);
     }
 
     /**
