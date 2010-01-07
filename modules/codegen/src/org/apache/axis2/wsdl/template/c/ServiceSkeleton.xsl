@@ -388,8 +388,6 @@
 	    
           <xsl:value-of select="$method-prefix"/>_t *svc_skeleton_wrapper = NULL;
 
-          svc_skeleton_wrapper = (<xsl:value-of select="$method-prefix"/>_t*)svc_skeleton;
-          
           <xsl:for-each select="method">
             <xsl:text>
             </xsl:text>
@@ -412,6 +410,7 @@
             </xsl:for-each>
           </xsl:for-each>
 
+          svc_skeleton_wrapper = (<xsl:value-of select="$method-prefix"/>_t*)svc_skeleton;
           operation_ctx = axis2_msg_ctx_get_op_ctx(msg_ctx, env);
           operation = axis2_op_ctx_get_op(operation_ctx, env);
           op_qname = (axutil_qname_t *)axis2_op_get_qname(operation, env);
