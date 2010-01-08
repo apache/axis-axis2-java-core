@@ -69,6 +69,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
     protected static final String C_OUR_TYPE_PREFIX = "axis2_";
     protected static final String C_OUR_TYPE_SUFFIX = "_t*";
+    protected static final String C_GEN_NO_MESSAGE_CONTEXT = "nmc";
 
 
     public CEmitter() {
@@ -181,6 +182,22 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         writeFile(interfaceImplModel, writerCStub);
     }
+
+    private void addGenerateMessageContextAttr(Document model)
+    {
+        Element rootEle = model.getDocumentElement();
+        Map<Object,Object> propertyMap = this.codeGenConfiguration.getProperties();
+        boolean generateMsgCtx = true;
+        if(propertyMap.containsKey(C_GEN_NO_MESSAGE_CONTEXT))
+        {
+             if(Boolean.valueOf(propertyMap.get(C_GEN_NO_MESSAGE_CONTEXT).toString()).booleanValue())
+             {
+                generateMsgCtx = false;
+             }
+        }
+        addAttribute(model, "generateMsgCtx",generateMsgCtx ? "1" : "0", rootEle);
+
+    }
     /**
      * Writes the Skel.
      *
@@ -188,9 +205,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      */
     protected void writeCSkel() throws Exception {
 
-        Document skeletonModel =
-                createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
-
+        Document skeletonModel =  createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
+        addGenerateMessageContextAttr(skeletonModel);
 
         CSkelHeaderWriter skeletonWriter = new CSkelHeaderWriter(
                 getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
@@ -213,15 +229,12 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected void writeCServiceSkeleton() throws Exception {
 
         Document skeletonModel = createDOMDocumentForServiceSkeletonXML();
+        addGenerateMessageContextAttr(skeletonModel);
         CSvcSkeletonWriter writer =
                 new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                                           codeGenConfiguration.getSourceLocation()),
                                        codeGenConfiguration.getOutputLanguage());
-
         writeFile(skeletonModel, writer);
-
-        //writeVCProjectFile();
-
     }
 
     /**

@@ -23,6 +23,7 @@
     <xsl:variable name="svc_name"><xsl:value-of select="@name"/></xsl:variable>
     <xsl:variable name="caps_svc_name"><xsl:value-of select="@caps-name"/></xsl:variable>
     <xsl:variable name="method-prefix"><xsl:value-of select="@prefix"/></xsl:variable>
+    <xsl:variable name="generateMsgCtx"><xsl:value-of select="@generateMsgCtx"/></xsl:variable>
     <xsl:variable name="qname"><xsl:value-of select="@qname"/></xsl:variable>
 
     /**
@@ -96,7 +97,9 @@
         /**
          * auto generated function declaration
          * for "<xsl:value-of select="@qname"/>" operation.
-         * @param env environment ( mandatory)<xsl:if test="not($isUnwrapParameters)"><xsl:for-each select="input/param[@type!='']"><xsl:text>
+         * @param env environment ( mandatory)<xsl:if test="$generateMsgCtx='1'">
+         <xsl:text>* @param MessageContext the outmessage context</xsl:text></xsl:if>
+         <xsl:if test="not($isUnwrapParameters)"><xsl:for-each select="input/param[@type!='']"><xsl:text>
          </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:value-of select="@type"/></xsl:for-each></xsl:if>
          <xsl:if test="$isUnwrapParameters"><xsl:for-each select="input/param/param[@type!='']"><xsl:text>
          </xsl:text>* @param _<xsl:value-of select="@name"/> of the <xsl:value-of select="@type"/></xsl:for-each></xsl:if>
@@ -127,6 +130,7 @@
         </xsl:choose>
         <xsl:text> </xsl:text>
         <xsl:value-of select="$method-prefix"/>_<xsl:value-of select="@name"/><xsl:text>(const axutil_env_t *env</xsl:text>
+                                          <xsl:if test="$generateMsgCtx='1'"><xsl:text>,axis2_msg_ctx_t *msg_ctx</xsl:text></xsl:if>
                                           <xsl:value-of select="$inputparams"/><xsl:for-each select="output/param[@location='soap_header']">,
                                             <xsl:variable name="outputtype"><xsl:value-of select="@type"/><xsl:if test="@ours">*</xsl:if></xsl:variable>
                                             <xsl:value-of select="$outputtype"/><xsl:text> dp_</xsl:text><xsl:value-of select="@name"/><xsl:text> /* output header double ptr*/</xsl:text>

@@ -30,6 +30,7 @@
         <xsl:variable name="svcname"><xsl:value-of select="@svcname"/></xsl:variable>
         <xsl:variable name="servicename"><xsl:value-of select="@svcname"/></xsl:variable>
         <xsl:variable name="soapVersion"><xsl:value-of select="@soap-version"/></xsl:variable>
+        <xsl:variable name="generateMsgCtx"><xsl:value-of select="@generateMsgCtx"/></xsl:variable>
 
         /**
          * <xsl:value-of select="@name"/>.c
@@ -558,6 +559,7 @@
                         <xsl:variable name="outputparam_types" select="output/param/param/@type"/>
                         {
                            <xsl:value-of select="$outputparam_types"/> ret_unwrapped = <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
+                                                <xsl:if test="$generateMsgCtx='1'"><xsl:text>, msg_ctx</xsl:text></xsl:if>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                 </xsl:for-each><xsl:if test="count(fault/*)">,
@@ -591,6 +593,7 @@
                                                 </xsl:for-each>
                         </xsl:variable>
                         ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/><xsl:text>(env</xsl:text>
+                                                <xsl:if test="$generateMsgCtx='1'"><xsl:text>, msg_ctx</xsl:text></xsl:if>
                                                 <xsl:value-of select="$inputparam_values"/><xsl:for-each select="output/param[@location='soap_header']">,
                                                     <xsl:text>&amp;_</xsl:text><xsl:value-of select="@name"/><xsl:value-of select="$position"/>
                                                 </xsl:for-each><xsl:if test="count(fault/*)">,
