@@ -49,7 +49,6 @@
         extern "C" {
         #endif
 
-
         /**
          * creating a custom structure to wrap the axis2_svc_skeleton class
          */
@@ -57,6 +56,7 @@
             axis2_svc_skeleton_t svc_skeleton;
 
             /* union to keep all the exception objects */
+          <xsl:if test="count(method/fault/*) &gt; 0">
             union {
                 <xsl:for-each select="method">
                     <xsl:if test="count(fault/*)">
@@ -64,12 +64,12 @@
                     </xsl:if>
                 </xsl:for-each>
             } fault;
+          </xsl:if>
         }<xsl:value-of select="$method-prefix"/>_t;
        
         /**
          * functions prototypes
          */
-
         /* On fault, handle the fault */
         axiom_node_t* AXIS2_CALL
         <xsl:value-of select="$method-prefix"/>_on_fault(axis2_svc_skeleton_t *svc_skeleton,
