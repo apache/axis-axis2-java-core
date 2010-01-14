@@ -32,6 +32,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 
+import java.util.HashMap;
+
 public class OperationContextTest extends AbstractTestCase {
 
     private ConfigurationContext configContext = new ConfigurationContext(
@@ -74,5 +76,20 @@ public class OperationContextTest extends AbstractTestCase {
         return messageContext;
 
     }
-
+        
+    public void testRemoveMessageContext() {
+        OperationContext opCtx = new OperationContext();
+        HashMap<String, MessageContext> msgCtxMap = opCtx.getMessageContexts();
+        assertTrue("Initial map not empty", msgCtxMap.isEmpty());
+        msgCtxMap.put("Key-1", new MessageContext());
+        msgCtxMap.put("Key-2", new MessageContext());
+        assertEquals("Map not created correctly", 2, msgCtxMap.size());
+        try {
+            opCtx.removeMessageContext("Key-1");
+            assertEquals("Label not removed correctly", 1, msgCtxMap.size());
+        }
+        catch (Exception e) {
+            fail("Unexpected exception: " + e);
+        }
+    }
 }

@@ -296,7 +296,7 @@ public class OperationContext extends AbstractContext
 
         MessageContext mc = getMessageContext(label);
         if (mc != null) {
-            messageContexts.remove(mc);
+            messageContexts.remove(label);
             setComplete(false); 
             touch();
         }
