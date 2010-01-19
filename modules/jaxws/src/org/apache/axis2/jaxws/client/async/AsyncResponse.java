@@ -96,29 +96,64 @@ public abstract class AsyncResponse implements Response {
         checkClassLoader(cl, contextCL);
     }
     
+    /**
+     * @param flt Throwable fault that occurred
+     * @param faultCtx MessageContext if fault is a SOAP Fault
+     */
     protected void onError(Throwable flt, MessageContext faultCtx) {
+        // Note:
+        // This code is hardened to prevent a secondary exception from being
+        // thrown back to the caller of onError.  It is likely that a
+        // thrown exception will cause other errors leading to 
+        // system fragility.
         if (log.isDebugEnabled()) {
             log.debug("AsyncResponse received a fault.");
         }
+        Throwable t = null;
+        try {
+            fault = flt;
+            faultMessageContext = faultCtx;
+            if (faultMessageContext != null) {
+                faultMessageContext.setEndpointDescription(endpointDescription);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("The faultMessageContext is not available because the error likely occurred on" +
+                    		" the client and is not the result of a SOAP Fault");
+                }
+            }
 
-        fault = flt;
-        faultMessageContext = faultCtx;
-        faultMessageContext.setEndpointDescription(endpointDescription);
+            // Probably a good idea to invalidate the cache
+            cacheValid = false;
+            cachedObject = null;
 
-        // Probably a good idea to invalidate the cache
-        cacheValid = false;
-        cachedObject = null;
-
-        Throwable t = processFaultResponse();
+            t = processFaultResponse();
+        } catch (Throwable unexpected) {
+            // An unexpected error occurred while processing the fault.
+            // The Response's throwable is set to this unexpected exception.
+            if (log.isDebugEnabled()) {
+                log.debug("A secondary exception occurred during onError processing: " + 
+                        unexpected);
+            }
+            t = unexpected;
+        }
         
         // JAXWS 4.3.3 conformance bullet says to throw an ExecutionException from here
         savedException = new ExecutionException(t);
          
-        // Countdown so that the Future object will know that procesing is complete.
-        latch.countDown();
-        
-        if (log.isDebugEnabled()) {
-            log.debug("New latch count = [" + latch.getCount() + "]");
+        try {
+            // Countdown so that the Future object will know that procesing is complete.
+            latch.countDown();
+
+            if (log.isDebugEnabled()) {
+                log.debug("New latch count = [" + latch.getCount() + "]");
+            }
+        } catch (Throwable unexpected) {
+            // An unexpected error occurred after processing the fault response
+            // The Response's throwable has already been set to the savedException
+            if (log.isDebugEnabled()) {
+                log.debug("A secondary exception occurred during onError processing " +
+                		"after the fault is processed: " + unexpected);
+            }
         }
     }
     
