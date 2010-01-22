@@ -107,18 +107,12 @@ public class AxisServletListener implements TransportListener {
         SessionContext sessionContext =
                 (SessionContext) req.getSession(true).getAttribute(
                         Constants.SESSION_CONTEXT_PROPERTY);
-        String sessionId = null;
-        try {
-            sessionId = req.getSession().getId();
-            if (sessionContext == null) {
+        String sessionId = req.getSession().getId();
+        if (sessionContext == null) {
             sessionContext = new SessionContext(null);
             sessionContext.setCookieID(sessionId);
             req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
                                           sessionContext);
-        }
-        } catch (Throwable t){
-            log.info("Old Servlet API :" + t);
-            return null;
         }
         messageContext.setSessionContext(sessionContext);
         messageContext.setProperty(AxisServlet.SESSION_ID, sessionId);

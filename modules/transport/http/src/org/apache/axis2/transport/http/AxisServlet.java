@@ -126,11 +126,7 @@ public class AxisServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //set the initial buffer for a larger value
-        try {
         response.setBufferSize(BUFFER_SIZE);
-        } catch (Throwable t){
-            log.info("Old Servlet API :" + t);
-        }
 
         preprocessRequest(request);
 
@@ -142,13 +138,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
             try {
                 // adding ServletContext into msgContext;
-                String url;
-                try {
-                    url = request.getRequestURL().toString();
-                } catch (Throwable t){
-                    log.info("Old Servlet API (fallback to HttpServletRequest.getRequestURI) :" + t);    
-                    url = request.getRequestURI();
-                }
+                String url = request.getRequestURL().toString();
                 
                 OutputStream bufferedOut = new BufferedOutputStream(out);
                 
@@ -591,14 +581,7 @@ public class AxisServlet extends HttpServlet {
         if (contextRoot != null && contextRoot.trim().length() != 0) {
             return;
         }
-        String contextPath = null;
-        // Support older servlet API's
-        try {
-            contextPath = req.getContextPath();
-        } catch (Throwable t) {
-            log.info("Old Servlet API (Fallback to HttpServletRequest.getServletPath) :" + t);    
-            contextPath = req.getServletPath();
-        }
+        String contextPath = req.getContextPath();
         //handling ROOT scenario, for servlets in the default (root) context, this method returns ""
         if (contextPath != null && contextPath.length() == 0) {
             contextPath = "/";
@@ -668,16 +651,8 @@ public class AxisServlet extends HttpServlet {
         MessageContext msgContext = configContext.createMessageContext();
         String requestURI = request.getRequestURI();
 
-        String trsPrefix = null;
-        int sepindex = -1;
-        // Support older servlet API's
-        try { 
-            trsPrefix = request.getRequestURL().toString();
-        } catch (Throwable t){
-            log.info("Old Servlet API (Fallback to HttpServletRequest.getRequestURI) :" + t);    
-            trsPrefix = request.getRequestURI();
-        }
-        sepindex = trsPrefix.indexOf(':');
+        String trsPrefix = request.getRequestURL().toString();
+        int sepindex = trsPrefix.indexOf(':');
         if (sepindex > -1) {
             trsPrefix = trsPrefix.substring(0, sepindex);
             msgContext.setIncomingTransportName(trsPrefix);
