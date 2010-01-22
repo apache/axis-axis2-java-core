@@ -475,17 +475,41 @@ public class SAAJConverterImpl implements SAAJConverter {
             for (int i=0; i<size; i++) {
                 String pre = reader.getNamespacePrefix(i);
                 String ns = reader.getNamespaceURI(i);
-                String existingNS = element.getNamespaceURI(pre);
-                if (!ns.equals(existingNS)) {
-                    element.removeNamespaceDeclaration(pre);  // Is it necessary to remove the existing prefix/ns
-                    element.addNamespaceDeclaration(pre, ns);
+                if ((pre != null && pre.length() > 0) &&
+                        (ns == null || ns.length() == 0)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("The prefix is (" + pre + ") but there is no namespace.  " +
+                                    "This erroneous declaration is skipped.");
+                        }
+                } else {
+                    String existingNS = element.getNamespaceURI(pre);
+                    if (!ns.equals(existingNS)) {
+                        element.removeNamespaceDeclaration(pre);  // Is it necessary to remove the existing prefix/ns
+                        element.addNamespaceDeclaration(pre, ns);
+                    }
                 }
             }
         } else {
             // Add the namespace declarations from the reader
             int size = reader.getNamespaceCount();
             for (int i=0; i<size; i++) {
-                element.addNamespaceDeclaration(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                String newPrefix = reader.getNamespacePrefix(i);
+                String newNS = reader.getNamespaceURI(i);
+                
+                if ((newPrefix != null && newPrefix.length() > 0) &&
+                     (newNS == null || newNS.length() == 0)) {
+                    // Due to a bug in Axiom DOM or the reader, I have
+                    // seen cases where the prefix is non-null but there is not
+                    // namespace.  Example: prefix is axis2ns3 and namespace is null.
+                    // This is an error..log, tolerate and continue
+                    if (log.isDebugEnabled()) {
+                        log.debug("The prefix is (" + newPrefix + ") but there is no namespace.  " +
+                                "This erroneous declaration is skipped.");
+                    }
+                } else {
+                    element.addNamespaceDeclaration(newPrefix,
+                                                newNS);
+                }
             }
         }
 
