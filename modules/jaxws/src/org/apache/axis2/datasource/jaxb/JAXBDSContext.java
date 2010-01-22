@@ -21,6 +21,7 @@ package org.apache.axis2.datasource.jaxb;
 
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.message.OccurrenceArray;
@@ -290,12 +291,25 @@ public class JAXBDSContext {
 
     /**
      * Unmarshal the xml into a JAXB object
-     * @param reader
+     * @param inputReader
      * @return
      * @throws JAXBException
      */
-    public Object unmarshal(XMLStreamReader reader) throws JAXBException {
+    public Object unmarshal(XMLStreamReader inputReader) throws JAXBException {
 
+        if (DEBUG_ENABLED) {
+            String clsText = (inputReader !=null) ? inputReader.getClass().toString() : "null";
+            log.debug("unmarshal with inputReader=" + clsText);
+        } 
+        XMLStreamReader reader = XMLStreamReaderUtils.getOriginalXMLStreamReader(inputReader);
+        if (reader == null) {
+            reader = inputReader;
+        }
+        if (DEBUG_ENABLED) {
+            String clsText = (reader !=null) ? reader.getClass().toString() : "null";
+            log.debug("  originalReader=" + clsText);
+        } 
+        
         // There may be a preferred classloader that should be used
         ClassLoader cl = getClassLoader();
         

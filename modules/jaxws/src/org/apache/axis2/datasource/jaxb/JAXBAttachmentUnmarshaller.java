@@ -19,8 +19,9 @@
 
 package org.apache.axis2.datasource.jaxb;
 
+import org.apache.axiom.om.OMAttachmentAccessor;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMXMLStreamReader;
+import org.apache.axiom.util.stax.XMLStreamReaderUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -168,9 +169,14 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
             }
             return dh;
         }
-        if (xmlStreamReader instanceof OMXMLStreamReader) {
+        XMLStreamReader attachmentAccessor = 
+            XMLStreamReaderUtils.getOMAttachmentAccessorXMLStreamReader(xmlStreamReader);
+        
+        if (attachmentAccessor != null &&
+            attachmentAccessor instanceof OMAttachmentAccessor) {
+            
             DataHandler dh = 
-                ((OMXMLStreamReader) xmlStreamReader).getDataHandler(blobcid);
+                ((OMAttachmentAccessor) attachmentAccessor).getDataHandler(blobcid);
             if (dh != null) {
                 JAXBAttachmentUnmarshallerMonitor.addBlobCID(blobcid);
             }
