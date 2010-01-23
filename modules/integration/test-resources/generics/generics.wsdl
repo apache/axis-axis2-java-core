@@ -13,33 +13,33 @@
             <xs:element name="processStringList">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" name="values" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="values" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="processStringListResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="processStringArray">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" name="values" nillable="true" type="ns:String"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="values" nillable="true" type="ns:String"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:complexType name="String">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" name="array" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="array" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:element name="processPersonList">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" name="persons" nillable="true"
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="persons" nillable="true"
                                     type="ax22:Person"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -47,14 +47,14 @@
             <xs:element name="processPersonListResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="return" nillable="true" type="ax22:Person"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax22:Person"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="getStringListResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded"  name="return" nillable="true" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -63,8 +63,8 @@
                    targetNamespace="http://generics.axis2.apache.org/xsd">
             <xs:complexType name="Person">
                 <xs:sequence>
-                    <xs:element name="age" type="xs:int"/>
-                    <xs:element name="name" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="age" type="xs:int"/>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
