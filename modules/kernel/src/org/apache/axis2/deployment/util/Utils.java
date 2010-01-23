@@ -425,8 +425,8 @@ public class Utils {
      * @throws Exception if a problem occurs
      */
     public static void fillAxisService(final AxisService axisService,
-                                       AxisConfiguration axisConfig, ArrayList excludeOperations,
-                                       ArrayList nonRpcMethods) throws Exception {
+                                       AxisConfiguration axisConfig, ArrayList<String> excludeOperations,
+                                       ArrayList<String> nonRpcMethods) throws Exception {
         String serviceClass;
         Parameter implInfoParam = axisService
                 .getParameter(Constants.SERVICE_CLASS);
