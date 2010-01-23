@@ -88,11 +88,11 @@ public class JAXWSDeployer implements Deployer {
             URL repository = axisConfig.getRepository();
             if (!file.isDirectory() || repository == null)
                 return;
-            ArrayList classList = getClassesInWebInfDirectory(file);
+            ArrayList<String> classList = getClassesInWebInfDirectory(file);
             ClassLoader threadClassLoader = null;
             try {
                 threadClassLoader = Thread.currentThread().getContextClassLoader();
-                ArrayList urls = new ArrayList();
+                ArrayList<URL> urls = new ArrayList<URL>();
                 urls.add(repository);
                 String webLocation = DeploymentEngine.getWebLocationString();
                 if (webLocation != null) {
@@ -117,10 +117,10 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
-    protected ArrayList getClassesInWebInfDirectory(File file) {
+    protected ArrayList<String> getClassesInWebInfDirectory(File file) {
         String filePath = file.getAbsolutePath();
         Collection files = FileUtils.listFiles(file, new String[]{"class"}, true);
-        ArrayList classList = new ArrayList();
+        ArrayList<String> classList = new ArrayList<String>();
         for (Iterator iterator = files.iterator(); iterator.hasNext();) {
             File f = (File) iterator.next();
             String fPath = f.getAbsolutePath();
@@ -141,7 +141,7 @@ public class JAXWSDeployer implements Deployer {
             URL location = deploymentFileData.getFile().toURL();
             if (isJar(deploymentFileData.getFile())) {
                 log.info("Deploying artifact : " + deploymentFileData.getAbsolutePath());
-                ArrayList urls = new ArrayList();
+                ArrayList<URL> urls = new ArrayList<URL>();
                 urls.add(deploymentFileData.getFile().toURL());
                 urls.add(axisConfig.getRepository());
                 String webLocation = DeploymentEngine.getWebLocationString();
@@ -157,7 +157,7 @@ public class JAXWSDeployer implements Deployer {
                         axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
 
-                ArrayList classList = getListOfClasses(deploymentFileData);
+                ArrayList<String> classList = getListOfClasses(deploymentFileData);
                 AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList);
                 
                 if(serviceGroup == null) {
@@ -179,23 +179,22 @@ public class JAXWSDeployer implements Deployer {
         }
     }
 
-    protected AxisServiceGroup deployClasses(String groupName, URL location, ClassLoader classLoader, List classList)
+    protected AxisServiceGroup deployClasses(String groupName, URL location, ClassLoader classLoader, List<String> classList)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, AxisFault {
-        ArrayList axisServiceList = new ArrayList();
+        ArrayList<AxisService> axisServiceList = new ArrayList<AxisService>();
         // Get the hierarchical path of the service
         String serviceHierarchy = Utils.getServiceHierarchy(location.getPath(), this.directory);
-        for (int i = 0, size = classList.size(); i < size; i++) {
-            String className = (String) classList.get(i);
-            Class pojoClass;
+        for (String className : classList) {
+            Class<?> pojoClass;
             try {
                 pojoClass = Loader.loadClass(classLoader, className);
             } catch (Exception e){
                 continue;
             }
-            WebService wsAnnotation = (WebService) pojoClass.getAnnotation(WebService.class);
+            WebService wsAnnotation = pojoClass.getAnnotation(WebService.class);
             WebServiceProvider wspAnnotation = null;
             if (wsAnnotation == null) {
-                wspAnnotation = (WebServiceProvider) pojoClass.getAnnotation(WebServiceProvider.class);
+                wspAnnotation = pojoClass.getAnnotation(WebServiceProvider.class);
             }
 
             // Create an Axis Service only if the class is not an interface and it has either 
@@ -222,8 +221,7 @@ public class JAXWSDeployer implements Deployer {
         //creating service group by considering the hierarchical path also
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupName(serviceHierarchy + groupName);
-        for (int i = 0; i < size; i++) {
-            AxisService axisService = (AxisService) axisServiceList.get(i);
+        for (AxisService axisService : axisServiceList) {
             axisService.setName(serviceHierarchy + axisService.getName());
             serviceGroup.addService(axisService);
         }
@@ -232,15 +230,15 @@ public class JAXWSDeployer implements Deployer {
         return serviceGroup;
     }
 
-    protected ArrayList getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
-        ArrayList classList;
+    protected ArrayList<String> getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
+        ArrayList<String> classList;
         FileInputStream fin = null;
         ZipInputStream zin = null;
         try {
             fin = new FileInputStream(deploymentFileData.getAbsolutePath());
             zin = new ZipInputStream(fin);
             ZipEntry entry;
-            classList = new ArrayList();
+            classList = new ArrayList<String>();
             while ((entry = zin.getNextEntry()) != null) {
                 String name = entry.getName();
                 if (name.endsWith(".class")) {
@@ -280,7 +278,7 @@ public class JAXWSDeployer implements Deployer {
             InstantiationException,
             IllegalAccessException,
             AxisFault {
-        Class pojoClass = Loader.loadClass(classLoader, className);
+        Class<?> pojoClass = Loader.loadClass(classLoader, className);
         AxisService axisService;
         try {
             axisService = DescriptionFactory.createAxisService(pojoClass, configCtx);
@@ -289,9 +287,9 @@ public class JAXWSDeployer implements Deployer {
             return null;
         }
         if (axisService != null) {
-            Iterator operations = axisService.getOperations();
+            Iterator<AxisOperation> operations = axisService.getOperations();
             while (operations.hasNext()) {
-                AxisOperation axisOperation = (AxisOperation) operations.next();
+                AxisOperation axisOperation = operations.next();
                 if (axisOperation.getMessageReceiver() == null) {
                     axisOperation.setMessageReceiver(new JAXWSMessageReceiver());
                 }
@@ -362,10 +360,10 @@ public class JAXWSDeployer implements Deployer {
             configCtx.setProperty(org.apache.axis2.jaxws.Constants.ENDPOINT_CONTEXT_MAP, map);
         }
         
-        Iterator iterator = serviceGroup.getServices();
+        Iterator<AxisService> iterator = serviceGroup.getServices();
         
         while (iterator.hasNext()) {
-            AxisService axisService = (AxisService) iterator.next();
+            AxisService axisService = iterator.next();
             Parameter param =
                 axisService.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
             EndpointDescription ed = (EndpointDescription) param.getValue();
