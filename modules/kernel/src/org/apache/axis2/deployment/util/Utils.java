@@ -1960,39 +1960,39 @@ public class Utils {
      * @return the class name
      */
     public static String getClassNameFromResourceName(String resourceName) {
-    	if (!resourceName.endsWith(".class")) {
-    		throw new IllegalArgumentException("The resource name doesn't refer to a class file");
-    	}
-    	return resourceName.substring(0, resourceName.length()-6).replace('/', '.');
+        if (!resourceName.endsWith(".class")) {
+            throw new IllegalArgumentException("The resource name doesn't refer to a class file");
+        }
+        return resourceName.substring(0, resourceName.length()-6).replace('/', '.');
     }
     
-	/**
-	 * Scan a JAR file and return the list of classes contained in the JAR.
-	 * 
-	 * @param deploymentFileData
-	 *            the JAR to scan
-	 * @return a list of Java class names
-	 * @throws DeploymentException
-	 *             if an error occurs while scanning the file
-	 */
+    /**
+     * Scan a JAR file and return the list of classes contained in the JAR.
+     * 
+     * @param deploymentFileData
+     *            the JAR to scan
+     * @return a list of Java class names
+     * @throws DeploymentException
+     *             if an error occurs while scanning the file
+     */
     public static List<String> getListOfClasses(DeploymentFileData deploymentFileData) throws DeploymentException {
         try {
-        	FileInputStream fin = new FileInputStream(deploymentFileData.getAbsolutePath());
+            FileInputStream fin = new FileInputStream(deploymentFileData.getAbsolutePath());
             try {
-            	ZipInputStream zin = new ZipInputStream(fin);
-            	try {
-		            ZipEntry entry;
-		            List<String> classList = new ArrayList<String>();
-		            while ((entry = zin.getNextEntry()) != null) {
-		                String name = entry.getName();
-		                if (name.endsWith(".class")) {
-		                    classList.add(getClassNameFromResourceName(name));
-		                }
-		            }
-		            return classList;
-            	} finally {
-            		zin.close();
-            	}
+                ZipInputStream zin = new ZipInputStream(fin);
+                try {
+                    ZipEntry entry;
+                    List<String> classList = new ArrayList<String>();
+                    while ((entry = zin.getNextEntry()) != null) {
+                        String name = entry.getName();
+                        if (name.endsWith(".class")) {
+                            classList.add(getClassNameFromResourceName(name));
+                        }
+                    }
+                    return classList;
+                } finally {
+                    zin.close();
+                }
             } finally {
                 fin.close();
             }
