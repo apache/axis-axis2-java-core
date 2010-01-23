@@ -25,7 +25,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.Deployer;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
@@ -59,8 +58,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /*
  * JAXWSDeployer is a custom deployer modeled after the POJODeployer. Its purpose
@@ -157,7 +154,7 @@ public class JAXWSDeployer implements Deployer {
                         axisConfig.isChildFirstClassLoading());
                 Thread.currentThread().setContextClassLoader(classLoader);
 
-                ArrayList<String> classList = getListOfClasses(deploymentFileData);
+                List<String> classList = Utils.getListOfClasses(deploymentFileData);
                 AxisServiceGroup serviceGroup = deployClasses(groupName, location, classLoader, classList);
                 
                 if(serviceGroup == null) {
@@ -228,39 +225,6 @@ public class JAXWSDeployer implements Deployer {
         axisConfig.addServiceGroup(serviceGroup);
         configureAddressing(serviceGroup);
         return serviceGroup;
-    }
-
-    protected ArrayList<String> getListOfClasses(DeploymentFileData deploymentFileData) throws IOException {
-        ArrayList<String> classList;
-        FileInputStream fin = null;
-        ZipInputStream zin = null;
-        try {
-            fin = new FileInputStream(deploymentFileData.getAbsolutePath());
-            zin = new ZipInputStream(fin);
-            ZipEntry entry;
-            classList = new ArrayList<String>();
-            while ((entry = zin.getNextEntry()) != null) {
-                String name = entry.getName();
-                if (name.endsWith(".class")) {
-                    name = name.replaceAll(".class", "");
-                    name = name.replaceAll("/", ".");
-                    classList.add(name);
-                }
-            }
-            zin.close();
-            fin.close();
-        } catch (Exception e) {
-            log.debug(Messages.getMessage("deployingexception", e.getMessage()), e);
-            throw new DeploymentException(e);
-        } finally {
-            if (zin != null) {
-                zin.close();
-            }
-            if (fin != null) {
-                fin.close();
-            }
-        }
-        return classList;
     }
 
     protected void storeFaultyService(DeploymentFileData deploymentFileData, Throwable t) {

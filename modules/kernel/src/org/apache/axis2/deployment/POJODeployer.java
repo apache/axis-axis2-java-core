@@ -37,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -45,8 +44,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.List;
 
 public class POJODeployer implements Deployer {
 
@@ -81,8 +79,7 @@ public class POJODeployer implements Deployer {
                                 configCtx.getAxisConfiguration().isChildFirstClassLoading());
 
                 Thread.currentThread().setContextClassLoader(classLoader);
-                String className = file.getName();
-                className = className.replaceAll(".class", "");
+                String className = Utils.getClassNameFromResourceName(file.getName());
                 Class<?> clazz = Loader.loadClass(className);
                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_POJO,
                         serviceHierarchy + className,
@@ -118,33 +115,7 @@ public class POJODeployer implements Deployer {
                 configCtx.getAxisConfiguration().addService(axisService);
 
             } else if ("jar".equals(extension)) {
-                ArrayList<String> classList;
-                FileInputStream fin = null;
-                ZipInputStream zin = null;
-                try {
-                    fin = new FileInputStream(deploymentFileData.getAbsolutePath());
-                    zin = new ZipInputStream(fin);
-                    ZipEntry entry;
-                    classList = new ArrayList<String>();
-                    while ((entry = zin.getNextEntry()) != null) {
-                        String name = entry.getName();
-                        if (name.endsWith(".class")) {
-                            classList.add(name);
-                        }
-                    }
-                    zin.close();
-                    fin.close();
-                } catch (Exception e) {
-                    log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_EXCEPTION,e.getMessage()),e);
-                    throw new DeploymentException(e);
-                } finally {
-                    if (zin != null) {
-                        zin.close();
-                    }
-                    if (fin != null) {
-                        fin.close();
-                    }
-                }
+                List<String> classList = Utils.getListOfClasses(deploymentFileData);
                 ArrayList<AxisService> axisServiceList = new ArrayList<AxisService>();
                 for (String className : classList) {
                     ArrayList<URL> urls = new ArrayList<URL>();
@@ -162,8 +133,6 @@ public class POJODeployer implements Deployer {
                                     getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                             configCtx.getAxisConfiguration().isChildFirstClassLoading());
                     Thread.currentThread().setContextClassLoader(classLoader);
-                    className = className.replaceAll(".class", "");
-                    className = className.replaceAll("/", ".");
                     Class<?> clazz = Loader.loadClass(className);
 
                     /**
@@ -357,7 +326,7 @@ public class POJODeployer implements Deployer {
         
         fileName = Utils.getShortFileName(fileName);
         if (fileName.endsWith(".class")) {
-            String className = fileName.replaceAll(".class", "");
+            String className = Utils.getClassNameFromResourceName(fileName);
             className = serviceHierarchy + className;
             try {
                 AxisServiceGroup serviceGroup =

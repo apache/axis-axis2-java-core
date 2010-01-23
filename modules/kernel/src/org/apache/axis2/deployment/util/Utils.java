@@ -31,6 +31,7 @@ import org.apache.axis2.JAXRS.JAXRSModel;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentClassLoader;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -42,6 +43,7 @@ import org.apache.axis2.description.java2wsdl.SchemaGenerator;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jsr181.JSR181Helper;
 import org.apache.axis2.jsr181.WebMethodAnnotation;
 import org.apache.axis2.jsr181.WebServiceAnnotation;
@@ -1949,5 +1951,54 @@ public class Utils {
             serviceHierarchy = temp.substring(0, temp.lastIndexOf('/') + 1);
         }
         return serviceHierarchy;
+    }
+
+    /**
+     * Get the class name from a resource name referring to a class file.
+     * 
+     * @param resourceName the resource name
+     * @return the class name
+     */
+    public static String getClassNameFromResourceName(String resourceName) {
+    	if (!resourceName.endsWith(".class")) {
+    		throw new IllegalArgumentException("The resource name doesn't refer to a class file");
+    	}
+    	return resourceName.substring(0, resourceName.length()-6).replace('/', '.');
+    }
+    
+	/**
+	 * Scan a JAR file and return the list of classes contained in the JAR.
+	 * 
+	 * @param deploymentFileData
+	 *            the JAR to scan
+	 * @return a list of Java class names
+	 * @throws DeploymentException
+	 *             if an error occurs while scanning the file
+	 */
+    public static List<String> getListOfClasses(DeploymentFileData deploymentFileData) throws DeploymentException {
+        try {
+        	FileInputStream fin = new FileInputStream(deploymentFileData.getAbsolutePath());
+            try {
+            	ZipInputStream zin = new ZipInputStream(fin);
+            	try {
+		            ZipEntry entry;
+		            List<String> classList = new ArrayList<String>();
+		            while ((entry = zin.getNextEntry()) != null) {
+		                String name = entry.getName();
+		                if (name.endsWith(".class")) {
+		                    classList.add(getClassNameFromResourceName(name));
+		                }
+		            }
+		            return classList;
+            	} finally {
+            		zin.close();
+            	}
+            } finally {
+                fin.close();
+            }
+        } catch (IOException e) {
+            log.debug(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_EXCEPTION, e.getMessage()), e);
+            throw new DeploymentException(e);
+        }
     }
 }
