@@ -37,9 +37,9 @@ import java.util.Iterator;
 
 public class ServiceGroupBuilder extends DescriptionBuilder {
     private OMElement serviceElement;
-    private HashMap wsdlServices;
+    private HashMap<String,AxisService> wsdlServices;
 
-    public ServiceGroupBuilder(OMElement service, HashMap wsdlServices,
+    public ServiceGroupBuilder(OMElement service, HashMap<String,AxisService> wsdlServices,
                                ConfigurationContext configCtx) {
         this.serviceElement = service;
         this.wsdlServices = wsdlServices;
@@ -49,7 +49,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
 
     public ArrayList<AxisService> populateServiceGroup(AxisServiceGroup axisServiceGroup)
             throws DeploymentException {
-        ArrayList serviceList = new ArrayList();
+        ArrayList<AxisService> serviceList = new ArrayList<AxisService>();
 
         try {
 
@@ -84,7 +84,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
                 } else {
-                    AxisService axisService = (AxisService) wsdlServices.get(serviceName);
+                    AxisService axisService = wsdlServices.get(serviceName);
 
                     if (axisService == null) {
                         axisService = new AxisService(serviceName);

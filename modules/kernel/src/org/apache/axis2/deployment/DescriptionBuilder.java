@@ -128,9 +128,9 @@ public class DescriptionBuilder implements DeploymentConstants {
      * services.xml.
      *
      */
-    protected HashMap processMessageReceivers(OMElement messageReceivers)
+    protected HashMap<String,MessageReceiver> processMessageReceivers(OMElement messageReceivers)
             throws DeploymentException {
-        HashMap mr_mep = new HashMap();
+        HashMap<String,MessageReceiver> mr_mep = new HashMap<String,MessageReceiver>();
         Iterator msgReceivers = messageReceivers.getChildrenWithName(new QName(
                 TAG_MESSAGE_RECEIVER));
         while (msgReceivers.hasNext()) {
@@ -138,9 +138,9 @@ public class DescriptionBuilder implements DeploymentConstants {
             final OMElement tempMsgReceiver = msgReceiver;
             MessageReceiver receiver = null;
             try {
-                receiver = (MessageReceiver) org.apache.axis2.java.security.AccessController
-                        .doPrivileged(new PrivilegedExceptionAction() {
-                            public Object run()
+                receiver = org.apache.axis2.java.security.AccessController
+                        .doPrivileged(new PrivilegedExceptionAction<MessageReceiver>() {
+                            public MessageReceiver run()
                                     throws org.apache.axis2.deployment.DeploymentException {
                                 return loadMessageReceiver(
                                         Thread.currentThread().getContextClassLoader(),
@@ -161,9 +161,9 @@ public class DescriptionBuilder implements DeploymentConstants {
      * services.xml.
      *
      */
-    protected HashMap processMessageReceivers(ClassLoader loader,
+    protected HashMap<String,MessageReceiver> processMessageReceivers(ClassLoader loader,
                                               OMElement element) throws DeploymentException {
-        HashMap meps = new HashMap();
+        HashMap<String,MessageReceiver> meps = new HashMap<String,MessageReceiver>();
         Iterator iterator = element.getChildrenWithName(new QName(
                 TAG_MESSAGE_RECEIVER));
         while (iterator.hasNext()) {

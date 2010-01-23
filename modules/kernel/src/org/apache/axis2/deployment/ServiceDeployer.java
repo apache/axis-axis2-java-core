@@ -66,21 +66,19 @@ public class ServiceDeployer implements Deployer {
                                               axisConfig.getServiceClassLoader(),
                     (File)axisConfig.getParameterValue(Constants.Configuration.ARTIFACTS_TEMP_DIR),
                     axisConfig.isChildFirstClassLoading());
-            HashMap wsdlservice = archiveReader.processWSDLs(deploymentFileData);
+            HashMap<String,AxisService> wsdlservice = archiveReader.processWSDLs(deploymentFileData);
             if (wsdlservice != null && wsdlservice.size() > 0) {
-                Iterator services = wsdlservice.values().iterator();
-                while (services.hasNext()) {
-                    AxisService service = (AxisService) services.next();
-                    Iterator operations = service.getOperations();
+                for (AxisService service : wsdlservice.values()) {
+                    Iterator<AxisOperation> operations = service.getOperations();
                     while (operations.hasNext()) {
-                        AxisOperation axisOperation = (AxisOperation) operations.next();
+                        AxisOperation axisOperation = operations.next();
                         axisConfig.getPhasesInfo().setOperationPhases(axisOperation);
                     }
                 }
             }
             AxisServiceGroup serviceGroup = new AxisServiceGroup(axisConfig);
             serviceGroup.setServiceGroupClassLoader(deploymentFileData.getClassLoader());
-            ArrayList serviceList = archiveReader.processServiceGroup(
+            ArrayList<AxisService> serviceList = archiveReader.processServiceGroup(
                     deploymentFileData.getAbsolutePath(), deploymentFileData,
                     serviceGroup, isDirectory, wsdlservice,
                     configCtx);
@@ -93,8 +91,7 @@ public class ServiceDeployer implements Deployer {
                 if (!"".equals(serviceHierarchy)) {
                     serviceGroup.setServiceGroupName(serviceHierarchy
                             + serviceGroup.getServiceGroupName());
-                    for (Object o : serviceList) {
-                        AxisService axisService = (AxisService) o;
+                    for (AxisService axisService : serviceList) {
                         axisService.setName(serviceHierarchy + axisService.getName());
                     }
                 }

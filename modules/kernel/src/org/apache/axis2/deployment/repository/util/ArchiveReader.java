@@ -80,10 +80,10 @@ public class ArchiveReader implements DeploymentConstants {
             AxisService axisService = null;
             String serviceName = DescriptionBuilder.getShortFileName(currentFile.getName());
             if (serviceName != null) {
-                axisService = (AxisService) wsdlServices.get(serviceName);
+                axisService = wsdlServices.get(serviceName);
             }
             if (axisService == null) {
-                axisService = (AxisService) wsdlServices.get(
+                axisService = wsdlServices.get(
                         DescriptionBuilder.getShortFileName(currentFile.getName()));
             }
             if (axisService == null) {
@@ -358,8 +358,7 @@ public class ArchiveReader implements DeploymentConstants {
                                                                     out.toByteArray()),
                                                             entry.getName());
                             if (services != null) {
-                                for (int i = 0; i < services.size(); i++) {
-                                    AxisService axisService = (AxisService) services.get(i);
+                                for (AxisService axisService : services) {
                                     if (axisService != null) {
                                         servicesMap.put(axisService.getName(), axisService);
                                     }
@@ -469,8 +468,7 @@ public class ArchiveReader implements DeploymentConstants {
                                                     in2, file1.toURI().toString());
 
                     if (services != null) {
-                        for (int j = 0; j < services.size(); j++) {
-                            AxisService axisService = (AxisService) services.get(j);
+                        for (AxisService axisService : services) {
                             if (axisService != null) {
                                 servicesMap.put(axisService.getName(), axisService);
                             }

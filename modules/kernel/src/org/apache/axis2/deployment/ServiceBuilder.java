@@ -42,8 +42,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ import java.util.Map;
 public class ServiceBuilder extends DescriptionBuilder {
 	private static final Log log = LogFactory.getLog(ServiceBuilder.class);
 	private AxisService service;
-	private HashMap wsdlServiceMap = new HashMap();
+	private HashMap<String,AxisService> wsdlServiceMap = new HashMap<String,AxisService>();
 
 	public ServiceBuilder(ConfigurationContext configCtx, AxisService service) {
 		this.service = service;
@@ -103,7 +101,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 			// then use that as the service name
 			if (serviceNameatt != null) {
 				if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
-					AxisService wsdlService = (AxisService) wsdlServiceMap
+					AxisService wsdlService = wsdlServiceMap
 							.get(serviceNameatt.getAttributeValue());
 					if (wsdlService != null) {
 						wsdlService.setClassLoader(service.getClassLoader());
@@ -240,7 +238,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				Iterator mappingIterator = schemaElement
 						.getChildrenWithName(new QName(MAPPING));
 				if (mappingIterator != null) {
-					Map pkg2nsMap = new Hashtable();
+					Map<String,String> pkg2nsMap = new Hashtable<String,String>();
 					while (mappingIterator.hasNext()) {
 						OMElement mappingElement = (OMElement) mappingIterator
 								.next();
@@ -277,25 +275,22 @@ public class ServiceBuilder extends DescriptionBuilder {
 			OMElement messageReceiver = service_element
 					.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
 			if (messageReceiver != null) {
-				HashMap mrs = processMessageReceivers(service.getClassLoader(),
+				HashMap<String,MessageReceiver> mrs = processMessageReceivers(service.getClassLoader(),
 						messageReceiver);
-				Iterator keys = mrs.keySet().iterator();
-				while (keys.hasNext()) {
-					String key = (String) keys.next();
-					service.addMessageReceiver(key, (MessageReceiver) mrs
-							.get(key));
+				for (Map.Entry<String,MessageReceiver> entry : mrs.entrySet()) {
+					service.addMessageReceiver(entry.getKey(), entry.getValue());
 				}
 			}
 
 			// Removing exclude operations
 			OMElement excludeOperations = service_element
 					.getFirstChildWithName(new QName(TAG_EXCLUDE_OPERATIONS));
-			ArrayList excludeops = null;
+			ArrayList<String> excludeops = null;
 			if (excludeOperations != null) {
 				excludeops = processExcludeOperations(excludeOperations);
 			}
 			if (excludeops == null) {
-				excludeops = new ArrayList();
+				excludeops = new ArrayList<String>();
 			}
 			Utils.addExcludeMethods(excludeops);
 
@@ -337,7 +332,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 			if (transports != null) {
 				Iterator transport_itr = transports
 						.getChildrenWithName(new QName(TAG_TRANSPORT));
-				ArrayList trs = new ArrayList();
+				ArrayList<String> trs = new ArrayList<String>();
 				while (transport_itr.hasNext()) {
 					OMElement trsEle = (OMElement) transport_itr.next();
 					String transportName = trsEle.getText().trim();
@@ -409,8 +404,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 				}
 			}
 
-			for (int i = 0; i < excludeops.size(); i++) {
-				String opName = (String) excludeops.get(i);
+			for (String opName : excludeops) {
 				service.removeOperation(new QName(opName));
 			}
 
@@ -566,12 +560,12 @@ public class ServiceBuilder extends DescriptionBuilder {
 	 *         operations TODO: Why not just return the AxisOperations
 	 *         themselves??
 	 */
-	private ArrayList getNonRPCMethods(AxisService axisService) {
-		ArrayList excludeOperations = new ArrayList();
-		Iterator operatins = axisService.getOperations();
+	private ArrayList<String> getNonRPCMethods(AxisService axisService) {
+		ArrayList<String> excludeOperations = new ArrayList<String>();
+		Iterator<AxisOperation> operatins = axisService.getOperations();
 		if (operatins.hasNext()) {
 			while (operatins.hasNext()) {
-				AxisOperation axisOperation = (AxisOperation) operatins.next();
+				AxisOperation axisOperation = operatins.next();
 				if (axisOperation.getMessageReceiver() == null) {
 					continue;
 				}
@@ -601,8 +595,8 @@ public class ServiceBuilder extends DescriptionBuilder {
 	 * @return an ArrayList of the String contents of the &lt;operation&gt;
 	 *         elements
 	 */
-	private ArrayList processExcludeOperations(OMElement excludeOperations) {
-		ArrayList exOps = new ArrayList();
+	private ArrayList<String> processExcludeOperations(OMElement excludeOperations) {
+		ArrayList<String> exOps = new ArrayList<String>();
 		Iterator excludeOp_itr = excludeOperations
 				.getChildrenWithName(new QName(TAG_OPERATION));
 		while (excludeOp_itr.hasNext()) {
@@ -708,9 +702,9 @@ public class ServiceBuilder extends DescriptionBuilder {
 		}
 	}
 
-	private ArrayList processOperations(Iterator operationsIterator)
+	private ArrayList<AxisOperation> processOperations(Iterator operationsIterator)
 			throws AxisFault {
-		ArrayList operations = new ArrayList();
+		ArrayList<AxisOperation> operations = new ArrayList<AxisOperation>();
 		while (operationsIterator.hasNext()) {
 			OMElement operation = (OMElement) operationsIterator.next();
 			// getting operation name
@@ -910,7 +904,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
 	}
 
-	public void setWsdlServiceMap(HashMap wsdlServiceMap) {
+	public void setWsdlServiceMap(HashMap<String,AxisService> wsdlServiceMap) {
 		this.wsdlServiceMap = wsdlServiceMap;
 	}
 
