@@ -9,8 +9,6 @@ Building the service from scratch
 =================================
 The service may be constructed from scratch by executing the wsimport tool (found in the Sun JAX-WS RI) on the BaseDataTypesDocLibB.wsdl file: 'wsimport -keep -verbose BaseDataTypesDocLibB.wsdl'  (The -keep option tells the tool to keep the generated files and the -verbose option causes the tool to list what is generated.)  After the files have been generated you will need to provide an implementation of the service (i.e. a class equivalent to TopDownSampleService.java).
 
-Note: Due to an issue with the JAXWSDeployer, the annotations from the interface need to be replicated in the implementing class if the service is being deployed through a jar via the servicejars directory.
-
 Deploying the service
 =====================
 The classes can be packaged into a jar and the jar can be dropped into the servicejars directory of a deployed axis2 server.
