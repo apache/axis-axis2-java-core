@@ -151,7 +151,7 @@ public class JAXBDSContext {
      * @throws JAXBException
      */
     public JAXBContext getJAXBContext(ClassLoader cl) throws JAXBException {
-        return getJAXBContext(null, false);
+        return getJAXBContext(cl, false);
     }
     
     /**
