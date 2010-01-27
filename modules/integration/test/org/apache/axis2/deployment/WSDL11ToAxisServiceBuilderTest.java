@@ -19,6 +19,8 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
@@ -62,5 +64,94 @@ public class WSDL11ToAxisServiceBuilderTest extends XMLTestCase {
         }
     }
 
-}
+    // Check the addressing requirement parameter is set to
+    // ADDRESSING_UNSPECIFIED when <wsaw:UsingAddressing /> is NOT used in the
+    // WSDL
+    public void testWithoutUsingAddressing() {
+        File testResourceFile = new File(wsdlLocation);
+        try {
+            WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(
+                    new FileInputStream(testResourceFile));
+            AxisService axisService = builder.populateService();
+            String addressingRequired = AddressingHelper
+                    .getAddressingRequirementParemeterValue(axisService);
+            assertEquals("Unexpected addressingRequirementParameter value: "
+                    + addressingRequired,
+                    AddressingConstants.ADDRESSING_UNSPECIFIED,
+                    addressingRequired);
+        } catch (Exception e) {
+            System.out.println("Error in WSDL : " + testResourceFile.getName());
+            System.out.println("Exception: " + e.toString());
+            fail("Caught exception " + e.toString());
+        }
+    }
 
+    // Check the addressing requirement parameter is set to
+    // ADDRESSING_OPTIONAL when <wsaw:UsingAddressing /> is used in the WSDL
+    public void testUsingAddressing() {
+        wsdlLocation = System.getProperty("basedir", ".") + "/"
+                + "test-resources/wsdl/UsingAddressing.wsdl";
+        File testResourceFile = new File(wsdlLocation);
+        try {
+            WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(
+                    new FileInputStream(testResourceFile));
+            AxisService axisService = builder.populateService();
+            String addressingRequired = AddressingHelper
+                    .getAddressingRequirementParemeterValue(axisService);
+            assertEquals("Unexpected addressingRequirementParameter value: "
+                    + addressingRequired,
+                    AddressingConstants.ADDRESSING_OPTIONAL, addressingRequired);
+        } catch (Exception e) {
+            System.out.println("Error in WSDL : " + testResourceFile.getName());
+            System.out.println("Exception: " + e.toString());
+            fail("Caught exception " + e.toString());
+        }
+    }
+
+    // Check the addressing requirement parameter is set to
+    // ADDRESSING_OPTIONAL when <wsaw:UsingAddressing wsdl:required="false" />
+    // is used in the WSDL
+    public void testUsingAddressingOptional() {
+        wsdlLocation = System.getProperty("basedir", ".") + "/"
+                + "test-resources/wsdl/UsingAddressingOptional.wsdl";
+        File testResourceFile = new File(wsdlLocation);
+        try {
+            WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(
+                    new FileInputStream(testResourceFile));
+            AxisService axisService = builder.populateService();
+            String addressingRequired = AddressingHelper
+                    .getAddressingRequirementParemeterValue(axisService);
+            assertEquals("Unexpected addressingRequirementParameter value: "
+                    + addressingRequired,
+                    AddressingConstants.ADDRESSING_OPTIONAL, addressingRequired);
+        } catch (Exception e) {
+            System.out.println("Error in WSDL : " + testResourceFile.getName());
+            System.out.println("Exception: " + e.toString());
+            fail("Caught exception " + e.toString());
+        }
+    }
+
+    // Check the addressing requirement parameter is set to
+    // ADDRESSING_REQUIRED when <wsaw:UsingAddressing wsdl:required="true" /> is
+    // used in the WSDL
+    public void testUsingAddressingRequired() {
+        wsdlLocation = System.getProperty("basedir", ".") + "/"
+                + "test-resources/wsdl/UsingAddressingRequired.wsdl";
+        File testResourceFile = new File(wsdlLocation);
+        try {
+            WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(
+                    new FileInputStream(testResourceFile));
+            AxisService axisService = builder.populateService();
+            String addressingRequired = AddressingHelper
+                    .getAddressingRequirementParemeterValue(axisService);
+            assertEquals("Unexpected addressingRequirementParameter value: "
+                    + addressingRequired,
+                    AddressingConstants.ADDRESSING_REQUIRED, addressingRequired);
+        } catch (Exception e) {
+            System.out.println("Error in WSDL : " + testResourceFile.getName());
+            System.out.println("Exception: " + e.toString());
+            fail("Caught exception " + e.toString());
+        }
+    }
+
+}

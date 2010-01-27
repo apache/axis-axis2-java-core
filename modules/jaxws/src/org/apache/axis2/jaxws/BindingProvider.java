@@ -20,6 +20,7 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.binding.BindingUtils;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
@@ -86,7 +87,12 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         // Setting standard property defaults for the request context
         requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, Boolean.FALSE);
         requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-        requestContext.put(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+        
+        // Addressing is disabled by default unless it is turned on in the WSDL
+        String addressingFlagFromWSDL = AddressingHelper.getAddressingRequirementParemeterValue(endpointDesc.getAxisService());
+        if(AddressingConstants.ADDRESSING_UNSPECIFIED.equals(addressingFlagFromWSDL)){
+            requestContext.put(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+        }
         
         // Set the endpoint address
         String endpointAddress = (epr != null ) ? epr.getAddress() : endpointDesc.getEndpointAddress();        
