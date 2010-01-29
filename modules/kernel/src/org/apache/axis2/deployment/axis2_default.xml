@@ -226,7 +226,6 @@
             <handler name="HTTPLocationBasedDispatcher"
                      class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
-        <phase name="RMPhase"/>
         <!--  System pre defined phases       -->
         <phase name="RMPhase"/>
         <phase name="OpPhase"/>
@@ -242,12 +241,7 @@
         <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
-	    <phase name="Security">
-            <!--<handler name="test"
-                     class="org.wso2.carbon.core.multitenancy.MultitenantMeteringHandler">
-                <order phase="Security"/>
-            </handler>-->
-        </phase>
+	    <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
         <phase name="Addressing">
