@@ -228,18 +228,26 @@
         </phase>
         <phase name="RMPhase"/>
         <!--  System pre defined phases       -->
+        <phase name="RMPhase"/>
+        <phase name="OpPhase"/>
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
         <phase name="OperationInPhase"/>
     </phaseOrder>
     <phaseOrder type="OutFlow">
+        <phase name="RMPhase"/>
+        <phase name="OpPhase"/>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationOutPhase"/>
         <!--system predefined phase-->
         <!--these phase will run irrespective of the service-->
-        <phase name="RMPhase"/>
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
-        <phase name="Security"/>
+	    <phase name="Security">
+            <!--<handler name="test"
+                     class="org.wso2.carbon.core.multitenancy.MultitenantMeteringHandler">
+                <order phase="Security"/>
+            </handler>-->
+        </phase>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
         <phase name="Addressing">
@@ -264,6 +272,7 @@
                      class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher"/>
         </phase>
         <phase name="RMPhase"/>
+        <phase name="OpPhase"/>
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>
     </phaseOrder>
