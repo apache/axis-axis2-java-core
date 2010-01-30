@@ -92,7 +92,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <excludes>
                         <exclude>**/*Util.java</exclude>
                     </excludes>

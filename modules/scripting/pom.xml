@@ -99,7 +99,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>

@@ -102,7 +102,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
                         <exclude>**/*PhaseResolvingTest.java</exclude>

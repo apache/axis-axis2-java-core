@@ -155,8 +155,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <inherited>true</inherited>
                         <configuration>
-                            <skip>false</skip>
-
                             <!-- The pertest forkMode is not ideal but seems to be necessary
                        because the test server doesn't shut down properly :-(
                        Should be removed if possible -->
@@ -204,8 +202,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <inherited>true</inherited>
                         <configuration>
-                            <skip>false</skip>
-
                             <!-- The pertest forkMode is not ideal but seems to be necessary
                        because the test server doesn't shut down properly :-(
                        Should be removed if possible -->
@@ -256,7 +252,7 @@
                                 <id>gen-enterprise-ts</id>
                                 <phase>generate-test-sources</phase>
                                 <configuration>
-                                    <tasks>
+                                    <tasks unless="maven.test.skip">
                                         <!-- Set a property that can be picked up from the ant build.xml's -->
                                         <property name="maven.class.path" refid="maven.runtime.classpath"/>
                                         <echo>Building enterprise WSDLs...</echo>
@@ -330,7 +326,7 @@
                         <id>gen-ts</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <condition property="test.skip">
                                     <equals arg1="true" arg2="${maven.test.skip}"/>
                                 </condition>
@@ -350,7 +346,7 @@
                         <id>build-repo</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <condition property="test.skip">
                                     <equals arg1="true" arg2="${maven.test.skip}"/>
                                 </condition>

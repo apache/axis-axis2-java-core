@@ -161,7 +161,7 @@
                         <id>gen-ts</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <!-- Set a property that can be picked up from the ant build.xml's -->
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
                                 <property name="maven.test.path" refid="maven.compile.classpath"/>
@@ -220,8 +220,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
-
                     <!-- The pertest forkMode is not ideal but seems to be necessary
                          because the test server doesn't shut down properly :-(
                          Should be removed if possible -->

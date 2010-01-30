@@ -127,7 +127,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
-              <skip>false</skip>
               <includes>
                 <include>**/*Test.java</include>
               </includes>
@@ -142,7 +141,7 @@
                     <id>generate-test-sources</id>
                     <phase>generate-test-sources</phase>
                     <configuration>
-                      <tasks>
+                      <tasks unless="maven.test.skip">
                         <!-- Set a property that can be picked up from the ant build.xml's -->
                         <property name="maven.class.path" refid="maven.test.classpath"/>
                         <echo>Building WSDLs...</echo>

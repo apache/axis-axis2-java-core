@@ -121,7 +121,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <excludes>
                         <exclude>**/*Abstract*.java</exclude>
                         <exclude>**/*Util*.java</exclude>
@@ -140,7 +139,7 @@
                         <id>process-test-resources</id>
                         <phase>process-test-resources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <mkdir dir="target/version"/>
                                 <jar destfile="target/version/version.jar">
                                     <fileset dir="version/target/classes">
@@ -163,7 +162,7 @@
                         <id>test-compile</id>
                         <phase>test-compile</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <property name="maven.build.dir" location="${basedir}/target"/>
                             </tasks>
                         </configuration>

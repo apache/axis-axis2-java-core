@@ -148,7 +148,6 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <skip>false</skip>
                     <forkMode>once</forkMode>
                     <!-- Notes:
                       * The Xerces related property fixes an issue on Sun JDKs caused by the

@@ -54,13 +54,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <dependencies>

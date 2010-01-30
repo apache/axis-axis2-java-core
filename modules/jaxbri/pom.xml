@@ -120,7 +120,7 @@
                         <id>gen-ts</id>
                         <phase>generate-test-sources</phase>
                         <configuration>
-                            <tasks>
+                            <tasks unless="maven.test.skip">
                                 <property name="axis2.home" value="${basedir}/target"/>
                                 <property name="maven.class.path" refid="maven.runtime.classpath"/>
                                 <!-- Theres got to be a better way to do this -->
@@ -178,7 +178,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <skip>false</skip>
                     <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Test.java</include>
