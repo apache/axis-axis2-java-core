@@ -75,8 +75,7 @@ public class UsingAddressingTests extends TestCase {
     // Check addressing is disabled when <wsaw:UsingAddressing /> is NOT used in
     // the WSDL
     public void testWithoutUsingAddressing() {
-        String wsdlLocation = "file:///" + System.getProperty("basedir", ".")
-                + "/" + "test-resources/wsdl/Test.wsdl";
+        String wsdlLocation = getClass().getResource("/wsdl/Test.wsdl").toExternalForm();
         try {
             Service svc = Service.create(new URL(wsdlLocation), serviceQName);
             Sample s = svc.getPort(portQName, Sample.class);
@@ -97,8 +96,7 @@ public class UsingAddressingTests extends TestCase {
     // Check addressing is enabled when <wsaw:UsingAddressing /> is used in the
     // WSDL.
     public void testUsingAddressing() {
-        String wsdlLocation = "file:///" + System.getProperty("basedir", ".")
-                + "/" + "test-resources/wsdl/UsingAddressing.wsdl";
+        String wsdlLocation = getClass().getResource("/wsdl/UsingAddressing.wsdl").toExternalForm();
         try {
             Service svc = Service.create(new URL(wsdlLocation), serviceQName);
             Sample s = svc.getPort(portQName, Sample.class);
@@ -122,8 +120,7 @@ public class UsingAddressingTests extends TestCase {
     // Check addressing is enabled when <wsaw:UsingAddressing
     // wsdl:required="false" /> is used in the WSDL
     public void testUsingAddressingOptional() {
-        String wsdlLocation = "file:///" + System.getProperty("basedir", ".")
-                + "/" + "test-resources/wsdl/UsingAddressingOptional.wsdl";
+        String wsdlLocation = getClass().getResource("/wsdl/UsingAddressingOptional.wsdl").toExternalForm();
         try {
             Service svc = Service.create(new URL(wsdlLocation), serviceQName);
             Sample s = svc.getPort(portQName, Sample.class);
@@ -147,8 +144,7 @@ public class UsingAddressingTests extends TestCase {
     // Check addressing is enabled when <wsaw:UsingAddressing
     // wsdl:required="true" /> is used in the WSDL
     public void testUsingAddressingRequired() {
-        String wsdlLocation = "file:///" + System.getProperty("basedir", ".")
-                + "/" + "test-resources/wsdl/UsingAddressingRequired.wsdl";
+        String wsdlLocation = getClass().getResource("/wsdl/UsingAddressingRequired.wsdl").toExternalForm();
         try {
             Service svc = Service.create(new URL(wsdlLocation), serviceQName);
             Sample s = svc.getPort(portQName, Sample.class);
