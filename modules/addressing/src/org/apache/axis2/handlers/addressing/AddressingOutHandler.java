@@ -452,7 +452,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     epr = new EndpointReference(anonymous);
                 }
             }
-            else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
+            else if ((!isFinalAddressingNamespace || messageContext.isServerSide()) && epr.hasNoneAddress()) {
                 return; //Omit the header.
             }
             else if (epr.isWSAddressingAnonymous())
