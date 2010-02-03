@@ -19,12 +19,21 @@
 
 package org.apache.axis2.jaxws.endpoint;
 
-import junit.framework.TestCase;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jws.WebService;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.EndpointReference;
 import javax.xml.ws.soap.SOAPBinding;
+
+import junit.framework.TestCase;
+
+import org.w3c.dom.Element;
 
 public class BasicEndpointTests extends TestCase {
 
@@ -58,6 +67,47 @@ public class BasicEndpointTests extends TestCase {
         assertTrue("The returned Binding instance was null", bnd != null);
         assertTrue("The returned Binding instance was of the wrong type (" + bnd.getClass().getName() + "), expected SOAPBinding", 
                 SOAPBinding.class.isAssignableFrom(bnd.getClass()));
+        ep.stop();
+    }
+    
+    public void testGetEndpointReference() throws Exception {
+        SampleEndpoint sample = new SampleEndpoint();
+
+        Endpoint ep = Endpoint.publish("test" , sample);
+        assertNotNull("The returned Endpoint instance was null", ep);
+        assertTrue("The endpoint was not published successfully", ep.isPublished());
+        
+        Element [] refParams = new Element[0];
+        EndpointReference epr = ep.getEndpointReference(refParams);
+        
+        assertNotNull("The returned EndpointReference instance was null", epr);
+        
+        ep.stop();
+    }
+    
+    public void testMetadata() throws Exception {
+        SampleEndpoint sample = new SampleEndpoint();
+        
+        Endpoint ep = Endpoint.create(sample);
+        assertTrue("The returned Endpoint instance was null", ep != null);
+        
+        ep.publish("test");
+        assertTrue("The endpoint was not published successfully", ep.isPublished());
+        
+        URL wsdl = new URL("http://test.wsdl.com/Test.wsdl");
+        String wsdlLocation = wsdl.toExternalForm();
+        List<Source> metadata = new ArrayList<Source>();
+        Source source = new StreamSource(wsdl.openStream());  
+        source.setSystemId(wsdlLocation);  
+        metadata.add(source);
+        ep.setMetadata(metadata);
+        
+        metadata = ep.getMetadata();
+        assertNotNull(metadata);
+        source = metadata.get(0);
+        assertNotNull(source);
+        assertEquals(source.getSystemId(), wsdlLocation);
+        
         ep.stop();
     }
 

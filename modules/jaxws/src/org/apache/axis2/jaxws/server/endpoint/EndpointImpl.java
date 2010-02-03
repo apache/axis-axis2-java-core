@@ -167,6 +167,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      */
     public void publish(String s) {
         int port = -1;
+        String address = s;
         try {
             URI uri = new URI(s);
             port = uri.getPort();
@@ -175,9 +176,12 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         // Default to 8080
         if(port == -1){
             port = 8080;
+            address = s + ":" + port;
         }
         ConfigurationContext ctx = endpointDesc.getServiceDescription().getAxisConfigContext();
-
+        if (endpointDesc.getEndpointAddress() == null)
+            endpointDesc.setEndpointAddress(address);
+        
         try {
             // For some reason the AxisService has not been added to the ConfigurationContext
             // at this point, so we need to do it for the service to be available.
@@ -240,9 +244,17 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
         String address = endpointDesc.getEndpointAddress();
         QName serviceName = endpointDesc.getServiceQName();
         QName portName = endpointDesc.getPortQName();
+
+        String wsdlLocation = null;
+        if (metadata != null) {
+            Source wsdlSource = metadata.get(0);
+            if (wsdlSource != null) {   
+                wsdlLocation = wsdlSource.getSystemId();
+            }
+        }
         
         org.apache.axis2.addressing.EndpointReference axis2EPR =
-        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, null, addressingNamespace);
+        	EndpointReferenceUtils.createAxis2EndpointReference(address, serviceName, portName, wsdlLocation, addressingNamespace);
         
         try {
             EndpointReferenceUtils.addReferenceParameters(axis2EPR, referenceParameters);
