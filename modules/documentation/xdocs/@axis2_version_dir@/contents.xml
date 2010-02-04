@@ -39,10 +39,10 @@ efficient, more modular and more XML-oriented than its predecessor
 carefully designed to support the easy addition of plug-in modules
 that extend its functionality for features such as security and
 increased reliability.</p>
-<p>Apache Axis2 Version @axis2_version@ comes to you with
-performance improvements and bug fixes over the 1.1 release.</p>
-<p>This page will take you through the list of documents that we
-have in store for you.</p>
+<p>Apache Axis2 Version @axis2_version@ is a bugfix release, fixing several
+problems in version 1.5.  Please see the release notes for more
+details.</p>
+<p>This page describes our list of available documents.</p>
 <h2>Apache Axis2 User's Guide</h2>
 <p>You can get started with Axis2 with the assistance of the
 following documents. They will guide you through the Axis2
