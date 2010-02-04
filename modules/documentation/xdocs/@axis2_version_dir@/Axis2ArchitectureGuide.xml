@@ -709,12 +709,10 @@ the SOAP message.</p>
 or org.apache.axis2.transport.http.SimpleHTTPServer provided by
 Axis2. The transport sender uses commons-httpclient to connect and
 send the SOAP message.</li>
-<li>TCP - This is the simplest transport, but needs WS-Addressing
-support to be functional.</li>
-<li>SMTP - This works off a single email account. Transport
-receiver is a thread that checks for emails at fixed time
-intervals.</li>
-<li>JMS</li>
+<li>Local - This transport can be used for in-VM communication.</li>
+<li>Transports for TCP, SMTP, JMS and other protocols are available
+from the <a href="http://ws.apache.org/commons/transport/">WS-Commons Transport</a>
+project.</li>
 </ol>
 <a name="bmWSDL" id="bmWSDL"></a>
 <h2>Code Generation</h2>

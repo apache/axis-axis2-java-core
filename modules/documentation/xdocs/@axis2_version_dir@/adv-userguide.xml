@@ -465,8 +465,8 @@ own transports, and deploy them by adding new transportReceiver or
 transportSender tags to axis2.xml. To learn how to configure and use
 different transports, please refer to the following documents.</p>
 <ol>
-  <li><a href="tcp-transport.html" target="_blank">TCP Transport</a></li>
   <li><a href="http-transport.html" target="_blank">HTTP Transports</a></li>
+  <li><a href="http://ws.apache.org/commons/transport/">WS-Commons Transport project</a></li>
 </ol>
 
 <h3>Attachments</h3>
