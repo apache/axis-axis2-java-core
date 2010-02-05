@@ -104,8 +104,10 @@ Guide</a></li>
 <li>Transports
 <ul>
 <li>18.1 <a href="http-transport.html" target="mainFrame">HTTP
-Transport</a></li>
-<li>18.2 <a href="transport_howto.html" target="mainFrame">Custom
+Transport sender</a></li>
+<li>18.2 <a href="servlet-transport.html" target="mainFrame">HTTP
+servlet transport</a></li>
+<li>18.3 <a href="transport_howto.html" target="mainFrame">Custom
 Transport</a></li>
 </ul>
 </li>
