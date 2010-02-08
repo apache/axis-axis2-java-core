@@ -44,7 +44,7 @@
             <item name="Tools" href="tools/index.html" />
         </menu>
         <menu name="Documentation">
-            <item name="Version 1.5.1" href="/@axis2_version_dir@/contents.html" >
+            <item name="Version 1.6" href="/@axis2_version_dir@/contents.html" >
                 <item name="Table of Contents" href="@axis2_version_dir@/toc.html" />
                 <item name="Installation Guide" href="@axis2_version_dir@/installationguide.html" />
                 <item name="QuickStart Guide" href="@axis2_version_dir@/quickstartguide.html" />
@@ -55,6 +55,7 @@
                 <item name="Web Administrator's Guide" href="@axis2_version_dir@/webadminguide.html" />
                 <item name="Migration Guide (from Axis1)" href="@axis2_version_dir@/migration.html" />
             </item>
+            <item name="Version 1.5.1" href="/1_5_1/contents.html"/>
             <item name="Version 1.5" href="/1_5/contents.html"/>
             <item name="Version 1.4.1" href="/1_4_1/contents.html"/>
             <item name="Version 1.4" href="/1_4/contents.html"/>
