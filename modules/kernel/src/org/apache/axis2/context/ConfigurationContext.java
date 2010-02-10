@@ -39,10 +39,9 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.OnDemandLogger;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -69,7 +68,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConfigurationContext extends AbstractContext {
 
-    private static final Log log = LogFactory.getLog(ConfigurationContext.class);
+    private static final OnDemandLogger log = new OnDemandLogger(ConfigurationContext.class);
     /** Map containing <code>MessageID</code> to <code>OperationContext</code> mapping. */
     private final ConcurrentHashMap<String, OperationContext> operationContextMap = new ConcurrentHashMap<String, OperationContext>();
     private final Hashtable<String, ServiceGroupContext> serviceGroupContextMap = new Hashtable<String, ServiceGroupContext>();
