@@ -271,9 +271,7 @@ public class RepositoryListener implements DeploymentConstants {
             String directory = entry.getKey();
             Map<String, Deployer> extensionMap = entry.getValue();
             for (String extension : extensionMap.keySet()) {
-                String[] strings = directory.split("/");
-                File dirToSearch = new File(deploymentEngine.getRepositoryDir(),
-                        strings[strings.length - 1]);
+                File dirToSearch = new File(deploymentEngine.getRepositoryDir(), directory);
                 findFileForGivenDirectory(dirToSearch, extension, directory);
             }
         }
