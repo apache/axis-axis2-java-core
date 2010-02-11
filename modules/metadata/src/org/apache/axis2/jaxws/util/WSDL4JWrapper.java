@@ -398,7 +398,8 @@ public class WSDL4JWrapper implements WSDLWrapper {
 
         for (URL url : urlList) {
             if ("file".equals(url.getProtocol())) {
-                final File f = new File(url.getPath());
+                // Insure that Windows spaces are properly handled in the URL
+                final File f = new File(url.getPath().replaceAll("%20", " "));
                 // If file is not of type directory then its a jar file
                 if (isAFile(f)) { 
                     try {
