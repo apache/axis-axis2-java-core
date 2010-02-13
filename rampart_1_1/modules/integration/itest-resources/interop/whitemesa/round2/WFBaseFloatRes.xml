@@ -1,7 +1,0 @@
-<SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <SOAP-ENV:Body>
-         <ns1:echoFloatResponse xmlns:ns1="http://soapinterop.org/">
-            <return xsi:type="xsd:float">50.25</return>
-         </ns1:echoFloatResponse>
-      </SOAP-ENV:Body>
-   </SOAP-ENV:Envelope>

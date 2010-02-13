@@ -1,9 +1,0 @@
-<shw:Address shw:t='test' xmlns:shw="http://www.jcommerce.net/soap/ns/SOAPHelloWorld">
-    <shw:Number>12</shw:Number>
-    <shw:City>
-        <shw:z>Dehiwela</shw:z>
-    </shw:City>
-    <shw:Country>
-        <shw:y>Sri Lanka</shw:y>
-    </shw:Country>
-</shw:Address>
