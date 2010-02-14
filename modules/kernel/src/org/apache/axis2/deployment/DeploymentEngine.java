@@ -99,8 +99,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     protected List wsToDeploy = new ArrayList();
 
-    private Object deploymentLock = new Object();
-
     /**
      * Stores all the web Services to undeploy.
      */
@@ -789,7 +787,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     /**
      * @param file WSInfo
      */
-    public synchronized void addWSToUndeploy(WSInfo file) {
+    public synchronized void addWSToUndeploy(WSInfo file){
         wsToUnDeploy.add(file);
     }
 
