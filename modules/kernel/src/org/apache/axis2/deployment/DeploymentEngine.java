@@ -99,6 +99,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     protected List wsToDeploy = new ArrayList();
 
+    private Object deploymentLock = new Object();
+
     /**
      * Stores all the web Services to undeploy.
      */
@@ -780,18 +782,18 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     /**
      * @param file ArchiveFileData
      */
-    public void addWSToDeploy(DeploymentFileData file) {
+    public synchronized void addWSToDeploy(DeploymentFileData file) {
         wsToDeploy.add(file);
     }
 
     /**
      * @param file WSInfo
      */
-    public void addWSToUndeploy(WSInfo file) {
+    public synchronized void addWSToUndeploy(WSInfo file) {
         wsToUnDeploy.add(file);
     }
 
-    public void doDeploy() {
+    public synchronized void doDeploy() {
         try {
             if (wsToDeploy.size() > 0) {
                 for (Object aWsToDeploy : wsToDeploy) {
@@ -864,7 +866,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
     }
 
-    public void unDeploy() {
+    public synchronized void unDeploy() {
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (Object aWsToUnDeploy : wsToUnDeploy) {
