@@ -1936,7 +1936,7 @@ public class Utils {
         if (filePath == null || serviceDir == null) {
             return "";
         }
-        String[] splited = filePath.split(serviceDir + "/");
+        String[] splited = filePath.split("/" + serviceDir + "/");
         String serviceHierarchy = null;
         if (splited.length > 1) {
             String temp = splited[splited.length - 1];
