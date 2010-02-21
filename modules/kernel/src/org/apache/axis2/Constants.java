@@ -313,6 +313,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Dispatching constants
      */
     public static int MAX_HIERARCHICAL_DEPTH = 10;
+    public static final String HIDDEN_SERVICE_PARAM_NAME = "hiddenService";
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

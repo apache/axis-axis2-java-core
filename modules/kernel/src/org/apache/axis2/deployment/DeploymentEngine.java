@@ -272,9 +272,13 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                     servicesURL,
                                     fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
-                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                            serviceGroup.getServiceGroupName(),
-                            servicesURL.toString()));
+                    // let the system have hidden services
+                    if (!JavaUtils.isTrueExplicitly(serviceGroup.getParameterValue(
+                            Constants.HIDDEN_SERVICE_PARAM_NAME))) {
+                        log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                                serviceGroup.getServiceGroupName(),
+                                servicesURL.toString()));
+                    }
                 }
             }
             //Loading other type of services such as custom deployers
@@ -603,10 +607,15 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             if (currentDeploymentFile != null) {
                 addAsWebResources(currentDeploymentFile.getFile(),
                         serviceGroup.getServiceGroupName(), serviceGroup);
-                log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                        currentDeploymentFile.getName(),
-                        serviceLocation.toString()));
-            } else {
+                // let the system have hidden services
+                if (!JavaUtils.isTrueExplicitly(serviceGroup.getParameterValue(
+                        Constants.HIDDEN_SERVICE_PARAM_NAME))) {
+                    log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
+                            currentDeploymentFile.getName(),
+                            serviceLocation.toString()));
+                }
+            } else if (!JavaUtils.isTrueExplicitly(serviceGroup.getParameterValue(
+                            Constants.HIDDEN_SERVICE_PARAM_NAME))) {
                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                         serviceGroup.getServiceGroupName()));
             }
