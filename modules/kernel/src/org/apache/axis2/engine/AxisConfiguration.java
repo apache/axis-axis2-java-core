@@ -751,7 +751,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator<String> itr = faultyServices.keySet().iterator();
         while (itr.hasNext()) {
             String fullFileName = itr.next();
-            if (fullFileName.indexOf(key) > 0) {
+            if (fullFileName.indexOf(key) >= 0) {
                 faultyServices.remove(fullFileName);
                 return;
             }
