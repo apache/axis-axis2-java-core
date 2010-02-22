@@ -33,9 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 
 public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
@@ -54,6 +52,12 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
 
     private OMStreamNamespaceContext omStreamNamespaceContext;
 
+    /**
+     * this stack keeps the name spaces added to the oMElementStack at a pirticular element
+     * when end element is written the namspeces added at a pirticulare element is removed.
+     */
+    private Stack<List<String>> namespacesListStack;
+
 
     public MTOMAwareOMBuilder() {
         omFactory = OMAbstractFactory.getOMFactory();
@@ -62,6 +66,7 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
         omStreamNamespaceContext = new OMStreamNamespaceContext();
         namespaceOMNamesapceMap = new HashMap();
         prefixNum = 0;
+        namespacesListStack = new Stack<List<String>>();
 
     }
 
@@ -85,6 +90,8 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
                 omNamespace = omFactory.createOMNamespace(namespace, prefix);
                 this.omStreamNamespaceContext.registerNamespace(namespace, prefix);
                 namespaceOMNamesapceMap.put(namespace, omNamespace);
+                // add this namespce to top list as well
+                namespacesListStack.peek().add(namespace);
             }
         }
         return omNamespace;
@@ -99,6 +106,8 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
     }
 
     public void writeStartElement(String prefix, String localName, String namespace) throws XMLStreamException {
+        // add a new stack element at the start of a new element
+        namespacesListStack.push(new ArrayList<String>());
         OMNamespace omNamespace = getOMNamespace(namespace, prefix);
         currentOMElement = omFactory.createOMElement(localName, omNamespace);
         if (!omElementStack.isEmpty()) {
@@ -128,6 +137,12 @@ public class MTOMAwareOMBuilder implements XMLStreamWriter, DataHandlerWriter {
 
     public void writeEndElement() throws XMLStreamException {
         omElementStack.pop();
+        // remove the namespaces declared by this element
+        List<String> addedNamespaces = namespacesListStack.pop();
+        for (String namespace : addedNamespaces){
+            namespaceOMNamesapceMap.remove(namespace);
+            omStreamNamespaceContext.removeNamespce(namespace);
+        }
     }
 
     public void writeEndDocument() throws XMLStreamException {

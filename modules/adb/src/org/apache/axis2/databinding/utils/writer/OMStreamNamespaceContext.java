@@ -52,5 +52,10 @@ public class OMStreamNamespaceContext implements NamespaceContext {
         return prefixToNamespaceMap.keySet().iterator();
     }
 
+    public void removeNamespce(String namespaceURI){
+        String prefix = (String) this.namespaceToPrefixMap.remove(namespaceURI);
+        this.prefixToNamespaceMap.remove(prefix);
+    }
+
 
 }
