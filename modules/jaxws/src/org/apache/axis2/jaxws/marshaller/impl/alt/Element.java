@@ -35,13 +35,15 @@ import javax.xml.namespace.QName;
  * The type value is usually the object needed
  * for the method signature (i.e. String)
  * <p/>
- * Here is an example for illustration: <element name='e1'> <complexType>...</complexType>
+ * Here is an example for illustration: 
+ * <element name='e1'> 
+ * <complexType>...</complexType>
  * </element>
  * <p/>
  * <element name='e2' type='t2' /> <complexType name= 't2'>..
  * <p/>
- * <element name='e3' type='e3' />  <!-- note element and type have same name --> <complexType name=
- * 'e3'>..
+ * <element name='e3' type='e3' />  <!-- note element and type have same name --> 
+ * <complexType name= 'e3'>..
  * <p/>
  * JAXB will generate the following objects:  E1, T2, E3 E1 will have an @XMLRootElement annotation.
  *  It is "element" and "type" enabled. e2 does not have a generated object.  So it will be
