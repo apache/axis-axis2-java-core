@@ -25,6 +25,8 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.server.AsyncHandlerProxyFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,14 +56,18 @@ public class CallbackFuture extends Callback {
     
     private InvocationContext invocationCtx;
     
+    public static String displayHandle(Object obj) {
+        return obj.getClass().getName() + '@' + Integer.toHexString(obj.hashCode());
+    }
+    
     /*
      * There are two Async Callback Future.cancel scenario that we address
      * 1) Client app creates request and call Async Operation. Now before the request is submitted
-     * 	  by JAXWS to Executor for processing and any response is received client decides to cancel 
-     * 	  the future task.
+     *    by JAXWS to Executor for processing and any response is received client decides to cancel 
+     *    the future task.
      * 2) Client app creates request and call Async Operation. Request is submitted by JAXWS 
-     * 	  to Executor for processing and a response is received and client decides to cancel the future
-     * 	  task.
+     *    to Executor for processing and a response is received and client decides to cancel the future
+     *    task.
      * 
      * We will address both these scenarios in the code. In scenario 1 we will do the following:
      * 1) Check the for the future.isCancelled before submitting the task to Executor 
@@ -75,7 +81,45 @@ public class CallbackFuture extends Callback {
 
     @SuppressWarnings("unchecked")
     public CallbackFuture(InvocationContext ic, AsyncHandler handler) {
-        cft = new CallbackFutureTask(ic.getAsyncResponseListener(), handler);
+        
+        // We need to save off the classloader associated with the AsyncHandler instance
+        // since we'll need to set this same classloader on the thread where
+        // handleResponse() is invoked.
+        // This is required so that we don't encounter ClassCastExceptions.
+        final Object handlerObj = handler;
+        final ClassLoader handlerCL = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return handlerObj.getClass().getClassLoader();
+            }
+        });
+       
+        // Allow the AsyncHandlerProxyFactory to create the proxy for the AsyncHandler
+        // passed in (which was provided by the client on the async invocation).
+        // This allows any server-specific work to be done, such as thread context management, etc.
+        AsyncHandler originalHandler = handler;
+        try {
+            if (debug) {
+                log.debug("Calling factory to create proxy for AsyncHandler instance: " + displayHandle(handler));
+            }
+            AsyncHandlerProxyFactory proxyFactory = (AsyncHandlerProxyFactory) FactoryRegistry
+                .getFactory(AsyncHandlerProxyFactory.class);
+            handler = proxyFactory.createAsyncHandlerProxy(handler);
+            if (debug) {
+                log.debug("Factory returned AsyncHandler proxy instance: " + displayHandle(handler));
+            }
+        }
+        catch (Exception e) {
+            if (debug) {
+                log.debug("AsyncHandlerProxyFactory threw an exception: " + e.toString());
+                e.printStackTrace();
+            }
+            
+            // Just use the original handler provided by the client if we 
+            // failed to create a proxy for it.
+            handler = originalHandler;
+        }
+
+        cft = new CallbackFutureTask(ic.getAsyncResponseListener(), handler, handlerCL);
         task = new FutureTask(cft);
         executor = ic.getExecutor();
         
@@ -223,12 +267,14 @@ class CallbackFutureTask implements Callable {
     AsyncResponse response;
     MessageContext msgCtx;
     AsyncHandler handler;
+    ClassLoader handlerCL;
     Exception error;
     boolean done = false;
 
-    CallbackFutureTask(AsyncResponse r, AsyncHandler h) {
+    CallbackFutureTask(AsyncResponse r, AsyncHandler h, ClassLoader cl) {
         response = r;
         handler = h;
+        handlerCL = cl;
     }
     
     protected AsyncHandler getHandler() {
@@ -252,24 +298,24 @@ class CallbackFutureTask implements Callable {
      */
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
-    	try {
-            // The ClassLoader that was used to load the AsyncHandler instance is the same
-            // one that is used to create the JAXB request object instances.  Because of that
-            // we need to make sure we're using the same ClassLoader as we start response
-            // processing or ClassCastExceptions will occur.
-            final ClassLoader classLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+        ClassLoader oldCL = null;
+        try {
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Setting up the thread's context classLoader");
+                log.debug(handlerCL.toString());
+            }
+            
+            // Retrieve the existing classloader from the thread.
+            oldCL = (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
                 public Object run() {
-                    return handler.getClass().getClassLoader();
+                    return Thread.currentThread().getContextClassLoader();
                 }
             });
             
-            if (log.isDebugEnabled()) {
-                log.debug("Setting up the thread's ClassLoader");
-                log.debug(classLoader.toString());
-            }
             AccessController.doPrivileged(new PrivilegedAction() {
                 public Object run() {
-                    Thread.currentThread().setContextClassLoader(classLoader);
+                    Thread.currentThread().setContextClassLoader(handlerCL);
                     return null;
                 }
             });
@@ -277,25 +323,42 @@ class CallbackFutureTask implements Callable {
             // Set the response or fault content on the AsyncResponse object
             // so that it can be collected inside the Executor thread and processed.
             if (error != null) {
-                response.onError(error, msgCtx, classLoader);
+                response.onError(error, msgCtx, handlerCL);
             } else {
-                response.onComplete(msgCtx, classLoader);
+                response.onComplete(msgCtx, handlerCL);
             }
             
             // Now that the content is available, call the JAX-WS AsyncHandler class
             // to deliver the response to the user.
             if (debug) {
-                log.debug("Calling JAX-WS AsyncHandler with the Response object");
-                log.debug("AyncHandler class: " + handler.getClass());
+                log.debug("Calling JAX-WS AsyncHandler.handleResponse() with response object: " + CallbackFuture.displayHandle(response));
             }
             handler.handleResponse(response);
-    	} catch (Throwable t) {
             if (debug) {
-                log.debug("An error occured while invoking the callback object.");
-                log.debug("Error: " + t.getMessage());
+                log.debug("Returned from handleResponse() invocation...");
             }
-    	} finally {
+        } catch (Throwable t) {
+            if (debug) {
+                log.debug("An error occurred while invoking the callback object.");
+                log.debug("Error: " + t.toString());
+                t.printStackTrace();
+            }
+        } finally {
             synchronized(this) {
+                // Restore the old classloader on this thread.
+                if (oldCL != null) {
+                    final ClassLoader t = oldCL;
+                    AccessController.doPrivileged(new PrivilegedAction() {
+                        public Object run() {
+                            Thread.currentThread().setContextClassLoader(t);
+                            return null;
+                        }
+                    });
+                    if (debug) {
+                        log.debug("Restored thread context classloader: " + oldCL.toString());
+                    }
+                }
+                
                 done = true;
                 this.notifyAll();
             }
