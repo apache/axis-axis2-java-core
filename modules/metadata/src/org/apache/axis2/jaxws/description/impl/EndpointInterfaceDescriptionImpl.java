@@ -41,6 +41,7 @@ import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
@@ -790,7 +791,7 @@ public class EndpointInterfaceDescriptionImpl
         if (WSToolingUtils.hasValue(getNewRulesFlag())) {
             if (newRulesFlag.equalsIgnoreCase("false")) {
                 if (log.isDebugEnabled()){
-                    log.debug("EndpointInterfaceDescriptionImpl: System property USE_LEGACY_WEB_METHOD_RULES set to false" );
+                    log.debug("EndpointInterfaceDescriptionImpl: System or Manifest property USE_LEGACY_WEB_METHOD_RULES set to false" );
                 }
                 newSunBehavior = isNewSunBehavior(MDQConstants.USE_LEGACY_WEB_METHOD_RULES);
             }
@@ -868,7 +869,7 @@ public class EndpointInterfaceDescriptionImpl
         return versionValid;
     }
     
-    private static String getNewRulesFlag () {
+    private String getNewRulesFlag () {
         
         if (newRulesFlag != null) {
             return newRulesFlag;
@@ -878,6 +879,8 @@ public class EndpointInterfaceDescriptionImpl
             newRulesFlag = (String) AccessController.doPrivileged(
                 new PrivilegedExceptionAction() {
                     public Object run() {
+                        //System property takes precedence over manifest property.
+                        //So first lets check for system property.
                         return (System.getProperty(MDQConstants.USE_LEGACY_WEB_METHOD_RULES));
                     }
                 });
@@ -887,7 +890,38 @@ public class EndpointInterfaceDescriptionImpl
                 log.debug("Exception getting USE_LEGACY_WEB_METHOD_RULES system property: " +e.getException());
             }
         }
-        
+        //System property not set, so let return the manifest property.
+        if(!WSToolingUtils.hasValue(newRulesFlag)){
+            if (log.isDebugEnabled()){
+                log.debug("EndpointInterfaceDescriptionImpl: system property '"+MDQConstants.USE_LEGACY_WEB_METHOD_RULES + "' not set" );
+            }
+            ConfigurationContext configContext = getEndpointDescription().getServiceDescription().getAxisConfigContext();
+            if(configContext!=null){
+                if (log.isDebugEnabled()){
+                    log.debug("EndpointInterfaceDescriptionImpl: Reading Manifest property '"+ MDQConstants.USE_MANIFEST_LEGACY_WEB_METHOD_RULES+"'" );
+                }
+                String param =(String)configContext.getProperty(MDQConstants.USE_MANIFEST_LEGACY_WEB_METHOD_RULES);
+                if(param == null){
+                    if (log.isDebugEnabled()){
+                        log.debug("EndpointInterfaceDescriptionImpl: Manifest property '"+ MDQConstants.USE_MANIFEST_LEGACY_WEB_METHOD_RULES+ "' not set" );
+                    }
+                }else{
+                    if (log.isDebugEnabled()){
+                        log.debug("EndpointInterfaceDescriptionImpl: Manifest property '"+ MDQConstants.USE_MANIFEST_LEGACY_WEB_METHOD_RULES+ "' is set" );
+                    }
+                    newRulesFlag = param;
+                }
+            }else{
+                if (log.isDebugEnabled()){
+                    log.debug("EndpointInterfaceDescriptionImpl: Unable to Read Manifest property '"+ MDQConstants.USE_MANIFEST_LEGACY_WEB_METHOD_RULES+"'" );
+                    log.debug("EndpointInterfaceDescriptionImpl: AxisConfigContext was null" );
+                }
+            }
+        }else{
+            if (log.isDebugEnabled()){
+                log.debug("EndpointInterfaceDescriptionImpl: system property '"+MDQConstants.USE_LEGACY_WEB_METHOD_RULES + "' set" );
+            }
+        }
         return newRulesFlag;
     }
     
