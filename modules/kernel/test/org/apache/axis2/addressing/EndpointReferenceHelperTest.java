@@ -25,8 +25,10 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.addressing.metadata.WSDLLocation;
 
 import javax.xml.namespace.QName;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -246,5 +248,83 @@ public class EndpointReferenceHelperTest extends TestCase {
         catch (Exception e) {
             //pass
         }
+    }
+    
+    public void testSetAndGetWSDLLocationMetadataForFinalSpecEPR() throws Exception {
+        String address = "http://ws.apache.org/axis2";
+        String targetNamespace = "targetNamespace";
+        String location = "wsdlLocation";
+        
+        EndpointReference epr = new EndpointReference(address);
+        
+        OMFactory omf = OMAbstractFactory.getOMFactory();
+        
+        // Uses final WSDLI namespace on wsdlLocation attribute
+        EndpointReferenceHelper.setWSDLLocationMetadata(omf, epr, AddressingConstants.Final.WSA_NAMESPACE, new WSDLLocation(targetNamespace, location));
+        
+        WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(epr, AddressingConstants.Final.WSA_NAMESPACE);
+        assertEquals(wsdlLocation.getTargetNamespace(), targetNamespace);
+        assertEquals(wsdlLocation.getLocation(), location);
+    }
+    
+    public void testSetAndGetWSDLLocationMetadataForSubmissionSpecEPR() throws Exception {
+        String address = "http://ws.apache.org/axis2";
+        String targetNamespace = "targetNamespace";
+        String location = "wsdlLocation";
+        
+        EndpointReference epr = new EndpointReference(address);
+        
+        OMFactory omf = OMAbstractFactory.getOMFactory();
+        
+        // Uses final WSDLI namespace on wsdlLocation attribute
+        EndpointReferenceHelper.setWSDLLocationMetadata(omf, epr, AddressingConstants.Submission.WSA_NAMESPACE, new WSDLLocation(targetNamespace, location));
+        
+        WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(epr, AddressingConstants.Submission.WSA_NAMESPACE);
+        assertEquals(wsdlLocation.getTargetNamespace(), targetNamespace);
+        assertEquals(wsdlLocation.getLocation(), location);
+    }
+    
+    public void testGetWSDLLocationMetadataForFinalSpecEPRWithOldWsdliNamespace() throws Exception {
+        String address = "http://ws.apache.org/axis2";
+        String targetNamespace = "targetNamespace";
+        String location = "wsdlLocation";
+        
+        EndpointReference epr = new EndpointReference(address);
+        
+        // Uses old candidate spec WSDLI namespace on wsdlLocation attribute
+        OMFactory omf = OMAbstractFactory.getOMFactory();
+        String value = new StringBuffer(targetNamespace).append(" ").append(location).toString();
+        QName OLD_WSDLI = new QName("http://www.w3.org/2006/01/wsdl-instance", "wsdlLocation", "wsdli");
+        OMNamespace wsdliNs = omf.createOMNamespace(OLD_WSDLI.getNamespaceURI(), OLD_WSDLI.getPrefix());
+        OMAttribute attribute = omf.createOMAttribute(OLD_WSDLI.getLocalPart(), wsdliNs, value);
+        
+        ArrayList list = new ArrayList();
+        list.add(attribute);
+        epr.setMetadataAttributes(list);
+        
+        WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(epr, AddressingConstants.Final.WSA_NAMESPACE);
+        assertEquals(wsdlLocation.getTargetNamespace(), targetNamespace);
+        assertEquals(wsdlLocation.getLocation(), location);  
+    }
+    
+    public void testGetWSDLLocationMetadataForSubmissionSpecEPRWithOldWsdliNamespace() throws Exception {
+        String address = "http://ws.apache.org/axis2";
+        String targetNamespace = "targetNamespace";
+        String location = "wsdlLocation";
+        
+        EndpointReference epr = new EndpointReference(address);
+        
+        // Uses old candidate spec WSDLI namespace on wsdlLocation attribute
+        OMFactory omf = OMAbstractFactory.getOMFactory();
+        String value = new StringBuffer(targetNamespace).append(" ").append(location).toString();
+        QName OLD_WSDLI = new QName("http://www.w3.org/2006/01/wsdl-instance", "wsdlLocation", "wsdli");
+        OMNamespace wsdliNs = omf.createOMNamespace(OLD_WSDLI.getNamespaceURI(), OLD_WSDLI.getPrefix());
+        OMAttribute attribute = omf.createOMAttribute(OLD_WSDLI.getLocalPart(), wsdliNs, value);
+        
+        epr.addAttribute(attribute);
+        
+        WSDLLocation wsdlLocation = EndpointReferenceHelper.getWSDLLocationMetadata(epr, AddressingConstants.Submission.WSA_NAMESPACE);
+        assertEquals(wsdlLocation.getTargetNamespace(), targetNamespace);
+        assertEquals(wsdlLocation.getLocation(), location);  
     }
 }

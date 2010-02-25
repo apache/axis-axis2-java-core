@@ -23,11 +23,17 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
 public class WSDLLocation {
+    private static final Log log = LogFactory.getLog(WSDLLocation.class);
+    
+    // Support both WSDLI namespaces on inbound messages to allow interop with earlier versions of axis2 
     private static final QName WSDLI = new QName("http://www.w3.org/2006/01/wsdl-instance", "wsdlLocation", "wsdli");
+    private static final QName FINAL_WSDLI = new QName("http://www.w3.org/ns/wsdl-instance", "wsdlLocation", "wsdli");
     
     private String targetNamespace;
     private String wsdlURL;
@@ -55,29 +61,35 @@ public class WSDLLocation {
     
     /**
      * Convenience method to convert an object of this type to an <code>OMAttribute</code>
+     * <p>
+     * &lt;... xmlns:wsdli="http://www.w3.org/ns/wsdl-instance" wsdli:wsdlLocation="targetNamespace wsdlURL" ...&gt
+     * </p>
      * @param factory <code>OMFactory</code> to use when generating <code>OMElement</code>s
      * 
      * @return an <code>OMAttribute</code> that can be added to an <code>EndpointReference</code>
      */
     public OMAttribute toOM(OMFactory factory) {
         String value = new StringBuffer(targetNamespace).append(" ").append(wsdlURL).toString();
-        OMNamespace wsdliNs = factory.createOMNamespace(WSDLI.getNamespaceURI(), WSDLI.getPrefix());
-        OMAttribute omAttribute = factory.createOMAttribute(WSDLI.getLocalPart(), wsdliNs, value);
-        
+        OMNamespace wsdliNs = factory.createOMNamespace(FINAL_WSDLI.getNamespaceURI(), FINAL_WSDLI.getPrefix());
+        OMAttribute omAttribute = factory.createOMAttribute(FINAL_WSDLI.getLocalPart(), wsdliNs, value);
+
         return omAttribute;
     }
     
     /**
-     * Convenience method for converting an OMAttribute to an instance of this type.
+     * Convenience method for converting an OMAttribute to an instance of either of these types.
      * <p>
      * &lt;... xmlns:wsdli="http://www.w3.org/2006/01/wsdl-instance" wsdli:wsdlLocation="targetNamespace wsdlURL" ...&gt
+     * </p>
+     * <p>
+     * &lt;... xmlns:wsdli="http://www.w3.org/ns/wsdl-instance" wsdli:wsdlLocation="targetNamespace wsdlURL" ...&gt
      * </p>
      * @param omAttribute the <code>OMAttribute</code> that holds the wsdl location.
      * @throws AxisFault
      */
     public void fromOM(OMAttribute omAttribute) throws AxisFault {
         QName qname = omAttribute.getQName();
-        if (WSDLI.equals(qname)) {
+        if (WSDLI.equals(qname) || FINAL_WSDLI.equals(qname)) {
            String value = omAttribute.getAttributeValue().trim();
            String[] values = value.split("\\s", 2);
            
@@ -88,6 +100,10 @@ public class WSDLLocation {
            
            targetNamespace = values[0];
            wsdlURL = values[1];
+           
+           if (log.isDebugEnabled()) {
+               log.debug("fromOM: Extracted WSDLLocation targetNamespace = " + targetNamespace + " and wsdlURL = " + wsdlURL + " from an OMAttribute with QName = " + qname);
+           }
         }
         else {
             throw new AxisFault("Unrecognized element.");
@@ -108,8 +124,12 @@ public class WSDLLocation {
         boolean result = false;
         QName qname = omAttribute.getQName();
         
-        if (WSDLI.equals(qname))
+        if (WSDLI.equals(qname) || FINAL_WSDLI.equals(qname))
             result = true;
+
+        if (log.isDebugEnabled()) {
+            log.debug("isWSDLLocationAttribute: OMAttribute QName = " + qname + ", result = " + result);
+        }
         
         return result;
     }

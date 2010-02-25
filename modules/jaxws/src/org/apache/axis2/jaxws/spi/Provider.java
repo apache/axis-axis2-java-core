@@ -26,6 +26,8 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.addressing.util.EndpointReferenceUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.EndpointImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -40,6 +42,8 @@ import java.net.URL;
 import java.util.List;
 
 public class Provider extends javax.xml.ws.spi.Provider {
+    private static final Log log = LogFactory.getLog(Provider.class);
+    
 	private static final Element[] ZERO_LENGTH_ARRAY = new Element[0];
 
     @Override
@@ -126,10 +130,17 @@ public class Provider extends javax.xml.ws.spi.Provider {
             	EndpointReferenceHelper.getWSDLLocationMetadata(axis2EPR, addressingNamespace);
             URL wsdlLocationURL = null;
             
-            if (wsdlLocation.getLocation() != null)
+            if (wsdlLocation.getLocation() != null) {
             	wsdlLocationURL = new URL(wsdlLocation.getLocation());
-            else
+                if (log.isDebugEnabled()) {
+                    log.debug("getPort: Using EPR wsdlLocationURL = " + wsdlLocationURL);
+                }
+            } else {
             	wsdlLocationURL = new URL(axis2EPR.getAddress() + "?wsdl");
+                if (log.isDebugEnabled()) {
+                    log.debug("getPort: Using default wsdlLocationURL = " + wsdlLocationURL);
+                }
+            }
             
             serviceDelegate =
             	new org.apache.axis2.jaxws.spi.ServiceDelegate(wsdlLocationURL, serviceName.getName(), Service.class);
