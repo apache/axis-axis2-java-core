@@ -29,7 +29,6 @@ import javax.xml.ws.AsyncHandler;
  */
 public class AsyncHandlerProxyFactoryImpl implements AsyncHandlerProxyFactory {
 
-    @Override
     public AsyncHandler createAsyncHandlerProxy(AsyncHandler ah) throws Exception {
         return ah;
     }
