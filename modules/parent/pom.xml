@@ -477,11 +477,12 @@
         <repository>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
+                <!-- The repository contains snapshots, but they are not updated by an automated build process -->
                 <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
+                <updatePolicy>daily</updatePolicy>
             </snapshots>
             <id>apache-ws-snapshots2</id>
             <name>Apache ws.zones - 2</name>
@@ -492,7 +493,7 @@
             <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
@@ -504,7 +505,7 @@
             <url>http://repo1.maven.org/eclipse</url>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>false</enabled>
@@ -530,6 +531,7 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
          </repository>
 	<repository>
@@ -562,6 +564,7 @@
             </snapshots>
             <releases>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
         </pluginRepository>
     </pluginRepositories>
