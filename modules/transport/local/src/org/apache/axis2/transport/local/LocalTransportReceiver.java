@@ -99,6 +99,7 @@ public class LocalTransportReceiver {
         localTransportResOut.setSender(new LocalResponder(response));
 
         try {
+            msgCtx.setIncomingTransportName(Constants.TRANSPORT_LOCAL);
             msgCtx.setTransportIn(tIn);
             msgCtx.setTransportOut(localTransportResOut);
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, response);

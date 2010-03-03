@@ -202,7 +202,7 @@ public class DispatchPhase extends Phase {
     }
 
     /**
-     * To check wether the incoming request has come in valid transport , simpley the transports
+     * To check whether the incoming request has come in valid transport , simply the transports
      * that service author wants to expose
      *
      * @param msgctx the current MessageContext
@@ -214,10 +214,16 @@ public class DispatchPhase extends Phase {
             return;
         } else {
             List trs = service.getExposedTransports();
-            String incommingTrs = msgctx.getIncomingTransportName();
+            String incomingTrs = msgctx.getIncomingTransportName();
+
+            //local transport is a special case, it need not be exposed.
+            if (Constants.TRANSPORT_LOCAL.equals(incomingTrs)) {
+                return;
+            }
+
             for (int i = 0; i < trs.size(); i++) {
                 String tr = (String) trs.get(i);
-                if (incommingTrs != null && incommingTrs.equals(tr)) {
+                if (incomingTrs != null && incomingTrs.equals(tr)) {
                     return;
                 }
             }
