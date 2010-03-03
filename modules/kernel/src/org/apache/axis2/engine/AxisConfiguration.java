@@ -294,7 +294,11 @@ public class AxisConfiguration extends AxisDescription {
      * @param moduleVersion the version of the module to remove
      */
     public void removeModule(String moduleName, Version moduleVersion) {
-        removeModule(moduleName, moduleVersion.toString());
+        String version = null;
+        if (moduleVersion != null) {
+            version = moduleVersion.toString();
+        }
+        removeModule(moduleName, version);
     }
 
     /**
