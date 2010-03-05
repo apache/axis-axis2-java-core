@@ -31,11 +31,14 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
+
+import org.apache.axis2.jaxws.spi.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.RespectBindingFeature;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -130,6 +133,51 @@ public class AddressingProviderTests extends AbstractTestCase {
         System.out.println(response.toString());
     }
     
+    /**
+     * Message already contains wsa headers. Make sure there is no mismatch between 
+     * SOAPAction and wsa:Action. 
+     */
+    public void testWithRespectBinding() throws Exception {
+
+        Dispatch<SOAPMessage> dispatch = createDispatchWithRespectBinding();
+             
+        BindingProvider bp = (BindingProvider) dispatch;
+        Binding binding = (Binding) bp.getBinding();
+
+        WebServiceFeature addressingFeature = binding.getFeature(AddressingFeature.ID);
+        assertNotNull(addressingFeature);
+        assertTrue("Expecting AddressingFeature to be enabled.", addressingFeature.isEnabled());
+        
+        WebServiceFeature respectBindingFeature = binding.getFeature(RespectBindingFeature.ID);
+        assertNotNull(respectBindingFeature);
+        assertTrue("Expecting RespectBindingFeature to be enabled.", respectBindingFeature.isEnabled());
+        
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
+
+        String msg = MessageFormat.format(SOAP_MESSAGE_2, 
+                                          endpointUrl,
+                                          "urn:" + UUID.randomUUID(),
+                                          ACTION);
+        
+        System.out.println(msg);
+        
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage request = factory.createMessage(null, new ByteArrayInputStream(msg.getBytes()));
+                        
+        SOAPMessage response = dispatch.invoke(request);
+                     
+        assertResponseXML(response, "Hello Response");
+        
+        System.out.println(response.toString());
+        
+        // Try again to verify
+        response = dispatch.invoke(request);
+        
+        assertResponseXML(response, "Hello Response");
+        
+        System.out.println(response.toString());
+    }
+    
     private SOAPElement assertResponseXML(SOAPMessage msg, String expectedText) throws Exception {
         assertTrue(msg != null);
         SOAPBody body = msg.getSOAPBody();
@@ -160,6 +208,19 @@ public class AddressingProviderTests extends AbstractTestCase {
         BindingProvider p = (BindingProvider) dispatch;
         p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
 
+        return dispatch;
+    }
+    
+    private Dispatch<SOAPMessage> createDispatchWithRespectBinding() throws Exception {
+        URL wsdlURL = getWsdl();
+        assertNotNull(wsdlURL);
+        Service svc = Service.create(wsdlURL, serviceName);
+        
+        WebServiceFeature[] wsf = {new AddressingFeature(true), new RespectBindingFeature(true)};
+        
+        Dispatch<SOAPMessage> dispatch =
+            svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE, wsf);
+        
         return dispatch;
     }
     

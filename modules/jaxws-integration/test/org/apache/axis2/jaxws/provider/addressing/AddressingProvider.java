@@ -29,6 +29,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.Addressing;
+import javax.xml.ws.RespectBinding;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -38,6 +39,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 		    portName="AddressingProviderPort")
 @BindingType(SOAPBinding.SOAP11HTTP_BINDING)
 @Addressing(enabled=true)
+@RespectBinding
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class AddressingProvider implements Provider<SOAPMessage> {
       

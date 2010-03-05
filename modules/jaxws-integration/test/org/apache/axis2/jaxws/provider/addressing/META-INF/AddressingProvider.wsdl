@@ -25,6 +25,8 @@
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
     xmlns:s="http://www.w3.org/2001/XMLSchema" 
     xmlns:tns="http://addressing.provider.jaxws.axis2.apache.org"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    
     targetNamespace="http://addressing.provider.jaxws.axis2.apache.org"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
@@ -65,6 +67,8 @@
         <soap:body use="literal" />
       </output>
     </operation>
+      <wsaw:UsingAddressing required="true" /> 
+    
   </binding>
 
   <service name="AddressingProviderService">
