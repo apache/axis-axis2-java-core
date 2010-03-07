@@ -293,12 +293,13 @@ public class SimpleTypeMapper {
             SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
 
             MessageContext messageContext = MessageContext.getCurrentMessageContext();
-            AxisService axisServce = messageContext.getAxisService();
-            // if the user has given a pirticualr timezone we use it.
-            if (axisServce.getParameter("TimeZone") != null){
-               zulu.setTimeZone(TimeZone.getTimeZone((String)axisServce.getParameter("TimeZone").getValue()));
+            if (messageContext != null) {
+                AxisService axisServce = messageContext.getAxisService();
+                // if the user has given a pirticualr timezone we use it.
+                if (axisServce.getParameter("TimeZone") != null) {
+                    zulu.setTimeZone(TimeZone.getTimeZone((String) axisServce.getParameter("TimeZone").getValue()));
+                }
             }
-
             return zulu.format(obj);
         }
         return obj.toString();
