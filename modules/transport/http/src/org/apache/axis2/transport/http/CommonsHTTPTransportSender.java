@@ -22,6 +22,7 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -30,6 +31,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
@@ -165,8 +167,18 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 format.setMimeBoundary((String) mimeBoundaryProperty);
             }
 
-            TransportOutDescription transportOut = msgContext.getConfigurationContext().
-                    getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
+            AxisConfiguration axisConfiguration = msgContext.getConfigurationContext().getAxisConfiguration();
+            TransportOutDescription transportOut = null;
+            if (msgContext.getTransportOut() != null){
+                 transportOut = msgContext.getTransportOut();
+            } else if (msgContext.getIncomingTransportName() != null){
+                transportOut = axisConfiguration.getTransportOut(msgContext.getIncomingTransportName());
+            } else if (msgContext.getOperationContext().getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN) != null){
+                String transportName = msgContext.getOperationContext().getMessageContext(WSDL2Constants.MESSAGE_LABEL_IN).getIncomingTransportName();
+                transportOut = msgContext.getConfigurationContext().getAxisConfiguration().getTransportOut(transportName);
+            } else {
+                transportOut = msgContext.getConfigurationContext().getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
+            }
 
              // set the timeout properteies
 
