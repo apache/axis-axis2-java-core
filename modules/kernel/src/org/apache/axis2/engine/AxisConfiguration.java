@@ -407,6 +407,70 @@ public class AxisConfiguration extends AxisDescription {
         addChild(axisServiceGroup);
     }
 
+    /**
+     * This method is used to add a service to an existing active service group in the axis configuration
+     *
+     * @param axisService service to be added to the existing service group provided
+     * @param serviceGroupName name of the service group which should be existing in the axis configuration
+     * @throws AxisFault in case of an error in adding the service to the group specified or if the group is not existing
+     */
+    public void addServiceToExistingServiceGroup(AxisService axisService,
+                                                 String serviceGroupName) throws AxisFault {
+
+        AxisServiceGroup serviceGroup = getServiceGroup(serviceGroupName);
+        if (serviceGroup == null) {
+            String message = "A ServiceGroup with the provided name "
+                    + serviceGroupName + " is not existing";
+            log.error(message);
+            throw new AxisFault(message);
+        }
+
+        if (axisService.getSchemaTargetNamespace() == null) {
+            axisService.setSchemaTargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+        }
+
+        if (axisService.isUseDefaultChains()) {
+            Iterator<AxisOperation> operations = axisService.getOperations();
+            while (operations.hasNext()) {
+                AxisOperation operation = operations.next();
+                phasesinfo.setOperationPhases(operation);
+            }
+        }
+
+        Map<String, AxisEndpoint> endpoints = axisService.getEndpoints();
+        if (endpoints == null || endpoints.size() == 0) {
+			org.apache.axis2.deployment.util.Utils.addEndpointsToService(
+					axisService, axisService.getAxisConfiguration());
+            endpoints = axisService.getEndpoints();
+		}
+
+        String serviceName = axisService.getName();
+        addToAllServicesMap(axisService);
+
+        if (endpoints != null) {
+            Iterator<String> endpointNameIter = endpoints.keySet().iterator();
+            while (endpointNameIter.hasNext()) {
+                String endpointName = endpointNameIter.next();
+                if (log.isDebugEnabled()) {
+                    log.debug("Adding service to allEndpoints map: ("
+                            + serviceName + "," + endpointName + ") ");
+                }
+
+                allEndpoints.put(serviceName + "." + endpointName, axisService);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("After adding to allEndpoints map, size is "
+                        + allEndpoints.size());
+            }
+        }
+        
+        serviceGroup.addService(axisService);
+
+        if (!axisService.isClientSide()) {
+            notifyObservers(new AxisEvent(AxisEvent.SERVICE_DEPLOY, axisService), axisService);
+        }
+    }
+
     public void addToAllServicesMap(AxisService axisService) throws AxisFault {
         String serviceName = axisService.getName();
         AxisService oldService = allServices.get(serviceName);
