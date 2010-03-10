@@ -65,6 +65,9 @@ public class Version implements Serializable, Comparable<Version> {
             if (dashIndex != -1) {
                 qualifier = versionString.substring(dashIndex + 1);
                 versionString = versionString.substring(0, dashIndex);
+            } else if (versionString.endsWith(".SNAPSHOT")){
+                qualifier = "SNAPSHOT";
+                versionString = versionString.substring(0,versionString.indexOf(".SNAPSHOT"));
             } else {
                 qualifier = null;
             }
