@@ -629,7 +629,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
             throws Exception {
         String propertyName;
         if (isArrayType) {
-            propertyName = type.getComponentType().getName();
+            propertyName = getClassName(type.getComponentType());
             if (type.getComponentType().isArray()) {
                 // this is a double array element
                 Class<?> simpleType = type.getComponentType();
@@ -689,7 +689,7 @@ public class DefaultSchemaGenerator implements Java2WSDLConstants, SchemaGenerat
                 return;
             }
         } else {
-            propertyName = type.getName();
+            propertyName = getClassName(type);
         }
         if (isArrayType && "byte".equals(propertyName)) {
             propertyName = "base64Binary";
