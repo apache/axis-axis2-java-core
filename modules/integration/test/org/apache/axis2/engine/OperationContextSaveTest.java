@@ -329,12 +329,7 @@ public class OperationContextSaveTest extends TestCase {
                 assertTrue(comparesOk);
 
                 ServiceContext restored_srvCtx = opctx_restored.getServiceContext();
-                comparesOk = restored_srvCtx.isEquivalent(serviceContext);
-                log.debug(
-                        "OperationContextSaveTest:testSaveAndRestore():  ServiceContext equivalency [" +
-                                comparesOk + "]");
-                assertTrue(comparesOk);
-
+                
                 ServiceGroupContext restored_sgCtx = restored_srvCtx.getServiceGroupContext();
                 comparesOk = restored_sgCtx.isEquivalent(serviceGroupContext);
                 log.debug(

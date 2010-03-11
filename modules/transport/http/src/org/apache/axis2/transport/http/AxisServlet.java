@@ -127,6 +127,7 @@ public class AxisServlet extends HttpServlet {
         //set the initial buffer for a larger value
         response.setBufferSize(BUFFER_SIZE);
 
+        
         preprocessRequest(request);
 
         MessageContext msgContext;
@@ -475,7 +476,6 @@ public class AxisServlet extends HttpServlet {
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
             listenerManager.start();
-            ListenerManager.defaultConfigurationContext = configContext;
             agent = new ListingAgent(configContext);
 
             initParams();

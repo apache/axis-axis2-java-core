@@ -224,22 +224,6 @@ public class ServiceContext extends AbstractContext
         this.targetEPR = targetEPR;
     }
 
-    public EndpointReference getMyEPR() {
-        if (myEPR == null) {
-            try {
-                if (ListenerManager.defaultConfigurationContext != null) {
-                    ListenerManager listenerManager =
-                            ListenerManager.defaultConfigurationContext.getListenerManager();
-                    myEPR = listenerManager.getEPRforService(axisService.getName(), null, null);
-                }
-            } catch (AxisFault axisFault) {
-                // what else I can do 
-                myEPR = null;
-            }
-        }
-        return myEPR;
-    }
-
     public void setMyEPR(EndpointReference myEPR) {
         this.myEPR = myEPR;
     }
@@ -594,64 +578,6 @@ public class ServiceContext extends AbstractContext
                 }
             }
         }
-    }
-
-
-    /**
-     * Compares key parts of the state from the current instance of
-     * this class with the specified instance to see if they are
-     * equivalent.
-     * <p/>
-     * This differs from the java.lang.Object.equals() method in
-     * that the equals() method generally looks at both the
-     * object identity (location in memory) and the object state
-     * (data).
-     * <p/>
-     *
-     * @param ctx
-     * @return TRUE if this object is equivalent with the specified object
-     *         that is, key fields match
-     *         FALSE, otherwise
-     */
-    public boolean isEquivalent(ServiceContext ctx) {
-        // NOTE: the input object is expected to exist (ie, be non-null)
-
-        if (!this.axisService.equals(ctx.getAxisService())) {
-            return false;
-        }
-
-
-        EndpointReference targetEPR2 = ctx.getTargetEPR();
-
-        if ((this.targetEPR != null) && (targetEPR2 != null)) {
-            if (!this.targetEPR.isEquivalent(targetEPR2)) {
-                return false;
-            }
-        } else if ((this.targetEPR == null) && (targetEPR2 == null)) {
-            // keep going
-        } else {
-            // one of the objects is null
-            return false;
-        }
-
-        EndpointReference myEPR2 = ctx.getMyEPR();
-
-        if ((this.myEPR != null) && (myEPR2 != null)) {
-            if (!this.myEPR.isEquivalent(myEPR2)) {
-                return false;
-            }
-        } else if ((this.myEPR == null) && (myEPR2 == null)) {
-            // keep going
-        } else {
-            // one of the objects is null
-            return false;
-        }
-
-        // TODO: consider checking the parent objects for equivalency
-
-        // TODO: consider checking fields from the super class for equivalency
-
-        return true;
     }
 
 

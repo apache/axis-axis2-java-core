@@ -38,13 +38,7 @@ public class ListenerManager {
 
     private static final OnDemandLogger log = new OnDemandLogger(ListenerManager.class);
 
-    public static ConfigurationContext defaultConfigurationContext;
     protected ListenerManagerShutdownThread shutdownHookThread = null;
-
-    public static ListenerManager getDefaultListenerManager() {
-        if (defaultConfigurationContext == null) return null;
-        return defaultConfigurationContext.getListenerManager();
-    }
 
     private ConfigurationContext configctx;
     private HashMap<String, TransportListener> startedTransports =
@@ -297,7 +291,6 @@ public class ListenerManager {
 
         this.startedTransports.clear();
         this.configctx = null;
-        defaultConfigurationContext = null;
     }
 
     public boolean isShutdownHookRequired() {

@@ -147,13 +147,12 @@ public class ServiceClient {
     private void configureServiceClient(ConfigurationContext configContext, AxisService axisService)
             throws AxisFault {
         if (configContext == null) {
-            if (ListenerManager.defaultConfigurationContext == null) {
+            if (MessageContext.getCurrentMessageContext() == null) {
                 configContext = ConfigurationContextFactory.
                         createConfigurationContextFromFileSystem(null, null);
-                ListenerManager.defaultConfigurationContext = configContext;
                 createConfigCtx = true;
             } else {
-                configContext = ListenerManager.defaultConfigurationContext;
+                configContext = MessageContext.getCurrentMessageContext().getConfigurationContext();
             }
         }
         this.configContext = configContext;

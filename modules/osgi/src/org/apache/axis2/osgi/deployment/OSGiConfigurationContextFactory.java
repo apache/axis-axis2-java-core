@@ -94,7 +94,6 @@ public class OSGiConfigurationContextFactory implements ManagedService {
         ListenerManager listenerManager = new ListenerManager();
         listenerManager.init(configCtx);
         listenerManager.start();
-        ListenerManager.defaultConfigurationContext = configCtx;
     }
 
     public void updated(Dictionary dictionary) throws ConfigurationException {
