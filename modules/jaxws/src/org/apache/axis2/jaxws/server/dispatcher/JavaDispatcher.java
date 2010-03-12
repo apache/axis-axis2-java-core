@@ -180,7 +180,7 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
                 
                 // Set the proper class loader so that we can properly marshall the
                 // outbound response.
-                ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
+                ClassLoader currentLoader = getCurrentContextClassLoader();
                 if (classLoader != null && (classLoader != currentLoader)) {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     if (log.isDebugEnabled()) {
